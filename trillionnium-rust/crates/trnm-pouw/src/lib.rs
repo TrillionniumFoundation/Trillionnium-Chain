@@ -1490,27 +1490,40 @@ pub fn apply_timeout(
     preflight_timeout_transfers(st, &task, forfeit_challenge_bond, refund_challenge_bond)?;
 
     let task_id = task_ref.id;
+    let before_task = st
+        .get_task(task_ref.id)
+        .ok_or_else(|| PouwError::State("task not found".into()))?;
     let next_ref = st
         .update_task(task_ref, task.clone())
         .map_err(map_state_err)?;
 
-    if let Some(bond) = task.challenge_bond {
-        if forfeit_challenge_bond {
-            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-            st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-        } else if refund_challenge_bond {
-            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-            if let Some(ref challenger) = task.challenger {
-                st.credit_balance(challenger, bond)
+    let settle_result = (|| -> Result<(), PouwError> {
+        if let Some(bond) = task.challenge_bond {
+            if forfeit_challenge_bond {
+                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
                     .map_err(PouwError::State)?;
+                st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
+                    .map_err(PouwError::State)?;
+            } else if refund_challenge_bond {
+                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+                    .map_err(PouwError::State)?;
+                if let Some(ref challenger) = task.challenger {
+                    st.credit_balance(challenger, bond)
+                        .map_err(PouwError::State)?;
+                }
             }
         }
+
+        settle_worker_stake_for_terminal_state(st, &task)?;
+        Ok(())
+    })();
+
+    if let Err(err) = settle_result {
+        st.update_task(next_ref.clone(), before_task)
+            .map_err(map_state_err)?;
+        return Err(err);
     }
 
-    settle_worker_stake_for_terminal_state(st, &task)?;
     // Hygiene boundary: timeout finalization must clear any staged multisig resolve
     // approvals so stale partial authorizations cannot linger after terminal state.
     st.clear_pending_resolve_approval(task_id);
@@ -2001,6 +2014,78 @@ mod tests {
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before_forfeit
+        );
+    }
+
+    #[test]
+    fn timeout_rejects_missing_resolve_deadline_without_clearing_staged_multisig_approval() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1_000);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let task_id = 21_503;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            1,
+        )
+        .unwrap();
+
+        let staged_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            2,
+        )
+        .expect_err("first multisig resolve should only stage approval");
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
+        assert_eq!(st.pending_resolve_approval(task_id), Some((true, 1)));
+
+        let mut task = st.get_task(task_id).unwrap();
+        task.resolve_deadline_height = None;
+        let bad_ref = st
+            .update_task(
+                ObjectRef {
+                    id: task_id,
+                    version: task.version,
+                },
+                task.clone(),
+            )
+            .unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_timeout(&mut st, bad_ref, 999).expect_err(
+            "timeout must fail closed when challenged task is missing resolve deadline metadata",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains(
+            "challenged status requires challenged_at_height, challenge_deadline_height, and resolve_deadline_height"
+        )));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.pending_resolve_approval(task_id),
+            Some((true, 1)),
+            "failed timeout must not clear staged resolve approval"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(task_id),
+            Some("authority-a".to_string())
         );
     }
 
