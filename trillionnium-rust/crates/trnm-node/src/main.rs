@@ -3776,6 +3776,20 @@ mod tests {
                 "bft_skipped_observed_height_rate_ppm",
             ],
             &[
+                "preexec_reject_active_height_rate_ppm",
+                "preexec_reject_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
+                "rollback_active_height_rate_ppm",
+                "rollback_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
                 "bft_round_change_active_height_rate_ppm",
                 "bft_round_change_active_observed_height_rate_ppm",
                 "bft_commit_observed_height_rate_ppm",
@@ -3798,7 +3812,7 @@ mod tests {
             ],
         ];
 
-        assert_eq!(review_bundles.len(), 5);
+        assert_eq!(review_bundles.len(), 7);
         for bundle in review_bundles {
             assert!(bundle[0].ends_with("_active_height_rate_ppm"));
             assert!(bundle[1].ends_with("_active_observed_height_rate_ppm"));
