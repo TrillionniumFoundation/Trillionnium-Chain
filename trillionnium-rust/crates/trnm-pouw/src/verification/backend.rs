@@ -65,12 +65,29 @@ impl VerificationBackendKind {
 }
 
 fn normalize_backend_token(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
-        .to_ascii_lowercase()
-        .chars()
-        .map(|ch| if ch.is_ascii_alphanumeric() { ch } else { ' ' })
-        .collect::<String>();
+    let trimmed = raw.trim();
+    let mut normalized = String::with_capacity(trimmed.len());
+    let chars = trimmed.char_indices().collect::<Vec<_>>();
+    for (idx, (_, ch)) in chars.iter().copied().enumerate() {
+        if idx > 0 {
+            let prev = chars[idx - 1].1;
+            let next = chars.get(idx + 1).map(|(_, next)| *next);
+            let upper_after_lower = ch.is_ascii_uppercase() && prev.is_ascii_lowercase();
+            let upper_before_lower = ch.is_ascii_uppercase()
+                && prev.is_ascii_uppercase()
+                && next.is_some_and(|next| next.is_ascii_lowercase());
+            if upper_after_lower || upper_before_lower {
+                normalized.push(' ');
+            }
+        }
+
+        if ch.is_ascii_alphanumeric() {
+            normalized.push(ch.to_ascii_lowercase());
+        } else {
+            normalized.push(' ');
+        }
+    }
+
     let collapsed = normalized.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.is_empty() {
         None
@@ -1007,6 +1024,7 @@ mod tests {
             ("tee collaterals endorsements quotes tdx", "tdx"),
             ("tee remote attestations certificates snp", "snp"),
             ("remote attestation quote sgx", "sgx"),
+            ("remoteAttestationQuoteSgx", "sgx"),
             ("remote attestation evidence sgx", "sgx"),
             ("attestation evidence snp", "snp"),
             ("receipt report tdx", "tdx"),
