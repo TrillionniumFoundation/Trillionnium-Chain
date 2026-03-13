@@ -2569,6 +2569,73 @@ fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
 }
 
 #[test]
+fn blocked_policy_tick_keeps_monetary_snapshot_and_state_root_stable() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "5".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .unwrap();
+    state
+        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "3".to_string())
+        .unwrap();
+
+    let first_event = state.policy_tick(10).expect("initial tick should fire at the configured interval");
+    assert_eq!(first_event.tick_count, 1, "sanity: first successful tick should advance tick_count");
+
+    let baseline_snapshot = state.monetary_state_snapshot();
+    let baseline_root = state.state_root();
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "sanity: repeated reads before the blocked tick should reuse the cached baseline root"
+    );
+
+    assert!(
+        !state.should_trigger_policy_tick(10),
+        "the same block height must not retrigger a policy tick once last_tick_height already matches it"
+    );
+    assert!(
+        !state.should_trigger_policy_tick(14),
+        "non-interval heights should fail closed without scheduling a monetary tick"
+    );
+    assert!(
+        state.policy_tick(14).is_none(),
+        "blocked non-triggering tick attempts should fail closed without mutating monetary state"
+    );
+
+    assert_eq!(
+        state.monetary_state_snapshot(),
+        baseline_snapshot,
+        "blocked policy_tick attempts must preserve the canonical monetary snapshot exactly"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "blocked policy_tick attempts must leave state_root unchanged"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after a blocked policy_tick attempt should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn monetary_net_issuance_should_affect_state_root_even_when_other_counters_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
