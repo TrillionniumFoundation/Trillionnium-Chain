@@ -3762,6 +3762,13 @@ mod tests {
     fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates() {
         let review_bundles: &[&[&str]] = &[
             &[
+                "critical_wait_active_height_rate_ppm",
+                "critical_wait_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
                 "hot_object_active_height_rate_ppm",
                 "hot_object_active_observed_height_rate_ppm",
                 "bft_commit_observed_height_rate_ppm",
@@ -3791,7 +3798,7 @@ mod tests {
             ],
         ];
 
-        assert_eq!(review_bundles.len(), 4);
+        assert_eq!(review_bundles.len(), 5);
         for bundle in review_bundles {
             assert!(bundle[0].ends_with("_active_height_rate_ppm"));
             assert!(bundle[1].ends_with("_active_observed_height_rate_ppm"));
