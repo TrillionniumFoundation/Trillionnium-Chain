@@ -11439,6 +11439,20 @@ mod tests {
     }
 
     #[test]
+    fn timeout_slash_governance_key_remains_blocked_by_allowlist() {
+        let mut st = seeded_state();
+        let err = st
+            .set_gov_param_bootstrap_unchecked(
+                40_134,
+                "default_slash_on_unresolved_challenge".into(),
+                "true".into(),
+            )
+            .expect_err("timeout-slash governance key should remain blocked until state allowlist is wired");
+        assert!(err.contains("governance key not allowed: default_slash_on_unresolved_challenge"));
+        assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
+    }
+
+    #[test]
     fn parse_governed_bool_param_accepts_explicit_true_and_false_aliases() {
         for raw in ["1", "true", "yes", "on", "0", "false", "no", "off"] {
             parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
