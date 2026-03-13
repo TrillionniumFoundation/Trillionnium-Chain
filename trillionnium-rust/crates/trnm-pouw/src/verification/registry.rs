@@ -251,12 +251,42 @@ impl VerifierRegistry {
             "tee attestation evidence" | "teeattestationevidence" => "tee",
             "attestation cert" | "attestationcert" => "tee",
             "attestation certs" | "attestationcerts" => "tee",
+            "attestation cert v1" | "attestationcertv1" | "attestation cert v 1" => "tee",
+            "attestation cert v2" | "attestationcertv2" | "attestation cert v 2" => "tee",
+            "attestation cert v3" | "attestationcertv3" | "attestation cert v 3" => "tee",
             "attestation certificate" | "attestationcertificate" => "tee",
             "attestation certificates" | "attestationcertificates" => "tee",
+            "attestation certificate v1"
+            | "attestationcertificatev1"
+            | "attestation certificate v 1" => "tee",
+            "attestation certificate v2"
+            | "attestationcertificatev2"
+            | "attestation certificate v 2" => "tee",
+            "attestation certificate v3"
+            | "attestationcertificatev3"
+            | "attestation certificate v 3" => "tee",
             "tee attestation cert" | "teeattestationcert" => "tee",
             "tee attestation certs" | "teeattestationcerts" => "tee",
+            "tee attestation cert v1"
+            | "teeattestationcertv1"
+            | "tee attestation cert v 1" => "tee",
+            "tee attestation cert v2"
+            | "teeattestationcertv2"
+            | "tee attestation cert v 2" => "tee",
+            "tee attestation cert v3"
+            | "teeattestationcertv3"
+            | "tee attestation cert v 3" => "tee",
             "tee attestation certificate" | "teeattestationcertificate" => "tee",
             "tee attestation certificates" | "teeattestationcertificates" => "tee",
+            "tee attestation certificate v1"
+            | "teeattestationcertificatev1"
+            | "tee attestation certificate v 1" => "tee",
+            "tee attestation certificate v2"
+            | "teeattestationcertificatev2"
+            | "tee attestation certificate v 2" => "tee",
+            "tee attestation certificate v3"
+            | "teeattestationcertificatev3"
+            | "tee attestation certificate v 3" => "tee",
             "enclave report" | "enclavereport" => "tee",
             "enclave evidence" | "enclaveevidence" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
@@ -694,12 +724,16 @@ mod tests {
             "tee attestation evidence",
             "attestation cert",
             "attestation certs",
+            "attestation cert v2",
             "attestation certificate",
             "attestation certificates",
+            "attestation certificate v3",
             "tee attestation cert",
             "tee attestation certs",
+            "tee attestation cert v1",
             "tee attestation certificate",
             "tee attestation certificates",
+            "tee attestation certificate v2",
             "enclave report",
             "enclave evidence",
             "tee attestation report",
