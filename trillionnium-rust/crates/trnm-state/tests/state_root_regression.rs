@@ -2327,6 +2327,54 @@ fn explicit_default_monetary_snapshot_has_same_state_root_as_empty_state() {
 }
 
 #[test]
+fn restoring_default_monetary_snapshot_rewinds_mixed_state_root_exactly() {
+    let mut state = StateStore::new();
+    state.set_balance("treasury.challenge_forfeits", 11);
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_001,
+            key: "challenge_min_bond".into(),
+            value: "5000".into(),
+            activate_at_height: 1_200,
+        }),
+    );
+
+    let baseline_root = state.state_root();
+    assert_eq!(
+        state.monetary_state(),
+        &MonetaryState::default(),
+        "sanity: baseline mixed state should start from the canonical default monetary snapshot"
+    );
+
+    state.restore_monetary_state(MonetaryState {
+        last_tick_height: 42,
+        tick_count: 3,
+        total_minted: 17,
+        total_burned: 5,
+        net_issuance: 12,
+    });
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "sanity: non-default monetary counters must perturb the root even when pending governance and treasury state are unchanged"
+    );
+
+    state.restore_monetary_state(MonetaryState::default());
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restoring the default monetary snapshot must rewind the mixed pending/treasury root exactly"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restoring the default monetary snapshot should deterministically reuse the rewound mixed-state root"
+    );
+}
+
+#[test]
 fn monetary_tick_metadata_should_affect_state_root_even_when_issuance_totals_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
