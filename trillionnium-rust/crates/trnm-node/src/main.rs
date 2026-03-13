@@ -6502,6 +6502,51 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_discards_uncheckpointed_wal_that_starts_above_genesis_without_claiming_recovery() {
+        let wal_dir = temp_wal_dir("recover-uncheckpointed-starts-above-genesis");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 12,
+                last_round: 5,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: None,
+        };
+        persist_wal_meta_entries(&wal_dir, &[e2]).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+        assert!(load_wal_meta_entries(&wal_dir).unwrap().is_empty());
+        assert!(load_checkpoint_meta(&wal_dir).unwrap().is_empty());
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_rejects_checkpointed_wal_chain_without_genesis_base() {
         let wal_dir = temp_wal_dir("recover-no-genesis-base");
         fs::create_dir_all(&wal_dir).unwrap();
