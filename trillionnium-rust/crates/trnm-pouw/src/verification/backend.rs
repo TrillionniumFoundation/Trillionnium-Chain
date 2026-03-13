@@ -796,9 +796,26 @@ pub fn resolve_zk_vk_ref(
     resolver: &dyn VkRefResolver,
     payload: &ParsedZkProofPayload,
 ) -> Result<ResolvedVkRef, BackendExecutionError> {
-    resolver
+    let resolved = resolver
         .resolve(&payload.vk_ref)
-        .map_err(VkRefResolutionError::into_backend_execution_error)
+        .map_err(VkRefResolutionError::into_backend_execution_error)?;
+
+    if let (Some(payload_system), Some(resolved_system)) = (
+        payload.zk_system.as_deref().and_then(normalize_zk_system),
+        resolved.zk_system.as_deref().and_then(normalize_zk_system),
+    ) {
+        if payload_system != resolved_system {
+            return Err(BackendExecutionError::InvalidProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
+                    resolved.vk_ref
+                ),
+            });
+        }
+    }
+
+    Ok(resolved)
 }
 
 fn decode_base64(raw: &str) -> Result<Vec<u8>, String> {
@@ -1309,6 +1326,23 @@ mod tests {
             err,
             VkRefResolutionError::Unknown {
                 vk_ref: "\u{2003}vk://trnm/dev/mock-groth16/v1\u{2003}".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn resolve_zk_vk_ref_rejects_payload_zk_system_mismatch_against_registered_vk_metadata() {
+        let task = mock_task();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
+        let resolver = VkRefRegistry::new();
+
+        let err = resolve_zk_vk_ref(&resolver, &payload).unwrap_err();
+
+        assert_eq!(
+            err,
+            BackendExecutionError::InvalidProof {
+                backend: "zk:payload".into(),
+                reason: "invalid zk payload: zk_system 'groth16' does not match vk_ref 'vk://trnm/dev/mock-plonk/v1'".into(),
             }
         );
     }
