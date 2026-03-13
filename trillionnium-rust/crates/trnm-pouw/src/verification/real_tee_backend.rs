@@ -3281,13 +3281,196 @@ impl VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    frames: Vec<Vec<u8>>,
+    window_start_sequence: u64,
+    window_frame_count: usize,
+    expected_ack_sequence: u64,
+    retransmit_budget: usize,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
-    for FailClosedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
-{
-    fn exchange_termination_classification(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    frames: Vec<Vec<u8>>,
+    window_start_sequence: u64,
+    window_frame_count: usize,
+    acked_through_sequence: u64,
+    retransmit_count: usize,
+    budget_remaining: usize,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner: Send + Sync {
+    fn plan_termination_category(
         &self,
+        classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+        verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange: Send + Sync {
+    fn exchange_termination_category(
+        &self,
+        category_request: &VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
+        classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+        verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection: Send + Sync {
+    fn project_normalized_verdict(
+        &self,
+        category_response: VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        category_request: &VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
+        classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+        verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner;
+
+impl VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner
+    for DirectVerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner
+{
+    fn plan_termination_category(
+        &self,
+        classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        _status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+        _verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        _outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        _convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+        _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        _frame_request: &VerifierHttpClientSessionFrameRequest,
+        _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        _socket_request: &VerifierHttpClientSessionSocketRequest,
+        _transport_request: &VerifierHttpClientSessionTransportRequest,
+        _call_request: &VerifierHttpClientSessionCallRequest,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest {
+            method: classification_request.method,
+            url: classification_request.url.clone(),
+            headers: classification_request.headers.clone(),
+            frames: classification_request.frames.clone(),
+            window_start_sequence: classification_request.window_start_sequence,
+            window_frame_count: classification_request.window_frame_count,
+            expected_ack_sequence: classification_request.expected_ack_sequence,
+            retransmit_budget: classification_request.retransmit_budget,
+            timeout_ms: classification_request.timeout_ms,
+            profile: classification_request.profile.clone(),
+            transport_mode: classification_request.transport_mode.clone(),
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange;
+
+impl VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
+    for FailClosedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
+{
+    fn exchange_termination_category(
+        &self,
+        _category_request: &VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
         _classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
         _status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
         _verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
@@ -3314,11 +3497,11 @@ impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client session protocol chunk termination classification exchange for profile '{}' is not wired",
+                "real http client session protocol chunk termination category exchange for profile '{}' is not wired",
                 http_request.profile
             ),
         })
@@ -3326,14 +3509,15 @@ impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
 }
 
 #[allow(dead_code)]
-struct PassthroughVerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper;
+struct PassthroughVerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection;
 
-impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
-    for PassthroughVerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
+impl VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection
+    for PassthroughVerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection
 {
-    fn map_normalized_outcome(
+    fn project_normalized_verdict(
         &self,
-        classification_response: VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+        category_response: VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        _category_request: &VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
         _classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
         _status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
         _verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
@@ -3360,20 +3544,181 @@ impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
-            status_code: classification_response.status_code,
-            headers: classification_response.headers,
-            frames: classification_response.frames,
-            window_start_sequence: classification_response.window_start_sequence,
-            window_frame_count: classification_response.window_frame_count,
-            acked_through_sequence: classification_response.acked_through_sequence,
-            retransmit_count: classification_response.retransmit_count,
-            budget_remaining: classification_response.budget_remaining,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse {
+            status_code: category_response.status_code,
+            headers: category_response.headers,
+            frames: category_response.frames,
+            window_start_sequence: category_response.window_start_sequence,
+            window_frame_count: category_response.window_frame_count,
+            acked_through_sequence: category_response.acked_through_sequence,
+            retransmit_count: category_response.retransmit_count,
+            budget_remaining: category_response.budget_remaining,
         })
     }
 }
 
+#[allow(dead_code)]
+struct CategorizedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange {
+    termination_category_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner>,
+    termination_category_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange>,
+    normalized_verdict_projection: Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection>,
+}
+
+#[allow(dead_code)]
+impl CategorizedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange {
+    fn new() -> Self {
+        Self {
+            termination_category_planner: Arc::new(
+                DirectVerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner,
+            ),
+            termination_category_exchange: Arc::new(
+                FailClosedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange,
+            ),
+            normalized_verdict_projection: Arc::new(
+                PassthroughVerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection,
+            ),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        termination_category_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner>,
+        termination_category_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange>,
+        normalized_verdict_projection: Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection>,
+    ) -> Self {
+        Self {
+            termination_category_planner,
+            termination_category_exchange,
+            normalized_verdict_projection,
+        }
+    }
+}
+
+impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
+    for CategorizedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
+{
+    fn exchange_termination_classification(
+        &self,
+        classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+        verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
+        let category_request = self.termination_category_planner.plan_termination_category(
+            classification_request,
+            status_request,
+            verdict_request,
+            outcome_request,
+            convergence_request,
+            budget_request,
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        let category_response = self.termination_category_exchange.exchange_termination_category(
+            &category_request,
+            classification_request,
+            status_request,
+            verdict_request,
+            outcome_request,
+            convergence_request,
+            budget_request,
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        self.normalized_verdict_projection.project_normalized_verdict(
+            category_response,
+            &category_request,
+            classification_request,
+            status_request,
+            verdict_request,
+            outcome_request,
+            convergence_request,
+            budget_request,
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
+    }
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper;
 #[allow(dead_code)]
 struct ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange {
     termination_classification_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner>,
