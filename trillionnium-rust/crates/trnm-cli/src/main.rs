@@ -147,12 +147,16 @@ enum QueryCommand {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
         limit: usize,
+        #[arg(long, default_value_t = false)]
+        summary: bool,
     },
     /// Query full request timeline / audit view via RPC
     RequestFull {
         request_id: String,
         #[arg(long, default_value_t = 20)]
         limit: usize,
+        #[arg(long, default_value_t = false)]
+        summary: bool,
     },
 }
 
@@ -334,6 +338,127 @@ fn request_full_query(request_id: &str, limit: usize) -> Result<serde_json::Valu
         );
     }
     parse_request_full_query_response(&stdout, request_id)
+}
+
+fn scalar_summary(value: Option<&serde_json::Value>) -> Option<String> {
+    let value = value?;
+    match value {
+        serde_json::Value::Null => None,
+        serde_json::Value::String(s) => Some(s.clone()),
+        serde_json::Value::Number(n) => Some(n.to_string()),
+        serde_json::Value::Bool(b) => Some(b.to_string()),
+        other => Some(other.to_string()),
+    }
+}
+
+fn push_metering_summary_lines(
+    lines: &mut Vec<String>,
+    indent: &str,
+    metering: &serde_json::Value,
+) {
+    let normalized_work_units =
+        scalar_summary(metering.get("normalized_work_units")).unwrap_or_else(|| "-".into());
+    let workload_class =
+        scalar_summary(metering.get("workload_class")).unwrap_or_else(|| "-".into());
+    let metering_schema =
+        scalar_summary(metering.get("metering_schema")).unwrap_or_else(|| "-".into());
+    let receipt_hash =
+        scalar_summary(metering.get("receipt_hash")).unwrap_or_else(|| "-".into());
+    lines.push(format!(
+        "{}metering work_units={} class={} schema={} receipt_hash={}",
+        indent, normalized_work_units, workload_class, metering_schema, receipt_hash
+    ));
+
+    if let Some(policy) = metering.get("policy") {
+        lines.push(format!(
+            "{}policy snapshot={} floor={} bounty_base={} chall_bonus={}/{} worker_bonus={}/{} worker_rebate={}/{}",
+            indent,
+            scalar_summary(policy.get("snapshot_version")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("min_accept_work_units")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("challenge_success_bounty_base")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_num")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_den")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_num")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_den")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_num")).unwrap_or_else(|| "-".into()),
+            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_den")).unwrap_or_else(|| "-".into()),
+        ));
+    }
+}
+
+fn render_events_query_summary(parsed: &serde_json::Value) -> Result<String> {
+    let events = parsed
+        .as_array()
+        .ok_or_else(|| anyhow!("events summary requires a json array"))?;
+    let mut lines = vec![format!("events_total={}", events.len())];
+    for (idx, event) in events.iter().enumerate() {
+        lines.push(format!(
+            "[{}] {} {}->{} tx_id={} block_height={} actor={} resolution={} bond_disposition={}",
+            idx,
+            scalar_summary(event.get("event_type")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("from_status")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("to_status")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("tx_id")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("block_height")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("actor")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("resolution_code")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("bond_disposition")).unwrap_or_else(|| "-".into()),
+        ));
+        if let Some(metering) = event.get("metering") {
+            push_metering_summary_lines(&mut lines, "  ", metering);
+        }
+    }
+    Ok(lines.join("
+"))
+}
+
+fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<String> {
+    let request = parsed
+        .get("request")
+        .ok_or_else(|| anyhow!("request-full summary missing request"))?;
+    let request_id = scalar_summary(request.get("request_id"))
+        .ok_or_else(|| anyhow!("request-full summary missing request_id"))?;
+    let task_id = scalar_summary(request.get("task_id"))
+        .ok_or_else(|| anyhow!("request-full summary missing task_id"))?;
+    let status = scalar_summary(request.get("status")).unwrap_or_else(|| "-".into());
+    let channel = scalar_summary(request.get("channel")).unwrap_or_else(|| "-".into());
+    let session_id = scalar_summary(request.get("session_id")).unwrap_or_else(|| "-".into());
+    let verifier_status = scalar_summary(parsed.get("verifier_status")).unwrap_or_else(|| "-".into());
+    let resolution_code = scalar_summary(parsed.get("resolution_code")).unwrap_or_else(|| "-".into());
+    let result_hash = scalar_summary(parsed.get("result_hash")).unwrap_or_else(|| "-".into());
+    let commit_tx_hash = scalar_summary(parsed.get("commit_tx_hash")).unwrap_or_else(|| "-".into());
+    let reveal_tx_hash = scalar_summary(parsed.get("reveal_tx_hash")).unwrap_or_else(|| "-".into());
+    let events = parsed
+        .get("events")
+        .and_then(|v| v.as_array())
+        .ok_or_else(|| anyhow!("request-full summary missing events"))?;
+
+    let mut lines = vec![
+        format!("request_id={}", request_id),
+        format!("task_id={}", task_id),
+        format!("status={} verifier_status={} resolution_code={}", status, verifier_status, resolution_code),
+        format!("channel={} session_id={}", channel, session_id),
+        format!("commit_tx_hash={} reveal_tx_hash={} result_hash={}", commit_tx_hash, reveal_tx_hash, result_hash),
+        format!("events_total={}", events.len()),
+    ];
+    for (idx, event) in events.iter().enumerate() {
+        lines.push(format!(
+            "[{}] {} {}->{} tx_id={} actor={} resolution={} bond_disposition={}",
+            idx,
+            scalar_summary(event.get("event_type")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("from_status")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("to_status")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("tx_id")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("actor")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("resolution_code")).unwrap_or_else(|| "-".into()),
+            scalar_summary(event.get("bond_disposition")).unwrap_or_else(|| "-".into()),
+        ));
+        if let Some(metering) = event.get("metering") {
+            push_metering_summary_lines(&mut lines, "  ", metering);
+        }
+    }
+    Ok(lines.join("
+"))
 }
 
 fn task_query(task_id: u64) -> Result<serde_json::Value> {
@@ -1111,13 +1236,29 @@ fn main() -> Result<()> {
                 let out = task_query(task_id)?;
                 println!("{}", serde_json::to_string_pretty(&out)?);
             }
-            QueryCommand::Events { task_id, limit } => {
+            QueryCommand::Events {
+                task_id,
+                limit,
+                summary,
+            } => {
                 let out = events_query(task_id, limit)?;
-                println!("{}", serde_json::to_string_pretty(&out)?);
+                if summary {
+                    println!("{}", render_events_query_summary(&out)?);
+                } else {
+                    println!("{}", serde_json::to_string_pretty(&out)?);
+                }
             }
-            QueryCommand::RequestFull { request_id, limit } => {
+            QueryCommand::RequestFull {
+                request_id,
+                limit,
+                summary,
+            } => {
                 let out = request_full_query(&request_id, limit)?;
-                println!("{}", serde_json::to_string_pretty(&out)?);
+                if summary {
+                    println!("{}", render_request_full_query_summary(&out)?);
+                } else {
+                    println!("{}", serde_json::to_string_pretty(&out)?);
+                }
             }
         },
     }
@@ -1244,6 +1385,94 @@ mod tests {
         assert_eq!(got[0]["task_id"], serde_json::json!(42));
         assert_eq!(got[0]["metering"]["normalized_work_units"], serde_json::json!(192));
         assert_eq!(got[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+    }
+
+    #[test]
+    fn render_events_query_summary_includes_metering_policy_lines() {
+        let raw = serde_json::json!([
+            {
+                "event_type": "resolve",
+                "task_id": 42,
+                "from_status": "Challenged",
+                "to_status": "Completed",
+                "actor": "authority",
+                "tx_id": 12,
+                "block_height": 4,
+                "resolution_code": "completed",
+                "bond_disposition": "forfeited",
+                "metering": {
+                    "workload_class": "llm_inference",
+                    "metering_schema": "llm_token_meter_v1",
+                    "receipt_hash": "deadbeef",
+                    "normalized_work_units": 192,
+                    "policy": {
+                        "snapshot_version": 1,
+                        "min_accept_work_units": 100,
+                        "challenge_success_bounty_base": 1,
+                        "challenge_success_bounty_per_work_unit_num": 1,
+                        "challenge_success_bounty_per_work_unit_den": 192,
+                        "worker_completion_bonus_per_work_unit_num": 1,
+                        "worker_completion_bonus_per_work_unit_den": 256,
+                        "worker_slash_rebate_per_work_unit_num": 1,
+                        "worker_slash_rebate_per_work_unit_den": 384
+                    }
+                }
+            }
+        ]);
+        let summary = render_events_query_summary(&raw).unwrap();
+        assert!(summary.contains("events_total=1"));
+        assert!(summary.contains("work_units=192"));
+        assert!(summary.contains("policy snapshot=1 floor=100 bounty_base=1 chall_bonus=1/192 worker_bonus=1/256 worker_rebate=1/384"));
+    }
+
+    #[test]
+    fn render_request_full_query_summary_includes_timeline_and_metering() {
+        let raw = serde_json::json!({
+            "request": {
+                "request_id": "req-42",
+                "task_id": 42,
+                "channel": "telegram",
+                "session_id": "session-1",
+                "status": "resolved"
+            },
+            "verifier_status": "ok",
+            "resolution_code": "completed",
+            "result_hash": "abcd",
+            "commit_tx_hash": "0x1",
+            "reveal_tx_hash": "0x2",
+            "events": [{
+                "event_type": "resolve",
+                "task_id": 42,
+                "from_status": "Challenged",
+                "to_status": "Completed",
+                "actor": "authority",
+                "tx_id": 3,
+                "resolution_code": "completed",
+                "bond_disposition": "forfeited",
+                "metering": {
+                    "workload_class": "llm_inference",
+                    "metering_schema": "llm_token_meter_v1",
+                    "receipt_hash": "deadbeef",
+                    "normalized_work_units": 192,
+                    "policy": {
+                        "snapshot_version": 1,
+                        "min_accept_work_units": 100,
+                        "challenge_success_bounty_base": 1,
+                        "challenge_success_bounty_per_work_unit_num": 1,
+                        "challenge_success_bounty_per_work_unit_den": 192,
+                        "worker_completion_bonus_per_work_unit_num": 1,
+                        "worker_completion_bonus_per_work_unit_den": 256,
+                        "worker_slash_rebate_per_work_unit_num": 1,
+                        "worker_slash_rebate_per_work_unit_den": 384
+                    }
+                }
+            }]
+        });
+        let summary = render_request_full_query_summary(&raw).unwrap();
+        assert!(summary.contains("request_id=req-42"));
+        assert!(summary.contains("task_id=42"));
+        assert!(summary.contains("commit_tx_hash=0x1 reveal_tx_hash=0x2 result_hash=abcd"));
+        assert!(summary.contains("work_units=192"));
     }
 
     #[test]
