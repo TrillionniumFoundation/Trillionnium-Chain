@@ -554,6 +554,8 @@ def main():
             1 for path in candidates if not os.path.exists(path) and path != selected
         )
         selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
+        selected_age_seconds = file_age_seconds(selected) if selected else None
+        selected_updated_at = file_mtime_iso(selected) if selected else None
         if not existing_candidates:
             return {
                 "label": label,
@@ -561,6 +563,8 @@ def main():
                 "action": "produce",
                 "selected": selected or "None",
                 "selected_freshness": selected_freshness,
+                "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
+                "selected_updated_at": selected_updated_at or "n/a",
                 "pending_selected": pending_selected,
                 "candidate_count": 0,
                 "missing_count": missing_count,
@@ -604,6 +608,8 @@ def main():
             "action": action,
             "selected": os.path.basename(selected) if selected else "None",
             "selected_freshness": selected_freshness,
+            "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
+            "selected_updated_at": selected_updated_at or "n/a",
             "pending_selected": pending_selected,
             "candidate_count": candidate_count,
             "missing_count": missing_count,
@@ -618,7 +624,8 @@ def main():
     def candidate_pool_health_line(pool: dict[str, str | int | bool]) -> str:
         return (
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
-            f"selected_freshness={pool['selected_freshness']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
+            f"selected_freshness={pool['selected_freshness']} selected_age_seconds={pool['selected_age_seconds']} "
+            f"selected_updated_at={pool['selected_updated_at']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
             f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
             f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
             f"fresh_ratio={pool['fresh_ratio']} old_backlog_ratio={pool['old_backlog_ratio']}"
@@ -634,12 +641,36 @@ def main():
                 archive_candidates.append(path)
         return archive_candidates
 
+    def archive_candidate_stats(candidates: list[str], keep_latest: int = 2) -> dict[str, int]:
+        archive_candidates = archive_candidates_for_pool(candidates, keep_latest=keep_latest)
+        total_bytes = 0
+        stale_bytes = 0
+        old_bytes = 0
+        for path in archive_candidates:
+            size_bytes = file_size_bytes(path) or 0
+            total_bytes += size_bytes
+            freshness = freshness_label(file_age_seconds(path))
+            if freshness == "stale":
+                stale_bytes += size_bytes
+            elif freshness == "old":
+                old_bytes += size_bytes
+        return {
+            "count": len(archive_candidates),
+            "total_bytes": total_bytes,
+            "stale_bytes": stale_bytes,
+            "old_bytes": old_bytes,
+        }
+
     def archive_candidate_line(label: str, candidates: list[str], limit: int = 5) -> str:
         archive_candidates = archive_candidates_for_pool(candidates)
+        stats = archive_candidate_stats(candidates)
         basenames = [os.path.basename(path) for path in archive_candidates[:limit]]
         remaining = max(0, len(archive_candidates) - limit)
         return (
-            f"- {label}: archive_candidate_count={len(archive_candidates)} "
+            f"- {label}: archive_candidate_count={stats['count']} "
+            f"archive_candidate_total_bytes={stats['total_bytes']} "
+            f"archive_candidate_stale_bytes={stats['stale_bytes']} "
+            f"archive_candidate_old_bytes={stats['old_bytes']} "
             f"keep_latest=2 preview={', '.join(basenames) if basenames else 'none'} "
             f"remaining={remaining}"
         )
@@ -827,6 +858,36 @@ def main():
     lines.append(selected_candidate_rank("classic_bench_selection", classic, classic_candidates))
     lines.append(selected_candidate_rank("mixed_bench_selection", mixed, mixed_candidates))
     lines.append(selected_candidate_rank("executor_profile_selection", executor_profile, executor_profile_candidates))
+    selected_newest_count = sum(
+        1
+        for pool in benchmark_pools
+        if pool["selected"] != "None" and str(pool["selected"]) != "None" and pool["pending_selected"] is False
+        and pool["candidate_count"]
+        and pool["selected"] == os.path.basename(
+            next(
+                (
+                    path
+                    for path in (
+                        classic_candidates
+                        if pool["label"] == "classic_bench_candidates"
+                        else mixed_candidates
+                        if pool["label"] == "mixed_bench_candidates"
+                        else executor_profile_candidates
+                    )
+                    if os.path.exists(path)
+                ),
+                "",
+            )
+        )
+    )
+    selected_fresh_count = sum(1 for pool in benchmark_pools if pool["selected_freshness"] == "fresh")
+    selected_pending_count = sum(1 for pool in benchmark_pools if pool["pending_selected"])
+    lines.append(
+        "- benchmark_pool_selected_artifact_status: "
+        f"newest_selected={selected_newest_count}/{len(benchmark_pools)} "
+        f"fresh_selected={selected_fresh_count}/{len(benchmark_pools)} "
+        f"pending_selected={selected_pending_count}/{len(benchmark_pools)}"
+    )
     lines.append(
         "- benchmark_pool_status_counts: "
         f"empty={pool_status_counts['empty']} refresh_required={pool_status_counts['refresh_required']} "
@@ -868,8 +929,12 @@ def main():
         label: archive_candidates_for_pool(candidates)
         for label, candidates in archive_pools
     }
+    archive_candidate_stats_by_pool = {
+        label: archive_candidate_stats(candidates)
+        for label, candidates in archive_pools
+    }
     archive_candidate_counts = {
-        label: len(archive_candidates_by_pool[label])
+        label: archive_candidate_stats_by_pool[label]["count"]
         for label, _ in archive_pools
     }
     archive_attention = [
@@ -895,6 +960,12 @@ def main():
     lines.append(
         "- benchmark_archive_freshness_counts: "
         f"stale={archive_freshness_counts['stale']} old={archive_freshness_counts['old']}"
+    )
+    lines.append(
+        "- benchmark_archive_byte_totals: "
+        f"total_bytes={sum(int(stats['total_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
+        f"stale_bytes={sum(int(stats['stale_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
+        f"old_bytes={sum(int(stats['old_bytes']) for stats in archive_candidate_stats_by_pool.values())}"
     )
     lines.append(
         f"- benchmark_archive_attention: {', '.join(archive_attention) if archive_attention else 'none'}"
@@ -948,6 +1019,13 @@ def main():
     lines.append(
         "- baseline_closeout_report_archive_freshness_counts: "
         f"stale={baseline_report_archive_freshness_counts['stale']} old={baseline_report_archive_freshness_counts['old']}"
+    )
+    baseline_report_archive_stats = archive_candidate_stats(baseline_report_candidates_with_out)
+    lines.append(
+        "- baseline_closeout_report_archive_byte_totals: "
+        f"total_bytes={baseline_report_archive_stats['total_bytes']} "
+        f"stale_bytes={baseline_report_archive_stats['stale_bytes']} "
+        f"old_bytes={baseline_report_archive_stats['old_bytes']}"
     )
     lines.append(
         "- baseline_closeout_report_archive_attention: "
@@ -1378,6 +1456,9 @@ def main():
             "profile.report.keys",
             "profile.report.read_fanout",
             "profile.report.write_every",
+            "profile.report.effective_read_fanout",
+            "profile.report.effective_write_ratio",
+            "profile.report.workload_signature",
             "profile.report.persist_profile",
             "profile.report.capture_started_at_epoch",
             "profile.report.capture_started_at_iso",
