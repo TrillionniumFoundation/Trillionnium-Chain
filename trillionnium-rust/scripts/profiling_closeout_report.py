@@ -71,6 +71,20 @@ def fmt_metric(name: str, vals):
     return f"- {name}: min={mn} p50={p50} p95={p95} max={mx}"
 
 
+def format_bytes(num_bytes: int) -> str:
+    units = ["B", "KiB", "MiB", "GiB", "TiB"]
+    value = float(max(0, num_bytes))
+    unit = units[0]
+    for candidate in units:
+        unit = candidate
+        if value < 1024.0 or candidate == units[-1]:
+            break
+        value /= 1024.0
+    if unit == "B":
+        return f"{int(value)} {unit}"
+    return f"{value:.1f} {unit}"
+
+
 def recommended_producer(label: str) -> str:
     if label == "node_log":
         return (
@@ -669,8 +683,11 @@ def main():
         return (
             f"- {label}: archive_candidate_count={stats['count']} "
             f"archive_candidate_total_bytes={stats['total_bytes']} "
+            f"archive_candidate_total_bytes_human={format_bytes(stats['total_bytes'])} "
             f"archive_candidate_stale_bytes={stats['stale_bytes']} "
+            f"archive_candidate_stale_bytes_human={format_bytes(stats['stale_bytes'])} "
             f"archive_candidate_old_bytes={stats['old_bytes']} "
+            f"archive_candidate_old_bytes_human={format_bytes(stats['old_bytes'])} "
             f"keep_latest=2 preview={', '.join(basenames) if basenames else 'none'} "
             f"remaining={remaining}"
         )
@@ -961,11 +978,17 @@ def main():
         "- benchmark_archive_freshness_counts: "
         f"stale={archive_freshness_counts['stale']} old={archive_freshness_counts['old']}"
     )
+    benchmark_archive_total_bytes = sum(int(stats['total_bytes']) for stats in archive_candidate_stats_by_pool.values())
+    benchmark_archive_stale_bytes = sum(int(stats['stale_bytes']) for stats in archive_candidate_stats_by_pool.values())
+    benchmark_archive_old_bytes = sum(int(stats['old_bytes']) for stats in archive_candidate_stats_by_pool.values())
     lines.append(
         "- benchmark_archive_byte_totals: "
-        f"total_bytes={sum(int(stats['total_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
-        f"stale_bytes={sum(int(stats['stale_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
-        f"old_bytes={sum(int(stats['old_bytes']) for stats in archive_candidate_stats_by_pool.values())}"
+        f"total_bytes={benchmark_archive_total_bytes} "
+        f"total_bytes_human={format_bytes(benchmark_archive_total_bytes)} "
+        f"stale_bytes={benchmark_archive_stale_bytes} "
+        f"stale_bytes_human={format_bytes(benchmark_archive_stale_bytes)} "
+        f"old_bytes={benchmark_archive_old_bytes} "
+        f"old_bytes_human={format_bytes(benchmark_archive_old_bytes)}"
     )
     lines.append(
         f"- benchmark_archive_attention: {', '.join(archive_attention) if archive_attention else 'none'}"
@@ -1024,8 +1047,11 @@ def main():
     lines.append(
         "- baseline_closeout_report_archive_byte_totals: "
         f"total_bytes={baseline_report_archive_stats['total_bytes']} "
+        f"total_bytes_human={format_bytes(baseline_report_archive_stats['total_bytes'])} "
         f"stale_bytes={baseline_report_archive_stats['stale_bytes']} "
-        f"old_bytes={baseline_report_archive_stats['old_bytes']}"
+        f"stale_bytes_human={format_bytes(baseline_report_archive_stats['stale_bytes'])} "
+        f"old_bytes={baseline_report_archive_stats['old_bytes']} "
+        f"old_bytes_human={format_bytes(baseline_report_archive_stats['old_bytes'])}"
     )
     lines.append(
         "- baseline_closeout_report_archive_attention: "
