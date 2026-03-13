@@ -1553,6 +1553,47 @@ mod tests {
     }
 
     #[test]
+    fn verify_wal_rejects_forged_checkpoint_on_uncommitted_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2-uncommitted".into(),
+            committed: false,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let best = verify_wal_and_find_checkpoint(
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: e2.content_hash_hex(),
+                },
+            ],
+            &[e1, e2],
+        )
+        .expect("verifier should fail closed instead of accepting uncommitted tail metadata");
+
+        assert_eq!(best.as_ref().map(|cp| cp.height), Some(1));
+        assert_eq!(best.as_ref().map(|cp| cp.state_root_hex.as_str()), Some("r1"));
+    }
+
+    #[test]
     fn resolve_approval_requires_two_distinct_approvers_before_ready() {
         let mut st = StateStore::new();
 
