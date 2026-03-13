@@ -334,6 +334,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_worker_binding_with_cyrillic_homoglyph_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "FRAUD:{\"task_id\":7,\"worker\":\"wоrker-fraud\",\"proof_type\":\"fraud\"}"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_missing_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
