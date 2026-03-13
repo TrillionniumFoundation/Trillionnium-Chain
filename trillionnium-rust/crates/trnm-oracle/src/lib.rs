@@ -296,8 +296,24 @@ pub struct OracleValidationReport {
 }
 
 impl OracleValidationReport {
+    pub fn classified_reject_total(&self) -> u32 {
+        self.metrics.classified_reject_total()
+    }
+
+    pub fn classified_outcome_total(&self) -> u32 {
+        self.metrics.classified_outcome_total()
+    }
+
     pub fn classified_outcome_conserves_sample_count(&self) -> bool {
         self.metrics.classified_outcome_conserves_sample_count()
+    }
+
+    pub fn observation_classified_reject_total(&self) -> u32 {
+        self.observation.classified_reject_total()
+    }
+
+    pub fn observation_classified_outcome_total(&self) -> u32 {
+        self.observation.classified_outcome_total()
     }
 
     pub fn observation_classified_outcome_conserves_sample_count(&self) -> bool {
@@ -933,15 +949,39 @@ mod tests {
 
         for report in reports {
             assert_eq!(
-                report.observation.classified_reject_total(),
-                report.metrics.classified_reject_total(),
+                report.observation_classified_reject_total(),
+                report.classified_reject_total(),
                 "classified reject totals drifted for error {:?}",
                 report.error
             );
             assert_eq!(
-                report.observation.classified_outcome_total(),
-                report.metrics.classified_outcome_total(),
+                report.observation_classified_outcome_total(),
+                report.classified_outcome_total(),
                 "classified outcome totals drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report.observation.classified_reject_total(),
+                report.observation_classified_reject_total(),
+                "observation helper drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report.metrics.classified_reject_total(),
+                report.classified_reject_total(),
+                "metrics helper drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report.observation.classified_outcome_total(),
+                report.observation_classified_outcome_total(),
+                "observation outcome helper drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report.metrics.classified_outcome_total(),
+                report.classified_outcome_total(),
+                "metrics outcome helper drifted for error {:?}",
                 report.error
             );
             assert_eq!(
