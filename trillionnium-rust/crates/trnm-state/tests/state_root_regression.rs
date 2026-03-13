@@ -3045,6 +3045,37 @@ fn pending_gov_update_value_changes_must_affect_state_root() {
 }
 
 #[test]
+fn pending_gov_update_key_string_boundaries_must_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "ab",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "ab".to_string(),
+            value: "c".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "a",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "a".to_string(),
+            value: "bc".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "pending governance key/value strings must be length-framed in state_root so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_original_cache() {
     let mut original = StateStore::new();
     original.set_balance("treasury.challenge_forfeits", 11);
