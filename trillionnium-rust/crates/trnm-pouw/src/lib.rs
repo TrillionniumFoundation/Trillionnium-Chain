@@ -435,6 +435,17 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     "terminal challenged task missing challenge timing metadata".into(),
                 ));
             }
+            if has_bond {
+                let challenged_at = task.challenged_at_height.expect("checked is_some");
+                let challenge_deadline = task.challenge_deadline_height.expect("checked is_some");
+                let resolve_deadline = task.resolve_deadline_height.expect("checked is_some");
+                if challenged_at > challenge_deadline || challenge_deadline > resolve_deadline {
+                    return Err(PouwError::State(
+                        "terminal challenged task has non-monotonic challenge/resolve deadlines"
+                            .into(),
+                    ));
+                }
+            }
             if !has_bond
                 && (task.challenged_at_height.is_some()
                     || task.challenge_deadline_height.is_some()
@@ -7161,6 +7172,44 @@ mod tests {
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("missing challenge bond outcome"))
         );
+    }
+
+    #[test]
+    fn timeout_rejects_terminal_challenged_task_with_non_monotonic_challenge_timing_fields() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 39018, "alice".into(), 100).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(39018, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+        let done = apply_timeout(&mut st, r5, 221).unwrap();
+
+        // Simulate corrupted terminal challenged object with impossible timing order.
+        let mut bad = st.get_task(done.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Completed);
+        bad.challenged_at_height = Some(141);
+        bad.challenge_deadline_height = Some(140);
+        bad.resolve_deadline_height = Some(145);
+        let bad_ref = st.update_task(done, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 222).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-monotonic challenge/resolve deadlines")));
     }
 
     #[test]
