@@ -6872,7 +6872,7 @@ locked_block_hash = "stale-replay-lock"
 
         let e1 = WalMeta {
             height: 1,
-            round: 0,
+            round: 4,
             proposal_hash: "h1".into(),
             committed: true,
             state_root_hex: "r1".into(),
@@ -6881,7 +6881,7 @@ locked_block_hash = "stale-replay-lock"
         let h1 = e1.content_hash_hex();
         let e3 = WalMeta {
             height: 3,
-            round: 0,
+            round: 9,
             proposal_hash: "h3".into(),
             committed: true,
             state_root_hex: "r3".into(),
@@ -6903,6 +6903,14 @@ locked_block_hash = "stale-replay-lock"
                     wal_entry_hash_hex: e3.content_hash_hex(),
                 },
             ],
+        )
+        .unwrap();
+        fs::write(
+            wal_file(&wal_dir),
+            r#"next_height = 99
+last_round = 42
+locked_block_hash = "stale-lock"
+"#,
         )
         .unwrap();
 
@@ -6927,6 +6935,12 @@ locked_block_hash = "stale-replay-lock"
         assert_eq!(retained_checkpoints[0].height, 1);
         assert_eq!(retained_checkpoints[0].state_root_hex, "r1");
         assert_eq!(retained_checkpoints[0].wal_entry_hash_hex, h1);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 2);
+        assert_eq!(wal.last_round, 4);
+        assert!(wal.locked_block_hash.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
