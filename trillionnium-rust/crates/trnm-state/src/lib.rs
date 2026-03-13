@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
+    TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -832,11 +833,14 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }
-                let task_version_matches = self
+                let task_is_resolve_eligible = self
                     .get_task(task_id)
-                    .map(|task| task.version == snapshot.task_version)
+                    .map(|task| {
+                        task.version == snapshot.task_version
+                            && matches!(task.status, TaskStatus::Challenged)
+                    })
                     .unwrap_or(false);
-                if !task_version_matches {
+                if !task_is_resolve_eligible {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }
