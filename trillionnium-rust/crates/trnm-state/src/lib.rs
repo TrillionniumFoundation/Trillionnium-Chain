@@ -3156,6 +3156,145 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_accepts_case_and_order_equivalent_pending_replacement_authority() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_190,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_210,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_211,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
+
+        let staged = st
+            .stage_or_confirm_resolve_approval(
+                8_324,
+                1,
+                false,
+                "Authority-D",
+                "Authority-D,Authority-C",
+            )
+            .expect("case/order-equivalent pending replacement authority should stage approval");
+        assert!(!staged);
+        assert_eq!(st.pending_resolve_approval(8_324), Some((false, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_324).as_deref(),
+            Some("Authority-D")
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_accepts_case_and_order_equivalent_pending_replacement_authority(
+    ) {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_220,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_240,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_241,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
+
+        st.restore_task(
+            9_322,
+            Some(TaskObject {
+                task_id: 9_322,
+                creator: "creator-d".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-d".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-d".into()),
+                challenge_bond_forfeited: None,
+                version: 4,
+            }),
+        );
+        st.restore_pending_resolve_approval(
+            9_322,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 2,
+                first_approver: "Authority-D".into(),
+                second_approver: Some("authority-c".into()),
+                authority_set: "Authority-D,Authority-C".into(),
+                task_version: 4,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_322), Some((false, 2)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_322).as_deref(),
+            Some("Authority-D")
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(9_322)
+                .expect("equivalent pending replacement snapshot should be restored")
+                .second_approver
+                .as_deref(),
+            Some("authority-c")
+        );
+    }
+
+    #[test]
     fn governance_minimal_state_machine() {
         let mut st = StateStore::new();
         let p = GovProposalObject {
