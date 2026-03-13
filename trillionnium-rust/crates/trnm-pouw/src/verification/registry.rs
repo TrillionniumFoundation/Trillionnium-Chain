@@ -223,6 +223,7 @@ impl VerifierRegistry {
             "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
             "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
             "attestation report v3" | "attestationreportv3" | "attestation report v 3" => "tee",
+            "zkp" | "zk p" => "zk",
             "zk proof" | "zkproof" => "zk",
             "zk proof v1" | "zkproofv1" | "zk proof v 1" => "zk",
             "zk proof v2" | "zkproofv2" | "zk proof v 2" => "zk",
@@ -233,7 +234,28 @@ impl VerifierRegistry {
             "zk receipt v3" | "zkreceiptv3" | "zk receipt v 3" | "zk receiptv3" => "zk",
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
+            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => {
+                "zk"
+            }
+            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => {
+                "zk"
+            }
+            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => {
+                "zk"
+            }
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zero knowledge receipt v1"
+            | "zeroknowledgereceiptv1"
+            | "zero knowledge receipt v 1"
+            | "zero knowledge receiptv1" => "zk",
+            "zero knowledge receipt v2"
+            | "zeroknowledgereceiptv2"
+            | "zero knowledge receipt v 2"
+            | "zero knowledge receiptv2" => "zk",
+            "zero knowledge receipt v3"
+            | "zeroknowledgereceiptv3"
+            | "zero knowledge receipt v 3"
+            | "zero knowledge receiptv3" => "zk",
             _ => collapsed.as_str(),
         };
 
@@ -373,7 +395,7 @@ mod tests {
         task.worker = Some("worker-zk".into());
         task.result_hash = Some([0x11; 32]);
 
-        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
         assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
     }
@@ -386,7 +408,7 @@ mod tests {
         task.worker = Some("worker-zk".into());
         task.result_hash = Some([0x11; 32]);
 
-        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/invalid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/invalid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
         assert!(matches!(
             registry.verify(&task, payload),
@@ -416,7 +438,7 @@ mod tests {
         task.worker = Some("worker-zk".into());
         task.result_hash = Some([0x11; 32]);
 
-        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"tee","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"tee","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
         assert!(matches!(
             registry.verify(&task, payload),
@@ -462,5 +484,31 @@ mod tests {
                 VerificationResult::Valid
             );
         }
+    }
+
+    #[test]
+    fn registry_supports_zkp_alias_from_platform_contract() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "zkp" }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_supports_zero_knowledge_proof_v2_alias_with_mixed_separators() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "zero／knowledge-proof:v2",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
     }
 }
