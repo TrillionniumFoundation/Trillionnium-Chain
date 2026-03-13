@@ -2,6 +2,65 @@ use trnm_state::*;
 use trnm_types::*;
 
 #[test]
+fn new_tasks_canonicalize_embedded_version_for_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let task = TaskObject {
+        task_id: 8_001,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("canonicalize task version".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-a".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-14T00:00:00Z".into()),
+                provenance_index: Some("prov-task-8001".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    };
+    let mut mismatched_version = task.clone();
+    mismatched_version.version = 99;
+
+    let ref_a = state_a.put_task_new(task).unwrap();
+    let ref_b = state_b.put_task_new(mismatched_version).unwrap();
+
+    assert_eq!(ref_a.version, 1);
+    assert_eq!(ref_b.version, 1);
+    assert_eq!(state_a.get_task(8_001).unwrap().version, 1);
+    assert_eq!(state_b.get_task(8_001).unwrap().version, 1);
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should ignore caller-supplied task version noise on initial task insertion"
+    );
+}
+
+#[test]
 fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
