@@ -181,6 +181,8 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "llm_meter_decode_step_weight",
     "llm_meter_kv_byte_weight",
     "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
     "resolve_authority",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
@@ -197,6 +199,8 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "llm_meter_decode_step_weight",
     "llm_meter_kv_byte_weight",
     "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
     "min_worker_stake",
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
@@ -281,8 +285,13 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         | "llm_meter_generated_token_weight"
         | "llm_meter_decode_step_weight"
         | "llm_meter_kv_byte_weight"
-        | "llm_meter_min_accept_work_units" => {
+        | "llm_meter_min_accept_work_units"
+        | "llm_meter_challenge_success_bounty_per_work_unit_num" => {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "llm_meter_challenge_success_bounty_per_work_unit_den" => {
+            let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
             Ok(())
         }
         "challenge_min_bond_bounty_bps" | "challenge_min_bond_worker_stake_bps" => {
@@ -3723,6 +3732,8 @@ mod tests {
             ("llm_meter_decode_step_weight", true),
             ("llm_meter_kv_byte_weight", true),
             ("llm_meter_min_accept_work_units", true),
+            ("llm_meter_challenge_success_bounty_per_work_unit_num", true),
+            ("llm_meter_challenge_success_bounty_per_work_unit_den", true),
             ("min_worker_stake", true),
             ("challenge_min_bond_bounty_bps", true),
             ("challenge_min_bond_worker_stake_bps", true),
@@ -3792,6 +3803,8 @@ mod tests {
             ("llm_meter_decode_step_weight", "-1"),
             ("llm_meter_kv_byte_weight", "-1"),
             ("llm_meter_min_accept_work_units", "-1"),
+            ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+            ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
             ("resolve_authority", "   "),
             ("emergency_pause", "TRUE"),
             ("monetary_policy_tick_interval_blocks", "0"),

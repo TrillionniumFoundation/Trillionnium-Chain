@@ -94,6 +94,8 @@ const DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT: u128 = 1;
 const DEFAULT_LLM_METER_DECODE_STEP_WEIGHT: u128 = 1;
 const DEFAULT_LLM_METER_KV_BYTE_WEIGHT: u128 = 0;
 const DEFAULT_LLM_METER_MIN_ACCEPT_WORK_UNITS: u128 = 0;
+const DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_NUM: u128 = 0;
+const DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_DEN: u128 = 1;
 const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
 const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
@@ -899,6 +901,50 @@ fn settle_worker_stake_for_terminal_state(
     Ok(())
 }
 
+fn llm_meter_challenge_success_bounty_bonus(
+    st: &StateStore,
+    task: &TaskObject,
+) -> Result<u128, PouwError> {
+    if task.status != TaskStatus::Slashed {
+        return Ok(0);
+    }
+    let Some(snapshot) = validate_task_metering_snapshot(task)? else {
+        return Ok(0);
+    };
+
+    let numerator = st
+        .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_num")
+        .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_NUM);
+    if numerator == 0 {
+        return Ok(0);
+    }
+    let denominator = st
+        .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_den")
+        .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_DEN);
+    if denominator == 0 {
+        return Err(PouwError::State(
+            "llm meter challenge success bounty denominator cannot be zero".into(),
+        ));
+    }
+
+    Ok(ceil_mul_div(
+        snapshot.normalized_work_units,
+        numerator,
+        denominator,
+    ))
+}
+
+fn effective_challenge_success_bounty(
+    st: &StateStore,
+    task: &TaskObject,
+) -> Result<u128, PouwError> {
+    let base_bounty = st
+        .gov_param_u128("challenge_success_bounty")
+        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY);
+    let metered_bonus = llm_meter_challenge_success_bounty_bonus(st, task)?;
+    Ok(base_bounty.saturating_add(metered_bonus))
+}
+
 fn maybe_pay_challenge_success_bounty(
     st: &mut StateStore,
     task: &TaskObject,
@@ -910,9 +956,7 @@ fn maybe_pay_challenge_success_bounty(
         return Ok(0);
     };
 
-    let configured_bounty = st
-        .gov_param_u128("challenge_success_bounty")
-        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY);
+    let configured_bounty = effective_challenge_success_bounty(st, task)?;
     if configured_bounty == 0 {
         return Ok(0);
     }
@@ -7642,6 +7686,128 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 101);
         assert_eq!(st.balance_of(&worker_stake_lock_account(task_id)), 0);
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 39);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn resolve_success_with_llm_meter_bonus_pays_challenger_above_base_bounty() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_970, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_971,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_972,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "192".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_812u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let refund_only_baseline = 100u128;
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(resolved.challenge_bond_forfeited, Some(false));
+        assert!(st.balance_of("challenger") > refund_only_baseline + 1);
+        assert_eq!(st.balance_of("challenger"), 102);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn resolve_success_with_llm_meter_bonus_preserves_bucket_conservation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_973, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_974,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_975,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "192".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_813u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let initial_sum = st.balance_of("challenger")
+            + st.balance_of(&worker_stake_lock_account(task_id))
+            + st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let _r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+
+        let final_sum = st.balance_of("challenger")
+            + st.balance_of(&worker_stake_lock_account(task_id))
+            + st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        assert_eq!(initial_sum, final_sum);
+        assert_eq!(st.balance_of("challenger"), 102);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(task_id)), 0);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 38);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
     }

@@ -354,16 +354,19 @@ The Rust scaffold now includes:
 - reveal-side persistence of a metering snapshot onto task metadata (`receipt_hash`, counters, coefficient snapshot, `normalized_work_units`)
 - challenge/resolve-side reading of that persisted snapshot with fail-closed validation: malformed or internally inconsistent `normalized_work_units` snapshots are rejected before state transition
 - resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy `normalized_work_units >= llm_meter_min_accept_work_units`; otherwise resolve is rejected fail-closed
+- slash-path payout integration: challenge-success bounty can now include a metered bonus derived from `normalized_work_units`, using governance ratio keys `llm_meter_challenge_success_bounty_per_work_unit_num` / `llm_meter_challenge_success_bounty_per_work_unit_den`
 - governance allowlist + schema validation for the coefficient/adjudication keys:
   - `llm_meter_prompt_token_weight`
   - `llm_meter_generated_token_weight`
   - `llm_meter_decode_step_weight`
   - `llm_meter_kv_byte_weight`
   - `llm_meter_min_accept_work_units`
+  - `llm_meter_challenge_success_bounty_per_work_unit_num`
+  - `llm_meter_challenge_success_bounty_per_work_unit_den`
 
 Still pending:
 
-- settlement integration that changes bounty / slash accounting magnitudes based on `normalized_work_units`
+- settlement integration that changes worker payout / slashing magnitudes beyond challenge-success bounty bonus and accept-path floor gating
 - TEE-side attested receipt generation
 
 ---
