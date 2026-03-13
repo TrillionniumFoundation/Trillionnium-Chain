@@ -231,6 +231,7 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 - 当前 L05 代码侧已覆盖的语义应单独记账：默认 challenged-timeout 仍固定走 `Completed + refund challenger bond`，不会碰全局 slash treasury；而合成的 slash-path 校验也要求资金流保持 task-local，并且**不会**因为 timeout 自动附带发放 challenge-success bounty。换言之，当前 PoUW 剩余风险主要在**治理键可达性/控制面接线**，而不是 timeout 结算路径在 `trnm-pouw` 内部重新打开了全局赏金抽取面。
 - 2026-03-14 L05 再次用回归钉住了这一点：`default_slash_on_unresolved_challenge` 目前仍被 state governance allowlist 拒绝，PoUW 侧只能继续 fail-closed 地回落到默认 `false`，不能把该开关误当成已上线可治理参数。
 - 2026-03-14 L05 还补了一条输入规范化回归：即使后续治理面接通，`default_slash_on_unresolved_challenge` 也必须继续拒绝 Unicode homoglyph 布尔别名（例如全角 `ｅ`、西里尔/希腊字母伪装的 `a/o`），避免把“看起来像 true/false/on/off”的非 ASCII 令牌误解析成经济终态开关。
+- 同轮也补充钉住了 fullwidth digit / Unicode whitespace 变体（例如 `１` / `０` / `true\u00a0` / `o\u00a0n`）：这些“看起来像布尔开关”的输入必须保持 fail-closed，不能在未来治理接线完成后被宽松解析成 challenged-timeout 的经济终态切换。
 - 2026-03-12 当前 L05 回归覆盖可明确锚定到两条语义测试：
   - `challenged_timeout_default_path_does_not_pay_bounty_or_touch_global_slash_treasury`
   - `challenged_timeout_slash_path_only_moves_task_local_stake_and_never_auto_pays_bounty`
