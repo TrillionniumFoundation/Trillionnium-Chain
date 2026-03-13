@@ -446,7 +446,7 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         | "broadcasting" | "processing" | "executing" | "in_progress" | "inflight"
         | "in_flight" => Some("pending".to_string()),
         "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized"
-        | "finalising" | "finalizing" | "complete" | "completed" | "done" => {
+        | "finalised" | "finalising" | "finalizing" | "complete" | "completed" | "done" => {
             Some("committed".to_string())
         }
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
@@ -1640,6 +1640,10 @@ mod tests {
         let finalized_alias = "tx_hash=0xef6\nstatus=finalized\n";
         let parsed_finalized = parse_tx_query_response(finalized_alias, "0xfallback").unwrap();
         assert_eq!(parsed_finalized.status, "committed");
+
+        let finalised_alias = "tx_hash=0xef60\nstatus=finalised\n";
+        let parsed_finalised = parse_tx_query_response(finalised_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalised.status, "committed");
 
         let finalising_alias = "tx_hash=0xef61\nstatus=finalising\n";
         let parsed_finalising = parse_tx_query_response(finalising_alias, "0xfallback").unwrap();
