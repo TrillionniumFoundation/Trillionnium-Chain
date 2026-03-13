@@ -998,6 +998,17 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
+        if normalize_backend_token(backend_id).is_none()
+            && !backend_id.eq_ignore_ascii_case("noop")
+        {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: backend_id '{}' must contain at least one visible canonical backend token segment",
+                    backend_id
+                ),
+            });
+        }
     }
     if let Some(backend_version) = payload.backend_version.as_deref() {
         if backend_version != backend_version.trim() {
@@ -1643,6 +1654,20 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not be empty when provided")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_backend_id_without_visible_canonical_token_segments() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"---","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id '---'") && reason.contains("visible canonical backend token segment")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_still_allows_noop_backend_id_as_explicit_legacy_no_backend_selector() {
+        let task = mock_task();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"noop","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
+        assert_eq!(payload.backend_id.as_deref(), Some("noop"));
     }
 
     #[test]
