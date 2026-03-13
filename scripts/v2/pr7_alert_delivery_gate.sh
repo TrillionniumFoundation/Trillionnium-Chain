@@ -43,6 +43,21 @@ require_enum() {
   exit 2
 }
 
+split_shell_words() {
+  local text="$1"
+  python3 - "$text" <<'PY'
+import shlex
+import sys
+
+try:
+    for item in shlex.split(sys.argv[1]):
+        print(item)
+except ValueError as exc:
+    print(f"[PR7][FAIL] invalid PR7_DELIVERY_CMD: {exc}", file=sys.stderr)
+    raise SystemExit(2)
+PY
+}
+
 require_non_negative_integer "PR7_GATE_LOCK_WAIT_SECONDS" "$LOCK_WAIT_SECONDS"
 require_non_negative_integer "PR7_GATE_LOCK_JITTER_MIN_MS" "$LOCK_JITTER_MIN_MS"
 require_non_negative_integer "PR7_GATE_LOCK_JITTER_MAX_MS" "$LOCK_JITTER_MAX_MS"
@@ -60,6 +75,19 @@ if [[ -z "${PR7_DELIVERY_CMD// }" ]]; then
   exit 2
 fi
 
+if ! PR7_DELIVERY_CMD_LINES="$(split_shell_words "$PR7_DELIVERY_CMD")"; then
+  exit 2
+fi
+mapfile -t PR7_DELIVERY_CMD_ARR <<<"$PR7_DELIVERY_CMD_LINES"
+if (( ${#PR7_DELIVERY_CMD_ARR[@]} == 0 )); then
+  echo "[PR7][FAIL] PR7_DELIVERY_CMD resolved to zero argv entries" >&2
+  exit 2
+fi
+if [[ -z "${PR7_DELIVERY_CMD_ARR[0]}" ]]; then
+  echo "[PR7][FAIL] PR7_DELIVERY_CMD resolved to an empty command token" >&2
+  exit 2
+fi
+
 # Optional: resolve versioned policy config (without overriding explicit env)
 POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
 if [[ -f "$POLICY_FILE" ]]; then
@@ -73,6 +101,32 @@ if [[ -f "$POLICY_FILE" ]]; then
   # shellcheck disable=SC1090
   source "$POLICY_ENV"
 fi
+
+require_enum "ALERT_NOTIFY_MIN_LEVEL" "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" INFO WARN CRITICAL PASS FAIL
+
+write_status_file() {
+  mkdir -p "$(dirname "$STATUS_FILE")"
+  cat >"$STATUS_FILE" <<EOF
+status=$1
+pr6_rc=$2
+pr7_rc=$3
+final_rc=$4
+fail_mode=${PR7_DELIVERY_FAIL_MODE}
+delivery_event=$5
+primary_channel=${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-}}
+backup_channel=${ALERT_NOTIFY_BACKUP_CHANNEL:-}
+success_channels=
+failed_channels=
+channels_ok=0
+channels_failed=0
+partial_success=0
+run_dir=${RUN_DIR}
+lock_dir=${LOCK_DIR}
+report=${6:-}
+audit_file=${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}
+generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+EOF
+}
 
 acquire_lock() {
   local start now elapsed jitter_range jitter
@@ -101,6 +155,8 @@ release_lock() {
 }
 
 if ! acquire_lock; then
+  write_status_file "LOCK_TIMEOUT" 0 5 5 "lock_timeout"
+  echo "[PR7][alert-delivery] status=LOCK_TIMEOUT pr6_rc=0 pr7_rc=5 final_rc=5 fail_mode=$PR7_DELIVERY_FAIL_MODE report= status_file=$STATUS_FILE"
   exit 5
 fi
 trap release_lock EXIT
@@ -133,8 +189,9 @@ fi
 # - else derive channel from min-level route
 if [[ -z "${ALERT_NOTIFY_CHANNEL:-}" ]]; then
   case "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" in
-    CRITICAL) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_CRITICAL:-imessage}" ;;
+    CRITICAL|FAIL) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_CRITICAL:-imessage}" ;;
     WARN) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_WARN:-imessage}" ;;
+    INFO|PASS) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_INFO:-imessage}" ;;
     *) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_INFO:-imessage}" ;;
   esac
 fi
@@ -144,7 +201,6 @@ if [[ -n "${ALERT_NOTIFY_BACKUP_CHANNEL:-}" ]]; then
   BACKUP_CHANNEL_ARG=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
 fi
 
-read -r -a PR7_DELIVERY_CMD_ARR <<<"$PR7_DELIVERY_CMD"
 set +e
 IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
   "${PR7_DELIVERY_CMD_ARR[@]}" \
@@ -187,15 +243,126 @@ elif [[ "$PR7_DELIVERY_FAIL_MODE" == "warn" && "$pr7_rc" -ne 0 ]]; then
   echo "[PR7][WARN] delivery failed with rc=$pr7_rc (mode=warn, preserving pr6 rc=$pr6_rc)" >&2
 fi
 
+AUDIT_FILE="${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}"
+DELIVERY_EVENT="unknown"
+PRIMARY_CHANNEL="${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-imessage}}"
+BACKUP_CHANNEL="${ALERT_NOTIFY_BACKUP_CHANNEL:-}"
+SUCCESS_CHANNELS=""
+FAILED_CHANNELS=""
+CHANNELS_OK="0"
+CHANNELS_FAILED="0"
+PARTIAL_SUCCESS="0"
+if [[ -f "$AUDIT_FILE" ]]; then
+  DELIVERY_SUMMARY_JSON="$(python3 - "$AUDIT_FILE" "$REPORT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+audit = Path(sys.argv[1])
+report = Path(sys.argv[2]).resolve()
+summary = None
+for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        item = json.loads(line)
+    except json.JSONDecodeError:
+        continue
+    try:
+        item_report = Path(str(item.get('report_path', ''))).resolve()
+    except Exception:
+        continue
+    if item.get('record_type') == 'delivery_summary' and item_report == report:
+        summary = item
+if summary is None:
+    print('{}')
+else:
+    print(json.dumps(summary, ensure_ascii=False))
+PY
+)"
+  if [[ -n "$DELIVERY_SUMMARY_JSON" && "$DELIVERY_SUMMARY_JSON" != "{}" ]]; then
+    DELIVERY_EVENT="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("event","unknown"))' <<<"$DELIVERY_SUMMARY_JSON")"
+    PRIMARY_CHANNEL="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("primary_channel",""))' <<<"$DELIVERY_SUMMARY_JSON")"
+    CHANNELS_OK="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("channels_ok",0))' <<<"$DELIVERY_SUMMARY_JSON")"
+    CHANNELS_FAILED="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("channels_failed",0))' <<<"$DELIVERY_SUMMARY_JSON")"
+    if [[ "$DELIVERY_EVENT" == "partial_success" ]]; then
+      PARTIAL_SUCCESS="1"
+    fi
+  fi
+
+  ROUTE_LINES="$(python3 - "$AUDIT_FILE" "$REPORT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+audit = Path(sys.argv[1])
+report = Path(sys.argv[2]).resolve()
+rows = []
+for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        item = json.loads(line)
+    except json.JSONDecodeError:
+        continue
+    if item.get('record_type') == 'delivery_summary':
+        continue
+    try:
+        item_report = Path(str(item.get('report_path', ''))).resolve()
+    except Exception:
+        continue
+    if item_report != report:
+        continue
+    ch = str(item.get('channel','')).strip()
+    if not ch:
+        continue
+    ok = bool(item.get('ok'))
+    rows.append((ch, ok))
+seen = {}
+for ch, ok in rows:
+    seen[ch] = ok
+succ = [ch for ch, ok in seen.items() if ok]
+fail = [ch for ch, ok in seen.items() if not ok]
+print('success=' + ','.join(succ))
+print('failed=' + ','.join(fail))
+PY
+)"
+  SUCCESS_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^success=//p' | head -n1)"
+  FAILED_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^failed=//p' | head -n1)"
+
+  if [[ "$DELIVERY_EVENT" == "unknown" ]]; then
+    if [[ -n "$SUCCESS_CHANNELS" ]]; then
+      CHANNELS_OK="$(python3 -c 'import sys; s=sys.argv[1].strip(); print(0 if not s else len([p for p in s.split(",") if p]))' "$SUCCESS_CHANNELS")"
+    fi
+    if [[ -n "$FAILED_CHANNELS" ]]; then
+      CHANNELS_FAILED="$(python3 -c 'import sys; s=sys.argv[1].strip(); print(0 if not s else len([p for p in s.split(",") if p]))' "$FAILED_CHANNELS")"
+    fi
+    if [[ -n "$SUCCESS_CHANNELS" && -n "$FAILED_CHANNELS" ]]; then
+      PARTIAL_SUCCESS="1"
+    fi
+  fi
+fi
+
 cat >"$STATUS_FILE" <<EOF
 status=${status}
 pr6_rc=${pr6_rc}
 pr7_rc=${pr7_rc}
 final_rc=${final_rc}
 fail_mode=${PR7_DELIVERY_FAIL_MODE}
+delivery_event=${DELIVERY_EVENT}
+primary_channel=${PRIMARY_CHANNEL}
+backup_channel=${BACKUP_CHANNEL}
+success_channels=${SUCCESS_CHANNELS}
+failed_channels=${FAILED_CHANNELS}
+channels_ok=${CHANNELS_OK}
+channels_failed=${CHANNELS_FAILED}
+partial_success=${PARTIAL_SUCCESS}
 run_dir=${RUN_DIR}
 lock_dir=${LOCK_DIR}
 report=${REPORT}
+audit_file=${AUDIT_FILE}
 generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 

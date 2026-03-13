@@ -353,7 +353,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 - [ ] `pr5_treasury_reconcile_report.sh` 成功输出 `summary.txt`
 - [ ] `summary.txt` 中 `status=PASS`
 
-更多操作细节：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
+更多操作细节：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-5 小节；脚本内联帮助仍是最近实现细节的真值来源。
 
 ## PR-6 Alert Rules（Challenge Treasury 异常告警）
 
@@ -373,7 +373,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 - `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
 - `CI_HARD_FAIL_ON_WARN=1`（WARN 也返回非 0）
 
-Runbook：`docs/runbooks/pr6-alert-rules.md`
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 小节；若与脚本行为冲突，以 `./scripts/v2/pr6_alert_rules_gate.sh` 和生成的 `run/pr6-alerts/*/summary.txt` 为准。
 
 ## PR-7 Alert Delivery（告警投递）
 
@@ -386,15 +386,35 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
 常用环境变量：
-- `ALERT_NOTIFY_CHANNEL=slack|telegram`
-- `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
+- `ALERT_NOTIFY_CHANNEL=slack|telegram|imessage`
+- `ALERT_NOTIFY_PRIMARY_CHANNEL`
+- `ALERT_NOTIFY_BACKUP_CHANNEL`
+- `ALERT_NOTIFY_MIN_LEVEL=INFO|WARN|CRITICAL`（兼容 `PASS->INFO`、`FAIL->CRITICAL` 别名）
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
+- `ALERT_NOTIFY_AUDIT_FILE=run/pr7-alert-delivery/audit.jsonl`
+- `ALERT_NOTIFY_DEAD_LETTER_FILE=run/pr7-alert-delivery/dead-letter.jsonl`
+- `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE=run/pr7-alert-delivery/retry-budget-state.json`
+- `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate`（默认 `ignore`；`escalate` 时投递失败会把 gate 最终返回码提升为 `4`）
 - `DRY_RUN=1`（本地演示，不依赖真实密钥）
 - Slack: `SLACK_WEBHOOK_URL`
 - Telegram: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
+- iMessage: `IMESSAGE_TO`
 
-Runbook：`docs/runbooks/pr7-alert-delivery.md`
+排障产物：
+- `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
+- `run/pr7-alerts/<timestamp>-pid*/policy.env`：本次 PR-6/PR-7 链路生效的阈值/策略快照（便于复盘告警为何命中或未命中）
+- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`）
+- `run/pr7-alert-delivery/state.json`：累计投递/抑制/失败统计与最近一次投递元数据
+- `run/pr7-alert-delivery/audit.jsonl`：逐次投递/抑制/失败审计流
+- `run/pr7-alert-delivery/dead-letter.jsonl`：重试耗尽后的 dead-letter 记录
+- `run/pr7-alert-delivery/retry-budget-state.json`：跨运行的全局重试预算状态
+
+建议：
+- 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
+- CI / cron 若要求“规则通过但投递失败也要报警”，改用 `PR7_DELIVERY_FAIL_MODE=escalate`。
+
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-7 小节；若与脚本行为冲突，以 `./scripts/v2/pr7_alert_delivery_gate.sh` / `scripts/v2/pr7_alert_delivery.py` 及 `run/pr7-alerts/*` 产物为准。
 
 ## PR-6 Nightly Security 日报（自动化）
 
@@ -404,11 +424,11 @@ nightly 在流程末尾自动生成日报：
 - 本地手动重跑：`python3 ./scripts/v2/pr6_daily_security_summary.py`
 - Workflow Summary 小节：`PR-6 Daily Security Ops`
 
-Runbook：`docs/runbooks/pr6-nightly-security-summary.md`
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 Nightly Daily Security Summary 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr6_daily_security_summary.py` 和生成的 `run/pr6-ops/daily-security-summary.md` 为准。
 
 ## PR-9 Weekly Alert Governance（每周告警治理）
 
-每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、TopN异常、阈值建议变更。
+每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、实际投递成功率、suppression share、TopN异常、阈值建议变更。
 
 执行：
 
@@ -418,13 +438,44 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 
 默认输出：
 - `run/pr9/weekly-alert-governance.md`
+- `run/pr9/weekly-alert-governance.json`
+- `run/pr9/history/weekly-alert-governance-YYYYMMDDTHHMMSSZ.json`
+
+输入来源（best effort，缺失时不会阻断）：
+- `run/pr7-alert-delivery/state.json`：投递统计（`alerts_sent / alerts_suppressed / alerts_failed`）
+- `run/pr7-alert-delivery/dead-letter.jsonl`：近 `--lookback-days` 窗口内 dead letter 计数
+- `run/pr7-topn/*/topn-anomaly-summary.md`：最新 TopN unresolved / forfeit / escrow 摘要
+- `run/pr7-threshold-advisor/*/threshold-advice.json`：最新阈值建议
+- `run/pr9/alert-thresholds.env` / `run/pr9/alert-thresholds.previous.env`：当前/上一版阈值 env diff
+- `run/pr9/history/weekly-alert-governance-*.json`：上一周 baseline（用于 week-over-week diff；会忽略未来时间戳的 stray snapshot）
+
+可选参数：
+- `--lookback-days <n>`：dead letter / 周对比窗口，默认 `7`
+- `--top-n <n>`：报告中保留的 TopN 数量，默认 `5`
+- `--out <path>`：Markdown 输出路径
+- `--json-out <path>`：JSON 输出路径
+- `--history-dir <path>`：历史快照目录
+
+降级/缺失行为：
+- 若缺少上一周 baseline，报告会标记 `baseline unavailable`，但仍输出本周 `.md/.json`。
+- 若缺少 PR7 TopN 或 threshold advice，报告会在 JSON 的 `degraded.*` 字段中标出，并在 Markdown 中写明 `MISSING` / `unavailable`。
+- 若本轮 JSON 负载与最新历史快照完全相同，history 目录会跳过重复快照写入，仅刷新当前 `weekly-alert-governance.md/.json`。
+- 选择 baseline 时会忽略未来时间戳的 stray history snapshot，避免 week-over-week diff 被未来产物污染。
 
 nightly 接入建议：
 - workflow step 使用 `continue-on-error: true`
 - 上传 `run/pr9/**` 到 artifacts
 - Step Summary 增加 `PR-9 Weekly Alert Governance`
 
-Runbook：`docs/runbooks/pr9-weekly-alert-governance.md`
+推荐前置（便于得到更完整的 PR-9 报告，而非硬依赖）：
+
+```bash
+./scripts/v2/pr7_topn_summary_gate.sh
+python3 ./scripts/v2/pr7_threshold_advisor.py
+python3 ./scripts/v2/pr9_weekly_alert_governance.py
+```
+
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-9 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准。
 
 ## Agent↔User P2P Phase A（MVP）
 

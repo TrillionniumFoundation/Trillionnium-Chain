@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-TMP="$(mktemp -d /tmp/trnm-pr7-partial-success-test.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr7-partial-success-test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 REPORT="$TMP/pr6-summary-critical.txt"

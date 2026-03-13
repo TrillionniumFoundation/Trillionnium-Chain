@@ -606,7 +606,38 @@ def main() -> int:
             escalated_from_warn = True
 
     if not should_trigger(level, min_level):
-        print(f"[PR7] skip: level={level} below min_level={min_level}")
+        skip_reason = f"level={level} below min_level={min_level}"
+        skip_fp = mk_class_fingerprint(report, level)
+        record_delivery(
+            state,
+            event="skipped_min_level",
+            reason=skip_reason,
+            channel=primary_channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=skip_fp,
+            report_path=report_path,
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                "at_utc": now_iso,
+                "record_type": "delivery_summary",
+                "fingerprint": skip_fp,
+                "class_fingerprint": skip_fp,
+                "level": level,
+                "report_path": str(report_path),
+                "channels_total": 0,
+                "channels_ok": 0,
+                "channels_failed": 0,
+                "attempts": 0,
+                "dry_run": args.dry_run,
+                "event": "skipped_min_level",
+                "ok": True,
+                "reason": skip_reason,
+                "primary_channel": primary_channel,
+            },
+        )
+        print(f"[PR7] skip: {skip_reason}")
         save_state(state_path, state)
         return 0
 
