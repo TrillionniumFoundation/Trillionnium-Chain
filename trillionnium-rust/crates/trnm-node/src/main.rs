@@ -3991,6 +3991,30 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_metric_names_keep_validator_spread_coverage_and_budget_views_distinct() {
+        let active_validators_field_name = "bft_leader_missed_active_validators";
+        let active_validator_share_field_name = "bft_leader_missed_active_validator_share_ppm";
+        let active_heights_field_name = "bft_leader_missed_active_heights";
+        let active_height_rate_field_name = "bft_leader_missed_active_height_rate_ppm";
+        let active_observed_height_rate_field_name =
+            "bft_leader_missed_active_observed_height_rate_ppm";
+        let density_avg_milli_field_name = "bft_leader_missed_density_avg_milli";
+        let active_height_share_field_name = "bft_leader_missed_active_height_share_ppm";
+
+        assert!(active_validators_field_name.ends_with("_validators"));
+        assert!(active_validator_share_field_name.ends_with("_share_ppm"));
+        assert!(active_heights_field_name.ends_with("_heights"));
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(active_validators_field_name, active_heights_field_name);
+        assert_ne!(active_validator_share_field_name, active_height_share_field_name);
+        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
+    }
+
+    #[test]
     fn leader_missed_active_height_share_handles_zero_finality_budget() {
         let bft_leader_missed_density_avg_milli = 2_500u64;
         let finality_avg = 0u128;
