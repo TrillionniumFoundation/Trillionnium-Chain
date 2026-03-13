@@ -2043,6 +2043,121 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_feature_on_bridge_fixture_metadata_matches_filename_semantics() {
+        use std::fs;
+        use std::path::PathBuf;
+
+        let fixtures_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/zk");
+        let mut checked = 0usize;
+
+        for fixture_path in fs::read_dir(&fixtures_dir)
+            .expect("fixtures/zk directory should exist")
+            .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        {
+            let Some(name) = fixture_path.file_name().and_then(|name| name.to_str()) else {
+                continue;
+            };
+            if !name.starts_with("real_backend_bridge_")
+                || !name.contains("_feature_on")
+                || !name.ends_with(".json")
+            {
+                continue;
+            }
+
+            let payload_json = fs::read_to_string(&fixture_path)
+                .unwrap_or_else(|err| panic!("failed reading {name}: {err}"));
+            let payload: serde_json::Value = serde_json::from_str(&payload_json)
+                .unwrap_or_else(|err| panic!("failed parsing {name}: {err}"));
+
+            let expected_family = if name.contains("_groth16_") {
+                "groth16"
+            } else if name.contains("_plonk_") {
+                "plonk"
+            } else {
+                panic!("fixture name missing zk system family: {name}");
+            };
+
+            assert_eq!(
+                payload.get("zk_system").and_then(|value| value.as_str()),
+                Some(expected_family),
+                "fixture zk_system drifted from filename family: {name}"
+            );
+
+            let circuit_id = payload
+                .get("meta")
+                .and_then(|meta| meta.get("circuit_id"))
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| panic!("fixture missing meta.circuit_id: {name}"));
+            assert!(
+                circuit_id.contains(expected_family),
+                "fixture circuit_id lost family tag '{expected_family}': {name} -> {circuit_id}"
+            );
+
+            let backend_version = payload.get("backend_version");
+            let has_named_backend_version_variant = name.contains("_versionless")
+                || name.contains("_null_backend_version")
+                || name.contains("_empty_string_version")
+                || name.contains("_blank_version")
+                || name.contains("_whitespace_version")
+                || name.contains("_padded_version");
+            if !has_named_backend_version_variant {
+                checked += 1;
+                continue;
+            }
+
+            if name.contains("_versionless") {
+                assert!(
+                    backend_version.is_none(),
+                    "versionless fixture unexpectedly carried backend_version: {name}"
+                );
+            } else if name.contains("_null_backend_version") {
+                assert!(
+                    matches!(backend_version, Some(serde_json::Value::Null)),
+                    "null-backend-version fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_empty_string_version") {
+                assert_eq!(
+                    backend_version.and_then(|value| value.as_str()),
+                    Some(""),
+                    "empty-string-version fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_blank_version") {
+                let version = backend_version
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("blank-version fixture missing string backend_version: {name}"));
+                assert!(
+                    !version.is_empty() && version.trim().is_empty(),
+                    "blank-version fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_whitespace_version") {
+                let version = backend_version
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("whitespace-version fixture missing string backend_version: {name}"));
+                assert!(
+                    version.contains(['\n', '\t']) && version.trim().is_empty(),
+                    "whitespace-version fixture drifted from filename semantics: {name}"
+                );
+            } else {
+                let version = backend_version
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("versioned fixture missing string backend_version: {name}"));
+                assert!(
+                    !version.trim().is_empty(),
+                    "versioned fixture unexpectedly used empty/whitespace backend_version: {name}"
+                );
+            }
+
+            checked += 1;
+        }
+
+        assert!(
+            checked >= 20,
+            "expected broad feature-on bridge fixture coverage, checked only {checked} fixtures"
+        );
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
