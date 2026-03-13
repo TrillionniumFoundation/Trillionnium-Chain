@@ -2212,6 +2212,40 @@ fn restore_pending_resolve_none_is_slot_scoped_even_with_multiple_pending_entrie
         root_with_both,
         "removing only one pending resolve entry should perturb the root while preserving unrelated pending resolve state"
     );
+
+    let mut expected = StateStore::new();
+    expected.restore_pending_resolve_approval(
+        5_211,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: false,
+            confirmations: 1,
+            first_approver: "resolver-c".into(),
+            authority_set: "resolver-c,resolver-d".into(),
+            task_version: 9,
+        }),
+    );
+
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "restore_pending_resolve_approval(None) should produce the same deterministic root as a canonical state containing only the preserved pending resolve entry"
+    );
+
+    state.restore_pending_resolve_approval(
+        5_210,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_both,
+        "restoring the removed pending resolve snapshot must rewind state_root exactly to the prior two-entry root"
+    );
 }
 
 #[test]
