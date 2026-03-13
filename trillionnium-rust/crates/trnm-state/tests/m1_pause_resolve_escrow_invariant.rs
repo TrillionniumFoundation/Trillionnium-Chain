@@ -2348,6 +2348,49 @@ fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_d
 }
 
 #[test]
+fn paused_state_rejects_exact_emergency_pause_placeholder_approver_without_side_effects() {
+    // L03 boundary hardening: the exact canonical emergency_pause placeholder must be rejected
+    // on the live paused resolve-approval path too, not only case-drifted aliases or restore.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_929);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 992);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 552);
+
+    st.set_gov_param(98_211, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_919,
+            1,
+            true,
+            "governance.emergency_pause",
+            "authority-a,authority-b",
+        )
+        .expect_err("exact emergency_pause placeholder approver must be rejected while paused");
+    assert!(err.contains("explicit non-system authority") || err.contains("approver"));
+
+    assert_eq!(st.pending_resolve_approval(9_919), None);
+    assert_eq!(st.pending_resolve_first_approver(9_919), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_side_effects() {
     // M1 micro-hardening: resolve quorum parsing must keep the emergency pause placeholder
     // reserved under case drift, so paused mode cannot smuggle control-plane aliases into
