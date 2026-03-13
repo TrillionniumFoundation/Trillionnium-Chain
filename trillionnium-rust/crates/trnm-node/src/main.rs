@@ -3611,6 +3611,33 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_review_bundle_keeps_budget_share_ahead_of_wall_time_aliases() {
+        let jitter_review_fields = [
+            "bft_round_change_backoff_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_round_change_backoff_density_avg_milli",
+            "bft_round_change_backoff_active_height_share_ppm",
+            "bft_round_change_backoff_wall_share_ppm",
+            "bft_round_change_backoff_share_ppm",
+        ];
+
+        assert_eq!(jitter_review_fields.len(), 8);
+        assert!(jitter_review_fields[0].ends_with("_active_observed_height_rate_ppm"));
+        assert_eq!(jitter_review_fields[1], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(jitter_review_fields[2], "bft_skipped_height_total");
+        assert_eq!(jitter_review_fields[3], "bft_skipped_observed_height_rate_ppm");
+        assert!(jitter_review_fields[4].ends_with("_avg_milli"));
+        assert_eq!(jitter_review_fields[5], "bft_round_change_backoff_active_height_share_ppm");
+        assert_eq!(jitter_review_fields[6], "bft_round_change_backoff_wall_share_ppm");
+        assert_eq!(jitter_review_fields[7], "bft_round_change_backoff_share_ppm");
+        assert_ne!(jitter_review_fields[5], jitter_review_fields[6]);
+        assert_ne!(jitter_review_fields[5], jitter_review_fields[7]);
+        assert_ne!(jitter_review_fields[6], jitter_review_fields[7]);
+    }
+
+    #[test]
     fn leader_missed_review_bundle_keeps_validator_spread_next_to_height_pressure_fields() {
         let fairness_review_fields = [
             "bft_leader_missed_top_share_ppm",
