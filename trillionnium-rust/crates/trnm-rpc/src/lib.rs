@@ -28,6 +28,16 @@ pub struct TaskMeteringPolicyQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TaskMeteringDerivedQueryResponse {
+    pub path: String,
+    pub accept_floor_pass: bool,
+    pub challenge_metered_bonus: u128,
+    pub challenge_bonus_total: u128,
+    pub worker_completion_bonus: u128,
+    pub worker_slash_rebate: u128,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct TaskMeteringQueryResponse {
     pub workload_class: String,
     pub metering_schema: String,
@@ -42,6 +52,7 @@ pub struct TaskMeteringQueryResponse {
     pub decode_step_weight: u128,
     pub kv_byte_weight: u128,
     pub policy: TaskMeteringPolicyQueryResponse,
+    pub derived: TaskMeteringDerivedQueryResponse,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -321,12 +332,22 @@ mod tests {
                     worker_slash_rebate_per_work_unit_num: 1,
                     worker_slash_rebate_per_work_unit_den: 192,
                 },
+                derived: TaskMeteringDerivedQueryResponse {
+                    path: "Revealed".into(),
+                    accept_floor_pass: true,
+                    challenge_metered_bonus: 1,
+                    challenge_bonus_total: 2,
+                    worker_completion_bonus: 1,
+                    worker_slash_rebate: 1,
+                },
             }),
         };
         let v = serde_json::to_value(task).unwrap();
         assert_eq!(v["metering"]["normalized_work_units"], json!(192));
         assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
         assert_eq!(v["metering"]["policy"]["challenge_success_bounty_base"], json!(1));
+        assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
+        assert_eq!(v["metering"]["derived"]["accept_floor_pass"], json!(true));
     }
 
     #[test]

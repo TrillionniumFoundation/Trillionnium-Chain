@@ -1,8 +1,8 @@
 use serde_json::json;
 use trnm_rpc::{
     AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse, GetTxResponse,
-    RpcErrorResponse, SendTxResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
-    TxStatus,
+    RpcErrorResponse, SendTxResponse, TaskMeteringDerivedQueryResponse,
+    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TxStatus,
 };
 
 #[test]
@@ -177,11 +177,20 @@ fn contract_event_shape_includes_metering_when_present() {
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 384,
             },
+            derived: TaskMeteringDerivedQueryResponse {
+                path: "Resolved".into(),
+                accept_floor_pass: true,
+                challenge_metered_bonus: 1,
+                challenge_bonus_total: 2,
+                worker_completion_bonus: 1,
+                worker_slash_rebate: 1,
+            },
         }),
     })
     .unwrap();
     assert_eq!(v["metering"]["normalized_work_units"], json!(192));
     assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
+    assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
 }
 
 #[test]

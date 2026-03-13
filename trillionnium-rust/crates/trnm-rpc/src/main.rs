@@ -16,8 +16,8 @@ use trnm_rpc::{
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
     GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
     MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TaskQueryResponse,
-    TxLifecycleRecord,
+    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
+    TaskMeteringQueryResponse, TaskQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::StateStore;
 use trnm_types::{
@@ -540,6 +540,89 @@ fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> 
     })
 }
 
+fn ceil_mul_div_u128(value: u128, numerator: u128, denominator: u128) -> Option<u128> {
+    if denominator == 0 {
+        return None;
+    }
+    if value == 0 || numerator == 0 {
+        return Some(0);
+    }
+    let product = value.checked_mul(numerator)?;
+    let adjusted = product.checked_add(denominator.checked_sub(1)?)?;
+    Some(adjusted / denominator)
+}
+
+fn task_metering_derived_query_response(
+    path: String,
+    normalized_work_units: u128,
+    policy: &TaskMeteringPolicyQueryResponse,
+) -> TaskMeteringDerivedQueryResponse {
+    let challenge_metered_bonus = ceil_mul_div_u128(
+        normalized_work_units,
+        policy.challenge_success_bounty_per_work_unit_num,
+        policy.challenge_success_bounty_per_work_unit_den,
+    )
+    .unwrap_or(0);
+    let worker_completion_bonus = ceil_mul_div_u128(
+        normalized_work_units,
+        policy.worker_completion_bonus_per_work_unit_num,
+        policy.worker_completion_bonus_per_work_unit_den,
+    )
+    .unwrap_or(0);
+    let worker_slash_rebate = ceil_mul_div_u128(
+        normalized_work_units,
+        policy.worker_slash_rebate_per_work_unit_num,
+        policy.worker_slash_rebate_per_work_unit_den,
+    )
+    .unwrap_or(0);
+
+    TaskMeteringDerivedQueryResponse {
+        path,
+        accept_floor_pass: normalized_work_units >= policy.min_accept_work_units,
+        challenge_metered_bonus,
+        challenge_bonus_total: policy
+            .challenge_success_bounty_base
+            .saturating_add(challenge_metered_bonus),
+        worker_completion_bonus,
+        worker_slash_rebate,
+    }
+}
+
+fn build_task_metering_query_response(
+    path: String,
+    workload_class: String,
+    metering_schema: String,
+    receipt_hash: String,
+    prompt_tokens: u64,
+    generated_tokens: u64,
+    decode_steps: u64,
+    kv_bytes_moved: u64,
+    normalized_work_units: u128,
+    prompt_token_weight: u128,
+    generated_token_weight: u128,
+    decode_step_weight: u128,
+    kv_byte_weight: u128,
+    policy: TaskMeteringPolicyQueryResponse,
+) -> TaskMeteringQueryResponse {
+    let derived = task_metering_derived_query_response(path, normalized_work_units, &policy);
+    TaskMeteringQueryResponse {
+        workload_class,
+        metering_schema,
+        receipt_hash,
+        prompt_tokens,
+        generated_tokens,
+        decode_steps,
+        kv_bytes_moved,
+        normalized_work_units,
+        prompt_token_weight,
+        generated_token_weight,
+        decode_step_weight,
+        kv_byte_weight,
+        policy,
+        derived,
+    }
+}
+
 fn parse_event_metering_query_response(
     kv: &BTreeMap<String, String>,
 ) -> Option<TaskMeteringQueryResponse> {
@@ -551,65 +634,61 @@ fn parse_event_metering_query_response(
         .and_then(|v| parse_u128_kv_value(v))
         .and_then(|v| u8::try_from(v).ok())?;
 
-    Some(TaskMeteringQueryResponse {
+    let normalized_work_units = kv
+        .get("metering_normalized_work_units")
+        .and_then(|v| parse_u128_kv_value(v))?;
+    let policy = TaskMeteringPolicyQueryResponse {
+        snapshot_version: policy_snapshot_version,
+        min_accept_work_units: kv
+            .get("metering_min_accept_work_units")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        challenge_success_bounty_base: kv
+            .get("metering_challenge_success_bounty_base")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        challenge_success_bounty_per_work_unit_num: kv
+            .get("metering_challenge_success_bounty_per_work_unit_num")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        challenge_success_bounty_per_work_unit_den: kv
+            .get("metering_challenge_success_bounty_per_work_unit_den")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        worker_completion_bonus_per_work_unit_num: kv
+            .get("metering_worker_completion_bonus_per_work_unit_num")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        worker_completion_bonus_per_work_unit_den: kv
+            .get("metering_worker_completion_bonus_per_work_unit_den")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        worker_slash_rebate_per_work_unit_num: kv
+            .get("metering_worker_slash_rebate_per_work_unit_num")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        worker_slash_rebate_per_work_unit_den: kv
+            .get("metering_worker_slash_rebate_per_work_unit_den")
+            .and_then(|v| parse_u128_kv_value(v))?,
+    };
+
+    Some(build_task_metering_query_response(
+        normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),
         workload_class,
         metering_schema,
         receipt_hash,
-        prompt_tokens: kv
-            .get("metering_prompt_tokens")
+        kv.get("metering_prompt_tokens")
             .and_then(|v| parse_u128_kv_value(v))? as u64,
-        generated_tokens: kv
-            .get("metering_generated_tokens")
+        kv.get("metering_generated_tokens")
             .and_then(|v| parse_u128_kv_value(v))? as u64,
-        decode_steps: kv
-            .get("metering_decode_steps")
+        kv.get("metering_decode_steps")
             .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv_bytes_moved: kv
-            .get("metering_kv_bytes_moved")
+        kv.get("metering_kv_bytes_moved")
             .and_then(|v| parse_u128_kv_value(v))? as u64,
-        normalized_work_units: kv
-            .get("metering_normalized_work_units")
+        normalized_work_units,
+        kv.get("metering_prompt_token_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
-        prompt_token_weight: kv
-            .get("metering_prompt_token_weight")
+        kv.get("metering_generated_token_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
-        generated_token_weight: kv
-            .get("metering_generated_token_weight")
+        kv.get("metering_decode_step_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
-        decode_step_weight: kv
-            .get("metering_decode_step_weight")
+        kv.get("metering_kv_byte_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
-        kv_byte_weight: kv
-            .get("metering_kv_byte_weight")
-            .and_then(|v| parse_u128_kv_value(v))?,
-        policy: TaskMeteringPolicyQueryResponse {
-            snapshot_version: policy_snapshot_version,
-            min_accept_work_units: kv
-                .get("metering_min_accept_work_units")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            challenge_success_bounty_base: kv
-                .get("metering_challenge_success_bounty_base")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            challenge_success_bounty_per_work_unit_num: kv
-                .get("metering_challenge_success_bounty_per_work_unit_num")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            challenge_success_bounty_per_work_unit_den: kv
-                .get("metering_challenge_success_bounty_per_work_unit_den")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            worker_completion_bonus_per_work_unit_num: kv
-                .get("metering_worker_completion_bonus_per_work_unit_num")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            worker_completion_bonus_per_work_unit_den: kv
-                .get("metering_worker_completion_bonus_per_work_unit_den")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            worker_slash_rebate_per_work_unit_num: kv
-                .get("metering_worker_slash_rebate_per_work_unit_num")
-                .and_then(|v| parse_u128_kv_value(v))?,
-            worker_slash_rebate_per_work_unit_den: kv
-                .get("metering_worker_slash_rebate_per_work_unit_den")
-                .and_then(|v| parse_u128_kv_value(v))?,
-        },
-    })
+        policy,
+    ))
 }
 
 fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
@@ -1102,38 +1181,54 @@ fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     Ok(tasks)
 }
 
+fn task_status_path(status: TaskStatus) -> String {
+    match status {
+        TaskStatus::Open => "Open",
+        TaskStatus::Assigned => "Assigned",
+        TaskStatus::Committed => "Committed",
+        TaskStatus::Revealed => "Revealed",
+        TaskStatus::Challenged => "Challenged",
+        TaskStatus::Completed => "Completed",
+        TaskStatus::Slashed => "Slashed",
+    }
+    .to_string()
+}
+
 fn task_metering_query_response(
     snapshot: &TaskMeteringSnapshot,
+    path: String,
 ) -> TaskMeteringQueryResponse {
-    TaskMeteringQueryResponse {
-        workload_class: snapshot.workload_class.clone(),
-        metering_schema: snapshot.metering_schema.clone(),
-        receipt_hash: snapshot.receipt_hash.clone(),
-        prompt_tokens: snapshot.prompt_tokens,
-        generated_tokens: snapshot.generated_tokens,
-        decode_steps: snapshot.decode_steps,
-        kv_bytes_moved: snapshot.kv_bytes_moved,
-        normalized_work_units: snapshot.normalized_work_units,
-        prompt_token_weight: snapshot.prompt_token_weight,
-        generated_token_weight: snapshot.generated_token_weight,
-        decode_step_weight: snapshot.decode_step_weight,
-        kv_byte_weight: snapshot.kv_byte_weight,
-        policy: TaskMeteringPolicyQueryResponse {
-            snapshot_version: snapshot.policy_snapshot_version,
-            min_accept_work_units: snapshot.min_accept_work_units,
-            challenge_success_bounty_base: snapshot.challenge_success_bounty_base,
-            challenge_success_bounty_per_work_unit_num: snapshot
-                .challenge_success_bounty_per_work_unit_num,
-            challenge_success_bounty_per_work_unit_den: snapshot
-                .challenge_success_bounty_per_work_unit_den,
-            worker_completion_bonus_per_work_unit_num: snapshot
-                .worker_completion_bonus_per_work_unit_num,
-            worker_completion_bonus_per_work_unit_den: snapshot
-                .worker_completion_bonus_per_work_unit_den,
-            worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
-            worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
-        },
-    }
+    let policy = TaskMeteringPolicyQueryResponse {
+        snapshot_version: snapshot.policy_snapshot_version,
+        min_accept_work_units: snapshot.min_accept_work_units,
+        challenge_success_bounty_base: snapshot.challenge_success_bounty_base,
+        challenge_success_bounty_per_work_unit_num: snapshot
+            .challenge_success_bounty_per_work_unit_num,
+        challenge_success_bounty_per_work_unit_den: snapshot
+            .challenge_success_bounty_per_work_unit_den,
+        worker_completion_bonus_per_work_unit_num: snapshot
+            .worker_completion_bonus_per_work_unit_num,
+        worker_completion_bonus_per_work_unit_den: snapshot
+            .worker_completion_bonus_per_work_unit_den,
+        worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
+        worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
+    };
+    build_task_metering_query_response(
+        path,
+        snapshot.workload_class.clone(),
+        snapshot.metering_schema.clone(),
+        snapshot.receipt_hash.clone(),
+        snapshot.prompt_tokens,
+        snapshot.generated_tokens,
+        snapshot.decode_steps,
+        snapshot.kv_bytes_moved,
+        snapshot.normalized_work_units,
+        snapshot.prompt_token_weight,
+        snapshot.generated_token_weight,
+        snapshot.decode_step_weight,
+        snapshot.kv_byte_weight,
+        policy,
+    )
 }
 
 fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<TaskQueryResponse> {
@@ -1153,7 +1248,7 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .metadata
             .as_ref()
             .and_then(|metadata| metadata.metering.as_ref())
-            .map(task_metering_query_response),
+            .map(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
     })
 }
 
@@ -5823,6 +5918,69 @@ mod tests {
     }
 
     #[test]
+    fn query_task_from_state_snapshot_computes_metering_derived_block() {
+        let tasks = vec![TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 777,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: None,
+                task_type: None,
+                input_hash: None,
+                model: None,
+                provenance: None,
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "deadbeef".into(),
+                    prompt_tokens: 128,
+                    generated_tokens: 32,
+                    decode_steps: 32,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 192,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 0,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 1,
+                    challenge_success_bounty_per_work_unit_num: 1,
+                    challenge_success_bounty_per_work_unit_den: 192,
+                    worker_completion_bonus_per_work_unit_num: 1,
+                    worker_completion_bonus_per_work_unit_den: 256,
+                    worker_slash_rebate_per_work_unit_num: 1,
+                    worker_slash_rebate_per_work_unit_den: 384,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 9,
+        }];
+        let out = query_task_from_state_snapshot(77, &tasks).expect("task expected");
+        let metering = out.metering.expect("metering expected");
+        assert_eq!(metering.derived.path, "Completed");
+        assert!(metering.derived.accept_floor_pass);
+        assert_eq!(metering.derived.challenge_metered_bonus, 1);
+        assert_eq!(metering.derived.challenge_bonus_total, 2);
+        assert_eq!(metering.derived.worker_completion_bonus, 1);
+        assert_eq!(metering.derived.worker_slash_rebate, 1);
+    }
+
+    #[test]
     fn query_task_from_state_snapshot_exposes_metering_audit_fields() {
         let tasks = vec![TaskObject {
             task_id: 42,
@@ -5885,6 +6043,8 @@ mod tests {
         assert_eq!(metering.policy.snapshot_version, 1);
         assert_eq!(metering.policy.min_accept_work_units, 100);
         assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
+        assert_eq!(metering.derived.path, "Revealed");
+        assert_eq!(metering.derived.challenge_bonus_total, 2);
     }
 
     #[test]
@@ -6153,6 +6313,8 @@ mod tests {
         assert_eq!(metering.policy.snapshot_version, 1);
         assert_eq!(metering.policy.min_accept_work_units, 100);
         assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
+        assert_eq!(metering.derived.path, "Completed");
+        assert_eq!(metering.derived.challenge_bonus_total, 2);
     }
 
     #[test]
