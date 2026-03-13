@@ -1115,18 +1115,30 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             return None;
         }
 
-        let candidate_start = trimmed
-            .char_indices()
-            .find_map(|(idx, ch)| {
-                let is_leading_wrapper = ch.is_ascii_whitespace()
+        let mut candidate = trimmed;
+        loop {
+            let before = candidate;
+            candidate = candidate.trim_start_matches(|ch: char| {
+                ch.is_ascii_whitespace()
                     || ch.is_control()
                     || is_invisible_filler(ch)
                     || is_receipt_quote_wrapper(ch)
-                    || matches!(ch, '(' | '[' | '{' | '<');
-                (!is_leading_wrapper).then_some(idx)
-            })
-            .unwrap_or(trimmed.len());
-        let candidate = &trimmed[candidate_start..];
+                    || matches!(ch, '(' | '[' | '{' | '<')
+            });
+            if let Some(rest) = candidate.strip_prefix('\\') {
+                if rest
+                    .chars()
+                    .next()
+                    .is_some_and(is_receipt_quote_wrapper)
+                {
+                    candidate = rest;
+                    continue;
+                }
+            }
+            if candidate == before {
+                break;
+            }
+        }
         if candidate.is_empty() {
             return None;
         }
@@ -1144,16 +1156,18 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         normalize_candidate_tx_hash(&candidate[..candidate_end])
     }
 
-    let normalized_key_quotes = text
-        .chars()
-        .map(|ch| {
-            if is_receipt_quote_wrapper(ch) {
-                '"'
-            } else {
-                ch
-            }
-        })
-        .collect::<String>();
+    let mut normalized_key_quotes = String::with_capacity(text.len());
+    let mut chars = text.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch == '\\' && chars.peek().copied().is_some_and(is_receipt_quote_wrapper) {
+            continue;
+        }
+        if is_receipt_quote_wrapper(ch) {
+            normalized_key_quotes.push('"');
+        } else {
+            normalized_key_quotes.push(ch);
+        }
+    }
     let normalized_delimiters = normalized_key_quotes
         .chars()
         .map(|ch| match ch {
@@ -2599,6 +2613,18 @@ mod tests {
         let backtick_key = parse_tx_hash("adapter stdout: {`tx_hash`: `0xFACECAFE`}")
             .expect("backtick-wrapped receipt key should parse");
         assert_eq!(backtick_key, "facecafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_shell_escaped_quote_wrapped_receipt_values() {
+        let shell_escaped_double = parse_tx_hash(r#"adapter stdout: {\"tx_hash\": \"0xDEADBEEF\"}"#)
+            .expect("shell-escaped double-quoted receipt hash should parse");
+        assert_eq!(shell_escaped_double, "deadbeef");
+
+        let shell_escaped_single =
+            parse_tx_hash("adapter stdout: {'tx_hash': \\'ABCD1234\\'}")
+                .expect("shell-escaped single-quoted receipt hash should parse");
+        assert_eq!(shell_escaped_single, "abcd1234");
     }
 
     #[test]
