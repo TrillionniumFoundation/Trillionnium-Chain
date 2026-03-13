@@ -559,10 +559,9 @@ pub fn parse_zk_proof_payload(
         })?;
     let body = raw
         .strip_prefix("ZK:")
-        .or_else(|| raw.strip_prefix("zk:"))
         .ok_or_else(|| BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: missing ZK: prefix".to_string(),
+            reason: "invalid zk payload: missing canonical ZK: prefix".to_string(),
         })?;
     let payload: ParsedZkProofPayload =
         serde_json::from_str(body).map_err(|_| BackendExecutionError::MalformedProof {
@@ -1066,6 +1065,15 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"base64","proof":"!!!","public_inputs":{"order":["task_id"]"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("canonical JSON object"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_lowercase_prefix_as_non_canonical() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"zk:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("missing canonical ZK: prefix"))
         );
     }
 
