@@ -11496,6 +11496,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_rejects_unicode_homoglyph_aliases_fail_closed() {
+        for raw in ["truｅ", "fаlse", "οn", "оff"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("unicode homoglyph boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
     fn unresolved_challenge_slash_on_timeout_defaults_false_when_param_absent() {
         let st = seeded_state();
         assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
