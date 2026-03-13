@@ -3160,6 +3160,62 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_emergency_p
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_exact_emergency_pause_placeholder_approver_slots(
+) {
+    // M1 micro-hardening: paused rollback/restore must also reject the exact canonical
+    // emergency_pause control-plane placeholder when it appears in either approver slot,
+    // not only case-drifted aliases.
+    for (task_id, confirmations, first_approver, second_approver) in [
+        (9_935, 1, "governance.emergency_pause", None),
+        (9_936, 2, "authority-a", Some("governance.emergency_pause")),
+    ] {
+        let mut st = StateStore::new();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_142);
+        st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_159);
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 659);
+
+        st.set_gov_param(98_221, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        st.restore_pending_resolve_approval(
+            task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations,
+                first_approver: first_approver.into(),
+                second_approver: second_approver.map(str::to_string),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(task_id),
+            None,
+            "paused restore must scrub exact emergency_pause placeholder approver slots"
+        );
+        assert_eq!(st.pending_resolve_first_approver(task_id), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(task_id), None);
+        assert_eq!(st.pending_gov_update("resolve_authority"), None);
+        assert!(st.is_emergency_paused());
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            forfeits_before
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            worker_slash_before
+        );
+    }
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_duplicate_second_approver_boundary(
 ) {
     // M1 micro-hardening: paused rollback/restore must reject finalized quorum snapshots when
