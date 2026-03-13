@@ -71,6 +71,20 @@ def fmt_metric(name: str, vals):
     return f"- {name}: min={mn} p50={p50} p95={p95} max={mx}"
 
 
+def format_bytes(num_bytes: int) -> str:
+    units = ["B", "KiB", "MiB", "GiB", "TiB"]
+    value = float(max(0, num_bytes))
+    unit = units[0]
+    for candidate in units:
+        unit = candidate
+        if value < 1024.0 or candidate == units[-1]:
+            break
+        value /= 1024.0
+    if unit == "B":
+        return f"{int(value)} {unit}"
+    return f"{value:.1f} {unit}"
+
+
 def recommended_producer(label: str) -> str:
     if label == "node_log":
         return (
@@ -669,8 +683,11 @@ def main():
         return (
             f"- {label}: archive_candidate_count={stats['count']} "
             f"archive_candidate_total_bytes={stats['total_bytes']} "
+            f"archive_candidate_total_bytes_human={format_bytes(stats['total_bytes'])} "
             f"archive_candidate_stale_bytes={stats['stale_bytes']} "
+            f"archive_candidate_stale_bytes_human={format_bytes(stats['stale_bytes'])} "
             f"archive_candidate_old_bytes={stats['old_bytes']} "
+            f"archive_candidate_old_bytes_human={format_bytes(stats['old_bytes'])} "
             f"keep_latest=2 preview={', '.join(basenames) if basenames else 'none'} "
             f"remaining={remaining}"
         )
@@ -961,11 +978,17 @@ def main():
         "- benchmark_archive_freshness_counts: "
         f"stale={archive_freshness_counts['stale']} old={archive_freshness_counts['old']}"
     )
+    benchmark_archive_total_bytes = sum(int(stats['total_bytes']) for stats in archive_candidate_stats_by_pool.values())
+    benchmark_archive_stale_bytes = sum(int(stats['stale_bytes']) for stats in archive_candidate_stats_by_pool.values())
+    benchmark_archive_old_bytes = sum(int(stats['old_bytes']) for stats in archive_candidate_stats_by_pool.values())
     lines.append(
         "- benchmark_archive_byte_totals: "
-        f"total_bytes={sum(int(stats['total_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
-        f"stale_bytes={sum(int(stats['stale_bytes']) for stats in archive_candidate_stats_by_pool.values())} "
-        f"old_bytes={sum(int(stats['old_bytes']) for stats in archive_candidate_stats_by_pool.values())}"
+        f"total_bytes={benchmark_archive_total_bytes} "
+        f"total_bytes_human={format_bytes(benchmark_archive_total_bytes)} "
+        f"stale_bytes={benchmark_archive_stale_bytes} "
+        f"stale_bytes_human={format_bytes(benchmark_archive_stale_bytes)} "
+        f"old_bytes={benchmark_archive_old_bytes} "
+        f"old_bytes_human={format_bytes(benchmark_archive_old_bytes)}"
     )
     lines.append(
         f"- benchmark_archive_attention: {', '.join(archive_attention) if archive_attention else 'none'}"
@@ -1024,8 +1047,11 @@ def main():
     lines.append(
         "- baseline_closeout_report_archive_byte_totals: "
         f"total_bytes={baseline_report_archive_stats['total_bytes']} "
+        f"total_bytes_human={format_bytes(baseline_report_archive_stats['total_bytes'])} "
         f"stale_bytes={baseline_report_archive_stats['stale_bytes']} "
-        f"old_bytes={baseline_report_archive_stats['old_bytes']}"
+        f"stale_bytes_human={format_bytes(baseline_report_archive_stats['stale_bytes'])} "
+        f"old_bytes={baseline_report_archive_stats['old_bytes']} "
+        f"old_bytes_human={format_bytes(baseline_report_archive_stats['old_bytes'])}"
     )
     lines.append(
         "- baseline_closeout_report_archive_attention: "
@@ -1184,29 +1210,46 @@ def main():
     closeout_status, closeout_reason = closeout_decision(
         missing_inputs, stale_inputs, old_inputs, closeout_capture_status
     )
+    closeout_present_set = set(present_inputs)
+    closeout_stale_inputs = [label for label in stale_inputs if label in closeout_present_set]
+    closeout_old_inputs = [label for label in old_inputs if label in closeout_present_set]
+    closeout_ready_inputs = sorted(
+        set(present_inputs) - set(closeout_stale_inputs) - set(closeout_old_inputs)
+    )
+    closeout_ready_count = len(closeout_ready_inputs)
+    closeout_structural_blockers = []
+    if not bench_dir_exists:
+        closeout_structural_blockers.append("bench_dir")
+    if closeout_capture_status == "mixed_capture_window":
+        closeout_structural_blockers.append("capture_window:mixed")
+    elif closeout_capture_status == "divergent_capture_window":
+        closeout_structural_blockers.append("capture_window:divergent")
+    closeout_evidence_blockers = missing_inputs + closeout_stale_inputs + closeout_old_inputs
+    closeout_blockers = closeout_evidence_blockers + closeout_structural_blockers
     lines += ["", "## Closeout Action Summary"]
     lines.append(f"- closeout_decision: {closeout_status}")
     lines.append(f"- closeout_decision_reason: {closeout_reason}")
     lines.append(
         "- closeout_action_counts: "
-        f"missing={len(missing_inputs)} stale={len(stale_inputs)} old={len(old_inputs)} ready={len(present_inputs) - len(stale_inputs) - len(old_inputs)}"
+        f"missing={len(missing_inputs)} stale={len(closeout_stale_inputs)} old={len(closeout_old_inputs)} ready={closeout_ready_count} structural={len(closeout_structural_blockers)}"
     )
     lines.append(f"- closeout_capture_cohesion: {closeout_capture_status}")
     lines.append(
         f"- closeout_capture_spread_seconds: {closeout_capture_spread_seconds if closeout_capture_spread_seconds is not None else 'n/a'}"
     )
-    closeout_blockers = missing_inputs + stale_inputs + old_inputs
-    if closeout_capture_status == "mixed_capture_window":
-        closeout_blockers.append("capture_window:mixed")
-    elif closeout_capture_status == "divergent_capture_window":
-        closeout_blockers.append("capture_window:divergent")
+    lines.append(
+        f"- closeout_evidence_blockers: {', '.join(closeout_evidence_blockers) if closeout_evidence_blockers else 'none'}"
+    )
+    lines.append(
+        f"- closeout_structural_blockers: {', '.join(closeout_structural_blockers) if closeout_structural_blockers else 'none'}"
+    )
     lines.append(
         f"- closeout_blockers: {', '.join(closeout_blockers) if closeout_blockers else 'none'}"
     )
     lines.append(
-        f"- closeout_ready_inputs: {', '.join(sorted(set(present_inputs) - set(stale_inputs) - set(old_inputs))) if present_inputs else 'none'}"
+        f"- closeout_ready_inputs: {', '.join(closeout_ready_inputs) if closeout_ready_inputs else 'none'}"
     )
-    closeout_followup_labels = missing_inputs + stale_inputs + old_inputs
+    closeout_followup_labels = closeout_evidence_blockers
     if closeout_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
         closeout_followup_labels = ["node_log", "classic_bench", "mixed_bench", "executor_profile"]
     closeout_followup_command_chain = build_followup_command_chain(
@@ -1468,6 +1511,8 @@ def main():
             "profile.report.elapsed_ms",
             "profile.report.path",
             "profile.report.artifact_basename",
+            "profile.report.output_line_count",
+            "profile.report.output_bytes",
             "profile.report.ungrouped_count",
             "profile.report.grouping_complete",
             "profile.report.persist_error",

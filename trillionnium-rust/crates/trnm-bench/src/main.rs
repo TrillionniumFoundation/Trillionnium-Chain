@@ -277,7 +277,26 @@ fn persist_profile_report(
         .unwrap_or_else(|| out_path.display().to_string());
     lines.push(format!("profile.report.path={}", resolved_path.display()));
     lines.push(format!("profile.report.artifact_basename={basename}"));
-    fs::write(&out_path, format!("{}\n", lines.join("\n")))?;
+
+    let line_count_prefix = "profile.report.output_line_count=";
+    let byte_count_prefix = "profile.report.output_bytes=";
+    let mut output_line_count = 0usize;
+    let mut output_bytes = 0usize;
+    let persisted_content = loop {
+        let mut persisted_lines = lines.clone();
+        persisted_lines.push(format!("{line_count_prefix}{output_line_count}"));
+        persisted_lines.push(format!("{byte_count_prefix}{output_bytes}"));
+        let persisted_content = format!("{}\n", persisted_lines.join("\n"));
+        let next_line_count = persisted_content.lines().count();
+        let next_output_bytes = persisted_content.as_bytes().len();
+        if next_line_count == output_line_count && next_output_bytes == output_bytes {
+            break persisted_content;
+        }
+        output_line_count = next_line_count;
+        output_bytes = next_output_bytes;
+    };
+
+    fs::write(&out_path, persisted_content)?;
     fs::canonicalize(&out_path).or(Ok(out_path))
 }
 
