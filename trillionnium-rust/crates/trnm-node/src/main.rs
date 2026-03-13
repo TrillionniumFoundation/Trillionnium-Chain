@@ -1608,6 +1608,15 @@ fn finality_budget_share_ppm(density_avg_milli: u64, finality_avg_ms: u128) -> u
     ratio_ppm_u64(density_avg_milli, finality_budget_milli)
 }
 
+fn wall_time_share_ppm(total_ms: u64, committed_heights: u64, finality_avg_ms: u128) -> u64 {
+    if committed_heights == 0 {
+        return 0;
+    }
+    let finality_avg_ms_u64 = u64::try_from(finality_avg_ms).unwrap_or(u64::MAX);
+    let total_budget_ms = committed_heights.saturating_mul(finality_avg_ms_u64);
+    ratio_ppm_u64(total_ms, total_budget_ms)
+}
+
 fn gap_percent_bps(total: u128, component_a: u128, component_b: u128) -> u128 {
     if total == 0 {
         return 0;
@@ -3626,32 +3635,37 @@ mod tests {
     }
 
     #[test]
-    fn round_change_backoff_wall_share_metric_uses_height_level_denominator() {
+    fn round_change_backoff_wall_share_metric_normalizes_per_committed_height_budget() {
         let bft_round_change_backoff_total_ms = 18u64;
         let bft_committed_heights = 4u64;
-        let finality_sample_count = 6u64;
-        let wall_share_per_height_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
-        let wall_share_per_finality_sample_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_total_ms, finality_sample_count);
-
-        assert_eq!(wall_share_per_height_ppm, 4_500_000);
-        assert_eq!(wall_share_per_finality_sample_ppm, 3_000_000);
-        assert_ne!(
-            wall_share_per_height_ppm,
-            wall_share_per_finality_sample_ppm
+        let finality_avg_ms = 20u128;
+        let wall_share_ppm = wall_time_share_ppm(
+            bft_round_change_backoff_total_ms,
+            bft_committed_heights,
+            finality_avg_ms,
         );
+        let active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(bft_round_change_backoff_total_ms, bft_committed_heights),
+            finality_avg_ms,
+        );
+
+        assert_eq!(wall_share_ppm, 225_000);
+        assert_eq!(active_height_share_ppm, 225_000);
     }
 
     #[test]
     fn round_change_backoff_compatibility_alias_matches_wall_share_metric() {
         let bft_round_change_backoff_total_ms = 18u64;
         let bft_committed_heights = 4u64;
-        let wall_share_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let finality_avg_ms = 20u128;
+        let wall_share_ppm = wall_time_share_ppm(
+            bft_round_change_backoff_total_ms,
+            bft_committed_heights,
+            finality_avg_ms,
+        );
         let compatibility_alias_ppm = wall_share_ppm;
 
-        assert_eq!(wall_share_ppm, 4_500_000);
+        assert_eq!(wall_share_ppm, 225_000);
         assert_eq!(compatibility_alias_ppm, wall_share_ppm);
     }
 
@@ -3659,10 +3673,14 @@ mod tests {
     fn round_change_backoff_wall_share_metric_can_exceed_one_million_when_backoff_dominates() {
         let bft_round_change_backoff_total_ms = 12u64;
         let bft_committed_heights = 3u64;
-        let wall_share_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let finality_avg_ms = 2u128;
+        let wall_share_ppm = wall_time_share_ppm(
+            bft_round_change_backoff_total_ms,
+            bft_committed_heights,
+            finality_avg_ms,
+        );
 
-        assert_eq!(wall_share_ppm, 4_000_000);
+        assert_eq!(wall_share_ppm, 2_000_000);
         assert!(wall_share_ppm > 1_000_000);
     }
 
@@ -7441,7 +7459,7 @@ fn main() -> Result<()> {
     let bft_round_change_backoff_active_height_share_ppm =
         finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
     let bft_round_change_backoff_wall_share_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        wall_time_share_ppm(bft_round_change_backoff_total_ms, bft_committed_heights, finality_avg);
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
     let bft_commit_observed_height_rate_ppm =
         ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
