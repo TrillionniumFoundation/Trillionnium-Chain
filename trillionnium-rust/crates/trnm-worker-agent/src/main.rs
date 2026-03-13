@@ -907,8 +907,7 @@ fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) 
 fn is_receipt_quote_wrapper(ch: char) -> bool {
     matches!(
         ch,
-        '"'
-            | '\''
+        '"' | '\''
             | '`'
             | '“'
             | '”'
@@ -933,7 +932,10 @@ fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(c, ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<')
+                || matches!(
+                    c,
+                    ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<'
+                )
                 || c.is_control()
                 || is_invisible_filler(c)
         })
@@ -1144,7 +1146,13 @@ fn parse_tx_hash(text: &str) -> Option<String> {
 
     let normalized_key_quotes = text
         .chars()
-        .map(|ch| if is_receipt_quote_wrapper(ch) { '"' } else { ch })
+        .map(|ch| {
+            if is_receipt_quote_wrapper(ch) {
+                '"'
+            } else {
+                ch
+            }
+        })
         .collect::<String>();
     let normalized_delimiters = normalized_key_quotes
         .chars()
@@ -2395,8 +2403,9 @@ mod tests {
             .expect("em dash json receipt key should parse");
         assert_eq!(em_dash_json, "facecafe");
 
-        let fullwidth_shell = parse_tx_hash("[adapter] commit accepted transaction－hash:0xBADDCAFE")
-            .expect("fullwidth hyphen shell receipt key should parse");
+        let fullwidth_shell =
+            parse_tx_hash("[adapter] commit accepted transaction－hash:0xBADDCAFE")
+                .expect("fullwidth hyphen shell receipt key should parse");
         assert_eq!(fullwidth_shell, "baddcafe");
     }
 
@@ -2460,8 +2469,10 @@ mod tests {
 
     #[test]
     fn parse_tx_hash_accepts_json_style_receipts_with_newlines_and_tabs_around_colon() {
-        let json = parse_tx_hash("{\n\t\"tx_hash\"\n\t:\n\t\"0xDEADBEEF\",\n\t\"status\":\n\t\"accepted\"\n}")
-            .expect("json receipt hash with newline/tab padding should parse");
+        let json = parse_tx_hash(
+            "{\n\t\"tx_hash\"\n\t:\n\t\"0xDEADBEEF\",\n\t\"status\":\n\t\"accepted\"\n}",
+        )
+        .expect("json receipt hash with newline/tab padding should parse");
         assert_eq!(json, "deadbeef");
     }
 
@@ -2577,8 +2588,9 @@ mod tests {
             .expect("double-angle-quoted transaction hash alias should parse");
         assert_eq!(double_angle, "abcd1234");
 
-        let corner_bracket = parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
-            .expect("corner-bracket-quoted transaction hash alias should parse");
+        let corner_bracket =
+            parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
+                .expect("corner-bracket-quoted transaction hash alias should parse");
         assert_eq!(corner_bracket, "facecafe");
     }
 

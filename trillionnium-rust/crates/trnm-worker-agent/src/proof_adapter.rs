@@ -146,33 +146,65 @@ fn collapse_adapter_delimiters(raw: &str) -> String {
 }
 
 fn peel_outer_quote_wrappers(value: &str) -> &str {
+    const QUOTE_WRAPPERS: [(&str, &str); 12] = [
+        ("'", "'"),
+        ("\"", "\""),
+        ("`", "`"),
+        ("“", "”"),
+        ("‘", "’"),
+        ("«", "»"),
+        ("‹", "›"),
+        ("「", "」"),
+        ("『", "』"),
+        ("〈", "〉"),
+        ("《", "》"),
+        ("⟨", "⟩"),
+    ];
+    const ESCAPED_QUOTE_WRAPPERS: [(&str, &str); 12] = [
+        (r#"\'"#, r#"\'"#),
+        (r#"\""#, r#"\""#),
+        (r#"\`"#, r#"\`"#),
+        ("\\“", "\\”"),
+        ("\\‘", "\\’"),
+        ("\\«", "\\»"),
+        ("\\‹", "\\›"),
+        ("\\「", "\\」"),
+        ("\\『", "\\』"),
+        ("\\〈", "\\〉"),
+        ("\\《", "\\》"),
+        ("\\⟨", "\\⟩"),
+    ];
+
     let mut current = value.trim().trim_start_matches('\u{feff}').trim();
 
     for _ in 0..16 {
-        let bytes = current.as_bytes();
-        if bytes.len() >= 2
-            && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
-                || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
-                || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
-        {
-            current = current[1..current.len() - 1]
-                .trim()
-                .trim_start_matches('\u{feff}')
-                .trim();
+        let mut changed = false;
+
+        for (prefix, suffix) in QUOTE_WRAPPERS {
+            if let Some(stripped) = current
+                .strip_prefix(prefix)
+                .and_then(|rest| rest.strip_suffix(suffix))
+            {
+                current = stripped.trim().trim_start_matches('\u{feff}').trim();
+                changed = true;
+                break;
+            }
+        }
+        if changed {
             continue;
         }
 
-        if bytes.len() >= 4
-            && bytes[0] == b'\\'
-            && bytes[bytes.len() - 2] == b'\\'
-            && ((bytes[1] == b'\'' && bytes[bytes.len() - 1] == b'\'')
-                || (bytes[1] == b'"' && bytes[bytes.len() - 1] == b'"')
-                || (bytes[1] == b'`' && bytes[bytes.len() - 1] == b'`'))
-        {
-            current = current[2..current.len() - 2]
-                .trim()
-                .trim_start_matches('\u{feff}')
-                .trim();
+        for (prefix, suffix) in ESCAPED_QUOTE_WRAPPERS {
+            if let Some(stripped) = current
+                .strip_prefix(prefix)
+                .and_then(|rest| rest.strip_suffix(suffix))
+            {
+                current = stripped.trim().trim_start_matches('\u{feff}').trim();
+                changed = true;
+                break;
+            }
+        }
+        if changed {
             continue;
         }
 
@@ -597,6 +629,28 @@ mod tests {
             "tee-attestation"
         );
         assert_eq!(normalize_adapter_value(r#"\"ZK-RECEIPT\""#), "zk-receipt");
+    }
+
+    #[test]
+    fn adapter_label_normalization_peels_smart_and_localized_quote_wrappers() {
+        assert_eq!(normalize_adapter_label("“TEE_RECEIPT”"), "tee-receipt");
+        assert_eq!(normalize_adapter_value("‘ZK_PROOF’"), "zk-proof");
+        assert_eq!(
+            normalize_adapter_label("«TEE-ATTESTATION»"),
+            "tee-attestation"
+        );
+        assert_eq!(normalize_adapter_value("‹zk receipt›"), "zk-receipt");
+        assert_eq!(normalize_adapter_label("「TEE_RECEIPT」"), "tee-receipt");
+        assert_eq!(normalize_adapter_value("『ZK_PROOF』"), "zk-proof");
+        assert_eq!(
+            normalize_adapter_label("〈TEE-ATTESTATION〉"),
+            "tee-attestation"
+        );
+        assert_eq!(normalize_adapter_value("《ZK_RECEIPT》"), "zk-receipt");
+        assert_eq!(normalize_adapter_label("⟨TEE_RECEIPT⟩"), "tee-receipt");
+        assert_eq!(normalize_adapter_value("⟨ZK_PROOF⟩"), "zk-proof");
+        assert_eq!(normalize_adapter_label(r#"\“TEE_RECEIPT\”"#), "tee-receipt");
+        assert_eq!(normalize_adapter_value(r#"\‘ZK_PROOF\’"#), "zk-proof");
     }
 
     #[test]
