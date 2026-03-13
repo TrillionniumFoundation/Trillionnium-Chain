@@ -740,6 +740,18 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
+        if !backend_version
+            .chars()
+            .any(|ch| ch.is_ascii_alphanumeric())
+        {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: backend_version '{}' must contain at least one visible canonical version token segment",
+                    backend_version
+                ),
+            });
+        }
         let backend_id = payload.backend_id.as_deref().map(str::trim);
         if backend_id.is_none_or(str::is_empty) {
             return Err(BackendExecutionError::MalformedProof {
@@ -1345,6 +1357,13 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not be empty when provided")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_backend_version_without_visible_version_token_segment() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"---","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version '---'") && reason.contains("visible canonical version token segment")));
     }
 
     #[test]
