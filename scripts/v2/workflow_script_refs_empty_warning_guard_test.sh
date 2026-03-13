@@ -39,11 +39,15 @@ if data.get('status') != 'warn':
     raise SystemExit(f"[FAIL] expected warn status for non-strict empty-ref workflow, got: {data}")
 if int(data.get('script_ref_total_count', 0)) != 0:
     raise SystemExit(f"[FAIL] expected script_ref_total_count=0, got: {data}")
+if int(data.get('empty_ref_count', -1)) != 1:
+    raise SystemExit(f"[FAIL] expected empty_ref_count=1 for empty-ref workflow summary, got: {data}")
 stdout = open(stdout_path, 'r', encoding='utf-8').read()
 stderr = open(stderr_path, 'r', encoding='utf-8').read()
 expected = '[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)'
 if expected not in stdout:
     raise SystemExit('[FAIL] missing aligned empty-ref warning in stdout')
+if '[workflow-ref] empty_ref_count=1' not in stdout:
+    raise SystemExit('[FAIL] missing empty_ref_count log line in stdout')
 if '[workflow-ref] status=warn strict_mode=0' not in stdout:
     raise SystemExit('[FAIL] missing non-strict warn status line in stdout')
 if stderr.strip():

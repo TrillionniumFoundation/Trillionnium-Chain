@@ -131,6 +131,8 @@ if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
   empty_ref_count=1
 fi
 
+echo "[workflow-ref] empty_ref_count=${empty_ref_count}"
+
 for ref in "${SCRIPT_REFS[@]}"; do
   path="${ref#./}"
 
@@ -192,6 +194,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "script_ref_count": ${#SCRIPT_REFS[@]},
   "non_dot_script_ref_total_count": ${non_dot_script_ref_count},
   "non_dot_script_ref_count": ${#NON_DOT_SCRIPT_REFS[@]},
+  "empty_ref_count": ${empty_ref_count},
   "git_head": "$(json_escape "${git_head}")",
   "missing_count": ${missing_count},
   "non_exec_count": ${non_exec_count},
