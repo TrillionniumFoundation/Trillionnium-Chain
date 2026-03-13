@@ -1,0 +1,29 @@
+use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate};
+
+#[test]
+fn spillover_recovered_id_re_dedupes_without_perturbing_queue_accounting() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    // Fill the dedicated critical slot and normal capacity, then spill one more
+    // critical tx into the normal lane so the lane is globally full.
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // Fresh id remains backpressured across classes while saturated.
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // After one dequeue frees headroom, the same id recovers as fresh ingress.
+    assert!(matches!(gate.pop_ready(), Some(100) | Some(1)));
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // Once recovered into the lane, the same id must immediately regain global
+    // duplicate protection without perturbing queue accounting.
+    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+}
