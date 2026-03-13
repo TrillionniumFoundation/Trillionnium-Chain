@@ -3433,6 +3433,77 @@ mod tests {
     }
 
     #[test]
+    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views() {
+        let review_bundles: &[&[&str]] = &[
+            &[
+                "critical_wait_active_heights",
+                "critical_wait_active_height_rate_ppm",
+                "critical_wait_active_observed_height_rate_ppm",
+                "critical_wait_density_avg_milli",
+                "critical_wait_active_height_share_ppm",
+            ],
+            &[
+                "hot_object_active_heights",
+                "hot_object_active_height_rate_ppm",
+                "hot_object_active_observed_height_rate_ppm",
+                "hot_object_active_top_label_share_avg_ppm",
+                "hot_object_active_tail_share_avg_ppm",
+                "hot_object_active_height_share_ppm",
+            ],
+            &[
+                "rollback_active_heights",
+                "rollback_active_height_rate_ppm",
+                "rollback_active_observed_height_rate_ppm",
+                "rollback_density_avg_milli",
+                "rollback_active_height_share_ppm",
+            ],
+            &[
+                "preexec_reject_active_heights",
+                "preexec_reject_active_height_rate_ppm",
+                "preexec_reject_active_observed_height_rate_ppm",
+                "preexec_reject_density_avg_milli",
+                "preexec_reject_active_height_share_ppm",
+            ],
+            &[
+                "bft_round_change_active_heights",
+                "bft_round_change_active_height_rate_ppm",
+                "bft_round_change_active_observed_height_rate_ppm",
+                "bft_round_change_density_avg_milli",
+                "bft_round_change_active_height_share_ppm",
+            ],
+            &[
+                "bft_round_change_backoff_active_heights",
+                "bft_round_change_backoff_active_height_rate_ppm",
+                "bft_round_change_backoff_active_observed_height_rate_ppm",
+                "bft_round_change_backoff_density_avg_milli",
+                "bft_round_change_backoff_active_height_share_ppm",
+            ],
+            &[
+                "bft_leader_missed_active_heights",
+                "bft_leader_missed_active_height_rate_ppm",
+                "bft_leader_missed_active_observed_height_rate_ppm",
+                "bft_leader_missed_density_avg_milli",
+                "bft_leader_missed_active_height_share_ppm",
+            ],
+        ];
+
+        for bundle in review_bundles {
+            assert!(bundle[0].ends_with("_active_heights"));
+            assert!(bundle[1].ends_with("_active_height_rate_ppm"));
+            assert!(bundle[2].ends_with("_active_observed_height_rate_ppm"));
+            assert_ne!(bundle[0], bundle[1]);
+            assert_ne!(bundle[0], bundle[2]);
+            assert_ne!(bundle[1], bundle[2]);
+            assert!(
+                bundle[3].ends_with("_avg_milli") || bundle[3].ends_with("_share_avg_ppm"),
+                "expected density or active-share companion field, got {}",
+                bundle[3]
+            );
+            assert!(bundle.last().unwrap().ends_with("_active_height_share_ppm"));
+        }
+    }
+
+    #[test]
     fn round_change_backoff_review_bundle_keeps_coverage_wall_and_budget_views_together() {
         let jitter_review_fields = [
             "bft_round_change_backoff_active_heights",
