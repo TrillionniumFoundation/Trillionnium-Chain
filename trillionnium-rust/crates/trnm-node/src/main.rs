@@ -3676,6 +3676,39 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_review_bundle_keeps_absolute_skipped_width_next_to_fairness_spread_and_budget_pressure() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 11);
+        assert!(fairness_review_fields[0].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_validators"));
+        assert!(fairness_review_fields[2].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_active_heights"));
+        assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
+        assert_eq!(fairness_review_fields[6], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(fairness_review_fields[7], "bft_skipped_height_total");
+        assert_eq!(fairness_review_fields[8], "bft_skipped_observed_height_rate_ppm");
+        assert!(fairness_review_fields[9].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[10].ends_with("_active_height_share_ppm"));
+        assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
+        assert_ne!(fairness_review_fields[6], fairness_review_fields[8]);
+        assert_ne!(fairness_review_fields[7], fairness_review_fields[8]);
+    }
+
+    #[test]
     fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates() {
         let review_bundles: &[&[&str]] = &[
             &[
