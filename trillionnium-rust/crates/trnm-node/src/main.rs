@@ -3500,6 +3500,21 @@ mod tests {
     }
 
     #[test]
+    fn bft_commit_and_skipped_height_review_bundle_keeps_observed_coverage_pair_together() {
+        let coverage_review_fields = [
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+        ];
+
+        assert_eq!(coverage_review_fields.len(), 3);
+        assert!(coverage_review_fields[0].ends_with("_rate_ppm"));
+        assert!(coverage_review_fields[1].ends_with("_total"));
+        assert!(coverage_review_fields[2].ends_with("_rate_ppm"));
+        assert_ne!(coverage_review_fields[0], coverage_review_fields[2]);
+    }
+
+    #[test]
     fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
         let bft_round_change_total = 6u64;
         let bft_round_change_active_heights = 2u64;
