@@ -80,6 +80,34 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_accepts_case_insensitive_prefix_when_bindings_match() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"fRaUd:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn fraud_verifier_accepts_utf8_bom_prefixed_payload_when_bindings_match() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"\xef\xbb\xbfFRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -120,6 +148,36 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, b"FRAUD:{\"task_id\":7,\"proof_type\":\"fraud\"}"),
             VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_zero_width_worker_binding_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "FRAUD:{\"task_id\":7,\"worker\":\"worke\u{200b}r-fraud\",\"proof_type\":\"fraud\"}"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_noncanonical_worker_binding_context_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.worker = Some(" worker-fraud ".into());
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("non-canonical worker binding context")
         ));
     }
 
@@ -203,6 +261,48 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"FRAUD:{\"task_id\":7,\"task_id\":\"7\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7\xef\xbc\x8c\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7\xef\xbc\x9b\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_semicolon_delimited_duplicate_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7;\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
         ));
@@ -481,6 +581,51 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_single_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\",'result_hash':\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_double_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_uppercase_prefixed_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\",\"result_hash\":\"0X0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_unexpected_result_hash_binding_without_context_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -491,6 +636,20 @@ mod tests {
                 b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_signed_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":+7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
         ));
     }
 
@@ -523,6 +682,35 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\xef\xbc\xbf\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result\xef\xbc\xbfhash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -551,7 +739,35 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_then_ascii_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\"\xef\xbc\x9a7,\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\"\xef\xbc\x9a\"worker-fraud\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_then_ascii_worker_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
@@ -638,6 +854,79 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"\xef\xbc\x8c\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7;\"worker\":\"worker-fraud\";\"proof_type\":\"fraud\";\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_comma_delimited_duplicate_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_result_hash_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"\xef\xbc\x8c\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_result_hash_binding_fail_closed(
+    ) {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"\xef\xbc\x9b\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_colon_unexpected_result_hash_binding_without_context_fail_closed(
     ) {
         let verifier = FraudVerifier;
@@ -649,6 +938,20 @@ mod tests {
                 b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\"\xef\xbc\x9a\"0909090909090909090909090909090909090909090909090909090909090909\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\"\xef\xbc\x9a\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
         ));
     }
 }
