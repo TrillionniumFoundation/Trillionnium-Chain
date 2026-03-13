@@ -74,6 +74,7 @@ L04 closeout checklist for one-pass triage:
 - **Burst width before averages**: keep `*_active_heights` next to density/share metrics so a problem concentrated on a few heights does not disappear inside p50/p95 or average finality.
 - **Budget pressure before compatibility aliases**: read `*_active_height_share_ppm` first for active-height pressure, then use compatibility aliases like `bft_round_change_backoff_share_ppm` only as wall-time context.
 - **Guardrail cause before wall time**: for preexec/rollback, read `preexec_reject_share_bps`, `preexec_conflict_miss_share_bps`, and `apply_error_rollback_share_bps` before concluding that higher elapsed time is only a scheduler slowdown.
+- **Fairness spread before hotspot severity**: for proposer misses, keep `bft_leader_missed_active_validators` and `bft_leader_missed_active_validator_share_ppm` next to `bft_leader_missed_active_heights`, `bft_leader_missed_active_observed_height_rate_ppm`, and `bft_leader_missed_active_height_share_ppm`; validator spread answers how widely misses have propagated across proposers, while the active-height fields answer how much clustered budget pressure those misses impose.
 - **Commit coverage before declaring improvement**: if `bft_skipped_observed_height_rate_ppm` rises or `bft_commit_observed_height_rate_ppm` falls, treat any better-looking committed-height ratios as suspicious until the denominator shift is explained.
 
 ## 仍然 deferred / 未在本次文档修正中解决
