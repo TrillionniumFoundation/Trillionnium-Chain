@@ -2155,6 +2155,14 @@ fn scan_and_apply_timeouts(
         ) {
             continue;
         }
+        if st.is_emergency_paused() && matches!(task.status, TaskStatus::Challenged) {
+            // Governance boundary hardening: the node-level timeout scanner must not even
+            // enter challenged settlement while emergency pause is active. The lower-level
+            // timeout path is already fail-closed, but skipping here keeps pause semantics
+            // explicit and preserves staged resolve approvals/escrow without touching the
+            // challenged settlement path at all.
+            continue;
+        }
         let from_status = format!("{:?}", task.status);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
@@ -2539,6 +2547,7 @@ fn decide_order_for_commit(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use trnm_state::GovParamUpdateOutcome;
 
     #[test]
     fn resolve_hotspot_summary_includes_shared_treasury_and_approval_labels() {
@@ -5946,9 +5955,13 @@ mod tests {
         )
         .unwrap();
         let _ = challenged_task_fixture(&mut st, 8100);
+        let current_task_version = st
+            .get_task(8100)
+            .expect("challenged task must exist before staging approval")
+            .version;
         st.stage_or_confirm_resolve_approval(
             8100,
-            1,
+            current_task_version,
             true,
             "authority-a",
             "authority-a,authority-b",
@@ -5985,6 +5998,424 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
         assert_eq!(st.pending_resolve_approval_snapshot(8100), before_pending);
+    }
+
+    #[test]
+    fn rollback_snapshot_restores_pending_resolve_state_against_pending_replacement_authority() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_180,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_181,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        let _ = challenged_task_fixture(&mut st, 8_109);
+        let before_task = st.get_task(8_109).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_109,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-c".into(),
+                second_approver: None,
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_109).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.pending_resolve_approval(8_109), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_109).as_deref(),
+            Some("authority-c")
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_109),
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-c".into(),
+                second_approver: None,
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            })
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_restores_case_and_order_equivalent_pending_replacement_authority_while_paused(
+    ) {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_283,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_303,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_304,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        st.set_gov_param(98_305, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let _ = challenged_task_fixture(&mut st, 8_115);
+        let before_task = st.get_task(8_115).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_forfeits = st.balance_of("treasury.challenge_forfeits");
+        let before_slashes = st.balance_of("treasury.worker_slashes");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_115,
+            task: Some(before_task.clone()),
+            balances: vec![
+                ("treasury.challenge_escrow".into(), Some(before_escrow)),
+                ("treasury.challenge_forfeits".into(), Some(before_forfeits)),
+                ("treasury.worker_slashes".into(), Some(before_slashes)),
+            ],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 2,
+                first_approver: "Authority-D".into(),
+                second_approver: Some("authority-c".into()),
+                authority_set: "Authority-D,Authority-C".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_115).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
+        assert_eq!(st.pending_resolve_approval(8_115), Some((false, 2)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_115).as_deref(),
+            Some("Authority-D")
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_115),
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 2,
+                first_approver: "Authority-D".into(),
+                second_approver: Some("authority-c".into()),
+                authority_set: "Authority-D,Authority-C".into(),
+                task_version: before_task.version,
+            })
+        );
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending replacement resolve_authority timelock should remain staged");
+        assert_eq!(pending.value, "authority-c,authority-d");
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("authority-a,authority-b".into()),
+            "rollback restore must preserve the active configured authority until the replacement matures"
+        );
+        assert!(st.is_emergency_paused());
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_stale_configured_resolve_state_when_pending_replacement_exists() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_260,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_280,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_281,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        let _ = challenged_task_fixture(&mut st, 8_114);
+
+        st.set_gov_param(98_282, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_114).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_forfeits = st.balance_of("treasury.challenge_forfeits");
+        let before_slashes = st.balance_of("treasury.worker_slashes");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_114,
+            task: Some(before_task.clone()),
+            balances: vec![
+                ("treasury.challenge_escrow".into(), Some(before_escrow)),
+                ("treasury.challenge_forfeits".into(), Some(before_forfeits)),
+                ("treasury.worker_slashes".into(), Some(before_slashes)),
+            ],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_114).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
+        assert_eq!(st.pending_resolve_approval(8_114), None);
+        assert_eq!(st.pending_resolve_first_approver(8_114), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(8_114), None);
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending replacement resolve_authority timelock should remain staged");
+        assert_eq!(pending.value, "authority-c,authority-d");
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("authority-a,authority-b".into()),
+            "rollback scrub must not mutate the active configured authority set"
+        );
+        assert!(st.is_emergency_paused());
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_invalid_pending_resolve_state() {
+        let mut st = StateStore::new();
+        let _ = challenged_task_fixture(&mut st, 8_110);
+        let before_task = st.get_task(8_110).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_110,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 3,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_110).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_110),
+            None,
+            "rollback must not revive malformed pending resolve quorum state"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_state_when_task_version_drifts() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_501,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_111);
+        let before_task = st.get_task(8_111).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_111,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version + 1,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_111).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_111),
+            None,
+            "rollback must not revive staged resolve quorum for a stale task version"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_finalized_pending_resolve_snapshot_missing_second_approver() {
+        let mut st = StateStore::new();
+        let _ = challenged_task_fixture(&mut st, 8_112);
+        let before_task = st.get_task(8_112).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_112,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_112).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_112),
+            None,
+            "rollback must not revive finalized resolve quorum without a distinct second approver audit trail"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_forbidden_approver_separator() {
+        let mut st = StateStore::new();
+        let _ = challenged_task_fixture(&mut st, 8_111);
+        let before_task = st.get_task(8_111).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_111,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority|a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_111).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_111),
+            None,
+            "rollback must scrub snapshot approvers that live parsing would reject"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_finalized_pending_resolve_snapshot_with_case_variant_duplicate_second_approver(
+    ) {
+        let mut st = StateStore::new();
+        let _ = challenged_task_fixture(&mut st, 8_113);
+        let before_task = st.get_task(8_113).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_113,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: Some("Authority-A".into()),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_113).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_113),
+            None,
+            "rollback must not revive finalized resolve quorum with a case-variant duplicate second approver"
+        );
+        assert_eq!(st.pending_resolve_first_approver(8_113), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(8_113), None);
     }
 
     #[test]
@@ -6096,6 +6527,75 @@ mod tests {
     }
 
     #[test]
+    fn paused_node_gate_skips_version_drift_resolve_replay_without_clearing_staged_quorum() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let (r5, _, _) = challenged_task_fixture(&mut st, 8_109_2);
+
+        let first = apply_one(
+            &mut st,
+            MockTx::Resolve {
+                task_id: r5.id,
+                slash_worker: true,
+                resolver: "authority-a".into(),
+            },
+            130,
+        );
+        assert!(matches!(
+            first.unwrap_err().downcast::<trnm_pouw::PouwError>(),
+            Ok(trnm_pouw::PouwError::ResolveApprovalStaged)
+        ));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+
+        st.set_gov_param(9_999, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let mut task_before = st.get_task(r5.id).expect("challenged task must exist");
+        task_before.version += 1;
+        st.restore_task(r5.id, Some(task_before.clone()));
+
+        let paused_tx = MockTx::Resolve {
+            task_id: r5.id,
+            slash_worker: true,
+            resolver: "authority-b".into(),
+        };
+        assert!(is_rejected_by_emergency_pause(true, &paused_tx));
+
+        let pending_before = st.pending_resolve_approval_snapshot(r5.id);
+        let escrow_before = st.balance_of("treasury.challenge_escrow");
+        let forfeit_before = st.balance_of("treasury.challenge_forfeits");
+
+        // If this replay reached apply_one after the challenged task version moved forward,
+        // resolve quorum staging would be cleared as stale. Emergency pause must block the tx
+        // before it can mutate pending approval state.
+        if !is_rejected_by_emergency_pause(st.is_emergency_paused(), &paused_tx) {
+            let _ = apply_one(&mut st, paused_tx, 131);
+        }
+
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(r5.id),
+            pending_before,
+            "pause gate must preserve staged multisig quorum across version-drift replay"
+        );
+        assert_eq!(
+            st.get_task(r5.id).expect("task should remain challenged"),
+            task_before
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeit_before);
+    }
+
+    #[test]
     fn paused_node_gate_skips_first_multisig_resolve_without_staging_or_escrow_drift() {
         let mut st = StateStore::new();
         st.set_gov_param_bootstrap_unchecked(
@@ -6136,6 +6636,74 @@ mod tests {
             st.pending_resolve_first_approver(r5.id),
             first_approver_before,
             "pause gate must not synthesize staged first approver state"
+        );
+        assert_eq!(
+            st.get_task(r5.id).expect("task should remain challenged"),
+            task_before
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeit_before);
+    }
+
+    #[test]
+    fn paused_node_gate_skips_pending_replacement_resolve_without_mutating_timelock_or_escrow_state(
+    ) {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let (r5, _, _) = challenged_task_fixture(&mut st, 8_109_3);
+
+        let scheduled = st
+            .set_gov_param(
+                9_998,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority should schedule before pause");
+        assert!(matches!(scheduled, GovParamUpdateOutcome::Scheduled { .. }));
+        let pending_gov_before = st
+            .pending_gov_update("resolve_authority")
+            .expect("replacement resolve_authority timelock should remain staged");
+
+        st.set_gov_param(9_999, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let paused_tx = MockTx::Resolve {
+            task_id: r5.id,
+            slash_worker: true,
+            resolver: "authority-a".into(),
+        };
+        assert!(is_rejected_by_emergency_pause(true, &paused_tx));
+
+        let task_before = st.get_task(r5.id).expect("challenged task must exist");
+        let pending_quorum_before = st.pending_resolve_approval_snapshot(r5.id);
+        let escrow_before = st.balance_of("treasury.challenge_escrow");
+        let forfeit_before = st.balance_of("treasury.challenge_forfeits");
+
+        if !is_rejected_by_emergency_pause(st.is_emergency_paused(), &paused_tx) {
+            let _ = apply_one(&mut st, paused_tx, 131);
+        }
+
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(r5.id),
+            pending_quorum_before,
+            "pause gate must not synthesize or clear staged quorum while a replacement authority is pending"
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            Some(pending_gov_before),
+            "pause gate must not mutate pending resolve_authority timelock state"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority").as_deref(),
+            Some("authority-a,authority-b"),
+            "pending replacement authority must not apply early while paused"
         );
         assert_eq!(
             st.get_task(r5.id).expect("task should remain challenged"),
@@ -6377,6 +6945,116 @@ mod tests {
             .expect("task must exist after timeout scan");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
+    fn timeout_scan_skips_challenged_task_while_paused_without_mutating_staged_resolve_state() {
+        // Governance boundary hardening: the node-level timeout scanner must not touch
+        // challenged settlement while paused, preserving staged resolve quorum and escrow.
+        let mut st = StateStore::new();
+        st.set_balance("worker7006", 1_000);
+        st.set_balance("challenger7006", 100);
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve authority should succeed");
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut st, 7006, "alice".into(), 100).unwrap();
+        let committed = compute_commitment(7006, &result_hash, &reveal_salt, "worker7006");
+        let r2 = apply_accept_task(&mut st, r1, "worker7006".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7006".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger7006".into(),
+            10,
+            "challenger7006".into(),
+            210,
+        )
+        .unwrap();
+
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            211,
+        )
+        .expect_err("first resolve approval should only stage quorum");
+        assert!(matches!(
+            staged,
+            trnm_pouw::PouwError::ResolveApprovalStaged
+        ));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+
+        st.set_gov_param(9_231, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let resolve_deadline = st
+            .get_task(7006)
+            .and_then(|t| t.resolve_deadline_height)
+            .expect("resolve deadline must be present after challenge");
+        let before_task = st.get_task(7006).expect("challenged task must exist");
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_forfeit = st.balance_of("treasury.challenge_forfeits");
+        let before_worker_slash = st.balance_of("treasury.worker_slashes");
+        let before_challenger = st.balance_of("challenger7006");
+
+        let known: HashSet<u64> = [7006u64].into_iter().collect();
+        let migrated = scan_and_apply_timeouts(
+            &mut st,
+            &known,
+            resolve_deadline.saturating_add(1),
+            9_100_201,
+        );
+
+        assert_eq!(migrated, 0);
+        let after_task = st
+            .get_task(7006)
+            .expect("challenged task must remain after paused scan");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.pending_resolve_approval(7006), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(7006).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeit);
+        assert_eq!(
+            st.balance_of("treasury.worker_slashes"),
+            before_worker_slash
+        );
+        assert_eq!(st.balance_of("challenger7006"), before_challenger);
     }
 
     #[test]
