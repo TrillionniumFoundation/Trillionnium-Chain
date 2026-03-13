@@ -1213,33 +1213,43 @@ def main():
     closeout_present_set = set(present_inputs)
     closeout_stale_inputs = [label for label in stale_inputs if label in closeout_present_set]
     closeout_old_inputs = [label for label in old_inputs if label in closeout_present_set]
-    closeout_ready_count = max(
-        0,
-        len(present_inputs) - len(closeout_stale_inputs) - len(closeout_old_inputs),
+    closeout_ready_inputs = sorted(
+        set(present_inputs) - set(closeout_stale_inputs) - set(closeout_old_inputs)
     )
+    closeout_ready_count = len(closeout_ready_inputs)
+    closeout_structural_blockers = []
+    if not bench_dir_exists:
+        closeout_structural_blockers.append("bench_dir")
+    if closeout_capture_status == "mixed_capture_window":
+        closeout_structural_blockers.append("capture_window:mixed")
+    elif closeout_capture_status == "divergent_capture_window":
+        closeout_structural_blockers.append("capture_window:divergent")
+    closeout_evidence_blockers = missing_inputs + closeout_stale_inputs + closeout_old_inputs
+    closeout_blockers = closeout_evidence_blockers + closeout_structural_blockers
     lines += ["", "## Closeout Action Summary"]
     lines.append(f"- closeout_decision: {closeout_status}")
     lines.append(f"- closeout_decision_reason: {closeout_reason}")
     lines.append(
         "- closeout_action_counts: "
-        f"missing={len(missing_inputs)} stale={len(closeout_stale_inputs)} old={len(closeout_old_inputs)} ready={closeout_ready_count}"
+        f"missing={len(missing_inputs)} stale={len(closeout_stale_inputs)} old={len(closeout_old_inputs)} ready={closeout_ready_count} structural={len(closeout_structural_blockers)}"
     )
     lines.append(f"- closeout_capture_cohesion: {closeout_capture_status}")
     lines.append(
         f"- closeout_capture_spread_seconds: {closeout_capture_spread_seconds if closeout_capture_spread_seconds is not None else 'n/a'}"
     )
-    closeout_blockers = missing_inputs + stale_inputs + old_inputs
-    if closeout_capture_status == "mixed_capture_window":
-        closeout_blockers.append("capture_window:mixed")
-    elif closeout_capture_status == "divergent_capture_window":
-        closeout_blockers.append("capture_window:divergent")
+    lines.append(
+        f"- closeout_evidence_blockers: {', '.join(closeout_evidence_blockers) if closeout_evidence_blockers else 'none'}"
+    )
+    lines.append(
+        f"- closeout_structural_blockers: {', '.join(closeout_structural_blockers) if closeout_structural_blockers else 'none'}"
+    )
     lines.append(
         f"- closeout_blockers: {', '.join(closeout_blockers) if closeout_blockers else 'none'}"
     )
     lines.append(
-        f"- closeout_ready_inputs: {', '.join(sorted(set(present_inputs) - set(stale_inputs) - set(old_inputs))) if present_inputs else 'none'}"
+        f"- closeout_ready_inputs: {', '.join(closeout_ready_inputs) if closeout_ready_inputs else 'none'}"
     )
-    closeout_followup_labels = missing_inputs + stale_inputs + old_inputs
+    closeout_followup_labels = closeout_evidence_blockers
     if closeout_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
         closeout_followup_labels = ["node_log", "classic_bench", "mixed_bench", "executor_profile"]
     closeout_followup_command_chain = build_followup_command_chain(
