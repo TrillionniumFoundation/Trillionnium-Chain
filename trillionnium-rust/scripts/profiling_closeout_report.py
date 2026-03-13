@@ -1468,6 +1468,8 @@ def main():
             "profile.report.elapsed_ms",
             "profile.report.path",
             "profile.report.artifact_basename",
+            "profile.report.output_line_count",
+            "profile.report.output_bytes",
             "profile.report.ungrouped_count",
             "profile.report.grouping_complete",
             "profile.report.persist_error",
