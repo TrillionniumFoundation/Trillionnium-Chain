@@ -2063,12 +2063,129 @@ fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot
     }
 }
 
+fn canonicalize_resolve_authority_snapshot(raw: &str) -> Option<String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() || trimmed != raw {
+        return None;
+    }
+
+    let has_forbidden_separator = |token: &str| {
+        token.contains(';')
+            || token.contains('|')
+            || token.contains('；')
+            || token.contains('，')
+            || token.contains('、')
+    };
+
+    let mut seen = std::collections::BTreeSet::new();
+    let mut canonical_members = Vec::new();
+    for member in trimmed.split(',') {
+        let member_trimmed = member.trim();
+        if member_trimmed.is_empty()
+            || member_trimmed != member
+            || member_trimmed.chars().any(|c| c.is_whitespace())
+            || has_forbidden_separator(member_trimmed)
+            || !member_trimmed.is_ascii()
+            || member_trimmed.eq_ignore_ascii_case("governance.resolve_authority")
+            || member_trimmed.eq_ignore_ascii_case("system")
+            || member_trimmed.eq_ignore_ascii_case("treasury.challenge_escrow")
+            || member_trimmed.eq_ignore_ascii_case("treasury.challenge_forfeits")
+            || member_trimmed.eq_ignore_ascii_case("treasury.worker_slashes")
+        {
+            return None;
+        }
+        let lowered = member_trimmed.to_ascii_lowercase();
+        if !seen.insert(lowered.clone()) {
+            return None;
+        }
+        canonical_members.push(lowered);
+    }
+
+    if canonical_members.len() < 2 {
+        return None;
+    }
+    canonical_members.sort();
+    Some(canonical_members.join(","))
+}
+
+fn is_canonical_resolve_approver_snapshot(raw: &str) -> bool {
+    let trimmed = raw.trim();
+    !trimmed.is_empty()
+        && trimmed == raw
+        && !trimmed.chars().any(|c| c.is_whitespace())
+        && !trimmed.contains(',')
+        && !trimmed.contains(';')
+        && !trimmed.contains('|')
+        && trimmed.is_ascii()
+        && !trimmed.eq_ignore_ascii_case("governance.resolve_authority")
+        && !trimmed.eq_ignore_ascii_case("system")
+        && !trimmed.eq_ignore_ascii_case("treasury.challenge_escrow")
+        && !trimmed.eq_ignore_ascii_case("treasury.challenge_forfeits")
+        && !trimmed.eq_ignore_ascii_case("treasury.worker_slashes")
+}
+
+fn restore_pending_resolve_approval_from_snapshot(
+    st: &mut StateStore,
+    task_id: u64,
+    snapshot: Option<PendingResolveApprovalSnapshot>,
+) {
+    st.clear_pending_resolve_approval(task_id);
+
+    let Some(snapshot) = snapshot else {
+        return;
+    };
+
+    let Some(task) = st.get_task(task_id) else {
+        return;
+    };
+    if snapshot.task_version != task.version {
+        return;
+    }
+    if snapshot.confirmations != 1 {
+        return;
+    }
+    if !is_canonical_resolve_approver_snapshot(&snapshot.first_approver) {
+        return;
+    }
+
+    let Some(snapshot_authority_set) =
+        canonicalize_resolve_authority_snapshot(&snapshot.authority_set)
+    else {
+        return;
+    };
+    let expected_authority_set = st
+        .pending_gov_update("resolve_authority")
+        .map(|pending| pending.value)
+        .or_else(|| st.gov_param_string("resolve_authority"));
+    let Some(expected_authority_set) = expected_authority_set
+        .as_deref()
+        .and_then(canonicalize_resolve_authority_snapshot)
+    else {
+        return;
+    };
+    if snapshot_authority_set != expected_authority_set {
+        return;
+    }
+
+    let _ = st.stage_or_confirm_resolve_approval(
+        task_id,
+        snapshot.task_version,
+        snapshot.slash_worker,
+        &snapshot.first_approver,
+        &snapshot.authority_set,
+    );
+}
+
 fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
     st.restore_task(snapshot.task_id, snapshot.task);
     for (address, balance) in snapshot.balances {
         st.restore_balance(&address, balance);
     }
-    st.restore_pending_resolve_approval(snapshot.task_id, snapshot.pending_resolve_approval);
+    restore_pending_resolve_approval_from_snapshot(
+        st,
+        snapshot.task_id,
+        snapshot.pending_resolve_approval,
+    );
 }
 
 fn balance_deltas_from_snapshot(
@@ -6196,7 +6313,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-c".into(),
-                second_approver: None,
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             }),
@@ -6217,7 +6333,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-c".into(),
-                second_approver: None,
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             })
@@ -6257,11 +6372,11 @@ mod tests {
             .expect("replacement resolve_authority update should be scheduled");
         assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
 
+        let _ = challenged_task_fixture(&mut st, 8_115);
         st.set_gov_param(98_305, 7_999, "emergency_pause".into(), "true".into())
             .expect("pause toggle must apply immediately");
         assert!(st.is_emergency_paused());
 
-        let _ = challenged_task_fixture(&mut st, 8_115);
         let before_task = st.get_task(8_115).unwrap();
         let before_escrow = st.balance_of("treasury.challenge_escrow");
         let before_forfeits = st.balance_of("treasury.challenge_forfeits");
@@ -6277,9 +6392,8 @@ mod tests {
             ],
             pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
                 slash_worker: false,
-                confirmations: 2,
+                confirmations: 1,
                 first_approver: "Authority-D".into(),
-                second_approver: Some("authority-c".into()),
                 authority_set: "Authority-D,Authority-C".into(),
                 task_version: before_task.version,
             }),
@@ -6291,7 +6405,7 @@ mod tests {
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
         assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
-        assert_eq!(st.pending_resolve_approval(8_115), Some((false, 2)));
+        assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
         assert_eq!(
             st.pending_resolve_first_approver(8_115).as_deref(),
             Some("Authority-D")
@@ -6300,9 +6414,8 @@ mod tests {
             st.pending_resolve_approval_snapshot(8_115),
             Some(PendingResolveApprovalSnapshot {
                 slash_worker: false,
-                confirmations: 2,
+                confirmations: 1,
                 first_approver: "Authority-D".into(),
-                second_approver: Some("authority-c".into()),
                 authority_set: "Authority-D,Authority-C".into(),
                 task_version: before_task.version,
             })
@@ -6374,7 +6487,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-a".into(),
-                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
@@ -6416,7 +6528,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 3,
                 first_approver: "authority-a".into(),
-                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
@@ -6454,7 +6565,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-a".into(),
-                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version + 1,
             }),
@@ -6486,7 +6596,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 2,
                 first_approver: "authority-a".into(),
-                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
@@ -6518,7 +6627,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority|a".into(),
-                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
@@ -6551,7 +6659,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 2,
                 first_approver: "authority-a".into(),
-                second_approver: Some("Authority-A".into()),
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
