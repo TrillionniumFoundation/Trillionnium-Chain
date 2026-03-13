@@ -84,6 +84,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_confirm_failure_reason_strips_u2065_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_confirm_failure_reason_strips_mvs_for_replay_stability \
   -- --nocapture
 
