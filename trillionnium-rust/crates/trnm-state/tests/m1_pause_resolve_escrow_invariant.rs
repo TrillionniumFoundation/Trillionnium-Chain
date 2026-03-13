@@ -144,6 +144,82 @@ fn resolve_authority_same_value_replace_preserves_pending_timelock_and_staged_qu
 }
 
 #[test]
+fn paused_resolve_authority_activation_scrubs_pending_resolve_approvals() {
+    // L03 boundary hardening: once a timelocked resolve_authority update activates under
+    // emergency_pause, any quorum staged against the pending authority set must be scrubbed so
+    // stale paused-state approvals cannot survive the authority boundary crossing.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_328,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_348,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_349,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    let activate_at_height = match replacement {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected Scheduled outcome, got {other:?}"),
+    };
+
+    st.set_gov_param(98_350, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_983, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before activation");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_983), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    let activated = st
+        .set_gov_param(
+            activate_at_height,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("timelocked resolve_authority should still apply while paused");
+    assert!(matches!(activated, GovParamUpdateOutcome::Applied(_)));
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority").as_deref(),
+        Some("authority-c,authority-d")
+    );
+    assert_eq!(st.pending_resolve_approval(9_983), None);
+    assert_eq!(st.pending_resolve_first_approver(9_983), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_983), None);
+    assert!(st.is_emergency_paused());
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "activating resolve_authority under pause must invalidate cached state root when scrubbing staged quorum"
+    );
+}
+
+#[test]
 fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
     // L03 boundary hardening: cancelling a staged resolve_authority timelock is still a
     // governance boundary transition and must scrub any staged resolve quorum immediately.
