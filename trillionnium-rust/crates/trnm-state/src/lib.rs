@@ -1168,7 +1168,14 @@ impl StateStore {
             self.pending_gov_updates.remove(&key);
             return Ok(out);
         }
-        self.upsert_gov_param_unchecked(key_id, key, value)
+
+        let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+        if key == "resolve_authority" {
+            self.invalidate_state_root_cache();
+            self.pending_gov_updates.remove(&key);
+            self.scrub_pending_resolve_approvals_for_authority_boundary();
+        }
+        Ok(out)
     }
 
     #[cfg(feature = "test-utils")]
@@ -2804,6 +2811,95 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(9_321), None);
         assert_eq!(st.pending_resolve_first_approver(9_321), None);
         assert_eq!(st.pending_resolve_approval_snapshot(9_321), None);
+    }
+
+    #[test]
+    fn bootstrap_unchecked_resolve_authority_boundary_scrubs_pending_timelock_and_quorum() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+
+        let activate_at_height = match st
+            .set_gov_param_with_action(
+                98_351,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("replacement resolve_authority update should be scheduled")
+        {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            other => panic!("expected Scheduled outcome, got {other:?}"),
+        };
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("replacement timelock should be staged")
+                .activate_at_height,
+            activate_at_height
+        );
+
+        st.put_task_new(TaskObject {
+            task_id: 9_981,
+            creator: "creator-a".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task must exist before staging resolve approval");
+
+        let ready = st
+            .stage_or_confirm_resolve_approval(
+                9_981,
+                1,
+                true,
+                "authority-c",
+                "authority-c,authority-d",
+            )
+            .expect("pending replacement authority should stage approval before unchecked rewrite");
+        assert!(!ready);
+        assert_eq!(st.pending_resolve_approval(9_981), Some((true, 1)));
+        let root_with_pending = st.state_root();
+
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-e,authority-f".into(),
+        )
+        .expect("unchecked resolve_authority rewrite should succeed");
+
+        assert_eq!(st.pending_gov_update("resolve_authority"), None);
+        assert_eq!(st.pending_resolve_approval(9_981), None);
+        assert_eq!(st.pending_resolve_first_approver(9_981), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(9_981), None);
+        assert_eq!(
+            st.gov_param_string("resolve_authority").as_deref(),
+            Some("authority-e,authority-f")
+        );
+        assert_ne!(
+            root_with_pending,
+            st.state_root(),
+            "unchecked resolve_authority boundary rewrite must invalidate cached state root"
+        );
     }
 
     #[test]
