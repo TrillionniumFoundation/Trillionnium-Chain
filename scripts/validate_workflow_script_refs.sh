@@ -126,6 +126,11 @@ if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
   echo "[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)"
 fi
 
+empty_ref_count=0
+if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
+  empty_ref_count=1
+fi
+
 for ref in "${SCRIPT_REFS[@]}"; do
   path="${ref#./}"
 
@@ -166,7 +171,7 @@ fi
 
 end_epoch="$(date -u +%s)"
 status="ok"
-if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$non_dot_script_ref_count" != "0" ]]; then
+if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$non_dot_script_ref_count" != "0" || "$empty_ref_count" != "0" ]]; then
   if [[ "$STRICT_MODE" == "1" ]]; then
     status="fail"
   else
