@@ -133,11 +133,35 @@ impl TeeVerifier {
             return "evidence/claims";
         };
 
-        let tokens = reason
-            .split(|ch: char| !ch.is_ascii_alphanumeric())
-            .filter(|token| !token.is_empty())
-            .map(|token| token.to_ascii_lowercase())
-            .collect::<Vec<_>>();
+        let mut tokens = Vec::new();
+        for raw in reason.split(|ch: char| !ch.is_ascii_alphanumeric()) {
+            if raw.is_empty() {
+                continue;
+            }
+
+            let mut start = 0usize;
+            let chars = raw.char_indices().collect::<Vec<_>>();
+            for idx in 1..chars.len() {
+                let (byte_idx, ch) = chars[idx];
+                let prev = chars[idx - 1].1;
+                let next = chars.get(idx + 1).map(|(_, next)| *next);
+                let upper_after_lower = ch.is_ascii_uppercase() && prev.is_ascii_lowercase();
+                let upper_before_lower = ch.is_ascii_uppercase()
+                    && prev.is_ascii_uppercase()
+                    && next.is_some_and(|next| next.is_ascii_lowercase());
+                if upper_after_lower || upper_before_lower {
+                    let token = &raw[start..byte_idx];
+                    if !token.is_empty() {
+                        tokens.push(token.to_ascii_lowercase());
+                    }
+                    start = byte_idx;
+                }
+            }
+            let token = &raw[start..];
+            if !token.is_empty() {
+                tokens.push(token.to_ascii_lowercase());
+            }
+        }
 
         let mentions = |predicate: fn(&str) -> bool| tokens.iter().any(|token| predicate(token));
 
@@ -1672,6 +1696,57 @@ mod tests {
             msg.contains("legacy: cannot currently verify TEE attestation quote/report claims"),
             "message: {msg}"
         );
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_camel_case_quote_report_claims_maps_to_combined_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quoteReportClaims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_camel_case_report_receipt_claims_maps_to_report_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "reportReceiptClaims verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("report evidence"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
     #[test]
