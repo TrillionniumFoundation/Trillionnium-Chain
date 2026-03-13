@@ -1090,6 +1090,19 @@ mod tests {
     }
 
     #[test]
+    fn backend_system_hint_keeps_tee_platform_extraction_stable_when_attestation_ids_include_payload_wording(
+    ) {
+        for (raw, expected) in [
+            ("tee remote attestation payload sgx", "sgx"),
+            ("remoteAttestationPayloadSnp", "snp"),
+            ("intelAttestationPayloadClaimsTdx", "tdx"),
+            ("amd attestation payload certificates snp", "snp"),
+        ] {
+            assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
+        }
+    }
+
+    #[test]
     fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
     ) {
         assert_eq!(
