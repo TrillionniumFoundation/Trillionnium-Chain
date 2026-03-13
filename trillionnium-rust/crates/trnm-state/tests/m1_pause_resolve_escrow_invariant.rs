@@ -511,6 +511,82 @@ fn paused_state_rejects_system_or_treasury_resolve_authority_members_without_sid
 }
 
 #[test]
+fn paused_state_rejects_reserved_system_resolve_approvers_without_side_effects() {
+    // M1 boundary hardening: even while paused, staged resolve approvals must reject
+    // reserved/system actors as approvers so custody aliases cannot masquerade as quorum votes.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 31_101);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 779);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 19);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_181, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let slashes_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+    let root_before = st.state_root();
+
+    for forbidden_approver in [
+        "system",
+        "Governance.Resolve_Authority",
+        "TREASURY.CHALLENGE_ESCROW",
+        "treasury.worker_slashes",
+    ] {
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                9_810,
+                1,
+                true,
+                forbidden_approver,
+                "authority-a,authority-b",
+            )
+            .expect_err("reserved/system approver must be rejected while paused");
+        assert!(
+            err.contains("explicit non-system authority")
+                || err.contains("single canonical actor id"),
+            "unexpected error for {forbidden_approver}: {err}"
+        );
+        assert_eq!(
+            st.pending_resolve_approval(9_810),
+            None,
+            "rejected approver must not leave staged quorum residue"
+        );
+        assert_eq!(st.pending_resolve_first_approver(9_810), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(9_810), None);
+        assert_eq!(st.state_root(), root_before);
+    }
+
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), slashes_before);
+}
+
+#[test]
 fn paused_state_rejects_resolve_approval_authority_set_drift_without_side_effects() {
     // M1 boundary hardening: once governance has a configured resolve_authority set, staged
     // resolve approvals must match it exactly even while paused so callers cannot smuggle a
