@@ -1077,6 +1077,19 @@ mod tests {
     }
 
     #[test]
+    fn backend_system_hint_extracts_concrete_tee_platform_from_vendor_led_camel_case_attestation_ids(
+    ) {
+        for (raw, expected) in [
+            ("intelRemoteAttestationQuoteSgx", "sgx"),
+            ("intelAttestationReceiptClaimsTdx", "tdx"),
+            ("amdRemoteAttestationReportSnp", "snp"),
+            ("amdAttestationCertificatesClaimsSnp", "snp"),
+        ] {
+            assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
+        }
+    }
+
+    #[test]
     fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
     ) {
         assert_eq!(
