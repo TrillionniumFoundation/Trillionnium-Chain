@@ -1877,6 +1877,59 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_feature_on_bridge_fixture_matrix_keeps_groth16_plonk_suffix_pairs_in_sync() {
+        use std::collections::BTreeMap;
+        use std::fs;
+        use std::path::PathBuf;
+
+        let fixtures_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/zk");
+        let mut suffix_families: BTreeMap<String, Vec<String>> = BTreeMap::new();
+
+        for fixture_path in fs::read_dir(&fixtures_dir)
+            .expect("fixtures/zk directory should exist")
+            .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        {
+            let Some(name) = fixture_path.file_name().and_then(|name| name.to_str()) else {
+                continue;
+            };
+            if !name.starts_with("real_backend_bridge_")
+                || !name.contains("_feature_on")
+                || !name.ends_with(".json")
+            {
+                continue;
+            }
+
+            let stem = name.trim_end_matches(".json");
+            for family in ["groth16", "plonk"] {
+                let prefix = format!("real_backend_bridge_{family}_");
+                if let Some(suffix) = stem.strip_prefix(&prefix) {
+                    suffix_families
+                        .entry(suffix.to_string())
+                        .or_default()
+                        .push(family.to_string());
+                    break;
+                }
+            }
+        }
+
+        assert!(
+            suffix_families.len() >= 24,
+            "expected broad feature-on bridge suffix coverage, found {} suffixes",
+            suffix_families.len()
+        );
+
+        for (suffix, mut families) in suffix_families {
+            families.sort();
+            assert_eq!(
+                families,
+                vec!["groth16".to_string(), "plonk".to_string()],
+                "feature-on bridge fixtures drifted for suffix '{suffix}'"
+            );
+        }
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
