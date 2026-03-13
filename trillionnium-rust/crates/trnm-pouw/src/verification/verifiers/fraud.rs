@@ -265,6 +265,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_semicolon_delimited_duplicate_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7;\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_proof_type_mismatch_when_present() {
         let verifier = FraudVerifier;
         let task = mock_task();
