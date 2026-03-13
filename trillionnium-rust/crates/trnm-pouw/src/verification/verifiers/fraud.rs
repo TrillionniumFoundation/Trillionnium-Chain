@@ -108,6 +108,17 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_prefix_without_visible_body_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"\xef\xbb\xbfFRAUD:\n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid fraud proof envelope")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
