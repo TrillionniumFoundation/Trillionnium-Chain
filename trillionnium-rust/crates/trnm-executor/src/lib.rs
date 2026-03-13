@@ -860,9 +860,11 @@ fn parse_env_f64(name: &str) -> Option<f64> {
                     && frac.chars().all(|ch| ch.is_ascii_digit())
                 {
                     let whole_digits = whole.trim_start_matches(['+', '-']);
+                    let whole_is_zero = !whole_digits.is_empty()
+                        && whole_digits.chars().all(|ch| ch == '0');
                     let comma_is_grouping = frac.len() == 3
                         && whole.chars().any(|ch| ch.is_ascii_digit())
-                        && whole_digits != "0";
+                        && !whole_is_zero;
                     if comma_is_grouping {
                         numeric.replace(',', "")
                     } else {
@@ -2076,6 +2078,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_integer_env_parsers_accept_quoted_plus_prefixed_comma_grouped_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " \"+1,024\" ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+9,001' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"+1,6\" ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 16);
+    }
+
+    #[test]
     fn aggressive_unsigned_env_knobs_fail_closed_on_negative_values() {
         let _env = env_lock();
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "-128");
@@ -2141,6 +2155,22 @@ mod tests {
 
         let _deep_on = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " \"on\" ");
         assert!(aggr_deep_scan_enabled());
+    }
+
+    #[test]
+    fn aggressive_toggle_parsers_accept_quoted_no_tokens() {
+        let _env = env_lock();
+
+        let _rr_no = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " \"no\" ");
+        assert!(!aggr_scan_round_robin_enabled());
+        drop(_rr_no);
+
+        let _deep_no = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " 'no' ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_no);
+
+        let _skip_no = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " \"no\" ");
+        assert!(!aggr_skip_empty_stage_checks());
     }
 
     #[test]
@@ -2273,6 +2303,24 @@ mod tests {
     }
 
     #[test]
+    fn grouped_integer_env_parsers_accept_quoted_comma_grouped_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " \"1,024\" ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '9,001' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"1,6\" ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '2,048' ");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " \"1,536\" ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 2048);
+        assert_eq!(auto_adaptive_sample_len(5000), 1536);
+        assert_eq!(auto_adaptive_sample_len(1400), 1400);
+    }
+
+    #[test]
     fn auto_adaptive_numeric_env_parser_accepts_percent_suffix_for_ratio_knobs() {
         let _env = env_lock();
 
@@ -2340,6 +2388,21 @@ mod tests {
         let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+0,125' ");
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"0,375\"");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '0,050' ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.125);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_treats_all_zero_whole_comma_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "000,250");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+000,125' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"000,375\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '000,050' ");
 
         assert_eq!(auto_hot_streak_threshold(), 0.25);
         assert_eq!(auto_reorder_min_margin(), 0.125);
@@ -2422,6 +2485,16 @@ mod tests {
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "'+5,1,2'");
 
         assert_eq!(auto_adaptive_min_batch_len(), 512);
+    }
+
+    #[test]
+    fn auto_adaptive_sample_len_rejects_ambiguous_grouped_comma_values() {
+        let _env = env_lock();
+
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "'+1,5,3,6'");
+
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        assert_eq!(auto_adaptive_sample_len(128), 128);
     }
 
     #[test]
@@ -2537,6 +2610,17 @@ mod tests {
         let _plus = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+1_536' ");
         assert_eq!(auto_adaptive_sample_len(5000), 1536);
         assert_eq!(auto_adaptive_sample_len(1024), 1024);
+    }
+
+    #[test]
+    fn auto_adaptive_sample_len_preserves_zero_for_empty_batches_even_with_env_floor() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+
+        // The experimental sample-size floor must not manufacture probe work
+        // for empty batches. Keep the helper fail-closed at zero so later
+        // callers cannot accidentally treat an empty batch as sampled.
+        assert_eq!(auto_adaptive_sample_len(0), 0);
     }
 
     #[test]
@@ -2857,6 +2941,35 @@ mod tests {
         assert!(
             d.use_hot_bucket,
             "late read-only hotspot should be visible in adaptive sample"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_default_sample_boundary_uses_direct_scan_for_tail_hotspots() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // The default adaptive sample window tops out at 2048 txs. Keep the
+        // exact boundary on the direct-scan fast path so future tuning does not
+        // accidentally sample a partial prefix and miss a hotspot that appears
+        // only in the batch tail.
+        let mut txs = Vec::with_capacity(2048);
+        for i in 0..1024u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..1024u64 {
+            txs.push(tx(2_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(
+            d.use_hot_bucket,
+            "default sample boundary should stay on direct-scan and keep tail hotspots visible"
         );
         assert_eq!(d.reason, "hotspot_detected");
     }
