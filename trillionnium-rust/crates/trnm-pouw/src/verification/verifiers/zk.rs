@@ -595,6 +595,28 @@ mod tests {
         }
     }
 
+    struct MockLegacySuccessBackend {
+        backend_id: &'static str,
+    }
+
+    impl ZkBackend for MockLegacySuccessBackend {
+        fn backend_id(&self) -> &str {
+            self.backend_id
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            assert!(request.zk_payload.is_none());
+            assert!(request.resolved_vk_ref.is_none());
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id.into(),
+            })
+        }
+    }
+
     struct MockUnavailableBackend;
     impl ZkBackend for MockUnavailableBackend {
         fn backend_id(&self) -> &str {
@@ -1354,6 +1376,26 @@ mod tests {
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
         assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn zk_verifier_accepts_selected_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint_even_without_json_payload() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockLegacySuccessBackend {
+            backend_id: "zk groth16 groth16 demo",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("zk-groth16-groth16-demo".into());
+        config.zk_features.zk_payload_v0_envelope = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let legacy_payload = b"ZK:task_id=99;worker=worker-zk;result_hash=1111111111111111111111111111111111111111111111111111111111111111;proof_type=zk;receipt=legacy";
+
+        assert_eq!(
+            verifier.verify_proof(&task, legacy_payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
