@@ -351,6 +351,24 @@ impl LaneAdmissionGate {
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
+        if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
+            // Idle dequeue polls are common in long-lived schedulers. Treat them as a
+            // self-heal boundary too so restored-state ghost caches/fairness state do
+            // not survive indefinitely when no fresh admit() arrives to reset them.
+            if !(self.normal.seen.is_empty()
+                && self.critical.seen.is_empty()
+                && self.seen_global.is_empty())
+            {
+                self.normal.seen.clear();
+                self.critical.seen.clear();
+                self.seen_global.clear();
+            }
+            if self.critical_served_streak != 0 {
+                self.critical_served_streak = 0;
+            }
+            return None;
+        }
+
         let prefer_normal = self.normal_has_dedicated_capacity
             && self.critical_served_streak >= self.critical_burst_limit
             && !self.normal.queue.is_empty();
@@ -1329,6 +1347,27 @@ mod tests {
 
         // Critical should not be spuriously preempted by stale fairness state.
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn idle_pop_ready_self_heals_stale_restored_state_without_waiting_for_admit() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Simulate restored idle state where no queued work remains but lane-local,
+        // lane-wide, and fairness bookkeeping are all stale-hot.
+        g.normal.seen.insert(7001);
+        g.critical.seen.insert(7002);
+        g.seen_global.insert(7003);
+        g.critical_served_streak = g.critical_burst_limit;
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // Idle dequeue polls should act as a self-heal boundary even before any new
+        // ingress arrives.
+        assert_eq!(g.pop_ready(), None);
+        assert!(g.normal.seen.is_empty());
+        assert!(g.critical.seen.is_empty());
+        assert!(g.seen_global.is_empty());
+        assert_eq!(g.critical_served_streak, 0);
     }
 
     #[test]
