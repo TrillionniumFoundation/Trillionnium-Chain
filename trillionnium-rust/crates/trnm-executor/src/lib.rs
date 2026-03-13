@@ -2221,6 +2221,31 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_small_batch_guardrail_only_promotes_at_minimum_hotspot_batch_size() {
+        let under_min = (0..31)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+        let under_decision = auto_adaptive_decision(&under_min);
+        assert!(!under_decision.use_hot_bucket);
+        assert_eq!(under_decision.reason, "small_batch");
+        assert!(matches!(
+            resolve_grouping_strategy(&under_min, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::Original
+        ));
+
+        let at_min = (0..32)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+        let at_min_decision = auto_adaptive_decision(&at_min);
+        assert!(at_min_decision.use_hot_bucket);
+        assert_eq!(at_min_decision.reason, "hotspot_detected");
+        assert!(matches!(
+            resolve_grouping_strategy(&at_min, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+    }
+
+    #[test]
     fn default_profile_strategy_stays_on_original_even_when_auto_adaptive_prefers_hot_bucket() {
         let txs = (0..1_024)
             .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
