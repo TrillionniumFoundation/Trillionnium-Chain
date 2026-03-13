@@ -740,6 +740,31 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
     None
 }
 
+fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
+    let direct = [
+        "tx_hash",
+        "txhash",
+        "txHash",
+        "transaction_hash",
+        "transactionHash",
+    ];
+    for key in direct {
+        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
+            if let Some(normalized) = normalize_tx_hash(h) {
+                return Some(normalized);
+            }
+        }
+    }
+
+    for key in ["result", "tx_response", "txResponse", "response", "data"] {
+        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+            return Some(found);
+        }
+    }
+
+    None
+}
+
 fn extract_tx_hash(text: &str) -> Option<String> {
     if let Some(v) = text.split_whitespace().find_map(|w| {
         let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
@@ -747,7 +772,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             .split_once('=')
             .or_else(|| trimmed.split_once(':'))?;
         match k.trim().to_ascii_lowercase().as_str() {
-            "tx_hash" | "txhash" => normalize_tx_hash(v),
+            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => normalize_tx_hash(v),
             _ => None,
         }
     }) {
@@ -755,12 +780,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
     }
 
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
-        if let Some(h) = v.get("tx_hash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
-        if let Some(h) = v.get("txhash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
+        return json_value_tx_hash(&v);
     }
 
     None
@@ -810,7 +830,10 @@ fn run_template_raw(cmd: &str) -> Result<String> {
             stderr
         );
     }
-    Ok(stdout.to_string())
+
+    let mut merged = stdout.to_string();
+    merged.push_str(&stderr);
+    Ok(merged)
 }
 
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
@@ -863,16 +886,26 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
 fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
-        .trim_matches('"')
-        .trim_matches('\'')
-        .trim_matches('`')
+        .trim_matches(|c: char| {
+            c.is_ascii_whitespace()
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':'
+                )
+        })
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
-    match cleaned.as_str() {
-        "pending" => Some("pending".to_string()),
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" => Some("committed".to_string()),
+    let canonical = cleaned.replace([' ', '-'], "_");
+    match canonical.as_str() {
+        "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
+        | "broadcasting" | "processing" | "executing" | "in_progress" | "inflight"
+        | "in_flight" => Some("pending".to_string()),
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized"
+        | "finalised" | "finalising" | "finalizing" | "complete" | "completed" | "done" => {
+            Some("committed".to_string())
+        }
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
-        | "timeout" | "timed_out" | "timed-out" => Some("fail".to_string()),
+        | "timeout" | "timed_out" | "expired" => Some("fail".to_string()),
         _ => None,
     }
 }
@@ -902,11 +935,86 @@ fn normalize_json_error(value: &serde_json::Value) -> Option<String> {
     }
 }
 
+fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::String(s) => normalize_tx_status(s),
+        serde_json::Value::Number(n) => n
+            .as_i64()
+            .map(|code| if code == 0 { "committed" } else { "fail" }.to_string()),
+        serde_json::Value::Bool(b) => Some(if *b { "committed" } else { "fail" }.to_string()),
+        _ => None,
+    }
+}
+
+fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    match current {
+        serde_json::Value::Number(n) => n.as_u64(),
+        serde_json::Value::String(s) => s.trim().parse::<u64>().ok(),
+        _ => None,
+    }
+}
+
+fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
+    for path in [
+        ["tx_result", "code"].as_slice(),
+        ["deliver_tx", "code"].as_slice(),
+        ["check_tx", "code"].as_slice(),
+        ["code"].as_slice(),
+        ["tx_code"].as_slice(),
+        ["transaction_code"].as_slice(),
+        ["deliver_tx_code"].as_slice(),
+        ["check_tx_code"].as_slice(),
+    ] {
+        if let Some(code) = json_u64_at_path(value, path) {
+            return Some(if code == 0 { "committed" } else { "fail" }.to_string());
+        }
+    }
+    None
+}
+
+fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
+    match key {
+        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
+        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+            let cleaned = value
+                .trim()
+                .trim_matches('"')
+                .trim_matches('\'')
+                .trim_matches('`')
+                .trim_end_matches(|c: char| c.is_ascii_punctuation());
+            let code = cleaned.parse::<u64>().ok()?;
+            Some(if code == 0 { "committed" } else { "fail" }.to_string())
+        }
+        _ => None,
+    }
+}
+
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
         let payload = v.get("result").unwrap_or(&v);
-        let raw_tx_hash = payload
+        let nested_tx_response = payload
+            .get("tx_response")
+            .or_else(|| payload.get("txResponse"))
+            .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
+            .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
+        let nested_response_data = payload
+            .get("response")
+            .and_then(|r| r.get("data"))
+            .or_else(|| payload.get("responseData"));
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .unwrap_or(payload);
+        let raw_tx_hash = primary
             .get("tx_hash")
+            .or_else(|| primary.get("txhash"))
+            .or_else(|| primary.get("txHash"))
+            .or_else(|| primary.get("transaction_hash"))
+            .or_else(|| primary.get("transactionHash"))
+            .or_else(|| payload.get("tx_hash"))
             .or_else(|| payload.get("txhash"))
             .or_else(|| payload.get("txHash"))
             .or_else(|| payload.get("transaction_hash"))
@@ -918,12 +1026,41 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
-        let status = payload
+        let status = primary
             .get("status")
-            .and_then(|x| x.as_str())
-            .and_then(normalize_tx_status)
+            .or_else(|| primary.get("tx_status"))
+            .or_else(|| primary.get("txStatus"))
+            .or_else(|| primary.get("transaction_status"))
+            .or_else(|| primary.get("transactionStatus"))
+            .or_else(|| primary.get("state"))
+            .or_else(|| primary.get("tx_state"))
+            .or_else(|| primary.get("txState"))
+            .or_else(|| primary.get("transaction_state"))
+            .or_else(|| primary.get("transactionState"))
+            .or_else(|| payload.get("status"))
+            .or_else(|| payload.get("tx_status"))
+            .or_else(|| payload.get("txStatus"))
+            .or_else(|| payload.get("transaction_status"))
+            .or_else(|| payload.get("transactionStatus"))
+            .or_else(|| payload.get("state"))
+            .or_else(|| payload.get("tx_state"))
+            .or_else(|| payload.get("txState"))
+            .or_else(|| payload.get("transaction_state"))
+            .or_else(|| payload.get("transactionState"))
+            .and_then(normalize_json_status)
+            .or_else(|| infer_json_tx_status(primary))
+            .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
-        let error = payload.get("error").and_then(normalize_json_error);
+        let error = primary
+            .get("error")
+            .or_else(|| primary.get("raw_log"))
+            .or_else(|| primary.get("rawLog"))
+            .or_else(|| primary.get("log"))
+            .or_else(|| payload.get("error"))
+            .or_else(|| payload.get("raw_log"))
+            .or_else(|| payload.get("rawLog"))
+            .or_else(|| payload.get("log"))
+            .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
             status,
@@ -953,12 +1090,20 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
                 }
-                "status" => {
+                "status" | "tx_status" | "txstatus" | "transaction_status"
+                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
+                | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "error" => {
+                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
+                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+                    if status.is_none() {
+                        status = infer_kv_tx_status(&key, &value);
+                    }
+                }
+                "error" | "raw_log" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
@@ -987,6 +1132,14 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
+
+    if let Some(status) = query_local_tx_status(&requested) {
+        return Ok(TxQueryResponse {
+            tx_hash: requested,
+            status,
+            error: None,
+        });
+    }
 
     if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
         let cmd = tpl(template, "tx_hash", &requested);
@@ -1071,20 +1224,42 @@ fn wait_for_tx<F>(
 where
     F: FnMut(&str) -> Result<TxQueryResponse>,
 {
+    if timeout.is_zero() {
+        bail!("tx wait timeout must be greater than 0s");
+    }
+    if interval.is_zero() {
+        bail!("tx wait interval must be greater than 0s");
+    }
+
+    let requested = normalize_tx_hash(tx_hash)
+        .ok_or_else(|| anyhow!("invalid tx hash for wait (expected hex-like tx hash)"))?;
     let started = Instant::now();
     loop {
-        let resp = query_fn(tx_hash)?;
+        let resp = query_fn(&requested)?;
+        if let Some(got) = normalize_tx_hash(&resp.tx_hash) {
+            if got != requested {
+                bail!(
+                    "tx wait response hash mismatch: requested={}, got={}",
+                    requested,
+                    got
+                );
+            }
+        }
         if is_terminal_tx_status(&resp.status) {
             return Ok(resp);
         }
-        if started.elapsed() >= timeout {
+
+        let elapsed = started.elapsed();
+        if elapsed >= timeout {
             bail!(
                 "tx wait timeout after {}s (last_status={})",
                 timeout.as_secs(),
                 resp.status
             );
         }
-        thread::sleep(interval);
+
+        let remaining = timeout.saturating_sub(elapsed);
+        thread::sleep(interval.min(remaining));
     }
 }
 
@@ -1109,9 +1284,20 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let raw = fs::read_to_string(path).ok()?;
     let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
     let rec = v.get(tx_hash)?;
-    rec.get("status")
-        .and_then(|s| s.as_str())
-        .and_then(normalize_tx_status)
+    [
+        "status",
+        "tx_status",
+        "txStatus",
+        "transaction_status",
+        "transactionStatus",
+        "state",
+        "tx_state",
+        "txState",
+        "transaction_state",
+        "transactionState",
+    ]
+    .into_iter()
+    .find_map(|key| rec.get(key).and_then(normalize_json_status))
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
@@ -1136,6 +1322,14 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         tx_hash.to_string(),
         serde_json::json!({
             "tx_hash": tx_hash,
+            "tx": {
+                "from": "trnm1pendingplaceholderfrom",
+                "to": "trnm1pendingplaceholderto",
+                "amount": 0,
+                "fee": 0,
+                "nonce": 0,
+                "signature": "pending"
+            },
             "status": "pending",
             "error": null,
             "submitted_at_unix_ms": now_ms,
@@ -1144,6 +1338,25 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
     );
 
     fs::write(path, serde_json::to_string_pretty(&root)?)?;
+    Ok(())
+}
+
+fn format_tx_hash_line(tx_hash: &str) -> String {
+    format!("tx_hash=\"{}\"", tx_hash)
+}
+
+fn format_tx_hash_alias_line(tx_hash: &str) -> String {
+    format!("txhash={}", tx_hash)
+}
+
+fn emit_tx_hash_lines(tx_hash: &str) {
+    println!("{}", format_tx_hash_line(tx_hash));
+    println!("{}", format_tx_hash_alias_line(tx_hash));
+}
+
+fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
+    persist_local_pending_tx(tx_hash)?;
+    emit_tx_hash_lines(tx_hash);
     Ok(())
 }
 
@@ -1190,7 +1403,7 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "commit_hash", &commit_hash);
                     cmd = tpl(cmd, "nonce", &nonce.to_string());
                     let tx_hash = run_template(&cmd)?;
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 } else {
                     let tx_hash = hash(&[
                         "commit-result",
@@ -1199,7 +1412,7 @@ fn main() -> Result<()> {
                         &commit_hash,
                         &nonce.to_string(),
                     ]);
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 }
             }
             TxCommand::RevealResult {
@@ -1213,7 +1426,7 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "result_hash", &result_hash);
                     cmd = tpl(cmd, "salt_hex", &salt_hex);
                     let tx_hash = run_template(&cmd)?;
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 } else {
                     let tx_hash = hash(&[
                         "reveal-result",
@@ -1221,12 +1434,12 @@ fn main() -> Result<()> {
                         &result_hash,
                         &salt_hex,
                     ]);
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 }
             }
             TxCommand::Query { tx_hash } => {
                 let resp = tx_query(&tx_hash)?;
-                println!("tx_hash={}", resp.tx_hash);
+                emit_tx_hash_lines(&resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -1243,7 +1456,7 @@ fn main() -> Result<()> {
                     Duration::from_secs(interval),
                     tx_query,
                 )?;
-                println!("tx_hash={}", resp.tx_hash);
+                emit_tx_hash_lines(&resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -1273,9 +1486,10 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "amount", &req.amount);
                     cmd = tpl(cmd, "denom", &req.denom);
                     let tx_hash = run_template(&cmd)?;
+                    persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
-                        status: "submitted".into(),
+                        status: "pending".into(),
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
@@ -1444,6 +1658,26 @@ mod tests {
     }
 
     #[test]
+    fn format_tx_hash_line_quotes_value_for_shell_readiness_probes() {
+        assert_eq!(
+            format_tx_hash_line("0xabc123"),
+            "tx_hash=\"0xabc123\"".to_string()
+        );
+        assert_eq!(
+            format_tx_hash_alias_line("0xabc123"),
+            "txhash=0xabc123".to_string()
+        );
+        assert_eq!(
+            extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_tx_hash_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+    }
+
+    #[test]
     fn extract_tx_hash_accepts_case_insensitive_keys_and_colon_separator() {
         assert_eq!(
             extract_tx_hash("INFO start TX_HASH:0xbeef01, done").as_deref(),
@@ -1453,6 +1687,42 @@ mod tests {
             extract_tx_hash("meta txHash=0xcafe02;").as_deref(),
             Some("0xcafe02")
         );
+        assert_eq!(
+            extract_tx_hash("operator transaction_hash:0xface03,").as_deref(),
+            Some("0xface03")
+        );
+        assert_eq!(
+            extract_tx_hash("note transactionHash=0xbabe04").as_deref(),
+            Some("0xbabe04")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_uppercase_prefixed_hashes_and_json_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=0xDEADBEEFCAFEBABE").as_deref(),
+            Some("0xdeadbeefcafebabe")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
+            Some("abcdef012345")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_nested_json_wrappers() {
+        let wrapped = "{\"result\":{\"tx_response\":{\"txhash\":\"0xABC123\"}}}";
+        assert_eq!(extract_tx_hash(wrapped).as_deref(), Some("0xabc123"));
+
+        let response = "{\"response\":{\"data\":{\"transactionHash\":\"BEEF4567\"}}}";
+        assert_eq!(extract_tx_hash(response).as_deref(), Some("beef4567"));
+    }
+
+    #[test]
+    fn run_template_extracts_nested_json_tx_hash_without_fallback_surrogate() {
+        let cmd = "python3 -c \"print('{\\\"result\\\":{\\\"tx_response\\\":{\\\"txhash\\\":\\\"0xABC123\\\"}}}')\"";
+        let extracted = run_template(cmd).unwrap();
+        assert_eq!(extracted, "0xabc123");
     }
 
     #[test]
@@ -1478,6 +1748,35 @@ mod tests {
     }
 
     #[test]
+    fn tx_query_parse_json_accepts_nested_tx_response_wrappers() {
+        let wrapped = "{\"tx_response\":{\"txhash\":\"ABC123\",\"code\":0}}";
+        let parsed_wrapped = parse_tx_query_response(wrapped, "0xfallback").unwrap();
+        assert_eq!(parsed_wrapped.tx_hash, "abc123");
+        assert_eq!(parsed_wrapped.status, "committed");
+        assert_eq!(parsed_wrapped.error, None);
+
+        let nested = "{\"result\":{\"response\":{\"tx_response\":{\"transactionHash\":\"0xdef456\",\"transactionState\":\"FINALIZED\",\"error\":\"NULL\"}}}}";
+        let parsed_nested = parse_tx_query_response(nested, "0xfallback").unwrap();
+        assert_eq!(parsed_nested.tx_hash, "0xdef456");
+        assert_eq!(parsed_nested.status, "committed");
+        assert_eq!(parsed_nested.error, None);
+
+        let nested_response_data = "{\"result\":{\"response\":{\"data\":{\"transactionHash\":\"0xfeed99\",\"transactionStatus\":\"confirmed\",\"rawLog\":\"NULL\"}}}}";
+        let parsed_nested_response_data =
+            parse_tx_query_response(nested_response_data, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_response_data.tx_hash, "0xfeed99");
+        assert_eq!(parsed_nested_response_data.status, "committed");
+        assert_eq!(parsed_nested_response_data.error, None);
+
+        let result_response_data = "{\"result\":{\"responseData\":{\"txHash\":\"0xbeef77\",\"txStatus\":\"accepted\",\"rawLog\":\"null\"}}}";
+        let parsed_result_response_data =
+            parse_tx_query_response(result_response_data, "0xfallback").unwrap();
+        assert_eq!(parsed_result_response_data.tx_hash, "0xbeef77");
+        assert_eq!(parsed_result_response_data.status, "pending");
+        assert_eq!(parsed_result_response_data.error, None);
+    }
+
+    #[test]
     fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
         let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
         let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
@@ -1488,6 +1787,37 @@ mod tests {
         let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
         assert_eq!(parsed_transaction.tx_hash, "0xdef");
         assert_eq!(parsed_transaction.status, "committed");
+
+        let tx_status_snake = "{\"tx_hash\":\"0xaaa\",\"tx_status\":\"accepted\"}";
+        let parsed_tx_status_snake =
+            parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa");
+        assert_eq!(parsed_tx_status_snake.status, "pending");
+
+        let tx_status_camel = "{\"txHash\":\"0xbbb\",\"txStatus\":\"finalized\"}";
+        let parsed_tx_status_camel =
+            parse_tx_query_response(tx_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_camel.tx_hash, "0xbbb");
+        assert_eq!(parsed_tx_status_camel.status, "committed");
+
+        let transaction_status_snake =
+            "{\"transactionHash\":\"0xccc\",\"transaction_status\":\"confirmed\"}";
+        let parsed_transaction_status_snake =
+            parse_tx_query_response(transaction_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_snake.tx_hash, "0xccc");
+        assert_eq!(parsed_transaction_status_snake.status, "committed");
+
+        let transaction_status_camel =
+            "{\"transaction_hash\":\"0xddd\",\"transactionStatus\":\"timed-out\"}";
+        let parsed_transaction_status_camel =
+            parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd");
+        assert_eq!(parsed_transaction_status_camel.status, "fail");
+
+        let state_alias = "{\"transactionHash\":\"0xeee\",\"transactionState\":\"included\"}";
+        let parsed_state_alias = parse_tx_query_response(state_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_state_alias.tx_hash, "0xeee");
+        assert_eq!(parsed_state_alias.status, "committed");
     }
 
     #[test]
@@ -1729,6 +2059,16 @@ mod tests {
     }
 
     #[test]
+    fn run_template_raw_merges_successful_stdout_and_stderr() {
+        let merged = run_template_raw(
+            "python3 -c \"import sys; print('tx_hash=0xabc123'); sys.stderr.write('status=committed\\n')\"",
+        )
+        .unwrap();
+        assert!(merged.contains("tx_hash=0xabc123"), "unexpected: {merged}");
+        assert!(merged.contains("status=committed"), "unexpected: {merged}");
+    }
+
+    #[test]
     fn tx_query_rejects_non_hex_like_tx_hash_before_shell_exec() {
         std::env::set_var(
             "TRNM_TX_QUERY_CMD",
@@ -1777,6 +2117,14 @@ mod tests {
         let backtick = "tx_hash=0x782\nstatus=fail\nerror=`signature invalid`\n";
         let parsed_backtick = parse_tx_query_response(backtick, "0xfallback").unwrap();
         assert_eq!(parsed_backtick.error.as_deref(), Some("signature invalid"));
+
+        let raw_log = "tx_hash=0x783\nstatus=fail\nraw_log='deliver tx failed'\n";
+        let parsed_raw_log = parse_tx_query_response(raw_log, "0xfallback").unwrap();
+        assert_eq!(parsed_raw_log.error.as_deref(), Some("deliver tx failed"));
+
+        let log_alias = "tx_hash=0x784\nstatus=fail\nlog=`check tx failed`\n";
+        let parsed_log_alias = parse_tx_query_response(log_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_log_alias.error.as_deref(), Some("check tx failed"));
     }
 
     #[test]
@@ -1807,6 +2155,109 @@ mod tests {
             "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
         let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
         assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+
+        let json_raw_log =
+            "{\"tx_hash\":\"0x778\",\"status\":\"fail\",\"raw_log\":\"deliver tx failed\"}";
+        let parsed_raw_log = parse_tx_query_response(json_raw_log, "0xfallback").unwrap();
+        assert_eq!(parsed_raw_log.error.as_deref(), Some("deliver tx failed"));
+
+        let json_log = "{\"tx_hash\":\"0x779\",\"status\":\"fail\",\"log\":\"check tx failed\"}";
+        let parsed_log = parse_tx_query_response(json_log, "0xfallback").unwrap();
+        assert_eq!(parsed_log.error.as_deref(), Some("check tx failed"));
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_scalar_status_aliases() {
+        let json_numeric = "{\"tx_hash\":\"0x780\",\"status\":0}";
+        let parsed_numeric = parse_tx_query_response(json_numeric, "0xfallback").unwrap();
+        assert_eq!(parsed_numeric.tx_hash, "0x780");
+        assert_eq!(parsed_numeric.status, "committed");
+
+        let json_nested_numeric =
+            "{\"result\":{\"transactionHash\":\"0x781\",\"transactionState\":12}}";
+        let parsed_nested_numeric =
+            parse_tx_query_response(json_nested_numeric, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_numeric.tx_hash, "0x781");
+        assert_eq!(parsed_nested_numeric.status, "fail");
+
+        let json_bool = "{\"tx_hash\":\"0x782\",\"status\":true}";
+        let parsed_bool = parse_tx_query_response(json_bool, "0xfallback").unwrap();
+        assert_eq!(parsed_bool.tx_hash, "0x782");
+        assert_eq!(parsed_bool.status, "committed");
+
+        let json_nested_bool =
+            "{\"result\":{\"response\":{\"tx_response\":{\"transactionHash\":\"0x783\",\"transactionState\":false}}}}";
+        let parsed_nested_bool = parse_tx_query_response(json_nested_bool, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_bool.tx_hash, "0x783");
+        assert_eq!(parsed_nested_bool.status, "fail");
+    }
+
+    #[test]
+    fn tx_query_parse_infers_status_from_common_code_fields() {
+        let json_root_code = "{\"tx_hash\":\"0x701\",\"code\":0}";
+        let parsed_root_code = parse_tx_query_response(json_root_code, "0xfallback").unwrap();
+        assert_eq!(parsed_root_code.tx_hash, "0x701");
+        assert_eq!(parsed_root_code.status, "committed");
+
+        let json_nested_code = "{\"result\":{\"tx_hash\":\"0x702\",\"tx_result\":{\"code\":9}}}";
+        let parsed_nested_code = parse_tx_query_response(json_nested_code, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_code.tx_hash, "0x702");
+        assert_eq!(parsed_nested_code.status, "fail");
+
+        let json_string_code = "{\"tx_hash\":\"0x703\",\"code\":\"0\"}";
+        let parsed_string_code = parse_tx_query_response(json_string_code, "0xfallback").unwrap();
+        assert_eq!(parsed_string_code.tx_hash, "0x703");
+        assert_eq!(parsed_string_code.status, "committed");
+
+        let json_nested_string_code =
+            "{\"result\":{\"tx_hash\":\"0x704\",\"deliver_tx\":{\"code\":\"12\"}}}";
+        let parsed_nested_string_code =
+            parse_tx_query_response(json_nested_string_code, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_string_code.tx_hash, "0x704");
+        assert_eq!(parsed_nested_string_code.status, "fail");
+
+        let json_tx_code = "{\"tx_hash\":\"0x7041\",\"tx_code\":0}";
+        let parsed_json_tx_code = parse_tx_query_response(json_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_tx_code.tx_hash, "0x7041");
+        assert_eq!(parsed_json_tx_code.status, "committed");
+
+        let json_transaction_code = "{\"transactionHash\":\"0x7042\",\"transaction_code\":7}";
+        let parsed_json_transaction_code =
+            parse_tx_query_response(json_transaction_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_transaction_code.tx_hash, "0x7042");
+        assert_eq!(parsed_json_transaction_code.status, "fail");
+
+        let json_deliver_tx_code =
+            "{\"result\":{\"tx_hash\":\"0x7043\",\"deliver_tx_code\":\"0\"}}";
+        let parsed_json_deliver_tx_code =
+            parse_tx_query_response(json_deliver_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_deliver_tx_code.tx_hash, "0x7043");
+        assert_eq!(parsed_json_deliver_tx_code.status, "committed");
+
+        let json_check_tx_code = "{\"result\":{\"tx_hash\":\"0x7044\",\"check_tx_code\":\"19\"}}";
+        let parsed_json_check_tx_code =
+            parse_tx_query_response(json_check_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_check_tx_code.tx_hash, "0x7044");
+        assert_eq!(parsed_json_check_tx_code.status, "fail");
+
+        let kv_root_code = "tx_hash=0x705\ncode=0\n";
+        let parsed_kv_root_code = parse_tx_query_response(kv_root_code, "0xfallback").unwrap();
+        assert_eq!(parsed_kv_root_code.tx_hash, "0x705");
+        assert_eq!(parsed_kv_root_code.status, "committed");
+
+        let kv_deliver_code = "tx_hash=0x706\ndeliver_tx_code=12\n";
+        let parsed_kv_deliver_code =
+            parse_tx_query_response(kv_deliver_code, "0xfallback").unwrap();
+        assert_eq!(parsed_kv_deliver_code.tx_hash, "0x706");
+        assert_eq!(parsed_kv_deliver_code.status, "fail");
+    }
+
+    #[test]
+    fn tx_query_parse_supports_nested_response_data_operator_state_aliases() {
+        let json = "{\"response\":{\"data\":{\"transactionHash\":\"`0xFACE55,`\",\"transactionState\":\"(in progress),\"}}}";
+        let parsed = parse_tx_query_response(json, "0xface55").unwrap();
+        assert_eq!(parsed.tx_hash, "0xface55");
+        assert_eq!(parsed.status, "pending");
     }
 
     #[test]
@@ -1836,6 +2287,10 @@ mod tests {
         let parsed_single_quoted = parse_tx_query_response(single_quoted, "0xfallback").unwrap();
         assert_eq!(parsed_single_quoted.status, "committed");
 
+        let wrapped_status = "tx_hash=0xeff1\nstatus=(`confirmed`,)\n";
+        let parsed_wrapped_status = parse_tx_query_response(wrapped_status, "0xfallback").unwrap();
+        assert_eq!(parsed_wrapped_status.status, "committed");
+
         let rejected_alias = "tx_hash=0xef0\nstatus=REJECTED\n";
         let parsed_rejected = parse_tx_query_response(rejected_alias, "0xfallback").unwrap();
         assert_eq!(parsed_rejected.status, "fail");
@@ -1848,6 +2303,69 @@ mod tests {
         let parsed_timed_out_hyphen =
             parse_tx_query_response(timed_out_hyphen_alias, "0xfallback").unwrap();
         assert_eq!(parsed_timed_out_hyphen.status, "fail");
+
+        let timed_out_spaced_alias = "tx_hash=0xef21\nstatus='timed out'\n";
+        let parsed_timed_out_spaced =
+            parse_tx_query_response(timed_out_spaced_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_timed_out_spaced.status, "fail");
+
+        let submitted_alias = "tx_hash=0xef3\nstatus=submitted\n";
+        let parsed_submitted = parse_tx_query_response(submitted_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_submitted.status, "pending");
+
+        let accepted_alias = "tx_hash=0xef4\nstatus=accepted\n";
+        let parsed_accepted = parse_tx_query_response(accepted_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_accepted.status, "pending");
+
+        let processing_alias = "tx_hash=0xef41\nstatus=processing\n";
+        let parsed_processing = parse_tx_query_response(processing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_processing.status, "pending");
+
+        let broadcasting_alias = "tx_hash=0xef411\nstatus=broadcasting\n";
+        let parsed_broadcasting =
+            parse_tx_query_response(broadcasting_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_broadcasting.status, "pending");
+
+        let executing_alias = "tx_hash=0xef412\nstatus=executing\n";
+        let parsed_executing = parse_tx_query_response(executing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_executing.status, "pending");
+
+        let in_progress_alias = "tx_hash=0xef42\nstatus=in_progress\n";
+        let parsed_in_progress = parse_tx_query_response(in_progress_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_progress.status, "pending");
+
+        let in_progress_spaced_alias = "tx_hash=0xef421\nstatus='in progress'\n";
+        let parsed_in_progress_spaced =
+            parse_tx_query_response(in_progress_spaced_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_progress_spaced.status, "pending");
+
+        let in_flight_alias = "tx_hash=0xef43\nstatus=in-flight\n";
+        let parsed_in_flight = parse_tx_query_response(in_flight_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_flight.status, "pending");
+
+        let included_alias = "tx_hash=0xef5\nstatus=included\n";
+        let parsed_included = parse_tx_query_response(included_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_included.status, "committed");
+
+        let finalized_alias = "tx_hash=0xef6\nstatus=finalized\n";
+        let parsed_finalized = parse_tx_query_response(finalized_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalized.status, "committed");
+
+        let finalised_alias = "tx_hash=0xef60\nstatus=finalised\n";
+        let parsed_finalised = parse_tx_query_response(finalised_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalised.status, "committed");
+
+        let finalising_alias = "tx_hash=0xef61\nstatus=finalising\n";
+        let parsed_finalising = parse_tx_query_response(finalising_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalising.status, "committed");
+
+        let finalizing_alias = "tx_hash=0xef62\nstatus=finalizing\n";
+        let parsed_finalizing = parse_tx_query_response(finalizing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalizing.status, "committed");
+
+        let expired_alias = "tx_hash=0xef7\nstatus=expired\n";
+        let parsed_expired = parse_tx_query_response(expired_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_expired.status, "fail");
     }
 
     #[test]
@@ -1883,6 +2401,36 @@ mod tests {
         let compact = "transactionHash=0xdef456\nstatus=committed\n";
         let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
         assert_eq!(parsed_compact.tx_hash, "0xdef456");
+
+        let tx_status_snake = "tx_hash=0xaaa111\ntx_status=queued\n";
+        let parsed_tx_status_snake =
+            parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa111");
+        assert_eq!(parsed_tx_status_snake.status, "pending");
+
+        let tx_status_compact = "txhash=0xbbb222\ntxStatus=timed-out\n";
+        let parsed_tx_status_compact =
+            parse_tx_query_response(tx_status_compact, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_compact.tx_hash, "0xbbb222");
+        assert_eq!(parsed_tx_status_compact.status, "fail");
+
+        let transaction_status_snake = "transaction_hash=0xccc333\ntransaction_status=confirmed\n";
+        let parsed_transaction_status_snake =
+            parse_tx_query_response(transaction_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_snake.tx_hash, "0xccc333");
+        assert_eq!(parsed_transaction_status_snake.status, "committed");
+
+        let transaction_status_camel = "transactionHash=0xddd444\ntransactionStatus=rejected\n";
+        let parsed_transaction_status_camel =
+            parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd444");
+        assert_eq!(parsed_transaction_status_camel.status, "fail");
+
+        let transaction_state_camel = "transactionHash=0xeee555\ntransactionState=finalized\n";
+        let parsed_transaction_state_camel =
+            parse_tx_query_response(transaction_state_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_state_camel.tx_hash, "0xeee555");
+        assert_eq!(parsed_transaction_state_camel.status, "committed");
     }
 
     #[test]
@@ -1907,11 +2455,47 @@ mod tests {
     }
 
     #[test]
+    fn wait_for_tx_rejects_zero_timeout() {
+        let result = wait_for_tx(
+            "0xabc123",
+            Duration::from_secs(0),
+            Duration::from_secs(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xabc123".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(msg.contains("tx wait timeout must be greater than 0s"));
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_zero_interval() {
+        let result = wait_for_tx(
+            "0xabc123",
+            Duration::from_secs(1),
+            Duration::from_secs(0),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xabc123".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(msg.contains("tx wait interval must be greater than 0s"));
+    }
+
+    #[test]
     fn wait_for_tx_timeout() {
         let result = wait_for_tx(
             "0xaaa",
-            Duration::from_millis(0),
-            Duration::from_millis(0),
+            Duration::from_millis(1),
+            Duration::from_millis(1),
             |_| {
                 Ok(TxQueryResponse {
                     tx_hash: "0xaaa".to_string(),
@@ -1920,7 +2504,38 @@ mod tests {
                 })
             },
         );
-        assert!(result.is_err());
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait timeout"),
+            "expected timeout error, got: {msg}"
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_does_not_oversleep_past_remaining_timeout_window() {
+        let started = Instant::now();
+        let result = wait_for_tx(
+            "0xaaa",
+            Duration::from_millis(20),
+            Duration::from_millis(50),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xaaa".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let elapsed = started.elapsed();
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait timeout"),
+            "expected timeout error, got: {msg}"
+        );
+        assert!(
+            elapsed < Duration::from_millis(250),
+            "tx wait should cap sleep to the remaining timeout window without hanging for a full retry interval; elapsed={elapsed:?}"
+        );
     }
 
     #[test]
@@ -1928,7 +2543,7 @@ mod tests {
         let result = wait_for_tx(
             "0xbbb",
             Duration::from_millis(10),
-            Duration::from_millis(0),
+            Duration::from_millis(1),
             |_| {
                 Ok(TxQueryResponse {
                     tx_hash: "0xbbb".to_string(),
@@ -1939,6 +2554,27 @@ mod tests {
         )
         .unwrap();
         assert_eq!(result.status, "committed");
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_hash_mismatch() {
+        let result = wait_for_tx(
+            "0xbbb",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xccc".to_string(),
+                    status: "committed".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait response hash mismatch"),
+            "unexpected: {msg}"
+        );
     }
 
     #[test]
@@ -1992,17 +2628,116 @@ mod tests {
         std::env::set_var("TRNM_RPC_TX_FILE", &path);
 
         let ok_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        let bad_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        let completed_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        let inflight_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        let scalar_hash = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+        let bool_hash = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+        let unknown_hash = "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
         let payload = format!(
-            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}}\n}}",
-            ok_hash, bad_hash
+            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"tx_status\": \"done\"}},\n  \"{}\": {{\"state\": \"in_progress\"}},\n  \"{}\": {{\"transactionStatus\": 0}},\n  \"{}\": {{\"txState\": false}},\n  \"{}\": {{\"status\": \"mystery\"}}\n}}",
+            ok_hash, completed_hash, inflight_hash, scalar_hash, bool_hash, unknown_hash
         );
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
-        assert_eq!(query_local_tx_status(bad_hash), None);
+        assert_eq!(
+            query_local_tx_status(completed_hash).as_deref(),
+            Some("committed")
+        );
+        assert_eq!(
+            query_local_tx_status(inflight_hash).as_deref(),
+            Some("pending")
+        );
+        assert_eq!(
+            query_local_tx_status(scalar_hash).as_deref(),
+            Some("committed")
+        );
+        assert_eq!(query_local_tx_status(bool_hash).as_deref(), Some("fail"));
+        assert_eq!(query_local_tx_status(unknown_hash), None);
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn persist_local_pending_tx_overwrites_existing_terminal_state_with_pending() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let tx_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        let payload = format!(
+            "{{\n  \"{}\": {{\"status\": \"committed\", \"updated_at_unix_ms\": 1}}\n}}",
+            tx_hash
+        );
+        std::fs::write(&path, payload).unwrap();
+
+        persist_local_pending_tx(tx_hash).unwrap();
+
+        let raw = std::fs::read_to_string(&path).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        assert_eq!(
+            parsed[tx_hash]["status"].as_str(),
+            Some("pending"),
+            "persist_local_pending_tx should reset tracked txs to pending on fresh submit"
+        );
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn emit_pending_tx_hash_tracks_reveal_like_submissions() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let tx_hash = "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
+        emit_pending_tx_hash(tx_hash).unwrap();
+
+        let raw = std::fs::read_to_string(&path).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        assert_eq!(parsed[tx_hash]["tx_hash"].as_str(), Some(tx_hash));
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn query_and_wait_stdout_include_plain_txhash_alias_for_shell_adapters() {
+        let query = TxQueryResponse {
+            tx_hash: "0xabc123".to_string(),
+            status: "pending".to_string(),
+            error: None,
+        };
+
+        let emitted = format!(
+            "{}\n{}\nstatus={}\n",
+            format_tx_hash_line(&query.tx_hash),
+            format_tx_hash_alias_line(&query.tx_hash),
+            query.status
+        );
+
+        assert!(emitted.contains("tx_hash=\"0xabc123\""));
+        assert!(emitted.contains("txhash=0xabc123"));
+        assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }

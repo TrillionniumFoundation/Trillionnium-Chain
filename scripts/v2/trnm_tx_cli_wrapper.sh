@@ -9,9 +9,36 @@ set -euo pipefail
 #   trnm_tx_cli_wrapper.sh tx query <tx_hash>
 
 if [[ "${1:-}" != "tx" ]]; then
-  echo "usage: $0 tx <commit-result|reveal-result|--help> ..." >&2
+  echo "usage: $0 tx <commit-result|reveal-result|query|wait|transfer|--help> ..." >&2
   exit 2
 fi
+
+resolve_delegate_bin() {
+  local candidate="${TRNM_TX_WRAPPER_DELEGATE_BIN:-${TRNM_TX_WRAPPER_CLI:-trnm-cli}}"
+  if command -v "$candidate" >/dev/null 2>&1; then
+    command -v "$candidate"
+    return 0
+  fi
+
+  local root
+  root="$(cd "$(dirname "$0")/../.." && pwd)"
+  local cargo_bin="$root/trillionnium-rust/target/debug/trnm-cli"
+  if [[ "$candidate" == "trnm-cli" && -x "$cargo_bin" ]]; then
+    printf "%s\n" "$cargo_bin"
+    return 0
+  fi
+
+  return 1
+}
+
+delegate_to_cli() {
+  local delegate_bin
+  if ! delegate_bin="$(resolve_delegate_bin)"; then
+    echo "delegated tx subcommand requires trnm-cli (set TRNM_TX_WRAPPER_DELEGATE_BIN if needed)" >&2
+    exit 127
+  fi
+  exec "$delegate_bin" tx "$@"
+}
 
 sub="${2:-}"
 if [[ "$sub" == "--help" || "$sub" == "-h" || -z "$sub" ]]; then
@@ -22,6 +49,10 @@ Usage:
   tx commit-result <task_id> <worker> <commit_hash> <nonce>
   tx reveal-result <task_id> <result_hash> <salt_hex>
   tx query <tx_hash>
+
+Delegated to trnm-cli (not emulated by this minimal wrapper):
+  tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+  tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 EOF
   exit 0
 fi
@@ -32,6 +63,9 @@ stable_tx_hash() {
 }
 
 case "$sub" in
+  wait|transfer)
+    delegate_to_cli "${@:3}"
+    ;;
   commit-result)
     if [[ "$#" -ne 6 ]]; then
       echo "invalid args for commit-result: expected 4 payload args" >&2
@@ -73,8 +107,16 @@ case "$sub" in
       echo "invalid args for query" >&2
       exit 2
     }
+
+    if delegate_bin="$(resolve_delegate_bin 2>/dev/null)"; then
+      exec "$delegate_bin" tx query "$tx_hash"
+    fi
+
     echo "tx_hash=$tx_hash"
-    echo "status=committed"
+    # Fail closed when no real delegate is available. Reporting committed here can
+    # create a false-ready operator signal for environments that only have the
+    # minimal wrapper on PATH.
+    echo "status=unknown"
     ;;
   *)
     echo "unknown tx subcommand: $sub" >&2

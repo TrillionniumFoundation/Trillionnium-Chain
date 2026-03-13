@@ -104,6 +104,42 @@ fn smoke_query_balance_fallback_json() {
 }
 
 #[test]
+fn smoke_tx_commit_query_fallback_roundtrip() {
+    let tx_file = tmp_dir("tx-query-fallback").join("txs.json");
+
+    let submit = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", tx_file.to_string_lossy().as_ref())
+        .args([
+            "tx",
+            "commit-result",
+            "9999991",
+            "worker_readiness",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "1",
+        ])
+        .output()
+        .unwrap();
+    assert!(submit.status.success());
+    let submit_stdout = String::from_utf8_lossy(&submit.stdout);
+    let tx_hash_line = submit_stdout
+        .lines()
+        .find(|line| line.starts_with("tx_hash="))
+        .expect("commit-result should print tx_hash");
+    let tx_hash = tx_hash_line.trim_start_matches("tx_hash=");
+    assert!(!tx_hash.is_empty());
+
+    let query = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", tx_file.to_string_lossy().as_ref())
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(query.status.success(), "stderr: {}", String::from_utf8_lossy(&query.stderr));
+    let query_stdout = String::from_utf8_lossy(&query.stdout);
+    assert!(query_stdout.contains(&format!("tx_hash={}", tx_hash)));
+    assert!(query_stdout.contains("status=pending"));
+}
+
+#[test]
 fn smoke_tx_transfer_template_path() {
     let store = tmp_dir("tx-transfer");
     let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -145,5 +181,5 @@ fn smoke_tx_transfer_template_path() {
     assert!(out2.status.success());
     let s = String::from_utf8_lossy(&out2.stdout);
     assert!(s.contains("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-    assert!(s.contains("submitted"));
+    assert!(s.contains("\"status\": \"pending\""));
 }

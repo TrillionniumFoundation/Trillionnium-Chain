@@ -6,6 +6,9 @@ set -euo pipefail
 #   $0 tx --help
 #   $0 tx commit-result <task_id> <worker> <commit_hash> <nonce>
 #   $0 tx reveal-result <task_id> <result_hash> <salt_hex>
+#   $0 tx query <tx_hash>
+#   $0 tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+#   $0 tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 
 RPC="${TRNM_RPC:-http://127.0.0.1:26657}"
 CHAIN_ID="${TRNM_CHAIN_ID:-trnm-localnet}"
@@ -32,30 +35,146 @@ Usage:
   tx commit-result <task_id> <worker> <commit_hash> <nonce>
   tx reveal-result <task_id> <result_hash> <salt_hex>
   tx query <tx_hash>
+  tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+  tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 
 Env:
   TRNM_TX_BIN, TRNM_RPC, TRNM_CHAIN_ID, TRNM_KEY_NAME, TRNM_KEYRING_BACKEND
   TRNM_GAS, TRNM_GAS_ADJUSTMENT, TRNM_FEES, TRNM_BROADCAST_MODE
   TRNM_TX_COMMIT_CMD, TRNM_TX_REVEAL_CMD, TRNM_TX_QUERY_CMD
+  TRNM_TX_WRAPPER_DELEGATE_BIN, TRNM_TX_WRAPPER_CLI
 EOF
+}
+
+resolve_delegate_bin() {
+  local candidate="${TRNM_TX_WRAPPER_DELEGATE_BIN:-${TRNM_TX_WRAPPER_CLI:-trnm-cli}}"
+  if command -v "$candidate" >/dev/null 2>&1; then
+    command -v "$candidate"
+    return 0
+  fi
+
+  local root
+  root="$(cd "$(dirname "$0")/../.." && pwd)"
+  local cargo_bin="$root/trillionnium-rust/target/debug/trnm-cli"
+  if [[ "$candidate" == "trnm-cli" && -x "$cargo_bin" ]]; then
+    printf "%s\n" "$cargo_bin"
+    return 0
+  fi
+
+  return 1
+}
+
+delegate_to_cli() {
+  local delegate_bin
+  if ! delegate_bin="$(resolve_delegate_bin)"; then
+    echo "delegated tx subcommand requires trnm-cli (set TRNM_TX_WRAPPER_DELEGATE_BIN if needed)" >&2
+    exit 127
+  fi
+  exec "$delegate_bin" tx "$@"
 }
 
 extract_tx_hash() {
   local out="$1"
-  # JSON: {"txhash":"..."}
+  # JSON: {"txhash":"..."} and common aliases used by tx/query tooling.
   local h
   h=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"tx_hash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"txHash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"transaction_hash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
   if [[ -n "$h" ]]; then
     printf "%s" "$h"
     return 0
   fi
-  # text: txhash: XXXXX
+  # text: txhash: XXXXX and common aliases.
   h=$(printf "%s" "$out" | sed -n 's/.*txhash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*txHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*transaction_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*transactionHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
   if [[ -n "$h" ]]; then
     printf "%s" "$h"
     return 0
   fi
   return 1
+}
+
+normalize_status() {
+  local raw="$1"
+  local cleaned canonical
+  cleaned=$(printf "%s" "$raw" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/^[[:space:]"'"'"'`]+//; s/[[:space:]"'"'"'`[:punct:]]+$//')
+  canonical=$(printf "%s" "$cleaned" | tr ' -' '__')
+
+  case "$canonical" in
+    pending|submitted|accepted|queued|broadcast|broadcasted|broadcasting|processing|executing|in_progress|inflight|in_flight)
+      printf "pending"
+      ;;
+    committed|confirmed|success|succeeded|ok|included|finalized|finalised|finalising|finalizing|complete|completed|done)
+      printf "committed"
+      ;;
+    fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|expired)
+      printf "fail"
+      ;;
+    *)
+      printf "%s" "$cleaned"
+      ;;
+  esac
+}
+
+normalize_tx_hash() {
+  local raw="$1"
+  local cleaned
+  cleaned=$(printf "%s" "$raw" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/^[[:space:]"'"'"'`({\[]+//; s/[[:space:]"'"'"'`,;:)}\]]+$//')
+
+  if [[ "$cleaned" =~ ^0x[0-9a-f]+$ ]]; then
+    printf "%s" "$cleaned"
+    return 0
+  fi
+  if [[ "$cleaned" =~ ^[0-9a-f]{6,}$ ]]; then
+    printf "%s" "$cleaned"
+    return 0
+  fi
+  return 1
+}
+
+infer_status_from_code() {
+  local out="$1"
+  local code=""
+
+  code=$(printf "%s" "$out" | sed -n 's/.*"code"[[:space:]]*:[[:space:]]*"\{0,1\}\([0-9][0-9]*\)"\{0,1\}.*/\1/p' | head -n1 || true)
+  if [[ -z "$code" ]]; then
+    code=$(printf "%s" "$out" | sed -n 's/.*\b\(deliver_tx_code\|check_tx_code\|tx_code\|code\)[[:space:]]*[:=][[:space:]]*"\{0,1\}\([0-9][0-9]*\)"\{0,1\}.*/\2/p' | head -n1 || true)
+  fi
+
+  if [[ -z "$code" ]]; then
+    return 1
+  fi
+
+  if [[ "$code" == "0" ]]; then
+    printf "committed"
+  else
+    printf "fail"
+  fi
 }
 
 run_cmd() {
@@ -90,6 +209,9 @@ if [[ "$sub" == "--help" || "$sub" == "-h" || -z "$sub" ]]; then
 fi
 
 case "$sub" in
+  wait|transfer)
+    delegate_to_cli "${@:3}"
+    ;;
   commit-result)
     if [[ "$#" -ne 6 ]]; then
       echo "invalid args for commit-result: expected 4 payload args" >&2
@@ -151,13 +273,113 @@ case "$sub" in
       exit $rc
     fi
 
-    seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
+    seen_hash=$(extract_tx_hash "$out" || true)
+    if [[ -n "$seen_hash" ]]; then
+      normalized_seen_hash=$(normalize_tx_hash "$seen_hash" || true)
+      normalized_requested_hash=$(normalize_tx_hash "$tx_hash" || true)
+      if [[ -n "$normalized_seen_hash" && -n "$normalized_requested_hash" && "$normalized_seen_hash" != "$normalized_requested_hash" ]]; then
+        echo "tx query response hash mismatch: requested=$normalized_requested_hash got=$normalized_seen_hash" >&2
+        exit 1
+      fi
     fi
+
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
-      status="committed"
+      status=$(printf "%s" "$out" | sed -n 's/.*"tx_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"txStatus"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"transaction_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"transactionStatus"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"state"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"tx_state"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"txState"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"transaction_state"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"transactionState"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn][Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Xx][Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn][Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      scalar_status=$(printf "%s" "$out" | python3 -c '
+import json, sys
+raw = sys.stdin.read()
+try:
+    value = json.loads(raw)
+except Exception:
+    raise SystemExit(0)
+payload = value.get("result", value) if isinstance(value, dict) else value
+primary = payload
+if isinstance(payload, dict):
+    response = payload.get("response") if isinstance(payload.get("response"), dict) else None
+    nested = (
+        payload.get("tx_response")
+        or payload.get("txResponse")
+        or (response.get("tx_response") if response else None)
+        or (response.get("txResponse") if response else None)
+        or (response.get("data") if response and isinstance(response.get("data"), dict) else None)
+        or (payload.get("responseData") if isinstance(payload.get("responseData"), dict) else None)
+    )
+    if isinstance(nested, dict):
+        primary = nested
+for container in [primary, payload]:
+    if not isinstance(container, dict):
+        continue
+    for key in ["status", "tx_status", "txStatus", "transaction_status", "transactionStatus", "state", "tx_state", "txState", "transaction_state", "transactionState"]:
+        if key not in container:
+            continue
+        field = container[key]
+        if isinstance(field, bool):
+            print("committed" if field else "fail")
+            raise SystemExit(0)
+        if isinstance(field, int):
+            print("committed" if field == 0 else "fail")
+            raise SystemExit(0)
+        if isinstance(field, str):
+            print(field)
+            raise SystemExit(0)
+raise SystemExit(0)
+' || true)
+      if [[ -n "$scalar_status" ]]; then
+        status="$scalar_status"
+      fi
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(infer_status_from_code "$out" || true)
+    else
+      status="$(normalize_status "$status")"
+    fi
+    if [[ -z "$status" ]]; then
+      status="unknown"
     fi
 
     echo "tx_hash=${seen_hash:-$tx_hash}"
