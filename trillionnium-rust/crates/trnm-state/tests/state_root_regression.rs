@@ -1907,6 +1907,39 @@ fn pending_resolve_task_version_must_affect_state_root() {
 }
 
 #[test]
+fn insertion_order_of_multiple_pending_resolve_entries_keeps_state_root_deterministic() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let first = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "resolver-a".into(),
+        authority_set: "resolver-a,resolver-b".into(),
+        task_version: 7,
+    };
+    let second = PendingResolveApprovalSnapshot {
+        slash_worker: false,
+        confirmations: 2,
+        first_approver: "resolver-c".into(),
+        authority_set: "resolver-c,resolver-d".into(),
+        task_version: 11,
+    };
+
+    state_a.restore_pending_resolve_approval(5_160, Some(first.clone()));
+    state_a.restore_pending_resolve_approval(5_161, Some(second.clone()));
+
+    state_b.restore_pending_resolve_approval(5_161, Some(second));
+    state_b.restore_pending_resolve_approval(5_160, Some(first));
+
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should be deterministic for equivalent pending resolve snapshots regardless of insertion order"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root() {
     let mut state = StateStore::new();
     state
