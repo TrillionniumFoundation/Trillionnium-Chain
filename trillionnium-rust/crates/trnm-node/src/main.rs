@@ -3090,14 +3090,42 @@ mod tests {
             hot_object_active_tail_share_total_ppm / hot_object_active_heights as u128;
         let hot_object_active_height_rate_ppm =
             ratio_ppm_u64(hot_object_active_heights, finality_sample_count);
+        let hot_object_active_observed_height_rate_ppm =
+            ratio_ppm_u64(hot_object_active_heights, 6u64);
+        let hot_object_active_height_share_ppm =
+            (hot_object_active_top_label_share_total_ppm + hot_object_active_tail_share_total_ppm)
+                / hot_object_active_heights as u128;
 
         assert_eq!(hot_object_top_label_share_avg_ppm, 300_000);
         assert_eq!(hot_object_tail_share_avg_ppm, 200_000);
         assert_eq!(hot_object_active_top_label_share_avg_ppm, 600_000);
         assert_eq!(hot_object_active_tail_share_avg_ppm, 400_000);
         assert_eq!(hot_object_active_height_rate_ppm, 500_000);
+        assert_eq!(hot_object_active_observed_height_rate_ppm, 333_333);
+        assert_eq!(hot_object_active_height_share_ppm, 1_000_000);
+        assert!(hot_object_active_observed_height_rate_ppm < hot_object_active_height_rate_ppm);
         assert!(hot_object_active_top_label_share_avg_ppm > hot_object_top_label_share_avg_ppm);
         assert!(hot_object_active_tail_share_avg_ppm > hot_object_tail_share_avg_ppm);
+    }
+
+    #[test]
+    fn hot_object_metric_names_keep_coverage_and_budget_share_distinct() {
+        let active_height_rate_field_name = "hot_object_active_height_rate_ppm";
+        let active_observed_height_rate_field_name = "hot_object_active_observed_height_rate_ppm";
+        let active_height_share_field_name = "hot_object_active_height_share_ppm";
+
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(active_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            active_height_share_field_name
+        );
     }
 
     #[test]
@@ -3134,17 +3162,61 @@ mod tests {
     fn critical_wait_active_height_rate_metrics_make_fairness_stall_concentration_visible() {
         let critical_wait_active_heights = 2u64;
         let finality_sample_count = 4u64;
+        let bft_observed_heights = 5u64;
         let critical_wait_total = 5u64;
         let critical_wait_density_avg = critical_wait_total / critical_wait_active_heights;
         let critical_wait_density_avg_milli =
             ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+        let critical_wait_active_height_rate_ppm =
+            ratio_ppm_u64(critical_wait_active_heights, finality_sample_count);
+        let critical_wait_active_observed_height_rate_ppm =
+            ratio_ppm_u64(critical_wait_active_heights, bft_observed_heights);
 
-        assert_eq!(
-            ratio_ppm_u64(critical_wait_active_heights, finality_sample_count),
-            500_000
+        assert_eq!(critical_wait_active_height_rate_ppm, 500_000);
+        assert_eq!(critical_wait_active_observed_height_rate_ppm, 400_000);
+        assert!(
+            critical_wait_active_observed_height_rate_ppm < critical_wait_active_height_rate_ppm
         );
         assert_eq!(critical_wait_density_avg, 2);
         assert_eq!(critical_wait_density_avg_milli, 2_500);
+    }
+
+    #[test]
+    fn critical_wait_metric_names_keep_committed_and_observed_coverage_distinct() {
+        let active_height_rate_field_name = "critical_wait_active_height_rate_ppm";
+        let active_observed_height_rate_field_name =
+            "critical_wait_active_observed_height_rate_ppm";
+        let density_field_name = "critical_wait_density_avg";
+        let milli_density_field_name = "critical_wait_density_avg_milli";
+        let active_height_share_field_name = "critical_wait_active_height_share_ppm";
+
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(density_field_name.ends_with("_avg"));
+        assert!(milli_density_field_name.ends_with("_avg_milli"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(active_observed_height_rate_field_name, density_field_name);
+        assert_ne!(density_field_name, milli_density_field_name);
+        assert_ne!(milli_density_field_name, active_height_share_field_name);
+    }
+
+    #[test]
+    fn critical_wait_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let critical_wait_active_heights = 2u64;
+        let committed_heights = 2u64;
+        let observed_heights = 5u64;
+        let committed_height_rate_ppm =
+            ratio_ppm_u64(critical_wait_active_heights, committed_heights);
+        let observed_height_rate_ppm =
+            ratio_ppm_u64(critical_wait_active_heights, observed_heights);
+
+        assert_eq!(committed_height_rate_ppm, 1_000_000);
+        assert_eq!(observed_height_rate_ppm, 400_000);
+        assert!(observed_height_rate_ppm < committed_height_rate_ppm);
     }
 
     #[test]
@@ -3158,9 +3230,23 @@ mod tests {
         };
         let critical_wait_density_avg_milli =
             ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+        let critical_wait_active_height_share_ppm =
+            finality_budget_share_ppm(critical_wait_density_avg_milli, 200u128);
 
         assert_eq!(critical_wait_density_avg, 0);
         assert_eq!(critical_wait_density_avg_milli, 0);
+        assert_eq!(critical_wait_active_height_share_ppm, 0);
+    }
+
+    #[test]
+    fn critical_wait_active_height_share_tracks_clustered_fairness_stall_budget_pressure() {
+        let critical_wait_density_avg_milli = 2_500u64;
+        let finality_avg = 200u128;
+        let critical_wait_active_height_share_ppm =
+            finality_budget_share_ppm(critical_wait_density_avg_milli, finality_avg);
+
+        assert_eq!(critical_wait_active_height_share_ppm, 12_500);
+        assert!(critical_wait_active_height_share_ppm < 1_000_000);
     }
 
     #[test]
@@ -3168,6 +3254,53 @@ mod tests {
         assert_eq!(ratio_percent_bps(6, 15), 4_000);
         assert_eq!(ratio_percent_bps(0, 15), 0);
         assert_eq!(ratio_percent_bps(4, 0), 0);
+    }
+
+    #[test]
+    fn preexec_reject_density_metrics_expose_concentrated_guardrail_pressure() {
+        let preexec_reject_total = 7u64;
+        let preexec_reject_active_heights = 2u64;
+        let bft_committed_heights = 3u64;
+        let bft_observed_heights = 5u64;
+        let finality_avg = 200u128;
+        let preexec_reject_density_avg = preexec_reject_total / preexec_reject_active_heights;
+        let preexec_reject_density_avg_milli =
+            ratio_milli_u64(preexec_reject_total, preexec_reject_active_heights);
+        let preexec_reject_active_height_rate_ppm =
+            ratio_ppm_u64(preexec_reject_active_heights, bft_committed_heights);
+        let preexec_reject_active_observed_height_rate_ppm =
+            ratio_ppm_u64(preexec_reject_active_heights, bft_observed_heights);
+        let preexec_reject_active_height_share_ppm =
+            finality_budget_share_ppm(preexec_reject_density_avg_milli, finality_avg);
+
+        assert_eq!(preexec_reject_density_avg, 3);
+        assert_eq!(preexec_reject_density_avg_milli, 3_500);
+        assert_eq!(preexec_reject_active_height_rate_ppm, 666_666);
+        assert_eq!(preexec_reject_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(preexec_reject_active_height_share_ppm, 17_500);
+        assert!(preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm);
+        assert_eq!(ratio_milli_u64(0, bft_committed_heights), 0);
+        assert_eq!(ratio_milli_u64(preexec_reject_total, 0), 0);
+    }
+
+    #[test]
+    fn preexec_reject_metric_names_keep_height_coverage_and_budget_semantics_distinct() {
+        let active_height_count_field_name = "preexec_reject_active_heights";
+        let active_height_rate_field_name = "preexec_reject_active_height_rate_ppm";
+        let active_observed_height_rate_field_name =
+            "preexec_reject_active_observed_height_rate_ppm";
+        let active_height_share_field_name = "preexec_reject_active_height_share_ppm";
+        let density_avg_milli_field_name = "preexec_reject_density_avg_milli";
+
+        assert!(active_height_count_field_name.ends_with("_heights"));
+        assert!(active_height_rate_field_name.ends_with("_height_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert_ne!(active_height_count_field_name, active_height_rate_field_name);
+        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(active_observed_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(active_height_share_field_name, density_avg_milli_field_name);
     }
 
     #[test]
@@ -3215,18 +3348,147 @@ mod tests {
     }
 
     #[test]
+    fn preexec_metric_names_keep_tail_and_guardrail_semantics_distinct() {
+        let peak_field_name = "preexec_peak_share_ppm";
+        let reject_density_avg_milli_field_name = "preexec_reject_density_avg_milli";
+        let reject_share_field_name = "preexec_reject_share_bps";
+        let conflict_miss_share_field_name = "preexec_conflict_miss_share_bps";
+
+        assert!(peak_field_name.ends_with("_share_ppm"));
+        assert!(reject_density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert!(reject_share_field_name.ends_with("_share_bps"));
+        assert!(conflict_miss_share_field_name.ends_with("_share_bps"));
+        assert_ne!(peak_field_name, reject_density_avg_milli_field_name);
+        assert_ne!(peak_field_name, reject_share_field_name);
+        assert_ne!(peak_field_name, conflict_miss_share_field_name);
+        assert_ne!(reject_density_avg_milli_field_name, reject_share_field_name);
+        assert_ne!(reject_density_avg_milli_field_name, conflict_miss_share_field_name);
+        assert_ne!(reject_share_field_name, conflict_miss_share_field_name);
+    }
+
+    #[test]
+    fn preexec_reject_review_bundle_keeps_commit_skip_coverage_pair_near_guardrail_pressure() {
+        let guardrail_review_fields = [
+            "preexec_peak_share_ppm",
+            "preexec_reject_active_heights",
+            "preexec_reject_active_height_rate_ppm",
+            "preexec_reject_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_observed_height_rate_ppm",
+            "preexec_reject_density_avg_milli",
+            "preexec_reject_active_height_share_ppm",
+            "preexec_reject_share_bps",
+            "preexec_conflict_miss_share_bps",
+        ];
+
+        assert_eq!(guardrail_review_fields.len(), 10);
+        assert!(guardrail_review_fields[0].ends_with("_share_ppm"));
+        assert!(guardrail_review_fields[1].ends_with("_heights"));
+        assert!(guardrail_review_fields[2].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[3].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[4].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[5].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[6].ends_with("_avg_milli"));
+        assert!(guardrail_review_fields[7].ends_with("_share_ppm"));
+        assert!(guardrail_review_fields[8].ends_with("_share_bps"));
+        assert!(guardrail_review_fields[9].ends_with("_share_bps"));
+        assert_ne!(guardrail_review_fields[2], guardrail_review_fields[3]);
+        assert_ne!(guardrail_review_fields[4], guardrail_review_fields[5]);
+        assert_ne!(guardrail_review_fields[6], guardrail_review_fields[7]);
+        assert_ne!(guardrail_review_fields[8], guardrail_review_fields[9]);
+    }
+
+    #[test]
     fn rollback_active_height_metric_names_keep_compatibility_and_height_semantics_distinct() {
         let compatibility_count_field_name = "rollback_block_total";
         let height_count_field_name = "rollback_active_heights";
         let compatibility_rate_field_name = "rollback_block_rate_ppm";
         let height_rate_field_name = "rollback_active_height_rate_ppm";
+        let observed_height_rate_field_name = "rollback_active_observed_height_rate_ppm";
 
         assert!(compatibility_count_field_name.ends_with("_total"));
         assert!(height_count_field_name.ends_with("_heights"));
         assert!(compatibility_rate_field_name.ends_with("_rate_ppm"));
         assert!(height_rate_field_name.ends_with("_height_rate_ppm"));
+        assert!(observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert_ne!(compatibility_count_field_name, height_count_field_name);
         assert_ne!(compatibility_rate_field_name, height_rate_field_name);
+        assert_ne!(height_rate_field_name, observed_height_rate_field_name);
+        assert_ne!(
+            compatibility_rate_field_name,
+            observed_height_rate_field_name
+        );
+    }
+
+    #[test]
+    fn rollback_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let rollback_active_heights = 2u64;
+        let rollback_committed_height_rate_ppm = ratio_ppm_u64(rollback_active_heights, 2u64);
+        let rollback_observed_height_rate_ppm = ratio_ppm_u64(rollback_active_heights, 5u64);
+
+        assert_eq!(rollback_committed_height_rate_ppm, 1_000_000);
+        assert_eq!(rollback_observed_height_rate_ppm, 400_000);
+        assert!(rollback_observed_height_rate_ppm < rollback_committed_height_rate_ppm);
+    }
+
+    #[test]
+    fn rollback_active_height_share_tracks_clustered_rollback_budget_pressure() {
+        let rollback_density_avg_milli = 2_500u64;
+        let finality_avg = 2u128;
+
+        let rollback_active_height_share_ppm =
+            finality_budget_share_ppm(rollback_density_avg_milli, finality_avg);
+
+        assert_eq!(rollback_active_height_share_ppm, 1_250_000);
+        assert!(rollback_active_height_share_ppm > 1_000_000);
+    }
+
+    #[test]
+    fn rollback_metric_names_keep_budget_share_and_coverage_distinct() {
+        let peak_field_name = "rollback_peak_share_ppm";
+        let active_height_rate_field_name = "rollback_active_height_rate_ppm";
+        let active_observed_height_rate_field_name = "rollback_active_observed_height_rate_ppm";
+        let density_avg_milli_field_name = "rollback_density_avg_milli";
+        let active_height_share_field_name = "rollback_active_height_share_ppm";
+
+        assert!(peak_field_name.ends_with("_share_ppm"));
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(peak_field_name, active_height_rate_field_name);
+        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(active_observed_height_rate_field_name, density_avg_milli_field_name);
+        assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
+    }
+
+    #[test]
+    fn rollback_review_bundle_keeps_commit_skip_coverage_pair_near_guardrail_pressure() {
+        let guardrail_review_fields = [
+            "rollback_peak_share_ppm",
+            "rollback_active_heights",
+            "rollback_active_height_rate_ppm",
+            "rollback_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_observed_height_rate_ppm",
+            "rollback_density_avg_milli",
+            "rollback_active_height_share_ppm",
+            "apply_error_rollback_share_bps",
+        ];
+
+        assert_eq!(guardrail_review_fields.len(), 9);
+        assert!(guardrail_review_fields[0].ends_with("_share_ppm"));
+        assert!(guardrail_review_fields[1].ends_with("_heights"));
+        assert!(guardrail_review_fields[2].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[3].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[4].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[5].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[6].ends_with("_avg_milli"));
+        assert!(guardrail_review_fields[7].ends_with("_share_ppm"));
+        assert!(guardrail_review_fields[8].ends_with("_share_bps"));
+        assert_ne!(guardrail_review_fields[2], guardrail_review_fields[3]);
+        assert_ne!(guardrail_review_fields[4], guardrail_review_fields[5]);
+        assert_ne!(guardrail_review_fields[6], guardrail_review_fields[7]);
     }
 
     #[test]
@@ -3254,6 +3516,219 @@ mod tests {
     }
 
     #[test]
+    fn consensus_summary_guardrail_field_list_keeps_active_height_and_observed_coverage_views() {
+        let observed_coverage_fields = [
+            "critical_wait_active_observed_height_rate_ppm",
+            "hot_object_active_observed_height_rate_ppm",
+            "preexec_reject_active_observed_height_rate_ppm",
+            "rollback_active_observed_height_rate_ppm",
+            "bft_round_change_active_observed_height_rate_ppm",
+            "bft_round_change_backoff_active_observed_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+        ];
+        let active_budget_share_fields = [
+            "critical_wait_active_height_share_ppm",
+            "hot_object_active_height_share_ppm",
+            "preexec_reject_active_height_share_ppm",
+            "rollback_active_height_share_ppm",
+            "bft_round_change_active_height_share_ppm",
+            "bft_round_change_backoff_active_height_share_ppm",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(observed_coverage_fields.len(), 7);
+        assert_eq!(active_budget_share_fields.len(), 7);
+        assert!(observed_coverage_fields.iter().all(|field| field.ends_with("_rate_ppm")));
+        assert!(active_budget_share_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        for observed_field in observed_coverage_fields {
+            assert!(
+                !active_budget_share_fields.contains(&observed_field),
+                "observed coverage field should stay distinct: {observed_field}"
+            );
+        }
+    }
+
+    #[test]
+    fn consensus_summary_backoff_field_list_keeps_wall_alias_separate_from_budget_share_fields() {
+        let backoff_fields = [
+            "bft_round_change_backoff_active_height_share_ppm",
+            "bft_round_change_backoff_wall_share_ppm",
+            "bft_round_change_backoff_share_ppm",
+        ];
+
+        assert_eq!(backoff_fields.len(), 3);
+        assert!(backoff_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        assert_ne!(backoff_fields[0], backoff_fields[1]);
+        assert_ne!(backoff_fields[0], backoff_fields[2]);
+        assert_ne!(backoff_fields[1], backoff_fields[2]);
+    }
+
+    #[test]
+    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views() {
+        let review_bundles: &[&[&str]] = &[
+            &[
+                "critical_wait_active_heights",
+                "critical_wait_active_height_rate_ppm",
+                "critical_wait_active_observed_height_rate_ppm",
+                "critical_wait_density_avg_milli",
+                "critical_wait_active_height_share_ppm",
+            ],
+            &[
+                "hot_object_active_heights",
+                "hot_object_active_height_rate_ppm",
+                "hot_object_active_observed_height_rate_ppm",
+                "hot_object_active_top_label_share_avg_ppm",
+                "hot_object_active_tail_share_avg_ppm",
+                "hot_object_active_height_share_ppm",
+            ],
+            &[
+                "rollback_active_heights",
+                "rollback_active_height_rate_ppm",
+                "rollback_active_observed_height_rate_ppm",
+                "rollback_density_avg_milli",
+                "rollback_active_height_share_ppm",
+            ],
+            &[
+                "preexec_reject_active_heights",
+                "preexec_reject_active_height_rate_ppm",
+                "preexec_reject_active_observed_height_rate_ppm",
+                "preexec_reject_density_avg_milli",
+                "preexec_reject_active_height_share_ppm",
+            ],
+            &[
+                "bft_round_change_active_heights",
+                "bft_round_change_active_height_rate_ppm",
+                "bft_round_change_active_observed_height_rate_ppm",
+                "bft_round_change_density_avg_milli",
+                "bft_round_change_active_height_share_ppm",
+            ],
+            &[
+                "bft_round_change_backoff_active_heights",
+                "bft_round_change_backoff_active_height_rate_ppm",
+                "bft_round_change_backoff_active_observed_height_rate_ppm",
+                "bft_round_change_backoff_density_avg_milli",
+                "bft_round_change_backoff_active_height_share_ppm",
+            ],
+            &[
+                "bft_leader_missed_active_heights",
+                "bft_leader_missed_active_height_rate_ppm",
+                "bft_leader_missed_active_observed_height_rate_ppm",
+                "bft_leader_missed_density_avg_milli",
+                "bft_leader_missed_active_height_share_ppm",
+            ],
+        ];
+
+        for bundle in review_bundles {
+            assert!(bundle[0].ends_with("_active_heights"));
+            assert!(bundle[1].ends_with("_active_height_rate_ppm"));
+            assert!(bundle[2].ends_with("_active_observed_height_rate_ppm"));
+            assert_ne!(bundle[0], bundle[1]);
+            assert_ne!(bundle[0], bundle[2]);
+            assert_ne!(bundle[1], bundle[2]);
+            assert!(
+                bundle[3].ends_with("_avg_milli") || bundle[3].ends_with("_share_avg_ppm"),
+                "expected density or active-share companion field, got {}",
+                bundle[3]
+            );
+            assert!(bundle.last().unwrap().ends_with("_active_height_share_ppm"));
+        }
+    }
+
+    #[test]
+    fn round_change_backoff_review_bundle_keeps_coverage_wall_and_budget_views_together() {
+        let jitter_review_fields = [
+            "bft_round_change_backoff_active_heights",
+            "bft_round_change_backoff_active_height_rate_ppm",
+            "bft_round_change_backoff_active_observed_height_rate_ppm",
+            "bft_round_change_backoff_density_avg_milli",
+            "bft_round_change_backoff_active_height_share_ppm",
+            "bft_round_change_backoff_wall_share_ppm",
+            "bft_round_change_backoff_share_ppm",
+        ];
+
+        assert_eq!(jitter_review_fields.len(), 7);
+        assert!(jitter_review_fields[0].ends_with("_heights"));
+        assert!(jitter_review_fields[1].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[2].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[3].ends_with("_avg_milli"));
+        assert!(jitter_review_fields[4].ends_with("_share_ppm"));
+        assert!(jitter_review_fields[5].ends_with("_share_ppm"));
+        assert!(jitter_review_fields[6].ends_with("_share_ppm"));
+        assert_ne!(jitter_review_fields[1], jitter_review_fields[2]);
+        assert_ne!(jitter_review_fields[4], jitter_review_fields[5]);
+        assert_ne!(jitter_review_fields[4], jitter_review_fields[6]);
+        assert_ne!(jitter_review_fields[5], jitter_review_fields[6]);
+    }
+
+    #[test]
+    fn leader_missed_review_bundle_keeps_validator_spread_next_to_height_pressure_fields() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 8);
+        assert!(fairness_review_fields[0].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_validators"));
+        assert!(fairness_review_fields[2].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_active_heights"));
+        assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
+        assert!(fairness_review_fields[6].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[7].ends_with("_active_height_share_ppm"));
+        assert_ne!(fairness_review_fields[0], fairness_review_fields[2]);
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[7]);
+        assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
+    }
+
+    #[test]
+    fn guardrail_review_bundles_keep_cause_fields_next_to_coverage_and_budget_pressure() {
+        let review_bundles: &[&[&str]] = &[
+            &[
+                "preexec_reject_active_heights",
+                "preexec_reject_active_height_rate_ppm",
+                "preexec_reject_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_observed_height_rate_ppm",
+                "preexec_reject_density_avg_milli",
+                "preexec_reject_active_height_share_ppm",
+                "preexec_reject_share_bps",
+                "preexec_conflict_miss_share_bps",
+            ],
+            &[
+                "rollback_active_heights",
+                "rollback_active_height_rate_ppm",
+                "rollback_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_observed_height_rate_ppm",
+                "rollback_density_avg_milli",
+                "rollback_active_height_share_ppm",
+                "apply_error_rollback_share_bps",
+            ],
+        ];
+
+        assert_eq!(review_bundles.len(), 2);
+        for bundle in review_bundles {
+            assert!(bundle[0].ends_with("_active_heights"));
+            assert!(bundle[1].ends_with("_active_height_rate_ppm"));
+            assert!(bundle[2].ends_with("_active_observed_height_rate_ppm"));
+            assert_eq!(bundle[3], "bft_commit_observed_height_rate_ppm");
+            assert_eq!(bundle[4], "bft_skipped_observed_height_rate_ppm");
+            assert!(bundle[5].ends_with("_avg_milli"));
+            assert!(bundle[6].ends_with("_active_height_share_ppm"));
+            assert!(bundle.last().unwrap().ends_with("_share_bps"));
+        }
+        assert_eq!(review_bundles[0].last().copied(), Some("preexec_conflict_miss_share_bps"));
+        assert_eq!(review_bundles[1].last().copied(), Some("apply_error_rollback_share_bps"));
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
@@ -3265,6 +3740,20 @@ mod tests {
         let field_name = "bft_round_change_backoff_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
         assert!(!field_name.contains("wall_share_ppm"));
+    }
+
+    #[test]
+    fn round_change_backoff_metric_names_keep_wall_alias_and_budget_share_distinct() {
+        let wall_share_field_name = "bft_round_change_backoff_wall_share_ppm";
+        let compatibility_alias_field_name = "bft_round_change_backoff_share_ppm";
+        let active_height_share_field_name = "bft_round_change_backoff_active_height_share_ppm";
+
+        assert!(wall_share_field_name.ends_with("_share_ppm"));
+        assert!(compatibility_alias_field_name.ends_with("_share_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(wall_share_field_name, compatibility_alias_field_name);
+        assert_ne!(wall_share_field_name, active_height_share_field_name);
+        assert_ne!(compatibility_alias_field_name, active_height_share_field_name);
     }
 
     #[test]
@@ -3298,6 +3787,65 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_wall_share_metric_can_exceed_one_million_when_backoff_dominates() {
+        let bft_round_change_backoff_total_ms = 12u64;
+        let bft_committed_heights = 3u64;
+        let wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+
+        assert_eq!(wall_share_ppm, 4_000_000);
+        assert!(wall_share_ppm > 1_000_000);
+    }
+
+    #[test]
+    fn bft_commit_and_skipped_height_rates_make_no_commit_pressure_visible() {
+        let bft_observed_heights = 5u64;
+        let bft_committed_heights = 4u64;
+        let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
+        let bft_commit_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
+        let bft_skipped_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
+
+        assert_eq!(bft_commit_observed_height_rate_ppm, 800_000);
+        assert_eq!(bft_skipped_height_total, 1);
+        assert_eq!(bft_skipped_observed_height_rate_ppm, 200_000);
+        assert_eq!(
+            bft_commit_observed_height_rate_ppm + bft_skipped_observed_height_rate_ppm,
+            1_000_000
+        );
+    }
+
+    #[test]
+    fn bft_commit_and_skipped_height_metric_names_keep_commit_and_skip_views_distinct() {
+        let commit_rate_field_name = "bft_commit_observed_height_rate_ppm";
+        let skipped_total_field_name = "bft_skipped_height_total";
+        let skipped_rate_field_name = "bft_skipped_observed_height_rate_ppm";
+
+        assert!(commit_rate_field_name.ends_with("_rate_ppm"));
+        assert!(skipped_total_field_name.ends_with("_total"));
+        assert!(skipped_rate_field_name.ends_with("_rate_ppm"));
+        assert_ne!(commit_rate_field_name, skipped_total_field_name);
+        assert_ne!(commit_rate_field_name, skipped_rate_field_name);
+        assert_ne!(skipped_total_field_name, skipped_rate_field_name);
+    }
+
+    #[test]
+    fn bft_commit_and_skipped_height_review_bundle_keeps_observed_coverage_pair_together() {
+        let coverage_review_fields = [
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+        ];
+
+        assert_eq!(coverage_review_fields.len(), 3);
+        assert!(coverage_review_fields[0].ends_with("_rate_ppm"));
+        assert!(coverage_review_fields[1].ends_with("_total"));
+        assert!(coverage_review_fields[2].ends_with("_rate_ppm"));
+        assert_ne!(coverage_review_fields[0], coverage_review_fields[2]);
+    }
+
+    #[test]
     fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
         let bft_round_change_total = 6u64;
         let bft_round_change_active_heights = 2u64;
@@ -3320,6 +3868,111 @@ mod tests {
     }
 
     #[test]
+    fn round_change_metric_names_keep_committed_budget_and_observed_coverage_distinct() {
+        let active_height_rate_field_name = "bft_round_change_active_height_rate_ppm";
+        let active_observed_height_rate_field_name =
+            "bft_round_change_active_observed_height_rate_ppm";
+        let active_height_share_field_name = "bft_round_change_active_height_share_ppm";
+        let density_avg_milli_field_name = "bft_round_change_density_avg_milli";
+
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_height_rate_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
+    }
+
+    #[test]
+    fn round_change_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let bft_round_change_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let committed_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_active_heights, bft_committed_heights);
+        let observed_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_active_heights, bft_observed_heights);
+
+        assert_eq!(committed_height_rate_ppm, 1_000_000);
+        assert_eq!(observed_height_rate_ppm, 400_000);
+        assert!(observed_height_rate_ppm < committed_height_rate_ppm);
+    }
+
+    #[test]
+    fn round_change_coverage_pair_with_commit_and_skip_rates_exposes_denominator_shift() {
+        let bft_round_change_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
+
+        let bft_round_change_active_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_active_heights, bft_committed_heights);
+        let bft_round_change_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_active_heights, bft_observed_heights);
+        let bft_commit_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
+        let bft_skipped_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
+
+        assert_eq!(bft_round_change_active_height_rate_ppm, 1_000_000);
+        assert_eq!(bft_round_change_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_commit_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_skipped_observed_height_rate_ppm, 600_000);
+        assert_eq!(
+            bft_commit_observed_height_rate_ppm + bft_skipped_observed_height_rate_ppm,
+            1_000_000
+        );
+        assert!(
+            bft_round_change_active_observed_height_rate_ppm
+                < bft_round_change_active_height_rate_ppm
+        );
+        assert_eq!(
+            bft_round_change_active_observed_height_rate_ppm,
+            bft_commit_observed_height_rate_ppm
+        );
+        assert!(bft_skipped_observed_height_rate_ppm > bft_commit_observed_height_rate_ppm);
+    }
+
+    #[test]
+    fn round_change_review_bundle_keeps_commit_skip_and_coverage_denominator_views_together() {
+        let jitter_review_fields = [
+            "bft_round_change_active_heights",
+            "bft_round_change_active_height_rate_ppm",
+            "bft_round_change_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_round_change_density_avg_milli",
+            "bft_round_change_active_height_share_ppm",
+        ];
+
+        assert_eq!(jitter_review_fields.len(), 8);
+        assert!(jitter_review_fields[0].ends_with("_heights"));
+        assert!(jitter_review_fields[1].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[2].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[3].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[4].ends_with("_total"));
+        assert!(jitter_review_fields[5].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[6].ends_with("_avg_milli"));
+        assert!(jitter_review_fields[7].ends_with("_share_ppm"));
+        assert_ne!(jitter_review_fields[1], jitter_review_fields[2]);
+        assert_ne!(jitter_review_fields[2], jitter_review_fields[3]);
+        assert_ne!(jitter_review_fields[3], jitter_review_fields[5]);
+        assert_ne!(jitter_review_fields[6], jitter_review_fields[7]);
+    }
+
+    #[test]
     fn round_change_density_avg_milli_preserves_sub_integer_jitter_signal() {
         let bft_round_change_total = 5u64;
         let bft_round_change_active_heights = 2u64;
@@ -3334,12 +3987,12 @@ mod tests {
     #[test]
     fn round_change_backoff_density_avg_milli_preserves_clustered_jitter_signal() {
         let bft_round_change_backoff_total_ms = 5u64;
-        let bft_round_change_active_heights = 2u64;
+        let bft_round_change_backoff_active_heights = 2u64;
         let bft_round_change_backoff_density_avg_ms =
-            bft_round_change_backoff_total_ms / bft_round_change_active_heights;
+            bft_round_change_backoff_total_ms / bft_round_change_backoff_active_heights;
         let bft_round_change_backoff_density_avg_milli = ratio_milli_u64(
             bft_round_change_backoff_total_ms,
-            bft_round_change_active_heights,
+            bft_round_change_backoff_active_heights,
         );
 
         assert_eq!(bft_round_change_backoff_density_avg_ms, 2);
@@ -3371,6 +4024,7 @@ mod tests {
         let bft_round_change_total = 5u64;
         let bft_round_change_backoff_total_ms = 5u64;
         let bft_round_change_active_heights = 2u64;
+        let bft_round_change_backoff_active_heights = 2u64;
         let finality_avg = 10u128;
 
         let density_avg = bft_round_change_total / bft_round_change_active_heights;
@@ -3379,10 +4033,10 @@ mod tests {
         let active_height_share_ppm =
             ratio_ppm_u64(density_avg_milli, (finality_avg as u64) * 1_000);
         let backoff_density_avg_ms =
-            bft_round_change_backoff_total_ms / bft_round_change_active_heights;
+            bft_round_change_backoff_total_ms / bft_round_change_backoff_active_heights;
         let backoff_density_avg_milli = ratio_milli_u64(
             bft_round_change_backoff_total_ms,
-            bft_round_change_active_heights,
+            bft_round_change_backoff_active_heights,
         );
         let backoff_active_height_share_ppm =
             ratio_ppm_u64(backoff_density_avg_milli, (finality_avg as u64) * 1_000);
@@ -3398,6 +4052,53 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_density_uses_backoff_active_heights_not_round_change_coverage() {
+        let bft_round_change_backoff_total_ms = 5u64;
+        let bft_round_change_active_heights = 4u64;
+        let bft_round_change_backoff_active_heights = 2u64;
+        let finality_avg = 10u128;
+
+        let diluted_density_avg_milli = ratio_milli_u64(
+            bft_round_change_backoff_total_ms,
+            bft_round_change_active_heights,
+        );
+        let backoff_density_avg_milli = ratio_milli_u64(
+            bft_round_change_backoff_total_ms,
+            bft_round_change_backoff_active_heights,
+        );
+        let backoff_active_height_share_ppm =
+            finality_budget_share_ppm(backoff_density_avg_milli, finality_avg);
+
+        assert_eq!(diluted_density_avg_milli, 1_250);
+        assert_eq!(backoff_density_avg_milli, 2_500);
+        assert!(backoff_density_avg_milli > diluted_density_avg_milli);
+        assert_eq!(backoff_active_height_share_ppm, 250_000);
+    }
+
+    #[test]
+    fn active_height_budget_share_metrics_can_exceed_one_million_when_jitter_or_fairness_dominates_finality(
+    ) {
+        let finality_avg = 2u128;
+        let round_change_density_avg_milli = 3_000u64;
+        let round_change_backoff_density_avg_milli = 4_500u64;
+        let leader_missed_density_avg_milli = 2_500u64;
+
+        let round_change_active_height_share_ppm =
+            finality_budget_share_ppm(round_change_density_avg_milli, finality_avg);
+        let round_change_backoff_active_height_share_ppm =
+            finality_budget_share_ppm(round_change_backoff_density_avg_milli, finality_avg);
+        let leader_missed_active_height_share_ppm =
+            finality_budget_share_ppm(leader_missed_density_avg_milli, finality_avg);
+
+        assert_eq!(round_change_active_height_share_ppm, 1_500_000);
+        assert_eq!(round_change_backoff_active_height_share_ppm, 2_250_000);
+        assert_eq!(leader_missed_active_height_share_ppm, 1_250_000);
+        assert!(round_change_active_height_share_ppm > 1_000_000);
+        assert!(round_change_backoff_active_height_share_ppm > 1_000_000);
+        assert!(leader_missed_active_height_share_ppm > 1_000_000);
+    }
+
+    #[test]
     fn hot_object_active_share_metrics_avoid_zero_block_dilution() {
         let all_block_top_label_share_samples_ppm = vec![0u128, 500_000, 800_000];
         let all_block_tail_share_samples_ppm = vec![0u128, 500_000, 200_000];
@@ -3406,7 +4107,8 @@ mod tests {
         let hot_object_active_tail_share_total_ppm = 700_000u128;
         let total_heights = 3u64;
 
-        let diluted_top_label_share_avg_ppm = average_or_zero(&all_block_top_label_share_samples_ppm);
+        let diluted_top_label_share_avg_ppm =
+            average_or_zero(&all_block_top_label_share_samples_ppm);
         let diluted_tail_share_avg_ppm = average_or_zero(&all_block_tail_share_samples_ppm);
         let active_top_label_share_avg_ppm =
             hot_object_active_top_label_share_total_ppm / hot_object_active_heights as u128;
@@ -3414,6 +4116,8 @@ mod tests {
             hot_object_active_tail_share_total_ppm / hot_object_active_heights as u128;
         let hot_object_active_height_rate_ppm =
             ratio_ppm_u64(hot_object_active_heights, total_heights);
+        let hot_object_active_observed_height_rate_ppm =
+            ratio_ppm_u64(hot_object_active_heights, 5u64);
 
         assert_eq!(diluted_top_label_share_avg_ppm, 433_333);
         assert_eq!(active_top_label_share_avg_ppm, 650_000);
@@ -3422,6 +4126,8 @@ mod tests {
         assert_eq!(active_tail_share_avg_ppm, 350_000);
         assert!(active_tail_share_avg_ppm > diluted_tail_share_avg_ppm);
         assert_eq!(hot_object_active_height_rate_ppm, 666_666);
+        assert_eq!(hot_object_active_observed_height_rate_ppm, 400_000);
+        assert!(hot_object_active_observed_height_rate_ppm < hot_object_active_height_rate_ppm);
     }
 
     #[test]
@@ -3435,8 +4141,10 @@ mod tests {
             .iter()
             .filter(|missed| **missed > 0)
             .count() as u64;
-        let bft_leader_missed_active_validator_share_ppm =
-            ratio_ppm_u64(bft_leader_missed_active_validators, leader_missed_final.len() as u64);
+        let bft_leader_missed_active_validator_share_ppm = ratio_ppm_u64(
+            bft_leader_missed_active_validators,
+            leader_missed_final.len() as u64,
+        );
 
         assert_eq!(bft_leader_missed_total, 6);
         assert_eq!(bft_leader_missed_max, 4);
@@ -3456,8 +4164,10 @@ mod tests {
             .iter()
             .filter(|missed| **missed > 0)
             .count() as u64;
-        let bft_leader_missed_active_validator_share_ppm =
-            ratio_ppm_u64(bft_leader_missed_active_validators, leader_missed_final.len() as u64);
+        let bft_leader_missed_active_validator_share_ppm = ratio_ppm_u64(
+            bft_leader_missed_active_validators,
+            leader_missed_final.len() as u64,
+        );
 
         assert_eq!(bft_leader_missed_total, 0);
         assert_eq!(bft_leader_missed_max, 0);
@@ -3485,17 +4195,29 @@ mod tests {
         assert!(active_validators_field_name.ends_with("_validators"));
         assert!(active_validator_share_field_name.ends_with("_share_ppm"));
         assert!(active_heights_field_name.ends_with("_heights"));
-        assert!(active_height_rate_field_name.ends_with("_share_ppm") || active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(
+            active_height_rate_field_name.ends_with("_share_ppm")
+                || active_height_rate_field_name.ends_with("_rate_ppm")
+        );
         assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert!(distribution_field_name.ends_with("_proposals"));
         assert_ne!(total_field_name, max_field_name);
         assert_ne!(max_field_name, top_share_field_name);
         assert_ne!(top_share_field_name, active_validators_field_name);
-        assert_ne!(active_validators_field_name, active_validator_share_field_name);
+        assert_ne!(
+            active_validators_field_name,
+            active_validator_share_field_name
+        );
         assert_ne!(active_validator_share_field_name, active_heights_field_name);
         assert_ne!(active_heights_field_name, active_height_rate_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
-        assert_ne!(active_observed_height_rate_field_name, distribution_field_name);
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            distribution_field_name
+        );
     }
 
     #[test]
@@ -3511,6 +4233,21 @@ mod tests {
         assert_eq!(bft_leader_missed_active_heights, 3);
         assert_eq!(bft_leader_missed_active_height_rate_ppm, 750_000);
         assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 500_000);
+    }
+
+    #[test]
+    fn leader_missed_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let bft_leader_missed_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let committed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_committed_heights);
+        let observed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_observed_heights);
+
+        assert_eq!(committed_height_rate_ppm, 1_000_000);
+        assert_eq!(observed_height_rate_ppm, 400_000);
+        assert!(observed_height_rate_ppm < committed_height_rate_ppm);
     }
 
     #[test]
@@ -3531,17 +4268,381 @@ mod tests {
     fn leader_missed_metric_names_include_density_fields_for_active_height_bursts() {
         let density_field_name = "bft_leader_missed_density_avg";
         let milli_density_field_name = "bft_leader_missed_density_avg_milli";
+        let active_height_share_field_name = "bft_leader_missed_active_height_share_ppm";
         let active_heights_field_name = "bft_leader_missed_active_heights";
         let active_observed_height_rate_field_name =
             "bft_leader_missed_active_observed_height_rate_ppm";
 
         assert!(density_field_name.ends_with("_avg"));
         assert!(milli_density_field_name.ends_with("_avg_milli"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert!(active_heights_field_name.ends_with("_heights"));
         assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert_ne!(density_field_name, milli_density_field_name);
-        assert_ne!(milli_density_field_name, active_heights_field_name);
-        assert_ne!(active_heights_field_name, active_observed_height_rate_field_name);
+        assert_ne!(milli_density_field_name, active_height_share_field_name);
+        assert_ne!(active_height_share_field_name, active_heights_field_name);
+        assert_ne!(
+            active_heights_field_name,
+            active_observed_height_rate_field_name
+        );
+    }
+
+    #[test]
+    fn leader_missed_metric_names_keep_validator_spread_distinct_from_height_budget_pressure() {
+        let active_validator_share_field_name = "bft_leader_missed_active_validator_share_ppm";
+        let active_height_share_field_name = "bft_leader_missed_active_height_share_ppm";
+        let density_field_name = "bft_leader_missed_density_avg_milli";
+        let active_observed_height_rate_field_name =
+            "bft_leader_missed_active_observed_height_rate_ppm";
+
+        assert!(active_validator_share_field_name.ends_with("_share_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert!(density_field_name.ends_with("_avg_milli"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert_ne!(
+            active_validator_share_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(active_validator_share_field_name, density_field_name);
+        assert_ne!(
+            active_height_share_field_name,
+            active_observed_height_rate_field_name
+        );
+    }
+
+    #[test]
+    fn leader_missed_review_bundle_keeps_validator_spread_coverage_and_budget_views_together() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 8);
+        assert!(fairness_review_fields[0].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_validators"));
+        assert!(fairness_review_fields[2].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_heights"));
+        assert!(fairness_review_fields[4].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[6].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[7].ends_with("_share_ppm"));
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[7]);
+        assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
+    }
+
+    #[test]
+    fn leader_missed_review_bundle_keeps_commit_skip_coverage_pair_near_fairness_hotspots() {
+        let fairness_review_fields = [
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 7);
+        assert!(fairness_review_fields[0].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[2].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_total"));
+        assert!(fairness_review_fields[4].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[6].ends_with("_share_ppm"));
+        assert_ne!(fairness_review_fields[0], fairness_review_fields[1]);
+        assert_ne!(fairness_review_fields[1], fairness_review_fields[2]);
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[4]);
+        assert_ne!(fairness_review_fields[5], fairness_review_fields[6]);
+    }
+
+    #[test]
+    fn leader_missed_metric_names_keep_validator_spread_coverage_and_budget_views_distinct() {
+        let active_validators_field_name = "bft_leader_missed_active_validators";
+        let active_validator_share_field_name = "bft_leader_missed_active_validator_share_ppm";
+        let active_heights_field_name = "bft_leader_missed_active_heights";
+        let active_height_rate_field_name = "bft_leader_missed_active_height_rate_ppm";
+        let active_observed_height_rate_field_name =
+            "bft_leader_missed_active_observed_height_rate_ppm";
+        let density_avg_milli_field_name = "bft_leader_missed_density_avg_milli";
+        let active_height_share_field_name = "bft_leader_missed_active_height_share_ppm";
+
+        assert!(active_validators_field_name.ends_with("_validators"));
+        assert!(active_validator_share_field_name.ends_with("_share_ppm"));
+        assert!(active_heights_field_name.ends_with("_heights"));
+        assert!(active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(active_validators_field_name, active_heights_field_name);
+        assert_ne!(active_validator_share_field_name, active_height_share_field_name);
+        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
+    }
+
+    #[test]
+    fn leader_missed_active_height_share_handles_zero_finality_budget() {
+        let bft_leader_missed_density_avg_milli = 2_500u64;
+        let finality_avg = 0u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_leader_missed_density_avg_milli, finality_avg),
+            0
+        );
+    }
+
+    #[test]
+    fn leader_missed_active_height_share_can_exceed_budget_when_fairness_stalls_dominate() {
+        let bft_leader_missed_density_avg_milli = 6_000u64;
+        let finality_avg = 4u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_leader_missed_density_avg_milli, finality_avg),
+            1_500_000
+        );
+    }
+
+    #[test]
+    fn leader_missed_hotspot_metrics_stay_visible_when_distribution_looks_benign() {
+        let leader_missed_final = vec![2u64, 2u64, 1u64, 1u64];
+        let bft_leader_missed_total: u64 = leader_missed_final.iter().copied().sum();
+        let bft_leader_missed_max = leader_missed_final.iter().copied().max().unwrap_or(0);
+        let bft_leader_missed_top_share_ppm =
+            ratio_ppm_u64(bft_leader_missed_max, bft_leader_missed_total);
+        let bft_leader_missed_active_validators = leader_missed_final
+            .iter()
+            .filter(|missed| **missed > 0)
+            .count() as u64;
+        let bft_leader_missed_active_validator_share_ppm = ratio_ppm_u64(
+            bft_leader_missed_active_validators,
+            leader_missed_final.len() as u64,
+        );
+        let bft_leader_missed_active_heights = 2u64;
+        let bft_committed_heights = 6u64;
+        let bft_observed_heights = 8u64;
+        let finality_avg = 2u128;
+        let bft_leader_missed_density_avg_milli =
+            ratio_milli_u64(bft_leader_missed_total, bft_leader_missed_active_heights);
+        let bft_leader_missed_active_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_committed_heights);
+        let bft_leader_missed_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_observed_heights);
+        let bft_leader_missed_active_height_share_ppm =
+            finality_budget_share_ppm(bft_leader_missed_density_avg_milli, finality_avg);
+
+        assert_eq!(bft_leader_missed_total, 6);
+        assert_eq!(bft_leader_missed_top_share_ppm, 333_333);
+        assert_eq!(bft_leader_missed_active_validator_share_ppm, 1_000_000);
+        assert_eq!(bft_leader_missed_active_height_rate_ppm, 333_333);
+        assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 250_000);
+        assert_eq!(bft_leader_missed_density_avg_milli, 3_000);
+        assert_eq!(bft_leader_missed_active_height_share_ppm, 1_500_000);
+        assert!(bft_leader_missed_active_height_share_ppm > 1_000_000);
+        assert!(
+            bft_leader_missed_top_share_ppm < 500_000
+                && bft_leader_missed_active_validator_share_ppm == 1_000_000
+        );
+    }
+
+    #[test]
+    fn leader_missed_active_height_share_stays_distinct_from_validator_distribution_share() {
+        let bft_leader_missed_total = 6u64;
+        let bft_leader_missed_active_heights = 2u64;
+        let bft_observed_heights = 8u64;
+        let leader_missed_final = vec![2u64, 2u64, 1u64, 1u64];
+        let finality_avg = 2u128;
+
+        let bft_leader_missed_active_validator_share_ppm = ratio_ppm_u64(
+            leader_missed_final
+                .iter()
+                .filter(|missed| **missed > 0)
+                .count() as u64,
+            leader_missed_final.len() as u64,
+        );
+        let bft_leader_missed_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_observed_heights);
+        let bft_leader_missed_active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(bft_leader_missed_total, bft_leader_missed_active_heights),
+            finality_avg,
+        );
+
+        assert_eq!(bft_leader_missed_active_validator_share_ppm, 1_000_000);
+        assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 250_000);
+        assert_eq!(bft_leader_missed_active_height_share_ppm, 1_500_000);
+        assert_ne!(
+            bft_leader_missed_active_height_share_ppm,
+            bft_leader_missed_active_validator_share_ppm
+        );
+        assert!(
+            bft_leader_missed_active_height_share_ppm
+                > bft_leader_missed_active_validator_share_ppm
+        );
+    }
+
+    #[test]
+    fn round_change_backoff_budget_share_metric_stays_distinct_from_wall_share_signal() {
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_round_change_active_heights = 2u64;
+        let bft_committed_heights = 4u64;
+        let finality_avg = 36u128;
+
+        let backoff_active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(
+                bft_round_change_backoff_total_ms,
+                bft_round_change_active_heights,
+            ),
+            finality_avg,
+        );
+        let backoff_wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+
+        assert_eq!(backoff_active_height_share_ppm, 250_000);
+        assert_eq!(backoff_wall_share_ppm, 4_500_000);
+        assert_ne!(backoff_active_height_share_ppm, backoff_wall_share_ppm);
+    }
+
+    #[test]
+    fn round_change_backoff_active_height_rate_exposes_zero_backoff_round_change_gap() {
+        let bft_round_change_active_heights = 3u64;
+        let bft_round_change_backoff_active_heights = 2u64;
+        let bft_committed_heights = 4u64;
+        let bft_observed_heights = 5u64;
+
+        let committed_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_committed_heights,
+        );
+        let observed_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_observed_heights,
+        );
+
+        assert_eq!(committed_height_rate_ppm, 500_000);
+        assert_eq!(observed_height_rate_ppm, 400_000);
+        assert!(bft_round_change_backoff_active_heights < bft_round_change_active_heights);
+        assert!(observed_height_rate_ppm < committed_height_rate_ppm);
+    }
+
+    #[test]
+    fn round_change_backoff_observed_coverage_stays_distinct_from_wall_share_alias() {
+        let bft_round_change_backoff_total_ms = 12u64;
+        let bft_round_change_backoff_active_heights = 2u64;
+        let bft_committed_heights = 3u64;
+        let bft_observed_heights = 5u64;
+        let finality_avg = 8u128;
+
+        let wall_share_ppm = ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let compatibility_alias_ppm = wall_share_ppm;
+        let active_observed_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_observed_heights,
+        );
+        let active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(
+                bft_round_change_backoff_total_ms,
+                bft_round_change_backoff_active_heights,
+            ),
+            finality_avg,
+        );
+
+        assert_eq!(wall_share_ppm, 4_000_000);
+        assert_eq!(compatibility_alias_ppm, wall_share_ppm);
+        assert_eq!(active_observed_height_rate_ppm, 400_000);
+        assert_eq!(active_height_share_ppm, 750_000);
+        assert_ne!(active_observed_height_rate_ppm, compatibility_alias_ppm);
+        assert_ne!(active_height_share_ppm, compatibility_alias_ppm);
+        assert!(active_observed_height_rate_ppm < active_height_share_ppm);
+    }
+
+    #[test]
+    fn round_change_backoff_coverage_pair_with_commit_and_skip_rates_exposes_denominator_shift() {
+        let bft_round_change_backoff_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
+
+        let bft_round_change_backoff_active_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
+        let bft_round_change_backoff_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+        let bft_commit_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
+        let bft_skipped_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
+
+        assert_eq!(bft_round_change_backoff_active_height_rate_ppm, 1_000_000);
+        assert_eq!(bft_round_change_backoff_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_commit_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_skipped_observed_height_rate_ppm, 600_000);
+        assert_eq!(
+            bft_commit_observed_height_rate_ppm + bft_skipped_observed_height_rate_ppm,
+            1_000_000
+        );
+        assert!(
+            bft_round_change_backoff_active_observed_height_rate_ppm
+                < bft_round_change_backoff_active_height_rate_ppm
+        );
+        assert_eq!(
+            bft_round_change_backoff_active_observed_height_rate_ppm,
+            bft_commit_observed_height_rate_ppm
+        );
+        assert!(bft_skipped_observed_height_rate_ppm > bft_commit_observed_height_rate_ppm);
+    }
+
+    #[test]
+    fn round_change_backoff_active_height_metric_names_stay_distinct_from_round_change_coverage() {
+        let round_change_active_heights_field_name = "bft_round_change_active_heights";
+        let backoff_active_heights_field_name = "bft_round_change_backoff_active_heights";
+        let backoff_active_height_rate_field_name =
+            "bft_round_change_backoff_active_height_rate_ppm";
+        let backoff_active_observed_height_rate_field_name =
+            "bft_round_change_backoff_active_observed_height_rate_ppm";
+
+        assert!(round_change_active_heights_field_name.ends_with("_heights"));
+        assert!(backoff_active_heights_field_name.ends_with("_heights"));
+        assert!(backoff_active_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(backoff_active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert_ne!(
+            round_change_active_heights_field_name,
+            backoff_active_heights_field_name
+        );
+        assert_ne!(
+            backoff_active_heights_field_name,
+            backoff_active_height_rate_field_name
+        );
+        assert_ne!(
+            backoff_active_height_rate_field_name,
+            backoff_active_observed_height_rate_field_name
+        );
+    }
+
+    #[test]
+    fn round_change_backoff_metric_names_keep_observed_coverage_distinct_from_wall_and_budget_views() {
+        let active_observed_height_rate_field_name =
+            "bft_round_change_backoff_active_observed_height_rate_ppm";
+        let active_height_share_field_name = "bft_round_change_backoff_active_height_share_ppm";
+        let wall_share_field_name = "bft_round_change_backoff_wall_share_ppm";
+        let compatibility_alias_field_name = "bft_round_change_backoff_share_ppm";
+
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert!(wall_share_field_name.ends_with("_share_ppm"));
+        assert!(compatibility_alias_field_name.ends_with("_share_ppm"));
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(active_observed_height_rate_field_name, wall_share_field_name);
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            compatibility_alias_field_name
+        );
     }
 
     #[test]
@@ -3596,6 +4697,28 @@ mod tests {
     }
 
     #[test]
+    fn round_change_active_height_share_handles_zero_finality_budget() {
+        let bft_round_change_density_avg_milli = 2_500u64;
+        let finality_avg = 0u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            0
+        );
+    }
+
+    #[test]
+    fn round_change_active_height_share_can_exceed_budget_when_jitter_dominates() {
+        let bft_round_change_density_avg_milli = 6_000u64;
+        let finality_avg = 4u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            1_500_000
+        );
+    }
+
+    #[test]
     fn finality_budget_share_helper_saturates_huge_finality_budgets_without_overflow() {
         let bft_round_change_density_avg_milli = 2_500u64;
         let finality_avg = (u64::MAX as u128) + 1;
@@ -3604,6 +4727,14 @@ mod tests {
             finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
             0
         );
+    }
+
+    #[test]
+    fn ratio_helpers_saturate_huge_metric_inputs_without_overflow() {
+        assert_eq!(ratio_ppm_u64(u64::MAX, 1), u64::MAX);
+        assert_eq!(ratio_milli_u64(u64::MAX, 1), u64::MAX);
+        assert_eq!(ratio_percent_bps(u128::MAX, 1), u128::MAX);
+        assert_eq!(ratio_ppm(u128::MAX, 1), u128::MAX);
     }
 
     #[test]
@@ -8877,6 +10008,7 @@ fn main() -> Result<()> {
     let mut hot_object_active_top_label_share_total_ppm: u128 = 0;
     let mut hot_object_active_tail_share_total_ppm: u128 = 0;
     let mut preexec_reject_total: u64 = 0;
+    let mut preexec_reject_active_heights: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut apply_error_preexec_conflict_miss_total: u64 = 0;
     let mut apply_error_version_conflict_total: u64 = 0;
@@ -8890,6 +10022,7 @@ fn main() -> Result<()> {
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
     let mut bft_round_change_active_heights: u64 = 0;
+    let mut bft_round_change_backoff_active_heights: u64 = 0;
     let mut bft_double_vote_total: u64 = 0;
     let mut bft_auth_reject_bad_sig_total: u64 = 0;
     let mut bft_auth_reject_replay_total: u64 = 0;
@@ -8934,6 +10067,9 @@ fn main() -> Result<()> {
             bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
             bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
             bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
+            if bft.round_change_backoff_total_ms > 0 {
+                bft_round_change_backoff_active_heights += 1;
+            }
             bft_round_change_backoff_max_ms =
                 bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
             if bft.leader_missed_snapshot.iter().any(|missed| *missed > 0) {
@@ -8986,6 +10122,9 @@ fn main() -> Result<()> {
         bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
         bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
         bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
+        if bft.round_change_backoff_total_ms > 0 {
+            bft_round_change_backoff_active_heights += 1;
+        }
         bft_round_change_backoff_max_ms =
             bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
         if bft.leader_missed_snapshot.iter().any(|missed| *missed > 0) {
@@ -9025,6 +10164,9 @@ fn main() -> Result<()> {
             critical_wait_active_heights += 1;
         }
         preexec_reject_total += ordering_decision.rejected;
+        if ordering_decision.rejected > 0 {
+            preexec_reject_active_heights += 1;
+        }
         let group_count = ordering_decision.group_count;
         let avg_group_size = if group_count == 0 {
             0u128
@@ -9045,10 +10187,11 @@ fn main() -> Result<()> {
         hot_object_tail_share_samples_ppm.push(hot_object_tail_share_ppm);
         if hot_object_summary.hot_tx_count > 0 {
             hot_object_active_heights += 1;
-            hot_object_active_top_label_share_total_ppm = hot_object_active_top_label_share_total_ppm
-                .saturating_add(hot_object_top_label_share_ppm);
-            hot_object_active_tail_share_total_ppm = hot_object_active_tail_share_total_ppm
-                .saturating_add(hot_object_tail_share_ppm);
+            hot_object_active_top_label_share_total_ppm =
+                hot_object_active_top_label_share_total_ppm
+                    .saturating_add(hot_object_top_label_share_ppm);
+            hot_object_active_tail_share_total_ppm =
+                hot_object_active_tail_share_total_ppm.saturating_add(hot_object_tail_share_ppm);
         }
 
         let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
@@ -9342,6 +10485,14 @@ fn main() -> Result<()> {
     };
     let hot_object_active_height_rate_ppm =
         ratio_ppm_u64(hot_object_active_heights, finality_samples_ms.len() as u64);
+    let hot_object_active_observed_height_rate_ppm =
+        ratio_ppm_u64(hot_object_active_heights, bft_observed_heights);
+    let hot_object_active_height_share_ppm = if hot_object_active_heights == 0 {
+        0
+    } else {
+        (hot_object_active_top_label_share_total_ppm + hot_object_active_tail_share_total_ppm)
+            / hot_object_active_heights as u128
+    };
     let scheduler_share_avg_ppm = ratio_ppm(scheduler_avg, finality_avg);
     let scheduler_peak_share_ppm = ratio_ppm(scheduler_max, finality_max);
     let preexec_share_avg_ppm = ratio_ppm(preexec_avg, finality_avg);
@@ -9356,16 +10507,33 @@ fn main() -> Result<()> {
         ratio_ppm_u64(rollback_block_total, finality_samples_ms.len() as u64);
     let rollback_active_heights = rollback_block_total;
     let rollback_active_height_rate_ppm = rollback_block_rate_ppm;
+    let rollback_active_observed_height_rate_ppm =
+        ratio_ppm_u64(rollback_active_heights, bft_observed_heights);
     let rollback_density_avg = if rollback_block_total == 0 {
         0
     } else {
         rollback_total / rollback_block_total
     };
     let rollback_density_avg_milli = ratio_milli_u64(rollback_total, rollback_block_total);
+    let rollback_active_height_share_ppm =
+        finality_budget_share_ppm(rollback_density_avg_milli, finality_avg);
     let preexec_conflict_miss_share_bps = ratio_percent_bps(
         apply_error_preexec_conflict_miss_total as u128,
         preexec_reject_total as u128,
     );
+    let preexec_reject_density_avg = if preexec_reject_active_heights == 0 {
+        0
+    } else {
+        preexec_reject_total / preexec_reject_active_heights
+    };
+    let preexec_reject_density_avg_milli =
+        ratio_milli_u64(preexec_reject_total, preexec_reject_active_heights);
+    let preexec_reject_active_height_rate_ppm =
+        ratio_ppm_u64(preexec_reject_active_heights, bft_committed_heights);
+    let preexec_reject_active_observed_height_rate_ppm =
+        ratio_ppm_u64(preexec_reject_active_heights, bft_observed_heights);
+    let preexec_reject_active_height_share_ppm =
+        finality_budget_share_ppm(preexec_reject_density_avg_milli, finality_avg);
     let apply_error_rollback_share_bps =
         ratio_percent_bps(rollback_total as u128, apply_error_total as u128);
     let rollback_block_rate = if finality_samples_ms.is_empty() {
@@ -9379,6 +10547,8 @@ fn main() -> Result<()> {
         critical_wait_active_heights,
         finality_samples_ms.len() as u64,
     );
+    let critical_wait_active_observed_height_rate_ppm =
+        ratio_ppm_u64(critical_wait_active_heights, bft_observed_heights);
     let critical_wait_density_avg = if critical_wait_active_heights == 0 {
         0
     } else {
@@ -9386,6 +10556,8 @@ fn main() -> Result<()> {
     };
     let critical_wait_density_avg_milli =
         ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+    let critical_wait_active_height_share_ppm =
+        finality_budget_share_ppm(critical_wait_density_avg_milli, finality_avg);
     let preexec_reject_share_bps =
         ratio_percent_bps(preexec_reject_total as u128, apply_error_total as u128);
     let unprofiled_finality_share_bps = gap_percent_bps(
@@ -9415,20 +10587,29 @@ fn main() -> Result<()> {
     } else {
         bft_round_change_backoff_total_ms / bft_round_change_total
     };
-    let bft_round_change_backoff_density_avg_ms = if bft_round_change_active_heights == 0 {
+    let bft_round_change_backoff_active_height_rate_ppm =
+        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
+    let bft_round_change_backoff_active_observed_height_rate_ppm =
+        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+    let bft_round_change_backoff_density_avg_ms = if bft_round_change_backoff_active_heights == 0 {
         0
     } else {
-        bft_round_change_backoff_total_ms / bft_round_change_active_heights
+        bft_round_change_backoff_total_ms / bft_round_change_backoff_active_heights
     };
     let bft_round_change_backoff_density_avg_milli = ratio_milli_u64(
         bft_round_change_backoff_total_ms,
-        bft_round_change_active_heights,
+        bft_round_change_backoff_active_heights,
     );
     let bft_round_change_backoff_active_height_share_ppm =
         finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
     let bft_round_change_backoff_wall_share_ppm =
         ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
+    let bft_commit_observed_height_rate_ppm =
+        ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
+    let bft_skipped_height_total = bft_observed_heights.saturating_sub(bft_committed_heights);
+    let bft_skipped_observed_height_rate_ppm =
+        ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -9462,8 +10643,10 @@ fn main() -> Result<()> {
     };
     let bft_leader_missed_density_avg_milli =
         ratio_milli_u64(bft_leader_missed_total, bft_leader_missed_active_heights);
+    let bft_leader_missed_active_height_share_ppm =
+        finality_budget_share_ppm(bft_leader_missed_density_avg_milli, finality_avg);
     println!(
-        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} scheduler_share_avg_ppm={} scheduler_peak_share_ppm={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} preexec_share_avg_ppm={} preexec_peak_share_ppm={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} commit_share_avg_ppm={} commit_peak_share_ppm={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} state_root_total_share_avg_ppm={} state_root_total_peak_share_ppm={} unprofiled_finality_share_bps={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} critical_wait_density_ppm={} critical_wait_peak_density_ppm={} critical_wait_active_heights={} critical_wait_active_height_rate_ppm={} critical_wait_density_avg={} critical_wait_density_avg_milli={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} hot_object_active_heights={} hot_object_active_height_rate_ppm={} hot_object_top_label_share_avg_ppm={} hot_object_top_label_share_p50_ppm={} hot_object_top_label_share_p95_ppm={} hot_object_top_label_share_max_ppm={} hot_object_active_top_label_share_avg_ppm={} hot_object_tail_share_avg_ppm={} hot_object_tail_share_p50_ppm={} hot_object_tail_share_p95_ppm={} hot_object_tail_share_max_ppm={} hot_object_active_tail_share_avg_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} rollback_share_avg_ppm={} rollback_peak_share_ppm={} rollback_block_total={} rollback_active_heights={} rollback_block_rate={:.6} rollback_block_rate_ppm={} rollback_active_height_rate_ppm={} rollback_density_avg={} rollback_density_avg_milli={} preexec_reject_total={} preexec_reject_share_bps={} apply_error_total={} apply_error_preexec_conflict_miss_total={} preexec_conflict_miss_share_bps={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} apply_error_rollback_share_bps={} timeout_migrated_total={} recovery_error_rate={:.6} bft_observed_heights={} bft_committed_heights={} bft_round_change_total={} bft_round_change_per_height_ppm={} bft_round_change_active_heights={} bft_round_change_active_height_rate_ppm={} bft_round_change_active_observed_height_rate_ppm={} bft_round_change_density_avg={} bft_round_change_density_avg_milli={} bft_round_change_active_height_share_ppm={} bft_round_change_backoff_total_ms={} bft_round_change_backoff_avg_ms={} bft_round_change_backoff_density_avg_ms={} bft_round_change_backoff_density_avg_milli={} bft_round_change_backoff_active_height_share_ppm={} bft_round_change_backoff_max_ms={} bft_round_change_backoff_wall_share_ppm={} bft_round_change_backoff_share_ppm={} bft_leader_missed_total={} bft_leader_missed_max={} bft_leader_missed_top_share_ppm={} bft_leader_missed_active_validators={} bft_leader_missed_active_validator_share_ppm={} bft_leader_missed_active_heights={} bft_leader_missed_active_height_rate_ppm={} bft_leader_missed_active_observed_height_rate_ppm={} bft_leader_missed_density_avg={} bft_leader_missed_density_avg_milli={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} scheduler_share_avg_ppm={} scheduler_peak_share_ppm={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} preexec_share_avg_ppm={} preexec_peak_share_ppm={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} commit_share_avg_ppm={} commit_peak_share_ppm={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} state_root_total_share_avg_ppm={} state_root_total_peak_share_ppm={} unprofiled_finality_share_bps={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} critical_wait_density_ppm={} critical_wait_peak_density_ppm={} critical_wait_active_heights={} critical_wait_active_height_rate_ppm={} critical_wait_active_observed_height_rate_ppm={} critical_wait_density_avg={} critical_wait_density_avg_milli={} critical_wait_active_height_share_ppm={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} hot_object_active_heights={} hot_object_active_height_rate_ppm={} hot_object_active_observed_height_rate_ppm={} hot_object_active_height_share_ppm={} hot_object_top_label_share_avg_ppm={} hot_object_top_label_share_p50_ppm={} hot_object_top_label_share_p95_ppm={} hot_object_top_label_share_max_ppm={} hot_object_active_top_label_share_avg_ppm={} hot_object_tail_share_avg_ppm={} hot_object_tail_share_p50_ppm={} hot_object_tail_share_p95_ppm={} hot_object_tail_share_max_ppm={} hot_object_active_tail_share_avg_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} rollback_share_avg_ppm={} rollback_peak_share_ppm={} rollback_block_total={} rollback_active_heights={} rollback_block_rate={:.6} rollback_block_rate_ppm={} rollback_active_height_rate_ppm={} rollback_active_observed_height_rate_ppm={} rollback_density_avg={} rollback_density_avg_milli={} rollback_active_height_share_ppm={} preexec_reject_total={} preexec_reject_active_heights={} preexec_reject_density_avg={} preexec_reject_density_avg_milli={} preexec_reject_active_height_rate_ppm={} preexec_reject_active_observed_height_rate_ppm={} preexec_reject_active_height_share_ppm={} preexec_reject_share_bps={} apply_error_total={} apply_error_preexec_conflict_miss_total={} preexec_conflict_miss_share_bps={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} apply_error_rollback_share_bps={} timeout_migrated_total={} recovery_error_rate={:.6} bft_observed_heights={} bft_committed_heights={} bft_commit_observed_height_rate_ppm={} bft_skipped_height_total={} bft_skipped_observed_height_rate_ppm={} bft_round_change_total={} bft_round_change_per_height_ppm={} bft_round_change_active_heights={} bft_round_change_active_height_rate_ppm={} bft_round_change_active_observed_height_rate_ppm={} bft_round_change_density_avg={} bft_round_change_density_avg_milli={} bft_round_change_active_height_share_ppm={} bft_round_change_backoff_total_ms={} bft_round_change_backoff_avg_ms={} bft_round_change_backoff_active_heights={} bft_round_change_backoff_active_height_rate_ppm={} bft_round_change_backoff_active_observed_height_rate_ppm={} bft_round_change_backoff_density_avg_ms={} bft_round_change_backoff_density_avg_milli={} bft_round_change_backoff_active_height_share_ppm={} bft_round_change_backoff_max_ms={} bft_round_change_backoff_wall_share_ppm={} bft_round_change_backoff_share_ppm={} bft_leader_missed_total={} bft_leader_missed_max={} bft_leader_missed_top_share_ppm={} bft_leader_missed_active_validators={} bft_leader_missed_active_validator_share_ppm={} bft_leader_missed_active_heights={} bft_leader_missed_active_height_rate_ppm={} bft_leader_missed_active_observed_height_rate_ppm={} bft_leader_missed_density_avg={} bft_leader_missed_density_avg_milli={} bft_leader_missed_active_height_share_ppm={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_avg,
         finality_p50,
         finality_p95,
@@ -9501,8 +10684,10 @@ fn main() -> Result<()> {
         critical_wait_peak_density_ppm,
         critical_wait_active_heights,
         critical_wait_active_height_rate_ppm,
+        critical_wait_active_observed_height_rate_ppm,
         critical_wait_density_avg,
         critical_wait_density_avg_milli,
+        critical_wait_active_height_share_ppm,
         block_txs_p50,
         block_txs_p95,
         block_txs_max,
@@ -9519,6 +10704,8 @@ fn main() -> Result<()> {
         hot_object_share_max_ppm,
         hot_object_active_heights,
         hot_object_active_height_rate_ppm,
+        hot_object_active_observed_height_rate_ppm,
+        hot_object_active_height_share_ppm,
         hot_object_top_label_share_avg_ppm,
         hot_object_top_label_share_p50_ppm,
         hot_object_top_label_share_p95_ppm,
@@ -9540,9 +10727,17 @@ fn main() -> Result<()> {
         rollback_block_rate,
         rollback_block_rate_ppm,
         rollback_active_height_rate_ppm,
+        rollback_active_observed_height_rate_ppm,
         rollback_density_avg,
         rollback_density_avg_milli,
+        rollback_active_height_share_ppm,
         preexec_reject_total,
+        preexec_reject_active_heights,
+        preexec_reject_density_avg,
+        preexec_reject_density_avg_milli,
+        preexec_reject_active_height_rate_ppm,
+        preexec_reject_active_observed_height_rate_ppm,
+        preexec_reject_active_height_share_ppm,
         preexec_reject_share_bps,
         apply_error_total,
         apply_error_preexec_conflict_miss_total,
@@ -9557,6 +10752,9 @@ fn main() -> Result<()> {
         recovery_error_rate,
         bft_observed_heights,
         bft_committed_heights,
+        bft_commit_observed_height_rate_ppm,
+        bft_skipped_height_total,
+        bft_skipped_observed_height_rate_ppm,
         bft_round_change_total,
         bft_round_change_per_height_ppm,
         bft_round_change_active_heights,
@@ -9567,6 +10765,9 @@ fn main() -> Result<()> {
         bft_round_change_active_height_share_ppm,
         bft_round_change_backoff_total_ms,
         bft_round_change_backoff_avg_ms,
+        bft_round_change_backoff_active_heights,
+        bft_round_change_backoff_active_height_rate_ppm,
+        bft_round_change_backoff_active_observed_height_rate_ppm,
         bft_round_change_backoff_density_avg_ms,
         bft_round_change_backoff_density_avg_milli,
         bft_round_change_backoff_active_height_share_ppm,
@@ -9583,6 +10784,7 @@ fn main() -> Result<()> {
         bft_leader_missed_active_observed_height_rate_ppm,
         bft_leader_missed_density_avg,
         bft_leader_missed_density_avg_milli,
+        bft_leader_missed_active_height_share_ppm,
         leader_missed_final,
         bft_double_vote_total,
         bft_auth_reject_bad_sig_total,
