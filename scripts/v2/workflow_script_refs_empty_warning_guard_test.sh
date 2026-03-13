@@ -26,7 +26,7 @@ jobs:
 YAML
 
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
-WORKFLOW_SCRIPT_REF_STRICT=1 \
+WORKFLOW_SCRIPT_REF_STRICT=0 \
 WORKFLOW_SCRIPT_REF_SUMMARY_PATH="$SUMMARY" \
   bash "$SCRIPT" >"$STDOUT_LOG" 2>"$STDERR_LOG"
 
@@ -35,8 +35,8 @@ import json, sys
 summary_path, stdout_path, stderr_path = sys.argv[1:4]
 with open(summary_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
-if data.get('status') != 'ok':
-    raise SystemExit(f"[FAIL] expected ok status for empty-ref workflow, got: {data}")
+if data.get('status') != 'warn':
+    raise SystemExit(f"[FAIL] expected warn status for non-strict empty-ref workflow, got: {data}")
 if int(data.get('script_ref_total_count', 0)) != 0:
     raise SystemExit(f"[FAIL] expected script_ref_total_count=0, got: {data}")
 stdout = open(stdout_path, 'r', encoding='utf-8').read()
@@ -44,7 +44,9 @@ stderr = open(stderr_path, 'r', encoding='utf-8').read()
 expected = '[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)'
 if expected not in stdout:
     raise SystemExit('[FAIL] missing aligned empty-ref warning in stdout')
+if '[workflow-ref] status=warn strict_mode=0' not in stdout:
+    raise SystemExit('[FAIL] missing non-strict warn status line in stdout')
 if stderr.strip():
     raise SystemExit(f"[FAIL] expected empty stderr, got: {stderr}")
-print('[PASS] workflow script ref validator reports empty-ref coverage with aligned warning text')
+print('[PASS] workflow script ref validator reports non-strict empty-ref workflows as warnings with aligned output')
 PY
