@@ -1527,6 +1527,57 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
+fn pending_resolve_task_version_must_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 8,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_ne!(
+        root_a, root_b,
+        "pending resolve task_version must contribute to state_root so identical approval metadata against different task revisions cannot hash identically"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original pending resolve task_version should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root() {
     let mut state = StateStore::new();
     state
