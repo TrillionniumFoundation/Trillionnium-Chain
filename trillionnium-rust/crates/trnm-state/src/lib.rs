@@ -4268,6 +4268,29 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: Some("forged-prev".into()),
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "genesis WAL metadata with a forged prev hash must fail closed instead of claiming checkpoint recovery"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
         let e1 = WalMeta {
             height: 10,
