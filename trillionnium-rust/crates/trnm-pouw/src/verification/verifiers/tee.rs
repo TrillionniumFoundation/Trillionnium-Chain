@@ -154,6 +154,10 @@ impl TeeVerifier {
         let mentions_evidence = mentions(|token| token == "evidence" || token == "evidences");
         let mentions_certificate =
             mentions(|token| matches!(token, "cert" | "certs" | "certificate" | "certificates"));
+        let mentions_collateral =
+            mentions(|token| token == "collateral" || token == "collaterals");
+        let mentions_endorsement =
+            mentions(|token| token == "endorsement" || token == "endorsements");
         let mentions_attestation =
             mentions(|token| token == "attestation" || token == "attestations");
         let mentions_receipt = mentions(|token| token == "receipt" || token == "receipts");
@@ -187,7 +191,12 @@ impl TeeVerifier {
         }
 
         if mentions_claims {
-            return if mentions_attestation || mentions_receipt || mentions_certificate {
+            return if mentions_attestation
+                || mentions_receipt
+                || mentions_certificate
+                || mentions_collateral
+                || mentions_endorsement
+            {
                 "evidence/claims"
             } else {
                 "claims"
@@ -195,14 +204,25 @@ impl TeeVerifier {
         }
 
         if mentions_payload {
-            return if mentions_attestation || mentions_receipt || mentions_certificate {
+            return if mentions_attestation
+                || mentions_receipt
+                || mentions_certificate
+                || mentions_collateral
+                || mentions_endorsement
+            {
                 "evidence/claims"
             } else {
                 "payload/claims"
             };
         }
 
-        if mentions_evidence || mentions_attestation || mentions_receipt || mentions_certificate {
+        if mentions_evidence
+            || mentions_attestation
+            || mentions_receipt
+            || mentions_certificate
+            || mentions_collateral
+            || mentions_endorsement
+        {
             return "evidence/claims";
         }
 
@@ -903,6 +923,53 @@ mod tests {
         assert!(!msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("report claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_collateral_payload_still_prefers_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "TEE collateral payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_endorsement_payload_still_prefers_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "TEE endorsement payload verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
     }
 
     #[test]

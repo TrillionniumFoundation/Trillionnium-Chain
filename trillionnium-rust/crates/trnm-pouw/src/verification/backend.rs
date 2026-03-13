@@ -121,6 +121,10 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                 | "certs"
                 | "certificate"
                 | "certificates"
+                | "collateral"
+                | "collaterals"
+                | "endorsement"
+                | "endorsements"
                 | "dcap"
                 | "sev"
         )
@@ -984,6 +988,8 @@ mod tests {
             ("tee certificate quote sgx", "sgx"),
             ("tee attestation receipt report tdx", "tdx"),
             ("tee evidence cert snp", "snp"),
+            ("tee collateral quote sgx", "sgx"),
+            ("tee endorsement report tdx", "tdx"),
             ("tee remote attestation receipt sgx", "sgx"),
             ("tee remote attestation evidence sgx", "sgx"),
             ("tee remote attestation quote sgx", "sgx"),
@@ -996,6 +1002,7 @@ mod tests {
             ("tee enclave evidence tdx", "tdx"),
             ("tee attestations receipts reports sgx", "sgx"),
             ("tee evidences certs quotes tdx", "tdx"),
+            ("tee collaterals endorsements quotes tdx", "tdx"),
             ("tee remote attestations certificates snp", "snp"),
             ("remote attestation quote sgx", "sgx"),
             ("remote attestation evidence sgx", "sgx"),
