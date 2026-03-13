@@ -727,15 +727,18 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
-        if payload
-            .backend_id
-            .as_deref()
-            .map(str::trim)
-            .is_none_or(str::is_empty)
-        {
+        let backend_id = payload.backend_id.as_deref().map(str::trim);
+        if backend_id.is_none_or(str::is_empty) {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: "invalid zk payload: backend_version requires backend_id"
+                    .to_string(),
+            });
+        }
+        if backend_id.is_some_and(|backend_id| backend_id.eq_ignore_ascii_case("noop")) {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: backend_version must not be provided for legacy noop backend_id"
                     .to_string(),
             });
         }
@@ -1284,6 +1287,13 @@ mod tests {
         let task = mock_task();
         let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"noop","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
         assert_eq!(payload.backend_id.as_deref(), Some("noop"));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_backend_version_for_legacy_noop_backend_id() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"noop","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not be provided for legacy noop backend_id")));
     }
 
     #[test]
