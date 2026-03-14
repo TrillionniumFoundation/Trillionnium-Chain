@@ -1875,6 +1875,31 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_camel_case_quote_report_receipt_maps_to_combined_evidence_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quoteReportReceipt verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report evidence:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_camel_case_quote_report_attestation_claims_keeps_combined_claims_surface_with_legacy_suffix(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
