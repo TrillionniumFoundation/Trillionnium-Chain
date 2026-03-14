@@ -910,11 +910,40 @@ def main():
     )
     selected_fresh_count = sum(1 for pool in benchmark_pools if pool["selected_freshness"] == "fresh")
     selected_pending_count = sum(1 for pool in benchmark_pools if pool["pending_selected"])
+    selection_mismatches = []
+    for pool in benchmark_pools:
+        label = str(pool["label"])
+        if pool["pending_selected"]:
+            selection_mismatches.append(f"{label}:pending_selected")
+            continue
+        selected = str(pool["selected"])
+        if selected == "None" or int(pool["candidate_count"]) == 0:
+            selection_mismatches.append(f"{label}:missing_selection")
+            continue
+        candidate_source = (
+            classic_candidates
+            if label == "classic_bench_candidates"
+            else mixed_candidates
+            if label == "mixed_bench_candidates"
+            else executor_profile_candidates
+        )
+        newest_existing = next((path for path in candidate_source if os.path.exists(path)), None)
+        if not newest_existing:
+            selection_mismatches.append(f"{label}:missing_newest_candidate")
+            continue
+        newest_basename = os.path.basename(newest_existing)
+        if selected != newest_basename:
+            selection_mismatches.append(
+                f"{label}:selected={selected}:newest={newest_basename}"
+            )
     lines.append(
         "- benchmark_pool_selected_artifact_status: "
         f"newest_selected={selected_newest_count}/{len(benchmark_pools)} "
         f"fresh_selected={selected_fresh_count}/{len(benchmark_pools)} "
         f"pending_selected={selected_pending_count}/{len(benchmark_pools)}"
+    )
+    lines.append(
+        f"- benchmark_pool_selection_mismatches: {', '.join(selection_mismatches) if selection_mismatches else 'none'}"
     )
     lines.append(
         "- benchmark_pool_status_counts: "
