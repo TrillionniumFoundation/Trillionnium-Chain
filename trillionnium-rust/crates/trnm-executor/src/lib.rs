@@ -3195,6 +3195,46 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_expected_gain_boundary_is_inclusive() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _baseline_streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _baseline_margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _baseline_share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _baseline_gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Keep the expected-gain gate inclusive (`>=`) at exact equality so
+        // experimental adaptive tuning can set a precise floor without a
+        // float-boundary off-by-one silently suppressing the hotspot switch.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..16u64 {
+            txs.push(tx(130_000 + i * 4, vec![], vec![o(77)]));
+            txs.push(tx(130_001 + i * 4, vec![], vec![o(77)]));
+            txs.push(tx(130_002 + i * 4, vec![], vec![o(3_000 + i)]));
+            txs.push(tx(130_003 + i * 4, vec![], vec![o(4_000 + i)]));
+        }
+
+        let baseline = auto_adaptive_decision(&txs);
+        assert!(baseline.use_hot_bucket, "baseline hotspot should clear permissive adaptive gates");
+
+        let gain = baseline.expected_gain_score.to_string();
+        let hot_key_share = baseline.hot_key_share.to_string();
+        let streak = baseline.streak_ratio.to_string();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", &streak);
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", &hot_key_share);
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", &gain);
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "expected-gain threshold should stay inclusive at exact equality");
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.expected_gain_score >= d.min_expected_gain_score);
+        assert!(d.hot_key_share >= d.min_hot_key_share);
+        assert!(d.streak_ratio >= d.streak_threshold + d.min_margin);
+    }
+
+    #[test]
     fn auto_adaptive_sampling_with_sparse_window_keeps_duplicate_indices_fail_closed() {
         let _env = env_lock();
         let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
