@@ -211,6 +211,37 @@ fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_upda
 }
 
 #[test]
+fn governance_proposal_id_must_affect_state_root_even_when_other_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_005,
+            title: "Raise fraud bond".into(),
+            proposer: "governance.alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .expect("first governance proposal insertion should succeed");
+    state_b
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_006,
+            title: "Raise fraud bond".into(),
+            proposer: "governance.alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .expect("second governance proposal insertion should succeed");
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root must include governance proposal_id so otherwise identical proposal payloads in distinct canonical slots cannot hash identically"
+    );
+}
+
+#[test]
 fn restore_applied_gov_param_rewinds_state_root_after_value_mutation() {
     let mut state = StateStore::new();
 
