@@ -16,6 +16,10 @@ use trnm_pouw::{
     apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
+#[cfg(test)]
+use trnm_pouw::{
+    apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
+};
 use trnm_state::{
     verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
     WalMeta,

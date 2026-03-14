@@ -27,6 +27,7 @@ fn new_tasks_canonicalize_embedded_version_for_state_root() {
                 provenance_index: Some("prov-task-8001".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
+        metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -531,6 +532,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
             input_hash: None,
             model: None,
             provenance: None,
+        metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -554,6 +556,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
         input_hash: None,
         model: None,
         provenance: None,
+        metering: None,
     });
 
     st1.put_task_new(task1).unwrap();
@@ -628,6 +631,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
                 version: None,
             }),
             provenance: None,
+        metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -656,6 +660,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
             version: None,
         }),
         provenance: None,
+        metering: None,
     });
 
     st1.put_task_new(base_task).unwrap();
@@ -715,6 +720,7 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
             provenance_index: Some("prov-7".into()),
             privacy_tier: Some(PrivacyTier::Internal),
         }),
+        metering: None,
     });
     st2.put_task_new(changed_task).unwrap();
 
@@ -833,6 +839,7 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
                 provenance_index: Some("prov-privacy-1".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
+        metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1498,6 +1505,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
                 provenance_index: Some("prov-task-10101".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
+        metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -1538,6 +1546,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
             provenance_index: Some("prov-task-10101-mutated".into()),
             privacy_tier: Some(PrivacyTier::Restricted),
         }),
+        metering: None,
     });
     state
         .update_task(task_ref, changed_task)
@@ -1649,6 +1658,7 @@ fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
                 provenance_index: Some("prov-task-10202".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
+        metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x21; 32]),
