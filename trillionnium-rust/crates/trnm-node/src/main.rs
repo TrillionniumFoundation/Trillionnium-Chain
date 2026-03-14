@@ -2,11 +2,13 @@ use anyhow::Result;
 use clap::Parser;
 use sha2::{Digest, Sha256};
 #[cfg(test)]
+use std::collections::VecDeque;
+#[cfg(test)]
 use std::sync::Arc;
 #[cfg(test)]
 use std::{collections::HashMap, fs, path::PathBuf};
 use std::{
-    collections::{HashSet, VecDeque},
+    collections::HashSet,
     thread,
     time::{Duration, Instant},
 };
@@ -19,7 +21,6 @@ use trnm_pouw::{
 #[cfg(test)]
 use trnm_state::PendingResolveApprovalSnapshot;
 use trnm_state::{CheckpointMeta, StateStore, WalMeta};
-use trnm_types::Hash32;
 #[cfg(test)]
 use trnm_types::{ObjectRef, TaskMeteringSnapshot, TaskStatus};
 
@@ -28,6 +29,7 @@ mod apply;
 mod args;
 mod bft;
 mod config;
+mod demo;
 mod events;
 mod hot;
 mod mempool;
@@ -61,6 +63,9 @@ use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{AuthRejectStats, BftVote, SignedVote, VoteType};
 use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::config::load_config;
+#[cfg(test)]
+use crate::demo::compute_commitment;
+use crate::demo::{build_demo_mempool, demo_worker_name};
 use crate::events::{emit_event, event_type_of, status_name};
 #[cfg(test)]
 use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fields};
@@ -113,72 +118,6 @@ fn hash32_hex(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(data);
     hex::encode(hasher.finalize())
-}
-
-fn compute_commitment(
-    task_id: u64,
-    result_hash: &Hash32,
-    reveal_salt: &[u8; 32],
-    worker: &str,
-) -> Hash32 {
-    let payload = format!(
-        "{}|{}|{}|{}",
-        task_id,
-        hex::encode(result_hash),
-        hex::encode(reveal_salt),
-        worker
-    );
-    let mut hasher = Sha256::new();
-    hasher.update(payload.as_bytes());
-    hasher.finalize().into()
-}
-
-fn demo_worker_name(task_id: u64) -> String {
-    format!("worker{}", task_id)
-}
-
-fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
-    let mut q = VecDeque::new();
-
-    for i in 0..demo_tasks.max(1) {
-        let task_id = 1001u64 + i;
-        let worker = demo_worker_name(task_id);
-        let result_hash = [7u8; 32];
-        let reveal_salt = [task_id as u8; 32];
-        let committed_hash = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
-
-        q.push_back(MockTx::CreateTask {
-            task_id,
-            creator: "alice".to_string(),
-            bounty: 100,
-        });
-        q.push_back(MockTx::AcceptTask {
-            task_id,
-            worker: worker.clone(),
-        });
-        q.push_back(MockTx::Commit {
-            task_id,
-            worker,
-            committed_hash,
-        });
-        q.push_back(MockTx::Reveal {
-            task_id,
-            result_hash,
-            reveal_salt,
-        });
-        q.push_back(MockTx::Challenge {
-            task_id,
-            challenger: "challenger".into(),
-            bond: 10,
-        });
-        q.push_back(MockTx::Resolve {
-            task_id,
-            slash_worker: false,
-            resolver: "governance.resolve_authority".into(),
-        });
-    }
-
-    q
 }
 
 fn classify_apply_error(err: &anyhow::Error) -> &'static str {
