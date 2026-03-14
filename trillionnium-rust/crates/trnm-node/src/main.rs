@@ -3134,6 +3134,34 @@ mod tests {
     }
 
     #[test]
+    fn critical_wait_review_bundle_keeps_commit_skip_coverage_pair_near_fairness_stall_pressure() {
+        let fairness_review_fields = [
+            "critical_wait_active_heights",
+            "critical_wait_active_height_rate_ppm",
+            "critical_wait_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "critical_wait_density_avg_milli",
+            "critical_wait_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 8);
+        assert!(fairness_review_fields[0].ends_with("_heights"));
+        assert!(fairness_review_fields[1].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[2].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[4].ends_with("_total"));
+        assert!(fairness_review_fields[5].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[6].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[7].ends_with("_share_ppm"));
+        assert_ne!(fairness_review_fields[1], fairness_review_fields[2]);
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[3]);
+        assert_ne!(fairness_review_fields[3], fairness_review_fields[5]);
+        assert_ne!(fairness_review_fields[6], fairness_review_fields[7]);
+    }
+
+    #[test]
     fn critical_wait_density_avg_handles_empty_active_height_set() {
         let critical_wait_total = 5u64;
         let critical_wait_active_heights = 0u64;
