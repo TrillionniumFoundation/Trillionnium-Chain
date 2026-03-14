@@ -3341,6 +3341,116 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
 }
 
 #[test]
+fn paused_state_pending_replacement_live_rejects_exact_emergency_pause_placeholder_second_approver_without_clearing_staged_quorum(
+) {
+    // L03 boundary hardening: when a replacement resolve_authority set is already timelocked,
+    // the live paused approval path must still reject the exact emergency_pause placeholder as
+    // a second approver, while preserving the valid staged quorum, pending timelock boundary,
+    // and custody balances.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_028);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_010);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 510);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_261,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(
+        replacement,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
+
+    st.set_gov_param(98_262, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let staged = st
+        .stage_or_confirm_resolve_approval(
+            9_936,
+            4,
+            true,
+            "authority-c",
+            "authority-c,authority-d",
+        )
+        .expect("first approval should stage against pending replacement authority");
+    assert!(!staged, "single approver should only stage paused quorum");
+    assert_eq!(st.pending_resolve_approval(9_936), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_936).as_deref(),
+        Some("authority-c")
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+    let root_before = st.state_root();
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_936,
+            4,
+            true,
+            "governance.emergency_pause",
+            "authority-c,authority-d",
+        )
+        .expect_err(
+            "exact emergency_pause placeholder second approver must be rejected against pending replacement authority",
+        );
+    assert!(err.contains("explicit non-system authority") || err.contains("approver"));
+
+    assert_eq!(
+        st.pending_resolve_approval(9_936),
+        Some((true, 1)),
+        "rejecting malformed second approver must preserve staged quorum"
+    );
+    assert_eq!(
+        st.pending_resolve_first_approver(9_936).as_deref(),
+        Some("authority-c"),
+        "rejecting malformed second approver must preserve first-approver audit trail"
+    );
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_936)
+            .expect("staged quorum must remain after malformed second approver rejection")
+            .second_approver,
+        None,
+        "rejecting malformed second approver must not fabricate a finalized quorum"
+    );
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("replacement resolve_authority timelock should remain staged");
+    assert_eq!(pending.value, "authority-c,authority-d");
+    assert_eq!(st.state_root(), root_before);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+}
+
+#[test]
 fn paused_state_pending_replacement_restore_scrubs_exact_emergency_pause_placeholder_second_approver_without_touching_pending_timelock(
 ) {
     // L03 boundary hardening: when a replacement resolve_authority set is already timelocked,
