@@ -20,6 +20,7 @@
 - 经济语义上还需要继续保持明确：当前 challenged-timeout 即使未来切到 `Slashed` 分支，也**不会自动发放 challenge-success bounty**；若产品后续要把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与防 farming 约束。
 - 本轮 L05 补充了一条 fail-closed 回归：若 challenged task 的 `resolve_deadline_height` 元数据缺失，`apply_timeout` 必须在任何 escrow / slash treasury 余额变动前直接拒绝，避免脏状态被误终结。
 - 同时，当前 fraud verifier 的 envelope 绑定面已对 `task_id` / `worker` / `proof_type` / `result_hash` 建立较完整的 fail-closed 回归覆盖：对大小写变体、全角分隔符、引号别名、重复绑定与缺失绑定都会直接拒绝，而不是尝试容错合并。这一收敛降低了挑战提交层通过 payload 歧义制造“看似同义、实则可绕过”的解释空间；当前 lane 的主要剩余风险仍更集中在 challenge timeout / resolve authority / governance wiring，而非 fraud envelope 再次回退到宽松解析。
+- 另外，`trnm-pouw` 现行 resolve-authority 边界已经补上几条关键 fail-closed 约束：`resolve_authority` 不能再与 `system`、`treasury.challenge_escrow`、`treasury.challenge_forfeits`、`treasury.worker_slashes`、默认占位值 `governance.resolve_authority`、task `worker`、`challenger` 或 `creator` 角色重叠；多成员集合也会对空成员、重复成员、非 canonical 标识与 staged approval 失配直接拒绝。因而当前 authority 面的主要残余风险，更偏向“真实 signer 绑定 / committee auth context / governance wiring”这些跨层闭环，而不是同一批已收敛的账户别名或角色重叠再次放开。
 
 ---
 

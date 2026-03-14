@@ -1008,4 +1008,47 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
         ));
     }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\"\xef\xbc\x9a7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_worker_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\"\xef\xbc\x9a\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_result_hash_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\"\xef\xbc\x9a\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
 }
