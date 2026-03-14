@@ -196,13 +196,26 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "resolve_authority",
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+const RESOLVE_AUTHORITY_KEY_ALIAS: &str = "resolve_authority";
 const EMERGENCY_PAUSE_PLACEHOLDER: &str = "governance.emergency_pause";
+const EMERGENCY_PAUSE_KEY_ALIAS: &str = "emergency_pause";
 const RESOLVE_AUTHORITY_SET_MAX_LEN: usize = 128;
 const RESOLVE_APPROVER_MAX_LEN: usize = 128;
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
+
+fn is_reserved_resolve_actor(actor: &str) -> bool {
+    actor.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+        || actor.eq_ignore_ascii_case(RESOLVE_AUTHORITY_KEY_ALIAS)
+        || actor.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+        || actor.eq_ignore_ascii_case(EMERGENCY_PAUSE_KEY_ALIAS)
+        || actor.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+        || actor.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+        || actor.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        || actor.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+}
 
 fn is_sensitive_gov_param(key: &str) -> bool {
     GOV_SENSITIVE_KEYS.contains(&key)
@@ -274,12 +287,7 @@ fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String
             || member_trimmed.contains('，')
             || member_trimmed.contains('、')
             || !member_trimmed.is_ascii()
-            || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-            || member_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-            || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+            || is_reserved_resolve_actor(member_trimmed)
         {
             return None;
         }
@@ -407,9 +415,7 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key
                     ));
                 }
-                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                    || member.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-                {
+                if is_reserved_resolve_actor(member) {
                     return Err(format!(
                         "invalid governance value for {}: placeholder authority is not allowed",
                         key
@@ -503,13 +509,7 @@ impl StateStore {
             return Err("resolve approval approver must be a single canonical actor id".into());
         }
 
-        if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-            || approver_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-            || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-        {
+        if is_reserved_resolve_actor(approver_trimmed) {
             return Err(
                 "resolve approval approver must be an explicit non-system authority".into(),
             );
@@ -549,12 +549,7 @@ impl StateStore {
                 || member_trimmed.chars().any(|c| c.is_control())
                 || has_forbidden_separator(member_trimmed)
                 || !member_trimmed.is_ascii()
-                || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                || member_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-                || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+                || is_reserved_resolve_actor(member_trimmed)
             {
                 return Err(
                     "resolve approval authority set contains non-canonical or forbidden member"
@@ -709,12 +704,7 @@ impl StateStore {
                 || trimmed.contains('，')
                 || trimmed.contains('、')
                 || !trimmed.is_ascii()
-                || trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                || trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-                || trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                || trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                || trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT))
+                || is_reserved_resolve_actor(trimmed))
         }
 
         if !(1..=2).contains(&snapshot.confirmations) {
@@ -775,12 +765,7 @@ impl StateStore {
                 || trimmed.contains('，')
                 || trimmed.contains('、')
                 || !trimmed.is_ascii()
-                || trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                || trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-                || trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                || trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                || trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+                || is_reserved_resolve_actor(trimmed)
             {
                 return false;
             }

@@ -2640,6 +2640,86 @@ fn paused_state_rejects_exact_emergency_pause_placeholder_second_approver_withou
 }
 
 #[test]
+fn paused_state_rejects_bare_emergency_pause_alias_approver_without_side_effects() {
+    // L03 boundary hardening: the bare emergency_pause control-plane alias must stay reserved
+    // on the live paused resolve-approval path too, not only the governance-prefixed placeholder.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_932);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 995);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 555);
+
+    st.set_gov_param(98_214, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_922, 1, true, "Emergency_Pause", "authority-a,authority-b")
+        .expect_err("bare emergency_pause alias approver must be rejected while paused");
+    assert!(err.contains("explicit non-system authority") || err.contains("approver"));
+
+    assert_eq!(st.pending_resolve_approval(9_922), None);
+    assert_eq!(st.pending_resolve_first_approver(9_922), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_rejects_bare_emergency_pause_alias_member_without_side_effects() {
+    // L03 boundary hardening: the bare emergency_pause control-plane alias must stay reserved
+    // when it appears inside the live paused authority set, not only the governance-prefixed placeholder.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_933);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 996);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 556);
+
+    st.set_gov_param(98_215, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_923,
+            1,
+            true,
+            "authority-a",
+            "authority-a,Emergency_Pause",
+        )
+        .expect_err("bare emergency_pause alias member must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_923), None);
+    assert_eq!(st.pending_resolve_first_approver(9_923), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_side_effects() {
     // M1 micro-hardening: resolve quorum parsing must keep the emergency pause placeholder
     // reserved under case drift, so paused mode cannot smuggle control-plane aliases into
