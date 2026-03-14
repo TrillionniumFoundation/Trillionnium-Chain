@@ -272,7 +272,7 @@ pub fn resolve_grouping_strategy(txs: &[Tx], strategy: GroupingStrategy) -> Grou
     match strategy {
         GroupingStrategy::AutoAdaptive => {
             let d = auto_adaptive_decision(txs);
-            if d.use_hot_bucket {
+            if d.use_hot_bucket && hot_bucket_interleave_would_reorder(txs) {
                 GroupingStrategy::HotBucketInterleave
             } else {
                 GroupingStrategy::Original
@@ -1960,7 +1960,7 @@ mod tests {
 
         assert!(matches!(
             resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
-            GroupingStrategy::HotBucketInterleave
+            GroupingStrategy::Original
         ));
         assert!(
             !hot_bucket_interleave_would_reorder(&txs),
@@ -1976,7 +1976,7 @@ mod tests {
 
         assert!(matches!(
             resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
-            GroupingStrategy::HotBucketInterleave
+            GroupingStrategy::Original
         ));
         assert!(
             !hot_bucket_interleave_would_reorder(&txs),
@@ -2234,10 +2234,14 @@ mod tests {
     #[test]
     fn resolve_grouping_strategy_maps_auto_adaptive_to_hot_bucket_on_hotspot_workloads() {
         let txs = (0..1_024)
-            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .map(|i| {
+                let key = ((i / 16) % 4) as u64;
+                tx(i as u64, vec![o(key)], vec![o(key)])
+            })
             .collect::<Vec<_>>();
 
         assert!(auto_adaptive_decision(&txs).use_hot_bucket);
+        assert!(hot_bucket_interleave_would_reorder(&txs));
         assert!(matches!(
             resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
             GroupingStrategy::HotBucketInterleave
@@ -2262,11 +2266,15 @@ mod tests {
         ));
 
         let at_min = (0..32)
-            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .map(|i| {
+                let key = ((i / 8) % 4) as u64;
+                tx(i as u64, vec![o(key)], vec![o(key)])
+            })
             .collect::<Vec<_>>();
         let at_min_decision = auto_adaptive_decision(&at_min);
         assert!(at_min_decision.use_hot_bucket);
         assert_eq!(at_min_decision.reason, "hotspot_detected");
+        assert!(hot_bucket_interleave_would_reorder(&at_min));
         assert!(matches!(
             resolve_grouping_strategy(&at_min, GroupingStrategy::AutoAdaptive),
             GroupingStrategy::HotBucketInterleave
