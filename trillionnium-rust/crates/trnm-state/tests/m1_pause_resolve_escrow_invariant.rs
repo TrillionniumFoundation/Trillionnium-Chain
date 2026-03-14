@@ -417,6 +417,80 @@ fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
     );
 }
 
+#[test]
+fn paused_resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
+    // L03 paused-boundary hardening: cancelling a staged resolve_authority timelock while
+    // emergency_pause is active is still an authority-boundary transition and must scrub any
+    // staged resolve quorum without unpausing or mutating the active authority set.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_360,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_380,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_381,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+    st.set_gov_param(98_382, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_985, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before paused cancellation");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_985), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    let cancelled = st
+        .set_gov_param_with_action(
+            98_383,
+            7_310,
+            "resolve_authority".into(),
+            String::new(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect("pending resolve_authority update should cancel cleanly while paused");
+    assert!(matches!(cancelled, GovParamUpdateOutcome::Cancelled));
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority").as_deref(),
+        Some("authority-a,authority-b")
+    );
+    assert_eq!(st.pending_resolve_approval(9_985), None);
+    assert_eq!(st.pending_resolve_first_approver(9_985), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_985), None);
+    assert!(st.is_emergency_paused());
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "paused cancellation of a pending resolve_authority boundary must invalidate cached state root"
+    );
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
