@@ -34,7 +34,8 @@ impl VerifierRegistry {
     }
 
     pub fn with_backend_config(config: VerificationBackendConfig) -> Self {
-        let backend_registry = ZkBackendRegistry::new();
+        #[allow(unused_mut)]
+        let mut backend_registry = ZkBackendRegistry::new();
         #[cfg(feature = "real-tee-backend")]
         real_tee_backend::register_optional_backends(&mut backend_registry);
         let backend_registry = Arc::new(backend_registry);
