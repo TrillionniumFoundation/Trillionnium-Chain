@@ -4733,3 +4733,55 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_approver_bound
         worker_slash_before
     );
 }
+
+#[test]
+fn first_resolve_approval_rejects_non_challenged_task_boundary() {
+    // L03 boundary hardening: the first resolve approval must stay bound to challenged-state
+    // semantics and reject open tasks before any quorum state is staged.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_361, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_381, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+    st.put_task_new(TaskObject {
+        task_id: 9_941,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Open,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    })
+    .expect("open task should exist before resolve-approval attempt");
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_941,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect_err("non-challenged task must reject the first resolve approval");
+
+    assert!(
+        err.contains("no longer challenged"),
+        "unexpected error: {err}"
+    );
+    assert_eq!(st.pending_resolve_approval(9_941), None);
+    assert_eq!(st.pending_resolve_first_approver(9_941), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_941), None);
+}
