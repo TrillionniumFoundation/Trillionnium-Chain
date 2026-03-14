@@ -2,6 +2,7 @@ use std::collections::VecDeque;
 
 use crate::types::MockTx;
 use sha2::{Digest, Sha256};
+use trnm_state::StateStore;
 use trnm_types::Hash32;
 
 pub(crate) fn compute_commitment(
@@ -68,4 +69,20 @@ pub(crate) fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<M
     }
 
     q
+}
+
+pub(crate) fn init_demo_state_and_mempool(
+    demo_tasks: u64,
+    demo_keys: u64,
+) -> (StateStore, VecDeque<MockTx>) {
+    let mut state = StateStore::new();
+    state.set_balance("challenger", 1_000_000);
+
+    let mempool = build_demo_mempool(demo_tasks, demo_keys);
+    for i in 0..demo_tasks.max(1) {
+        let worker = demo_worker_name(1001u64 + i);
+        state.set_balance(&worker, 1_000_000);
+    }
+
+    (state, mempool)
 }

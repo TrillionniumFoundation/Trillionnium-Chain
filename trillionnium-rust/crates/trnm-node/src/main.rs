@@ -17,9 +17,9 @@ use trnm_pouw::{
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
     apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
+use trnm_state::{CheckpointMeta, WalMeta};
 #[cfg(test)]
-use trnm_state::PendingResolveApprovalSnapshot;
-use trnm_state::{CheckpointMeta, StateStore, WalMeta};
+use trnm_state::{PendingResolveApprovalSnapshot, StateStore};
 #[cfg(test)]
 use trnm_types::{ObjectRef, TaskMeteringSnapshot, TaskStatus};
 
@@ -67,7 +67,7 @@ use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::config::load_config;
 #[cfg(test)]
 use crate::demo::compute_commitment;
-use crate::demo::{build_demo_mempool, demo_worker_name};
+use crate::demo::init_demo_state_and_mempool;
 use crate::error_kind::classify_apply_error;
 use crate::events::{emit_event, event_type_of, status_name};
 #[cfg(test)]
@@ -9387,13 +9387,7 @@ fn main() -> Result<()> {
     );
     ensure_recoverable_wal_state(&wal_dir, &recovered)?;
 
-    let mut state = StateStore::new();
-    state.set_balance("challenger", 1_000_000);
-    let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
-    for i in 0..args.demo_tasks.max(1) {
-        let worker = demo_worker_name(1001u64 + i);
-        state.set_balance(&worker, 1_000_000);
-    }
+    let (mut state, mut mempool) = init_demo_state_and_mempool(args.demo_tasks, args.demo_keys);
     let mut known_task_ids: HashSet<u64> = HashSet::new();
     let mut finality_samples_ms: Vec<u128> = Vec::new();
     let mut scheduler_samples_ms: Vec<u128> = Vec::new();
