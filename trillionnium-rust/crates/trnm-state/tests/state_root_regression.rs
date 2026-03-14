@@ -212,6 +212,37 @@ fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_upda
 }
 
 #[test]
+fn governance_proposal_id_must_affect_state_root_even_when_other_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_005,
+            title: "Raise fraud bond".into(),
+            proposer: "governance.alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .expect("first governance proposal insertion should succeed");
+    state_b
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_006,
+            title: "Raise fraud bond".into(),
+            proposer: "governance.alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .expect("second governance proposal insertion should succeed");
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root must include governance proposal_id so otherwise identical proposal payloads in distinct canonical slots cannot hash identically"
+    );
+}
+
+#[test]
 fn restore_applied_gov_param_rewinds_state_root_after_value_mutation() {
     let mut state = StateStore::new();
 
@@ -1115,6 +1146,57 @@ fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_trea
 }
 
 #[test]
+fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state() {
+    let mut missing = StateStore::new();
+    let mut explicit_zero = StateStore::new();
+
+    for state in [&mut missing, &mut explicit_zero] {
+        state.set_balance("treasury.challenge_forfeits", 11);
+        state.set_balance("treasury.worker_slashes", 7);
+        state.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 302,
+                key: "challenge_min_bond".into(),
+                value: "175".into(),
+                activate_at_height: 260,
+            }),
+        );
+        state.restore_pending_resolve_approval(
+            4_200,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority.beta".into(),
+                authority_set: "authority.alpha,authority.beta".into(),
+                task_version: 4,
+            }),
+        );
+        state.restore_monetary_state(MonetaryState {
+            last_tick_height: 91,
+            tick_count: 5,
+            total_minted: 25,
+            total_burned: 6,
+            net_issuance: 19,
+        });
+    }
+
+    let missing_root = missing.state_root();
+    explicit_zero.set_balance("treasury.challenge_escrow", 0);
+
+    assert_eq!(
+        explicit_zero.balance_of("treasury.challenge_escrow"),
+        0,
+        "sanity: explicit zero challenge escrow balance should still read back as zero"
+    );
+    assert_eq!(
+        explicit_zero.state_root(),
+        missing_root,
+        "state_root must treat zero challenge escrow balance the same as a missing entry even when other pending, treasury, and monetary state is present"
+    );
+}
+
+#[test]
 fn insertion_order_of_balances_pending_and_monetary_snapshots_keeps_state_root_deterministic() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -1635,7 +1717,7 @@ fn restore_balance_rewinds_state_root_after_value_mutation() {
 }
 
 #[test]
-fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
+fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
     let mut state = StateStore::new();
     let task = TaskObject {
         task_id: 10_202,
@@ -1682,13 +1764,17 @@ fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
 
     state.restore_task(task_ref.id + 1, Some(snapshot.clone()));
     assert!(
-        state.get_task(task_ref.id + 1).is_some(),
-        "restoring the task snapshot through a second object slot should materialize a distinct slot"
+        state.get_task(task_ref.id + 1).is_none(),
+        "restore_task should fail closed when a snapshot's embedded task_id does not match the requested slot"
     );
-    assert_ne!(
+    assert!(
+        state.get_task(task_ref.id).is_some(),
+        "failing closed on a mismatched slot must preserve the canonical task slot"
+    );
+    assert_eq!(
         state.state_root(),
         canonical_root,
-        "restoring an identical task snapshot through a mismatched object slot must perturb the root because the object slot id is part of state identity"
+        "restore_task should keep the canonical deterministic root when asked to restore a snapshot through a mismatched object slot"
     );
 
     state.restore_task(task_ref.id + 1, None);
