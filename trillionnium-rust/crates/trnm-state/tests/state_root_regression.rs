@@ -2,6 +2,65 @@ use trnm_state::*;
 use trnm_types::*;
 
 #[test]
+fn new_tasks_canonicalize_embedded_version_for_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let task = TaskObject {
+        task_id: 8_001,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("canonicalize task version".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-a".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-14T00:00:00Z".into()),
+                provenance_index: Some("prov-task-8001".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    };
+    let mut mismatched_version = task.clone();
+    mismatched_version.version = 99;
+
+    let ref_a = state_a.put_task_new(task).unwrap();
+    let ref_b = state_b.put_task_new(mismatched_version).unwrap();
+
+    assert_eq!(ref_a.version, 1);
+    assert_eq!(ref_b.version, 1);
+    assert_eq!(state_a.get_task(8_001).unwrap().version, 1);
+    assert_eq!(state_b.get_task(8_001).unwrap().version, 1);
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should ignore caller-supplied task version noise on initial task insertion"
+    );
+}
+
+#[test]
 fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -931,6 +990,49 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let snapshot = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "authority.alpha".into(),
+        authority_set: "authority.alpha,authority.beta".into(),
+        task_version: 3,
+    };
+
+    state_a.restore_pending_resolve_approval(4_201, Some(snapshot.clone()));
+    state_b.restore_pending_resolve_approval(4_202, Some(snapshot));
+
+    let root_a = state_a.state_root();
+    assert_ne!(
+        root_a,
+        state_b.state_root(),
+        "state_root must include the pending resolve task id so identical approval payloads staged for different tasks cannot hash identically"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        4_202,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    state_b.restore_pending_resolve_approval(4_202, None);
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "moving an identical pending resolve snapshot onto the original task id and removing the extra entry should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn treasury_balance_address_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
@@ -1629,6 +1731,39 @@ fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root()
 }
 
 #[test]
+fn pending_resolve_task_id_slot_must_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let snapshot = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "resolver-a".into(),
+        authority_set: "resolver-a,resolver-b".into(),
+        task_version: 7,
+    };
+
+    state_a.restore_pending_resolve_approval(5_148, Some(snapshot.clone()));
+    state_b.restore_pending_resolve_approval(5_149, Some(snapshot.clone()));
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_ne!(
+        root_a, root_b,
+        "pending resolve task_id slot must contribute to state_root so identical approval payloads on different tasks cannot hash identically"
+    );
+
+    state_b.restore_pending_resolve_approval(5_149, None);
+    state_b.restore_pending_resolve_approval(5_148, Some(snapshot));
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original pending resolve task_id slot should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn pending_resolve_slash_worker_flag_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -2076,6 +2211,40 @@ fn restore_pending_resolve_none_is_slot_scoped_even_with_multiple_pending_entrie
         state.state_root(),
         root_with_both,
         "removing only one pending resolve entry should perturb the root while preserving unrelated pending resolve state"
+    );
+
+    let mut expected = StateStore::new();
+    expected.restore_pending_resolve_approval(
+        5_211,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: false,
+            confirmations: 1,
+            first_approver: "resolver-c".into(),
+            authority_set: "resolver-c,resolver-d".into(),
+            task_version: 9,
+        }),
+    );
+
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "restore_pending_resolve_approval(None) should produce the same deterministic root as a canonical state containing only the preserved pending resolve entry"
+    );
+
+    state.restore_pending_resolve_approval(
+        5_210,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_both,
+        "restoring the removed pending resolve snapshot must rewind state_root exactly to the prior two-entry root"
     );
 }
 
@@ -3134,6 +3303,126 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
+fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state_a.restore_pending_gov_update(
+        "min_worker_stake",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "min_worker_stake".to_string(),
+            value: "9000".to_string(),
+            activate_at_height: 1_040,
+        }),
+    );
+
+    state_b.restore_pending_gov_update(
+        "min_worker_stake",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "min_worker_stake".to_string(),
+            value: "9000".to_string(),
+            activate_at_height: 1_040,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should be deterministic for equivalent pending governance queues regardless of restore/insertion order"
+    );
+}
+
+#[test]
+fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserves_other_entries() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_301,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 7_302,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            activate_at_height: 33,
+        }),
+    );
+
+    let canonical_other_snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("canonical pending governance entry should exist before mismatched restore");
+    let root_with_both = state.state_root();
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 7_302,
+            key: "challenge_success_bounty".to_string(),
+            value: "12".to_string(),
+            activate_at_height: 44,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "mismatched restore should fail closed by clearing only the targeted stale caller slot"
+    );
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "mismatched restore must not materialize a foreign pending governance key from snapshot.key"
+    );
+    assert_eq!(
+        state.pending_gov_update("challenge_min_bond"),
+        Some(canonical_other_snapshot.clone()),
+        "mismatched restore must preserve unrelated canonical pending governance entries"
+    );
+
+    let mut expected = StateStore::new();
+    expected.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(canonical_other_snapshot),
+    );
+
+    assert_ne!(
+        state.state_root(),
+        root_with_both,
+        "clearing only the targeted stale caller slot must perturb the prior two-entry root"
+    );
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "after a mismatched restore, the deterministic root should match the canonical state containing only the preserved unrelated pending entry"
+    );
+}
+
+#[test]
 fn pending_gov_update_key_id_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -3410,5 +3699,94 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
         original.state_root(),
         baseline_root,
         "the original state's cached root must remain canonical after the clone completes its restore roundtrip"
+    );
+}
+
+#[test]
+fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index() {
+    let mut original = StateStore::new();
+    original
+        .set_gov_param(0, 7_901, "max_block_ms".into(), "500".into())
+        .expect("baseline applied governance param should succeed");
+
+    let baseline_root = original.state_root();
+    let baseline_snapshot = original
+        .get_param(7_901)
+        .expect("baseline applied governance snapshot should exist");
+    let mut cloned = original.clone();
+
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "cloned state should preserve the canonical cached applied-governance root before mutation"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "cloned state should preserve the canonical key-index mapping before mutation"
+    );
+
+    cloned.restore_gov_param(
+        7_901,
+        Some(GovParamObject {
+            key_id: 7_901,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: baseline_snapshot.version,
+        }),
+    );
+
+    let mutated_clone_root = cloned.state_root();
+    assert_ne!(
+        mutated_clone_root, baseline_root,
+        "changing an applied governance key through restore_gov_param must perturb the cloned root because both object payload and key index are state-root inputs"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms"),
+        None,
+        "clone-local restore mutation should rewrite the clone key index away from the original key"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_parallel_workers").as_deref(),
+        Some("8"),
+        "clone-local restore mutation should expose the replacement applied governance key only inside the clone"
+    );
+    assert_eq!(
+        original.state_root(),
+        baseline_root,
+        "clone-local applied governance mutation must not alias back into the original cached root"
+    );
+    assert_eq!(
+        original.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "clone-local applied governance mutation must not rewrite the original key-index mapping"
+    );
+
+    cloned.restore_gov_param(7_901, Some(baseline_snapshot.clone()));
+
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "restoring the original applied governance snapshot should restore the canonical key-index mapping in the clone"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_parallel_workers"),
+        None,
+        "restoring the original applied governance snapshot should remove the clone-only replacement key"
+    );
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "restoring the cloned applied governance snapshot must rewind state_root exactly to the original canonical baseline"
+    );
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "repeated reads after clone-local applied governance restore should deterministically reuse the rewound cached root"
+    );
+    assert_eq!(
+        original.state_root(),
+        baseline_root,
+        "the original state's cached root must remain canonical after the clone restores its applied governance snapshot"
     );
 }
