@@ -108,6 +108,17 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_prefix_without_visible_body_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"\xef\xbb\xbfFRAUD:\n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid fraud proof envelope")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -319,6 +330,21 @@ mod tests {
                 b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"tee\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_worker_binding_with_cyrillic_homoglyph_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "FRAUD:{\"task_id\":7,\"worker\":\"wоrker-fraud\",\"proof_type\":\"fraud\"}"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
         ));
     }
 
@@ -648,6 +674,34 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"FRAUD:{\"task_id\":+7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_negative_signed_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":-7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_plus_signed_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":\xef\xbc\x8b7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
         ));

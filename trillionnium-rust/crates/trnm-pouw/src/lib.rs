@@ -1995,27 +1995,40 @@ pub fn apply_timeout(
     preflight_timeout_transfers(st, &task, forfeit_challenge_bond, refund_challenge_bond)?;
 
     let task_id = task_ref.id;
+    let before_task = st
+        .get_task(task_ref.id)
+        .ok_or_else(|| PouwError::State("task not found".into()))?;
     let next_ref = st
         .update_task(task_ref, task.clone())
         .map_err(map_state_err)?;
 
-    if let Some(bond) = task.challenge_bond {
-        if forfeit_challenge_bond {
-            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-            st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-        } else if refund_challenge_bond {
-            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
-            if let Some(ref challenger) = task.challenger {
-                st.credit_balance(challenger, bond)
+    let settle_result = (|| -> Result<(), PouwError> {
+        if let Some(bond) = task.challenge_bond {
+            if forfeit_challenge_bond {
+                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
                     .map_err(PouwError::State)?;
+                st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
+                    .map_err(PouwError::State)?;
+            } else if refund_challenge_bond {
+                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+                    .map_err(PouwError::State)?;
+                if let Some(ref challenger) = task.challenger {
+                    st.credit_balance(challenger, bond)
+                        .map_err(PouwError::State)?;
+                }
             }
         }
+
+        settle_worker_stake_for_terminal_state(st, &task)?;
+        Ok(())
+    })();
+
+    if let Err(err) = settle_result {
+        st.update_task(next_ref.clone(), before_task)
+            .map_err(map_state_err)?;
+        return Err(err);
     }
 
-    settle_worker_stake_for_terminal_state(st, &task)?;
     // Hygiene boundary: timeout finalization must clear any staged multisig resolve
     // approvals so stale partial authorizations cannot linger after terminal state.
     st.clear_pending_resolve_approval(task_id);
@@ -2552,6 +2565,78 @@ mod tests {
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before_forfeit
+        );
+    }
+
+    #[test]
+    fn timeout_rejects_missing_resolve_deadline_without_clearing_staged_multisig_approval() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1_000);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let task_id = 21_503;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            1,
+        )
+        .unwrap();
+
+        let staged_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            2,
+        )
+        .expect_err("first multisig resolve should only stage approval");
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
+        assert_eq!(st.pending_resolve_approval(task_id), Some((true, 1)));
+
+        let mut task = st.get_task(task_id).unwrap();
+        task.resolve_deadline_height = None;
+        let bad_ref = st
+            .update_task(
+                ObjectRef {
+                    id: task_id,
+                    version: task.version,
+                },
+                task.clone(),
+            )
+            .unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_timeout(&mut st, bad_ref, 999).expect_err(
+            "timeout must fail closed when challenged task is missing resolve deadline metadata",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains(
+            "challenged status requires challenged_at_height, challenge_deadline_height, and resolve_deadline_height"
+        )));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.pending_resolve_approval(task_id),
+            Some((true, 1)),
+            "failed timeout must not clear staged resolve approval"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(task_id),
+            Some("authority-a".to_string())
         );
     }
 
@@ -12668,6 +12753,72 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_rejects_non_canonical_challenger_identity_without_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 40);
+        st.set_gov_param_bootstrap_unchecked(40_130, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_131, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 9);
+
+        let r1 = apply_create_task(&mut st, 40_132, "alice".into(), 10).unwrap();
+        let result_hash = [17u8; 32];
+        let reveal_salt = [18u8; 32];
+        let committed = compute_commitment(40_132, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.challenger = Some(" challenger".into());
+        let bad_ref = st.update_task(r5, malformed).unwrap();
+
+        let before_task = st.get_task(bad_ref.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_132));
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = apply_timeout(&mut st, bad_ref, 221)
+            .expect_err("non-canonical challenger identity must fail closed before timeout settlement");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains(
+            "challenge metadata contains non-canonical challenger identity"
+        )));
+
+        let after_task = st.get_task(before_task.task_id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(after_task.resolve_deadline_height, before_task.resolve_deadline_height);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_132)), before_lock);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
     fn challenged_timeout_slash_path_only_moves_task_local_stake_and_never_auto_pays_bounty() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -12727,6 +12878,20 @@ mod tests {
     }
 
     #[test]
+    fn timeout_slash_governance_key_remains_blocked_by_allowlist() {
+        let mut st = seeded_state();
+        let err = st
+            .set_gov_param_bootstrap_unchecked(
+                40_134,
+                "default_slash_on_unresolved_challenge".into(),
+                "true".into(),
+            )
+            .expect_err("timeout-slash governance key should remain blocked until state allowlist is wired");
+        assert!(err.contains("governance key not allowed: default_slash_on_unresolved_challenge"));
+        assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
+    }
+
+    #[test]
     fn parse_governed_bool_param_accepts_explicit_true_and_false_aliases() {
         for raw in ["1", "true", "yes", "on", "0", "false", "no", "off"] {
             parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
@@ -12770,6 +12935,24 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_rejects_ascii_internal_whitespace_aliases_fail_closed() {
+        for raw in ["tr ue", "fa\tlse", "o\nn", "of\rf"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("internal-whitespace boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
+    fn parse_governed_bool_param_rejects_unicode_homoglyph_aliases_fail_closed() {
+        for raw in ["truｅ", "fаlse", "οn", "оff"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("unicode homoglyph boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
     fn unresolved_challenge_slash_on_timeout_defaults_false_when_param_absent() {
         let st = seeded_state();
         assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
@@ -12789,6 +12972,24 @@ mod tests {
         for raw in ["2", "-1", "true.", "false,", "yes/", "off:"] {
             let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
                 .expect_err("numeric or punctuation boolean lookalikes must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
+    fn parse_governed_bool_param_rejects_fullwidth_digit_aliases_fail_closed() {
+        for raw in ["１", "０", "１true", "false０"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("fullwidth digit aliases must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
+    fn parse_governed_bool_param_rejects_unicode_whitespace_lookalikes_fail_closed() {
+        for raw in ["true\u{00a0}", "\u{2003}false", "o\u{00a0}n", "of\u{2009}f"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("unicode whitespace boolean lookalikes must be rejected");
             assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
         }
     }
