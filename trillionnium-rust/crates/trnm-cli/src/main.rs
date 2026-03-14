@@ -440,7 +440,15 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         })
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
-    let canonical = cleaned.replace([' ', '-'], "_");
+    let canonical = cleaned
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
+        .collect::<String>()
+        .trim_matches('_')
+        .split('_')
+        .filter(|segment| !segment.is_empty())
+        .collect::<Vec<_>>()
+        .join("_");
     match canonical.as_str() {
         "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
         | "broadcasting" | "processing" | "executing" | "in_progress" | "inflight"
@@ -1598,6 +1606,11 @@ mod tests {
         let parsed_timed_out_spaced =
             parse_tx_query_response(timed_out_spaced_alias, "0xfallback").unwrap();
         assert_eq!(parsed_timed_out_spaced.status, "fail");
+
+        let timed_out_noisy_alias = "tx_hash=0xef2\nstatus=Timed -  Out!!!\n";
+        let parsed_timed_out_noisy =
+            parse_tx_query_response(timed_out_noisy_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_timed_out_noisy.status, "fail");
 
         let submitted_alias = "tx_hash=0xef3\nstatus=submitted\n";
         let parsed_submitted = parse_tx_query_response(submitted_alias, "0xfallback").unwrap();
