@@ -229,7 +229,11 @@ impl TeeVerifier {
                 // subtype that callers may misread as non-attestation-specific.
                 "evidence/claims"
             } else {
-                "claims"
+                // Bare `claims` wording in a TEE backend reason is still part of
+                // the attestation contract. Keep unavailable/internal surfaces on
+                // the attestation-oriented `evidence/claims` label so callers do
+                // not build generic non-TEE branching on shared backend text.
+                "evidence/claims"
             };
         }
 
@@ -2041,6 +2045,53 @@ mod tests {
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("failed while verifying TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_generic_claims_wording_prefers_attestation_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "claims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("cannot currently verify TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_generic_claims_wording_prefers_attestation_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "claims verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("failed while verifying TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
