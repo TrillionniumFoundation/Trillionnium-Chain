@@ -4,7 +4,7 @@ use sha2::{Digest, Sha256};
 #[cfg(test)]
 use std::{collections::HashMap, fs, path::PathBuf};
 use std::{
-    collections::{BTreeMap, HashSet, VecDeque},
+    collections::{HashSet, VecDeque},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
@@ -69,10 +69,10 @@ use crate::rollback::{
 use crate::rwset::read_write_decl;
 use crate::timeout::scan_and_apply_timeouts;
 #[cfg(test)]
+use crate::types::HotObjectSummary;
+#[cfg(test)]
 use crate::types::RecoveredWalState;
-use crate::types::{
-    ConsensusWal, DaBatch, HotObjectSummary, MockTx, OrderingDecision, RlAdvice, RlAdviceContext,
-};
+use crate::types::{ConsensusWal, DaBatch, MockTx, OrderingDecision, RlAdvice, RlAdviceContext};
 use crate::wal::{
     load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
     persist_wal_meta_entries, resolve_wal_dir,
