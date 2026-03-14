@@ -30,6 +30,7 @@ mod bft;
 mod config;
 mod events;
 mod hot;
+mod metrics;
 mod ordering;
 mod recovery;
 mod rl;
@@ -59,6 +60,10 @@ use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fie
 use crate::hot::{
     hot_object_tail_share_ppm, hot_object_top_label_share_ppm, missed_proposals_added_since,
     summarize_hot_objects,
+};
+use crate::metrics::{
+    average_or_zero, finality_budget_share_ppm, gap_percent_bps, max_or_zero, percentile,
+    ratio_milli_u64, ratio_percent_bps, ratio_ppm, ratio_ppm_u64, wall_time_share_ppm,
 };
 use crate::ordering::decide_order_for_commit;
 #[cfg(test)]
@@ -285,84 +290,6 @@ fn now_unix_ms() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0)
-}
-
-fn percentile(mut vals: Vec<u128>, p: f64) -> u128 {
-    if vals.is_empty() {
-        return 0;
-    }
-    vals.sort_unstable();
-    let idx = ((vals.len() - 1) as f64 * p).round() as usize;
-    vals[idx.min(vals.len() - 1)]
-}
-
-fn max_or_zero(vals: &[u128]) -> u128 {
-    vals.iter().copied().max().unwrap_or(0)
-}
-
-fn average_or_zero(vals: &[u128]) -> u128 {
-    if vals.is_empty() {
-        0
-    } else {
-        vals.iter().copied().sum::<u128>() / vals.len() as u128
-    }
-}
-
-fn ratio_ppm(numerator: u128, denominator: u128) -> u128 {
-    if denominator == 0 {
-        0
-    } else {
-        numerator.saturating_mul(1_000_000) / denominator
-    }
-}
-
-fn ratio_ppm_u64(numerator: u64, denominator: u64) -> u64 {
-    if denominator == 0 {
-        0
-    } else {
-        numerator.saturating_mul(1_000_000) / denominator
-    }
-}
-
-fn ratio_percent_bps(numerator: u128, denominator: u128) -> u128 {
-    if denominator == 0 {
-        0
-    } else {
-        numerator.saturating_mul(10_000) / denominator
-    }
-}
-
-fn ratio_milli_u64(numerator: u64, denominator: u64) -> u64 {
-    if denominator == 0 {
-        0
-    } else {
-        numerator.saturating_mul(1_000) / denominator
-    }
-}
-
-fn finality_budget_share_ppm(density_avg_milli: u64, finality_avg_ms: u128) -> u64 {
-    let finality_avg_ms_u64 = u64::try_from(finality_avg_ms).unwrap_or(u64::MAX);
-    let finality_budget_milli = finality_avg_ms_u64.saturating_mul(1_000);
-    ratio_ppm_u64(density_avg_milli, finality_budget_milli)
-}
-
-fn wall_time_share_ppm(total_ms: u64, committed_heights: u64, finality_avg_ms: u128) -> u64 {
-    if committed_heights == 0 {
-        return 0;
-    }
-    let finality_avg_ms_u64 = u64::try_from(finality_avg_ms).unwrap_or(u64::MAX);
-    let total_budget_ms = committed_heights.saturating_mul(finality_avg_ms_u64);
-    ratio_ppm_u64(total_ms, total_budget_ms)
-}
-
-fn gap_percent_bps(total: u128, component_a: u128, component_b: u128) -> u128 {
-    if total == 0 {
-        return 0;
-    }
-    total
-        .saturating_sub(component_a.saturating_add(component_b))
-        .saturating_mul(10_000)
-        / total
 }
 
 fn treasury_total(st: &StateStore) -> u128 {

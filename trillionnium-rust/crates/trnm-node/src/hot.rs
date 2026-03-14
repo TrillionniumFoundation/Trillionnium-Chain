@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use trnm_state::StateStore;
 
-use crate::ratio_ppm;
+use crate::metrics::ratio_ppm;
 use crate::types::{HotObjectSummary, MockTx};
 use crate::{
     CHALLENGE_ESCROW_ACCOUNT, CHALLENGE_FORFEIT_TREASURY_ACCOUNT, RESOLVE_AUTHORITY_HOT_LABEL,
