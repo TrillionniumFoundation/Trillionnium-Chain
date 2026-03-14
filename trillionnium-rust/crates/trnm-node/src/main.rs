@@ -30,6 +30,7 @@ mod args;
 mod bft;
 mod config;
 mod demo;
+mod error_kind;
 mod events;
 mod hot;
 mod mempool;
@@ -66,6 +67,7 @@ use crate::config::load_config;
 #[cfg(test)]
 use crate::demo::compute_commitment;
 use crate::demo::{build_demo_mempool, demo_worker_name};
+use crate::error_kind::classify_apply_error;
 use crate::events::{emit_event, event_type_of, status_name};
 #[cfg(test)]
 use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fields};
@@ -118,31 +120,6 @@ fn hash32_hex(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(data);
     hex::encode(hasher.finalize())
-}
-
-fn classify_apply_error(err: &anyhow::Error) -> &'static str {
-    if let Some(pouw) = err.downcast_ref::<trnm_pouw::PouwError>() {
-        return match pouw {
-            trnm_pouw::PouwError::VersionConflict => "version_conflict",
-            trnm_pouw::PouwError::InvalidTransition => "invalid_transition",
-            trnm_pouw::PouwError::DeadlineExceeded => "deadline_exceeded",
-            trnm_pouw::PouwError::ResolveApprovalStaged => "resolve_approval_staged",
-            _ => "semantic_fail",
-        };
-    }
-
-    let e = err.to_string().to_ascii_lowercase();
-    if e.contains("version conflict") {
-        "version_conflict"
-    } else if e.contains("invalid transition") {
-        "invalid_transition"
-    } else if e.contains("deadline exceeded") {
-        "deadline_exceeded"
-    } else if e.contains("preexec") {
-        "preexec_conflict_miss"
-    } else {
-        "semantic_fail"
-    }
 }
 
 fn is_high_risk_tx(tx: &MockTx) -> bool {
