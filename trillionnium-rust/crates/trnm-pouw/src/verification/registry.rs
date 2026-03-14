@@ -2227,6 +2227,56 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_feature_on_bridge_fixture_circuit_ids_are_unique_across_matrix() {
+        use std::collections::BTreeMap;
+        use std::fs;
+        use std::path::PathBuf;
+
+        let fixtures_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/zk");
+        let mut owners_by_circuit_id: BTreeMap<String, String> = BTreeMap::new();
+        let mut checked = 0usize;
+
+        for fixture_path in fs::read_dir(&fixtures_dir)
+            .expect("fixtures/zk directory should exist")
+            .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        {
+            let Some(name) = fixture_path.file_name().and_then(|name| name.to_str()) else {
+                continue;
+            };
+            if !name.starts_with("real_backend_bridge_")
+                || !name.contains("_feature_on")
+                || !name.ends_with(".json")
+            {
+                continue;
+            }
+
+            let payload_json = fs::read_to_string(&fixture_path)
+                .unwrap_or_else(|err| panic!("failed reading {name}: {err}"));
+            let payload: serde_json::Value = serde_json::from_str(&payload_json)
+                .unwrap_or_else(|err| panic!("failed parsing {name}: {err}"));
+            let circuit_id = payload
+                .get("meta")
+                .and_then(|meta| meta.get("circuit_id"))
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| panic!("fixture missing meta.circuit_id: {name}"));
+
+            if let Some(previous_owner) = owners_by_circuit_id.insert(circuit_id.to_string(), name.to_string()) {
+                panic!(
+                    "feature-on bridge fixture matrix reused meta.circuit_id '{circuit_id}' across '{previous_owner}' and '{name}'"
+                );
+            }
+
+            checked += 1;
+        }
+
+        assert!(
+            checked >= 20,
+            "expected broad feature-on bridge fixture coverage, checked only {checked} fixtures"
+        );
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
