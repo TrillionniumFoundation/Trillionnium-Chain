@@ -20,11 +20,14 @@ use trnm_pouw::{
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta};
-use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
+#[cfg(test)]
+use trnm_types::TaskMeteringSnapshot;
+use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
 
 mod args;
 mod bft;
 mod config;
+mod events;
 mod recovery;
 mod types;
 mod wal;
@@ -42,6 +45,9 @@ use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{AuthRejectStats, BftVote, SignedVote, VoteType};
 use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::config::load_config;
+use crate::events::{emit_event, emit_timeout_event, event_type_of, status_name};
+#[cfg(test)]
+use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fields};
 #[cfg(test)]
 use crate::recovery::metadata_only_recovery_error;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
@@ -245,25 +251,6 @@ fn task_id_of(tx: &MockTx) -> u64 {
     }
 }
 
-fn event_type_of(tx: &MockTx) -> &'static str {
-    match tx {
-        MockTx::CreateTask { .. } => "create",
-        MockTx::AcceptTask { .. } => "accept",
-        MockTx::Commit { .. } => "commit",
-        MockTx::Reveal { .. } => "reveal",
-        MockTx::Challenge { .. } => "challenge",
-        MockTx::Resolve { .. } => "resolve",
-    }
-}
-
-fn event_type_for_apply_outcome(tx: &MockTx, err_kind: Option<&str>) -> &'static str {
-    if matches!(tx, MockTx::Resolve { .. }) && err_kind == Some("resolve_approval_staged") {
-        "resolve_approval_staged"
-    } else {
-        event_type_of(tx)
-    }
-}
-
 fn is_critical_tx(tx: &MockTx) -> bool {
     matches!(tx, MockTx::Challenge { .. } | MockTx::Resolve { .. })
 }
@@ -370,12 +357,6 @@ fn challenger_of(tx: &MockTx) -> Option<String> {
 
 fn tx_hash_of(tx_id: u64) -> String {
     format!("0xmock{:016x}", tx_id)
-}
-
-fn status_name(st: &StateStore, task_id: u64) -> String {
-    st.get_task(task_id)
-        .map(|t| format!("{:?}", t.status))
-        .unwrap_or_else(|| "NONE".to_string())
 }
 
 fn now_unix_ms() -> u128 {
@@ -538,185 +519,6 @@ fn balance_deltas_for_transition(
     // task_id currently reserved for future richer per-task accounting; keep signature explicit.
     let _ = task_id;
     (treasury_delta, challenger_delta)
-}
-
-fn format_task_metering_event_fields(snapshot: &TaskMeteringSnapshot) -> String {
-    format!(
-        " metering_workload_class={} metering_schema={} metering_receipt_hash={} metering_policy_snapshot_version={} metering_prompt_tokens={} metering_generated_tokens={} metering_decode_steps={} metering_kv_bytes_moved={} metering_normalized_work_units={} metering_prompt_token_weight={} metering_generated_token_weight={} metering_decode_step_weight={} metering_kv_byte_weight={} metering_min_accept_work_units={} metering_challenge_success_bounty_base={} metering_challenge_success_bounty_per_work_unit_num={} metering_challenge_success_bounty_per_work_unit_den={} metering_worker_completion_bonus_per_work_unit_num={} metering_worker_completion_bonus_per_work_unit_den={} metering_worker_slash_rebate_per_work_unit_num={} metering_worker_slash_rebate_per_work_unit_den={}",
-        snapshot.workload_class,
-        snapshot.metering_schema,
-        snapshot.receipt_hash,
-        snapshot.policy_snapshot_version,
-        snapshot.prompt_tokens,
-        snapshot.generated_tokens,
-        snapshot.decode_steps,
-        snapshot.kv_bytes_moved,
-        snapshot.normalized_work_units,
-        snapshot.prompt_token_weight,
-        snapshot.generated_token_weight,
-        snapshot.decode_step_weight,
-        snapshot.kv_byte_weight,
-        snapshot.min_accept_work_units,
-        snapshot.challenge_success_bounty_base,
-        snapshot.challenge_success_bounty_per_work_unit_num,
-        snapshot.challenge_success_bounty_per_work_unit_den,
-        snapshot.worker_completion_bonus_per_work_unit_num,
-        snapshot.worker_completion_bonus_per_work_unit_den,
-        snapshot.worker_slash_rebate_per_work_unit_num,
-        snapshot.worker_slash_rebate_per_work_unit_den,
-    )
-}
-
-fn task_metering_event_suffix(st: &StateStore, task_id: u64) -> String {
-    st.get_task(task_id)
-        .and_then(|task| task.metadata)
-        .and_then(|metadata| metadata.metering)
-        .map(|snapshot| format_task_metering_event_fields(&snapshot))
-        .unwrap_or_default()
-}
-
-fn emit_event(
-    st: &StateStore,
-    tx: &MockTx,
-    signer: &str,
-    tx_id: u64,
-    block_height: u64,
-    from_status: &str,
-    to_status: &str,
-    state_root: &str,
-    treasury_delta: &EventDelta,
-    challenger_delta: Option<&EventDelta>,
-    challenger: Option<&str>,
-    err_kind: Option<&str>,
-) {
-    let task_id = task_id_of(tx);
-    let event_type = event_type_for_apply_outcome(tx, err_kind);
-    let actor = actor_of(st, tx);
-    let challenger = challenger
-        .map(|s| s.to_string())
-        .or_else(|| challenger_of(tx))
-        .unwrap_or_else(|| "-".to_string());
-    let tx_hash = tx_hash_of(tx_id);
-    let ts_unix_ms = now_unix_ms();
-
-    let bond_disposition = match tx {
-        MockTx::Challenge { .. } => Some("posted"),
-        MockTx::Resolve { slash_worker, .. } => Some(if *slash_worker {
-            "refunded"
-        } else {
-            "forfeited"
-        }),
-        _ => None,
-    };
-
-    let treasury_delta_str = match tx {
-        // PR5 reconcile contract treats challenge as escrow-only movement;
-        // event-level treasury_delta must stay neutral for challenge events.
-        MockTx::Challenge { .. } => "0",
-        _ => treasury_delta.text.as_str(),
-    };
-    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
-    let bond_disposition_str = bond_disposition.unwrap_or("-");
-    let metering_suffix = match tx {
-        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_metering_event_suffix(st, task_id),
-        _ => String::new(),
-    };
-
-    match tx {
-        MockTx::Resolve { slash_worker, .. } => {
-            let resolution_code = if *slash_worker {
-                "slashed"
-            } else {
-                "completed"
-            };
-            println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
-                event_type,
-                task_id,
-                from_status,
-                to_status,
-                actor,
-                signer,
-                challenger,
-                tx_hash,
-                tx_id,
-                block_height,
-                state_root,
-                ts_unix_ms,
-                slash_worker,
-                resolution_code,
-                treasury_delta_str,
-                challenger_delta_str,
-                bond_disposition_str,
-                metering_suffix,
-            );
-        }
-        _ => {
-            println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
-                event_type,
-                task_id,
-                from_status,
-                to_status,
-                actor,
-                signer,
-                challenger,
-                tx_hash,
-                tx_id,
-                block_height,
-                state_root,
-                ts_unix_ms,
-                treasury_delta_str,
-                challenger_delta_str,
-                bond_disposition_str,
-                metering_suffix,
-            );
-        }
-    }
-}
-
-fn emit_timeout_event(
-    st: &StateStore,
-    task_id: u64,
-    tx_id: u64,
-    block_height: u64,
-    from_status: &str,
-    to_status: &str,
-    state_root: &str,
-    treasury_delta: &EventDelta,
-    challenger_delta: Option<&EventDelta>,
-    challenger: Option<&str>,
-    bond_disposition: Option<&str>,
-) {
-    let tx_hash = tx_hash_of(tx_id);
-    let ts_unix_ms = now_unix_ms();
-    let treasury_delta_str = treasury_delta.text.as_str();
-    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
-    let bond_disposition_str = bond_disposition.unwrap_or("-");
-    let metering_suffix = task_metering_event_suffix(st, task_id);
-    let resolution_code = if to_status == "Slashed" {
-        "slashed"
-    } else {
-        "completed"
-    };
-
-    println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
-        task_id,
-        from_status,
-        to_status,
-        challenger.unwrap_or("-"),
-        tx_hash,
-        tx_id,
-        block_height,
-        state_root,
-        ts_unix_ms,
-        resolution_code,
-        treasury_delta_str,
-        challenger_delta_str,
-        bond_disposition_str,
-        metering_suffix,
-    );
 }
 
 fn is_high_risk_tx(tx: &MockTx) -> bool {
