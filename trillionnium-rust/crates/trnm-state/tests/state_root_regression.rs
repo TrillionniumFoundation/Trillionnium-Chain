@@ -1626,7 +1626,7 @@ fn restore_balance_rewinds_state_root_after_value_mutation() {
 }
 
 #[test]
-fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
+fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
     let mut state = StateStore::new();
     let task = TaskObject {
         task_id: 10_202,
@@ -1672,13 +1672,17 @@ fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
 
     state.restore_task(task_ref.id + 1, Some(snapshot.clone()));
     assert!(
-        state.get_task(task_ref.id + 1).is_some(),
-        "restoring the task snapshot through a second object slot should materialize a distinct slot"
+        state.get_task(task_ref.id + 1).is_none(),
+        "restore_task should fail closed when a snapshot's embedded task_id does not match the requested slot"
     );
-    assert_ne!(
+    assert!(
+        state.get_task(task_ref.id).is_some(),
+        "failing closed on a mismatched slot must preserve the canonical task slot"
+    );
+    assert_eq!(
         state.state_root(),
         canonical_root,
-        "restoring an identical task snapshot through a mismatched object slot must perturb the root because the object slot id is part of state identity"
+        "restore_task should keep the canonical deterministic root when asked to restore a snapshot through a mismatched object slot"
     );
 
     state.restore_task(task_ref.id + 1, None);

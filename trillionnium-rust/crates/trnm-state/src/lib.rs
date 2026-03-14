@@ -583,6 +583,10 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
+                if task.task_id != id {
+                    self.objects.remove(&id);
+                    return;
+                }
                 self.objects.insert(
                     id,
                     VersionedObject {
