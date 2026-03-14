@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
+    TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -221,6 +222,126 @@ const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
+const RESOLVE_ACTOR_ID_MAX_LEN: usize = 128;
+
+fn resolve_actor_has_forbidden_separator(token: &str) -> bool {
+    token.contains(',')
+        || token.contains(';')
+        || token.contains('|')
+        || token.contains('；')
+        || token.contains('，')
+        || token.contains('、')
+}
+
+fn resolve_actor_is_reserved(token: &str) -> bool {
+    token.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+        || token.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+        || token.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+        || token.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        || token.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        || token.eq_ignore_ascii_case("governance.emergency_pause")
+        || token.eq_ignore_ascii_case("emergency_pause")
+}
+
+fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Err("resolve approval approver must be non-empty".into());
+    }
+    if trimmed != raw
+        || trimmed
+            .chars()
+            .any(|c| c.is_whitespace() || c.is_control())
+    {
+        return Err("resolve approval approver must not contain whitespace or control characters".into());
+    }
+    if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
+        return Err(format!(
+            "resolve approval approver exceeds max length {}",
+            RESOLVE_ACTOR_ID_MAX_LEN
+        ));
+    }
+    if resolve_actor_has_forbidden_separator(trimmed) || !trimmed.is_ascii() {
+        return Err("resolve approval approver must be a single canonical actor id".into());
+    }
+    if resolve_actor_is_reserved(trimmed) {
+        return Err("resolve approval approver must be an explicit non-system authority".into());
+    }
+    Ok(trimmed.to_ascii_lowercase())
+}
+
+fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() || trimmed != raw {
+        return Err(
+            "resolve approval authority set must be a canonical comma-delimited actor list"
+                .into(),
+        );
+    }
+    if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
+        return Err(format!(
+            "resolve approval authority set exceeds max length {}",
+            RESOLVE_ACTOR_ID_MAX_LEN
+        ));
+    }
+
+    let authority_members: Vec<&str> = trimmed.split(',').collect();
+    if authority_members.len() < 2 {
+        return Err("resolve approval authority set must include at least two members".into());
+    }
+
+    let mut seen_members = std::collections::BTreeSet::new();
+    for member in &authority_members {
+        let member_trimmed = member.trim();
+        if member_trimmed.is_empty()
+            || member_trimmed != *member
+            || member_trimmed
+                .chars()
+                .any(|c| c.is_whitespace() || c.is_control())
+            || member_trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN
+            || resolve_actor_has_forbidden_separator(member_trimmed)
+            || !member_trimmed.is_ascii()
+            || resolve_actor_is_reserved(member_trimmed)
+        {
+            return Err(
+                "resolve approval authority set contains non-canonical or forbidden member"
+                    .into(),
+            );
+        }
+        if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
+            return Err("resolve approval authority set must not contain duplicate members".into());
+        }
+    }
+
+    Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
+}
+
+fn ensure_effective_resolve_authority_match(
+    st: &StateStore,
+    authority_set: &str,
+) -> Result<(), String> {
+    let provided = canonicalize_resolve_authority_set(authority_set)?;
+    if let Some(pending) = st.pending_gov_update("resolve_authority") {
+        let expected = canonicalize_resolve_authority_set(&pending.value)
+            .map_err(|_| "resolve approval authority set must match pending governance authority".to_string())?;
+        if expected != provided {
+            return Err("resolve approval authority set must match pending governance authority".into());
+        }
+        return Ok(());
+    }
+    if let Some(current) = st.gov_param_string("resolve_authority") {
+        let expected = canonicalize_resolve_authority_set(&current)
+            .map_err(|_| "resolve approval authority set must match configured governance authority".to_string())?;
+        if expected != provided {
+            return Err("resolve approval authority set must match configured governance authority".into());
+        }
+    }
+    Ok(())
+}
+
+fn is_effective_resolve_authority_match(st: &StateStore, authority_set: &str) -> bool {
+    ensure_effective_resolve_authority_match(st, authority_set).is_ok()
+}
 
 fn is_sensitive_gov_param(key: &str) -> bool {
     GOV_SENSITIVE_KEYS.contains(&key)
@@ -452,79 +573,30 @@ impl StateStore {
         approver: &str,
         authority_set: &str,
     ) -> Result<bool, String> {
-        let approver_trimmed = approver.trim();
-        if approver_trimmed.is_empty() {
-            return Err("resolve approval approver must be non-empty".into());
+        if task_id == 0 {
+            return Err("resolve approval task id must be >= 1".into());
         }
-        if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
-            return Err("resolve approval approver must not contain whitespace".into());
-        }
-        if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
-            return Err("resolve approval approver must be a single canonical actor id".into());
-        }
-        if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-            || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-        {
-            return Err(
-                "resolve approval approver must be an explicit non-system authority".into(),
-            );
+        if task_version == 0 {
+            return Err("resolve approval task version must be >= 1".into());
         }
 
-        let authority_trimmed = authority_set.trim();
-        if authority_trimmed.is_empty() || authority_trimmed != authority_set {
-            return Err(
-                "resolve approval authority set must be a canonical comma-delimited actor list"
-                    .into(),
-            );
-        }
-        let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
-        if authority_members.len() < 2 {
-            return Err("resolve approval authority set must include at least two members".into());
-        }
-        let has_forbidden_separator = |token: &str| {
-            token.contains(';')
-                || token.contains('|')
-                || token.contains('；')
-                || token.contains('，')
-                || token.contains('、')
-        };
-        let mut seen_members = std::collections::BTreeSet::new();
-        for member in &authority_members {
-            let member_trimmed = member.trim();
-            if member_trimmed.is_empty()
-                || member_trimmed != *member
-                || member_trimmed.chars().any(|c| c.is_whitespace())
-                || has_forbidden_separator(member_trimmed)
-                || !member_trimmed.is_ascii()
-                || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-            {
-                return Err(
-                    "resolve approval authority set contains non-canonical or forbidden member"
-                        .into(),
-                );
-            }
-            if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
-                return Err(
-                    "resolve approval authority set must not contain duplicate members".into(),
-                );
-            }
-        }
-        if !authority_members
-            .iter()
-            .any(|member| *member == approver_trimmed)
+        let approver_canonical = validate_resolve_approver_token(approver)?;
+        let authority_canonical = canonicalize_resolve_authority_set(authority_set)?;
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == approver_canonical)
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
+        ensure_effective_resolve_authority_match(self, authority_set)?;
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
-            if entry.authority_set != authority_set {
+            if entry.confirmations >= 2 {
+                return Err("resolve approval already finalized; clear pending approval first".into());
+            }
+            let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
+                .map_err(|_| "resolve approval authority set changed".to_string())?;
+            if entry_authority_canonical != authority_canonical {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
@@ -543,7 +615,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver_trimmed.to_string(),
+                    first_approver: approver.trim().to_string(),
                     authority_set: authority_set.to_string(),
                     task_version,
                 });
@@ -553,8 +625,12 @@ impl StateStore {
         if entry.confirmations >= 2 {
             return Err("resolve approval already finalized; clear pending approval first".into());
         }
-        if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
-            return Err("resolve approval requires distinct approver".into());
+        if entry.confirmations > 0 {
+            let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
+                .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+            if first_approver_canonical == approver_canonical {
+                return Err("resolve approval requires distinct approver".into());
+            }
         }
         entry.confirmations = entry.confirmations.saturating_add(1);
         Ok(entry.confirmations >= 2)
@@ -598,23 +674,51 @@ impl StateStore {
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
         self.invalidate_state_root_cache();
-        match snapshot {
-            Some(snapshot) => {
-                self.pending_resolve_approvals.insert(
-                    task_id,
-                    PendingResolveApproval {
-                        slash_worker: snapshot.slash_worker,
-                        confirmations: snapshot.confirmations,
-                        first_approver: snapshot.first_approver,
-                        authority_set: snapshot.authority_set,
-                        task_version: snapshot.task_version,
-                    },
-                );
-            }
-            None => {
-                self.pending_resolve_approvals.remove(&task_id);
-            }
+        self.pending_resolve_approvals.remove(&task_id);
+
+        let Some(snapshot) = snapshot else {
+            return;
+        };
+        if task_id == 0 || snapshot.task_version == 0 {
+            return;
         }
+        if !(1..=2).contains(&snapshot.confirmations) {
+            return;
+        }
+        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        else {
+            return;
+        };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return;
+        };
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return;
+        }
+        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
+            return;
+        }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return;
+        }
+
+        self.pending_resolve_approvals.insert(
+            task_id,
+            PendingResolveApproval {
+                slash_worker: snapshot.slash_worker,
+                confirmations: snapshot.confirmations,
+                first_approver: snapshot.first_approver,
+                authority_set: snapshot.authority_set,
+                task_version: snapshot.task_version,
+            },
+        );
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
@@ -1095,11 +1199,20 @@ impl StateStore {
                     GovPendingUpdateAction::Cancel => {
                         self.invalidate_state_root_cache();
                         self.pending_gov_updates.remove(&key);
+                        if key == "resolve_authority" {
+                            self.pending_resolve_approvals.clear();
+                        }
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
+                        if pending.value == value {
+                            return Ok(GovParamUpdateOutcome::Scheduled {
+                                activate_at_height: pending.activate_at_height,
+                            });
+                        }
                         let activate_at_height =
                             current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+                        let scrubs_resolve_quorum = key == "resolve_authority";
                         self.invalidate_state_root_cache();
                         self.pending_gov_updates.insert(
                             key.clone(),
@@ -1110,6 +1223,9 @@ impl StateStore {
                                 activate_at_height,
                             },
                         );
+                        if scrubs_resolve_quorum {
+                            self.pending_resolve_approvals.clear();
+                        }
                         return Ok(GovParamUpdateOutcome::Scheduled { activate_at_height });
                     }
                     GovPendingUpdateAction::Enforce => {
@@ -1143,6 +1259,9 @@ impl StateStore {
             }
             self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
+            if key == "resolve_authority" {
+                self.pending_resolve_approvals.clear();
+            }
             let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
@@ -1152,6 +1271,7 @@ impl StateStore {
         }
 
         let activate_at_height = current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+        let scrubs_resolve_quorum = key == "resolve_authority";
         self.invalidate_state_root_cache();
         self.pending_gov_updates.insert(
             key.clone(),
@@ -1162,6 +1282,9 @@ impl StateStore {
                 activate_at_height,
             },
         );
+        if scrubs_resolve_quorum {
+            self.pending_resolve_approvals.clear();
+        }
         Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
     }
 
@@ -2218,7 +2341,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_approval_clears_stale_stage_on_authority_set_case_drift() {
+    fn resolve_approval_preserves_staged_quorum_on_authority_set_case_drift() {
         let mut st = StateStore::new();
 
         let first = st
@@ -2233,7 +2356,7 @@ mod tests {
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(8_181), Some((true, 1)));
 
-        let case_drift_err = st
+        let second = st
             .stage_or_confirm_resolve_approval(
                 8_181,
                 7,
@@ -2241,10 +2364,13 @@ mod tests {
                 "Authority-B",
                 "authority-a,Authority-B",
             )
-            .expect_err("authority set case drift must fail closed and clear stale stage");
-        assert!(case_drift_err.contains("authority set changed"));
-        assert_eq!(st.pending_resolve_approval(8_181), None);
-        assert_eq!(st.pending_resolve_first_approver(8_181), None);
+            .expect("authority set case drift should preserve staged quorum");
+        assert!(second);
+        assert_eq!(st.pending_resolve_approval(8_181), Some((true, 2)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_181).as_deref(),
+            Some("authority-a")
+        );
     }
 
     #[test]

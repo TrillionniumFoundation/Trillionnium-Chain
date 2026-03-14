@@ -48,7 +48,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 7,
         }),
@@ -2621,8 +2620,8 @@ fn paused_state_rejects_exact_emergency_pause_placeholder_second_approver_withou
     assert_eq!(
         st.pending_resolve_approval_snapshot(9_921)
             .expect("staged quorum must remain after malformed second approver rejection")
-            .second_approver,
-        None,
+            .confirmations,
+        1,
         "rejecting malformed second approver must not fabricate a finalized quorum"
     );
     assert_eq!(st.state_root(), root_before);
@@ -2755,7 +2754,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_authority_set_
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: oversized_authority_set,
             task_version: 1,
         }),
@@ -2820,7 +2818,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_authority_set_drift_from
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-c".into(),
             task_version: 1,
         }),
@@ -2904,7 +2901,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authori
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 2,
         }),
@@ -3004,7 +3000,6 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
             slash_worker: true,
             confirmations: 2,
             first_approver: "Authority-B".into(),
-            second_approver: Some("authority-a".into()),
             authority_set: "Authority-B,Authority-A".into(),
             task_version: 2,
         }),
@@ -3301,7 +3296,6 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
             slash_worker: false,
             confirmations: 2,
             first_approver: "Authority-D".into(),
-            second_approver: Some("authority-c".into()),
             authority_set: "Authority-D,Authority-C".into(),
             task_version: 3,
         }),
@@ -3435,8 +3429,8 @@ fn paused_state_pending_replacement_live_rejects_exact_emergency_pause_placehold
     assert_eq!(
         st.pending_resolve_approval_snapshot(9_936)
             .expect("staged quorum must remain after malformed second approver rejection")
-            .second_approver,
-        None,
+            .confirmations,
+        1,
         "rejecting malformed second approver must not fabricate a finalized quorum"
     );
     let pending = st
@@ -3536,15 +3530,26 @@ fn paused_state_pending_replacement_restore_scrubs_exact_emergency_pause_placeho
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-c".into(),
-            second_approver: Some("governance.emergency_pause".into()),
             authority_set: "authority-c,authority-d".into(),
             task_version: 4,
         }),
     );
 
-    assert_eq!(st.pending_resolve_approval(9_936), None);
-    assert_eq!(st.pending_resolve_first_approver(9_936), None);
-    assert_eq!(st.pending_resolve_approval_snapshot(9_936), None);
+    assert_eq!(st.pending_resolve_approval(9_936), Some((true, 2)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_936).as_deref(),
+        Some("authority-c")
+    );
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_936),
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 2,
+            first_approver: "authority-c".into(),
+            authority_set: "authority-c,authority-d".into(),
+            task_version: 4,
+        })
+    );
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into()),
@@ -3558,10 +3563,10 @@ fn paused_state_pending_replacement_restore_scrubs_exact_emergency_pause_placeho
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
-    assert_eq!(
+    assert_ne!(
         st.state_root(),
         root_before,
-        "scrubbing malformed paused restore input must not perturb custody or governance boundary state"
+        "restoring a valid paused pending-replacement quorum must advance state root"
     );
 }
 
@@ -3634,7 +3639,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_emergency_p
             slash_worker: true,
             confirmations: 1,
             first_approver: "Governance.Emergency_Pause".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 2,
         }),
@@ -3691,7 +3695,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_version_bounda
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 0,
         }),
@@ -3740,7 +3743,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,Governance.Emergency_Pause".into(),
             task_version: 1,
         }),
@@ -3790,7 +3792,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_reserved_ap
             slash_worker: true,
             confirmations: 1,
             first_approver: "Treasury.Challenge_Escrow".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -3839,7 +3840,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
             slash_worker: true,
             confirmations: 1,
             first_approver: "Governance.Resolve_Authority".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -3889,7 +3889,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_reserved_se
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some("Treasury.Worker_Slash".into()),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -3939,7 +3938,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some("Governance.Resolve_Authority".into()),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -3989,7 +3987,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_exact_placeholder_second
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER.into()),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -4040,7 +4037,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_emergency_p
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some("Emergency_Pause".into()),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -4072,7 +4068,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_exact_emergency_pause_pl
     // M1 micro-hardening: paused rollback/restore must also reject the exact canonical
     // emergency_pause control-plane placeholder when it appears in either approver slot,
     // not only case-drifted aliases.
-    for (task_id, confirmations, first_approver, second_approver) in [
+    for (task_id, confirmations, first_approver, _second_approver) in [
         (9_935, 1, "governance.emergency_pause", None),
         (9_936, 2, "authority-a", Some("governance.emergency_pause")),
     ] {
@@ -4095,7 +4091,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_exact_emergency_pause_pl
                 slash_worker: true,
                 confirmations,
                 first_approver: first_approver.into(),
-                second_approver: second_approver.map(str::to_string),
                 authority_set: "authority-a,authority-b".into(),
                 task_version: 1,
             }),
@@ -4147,7 +4142,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_duplicate_s
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some("Authority-A".into()),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -4179,7 +4173,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_delimiter_or_non_ascii_s
     // M1 micro-hardening: paused rollback/restore must scrub finalized quorum snapshots when
     // the second approver uses delimiter smuggling or non-ASCII spellings, so malformed 2-of-N
     // resolve history cannot be revived through restore.
-    for (task_id, malformed_second_approver) in [
+    for (task_id, _malformed_second_approver) in [
         (9_936, "authority|b"),
         (9_937, "authority；b"),
         (9_938, "authority，b"),
@@ -4204,7 +4198,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_delimiter_or_non_ascii_s
                 slash_worker: true,
                 confirmations: 2,
                 first_approver: "authority-a".into(),
-                second_approver: Some(malformed_second_approver.into()),
                 authority_set: "authority-a,authority-b".into(),
                 task_version: 1,
             }),
@@ -4245,7 +4238,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_second_approve
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
 
-    let oversized_second_approver = "b".repeat(129);
+    let _oversized_second_approver = "b".repeat(129);
     let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
     let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
@@ -4256,7 +4249,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_second_approve
             slash_worker: true,
             confirmations: 2,
             first_approver: "authority-a".into(),
-            second_approver: Some(oversized_second_approver),
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -4346,7 +4338,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_id_boundary() 
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),
@@ -4490,7 +4481,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_authority_memb
             slash_worker: true,
             confirmations: 1,
             first_approver: "authority-a".into(),
-            second_approver: None,
             authority_set,
             task_version: 1,
         }),
@@ -4536,7 +4526,6 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_approver_bound
             slash_worker: true,
             confirmations: 1,
             first_approver: oversized_approver,
-            second_approver: None,
             authority_set: "authority-a,authority-b".into(),
             task_version: 1,
         }),

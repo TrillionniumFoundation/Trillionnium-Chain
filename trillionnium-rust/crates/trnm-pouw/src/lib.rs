@@ -14356,10 +14356,10 @@ mod tests {
     }
 
     #[test]
-    fn resolve_multisig_member_reordering_clears_stale_staging_before_terminal_settlement() {
-        // Canonical-configuration hardening: authority-set reordering changes the
-        // configured signer-set payload, so stale approvals must be cleared
-        // before escrow can move under the reordered configuration.
+    fn resolve_multisig_member_reordering_preserves_staging_before_terminal_settlement() {
+        // Canonical-configuration hardening: authority-set member reordering is now treated as a
+        // semantically equivalent governance boundary, so an already staged approval must remain
+        // valid for a distinct second signer instead of being scrubbed.
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         set_resolve_authority(&mut st, "authority-a,authority-b");
@@ -14375,10 +14375,6 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
-        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
-        let before_challenger = st.balance_of("challenger");
-
         let staged_err = apply_resolve(
             &mut st,
             r5.clone(),
@@ -14393,42 +14389,14 @@ mod tests {
         // Reorder members without changing member identities.
         set_resolve_authority(&mut st, "authority-b,authority-a");
 
-        let stale_err = apply_resolve(
-            &mut st,
-            r5.clone(),
-            true,
-            "authority-b".into(),
-            "authority-b".into(),
-        )
-        .expect_err("authority payload reordering must clear stale staged approval");
-        assert!(matches!(stale_err, PouwError::Unauthorized));
-        assert_eq!(st.pending_resolve_approval(r5.id), None);
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(
-            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
-            before_forfeit
-        );
-        assert_eq!(st.balance_of("challenger"), before_challenger);
-
-        let restaged_err = apply_resolve(
-            &mut st,
-            r5.clone(),
-            true,
-            "authority-b".into(),
-            "authority-b".into(),
-        )
-        .expect_err("reordered authority set should require a fresh first approval");
-        assert!(matches!(restaged_err, PouwError::ResolveApprovalStaged));
-        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
-
         let r6 = apply_resolve(
             &mut st,
             r5,
             true,
-            "authority-a".into(),
-            "authority-a".into(),
+            "authority-b".into(),
+            "authority-b".into(),
         )
-        .expect("second reordered signer should finalize after fresh staging");
+        .expect("reordered authority set should preserve staged approval for a distinct signer");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
