@@ -175,6 +175,9 @@ TRNM 当前已经具备：
   - `preexec_reject_active_heights`
   - `preexec_reject_active_height_rate_ppm`
   - `preexec_reject_active_observed_height_rate_ppm`
+  - `bft_commit_observed_height_rate_ppm`
+  - `bft_skipped_height_total`
+  - `bft_skipped_observed_height_rate_ppm`
   - `preexec_reject_density_avg_milli`
   - `preexec_reject_active_height_share_ppm`
   - `preexec_reject_share_bps`

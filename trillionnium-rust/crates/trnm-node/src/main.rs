@@ -3288,6 +3288,7 @@ mod tests {
             "preexec_reject_active_height_rate_ppm",
             "preexec_reject_active_observed_height_rate_ppm",
             "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
             "bft_skipped_observed_height_rate_ppm",
             "preexec_reject_density_avg_milli",
             "preexec_reject_active_height_share_ppm",
@@ -3295,21 +3296,23 @@ mod tests {
             "preexec_conflict_miss_share_bps",
         ];
 
-        assert_eq!(guardrail_review_fields.len(), 10);
+        assert_eq!(guardrail_review_fields.len(), 11);
         assert!(guardrail_review_fields[0].ends_with("_share_ppm"));
         assert!(guardrail_review_fields[1].ends_with("_heights"));
         assert!(guardrail_review_fields[2].ends_with("_rate_ppm"));
         assert!(guardrail_review_fields[3].ends_with("_rate_ppm"));
         assert!(guardrail_review_fields[4].ends_with("_rate_ppm"));
-        assert!(guardrail_review_fields[5].ends_with("_rate_ppm"));
-        assert!(guardrail_review_fields[6].ends_with("_avg_milli"));
-        assert!(guardrail_review_fields[7].ends_with("_share_ppm"));
-        assert!(guardrail_review_fields[8].ends_with("_share_bps"));
+        assert!(guardrail_review_fields[5].ends_with("_total"));
+        assert!(guardrail_review_fields[6].ends_with("_rate_ppm"));
+        assert!(guardrail_review_fields[7].ends_with("_avg_milli"));
+        assert!(guardrail_review_fields[8].ends_with("_share_ppm"));
         assert!(guardrail_review_fields[9].ends_with("_share_bps"));
+        assert!(guardrail_review_fields[10].ends_with("_share_bps"));
         assert_ne!(guardrail_review_fields[2], guardrail_review_fields[3]);
-        assert_ne!(guardrail_review_fields[4], guardrail_review_fields[5]);
-        assert_ne!(guardrail_review_fields[6], guardrail_review_fields[7]);
-        assert_ne!(guardrail_review_fields[8], guardrail_review_fields[9]);
+        assert_ne!(guardrail_review_fields[4], guardrail_review_fields[6]);
+        assert_ne!(guardrail_review_fields[5], guardrail_review_fields[6]);
+        assert_ne!(guardrail_review_fields[7], guardrail_review_fields[8]);
+        assert_ne!(guardrail_review_fields[9], guardrail_review_fields[10]);
     }
 
     #[test]
@@ -3672,6 +3675,7 @@ mod tests {
                 "preexec_reject_active_height_rate_ppm",
                 "preexec_reject_active_observed_height_rate_ppm",
                 "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
                 "bft_skipped_observed_height_rate_ppm",
                 "preexec_reject_density_avg_milli",
                 "preexec_reject_active_height_share_ppm",
@@ -3683,6 +3687,7 @@ mod tests {
                 "rollback_active_height_rate_ppm",
                 "rollback_active_observed_height_rate_ppm",
                 "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
                 "bft_skipped_observed_height_rate_ppm",
                 "rollback_density_avg_milli",
                 "rollback_active_height_share_ppm",
@@ -3696,9 +3701,10 @@ mod tests {
             assert!(bundle[1].ends_with("_active_height_rate_ppm"));
             assert!(bundle[2].ends_with("_active_observed_height_rate_ppm"));
             assert_eq!(bundle[3], "bft_commit_observed_height_rate_ppm");
-            assert_eq!(bundle[4], "bft_skipped_observed_height_rate_ppm");
-            assert!(bundle[5].ends_with("_avg_milli"));
-            assert!(bundle[6].ends_with("_active_height_share_ppm"));
+            assert_eq!(bundle[4], "bft_skipped_height_total");
+            assert_eq!(bundle[5], "bft_skipped_observed_height_rate_ppm");
+            assert!(bundle[6].ends_with("_avg_milli"));
+            assert!(bundle[7].ends_with("_active_height_share_ppm"));
             assert!(bundle.last().unwrap().ends_with("_share_bps"));
         }
         assert_eq!(review_bundles[0].last().copied(), Some("preexec_conflict_miss_share_bps"));
