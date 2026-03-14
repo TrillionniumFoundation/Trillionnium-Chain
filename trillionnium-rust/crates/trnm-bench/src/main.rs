@@ -1139,6 +1139,28 @@ mod tests {
         assert_eq!(conflict_hit_rate(&profile), 0.0);
     }
 
+    #[test]
+    fn single_key_noop_hotspot_still_emits_auto_diagnostics_without_claiming_dispatch() {
+        let txs = build_hot_streak_txs(64, 1, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let adaptive_candidate = adaptive_candidate_strategy_for(&txs);
+        let effective_strategy = effective_strategy_for(StrategyArg::AutoAdaptive, &txs);
+
+        assert!(decision.use_hot_bucket);
+        assert_eq!(decision.reason, "hotspot_detected");
+        assert!(matches!(adaptive_candidate, GroupingStrategy::Original));
+        assert!(matches!(effective_strategy, GroupingStrategy::Original));
+        assert!(emits_auto_profile(StrategyArg::AutoAdaptive, false));
+        assert!(!auto_profile_applied(
+            StrategyArg::AutoAdaptive,
+            effective_strategy,
+        ));
+        assert!(
+            !default_has_adaptive_opportunity(StrategyArg::AutoAdaptive, adaptive_candidate),
+            "explicit auto-adaptive reporting must not leak default-only headroom on no-op hotspot batches"
+        );
+    }
+
     fn assert_profiles_match(
         left_groups: &[Vec<Tx>],
         left_profile: &trnm_executor::GroupingProfile,
