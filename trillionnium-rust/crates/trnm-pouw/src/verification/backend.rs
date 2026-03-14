@@ -1596,6 +1596,22 @@ mod tests {
     }
 
     #[test]
+    fn backend_token_family_and_system_hints_canonicalize_case_drifted_alias_segments() {
+        assert_eq!(
+            backend_token_family_hint("ZK-Groth-16-demo"),
+            Some(VerificationBackendFamily::Zk)
+        );
+        assert_eq!(
+            backend_token_zk_system_hints("ZK-Groth-16-GROTH16-demo"),
+            vec!["groth16"]
+        );
+        assert_eq!(
+            backend_token_zk_system_hints("TEE-PLONK-Plonk-demo"),
+            vec!["plonk"]
+        );
+    }
+
+    #[test]
     fn backend_registry_resolves_canonicalized_backend_aliases_fail_closed_without_guessing() {
         let mut registry = VerificationBackendRegistry::new();
         registry.register(Arc::new(MockRegistryBackend {
