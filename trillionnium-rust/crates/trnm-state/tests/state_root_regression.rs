@@ -2212,6 +2212,40 @@ fn restore_pending_resolve_none_is_slot_scoped_even_with_multiple_pending_entrie
         root_with_both,
         "removing only one pending resolve entry should perturb the root while preserving unrelated pending resolve state"
     );
+
+    let mut expected = StateStore::new();
+    expected.restore_pending_resolve_approval(
+        5_211,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: false,
+            confirmations: 1,
+            first_approver: "resolver-c".into(),
+            authority_set: "resolver-c,resolver-d".into(),
+            task_version: 9,
+        }),
+    );
+
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "restore_pending_resolve_approval(None) should produce the same deterministic root as a canonical state containing only the preserved pending resolve entry"
+    );
+
+    state.restore_pending_resolve_approval(
+        5_210,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_both,
+        "restoring the removed pending resolve snapshot must rewind state_root exactly to the prior two-entry root"
+    );
 }
 
 #[test]
@@ -3315,6 +3349,76 @@ fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
         state_a.state_root(),
         state_b.state_root(),
         "state_root should be deterministic for equivalent pending governance queues regardless of restore/insertion order"
+    );
+}
+
+#[test]
+fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserves_other_entries() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_301,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 7_302,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            activate_at_height: 33,
+        }),
+    );
+
+    let canonical_other_snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("canonical pending governance entry should exist before mismatched restore");
+    let root_with_both = state.state_root();
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 7_302,
+            key: "challenge_success_bounty".to_string(),
+            value: "12".to_string(),
+            activate_at_height: 44,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "mismatched restore should fail closed by clearing only the targeted stale caller slot"
+    );
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "mismatched restore must not materialize a foreign pending governance key from snapshot.key"
+    );
+    assert_eq!(
+        state.pending_gov_update("challenge_min_bond"),
+        Some(canonical_other_snapshot.clone()),
+        "mismatched restore must preserve unrelated canonical pending governance entries"
+    );
+
+    let mut expected = StateStore::new();
+    expected.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(canonical_other_snapshot),
+    );
+
+    assert_ne!(
+        state.state_root(),
+        root_with_both,
+        "clearing only the targeted stale caller slot must perturb the prior two-entry root"
+    );
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "after a mismatched restore, the deterministic root should match the canonical state containing only the preserved unrelated pending entry"
     );
 }
 
