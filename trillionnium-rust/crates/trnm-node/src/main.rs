@@ -657,6 +657,13 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
     )
 }
 
+fn ensure_recoverable_wal_state(wal_dir: &Path, recovered: &RecoveredWalState) -> Result<()> {
+    if recovered.metadata_only_recovery {
+        anyhow::bail!(metadata_only_recovery_error(wal_dir, recovered));
+    }
+    Ok(())
+}
+
 fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)
     let f = n.saturating_sub(1) / 3;
@@ -8111,6 +8118,59 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
+        let wal_dir = temp_wal_dir("recover-guard-metadata-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 4,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 3,
+            checkpoint_height_retained: Some(2),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap_err();
+        let err = format!("{err:#}");
+
+        assert!(err.contains("refusing metadata-only recovery"));
+        assert!(err.contains("retained 3 committed WAL entries through height 3"));
+        assert!(err.contains("last retained checkpoint: 2"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_fully_checkpointed_recovery() {
+        let wal_dir = temp_wal_dir("recover-guard-safe");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 3,
+            restored_lock: Some("h2".into()),
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(2),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap();
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_without_checkpoint_and_without_retained_wal_is_not_metadata_only() {
         let wal_dir = temp_wal_dir("recover-no-checkpoint-no-retained-wal");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -8342,9 +8402,7 @@ fn main() -> Result<()> {
         recovered.truncated,
         recovered.metadata_only_recovery
     );
-    if recovered.metadata_only_recovery {
-        anyhow::bail!(metadata_only_recovery_error(&wal_dir, &recovered));
-    }
+    ensure_recoverable_wal_state(&wal_dir, &recovered)?;
 
     let mut state = StateStore::new();
     state.set_balance("challenger", 1_000_000);
