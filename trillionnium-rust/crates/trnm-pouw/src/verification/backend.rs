@@ -1462,6 +1462,54 @@ mod tests {
     }
 
     #[test]
+    fn vk_ref_registry_rejects_embedded_control_whitespace_without_silent_normalization() {
+        let resolver = VkRefRegistry::new();
+
+        let err = resolver
+            .resolve("vk://trnm/dev/mock-groth16/line\nbreak")
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            VkRefResolutionError::Unknown {
+                vk_ref: "vk://trnm/dev/mock-groth16/line\nbreak".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn vk_ref_registry_rejects_embedded_unicode_whitespace_without_silent_normalization() {
+        let resolver = VkRefRegistry::new();
+
+        let err = resolver
+            .resolve("vk://trnm/dev/mock-groth16/line\u{2003}break")
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            VkRefResolutionError::Unknown {
+                vk_ref: "vk://trnm/dev/mock-groth16/line\u{2003}break".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn vk_ref_registry_rejects_embedded_zero_width_format_char_without_silent_normalization() {
+        let resolver = VkRefRegistry::new();
+
+        let err = resolver
+            .resolve("vk://trnm/dev/mock-groth16/line\u{200b}break")
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            VkRefResolutionError::Unknown {
+                vk_ref: "vk://trnm/dev/mock-groth16/line\u{200b}break".into(),
+            }
+        );
+    }
+
+    #[test]
     fn resolve_zk_vk_ref_rejects_payload_zk_system_mismatch_against_registered_vk_metadata() {
         let task = mock_task();
         let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
