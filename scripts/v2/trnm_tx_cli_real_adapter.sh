@@ -121,7 +121,7 @@ normalize_status() {
   cleaned=$(printf "%s" "$raw" \
     | tr '[:upper:]' '[:lower:]' \
     | sed -E 's/^[[:space:]"'"'"'`]+//; s/[[:space:]"'"'"'`[:punct:]]+$//')
-  canonical=$(printf "%s" "$cleaned" | tr ' -' '__')
+  canonical=$(printf "%s" "$cleaned" | sed -E 's/[^[:alnum:]]+/_/g; s/^_+//; s/_+$//')
 
   case "$canonical" in
     pending|submitted|accepted|queued|broadcast|broadcasted|broadcasting|processing|executing|in_progress|inflight|in_flight)
