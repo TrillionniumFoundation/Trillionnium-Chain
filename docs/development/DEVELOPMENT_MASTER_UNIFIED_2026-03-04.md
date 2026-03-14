@@ -19,6 +19,8 @@
 - **当前是否 release-ready / 哪个文档能当真相源**：看仓库根 `RELEASE_READINESS.md`
 - **开发排期 / lane 调度 / 下一步执行优先级**：看本文
 - **ZKP 平台边界 / backend 抽象 / payload 与错误契约**：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
+- **混合参考架构（Solana / Sui / Conflux 分层借鉴原则）**：看 `docs/architecture/TRNM_HYBRID_REFERENCE_ARCHITECTURE_V0.md`
+- **混合参考架构的 crate 级实施路线图**：看 `docs/development/TRNM_HYBRID_REFERENCE_CRATE_ROADMAP_V0.md`
 - **benchmark closeout 方法、产物字段、micro→system bridge**：看 `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`
 - **并发瓶颈图、8 周路线、对外并发 closeout 口径**：看 `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
 
