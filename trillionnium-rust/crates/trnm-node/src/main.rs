@@ -3555,6 +3555,36 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_review_bundle_keeps_commit_skip_denominator_context_next_to_shape_and_budget_pressure() {
+        let hotspot_review_fields = [
+            "hot_object_active_heights",
+            "hot_object_active_height_rate_ppm",
+            "hot_object_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "hot_object_active_top_label_share_avg_ppm",
+            "hot_object_active_tail_share_avg_ppm",
+            "hot_object_active_height_share_ppm",
+        ];
+
+        assert_eq!(hotspot_review_fields.len(), 9);
+        assert!(hotspot_review_fields[0].ends_with("_active_heights"));
+        assert!(hotspot_review_fields[1].ends_with("_active_height_rate_ppm"));
+        assert!(hotspot_review_fields[2].ends_with("_active_observed_height_rate_ppm"));
+        assert_eq!(hotspot_review_fields[3], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(hotspot_review_fields[4], "bft_skipped_height_total");
+        assert_eq!(hotspot_review_fields[5], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(hotspot_review_fields[6], "hot_object_active_top_label_share_avg_ppm");
+        assert_eq!(hotspot_review_fields[7], "hot_object_active_tail_share_avg_ppm");
+        assert_eq!(hotspot_review_fields[8], "hot_object_active_height_share_ppm");
+        assert_ne!(hotspot_review_fields[1], hotspot_review_fields[2]);
+        assert_ne!(hotspot_review_fields[3], hotspot_review_fields[5]);
+        assert_ne!(hotspot_review_fields[6], hotspot_review_fields[8]);
+        assert_ne!(hotspot_review_fields[7], hotspot_review_fields[8]);
+    }
+
+    #[test]
     fn round_change_backoff_review_bundle_keeps_coverage_wall_and_budget_views_together() {
         let jitter_review_fields = [
             "bft_round_change_backoff_active_heights",
