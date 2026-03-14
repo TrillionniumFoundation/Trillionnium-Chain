@@ -20,9 +20,9 @@ use trnm_pouw::{
 #[cfg(test)]
 use trnm_state::PendingResolveApprovalSnapshot;
 use trnm_state::{CheckpointMeta, StateStore, WalMeta};
-use trnm_types::{Hash32, ObjectRef, Tx};
+use trnm_types::{Hash32, Tx};
 #[cfg(test)]
-use trnm_types::{TaskMeteringSnapshot, TaskStatus};
+use trnm_types::{ObjectRef, TaskMeteringSnapshot, TaskStatus};
 
 mod apply;
 mod args;
@@ -31,6 +31,7 @@ mod config;
 mod events;
 mod recovery;
 mod rollback;
+mod rwset;
 mod timeout;
 mod types;
 mod wal;
@@ -60,6 +61,7 @@ use crate::rollback::TxRollbackSnapshot;
 use crate::rollback::{
     balance_deltas_from_snapshot, capture_rollback_snapshot, rollback_tx_snapshot,
 };
+use crate::rwset::read_write_decl;
 use crate::timeout::scan_and_apply_timeouts;
 #[cfg(test)]
 use crate::types::RecoveredWalState;
@@ -534,17 +536,6 @@ fn is_rejected_by_emergency_pause(is_paused: bool, tx: &MockTx) -> bool {
     is_paused && is_high_risk_tx(tx)
 }
 
-fn pseudo_object_id_for_account(account: &str) -> u64 {
-    let mut h = Sha256::new();
-    h.update(b"balance:");
-    h.update(account.as_bytes());
-    let digest = h.finalize();
-    let mut bytes = [0u8; 8];
-    bytes.copy_from_slice(&digest[..8]);
-    // keep account-derived ids in high range to avoid overlapping natural task ids
-    u64::from_le_bytes(bytes) | (1u64 << 63)
-}
-
 fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
     let mut labels = BTreeMap::new();
     let mut hot_tx_count = 0usize;
@@ -596,99 +587,6 @@ fn missed_proposals_added_since(previous: &[u64], current: &[u64]) -> u64 {
             current_count.saturating_sub(previous.get(idx).copied().unwrap_or(0))
         })
         .sum()
-}
-
-fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
-    let task_id = match tx {
-        MockTx::CreateTask { task_id, .. }
-        | MockTx::AcceptTask { task_id, .. }
-        | MockTx::Commit { task_id, .. }
-        | MockTx::Reveal { task_id, .. }
-        | MockTx::Challenge { task_id, .. }
-        | MockTx::Resolve { task_id, .. } => *task_id,
-    };
-
-    let task_obj = ObjectRef {
-        id: task_id,
-        version: 1,
-    };
-
-    let mut read_set = vec![task_obj.clone()];
-    let mut write_set = vec![task_obj.clone()];
-
-    match tx {
-        MockTx::AcceptTask { worker, .. } => {
-            let worker_obj = ObjectRef {
-                id: pseudo_object_id_for_account(worker),
-                version: 1,
-            };
-            let lock_obj = ObjectRef {
-                id: pseudo_object_id_for_account(&format!("worker_stake_lock.{}", task_id)),
-                version: 1,
-            };
-            read_set.push(worker_obj.clone());
-            write_set.push(worker_obj);
-            read_set.push(lock_obj.clone());
-            write_set.push(lock_obj);
-        }
-        MockTx::Challenge { challenger, .. } => {
-            let challenger_obj = ObjectRef {
-                id: pseudo_object_id_for_account(challenger),
-                version: 1,
-            };
-            let escrow_obj = ObjectRef {
-                id: pseudo_object_id_for_account(CHALLENGE_ESCROW_ACCOUNT),
-                version: 1,
-            };
-            read_set.push(challenger_obj.clone());
-            write_set.push(challenger_obj);
-            read_set.push(escrow_obj.clone());
-            write_set.push(escrow_obj);
-        }
-        MockTx::Resolve { .. } => {
-            let escrow_obj = ObjectRef {
-                id: pseudo_object_id_for_account(CHALLENGE_ESCROW_ACCOUNT),
-                version: 1,
-            };
-            let forfeit_obj = ObjectRef {
-                id: pseudo_object_id_for_account(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
-                version: 1,
-            };
-            let slash_obj = ObjectRef {
-                id: pseudo_object_id_for_account(WORKER_SLASH_TREASURY_ACCOUNT),
-                version: 1,
-            };
-            let lock_obj = ObjectRef {
-                id: pseudo_object_id_for_account(&format!("worker_stake_lock.{}", task_id)),
-                version: 1,
-            };
-            read_set.push(escrow_obj.clone());
-            write_set.push(escrow_obj);
-            read_set.push(forfeit_obj.clone());
-            write_set.push(forfeit_obj);
-            read_set.push(slash_obj.clone());
-            write_set.push(slash_obj);
-            read_set.push(lock_obj.clone());
-            write_set.push(lock_obj);
-
-            if let Some(challenger) = st.get_task(task_id).and_then(|t| t.challenger) {
-                let challenger_obj = ObjectRef {
-                    id: pseudo_object_id_for_account(&challenger),
-                    version: 1,
-                };
-                read_set.push(challenger_obj.clone());
-                write_set.push(challenger_obj);
-            }
-        }
-        _ => {}
-    }
-
-    Tx {
-        id: tx_id,
-        read_set,
-        write_set,
-        payload: vec![],
-    }
 }
 
 #[derive(Clone)]
