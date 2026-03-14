@@ -215,12 +215,18 @@ impl TeeVerifier {
         }
 
         if mentions_claims {
-            return if mentions_attestation
+            return if mentions_payload
+                || mentions_attestation
                 || mentions_receipt
                 || mentions_certificate
                 || mentions_collateral
                 || mentions_endorsement
             {
+                // Shared backend plumbing can still emit ZK-oriented `payload`
+                // wording for TEE attestations. When `claims` is present too,
+                // keep the contract on the attestation-oriented
+                // `evidence/claims` surface instead of exposing a generic claims
+                // subtype that callers may misread as non-attestation-specific.
                 "evidence/claims"
             } else {
                 "claims"
@@ -1892,6 +1898,53 @@ mod tests {
             msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
             "message: {msg}"
         );
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_generic_payload_claims_wording_still_prefers_attestation_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "payload claims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("cannot currently verify TEE attestation claims:"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_generic_payload_claims_wording_still_prefers_attestation_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "payload claims verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("failed while verifying TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
     #[test]
