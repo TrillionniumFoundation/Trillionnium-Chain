@@ -6956,7 +6956,6 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "governance.emergency_pause".into(),
-                second_approver: None,
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             }),
