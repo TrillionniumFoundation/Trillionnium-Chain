@@ -588,6 +588,20 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
+        if let Some(task) = self.get_task(task_id) {
+            if task.status != TaskStatus::Challenged {
+                if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                    self.invalidate_state_root_cache();
+                }
+                return Err("resolve approval task no longer challenged".into());
+            }
+            if task.version != task_version {
+                if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                    self.invalidate_state_root_cache();
+                }
+                return Err("resolve approval task version changed".into());
+            }
+        }
         ensure_effective_resolve_authority_match(self, authority_set)?;
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {

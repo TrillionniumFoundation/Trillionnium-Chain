@@ -1660,6 +1660,9 @@ pub fn apply_resolve_at_height(
     let mut task = st
         .get_task(task_ref.id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
+    if task.version != task_ref.version {
+        return Err(PouwError::VersionConflict);
+    }
     if task.status != TaskStatus::Challenged {
         return Err(PouwError::InvalidTransition);
     }
@@ -2879,7 +2882,7 @@ mod tests {
         )
         .unwrap_err();
         assert!(matches!(staged, PouwError::ResolveApprovalStaged));
-        let _r6 = apply_resolve(
+        let r6 = apply_resolve(
             &mut st,
             r5.clone(),
             false,
@@ -2888,9 +2891,9 @@ mod tests {
         )
         .unwrap();
 
-        // FINAL: further resolve is invalid.
+        // FINAL: further resolve is invalid when attempted against the current terminal ref.
         assert!(matches!(
-            apply_resolve(&mut st, r5, false, "challenger".into(), "challenger".into())
+            apply_resolve(&mut st, r6, false, "challenger".into(), "challenger".into())
                 .unwrap_err(),
             PouwError::InvalidTransition
         ));
