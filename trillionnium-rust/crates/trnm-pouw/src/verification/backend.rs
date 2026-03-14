@@ -79,6 +79,11 @@ pub fn normalize_backend_token(raw: &str) -> Option<String> {
     }
 }
 
+pub fn contains_forbidden_opaque_token_chars(raw: &str) -> bool {
+    raw.chars()
+        .any(|ch| !ch.is_ascii() || ch.is_whitespace() || ch.is_control())
+}
+
 pub fn backend_token_family_hint(raw: &str) -> Option<VerificationBackendFamily> {
     let normalized = normalize_backend_token(raw)?;
     match normalized.split_whitespace().next()? {
@@ -988,19 +993,29 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
-        if backend_id
-            .chars()
-            .any(|ch| ch.is_whitespace() || ch.is_control())
-        {
+        if contains_forbidden_opaque_token_chars(backend_id) {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: "invalid zk payload: backend_id must be a single opaque token without embedded whitespace or control characters"
                     .to_string(),
             });
         }
-        if normalize_backend_token(backend_id).is_none()
-            && !backend_id.eq_ignore_ascii_case("noop")
-        {
+        if backend_id.eq_ignore_ascii_case("noop") {
+            if backend_id != "noop" {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: legacy noop backend_id must use canonical lowercase token 'noop'"
+                        .to_string(),
+                });
+            }
+            if payload.backend_version.is_some() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: backend_version must not be provided for legacy noop backend_id"
+                        .to_string(),
+                });
+            }
+        } else if normalize_backend_token(backend_id).is_none() {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: format!(
@@ -1026,10 +1041,7 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
-        if backend_version
-            .chars()
-            .any(|ch| ch.is_whitespace() || ch.is_control())
-        {
+        if contains_forbidden_opaque_token_chars(backend_version) {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: "invalid zk payload: backend_version must be a single opaque token without embedded whitespace or control characters"
