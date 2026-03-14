@@ -4,7 +4,7 @@ use crate::bft::core::{
     accept_signed_vote, aggregate_votes, detect_double_votes, quorum_threshold, vote_signature,
 };
 use crate::bft::model::{AuthRejectStats, BftVote, RoundStep, SignedVote, VoteType};
-use crate::hash32_hex;
+use crate::hash::hash32_hex;
 
 pub(crate) fn simulate_bft_round(
     height: u64,

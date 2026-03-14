@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::bft::model::{AuthRejectStats, BftJitterControl, BftVote, SignedVote, VoteType};
-use crate::hash32_hex;
+use crate::hash::hash32_hex;
 
 pub(crate) fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)

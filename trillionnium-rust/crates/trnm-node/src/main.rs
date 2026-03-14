@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::Parser;
-use sha2::{Digest, Sha256};
 #[cfg(test)]
 use std::collections::VecDeque;
 #[cfg(test)]
@@ -32,6 +31,7 @@ mod config;
 mod demo;
 mod error_kind;
 mod events;
+mod hash;
 mod hot;
 mod mempool;
 mod metrics;
@@ -72,6 +72,7 @@ use crate::error_kind::classify_apply_error;
 use crate::events::{emit_event, event_type_of, status_name};
 #[cfg(test)]
 use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fields};
+use crate::hash::hash32_hex;
 use crate::hot::{
     hot_object_tail_share_ppm, hot_object_top_label_share_ppm, missed_proposals_added_since,
     summarize_hot_objects,
@@ -119,12 +120,6 @@ const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
 const RESOLVE_PENDING_APPROVAL_HOT_LABEL: &str = "resolve.pending_approval";
 const RESOLVE_AUTHORITY_HOT_LABEL: &str = "governance.resolve_authority";
-
-fn hash32_hex(data: &[u8]) -> String {
-    let mut hasher = Sha256::new();
-    hasher.update(data);
-    hex::encode(hasher.finalize())
-}
 
 #[cfg(test)]
 mod tests {
