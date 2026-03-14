@@ -6,11 +6,13 @@ use std::{
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
-    io::{Read, Seek, SeekFrom, Write},
+    io::{Read, Write},
     net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
+#[cfg(test)]
+use std::io::{Seek, SeekFrom};
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
@@ -36,7 +38,9 @@ const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
 const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
+#[cfg(test)]
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
+#[cfg(test)]
 const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
 const NODE_EVENT_LOG_SOURCES_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_SOURCES";
 const NODE_EVENT_LOG_MANIFEST_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_MANIFEST";
@@ -239,18 +243,6 @@ struct MarketBid {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct MarketMatchResult {
-    task_id: u64,
-    winner: String,
-    price: u128,
-    status: String,
-    match_policy: String,
-    matched_bid_count: usize,
-    winner_reputation: i64,
-    effective_score: u128,
-}
-
-#[derive(Debug, Clone, Serialize)]
 struct MarketReport {
     task_count: usize,
     open_task_count: usize,
@@ -383,6 +375,7 @@ struct ChallengeTreasuryQueryResponse {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum NodeEventScanMode {
     Authoritative,
+    #[cfg(test)]
     RecentTail,
 }
 
@@ -390,6 +383,7 @@ impl NodeEventScanMode {
     fn as_str(self) -> &'static str {
         match self {
             Self::Authoritative => "authoritative",
+            #[cfg(test)]
             Self::RecentTail => "recent_tail",
         }
     }
@@ -467,6 +461,7 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         .collect()
 }
 
+#[cfg(test)]
 fn node_event_log_tail_bytes() -> u64 {
     std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES")
         .ok()
@@ -476,6 +471,7 @@ fn node_event_log_tail_bytes() -> u64 {
         .unwrap_or(NODE_EVENT_LOG_TAIL_BYTES_DEFAULT)
 }
 
+#[cfg(test)]
 fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
     let mut file = fs::File::open(path).ok()?;
     let size = file.metadata().ok()?.len();
@@ -840,12 +836,17 @@ fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
 
 fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNodeEvents {
     let candidates = node_event_log_candidates(root);
+    #[cfg(test)]
     let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
+    #[cfg(test)]
     let mut truncated = false;
+    #[cfg(not(test))]
+    let truncated = false;
     for p in candidates {
         let raw = match mode {
             NodeEventScanMode::Authoritative => fs::read_to_string(&p).ok(),
+            #[cfg(test)]
             NodeEventScanMode::RecentTail => {
                 if let Ok(meta) = fs::metadata(&p) {
                     if meta.len() > tail_bytes {
@@ -939,6 +940,7 @@ fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
     load_node_events_from_root(&root, mode)
 }
 
+#[cfg(test)]
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     load_node_events(NodeEventScanMode::RecentTail).events
 }
@@ -2493,6 +2495,7 @@ fn parse_http_get_target(first_line: &str) -> Option<&str> {
     Some(path)
 }
 
+#[cfg(test)]
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
     parse_http_get_target(first_line).map(|path| path.split('?').next().unwrap_or(path))
 }
