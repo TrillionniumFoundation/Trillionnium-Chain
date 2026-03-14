@@ -564,6 +564,7 @@ def main():
     def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int | bool]:
         existing_candidates = [path for path in candidates if os.path.exists(path)]
         pending_selected = bool(selected and selected in candidates and not os.path.exists(selected))
+        pending_count = 1 if pending_selected else 0
         missing_count = sum(
             1 for path in candidates if not os.path.exists(path) and path != selected
         )
@@ -571,6 +572,7 @@ def main():
         selected_age_seconds = file_age_seconds(selected) if selected else None
         selected_updated_at = file_mtime_iso(selected) if selected else None
         if not existing_candidates:
+            effective_candidate_count = pending_count
             return {
                 "label": label,
                 "status": "empty",
@@ -580,7 +582,9 @@ def main():
                 "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
                 "selected_updated_at": selected_updated_at or "n/a",
                 "pending_selected": pending_selected,
+                "pending_count": pending_count,
                 "candidate_count": 0,
+                "effective_candidate_count": effective_candidate_count,
                 "missing_count": missing_count,
                 "fresh": 0,
                 "effective_fresh": 1 if pending_selected and selected_freshness == "fresh" else 0,
@@ -600,8 +604,9 @@ def main():
             effective_fresh_count += 1
         old_backlog = freshness_counts["stale"] + freshness_counts["old"]
         candidate_count = len(existing_candidates)
-        fresh_ratio = effective_fresh_count / candidate_count if candidate_count else 0.0
-        old_backlog_ratio = old_backlog / candidate_count if candidate_count else 0.0
+        effective_candidate_count = candidate_count + pending_count
+        fresh_ratio = effective_fresh_count / effective_candidate_count if effective_candidate_count else 0.0
+        old_backlog_ratio = old_backlog / effective_candidate_count if effective_candidate_count else 0.0
         if candidate_count == 0:
             status = "empty"
             action = "produce"
@@ -626,7 +631,9 @@ def main():
             "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
             "selected_updated_at": selected_updated_at or "n/a",
             "pending_selected": pending_selected,
+            "pending_count": pending_count,
             "candidate_count": candidate_count,
+            "effective_candidate_count": effective_candidate_count,
             "missing_count": missing_count,
             "fresh": freshness_counts["fresh"],
             "effective_fresh": effective_fresh_count,
@@ -642,7 +649,8 @@ def main():
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
             f"selected_freshness={pool['selected_freshness']} selected_age_seconds={pool['selected_age_seconds']} "
             f"selected_updated_at={pool['selected_updated_at']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
-            f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
+            f"pending_count={pool['pending_count']} candidate_count={pool['candidate_count']} "
+            f"effective_candidate_count={pool['effective_candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
             f"effective_fresh={pool['effective_fresh']} stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
             f"fresh_ratio={pool['fresh_ratio']} old_backlog_ratio={pool['old_backlog_ratio']}"
         )
@@ -705,9 +713,10 @@ def main():
                 f"newest={'true' if rank == 1 else 'false'}"
             )
         if selected in candidates:
+            effective_candidate_count = len(existing_candidates) + 1
             return (
                 f"- {label}: selected={os.path.basename(selected)} "
-                f"rank={'1' if candidates and candidates[0] == selected else 'pending_write'}/{len(existing_candidates)} "
+                f"rank={'1' if candidates and candidates[0] == selected else 'pending_write'}/{effective_candidate_count} "
                 f"newest={'pending_write_newest' if candidates and candidates[0] == selected else 'pending_write'}"
             )
         return (
@@ -901,11 +910,40 @@ def main():
     )
     selected_fresh_count = sum(1 for pool in benchmark_pools if pool["selected_freshness"] == "fresh")
     selected_pending_count = sum(1 for pool in benchmark_pools if pool["pending_selected"])
+    selection_mismatches = []
+    for pool in benchmark_pools:
+        label = str(pool["label"])
+        if pool["pending_selected"]:
+            selection_mismatches.append(f"{label}:pending_selected")
+            continue
+        selected = str(pool["selected"])
+        if selected == "None" or int(pool["candidate_count"]) == 0:
+            selection_mismatches.append(f"{label}:missing_selection")
+            continue
+        candidate_source = (
+            classic_candidates
+            if label == "classic_bench_candidates"
+            else mixed_candidates
+            if label == "mixed_bench_candidates"
+            else executor_profile_candidates
+        )
+        newest_existing = next((path for path in candidate_source if os.path.exists(path)), None)
+        if not newest_existing:
+            selection_mismatches.append(f"{label}:missing_newest_candidate")
+            continue
+        newest_basename = os.path.basename(newest_existing)
+        if selected != newest_basename:
+            selection_mismatches.append(
+                f"{label}:selected={selected}:newest={newest_basename}"
+            )
     lines.append(
         "- benchmark_pool_selected_artifact_status: "
         f"newest_selected={selected_newest_count}/{len(benchmark_pools)} "
         f"fresh_selected={selected_fresh_count}/{len(benchmark_pools)} "
         f"pending_selected={selected_pending_count}/{len(benchmark_pools)}"
+    )
+    lines.append(
+        f"- benchmark_pool_selection_mismatches: {', '.join(selection_mismatches) if selection_mismatches else 'none'}"
     )
     lines.append(
         "- benchmark_pool_status_counts: "
@@ -925,6 +963,8 @@ def main():
     lines.append(
         "- benchmark_pool_backlog_totals: "
         f"candidate_count={sum(int(pool['candidate_count']) for pool in benchmark_pools)} "
+        f"effective_candidate_count={sum(int(pool['effective_candidate_count']) for pool in benchmark_pools)} "
+        f"pending_count={sum(int(pool['pending_count']) for pool in benchmark_pools)} "
         f"fresh={sum(int(pool['fresh']) for pool in benchmark_pools)} "
         f"effective_fresh={sum(int(pool['effective_fresh']) for pool in benchmark_pools)} "
         f"stale={sum(int(pool['stale']) for pool in benchmark_pools)} "
@@ -1104,7 +1144,9 @@ def main():
     )
     lines.append(
         "- baseline_closeout_report_action_counts: "
-        f"candidate_count={baseline_report_pool['candidate_count']} fresh={baseline_report_pool['fresh']} "
+        f"candidate_count={baseline_report_pool['candidate_count']} "
+        f"effective_candidate_count={baseline_report_pool['effective_candidate_count']} "
+        f"pending_count={baseline_report_pool['pending_count']} fresh={baseline_report_pool['fresh']} "
         f"effective_fresh={baseline_report_pool['effective_fresh']} "
         f"stale={baseline_report_pool['stale']} old={baseline_report_pool['old']} "
         f"old_backlog={baseline_report_pool['old_backlog']} archive_candidate_count={len(baseline_report_archive_candidates)}"
