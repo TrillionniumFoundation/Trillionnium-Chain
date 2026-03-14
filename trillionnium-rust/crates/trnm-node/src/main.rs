@@ -10,7 +10,6 @@ use std::{
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
-use trnm_mempool::{IngressClass, LaneAdmissionGate};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
@@ -30,6 +29,7 @@ mod bft;
 mod config;
 mod events;
 mod hot;
+mod mempool;
 mod metrics;
 mod ordering;
 mod recovery;
@@ -61,6 +61,7 @@ use crate::hot::{
     hot_object_tail_share_ppm, hot_object_top_label_share_ppm, missed_proposals_added_since,
     summarize_hot_objects,
 };
+use crate::mempool::{pick_txs_with_critical_guard, requeue_uncommitted_txs};
 use crate::metrics::{
     average_or_zero, finality_budget_share_ppm, gap_percent_bps, max_or_zero, percentile,
     ratio_milli_u64, ratio_percent_bps, ratio_ppm, ratio_ppm_u64, wall_time_share_ppm,
@@ -170,13 +171,6 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     q
 }
 
-fn requeue_uncommitted_txs(mempool: &mut VecDeque<MockTx>, picked: Vec<MockTx>) {
-    if picked.is_empty() {
-        return;
-    }
-    mempool.extend(picked);
-}
-
 fn task_id_of(tx: &MockTx) -> u64 {
     match tx {
         MockTx::CreateTask { task_id, .. }
@@ -186,77 +180,6 @@ fn task_id_of(tx: &MockTx) -> u64 {
         | MockTx::Challenge { task_id, .. }
         | MockTx::Resolve { task_id, .. } => *task_id,
     }
-}
-
-fn is_critical_tx(tx: &MockTx) -> bool {
-    matches!(tx, MockTx::Challenge { .. } | MockTx::Resolve { .. })
-}
-
-fn pick_txs_with_critical_guard(
-    mempool: &mut VecDeque<MockTx>,
-    txs_per_block: usize,
-) -> Vec<MockTx> {
-    if txs_per_block == 0 || mempool.is_empty() {
-        return Vec::new();
-    }
-
-    if txs_per_block >= mempool.len() {
-        // Free-ingress fast path: when block capacity can absorb the whole queue,
-        // keep FIFO dequeue semantics while avoiding lane-gate bookkeeping.
-        return mempool.drain(..).collect();
-    }
-
-    if !mempool.iter().any(is_critical_tx) {
-        // Normal-only backlog has no critical-lane anti-starvation requirement.
-        // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
-        // free-ingress selection overhead on the hot path.
-        let mut picked = Vec::with_capacity(txs_per_block);
-        for _ in 0..txs_per_block {
-            let Some(tx) = mempool.pop_front() else {
-                break;
-            };
-            picked.push(tx);
-        }
-        return picked;
-    }
-
-    // Selection fairness should consider the full queued backlog, not only the
-    // first block-sized prefix. Otherwise a critical tx that arrives behind a
-    // long normal queue can never enter the fairness gate and is effectively
-    // starved until the prefix drains.
-    let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
-    let mempool_len = mempool.len();
-    for (idx, tx) in mempool.iter().enumerate() {
-        let class = if is_critical_tx(tx) {
-            IngressClass::Critical
-        } else {
-            IngressClass::Normal
-        };
-        let _ = lane.admit(idx as u64, class);
-    }
-
-    let mut selected = Vec::with_capacity(txs_per_block);
-    while selected.len() < txs_per_block {
-        let Some(id) = lane.pop_ready() else {
-            break;
-        };
-        let idx = id as usize;
-        if idx < mempool_len {
-            selected.push((idx, selected.len()));
-        }
-    }
-
-    let mut picked_slots: Vec<Option<MockTx>> = (0..selected.len()).map(|_| None).collect();
-    selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
-
-    for (idx, pos) in selected {
-        let tx = mempool
-            .remove(idx)
-            .expect("selected tx index must still exist during descending extraction");
-        picked_slots[pos] = Some(tx);
-    }
-
-    picked_slots.into_iter().flatten().collect()
 }
 
 pub(crate) fn actor_of(st: &StateStore, tx: &MockTx) -> String {
