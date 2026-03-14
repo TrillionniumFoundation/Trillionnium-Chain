@@ -1,7 +1,7 @@
 use trnm_state::{PendingResolveApprovalSnapshot, StateStore};
 
 use crate::accounting::{event_delta_from_balances, EventDelta};
-use crate::task_id_of;
+use crate::txmeta::task_id_of;
 use crate::types::MockTx;
 
 #[derive(Debug, Clone)]

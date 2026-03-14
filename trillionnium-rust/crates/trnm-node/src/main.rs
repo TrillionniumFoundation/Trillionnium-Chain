@@ -8,7 +8,7 @@ use std::{collections::HashMap, fs, path::PathBuf};
 use std::{
     collections::{HashSet, VecDeque},
     thread,
-    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant},
 };
 #[cfg(test)]
 use trnm_pouw::{
@@ -38,6 +38,7 @@ mod rl;
 mod rollback;
 mod rwset;
 mod timeout;
+mod txmeta;
 mod types;
 mod wal;
 
@@ -87,6 +88,9 @@ use crate::rollback::{
     balance_deltas_from_snapshot, capture_rollback_snapshot, rollback_tx_snapshot,
 };
 use crate::timeout::scan_and_apply_timeouts;
+use crate::txmeta::task_id_of;
+#[cfg(test)]
+use crate::txmeta::{challenger_of, now_unix_ms};
 #[cfg(test)]
 use crate::types::HotObjectSummary;
 #[cfg(test)]
@@ -175,50 +179,6 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     }
 
     q
-}
-
-fn task_id_of(tx: &MockTx) -> u64 {
-    match tx {
-        MockTx::CreateTask { task_id, .. }
-        | MockTx::AcceptTask { task_id, .. }
-        | MockTx::Commit { task_id, .. }
-        | MockTx::Reveal { task_id, .. }
-        | MockTx::Challenge { task_id, .. }
-        | MockTx::Resolve { task_id, .. } => *task_id,
-    }
-}
-
-pub(crate) fn actor_of(st: &StateStore, tx: &MockTx) -> String {
-    match tx {
-        MockTx::CreateTask { creator, .. } => creator.clone(),
-        MockTx::AcceptTask { worker, .. } => worker.clone(),
-        MockTx::Commit { worker, .. } => worker.clone(),
-        MockTx::Reveal { task_id, .. } => st
-            .get_task(*task_id)
-            .and_then(|t| t.worker)
-            .unwrap_or_else(|| format!("worker{}", task_id)),
-        MockTx::Challenge { challenger, .. } => challenger.clone(),
-        MockTx::Resolve { resolver, .. } => resolver.clone(),
-    }
-}
-
-fn challenger_of(tx: &MockTx) -> Option<String> {
-    match tx {
-        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-        MockTx::Resolve { .. } => None,
-        _ => None,
-    }
-}
-
-fn tx_hash_of(tx_id: u64) -> String {
-    format!("0xmock{:016x}", tx_id)
-}
-
-fn now_unix_ms() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis())
-        .unwrap_or(0)
 }
 
 fn classify_apply_error(err: &anyhow::Error) -> &'static str {

@@ -6,7 +6,7 @@ use trnm_pouw::{
 use trnm_state::StateStore;
 use trnm_types::ObjectRef;
 
-use crate::actor_of;
+use crate::txmeta::actor_of;
 use crate::types::MockTx;
 
 fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
