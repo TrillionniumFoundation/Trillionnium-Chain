@@ -14,21 +14,23 @@ use trnm_mempool::{IngressClass, LaneAdmissionGate};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
+    apply_timeout,
 };
 use trnm_pouw::{
     apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
-    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
+    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height,
 };
 use trnm_state::{CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta};
+use trnm_types::{Hash32, ObjectRef, Tx};
 #[cfg(test)]
-use trnm_types::TaskMeteringSnapshot;
-use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
+use trnm_types::{TaskMeteringSnapshot, TaskStatus};
 
 mod args;
 mod bft;
 mod config;
 mod events;
 mod recovery;
+mod timeout;
 mod types;
 mod wal;
 
@@ -45,12 +47,13 @@ use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{AuthRejectStats, BftVote, SignedVote, VoteType};
 use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::config::load_config;
-use crate::events::{emit_event, emit_timeout_event, event_type_of, status_name};
+use crate::events::{emit_event, event_type_of, status_name};
 #[cfg(test)]
 use crate::events::{event_type_for_apply_outcome, format_task_metering_event_fields};
 #[cfg(test)]
 use crate::recovery::metadata_only_recovery_error;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
+use crate::timeout::scan_and_apply_timeouts;
 #[cfg(test)]
 use crate::types::RecoveredWalState;
 use crate::types::{
@@ -811,76 +814,6 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
         }
     }
     Ok(())
-}
-
-fn scan_and_apply_timeouts(
-    st: &mut StateStore,
-    known_task_ids: &HashSet<u64>,
-    current_height: u64,
-    tx_id_seed: u64,
-) -> u64 {
-    let mut migrated = 0u64;
-    for task_id in known_task_ids.iter().copied() {
-        let Some(task) = st.get_task(task_id) else {
-            continue;
-        };
-        if !matches!(
-            task.status,
-            TaskStatus::Assigned
-                | TaskStatus::Committed
-                | TaskStatus::Revealed
-                | TaskStatus::Challenged
-        ) {
-            continue;
-        }
-        if st.is_emergency_paused() && matches!(task.status, TaskStatus::Challenged) {
-            // Governance boundary hardening: the node-level timeout scanner must not even
-            // enter challenged settlement while emergency pause is active. The lower-level
-            // timeout path is already fail-closed, but skipping here keeps pause semantics
-            // explicit and preserves staged resolve approvals/escrow without touching the
-            // challenged settlement path at all.
-            continue;
-        }
-        let from_status = format!("{:?}", task.status);
-        let challenger = task.challenger.clone();
-        let Some(task_ref) = st.get_ref(task_id) else {
-            continue;
-        };
-        let before = st.clone();
-        if apply_timeout(st, task_ref, current_height).is_ok() {
-            migrated += 1;
-            let to_status = status_name(st, task_id);
-            let root = hex::encode(st.state_root());
-            let (treasury_delta, challenger_delta) =
-                balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = if from_status == "Challenged" {
-                st.get_task(task_id).and_then(|t| {
-                    t.challenge_bond_forfeited
-                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
-                })
-            } else {
-                None
-            };
-            emit_timeout_event(
-                st,
-                task_id,
-                tx_id_seed.saturating_add(migrated),
-                current_height,
-                &from_status,
-                &to_status,
-                &root,
-                &treasury_delta,
-                challenger_delta.as_ref(),
-                challenger.as_deref(),
-                bond_disposition,
-            );
-            println!(
-                "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, from_status, to_status
-            );
-        }
-    }
-    migrated
 }
 
 fn pseudo_object_id_for_account(account: &str) -> u64 {
