@@ -416,6 +416,80 @@ fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
     );
 }
 
+#[test]
+fn paused_resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
+    // L03 paused-boundary hardening: cancelling a staged resolve_authority timelock while
+    // emergency_pause is active is still an authority-boundary transition and must scrub any
+    // staged resolve quorum without unpausing or mutating the active authority set.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_360,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_380,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_381,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+    st.set_gov_param(98_382, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_985, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before paused cancellation");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_985), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    let cancelled = st
+        .set_gov_param_with_action(
+            98_383,
+            7_310,
+            "resolve_authority".into(),
+            String::new(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect("pending resolve_authority update should cancel cleanly while paused");
+    assert!(matches!(cancelled, GovParamUpdateOutcome::Cancelled));
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority").as_deref(),
+        Some("authority-a,authority-b")
+    );
+    assert_eq!(st.pending_resolve_approval(9_985), None);
+    assert_eq!(st.pending_resolve_first_approver(9_985), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_985), None);
+    assert!(st.is_emergency_paused());
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "paused cancellation of a pending resolve_authority boundary must invalidate cached state root"
+    );
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
@@ -1768,6 +1842,102 @@ fn paused_state_rejects_resolve_task_version_drift_and_clears_stale_quorum_witho
 }
 
 #[test]
+fn paused_state_rejects_second_resolve_approval_when_live_task_leaves_challenged_boundary() {
+    // L03 boundary hardening: once a live task object is no longer Challenged, a previously
+    // staged resolve quorum must be scrubbed instead of allowing a second approval to reuse the
+    // stale boundary while paused.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_223);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 903);
+    st.set_gov_param(98_117, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_901_4,
+        Some(TaskObject {
+            task_id: 9_901_4,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    let first = st
+        .stage_or_confirm_resolve_approval(
+            9_901_4,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first paused approval stage should succeed on challenged task");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_901_4), Some((true, 1)));
+
+    st.restore_task(
+        9_901_4,
+        Some(TaskObject {
+            task_id: 9_901_4,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_901_4,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b",
+        )
+        .expect_err("second approval must fail once task leaves challenged boundary");
+    assert!(err.contains("no longer challenged"), "unexpected error: {err}");
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.pending_resolve_approval(9_901_4), None);
+    assert_eq!(st.pending_resolve_first_approver(9_901_4), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
+
+#[test]
 fn paused_state_rejects_noncanonical_resolve_authority_without_escrow_side_effects() {
     // M1 merge-gate invariant: emergency_pause cannot be used to slip malformed
     // authority sets into resolve flow, and any rejection must be side-effect free.
@@ -2625,6 +2795,86 @@ fn paused_state_rejects_exact_emergency_pause_placeholder_second_approver_withou
         "rejecting malformed second approver must not fabricate a finalized quorum"
     );
     assert_eq!(st.state_root(), root_before);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_rejects_bare_emergency_pause_alias_approver_without_side_effects() {
+    // L03 boundary hardening: the bare emergency_pause control-plane alias must stay reserved
+    // on the live paused resolve-approval path too, not only the governance-prefixed placeholder.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_932);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 995);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 555);
+
+    st.set_gov_param(98_214, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_922, 1, true, "Emergency_Pause", "authority-a,authority-b")
+        .expect_err("bare emergency_pause alias approver must be rejected while paused");
+    assert!(err.contains("explicit non-system authority") || err.contains("approver"));
+
+    assert_eq!(st.pending_resolve_approval(9_922), None);
+    assert_eq!(st.pending_resolve_first_approver(9_922), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_rejects_bare_emergency_pause_alias_member_without_side_effects() {
+    // L03 boundary hardening: the bare emergency_pause control-plane alias must stay reserved
+    // when it appears inside the live paused authority set, not only the governance-prefixed placeholder.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_933);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 996);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 556);
+
+    st.set_gov_param(98_215, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_923,
+            1,
+            true,
+            "authority-a",
+            "authority-a,Emergency_Pause",
+        )
+        .expect_err("bare emergency_pause alias member must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_923), None);
+    assert_eq!(st.pending_resolve_first_approver(9_923), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
@@ -4533,4 +4783,56 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_approver_bound
         st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
         worker_slash_before
     );
+}
+
+#[test]
+fn first_resolve_approval_rejects_non_challenged_task_boundary() {
+    // L03 boundary hardening: the first resolve approval must stay bound to challenged-state
+    // semantics and reject open tasks before any quorum state is staged.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_361, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_381, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+    st.put_task_new(TaskObject {
+        task_id: 9_941,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Open,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    })
+    .expect("open task should exist before resolve-approval attempt");
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_941,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect_err("non-challenged task must reject the first resolve approval");
+
+    assert!(
+        err.contains("no longer challenged"),
+        "unexpected error: {err}"
+    );
+    assert_eq!(st.pending_resolve_approval(9_941), None);
+    assert_eq!(st.pending_resolve_first_approver(9_941), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_941), None);
 }
