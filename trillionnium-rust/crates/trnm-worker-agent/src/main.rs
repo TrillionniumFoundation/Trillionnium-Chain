@@ -921,6 +921,8 @@ fn is_receipt_quote_wrapper(ch: char) -> bool {
             | '〉'
             | '《'
             | '》'
+            | '⟨'
+            | '⟩'
             | '「'
             | '」'
             | '『'
@@ -2606,6 +2608,10 @@ mod tests {
             parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
                 .expect("corner-bracket-quoted transaction hash alias should parse");
         assert_eq!(corner_bracket, "facecafe");
+
+        let math_angle = parse_tx_hash("adapter stdout: {⟨tx_hash⟩: ⟨0xC001D00D⟩}")
+            .expect("math-angle-quoted receipt hash should parse");
+        assert_eq!(math_angle, "c001d00d");
     }
 
     #[test]
