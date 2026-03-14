@@ -132,8 +132,8 @@ v0 在路由层保持当前顶层种类不变：
 对 `ProofType::Zk`，平台层引入如下概念字段：
 
 - `zk_system`：证明系统标识。当前 v0 router / payload parser 冻结接受的 canonical token 为 `groth16 | plonk | halo2 | stark | risc0 | sp1`；更宽的自定义命名空间（如 `custom:<org>:<system>`）先作为文档保留位，不得在 v0 实现中静默放开；若 payload 在 `trnm.zk.payload.v0` 中直接使用该类 token，router 必须按 malformed fail-closed 拒绝。
-- `backend_id`：具体 backend 实例标识，例如 `local-groth16-bn254`、`risc0-host-v1`；v0 canonical payload 中若显式提供，必须是去除首尾空白后的规范 token，不能依赖 router 静默 trim，并且必须保持为单一 opaque token，不能夹带内嵌 whitespace 或控制字符（包括 Unicode whitespace）；同时不得退化为仅由标点/分隔符组成、经 canonical 归一化后无可见 token segment 的噪声选择器（保留的唯一显式 no-backend 别名是 legacy `noop`）；若 token 携带 canonical zk-system hint，则所有 distinct hints 必须收敛为且仅为一个 canonical system：重复同值 hint 可去重接受，但混合 hint（如同时出现 `groth16` 与 `plonk`）必须 fail-closed，且仅有 `zk` / `zk-*` 这类 family-only token 不得被当作隐式系统选择器；相对地，像 `mock-zk` 这类**既没有显式 family 前缀、也没有 canonical zk-system hint** 的 opaque backend token 在 v0 中仍允许存在，但只能作为精确 registry/config 选择值使用，不能被 router 升级为隐式 proving-system 猜测
-- `backend_version`：backend 契约版本，例如 `v1`；若显式提供，也必须是去除首尾空白后的 canonical token，不能依赖 router 静默 trim，并且必须保持为单一 opaque token，不能夹带内嵌 whitespace 或控制字符（包括 Unicode whitespace）；且在 `trnm.zk.payload.v0` 中不得脱离 `backend_id` 单独出现
+- `backend_id`：具体 backend 实例标识，例如 `local-groth16-bn254`、`risc0-host-v1`；v0 canonical payload 中若显式提供，必须是去除首尾空白后的规范 token，不能依赖 router 静默 trim，并且必须保持为单一 opaque token，不能夹带内嵌 whitespace 或控制字符（包括 Unicode whitespace）；同时不得退化为仅由标点/分隔符组成、经 canonical 归一化后无可见 token segment 的噪声选择器（保留的唯一显式 no-backend 别名是 legacy `noop`，且在 v0 中也必须精确使用小写 canonical token `noop`，不得接受 `NOOP` 等大小写漂移写法）；若 token 携带 canonical zk-system hint，则所有 distinct hints 必须收敛为且仅为一个 canonical system：重复同值 hint 可去重接受，但混合 hint（如同时出现 `groth16` 与 `plonk`）必须 fail-closed，且仅有 `zk` / `zk-*` 这类 family-only token 不得被当作隐式系统选择器；相对地，像 `mock-zk` 这类**既没有显式 family 前缀、也没有 canonical zk-system hint** 的 opaque backend token 在 v0 中仍允许存在，但只能作为精确 registry/config 选择值使用，不能被 router 升级为隐式 proving-system 猜测
+- `backend_version`：backend 契约版本，例如 `v1`；若显式提供，也必须是去除首尾空白后的 canonical token，不能依赖 router 静默 trim，并且必须保持为单一 opaque token，不能夹带内嵌 whitespace 或控制字符（包括 Unicode whitespace）；同时不得退化为仅由标点/分隔符组成、缺少可见 canonical version token segment 的噪声值；且在 `trnm.zk.payload.v0` 中不得脱离 `backend_id` 单独出现，也不得与 legacy `noop` backend_id 同时出现
 - `proof_encoding`：canonical payload 中的 proof 字节编码字段；当前 router / parser 冻结接受 `hex | base64`，且在 `trnm.zk.payload.v0` 中该字段为必填，必须使用小写 canonical token；缺失或使用非 canonical 大小写/别名时必须 fail-closed，不得静默默认到 `base64`
 - `proof`：编码后的 proof 字节串；在 v0 canonical payload 中必须非空，不得依赖 router / decoder 对首尾空白做静默 trim，并且必须保持为单一 encoded token，不能夹带内嵌 whitespace 或控制字符（包括 Unicode whitespace），避免 payload 文档、parser 与 backend decode 行为漂移
 - `proof_format`：backend/config 能力层的编码格式声明，例如 `raw-bytes | hex | base64 | json-envelope`
@@ -174,7 +174,7 @@ Router / backend 实现涉及 payload 形状、`public_inputs` 顺序、编码�
 3. `task_id / proof_type / worker / result_hash` 必须在平台层完成 fail-closed 绑定校验，其中 canonical payload 顶层 `proof_type` 在 v0 中必须精确等于小写 token `zk`，不得通过大小写归一化静默放宽。
 4. `public_inputs` 的**顺序、编码、最小绑定集**不是 backend 私有约定，而是平台协议的一部分。
 5. `vk_ref` 是审计保留字段，backend 不得静默改写或忽略。
-6. `meta` 若出现，当前 v0 只接受已冻结字段；未知 `meta` 字段必须按 malformed fail-closed 拒绝，避免实现/fixture/文档各自漂移。
+6. Canonical JSON object 必须 fail-closed 拒绝未知字段：顶层 payload、`public_inputs` 对象、以及 `meta` 对象都只接受已冻结字段，避免实现 / fixture / 文档各自漂移。
 
 ## 5.2 架构与协议分工
 
@@ -194,7 +194,7 @@ v0 建议冻结以下 feature flag 名称：
 - `zk_backend_router`：启用 backend 路由层
 - `zk_payload_v0_envelope`：强制要求 canonical payload v0
 - `zk_allow_legacy_receipt_aliases`：允许旧 receipt alias 映射到 `zk`
-- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend（**v0 当前作为保留位冻结；在 payload 显式声明 `backend_id` 的 router 路径中，默认仍必须 fail-closed，不能静默猜测式回退**）
+- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend（**v0 当前作为保留位冻结；在 payload 显式声明 `backend_id` 的 router 路径中，默认仍必须 fail-closed，不能静默猜测式回退，也不能回落到配置默认 backend**）
 - `zk_explicit_backend_required`：要求 payload 显式带 `backend_id`
 
 ## 6.2 Config 结构
@@ -422,11 +422,12 @@ v0 **不承诺**：
 4. 若 payload 显式携带 `backend_id`，且该 token 可推断 proving-system hint，则该 hint 必须与 `vk_ref` 的 canonical `zk_system` 一致；若同一 token 中出现多个**不同的** canonical system hint（例如 `groth16-plonk-demo` 或带显式 family 前缀的 `zk-groth16-plonk-demo`），router 必须按 invalid fail-closed 拒绝，而不是猜测使用其中之一。
 5. 若 payload 显式携带的 `backend_id` 只是 family-only router token（例如 `zk`、`zk-demo`，即显式声明了 ZK family 但没有任何 canonical zk-system hint），router 必须按 malformed fail-closed 拒绝，而不是把它当成 backend alias 或继续猜测式路由。
 6. 若 payload `backend_id` 是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token（例如 `mock-zk`），v0 允许它作为精确 backend selector 存在，但 router 只能把它当作 registry/config 中的显式后端名，不能把它升级为隐式 proving-system 选择器。
-7. router 最终选中的 backend token 也不得是 family-only `zk` / `zk-*` router token；若它没有任何 canonical zk-system hint，则必须按 malformed fail-closed 拒绝，而不是先落到 generic unknown-backend / unavailable 分支；同样不得依赖 silent surrounding-whitespace trim，且不得夹带内嵌 whitespace / control characters（包括 Unicode whitespace）。
+7. router 最终选中的 backend token 也不得是 family-only `zk` / `zk-*` router token；但若它是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token，则 v0 仍允许其作为精确配置值存在，而不是预先按 malformed 拒绝。无论哪种情况，legacy no-backend selector 仍只允许精确小写 canonical token `noop`，router-selected `NOOP` 等大小写漂移形式也必须 fail-closed；同样不得依赖 silent surrounding-whitespace trim，且不得夹带内嵌 whitespace / control characters（包括 Unicode whitespace）。
 8. 若 router 最终选中的 backend token 是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token，则 v0 仍允许其作为精确配置值存在，但同样不得被 reinterpret 为隐式 proving-system 选择器。
 9. 若 `backend_id` / router 选中的 backend token 里只是重复出现同一个 canonical system hint（例如 `groth16-groth16-demo`），可视为同一 system 的重复提示并去重后继续匹配，不应被当成多系统 payload 误杀。
 10. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
 11. 不允许因为 `allow_backend_fallback`、默认 backend、或历史别名兼容而跨 proving system 静默改道。
+12. 若 canonical payload 已显式给出 `backend_id`，该选择器就是 router 的权威输入；即使开启/保留了 fallback 相关配置，遇到 unknown / disabled / unavailable backend 时也必须按 fail-closed unavailable 路径返回，不能静默回退到配置默认 backend。
 
 设计意图：
 
