@@ -1825,7 +1825,7 @@ fn pending_resolve_slash_worker_flag_must_affect_state_root() {
 }
 
 #[test]
-fn pending_resolve_confirmations_must_affect_state_root() {
+fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
@@ -1852,9 +1852,10 @@ fn pending_resolve_confirmations_must_affect_state_root() {
 
     let root_a = state_a.state_root();
     let root_b = state_b.state_root();
+    assert_eq!(state_b.pending_resolve_approval(5_150), None);
     assert_ne!(
         root_a, root_b,
-        "pending resolve confirmations must contribute to state_root so pre-quorum and quorum-ready stages cannot hash identically"
+        "finalized restore snapshots without an encoded second approver must scrub instead of materializing a fake quorum"
     );
 
     state_b.restore_pending_resolve_approval(
@@ -1871,7 +1872,7 @@ fn pending_resolve_confirmations_must_affect_state_root() {
     assert_eq!(
         state_b.state_root(),
         root_a,
-        "restoring the original confirmation count should rewind the deterministic root exactly"
+        "restoring the original staged snapshot should rewind the deterministic root exactly"
     );
 }
 
@@ -2065,7 +2066,7 @@ fn insertion_order_of_multiple_pending_resolve_entries_keeps_state_root_determin
     };
     let second = PendingResolveApprovalSnapshot {
         slash_worker: false,
-        confirmations: 2,
+        confirmations: 1,
         first_approver: "resolver-c".into(),
         authority_set: "resolver-c,resolver-d".into(),
         task_version: 11,
@@ -3665,7 +3666,7 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
         5_401,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: false,
-            confirmations: 2,
+            confirmations: 1,
             first_approver: "authority.beta".into(),
             authority_set: "authority.alpha,authority.beta".into(),
             task_version: 4,

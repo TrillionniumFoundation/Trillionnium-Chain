@@ -682,7 +682,7 @@ impl StateStore {
         if task_id == 0 || snapshot.task_version == 0 {
             return;
         }
-        if !(1..=2).contains(&snapshot.confirmations) {
+        if snapshot.confirmations != 1 {
             return;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
@@ -702,11 +702,10 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
             return;
         }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
+        if let Some(task) = self.get_task(task_id) {
+            if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+                return;
+            }
         }
 
         self.pending_resolve_approvals.insert(

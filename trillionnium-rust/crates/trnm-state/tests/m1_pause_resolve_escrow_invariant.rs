@@ -2998,14 +2998,14 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
         9_930,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: true,
-            confirmations: 2,
+            confirmations: 1,
             first_approver: "Authority-B".into(),
             authority_set: "Authority-B,Authority-A".into(),
             task_version: 2,
         }),
     );
 
-    assert_eq!(st.pending_resolve_approval(9_930), Some((true, 2)));
+    assert_eq!(st.pending_resolve_approval(9_930), Some((true, 1)));
     assert_eq!(
         st.pending_resolve_first_approver(9_930).as_deref(),
         Some("Authority-B"),
@@ -3294,14 +3294,14 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
         9_931,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: false,
-            confirmations: 2,
+            confirmations: 1,
             first_approver: "Authority-D".into(),
             authority_set: "Authority-D,Authority-C".into(),
             task_version: 3,
         }),
     );
 
-    assert_eq!(st.pending_resolve_approval(9_931), Some((false, 2)));
+    assert_eq!(st.pending_resolve_approval(9_931), Some((false, 1)));
     assert_eq!(
         st.pending_resolve_first_approver(9_931).as_deref(),
         Some("Authority-D"),
@@ -3535,21 +3535,9 @@ fn paused_state_pending_replacement_restore_scrubs_exact_emergency_pause_placeho
         }),
     );
 
-    assert_eq!(st.pending_resolve_approval(9_936), Some((true, 2)));
-    assert_eq!(
-        st.pending_resolve_first_approver(9_936).as_deref(),
-        Some("authority-c")
-    );
-    assert_eq!(
-        st.pending_resolve_approval_snapshot(9_936),
-        Some(PendingResolveApprovalSnapshot {
-            slash_worker: true,
-            confirmations: 2,
-            first_approver: "authority-c".into(),
-            authority_set: "authority-c,authority-d".into(),
-            task_version: 4,
-        })
-    );
+    assert_eq!(st.pending_resolve_approval(9_936), None);
+    assert_eq!(st.pending_resolve_first_approver(9_936), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_936), None);
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into()),
@@ -3563,10 +3551,10 @@ fn paused_state_pending_replacement_restore_scrubs_exact_emergency_pause_placeho
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
-    assert_ne!(
+    assert_eq!(
         st.state_root(),
         root_before,
-        "restoring a valid paused pending-replacement quorum must advance state root"
+        "restoring a finalized paused pending-replacement quorum without an encoded second approver must scrub and leave state unchanged"
     );
 }
 
