@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Parser;
 use sha2::{Digest, Sha256};
 #[cfg(test)]
@@ -13,18 +13,16 @@ use trnm_executor::build_parallel_groups;
 use trnm_mempool::{IngressClass, LaneAdmissionGate};
 #[cfg(test)]
 use trnm_pouw::{
-    apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
-    apply_timeout,
-};
-use trnm_pouw::{
-    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
-    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height,
+    apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
+    apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
+    apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta};
 use trnm_types::{Hash32, ObjectRef, Tx};
 #[cfg(test)]
 use trnm_types::{TaskMeteringSnapshot, TaskStatus};
 
+mod apply;
 mod args;
 mod bft;
 mod config;
@@ -34,6 +32,7 @@ mod timeout;
 mod types;
 mod wal;
 
+use crate::apply::{apply_one, verified_signer_of};
 use crate::args::Args;
 #[cfg(test)]
 use crate::args::{WalDirMode, DEFAULT_BFT_WAL_DIR};
@@ -238,11 +237,6 @@ fn requeue_uncommitted_txs(mempool: &mut VecDeque<MockTx>, picked: Vec<MockTx>) 
     mempool.extend(picked);
 }
 
-fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
-    st.get_ref(task_id)
-        .with_context(|| format!("task_ref missing for task_id={}", task_id))
-}
-
 fn task_id_of(tx: &MockTx) -> u64 {
     match tx {
         MockTx::CreateTask { task_id, .. }
@@ -325,7 +319,7 @@ fn pick_txs_with_critical_guard(
     picked_slots.into_iter().flatten().collect()
 }
 
-fn actor_of(st: &StateStore, tx: &MockTx) -> String {
+pub(crate) fn actor_of(st: &StateStore, tx: &MockTx) -> String {
     match tx {
         MockTx::CreateTask { creator, .. } => creator.clone(),
         MockTx::AcceptTask { worker, .. } => worker.clone(),
@@ -336,17 +330,6 @@ fn actor_of(st: &StateStore, tx: &MockTx) -> String {
             .unwrap_or_else(|| format!("worker{}", task_id)),
         MockTx::Challenge { challenger, .. } => challenger.clone(),
         MockTx::Resolve { resolver, .. } => resolver.clone(),
-    }
-}
-
-fn verified_signer_of(st: &StateStore, tx: &MockTx) -> String {
-    match tx {
-        MockTx::Resolve { resolver, .. } => resolver.clone(),
-        MockTx::Reveal { task_id, .. } => st
-            .get_task(*task_id)
-            .and_then(|t| t.worker)
-            .unwrap_or_else(|| "unknown_worker".to_string()),
-        _ => actor_of(st, tx),
     }
 }
 
@@ -757,63 +740,6 @@ fn balance_deltas_from_snapshot(
             })
     });
     (treasury_delta, challenger_delta)
-}
-
-fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()> {
-    let signer = verified_signer_of(st, &tx);
-    match tx {
-        MockTx::CreateTask {
-            task_id,
-            creator,
-            bounty,
-        } => {
-            let _ = apply_create_task(st, task_id, creator, bounty)?;
-        }
-        MockTx::AcceptTask { task_id, worker } => {
-            let r = task_ref(st, task_id)?;
-            let _ = apply_accept_task_at_height(st, r, worker, current_height)?;
-        }
-        MockTx::Commit {
-            task_id,
-            worker,
-            committed_hash,
-        } => {
-            let r = task_ref(st, task_id)?;
-            let _ = apply_commit_result_at_height(st, r, worker, committed_hash, current_height)?;
-        }
-        MockTx::Reveal {
-            task_id,
-            result_hash,
-            reveal_salt,
-        } => {
-            let r = task_ref(st, task_id)?;
-            let _ = apply_reveal_result_at_height(
-                st,
-                r,
-                result_hash,
-                reveal_salt,
-                None,
-                current_height,
-            )?;
-        }
-        MockTx::Challenge {
-            task_id,
-            challenger,
-            bond,
-        } => {
-            let r = task_ref(st, task_id)?;
-            let _ = apply_challenge_at_height(st, r, challenger, bond, signer, current_height)?;
-        }
-        MockTx::Resolve {
-            task_id,
-            slash_worker,
-            resolver,
-        } => {
-            let r = task_ref(st, task_id)?;
-            let _ = apply_resolve_at_height(st, r, slash_worker, resolver, signer, current_height)?;
-        }
-    }
-    Ok(())
 }
 
 fn pseudo_object_id_for_account(account: &str) -> u64 {
