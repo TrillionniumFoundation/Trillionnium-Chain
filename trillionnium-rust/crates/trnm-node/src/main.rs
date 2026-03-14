@@ -3769,6 +3769,49 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_review_bundle_keeps_skipped_width_between_commit_coverage_and_skip_rate() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        let commit_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_commit_observed_height_rate_ppm")
+            .expect("commit coverage field present");
+        let skipped_total_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_skipped_height_total")
+            .expect("skipped width field present");
+        let skipped_rate_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_skipped_observed_height_rate_ppm")
+            .expect("skipped coverage field present");
+        let density_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_density_avg_milli")
+            .expect("density field present");
+        let share_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_active_height_share_ppm")
+            .expect("budget share field present");
+
+        assert_eq!(skipped_total_idx, commit_idx + 1);
+        assert_eq!(skipped_rate_idx, skipped_total_idx + 1);
+        assert!(density_idx > skipped_rate_idx);
+        assert!(share_idx > density_idx);
+    }
+
+    #[test]
     fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates() {
         let review_bundles: &[&[&str]] = &[
             &[
