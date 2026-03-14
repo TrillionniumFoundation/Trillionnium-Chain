@@ -583,6 +583,7 @@ def main():
                 "candidate_count": 0,
                 "missing_count": missing_count,
                 "fresh": 0,
+                "effective_fresh": 1 if pending_selected and selected_freshness == "fresh" else 0,
                 "stale": 0,
                 "old": 0,
                 "old_backlog": 0,
@@ -628,6 +629,7 @@ def main():
             "candidate_count": candidate_count,
             "missing_count": missing_count,
             "fresh": freshness_counts["fresh"],
+            "effective_fresh": effective_fresh_count,
             "stale": freshness_counts["stale"],
             "old": freshness_counts["old"],
             "old_backlog": old_backlog,
@@ -641,7 +643,7 @@ def main():
             f"selected_freshness={pool['selected_freshness']} selected_age_seconds={pool['selected_age_seconds']} "
             f"selected_updated_at={pool['selected_updated_at']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
             f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
-            f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
+            f"effective_fresh={pool['effective_fresh']} stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
             f"fresh_ratio={pool['fresh_ratio']} old_backlog_ratio={pool['old_backlog_ratio']}"
         )
 
@@ -924,6 +926,7 @@ def main():
         "- benchmark_pool_backlog_totals: "
         f"candidate_count={sum(int(pool['candidate_count']) for pool in benchmark_pools)} "
         f"fresh={sum(int(pool['fresh']) for pool in benchmark_pools)} "
+        f"effective_fresh={sum(int(pool['effective_fresh']) for pool in benchmark_pools)} "
         f"stale={sum(int(pool['stale']) for pool in benchmark_pools)} "
         f"old={sum(int(pool['old']) for pool in benchmark_pools)} "
         f"old_backlog={sum(int(pool['old_backlog']) for pool in benchmark_pools)}"
@@ -1102,6 +1105,7 @@ def main():
     lines.append(
         "- baseline_closeout_report_action_counts: "
         f"candidate_count={baseline_report_pool['candidate_count']} fresh={baseline_report_pool['fresh']} "
+        f"effective_fresh={baseline_report_pool['effective_fresh']} "
         f"stale={baseline_report_pool['stale']} old={baseline_report_pool['old']} "
         f"old_backlog={baseline_report_pool['old_backlog']} archive_candidate_count={len(baseline_report_archive_candidates)}"
     )
