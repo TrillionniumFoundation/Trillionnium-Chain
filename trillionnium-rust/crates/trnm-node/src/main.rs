@@ -32,6 +32,7 @@ mod events;
 mod hot;
 mod ordering;
 mod recovery;
+mod rl;
 mod rollback;
 mod rwset;
 mod timeout;
@@ -65,6 +66,9 @@ use crate::ordering::{pre_execute_group_parallel, PreExecPool};
 #[cfg(test)]
 use crate::recovery::metadata_only_recovery_error;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
+use crate::rl::build_rl_advisor;
+#[cfg(test)]
+use crate::rl::{RlAdvisor, ShadowOnlyRlAdvisor};
 #[cfg(test)]
 use crate::rollback::TxRollbackSnapshot;
 use crate::rollback::{
@@ -75,7 +79,7 @@ use crate::timeout::scan_and_apply_timeouts;
 use crate::types::HotObjectSummary;
 #[cfg(test)]
 use crate::types::RecoveredWalState;
-use crate::types::{ConsensusWal, MockTx, RlAdvice, RlAdviceContext};
+use crate::types::{ConsensusWal, MockTx, RlAdviceContext};
 use crate::wal::{
     load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
     persist_wal_meta_entries, resolve_wal_dir,
@@ -88,39 +92,6 @@ const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
 const RESOLVE_PENDING_APPROVAL_HOT_LABEL: &str = "resolve.pending_approval";
 const RESOLVE_AUTHORITY_HOT_LABEL: &str = "governance.resolve_authority";
-
-trait RlAdvisor {
-    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice>;
-}
-
-struct DisabledRlAdvisor;
-
-impl RlAdvisor for DisabledRlAdvisor {
-    fn advise(&self, _ctx: &RlAdviceContext) -> Option<RlAdvice> {
-        None
-    }
-}
-
-/// Shadow-only advisor: emits recommendation logs but never mutates commit ordering.
-struct ShadowOnlyRlAdvisor {
-    topk: usize,
-}
-
-impl RlAdvisor for ShadowOnlyRlAdvisor {
-    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice> {
-        if ctx.ordered_ids.is_empty() {
-            return None;
-        }
-        let mut suggested = ctx.ordered_ids.clone();
-        suggested.reverse();
-        suggested.truncate(self.topk.max(1));
-        let _ = ctx.height;
-        Some(RlAdvice {
-            suggested_ids: suggested,
-            reason: "shadow_reverse_baseline",
-        })
-    }
-}
 
 fn hash32_hex(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
@@ -9980,13 +9951,7 @@ fn main() -> Result<()> {
                 hot_object_active_tail_share_total_ppm.saturating_add(hot_object_tail_share_ppm);
         }
 
-        let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
-            Box::new(ShadowOnlyRlAdvisor {
-                topk: args.rl_advisor_shadow_topk,
-            })
-        } else {
-            Box::new(DisabledRlAdvisor)
-        };
+        let rl_advisor = build_rl_advisor(args.rl_advisor_shadow, args.rl_advisor_shadow_topk);
         if let Some(advice) = rl_advisor.advise(&RlAdviceContext {
             height,
             ordered_ids: ordering_decision.ordered_ids.clone(),
