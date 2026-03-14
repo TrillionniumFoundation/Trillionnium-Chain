@@ -13,9 +13,8 @@ use std::{
 use trnm_executor::build_parallel_groups;
 use trnm_mempool::{IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
-    apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
-    apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
-    apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
+    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
+    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{
     verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
