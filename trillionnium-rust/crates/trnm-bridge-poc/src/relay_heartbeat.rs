@@ -259,6 +259,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_collapses_thin_space_family_for_replay_stability() {
+        let raw = "target\u{2008}relay\u{2009}timeout\u{200A}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
         let raw = "target\r\nrelay\u{2028}timeout\u{2029}signal\n";
         let normalized = normalize_failure_reason(raw);
