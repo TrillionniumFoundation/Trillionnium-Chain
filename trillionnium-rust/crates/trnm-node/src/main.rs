@@ -661,6 +661,13 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
     )
 }
 
+fn ensure_recoverable_wal_state(wal_dir: &Path, recovered: &RecoveredWalState) -> Result<()> {
+    if recovered.metadata_only_recovery {
+        anyhow::bail!(metadata_only_recovery_error(wal_dir, recovered));
+    }
+    Ok(())
+}
+
 fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)
     let f = n.saturating_sub(1) / 3;
@@ -8841,6 +8848,112 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_discards_committed_duplicate_height_tail_without_restoring_stale_lock() {
+        let wal_dir = temp_wal_dir("recover-committed-duplicate-height-tail-no-stale-lock");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "stale-duplicate-tail-lock".into(),
+            committed: true,
+            state_root_hex: "r2-replayed".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2.clone()]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: replayed_e2.state_root_hex.clone(),
+                    wal_entry_hash_hex: replayed_e2.content_hash_hex(),
+                },
+            ],
+        )
+        .unwrap();
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 3,
+                last_round: 1,
+                locked_block_hash: Some("stale-duplicate-tail-lock".into()),
+            },
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.truncated);
+        assert!(
+            !recovered.metadata_only_recovery,
+            "discarding a corrupt duplicate-height committed WAL tail should preserve recoverable state at the retained checkpoint"
+        );
+        assert_eq!(recovered.wal_entries_retained, 2);
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(
+            recovered.last_checkpoint.as_ref().map(|cp| cp.height),
+            Some(2)
+        );
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h2"));
+        assert_ne!(
+            recovered.restored_lock.as_deref(),
+            Some("stale-duplicate-tail-lock")
+        );
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[1].height, 2);
+        assert_eq!(entries[1].proposal_hash, "h2");
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "r2");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, h2);
+        assert!(checkpoints
+            .iter()
+            .all(|cp| cp.wal_entry_hash_hex != replayed_e2.content_hash_hex()));
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h2"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_committed_tail_beyond_checkpoint_prunes_stale_duplicate_checkpoint_at_retained_height(
     ) {
         let wal_dir = temp_wal_dir(
@@ -10324,6 +10437,87 @@ locked_block_hash = "stale-replay-lock"
     }
 
     #[test]
+    fn recover_uncommitted_duplicate_height_tail_prunes_stale_duplicate_checkpoint_at_retained_height(
+    ) {
+        let wal_dir =
+            temp_wal_dir("recover-uncommitted-duplicate-height-tail-prunes-stale-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "h2-replay-uncommitted".into(),
+            committed: false,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2-stale".into(),
+                    wal_entry_hash_hex: "stale-h2".into(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.truncated);
+        assert!(recovered.metadata_only_recovery);
+        assert!(recovered.restored_lock.is_none());
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(recovered.wal_entries_retained, 2);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 1);
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "r2");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, h2);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_gap_skipping_tail_truncates_to_last_valid_checkpoint() {
         let wal_dir = temp_wal_dir("recover-gap-skipping-tail");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -11079,6 +11273,59 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
+        let wal_dir = temp_wal_dir("recover-guard-metadata-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 4,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 3,
+            checkpoint_height_retained: Some(2),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap_err();
+        let err = format!("{err:#}");
+
+        assert!(err.contains("refusing metadata-only recovery"));
+        assert!(err.contains("retained 3 committed WAL entries through height 3"));
+        assert!(err.contains("last retained checkpoint: 2"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_fully_checkpointed_recovery() {
+        let wal_dir = temp_wal_dir("recover-guard-safe");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 3,
+            restored_lock: Some("h2".into()),
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(2),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap();
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_without_checkpoint_and_without_retained_wal_is_not_metadata_only() {
         let wal_dir = temp_wal_dir("recover-no-checkpoint-no-retained-wal");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -11310,9 +11557,7 @@ fn main() -> Result<()> {
         recovered.truncated,
         recovered.metadata_only_recovery
     );
-    if recovered.metadata_only_recovery {
-        anyhow::bail!(metadata_only_recovery_error(&wal_dir, &recovered));
-    }
+    ensure_recoverable_wal_state(&wal_dir, &recovered)?;
 
     let mut state = StateStore::new();
     state.set_balance("challenger", 1_000_000);
