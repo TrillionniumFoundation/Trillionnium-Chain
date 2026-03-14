@@ -1,292 +1,59 @@
 use anyhow::{Context, Result};
-use clap::{Parser, ValueEnum};
-use serde::{Deserialize, Serialize};
+use clap::Parser;
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
-    fs,
-    path::{Path, PathBuf},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
+#[cfg(test)]
+use std::{fs, path::PathBuf};
 use trnm_executor::build_parallel_groups;
 use trnm_mempool::{IngressClass, LaneAdmissionGate};
-use trnm_pouw::{
-    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
-    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
-};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
 };
-use trnm_state::{
-    verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
-    WalMeta,
+use trnm_pouw::{
+    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
+    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
+use trnm_state::{CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta};
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
-#[derive(Debug, Parser)]
-#[command(
-    name = "trnm-node",
-    version,
-    about = "Trillionnium Rust node (mock execution loop)"
-)]
-struct Args {
-    #[arg(long, default_value = "configs/node1.toml")]
-    config: String,
-    #[arg(long, default_value_t = 1000)]
-    block_ms: u64,
-    #[arg(long, default_value_t = 10)]
-    max_blocks: u64,
-    /// Number of task flows injected into demo mempool
-    #[arg(long, default_value_t = 2)]
-    demo_tasks: u64,
-    /// Number of distinct task ids used by injected load (smaller => higher conflict)
-    #[arg(long, default_value_t = 2)]
-    demo_keys: u64,
-    /// Worker count used for group parallel pre-execution
-    #[arg(long, default_value_t = 4)]
-    parallel_workers: usize,
-    /// Number of mempool txs attempted per committed block
-    #[arg(long, default_value_t = 4)]
-    txs_per_block: usize,
-    /// Validator set size for BFT round simulation
-    #[arg(long, default_value_t = 4)]
-    validators: usize,
-    /// Byzantine validators simulated in BFT vote aggregation
-    #[arg(long, default_value_t = 0)]
-    byzantine: usize,
-    /// Max rounds per height before giving up commit (round-change path)
-    #[arg(long, default_value_t = 3)]
-    bft_max_rounds: u64,
-    /// Inject no-quorum faulty rounds at beginning of each height
-    #[arg(long, default_value_t = 0)]
-    bft_fault_rounds: u64,
-    /// Missed proposal threshold before leader is de-weighted/skipped
-    #[arg(long, default_value_t = 2)]
-    bft_missed_proposal_threshold: u64,
-    /// Rounds to penalize leader after crossing missed proposal threshold
-    #[arg(long, default_value_t = 2)]
-    bft_leader_penalty_rounds: u64,
-    /// Base backoff milliseconds applied on each round-change
-    #[arg(long, default_value_t = 5)]
-    bft_round_change_backoff_ms: u64,
-    /// Max cap for round-change backoff milliseconds
-    #[arg(long, default_value_t = 40)]
-    bft_round_change_backoff_max_ms: u64,
-    /// Consensus WAL directory for restart recovery
-    #[arg(long, default_value = DEFAULT_BFT_WAL_DIR)]
-    bft_wal_dir: String,
-    /// How to handle the default WAL directory when no explicit isolated dir is provided.
-    /// `auto` isolates repeated runs that use the built-in default path, while explicit custom
-    /// paths keep legacy restart-recovery behavior.
-    #[arg(long, value_enum, default_value_t = WalDirMode::Auto)]
-    bft_wal_mode: WalDirMode,
-    /// Write one checkpoint metadata every N committed blocks
-    #[arg(long, default_value_t = 5)]
-    bft_checkpoint_interval: u64,
-    /// Enable PoUW timeout scanner in block loop (rollback switch)
-    #[arg(long, default_value_t = true)]
-    pouw_timeout_scan: bool,
-    /// Run timeout scanner every N committed blocks (1 = every block)
-    #[arg(long, default_value_t = 1)]
-    pouw_timeout_scan_every_blocks: u64,
-    /// P2 scaffold switch: enable DA/ordering decoupled path (default false keeps legacy path)
-    #[arg(long, default_value_t = false)]
-    enable_da_ordering_decouple: bool,
-    /// Enable RL advisor in shadow mode (suggest only, never execute)
-    #[arg(long, default_value_t = false)]
-    rl_advisor_shadow: bool,
-    /// Maximum suggested tx ids printed by shadow advisor
-    #[arg(long, default_value_t = 4)]
-    rl_advisor_shadow_topk: usize,
-}
+mod args;
+mod config;
+mod recovery;
+mod types;
+mod wal;
 
-const DEFAULT_BFT_WAL_DIR: &str = "run/consensus-wal";
+use crate::args::Args;
+#[cfg(test)]
+use crate::args::{WalDirMode, DEFAULT_BFT_WAL_DIR};
+use crate::config::load_config;
+#[cfg(test)]
+use crate::recovery::metadata_only_recovery_error;
+use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
+#[cfg(test)]
+use crate::types::RecoveredWalState;
+use crate::types::{
+    AuthRejectStats, BftHeightResult, BftJitterControl, BftVote, ConsensusWal, DaBatch,
+    HotObjectSummary, LeaderHealth, MockTx, OrderingDecision, RlAdvice, RlAdviceContext, RoundStep,
+    SignedVote, VoteType,
+};
+use crate::wal::{
+    load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
+    persist_wal_meta_entries, resolve_wal_dir,
+};
+#[cfg(test)]
+use crate::wal::{wal_file, wal_meta_file};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
-enum WalDirMode {
-    Auto,
-    Reuse,
-    FailIfExists,
-}
-
-#[derive(Debug, Deserialize)]
-struct NodeConfig {
-    node_id: String,
-    rpc_addr: String,
-    p2p_addr: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum MockTx {
-    CreateTask {
-        task_id: u64,
-        creator: String,
-        bounty: u128,
-    },
-    AcceptTask {
-        task_id: u64,
-        worker: String,
-    },
-    Commit {
-        task_id: u64,
-        worker: String,
-        committed_hash: Hash32,
-    },
-    Reveal {
-        task_id: u64,
-        result_hash: Hash32,
-        reveal_salt: [u8; 32],
-    },
-    Challenge {
-        task_id: u64,
-        challenger: String,
-        bond: u128,
-    },
-    Resolve {
-        task_id: u64,
-        slash_worker: bool,
-        resolver: String,
-    },
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum RoundStep {
-    Propose,
-    Prevote,
-    Precommit,
-    Commit,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum VoteType {
-    Prevote,
-    Precommit,
-}
-
-#[derive(Debug, Clone)]
-struct BftVote {
-    validator: String,
-    vote_type: VoteType,
-    block_hash: String,
-    byzantine: bool,
-    height: u64,
-    round: u64,
-}
-
-#[derive(Debug, Clone)]
-struct SignedVote {
-    vote: BftVote,
-    nonce: u64,
-    signature: String,
-}
-
-#[derive(Debug, Clone, Default)]
-struct AuthRejectStats {
-    bad_sig: usize,
-    replay: usize,
-    stale_nonce: usize,
-}
-
-#[derive(Debug, Clone, Default)]
-struct LeaderHealth {
-    missed_proposals: u64,
-    penalty_until_round: u64,
-}
-
-#[derive(Debug, Clone)]
-struct BftJitterControl {
-    missed_threshold: u64,
-    penalty_rounds: u64,
-    round_change_backoff_ms: u64,
-    round_change_backoff_cap_ms: u64,
-    leader_health: Vec<LeaderHealth>,
-}
-
-#[derive(Debug, Clone)]
-struct BftHeightResult {
-    committed: bool,
-    committed_round: u64,
-    round_changes: u64,
-    prevote_count: usize,
-    precommit_count: usize,
-    double_vote_events: usize,
-    auth_reject_bad_sig: usize,
-    auth_reject_replay: usize,
-    auth_reject_stale_nonce: usize,
-    round_change_backoff_total_ms: u64,
-    round_change_backoff_max_ms: u64,
-    leader_missed_snapshot: Vec<u64>,
-}
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
 const RESOLVE_PENDING_APPROVAL_HOT_LABEL: &str = "resolve.pending_approval";
 const RESOLVE_AUTHORITY_HOT_LABEL: &str = "governance.resolve_authority";
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-struct HotObjectSummary {
-    hot_tx_count: usize,
-    labels: BTreeMap<String, usize>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct ConsensusWal {
-    next_height: u64,
-    last_round: u64,
-    locked_block_hash: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-struct RecoveredWalState {
-    next_height: u64,
-    restored_lock: Option<String>,
-    last_checkpoint: Option<CheckpointMeta>,
-    truncated: bool,
-    metadata_only_recovery: bool,
-    wal_entries_retained: usize,
-    checkpoint_height_retained: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-struct WalMetaList {
-    entries: Vec<WalMeta>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-struct CheckpointMetaList {
-    checkpoints: Vec<CheckpointMeta>,
-}
-
-/// DA layer output consumed by ordering/consensus.
-#[derive(Debug, Clone)]
-struct DaBatch {
-    tx_ids: Vec<u64>,
-}
-
-/// Ordering result passed into commit loop.
-#[derive(Debug, Clone)]
-struct OrderingDecision {
-    ordered_ids: Vec<u64>,
-    rejected: u64,
-    preexec_elapsed_ms: u128,
-    group_count: usize,
-    critical_wait_blocks: u64,
-}
-
-#[derive(Debug, Clone)]
-struct RlAdviceContext {
-    height: u64,
-    ordered_ids: Vec<u64>,
-}
-
-#[derive(Debug, Clone)]
-struct RlAdvice {
-    suggested_ids: Vec<u64>,
-    reason: &'static str,
-}
 
 trait DaProvider {
     fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch;
@@ -373,299 +140,6 @@ impl RlAdvisor for ShadowOnlyRlAdvisor {
             reason: "shadow_reverse_baseline",
         })
     }
-}
-
-fn wal_file(wal_dir: &Path) -> PathBuf {
-    wal_dir.join("consensus-wal.toml")
-}
-
-fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
-    wal_file(wal_dir).exists()
-        || wal_meta_file(wal_dir).exists()
-        || checkpoint_file(wal_dir).exists()
-}
-
-fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
-    base_dir.join(format!("session-{}-{}", now_unix_ms(), std::process::id()))
-}
-
-fn resolve_wal_dir(args: &Args) -> Result<(PathBuf, Option<String>)> {
-    let requested = PathBuf::from(&args.bft_wal_dir);
-    let uses_builtin_default = requested == PathBuf::from(DEFAULT_BFT_WAL_DIR);
-    let has_existing_state = wal_dir_has_existing_state(&requested);
-
-    match args.bft_wal_mode {
-        WalDirMode::Reuse => Ok((requested, None)),
-        WalDirMode::FailIfExists => {
-            if has_existing_state {
-                anyhow::bail!(
-                    "refusing to reuse existing BFT WAL state at {} (pass --bft-wal-mode reuse to recover, or choose a fresh --bft-wal-dir)",
-                    requested.display()
-                );
-            }
-            Ok((requested, None))
-        }
-        WalDirMode::Auto => {
-            if uses_builtin_default && has_existing_state {
-                let isolated = isolated_default_wal_dir(&requested);
-                Ok((
-                    isolated.clone(),
-                    Some(format!(
-                        "[bft-wal] existing default WAL state detected at {}; isolating this run in {} (pass --bft-wal-mode reuse to recover prior state explicitly)",
-                        requested.display(),
-                        isolated.display()
-                    )),
-                ))
-            } else {
-                Ok((requested, None))
-            }
-        }
-    }
-}
-
-fn wal_meta_file(wal_dir: &Path) -> PathBuf {
-    wal_dir.join("consensus-wal-meta.toml")
-}
-
-fn checkpoint_file(wal_dir: &Path) -> PathBuf {
-    wal_dir.join("consensus-checkpoints.toml")
-}
-
-fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
-    let f = wal_meta_file(wal_dir);
-    if !f.exists() {
-        return Ok(vec![]);
-    }
-    let raw =
-        fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
-    let list: WalMetaList =
-        toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
-    Ok(list.entries)
-}
-
-fn persist_wal_meta_entries(wal_dir: &Path, entries: &[WalMeta]) -> Result<()> {
-    fs::create_dir_all(wal_dir)?;
-    let f = wal_meta_file(wal_dir);
-    let raw = toml::to_string(&WalMetaList {
-        entries: entries.to_vec(),
-    })?;
-    fs::write(&f, raw).with_context(|| format!("write wal meta failed: {}", f.display()))?;
-    Ok(())
-}
-
-fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
-    let f = checkpoint_file(wal_dir);
-    if !f.exists() {
-        return Ok(vec![]);
-    }
-    let raw = fs::read_to_string(&f)
-        .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
-    let mut list: CheckpointMetaList = toml::from_str(&raw)
-        .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
-    list.checkpoints.sort_by_key(|cp| cp.height);
-    Ok(list.checkpoints)
-}
-
-fn persist_checkpoint_meta(wal_dir: &Path, checkpoints: &[CheckpointMeta]) -> Result<()> {
-    fs::create_dir_all(wal_dir)?;
-    let f = checkpoint_file(wal_dir);
-    let raw = toml::to_string(&CheckpointMetaList {
-        checkpoints: checkpoints.to_vec(),
-    })?;
-    fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
-    Ok(())
-}
-
-fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
-    fs::create_dir_all(wal_dir)?;
-    let f = wal_file(wal_dir);
-    let raw = toml::to_string(wal)?;
-    fs::write(&f, raw).with_context(|| format!("write wal failed: {}", f.display()))?;
-    Ok(())
-}
-
-fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
-    let entries = load_wal_meta_entries(wal_dir)?;
-    let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let last_checkpoint =
-        verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
-
-    let mut truncated = false;
-    if entries.is_empty() && checkpoints.is_empty() && wal_file(wal_dir).exists() {
-        persist_consensus_wal(
-            wal_dir,
-            &ConsensusWal {
-                next_height: 1,
-                last_round: 0,
-                locked_block_hash: None,
-            },
-        )?;
-        truncated = true;
-    }
-    if entries.is_empty() && !checkpoints.is_empty() {
-        persist_checkpoint_meta(wal_dir, &[])?;
-        truncated = true;
-    }
-    if !entries.is_empty() && last_checkpoint.is_none() {
-        truncated = true;
-        persist_wal_meta_entries(wal_dir, &[])?;
-        persist_checkpoint_meta(wal_dir, &[])?;
-        persist_consensus_wal(
-            wal_dir,
-            &ConsensusWal {
-                next_height: 1,
-                last_round: 0,
-                locked_block_hash: None,
-            },
-        )?;
-        return Ok(RecoveredWalState {
-            next_height: 1,
-            restored_lock: None,
-            last_checkpoint: None,
-            truncated,
-            metadata_only_recovery: false,
-            wal_entries_retained: 0,
-            checkpoint_height_retained: None,
-        });
-    }
-
-    let mut valid_entries = entries.clone();
-    let mut metadata_only_tail_discarded = false;
-    let mut committed_tail_beyond_checkpoint_discarded = false;
-    if let Some(cp) = &last_checkpoint {
-        if let Some(idx) = entries
-            .iter()
-            .position(|e| e.height == cp.height && e.content_hash_hex() == cp.wal_entry_hash_hex)
-        {
-            if idx + 1 < entries.len() {
-                let discarded_tail = &entries[idx + 1..];
-                metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
-                let retained_tip_hash = entries[idx].content_hash_hex();
-                committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
-                    e.committed
-                        && e.height > cp.height
-                        && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
-                });
-                valid_entries.truncate(idx + 1);
-                persist_wal_meta_entries(wal_dir, &valid_entries)?;
-                truncated = true;
-            }
-
-            let retained_checkpoint_keys: HashSet<(u64, String, String)> = valid_entries
-                .iter()
-                .map(|entry| {
-                    (
-                        entry.height,
-                        entry.state_root_hex.clone(),
-                        entry.content_hash_hex(),
-                    )
-                })
-                .collect();
-            let mut seen_checkpoint_keys = HashSet::new();
-            let mut valid_checkpoints: Vec<CheckpointMeta> = checkpoints
-                .iter()
-                .filter(|c| {
-                    retained_checkpoint_keys.contains(&(
-                        c.height,
-                        c.state_root_hex.clone(),
-                        c.wal_entry_hash_hex.clone(),
-                    ))
-                })
-                .filter(|c| {
-                    seen_checkpoint_keys.insert((
-                        c.height,
-                        c.state_root_hex.as_str(),
-                        c.wal_entry_hash_hex.as_str(),
-                    ))
-                })
-                .cloned()
-                .collect();
-            valid_checkpoints.sort_by(|a, b| {
-                a.height
-                    .cmp(&b.height)
-                    .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
-                    .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
-            });
-            if valid_checkpoints != checkpoints {
-                persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
-                truncated = true;
-            }
-        }
-    }
-
-    if let Some(last) = valid_entries.last() {
-        let retained_checkpoint_height = last_checkpoint.as_ref().map(|cp| cp.height);
-        let retained_entry_count = valid_entries.len();
-        let metadata_only_recovery = metadata_only_tail_discarded
-            || committed_tail_beyond_checkpoint_discarded
-            || retained_checkpoint_height
-                .map(|checkpoint_height| checkpoint_height < last.height)
-                .unwrap_or(retained_entry_count > 0);
-        let restored_lock = if metadata_only_recovery {
-            None
-        } else {
-            Some(last.proposal_hash.clone())
-        };
-        persist_consensus_wal(
-            wal_dir,
-            &ConsensusWal {
-                next_height: last.height + 1,
-                last_round: last.round,
-                locked_block_hash: restored_lock.clone(),
-            },
-        )?;
-        return Ok(RecoveredWalState {
-            next_height: last.height + 1,
-            restored_lock,
-            checkpoint_height_retained: retained_checkpoint_height,
-            last_checkpoint,
-            truncated,
-            metadata_only_recovery,
-            wal_entries_retained: retained_entry_count,
-        });
-    }
-
-    if truncated {
-        persist_consensus_wal(
-            wal_dir,
-            &ConsensusWal {
-                next_height: 1,
-                last_round: 0,
-                locked_block_hash: None,
-            },
-        )?;
-    }
-
-    Ok(RecoveredWalState {
-        next_height: 1,
-        restored_lock: None,
-        checkpoint_height_retained: last_checkpoint.as_ref().map(|cp| cp.height),
-        last_checkpoint,
-        truncated,
-        metadata_only_recovery: false,
-        wal_entries_retained: 0,
-    })
-}
-
-fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
-    format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
-        wal_dir.display(),
-        recovered.wal_entries_retained,
-        if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-        recovered.next_height.saturating_sub(1),
-        recovered
-            .checkpoint_height_retained
-            .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into())
-    )
-}
-
-fn ensure_recoverable_wal_state(wal_dir: &Path, recovered: &RecoveredWalState) -> Result<()> {
-    if recovered.metadata_only_recovery {
-        anyhow::bail!(metadata_only_recovery_error(wal_dir, recovered));
-    }
-    Ok(())
 }
 
 fn quorum_threshold(n: usize) -> usize {
@@ -1429,13 +903,6 @@ fn hash32_hex(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(data);
     hex::encode(hasher.finalize())
-}
-
-fn load_config(path: &str) -> Result<NodeConfig> {
-    let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
-    let cfg: NodeConfig =
-        toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    Ok(cfg)
 }
 
 fn compute_commitment(
@@ -3261,9 +2728,9 @@ mod tests {
             ratio_ppm_u64(hot_object_active_heights, finality_sample_count);
         let hot_object_active_observed_height_rate_ppm =
             ratio_ppm_u64(hot_object_active_heights, 6u64);
-        let hot_object_active_height_share_ppm =
-            (hot_object_active_top_label_share_total_ppm + hot_object_active_tail_share_total_ppm)
-                / hot_object_active_heights as u128;
+        let hot_object_active_height_share_ppm = (hot_object_active_top_label_share_total_ppm
+            + hot_object_active_tail_share_total_ppm)
+            / hot_object_active_heights as u128;
 
         assert_eq!(hot_object_top_label_share_avg_ppm, 300_000);
         assert_eq!(hot_object_tail_share_avg_ppm, 200_000);
@@ -3290,7 +2757,10 @@ mod tests {
             active_height_rate_field_name,
             active_observed_height_rate_field_name
         );
-        assert_ne!(active_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(
+            active_height_rate_field_name,
+            active_height_share_field_name
+        );
         assert_ne!(
             active_observed_height_rate_field_name,
             active_height_share_field_name
@@ -3501,7 +2971,9 @@ mod tests {
         assert_eq!(preexec_reject_active_height_rate_ppm, 666_666);
         assert_eq!(preexec_reject_active_observed_height_rate_ppm, 400_000);
         assert_eq!(preexec_reject_active_height_share_ppm, 17_500);
-        assert!(preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm);
+        assert!(
+            preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm
+        );
         assert_eq!(ratio_milli_u64(0, bft_committed_heights), 0);
         assert_eq!(ratio_milli_u64(preexec_reject_total, 0), 0);
     }
@@ -3520,9 +2992,18 @@ mod tests {
         assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
-        assert_ne!(active_height_count_field_name, active_height_rate_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
-        assert_ne!(active_observed_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(
+            active_height_count_field_name,
+            active_height_rate_field_name
+        );
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            active_height_share_field_name
+        );
         assert_ne!(active_height_share_field_name, density_avg_milli_field_name);
     }
 
@@ -3585,7 +3066,10 @@ mod tests {
         assert_ne!(peak_field_name, reject_share_field_name);
         assert_ne!(peak_field_name, conflict_miss_share_field_name);
         assert_ne!(reject_density_avg_milli_field_name, reject_share_field_name);
-        assert_ne!(reject_density_avg_milli_field_name, conflict_miss_share_field_name);
+        assert_ne!(
+            reject_density_avg_milli_field_name,
+            conflict_miss_share_field_name
+        );
         assert_ne!(reject_share_field_name, conflict_miss_share_field_name);
     }
 
@@ -3683,8 +3167,14 @@ mod tests {
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(peak_field_name, active_height_rate_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
-        assert_ne!(active_observed_height_rate_field_name, density_avg_milli_field_name);
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            density_avg_milli_field_name
+        );
         assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
     }
 
@@ -3767,8 +3257,12 @@ mod tests {
 
         assert_eq!(observed_coverage_fields.len(), 7);
         assert_eq!(active_budget_share_fields.len(), 7);
-        assert!(observed_coverage_fields.iter().all(|field| field.ends_with("_rate_ppm")));
-        assert!(active_budget_share_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        assert!(observed_coverage_fields
+            .iter()
+            .all(|field| field.ends_with("_rate_ppm")));
+        assert!(active_budget_share_fields
+            .iter()
+            .all(|field| field.ends_with("_share_ppm")));
         for observed_field in observed_coverage_fields {
             assert!(
                 !active_budget_share_fields.contains(&observed_field),
@@ -3786,14 +3280,17 @@ mod tests {
         ];
 
         assert_eq!(backoff_fields.len(), 3);
-        assert!(backoff_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        assert!(backoff_fields
+            .iter()
+            .all(|field| field.ends_with("_share_ppm")));
         assert_ne!(backoff_fields[0], backoff_fields[1]);
         assert_ne!(backoff_fields[0], backoff_fields[2]);
         assert_ne!(backoff_fields[1], backoff_fields[2]);
     }
 
     #[test]
-    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views() {
+    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "critical_wait_active_heights",
@@ -3864,7 +3361,8 @@ mod tests {
     }
 
     #[test]
-    fn hot_object_review_bundle_keeps_commit_skip_denominator_context_next_to_shape_and_budget_pressure() {
+    fn hot_object_review_bundle_keeps_commit_skip_denominator_context_next_to_shape_and_budget_pressure(
+    ) {
         let hotspot_review_fields = [
             "hot_object_active_heights",
             "hot_object_active_height_rate_ppm",
@@ -3881,12 +3379,27 @@ mod tests {
         assert!(hotspot_review_fields[0].ends_with("_active_heights"));
         assert!(hotspot_review_fields[1].ends_with("_active_height_rate_ppm"));
         assert!(hotspot_review_fields[2].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(hotspot_review_fields[3], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            hotspot_review_fields[3],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(hotspot_review_fields[4], "bft_skipped_height_total");
-        assert_eq!(hotspot_review_fields[5], "bft_skipped_observed_height_rate_ppm");
-        assert_eq!(hotspot_review_fields[6], "hot_object_active_top_label_share_avg_ppm");
-        assert_eq!(hotspot_review_fields[7], "hot_object_active_tail_share_avg_ppm");
-        assert_eq!(hotspot_review_fields[8], "hot_object_active_height_share_ppm");
+        assert_eq!(
+            hotspot_review_fields[5],
+            "bft_skipped_observed_height_rate_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[6],
+            "hot_object_active_top_label_share_avg_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[7],
+            "hot_object_active_tail_share_avg_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[8],
+            "hot_object_active_height_share_ppm"
+        );
         assert_ne!(hotspot_review_fields[1], hotspot_review_fields[2]);
         assert_ne!(hotspot_review_fields[3], hotspot_review_fields[5]);
         assert_ne!(hotspot_review_fields[6], hotspot_review_fields[8]);
@@ -3938,9 +3451,15 @@ mod tests {
         assert!(jitter_review_fields[0].ends_with("_active_heights"));
         assert!(jitter_review_fields[1].ends_with("_active_height_rate_ppm"));
         assert!(jitter_review_fields[2].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(jitter_review_fields[3], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[3],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(jitter_review_fields[4], "bft_skipped_height_total");
-        assert_eq!(jitter_review_fields[5], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[5],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(jitter_review_fields[6].ends_with("_avg_milli"));
         assert!(jitter_review_fields[7].ends_with("_share_ppm"));
         assert!(jitter_review_fields[8].ends_with("_share_ppm"));
@@ -3967,13 +3486,28 @@ mod tests {
 
         assert_eq!(jitter_review_fields.len(), 8);
         assert!(jitter_review_fields[0].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(jitter_review_fields[1], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[1],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(jitter_review_fields[2], "bft_skipped_height_total");
-        assert_eq!(jitter_review_fields[3], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[3],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(jitter_review_fields[4].ends_with("_avg_milli"));
-        assert_eq!(jitter_review_fields[5], "bft_round_change_backoff_active_height_share_ppm");
-        assert_eq!(jitter_review_fields[6], "bft_round_change_backoff_wall_share_ppm");
-        assert_eq!(jitter_review_fields[7], "bft_round_change_backoff_share_ppm");
+        assert_eq!(
+            jitter_review_fields[5],
+            "bft_round_change_backoff_active_height_share_ppm"
+        );
+        assert_eq!(
+            jitter_review_fields[6],
+            "bft_round_change_backoff_wall_share_ppm"
+        );
+        assert_eq!(
+            jitter_review_fields[7],
+            "bft_round_change_backoff_share_ppm"
+        );
         assert_ne!(jitter_review_fields[5], jitter_review_fields[6]);
         assert_ne!(jitter_review_fields[5], jitter_review_fields[7]);
         assert_ne!(jitter_review_fields[6], jitter_review_fields[7]);
@@ -4046,12 +3580,19 @@ mod tests {
             assert!(bundle[7].ends_with("_active_height_share_ppm"));
             assert!(bundle.last().unwrap().ends_with("_share_bps"));
         }
-        assert_eq!(review_bundles[0].last().copied(), Some("preexec_conflict_miss_share_bps"));
-        assert_eq!(review_bundles[1].last().copied(), Some("apply_error_rollback_share_bps"));
+        assert_eq!(
+            review_bundles[0].last().copied(),
+            Some("preexec_conflict_miss_share_bps")
+        );
+        assert_eq!(
+            review_bundles[1].last().copied(),
+            Some("apply_error_rollback_share_bps")
+        );
     }
 
     #[test]
-    fn leader_missed_review_bundle_keeps_commit_vs_skipped_coverage_context_near_fairness_pressure() {
+    fn leader_missed_review_bundle_keeps_commit_vs_skipped_coverage_context_near_fairness_pressure()
+    {
         let fairness_review_fields = [
             "bft_leader_missed_top_share_ppm",
             "bft_leader_missed_active_validators",
@@ -4072,8 +3613,14 @@ mod tests {
         assert!(fairness_review_fields[3].ends_with("_active_heights"));
         assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
         assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(fairness_review_fields[6], "bft_commit_observed_height_rate_ppm");
-        assert_eq!(fairness_review_fields[7], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[6],
+            "bft_commit_observed_height_rate_ppm"
+        );
+        assert_eq!(
+            fairness_review_fields[7],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(fairness_review_fields[8].ends_with("_avg_milli"));
         assert!(fairness_review_fields[9].ends_with("_active_height_share_ppm"));
         assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
@@ -4081,7 +3628,8 @@ mod tests {
     }
 
     #[test]
-    fn leader_missed_review_bundle_keeps_absolute_skipped_width_next_to_fairness_spread_and_budget_pressure() {
+    fn leader_missed_review_bundle_keeps_absolute_skipped_width_next_to_fairness_spread_and_budget_pressure(
+    ) {
         let fairness_review_fields = [
             "bft_leader_missed_top_share_ppm",
             "bft_leader_missed_active_validators",
@@ -4103,9 +3651,15 @@ mod tests {
         assert!(fairness_review_fields[3].ends_with("_active_heights"));
         assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
         assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(fairness_review_fields[6], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[6],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(fairness_review_fields[7], "bft_skipped_height_total");
-        assert_eq!(fairness_review_fields[8], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[8],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(fairness_review_fields[9].ends_with("_avg_milli"));
         assert!(fairness_review_fields[10].ends_with("_active_height_share_ppm"));
         assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
@@ -4157,7 +3711,8 @@ mod tests {
     }
 
     #[test]
-    fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates() {
+    fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "hot_object_active_heights",
@@ -4207,7 +3762,8 @@ mod tests {
     }
 
     #[test]
-    fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates() {
+    fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "critical_wait_active_height_rate_ppm",
@@ -4344,7 +3900,10 @@ mod tests {
                 .expect("skipped observed rate must stay present in review bundle");
 
             assert_eq!(skipped_rate_idx, skipped_total_idx + 1);
-            assert_eq!(bundle[skipped_total_idx - 1], "bft_commit_observed_height_rate_ppm");
+            assert_eq!(
+                bundle[skipped_total_idx - 1],
+                "bft_commit_observed_height_rate_ppm"
+            );
             assert!(bundle[0].ends_with("_active_height_rate_ppm"));
             assert!(bundle[1].ends_with("_active_observed_height_rate_ppm"));
             assert_ne!(bundle[0], bundle[1]);
@@ -4377,7 +3936,10 @@ mod tests {
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(wall_share_field_name, compatibility_alias_field_name);
         assert_ne!(wall_share_field_name, active_height_share_field_name);
-        assert_ne!(compatibility_alias_field_name, active_height_share_field_name);
+        assert_ne!(
+            compatibility_alias_field_name,
+            active_height_share_field_name
+        );
     }
 
     #[test]
@@ -5045,8 +4607,14 @@ mod tests {
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(active_validators_field_name, active_heights_field_name);
-        assert_ne!(active_validator_share_field_name, active_height_share_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(
+            active_validator_share_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
         assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
     }
 
@@ -5201,7 +4769,8 @@ mod tests {
         let bft_observed_heights = 5u64;
         let finality_avg = 8u128;
 
-        let wall_share_ppm = ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
         let compatibility_alias_ppm = wall_share_ppm;
         let active_observed_height_rate_ppm = ratio_ppm_u64(
             bft_round_change_backoff_active_heights,
@@ -5231,17 +4800,24 @@ mod tests {
         let bft_observed_heights = 5u64;
         let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
 
-        let bft_round_change_backoff_active_height_rate_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
-        let bft_round_change_backoff_active_observed_height_rate_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+        let bft_round_change_backoff_active_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_committed_heights,
+        );
+        let bft_round_change_backoff_active_observed_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_observed_heights,
+        );
         let bft_commit_observed_height_rate_ppm =
             ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
         let bft_skipped_observed_height_rate_ppm =
             ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
 
         assert_eq!(bft_round_change_backoff_active_height_rate_ppm, 1_000_000);
-        assert_eq!(bft_round_change_backoff_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(
+            bft_round_change_backoff_active_observed_height_rate_ppm,
+            400_000
+        );
         assert_eq!(bft_commit_observed_height_rate_ppm, 400_000);
         assert_eq!(bft_skipped_observed_height_rate_ppm, 600_000);
         assert_eq!(
@@ -5287,7 +4863,8 @@ mod tests {
     }
 
     #[test]
-    fn round_change_backoff_metric_names_keep_observed_coverage_distinct_from_wall_and_budget_views() {
+    fn round_change_backoff_metric_names_keep_observed_coverage_distinct_from_wall_and_budget_views(
+    ) {
         let active_observed_height_rate_field_name =
             "bft_round_change_backoff_active_observed_height_rate_ppm";
         let active_height_share_field_name = "bft_round_change_backoff_active_height_share_ppm";
@@ -5302,7 +4879,10 @@ mod tests {
             active_observed_height_rate_field_name,
             active_height_share_field_name
         );
-        assert_ne!(active_observed_height_rate_field_name, wall_share_field_name);
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            wall_share_field_name
+        );
         assert_ne!(
             active_observed_height_rate_field_name,
             compatibility_alias_field_name
@@ -6685,7 +6265,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_109);
         let before_task = st.get_task(8_109).unwrap();
@@ -6756,7 +6339,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_115);
         st.set_gov_param(98_305, 7_999, "emergency_pause".into(), "true".into())
@@ -6789,7 +6375,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_115).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
         assert_eq!(
@@ -6849,7 +6438,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_116);
 
@@ -6883,7 +6475,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_116).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_116), None);
         assert_eq!(st.pending_resolve_first_approver(8_116), None);
@@ -6931,7 +6526,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_117);
 
@@ -6965,7 +6563,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_117).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_117), None);
         assert_eq!(st.pending_resolve_first_approver(8_117), None);
@@ -7012,7 +6613,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_114);
 
@@ -7046,7 +6650,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_114).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_114), None);
         assert_eq!(st.pending_resolve_first_approver(8_114), None);
@@ -12447,10 +12054,14 @@ fn main() -> Result<()> {
     } else {
         bft_round_change_backoff_total_ms / bft_round_change_total
     };
-    let bft_round_change_backoff_active_height_rate_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
-    let bft_round_change_backoff_active_observed_height_rate_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+    let bft_round_change_backoff_active_height_rate_ppm = ratio_ppm_u64(
+        bft_round_change_backoff_active_heights,
+        bft_committed_heights,
+    );
+    let bft_round_change_backoff_active_observed_height_rate_ppm = ratio_ppm_u64(
+        bft_round_change_backoff_active_heights,
+        bft_observed_heights,
+    );
     let bft_round_change_backoff_density_avg_ms = if bft_round_change_backoff_active_heights == 0 {
         0
     } else {
@@ -12462,8 +12073,11 @@ fn main() -> Result<()> {
     );
     let bft_round_change_backoff_active_height_share_ppm =
         finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
-    let bft_round_change_backoff_wall_share_ppm =
-        wall_time_share_ppm(bft_round_change_backoff_total_ms, bft_committed_heights, finality_avg);
+    let bft_round_change_backoff_wall_share_ppm = wall_time_share_ppm(
+        bft_round_change_backoff_total_ms,
+        bft_committed_heights,
+        finality_avg,
+    );
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
     let bft_commit_observed_height_rate_ppm =
         ratio_ppm_u64(bft_committed_heights, bft_observed_heights);

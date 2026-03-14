@@ -1,0 +1,139 @@
+use crate::args::{Args, WalDirMode, DEFAULT_BFT_WAL_DIR};
+use crate::types::ConsensusWal;
+use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+    time::{SystemTime, UNIX_EPOCH},
+};
+use trnm_state::{CheckpointMeta, WalMeta};
+
+fn now_unix_ms() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct WalMetaList {
+    entries: Vec<WalMeta>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct CheckpointMetaList {
+    checkpoints: Vec<CheckpointMeta>,
+}
+
+pub(crate) fn wal_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-wal.toml")
+}
+
+pub(crate) fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
+    wal_file(wal_dir).exists()
+        || wal_meta_file(wal_dir).exists()
+        || checkpoint_file(wal_dir).exists()
+}
+
+pub(crate) fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
+    base_dir.join(format!("session-{}-{}", now_unix_ms(), std::process::id()))
+}
+
+pub(crate) fn resolve_wal_dir(args: &Args) -> Result<(PathBuf, Option<String>)> {
+    let requested = PathBuf::from(&args.bft_wal_dir);
+    let uses_builtin_default = requested == PathBuf::from(DEFAULT_BFT_WAL_DIR);
+    let has_existing_state = wal_dir_has_existing_state(&requested);
+
+    match args.bft_wal_mode {
+        WalDirMode::Reuse => Ok((requested, None)),
+        WalDirMode::FailIfExists => {
+            if has_existing_state {
+                anyhow::bail!(
+                    "refusing to reuse existing BFT WAL state at {} (pass --bft-wal-mode reuse to recover, or choose a fresh --bft-wal-dir)",
+                    requested.display()
+                );
+            }
+            Ok((requested, None))
+        }
+        WalDirMode::Auto => {
+            if uses_builtin_default && has_existing_state {
+                let isolated = isolated_default_wal_dir(&requested);
+                Ok((
+                    isolated.clone(),
+                    Some(format!(
+                        "[bft-wal] existing default WAL state detected at {}; isolating this run in {} (pass --bft-wal-mode reuse to recover prior state explicitly)",
+                        requested.display(),
+                        isolated.display()
+                    )),
+                ))
+            } else {
+                Ok((requested, None))
+            }
+        }
+    }
+}
+
+pub(crate) fn wal_meta_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-wal-meta.toml")
+}
+
+pub(crate) fn checkpoint_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-checkpoints.toml")
+}
+
+pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
+    let f = wal_meta_file(wal_dir);
+    if !f.exists() {
+        return Ok(vec![]);
+    }
+    let raw =
+        fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    let list: WalMetaList =
+        toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
+    Ok(list.entries)
+}
+
+pub(crate) fn persist_wal_meta_entries(wal_dir: &Path, entries: &[WalMeta]) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = wal_meta_file(wal_dir);
+    let raw = toml::to_string(&WalMetaList {
+        entries: entries.to_vec(),
+    })?;
+    fs::write(&f, raw).with_context(|| format!("write wal meta failed: {}", f.display()))?;
+    Ok(())
+}
+
+pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
+    let f = checkpoint_file(wal_dir);
+    if !f.exists() {
+        return Ok(vec![]);
+    }
+    let raw = fs::read_to_string(&f)
+        .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
+    let mut list: CheckpointMetaList = toml::from_str(&raw)
+        .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
+    list.checkpoints.sort_by_key(|cp| cp.height);
+    Ok(list.checkpoints)
+}
+
+pub(crate) fn persist_checkpoint_meta(
+    wal_dir: &Path,
+    checkpoints: &[CheckpointMeta],
+) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = checkpoint_file(wal_dir);
+    let raw = toml::to_string(&CheckpointMetaList {
+        checkpoints: checkpoints.to_vec(),
+    })?;
+    fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
+    Ok(())
+}
+
+pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = wal_file(wal_dir);
+    let raw = toml::to_string(wal)?;
+    fs::write(&f, raw).with_context(|| format!("write wal failed: {}", f.display()))?;
+    Ok(())
+}
