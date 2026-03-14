@@ -602,6 +602,18 @@ impl StateStore {
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval task version changed".into());
             }
+            if let Some(task) = self.get_task(task_id) {
+                if !matches!(task.status, TaskStatus::Challenged) {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval task no longer challenged".into());
+                }
+                if task.version != task_version {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval task version changed".into());
+                }
+            }
         }
 
         let next_confirmations = {
