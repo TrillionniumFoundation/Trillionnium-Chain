@@ -23,6 +23,7 @@ use trnm_state::{CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, Wal
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
 mod args;
+mod bft;
 mod config;
 mod recovery;
 mod types;
@@ -35,12 +36,14 @@ use crate::config::load_config;
 #[cfg(test)]
 use crate::recovery::metadata_only_recovery_error;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
+use crate::bft::model::{
+    AuthRejectStats, BftHeightResult, BftJitterControl, BftVote, LeaderHealth, RoundStep,
+    SignedVote, VoteType,
+};
 #[cfg(test)]
 use crate::types::RecoveredWalState;
 use crate::types::{
-    AuthRejectStats, BftHeightResult, BftJitterControl, BftVote, ConsensusWal, DaBatch,
-    HotObjectSummary, LeaderHealth, MockTx, OrderingDecision, RlAdvice, RlAdviceContext, RoundStep,
-    SignedVote, VoteType,
+    ConsensusWal, DaBatch, HotObjectSummary, MockTx, OrderingDecision, RlAdvice, RlAdviceContext,
 };
 use crate::wal::{
     load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
