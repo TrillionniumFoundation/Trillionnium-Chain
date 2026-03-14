@@ -4,7 +4,7 @@ use trnm_pouw::apply_timeout;
 use trnm_state::StateStore;
 use trnm_types::TaskStatus;
 
-use crate::balance_deltas_for_transition;
+use crate::accounting::balance_deltas_for_transition;
 use crate::events::{emit_timeout_event, status_name};
 
 pub(crate) fn scan_and_apply_timeouts(

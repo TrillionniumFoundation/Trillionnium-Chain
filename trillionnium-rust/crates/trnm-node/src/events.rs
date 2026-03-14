@@ -1,8 +1,9 @@
 use trnm_state::StateStore;
 use trnm_types::TaskMeteringSnapshot;
 
+use crate::accounting::EventDelta;
 use crate::types::MockTx;
-use crate::{actor_of, challenger_of, now_unix_ms, task_id_of, tx_hash_of, EventDelta};
+use crate::{actor_of, challenger_of, now_unix_ms, task_id_of, tx_hash_of};
 
 pub(crate) fn event_type_of(tx: &MockTx) -> &'static str {
     match tx {
