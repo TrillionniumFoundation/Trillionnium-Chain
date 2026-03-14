@@ -1,0 +1,263 @@
+use std::{
+    collections::VecDeque,
+    sync::{mpsc, Arc, Condvar, Mutex},
+    thread,
+    time::Instant,
+};
+
+use trnm_executor::build_parallel_groups;
+use trnm_state::StateStore;
+use trnm_types::Tx;
+
+use crate::apply::apply_one;
+use crate::rwset::read_write_decl;
+use crate::types::{DaBatch, MockTx, OrderingDecision};
+
+trait DaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch;
+}
+
+struct LegacyMempoolDaProvider;
+
+impl DaProvider for LegacyMempoolDaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch {
+        DaBatch {
+            tx_ids: (1..=(picked.len() as u64)).collect(),
+        }
+    }
+}
+
+trait OrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+        candidate_height: u64,
+    ) -> OrderingDecision;
+}
+
+struct PreexecOrderingEngine;
+
+impl OrderingEngine for PreexecOrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+        candidate_height: u64,
+    ) -> OrderingDecision {
+        let pool = PreExecPool::new(
+            Arc::new(snapshot.clone()),
+            Arc::new(picked.to_vec()),
+            workers,
+            candidate_height,
+        );
+        let preexec_started = Instant::now();
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
+        OrderingDecision {
+            ordered_ids,
+            rejected,
+            preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
+            group_count: usize::from(!da_batch.tx_ids.is_empty()),
+            critical_wait_blocks: 0,
+        }
+    }
+}
+
+#[derive(Clone)]
+struct PreExecJob {
+    ids: Vec<u64>,
+    result_tx: mpsc::Sender<(u64, bool, String)>,
+}
+
+enum PreExecQueueEntry {
+    Run(PreExecJob),
+    Shutdown,
+}
+
+struct PreExecPoolState {
+    queue: Mutex<VecDeque<PreExecQueueEntry>>,
+    cv: Condvar,
+}
+
+pub(crate) struct PreExecPool {
+    state: Arc<PreExecPoolState>,
+    handles: Vec<thread::JoinHandle<()>>,
+    width: usize,
+}
+
+impl PreExecPool {
+    pub(crate) fn new(
+        snapshot: Arc<StateStore>,
+        picked: Arc<Vec<MockTx>>,
+        workers: usize,
+        candidate_height: u64,
+    ) -> Self {
+        let width = workers.max(1);
+        let state = Arc::new(PreExecPoolState {
+            queue: Mutex::new(VecDeque::new()),
+            cv: Condvar::new(),
+        });
+        let mut handles = Vec::with_capacity(width);
+        for _ in 0..width {
+            let state_cloned = Arc::clone(&state);
+            let snapshot_cloned = Arc::clone(&snapshot);
+            let picked_cloned = Arc::clone(&picked);
+            handles.push(thread::spawn(move || loop {
+                let entry = {
+                    let mut guard = state_cloned.queue.lock().expect("preexec queue poisoned");
+                    loop {
+                        if let Some(entry) = guard.pop_front() {
+                            break entry;
+                        }
+                        guard = state_cloned
+                            .cv
+                            .wait(guard)
+                            .expect("preexec queue poisoned while waiting");
+                    }
+                };
+                match entry {
+                    PreExecQueueEntry::Run(job) => {
+                        for id in job.ids {
+                            let idx = (id - 1) as usize;
+                            let mut local_state = snapshot_cloned.as_ref().clone();
+                            let res = apply_one(
+                                &mut local_state,
+                                picked_cloned[idx].clone(),
+                                candidate_height,
+                            );
+                            match res {
+                                Ok(_) => {
+                                    let _ = job.result_tx.send((id, true, String::new()));
+                                }
+                                Err(e) => {
+                                    let _ = job.result_tx.send((id, false, e.to_string()));
+                                }
+                            }
+                        }
+                    }
+                    PreExecQueueEntry::Shutdown => break,
+                }
+            }));
+        }
+
+        Self {
+            state,
+            handles,
+            width,
+        }
+    }
+
+    fn execute_group(&self, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
+        if group_ids.is_empty() {
+            return (vec![], 0);
+        }
+        let workers = self.width.min(group_ids.len());
+        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for w in 0..workers {
+                let ids: Vec<u64> = group_ids
+                    .iter()
+                    .copied()
+                    .enumerate()
+                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                    .collect();
+                if ids.is_empty() {
+                    continue;
+                }
+                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
+                    ids,
+                    result_tx: tx.clone(),
+                }));
+            }
+        }
+        self.state.cv.notify_all();
+        drop(tx);
+
+        let mut ok_ids = Vec::new();
+        let mut rejected = 0u64;
+        for (id, ok, err) in rx {
+            if ok {
+                ok_ids.push(id);
+            } else {
+                rejected += 1;
+                println!("[preexec] tx_id={} rejected err={}", id, err);
+            }
+        }
+
+        ok_ids.sort_unstable();
+        (ok_ids, rejected)
+    }
+}
+
+impl Drop for PreExecPool {
+    fn drop(&mut self) {
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for _ in 0..self.handles.len() {
+                queue.push_back(PreExecQueueEntry::Shutdown);
+            }
+        }
+        self.state.cv.notify_all();
+        while let Some(handle) = self.handles.pop() {
+            let _ = handle.join();
+        }
+    }
+}
+
+pub(crate) fn pre_execute_group_parallel(
+    pool: &PreExecPool,
+    group_ids: Vec<u64>,
+) -> (Vec<u64>, u64) {
+    pool.execute_group(group_ids)
+}
+
+pub(crate) fn decide_order_for_commit(
+    state: &StateStore,
+    picked: &[MockTx],
+    workers: usize,
+    enable_da_ordering_decouple: bool,
+    candidate_height: u64,
+) -> OrderingDecision {
+    if !enable_da_ordering_decouple {
+        let plan: Vec<Tx> = picked
+            .iter()
+            .enumerate()
+            .map(|(i, tx)| read_write_decl(state, tx, (i as u64) + 1))
+            .collect();
+        let groups = build_parallel_groups(&plan);
+        let group_count = groups.len();
+        let critical_wait_blocks = group_count.saturating_sub(1) as u64;
+        let mut ordered = Vec::new();
+        let mut rejected = 0u64;
+        let pool = PreExecPool::new(
+            Arc::new(state.clone()),
+            Arc::new(picked.to_vec()),
+            workers,
+            candidate_height,
+        );
+        let preexec_started = Instant::now();
+        for g in groups {
+            let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
+            let (ids, rej) = pre_execute_group_parallel(&pool, group_ids);
+            ordered.extend(ids);
+            rejected += rej;
+        }
+        return OrderingDecision {
+            ordered_ids: ordered,
+            rejected,
+            preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
+            group_count,
+            critical_wait_blocks,
+        };
+    }
+
+    let da = LegacyMempoolDaProvider;
+    let ordering = PreexecOrderingEngine;
+    let da_batch = da.batch_from_picked(picked);
+    ordering.decide(state, picked, &da_batch, workers, candidate_height)
+}
