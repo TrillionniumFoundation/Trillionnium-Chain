@@ -154,6 +154,68 @@ TRNM 当前已经具备：
    - 若 skipped / no-commit heights 存在，应优先比较 `hot_object_active_height_rate_ppm` 与 `hot_object_active_observed_height_rate_ppm`；若两者差距明显，再结合 `hot_object_active_height_share_ppm` 与 top/tail share 判断这是局部 burst hotspot，还是更广泛的对象面退化。这样可以避免把热点问题误判成平均上可接受，或把单一热点标签误读成整个对象面都同时恶化；同时也避免把 budget-pressure 视角与 top/tail concentration 视角混为一谈。
    - 一次性 triage 时，先看 coverage（`hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm`），再看 shape（`hot_object_top_label_share_*` / `hot_object_tail_share_*`），最后才用 `hot_object_active_height_share_ppm` 判断这些热点对平均 finality budget 的压力；不要直接把 top share 高低当成 burst 严重度结论。
 
+#### L04 一次性 closeout / triage 最小字段包（便于人工复核）
+
+为避免 block-loop observability 在 closeout 时退回“只看平均 finality / 只看 wall-share”的旧口径，建议把下列字段按 bundle 挨着读，而不是散着看：
+
+- **Scheduler fairness stall bundle**
+  - `critical_wait_active_heights`
+  - `critical_wait_active_height_rate_ppm`
+  - `critical_wait_active_observed_height_rate_ppm`
+  - `critical_wait_density_avg_milli`
+  - `critical_wait_active_height_share_ppm`
+- **Hot-object concentration bundle**
+  - `hot_object_active_heights`
+  - `hot_object_active_height_rate_ppm`
+  - `hot_object_active_observed_height_rate_ppm`
+  - `hot_object_active_top_label_share_avg_ppm`
+  - `hot_object_active_tail_share_avg_ppm`
+  - `hot_object_active_height_share_ppm`
+- **Preexec guardrail bundle**
+  - `preexec_reject_active_heights`
+  - `preexec_reject_active_height_rate_ppm`
+  - `preexec_reject_active_observed_height_rate_ppm`
+  - `preexec_reject_density_avg_milli`
+  - `preexec_reject_active_height_share_ppm`
+  - `preexec_reject_share_bps`
+  - `preexec_conflict_miss_share_bps`
+- **Rollback guardrail bundle**
+  - `rollback_active_heights`
+  - `rollback_active_height_rate_ppm`
+  - `rollback_active_observed_height_rate_ppm`
+  - `rollback_density_avg_milli`
+  - `rollback_active_height_share_ppm`
+  - `apply_error_rollback_share_bps`
+- **Consensus jitter bundle**
+  - `bft_round_change_active_heights`
+  - `bft_round_change_active_height_rate_ppm`
+  - `bft_round_change_active_observed_height_rate_ppm`
+  - `bft_round_change_density_avg_milli`
+  - `bft_round_change_active_height_share_ppm`
+- **Sustained backoff bundle**
+  - `bft_round_change_backoff_active_heights`
+  - `bft_round_change_backoff_active_height_rate_ppm`
+  - `bft_round_change_backoff_active_observed_height_rate_ppm`
+  - `bft_round_change_backoff_density_avg_milli`
+  - `bft_round_change_backoff_active_height_share_ppm`
+  - `bft_round_change_backoff_wall_share_ppm`
+  - `bft_round_change_backoff_share_ppm`
+- **Proposer fairness bundle**
+  - `bft_leader_missed_top_share_ppm`
+  - `bft_leader_missed_active_validators`
+  - `bft_leader_missed_active_validator_share_ppm`
+  - `bft_leader_missed_active_heights`
+  - `bft_leader_missed_active_height_rate_ppm`
+  - `bft_leader_missed_active_observed_height_rate_ppm`
+  - `bft_leader_missed_density_avg_milli`
+  - `bft_leader_missed_active_height_share_ppm`
+- **Denominator / skipped-height sanity bundle**
+  - `bft_commit_observed_height_rate_ppm`
+  - `bft_skipped_height_total`
+  - `bft_skipped_observed_height_rate_ppm`
+
+最小判读顺序固定为：**coverage → burst width → density / shape → active-height budget pressure → wall-share / compatibility alias**。这样可以把“问题只是分母变化”与“问题真的集中爆发”区分开，也避免把 `*_active_height_share_ppm` 与 wall-share / validator-spread 这类不同语义的指标互相替代。
+
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
 - **比 Sui**：对象级执行隔离还不够原生，仍依赖较厚的共享状态层。
