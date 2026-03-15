@@ -70,3 +70,12 @@ Rust 版外置治理骨架（in-memory state machine）：
 3. **版本漂移保护**：同参数并发提案会因版本改变而拒绝执行，避免覆盖
 4. **权限漂移**：撤销 proposer/executor/guardian 后调用失败
 5. **pause 恢复**：pause 立即生效；unpause 到期前失败、到期后成功
+6. **审计日志链路**：提案流转与暂停恢复路径会产生日志，支持链下查询与状态追踪
+
+## 审计日志（v2）
+
+新增 `GovernanceGuard` 可观测能力（便于 indexer + 风控）：
+- `audit_log() -> &[GovernanceEvent]`
+- `consume_audit_log() -> Vec<GovernanceEvent>`
+
+事件包括：`ProposalProposed`、`ProposalQueued`、`ProposalExecuted`、`ProposalCancelled`、`PauseSet`、`PauseRestoreScheduled`、`PauseRestoreExecuted`。

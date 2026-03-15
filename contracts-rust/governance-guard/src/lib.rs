@@ -40,6 +40,50 @@ pub struct GovernanceBridgeState {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GovernanceEvent {
+    ProposalProposed {
+        proposal_id: ProposalId,
+        proposer: String,
+        kind: ProposalKind,
+        param_key: Option<String>,
+        eta: u64,
+    },
+    ProposalQueued {
+        proposal_id: ProposalId,
+        actor: String,
+    },
+    ProposalExecuted {
+        proposal_id: ProposalId,
+        actor: String,
+        kind: ProposalKind,
+        param_key: Option<String>,
+        old_value: Option<String>,
+        new_value: Option<String>,
+        version_before: Option<u64>,
+        version_after: Option<u64>,
+    },
+    ProposalCancelled {
+        proposal_id: ProposalId,
+        actor: String,
+    },
+    PauseSet {
+        actor: String,
+        previous_state: bool,
+        next_state: bool,
+    },
+    PauseRestoreScheduled {
+        proposal_id: ProposalId,
+        proposer: String,
+        eta: u64,
+    },
+    PauseRestoreExecuted {
+        proposal_id: ProposalId,
+        actor: String,
+    },
+    AuditLogCleared,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Error {
     Unauthorized,
     InvalidEta,
@@ -70,6 +114,7 @@ pub struct GovernanceGuard {
     executors: HashSet<String>,
     guardians: HashSet<String>,
     bridge: GovernanceBridgeState,
+    audit_log: Vec<GovernanceEvent>,
 }
 
 impl GovernanceGuard {
@@ -89,6 +134,7 @@ impl GovernanceGuard {
             executors: HashSet::new(),
             guardians,
             bridge: GovernanceBridgeState::default(),
+            audit_log: Vec::new(),
         }
     }
 
@@ -154,7 +200,7 @@ impl GovernanceGuard {
             proposer: caller.to_owned(),
             executor: None,
             eta,
-            param_key,
+            param_key: param_key.clone(),
             old_value: old_value.into(),
             new_value: new_value.into(),
             base_version: Some(base_version),
@@ -163,6 +209,13 @@ impl GovernanceGuard {
             executed_at: None,
         };
         self.proposals.insert(id, proposal);
+        self.audit_log.push(GovernanceEvent::ProposalProposed {
+            proposal_id: id,
+            proposer: caller.to_owned(),
+            kind: ProposalKind::ParamChange,
+            param_key: Some(param_key.clone()),
+            eta,
+        });
         Ok(id)
     }
 
@@ -182,6 +235,10 @@ impl GovernanceGuard {
             return Err(Error::NotQueued);
         }
         proposal.status = ProposalStatus::Queued;
+        self.audit_log.push(GovernanceEvent::ProposalQueued {
+            proposal_id,
+            actor: caller.to_owned(),
+        });
         Ok(())
     }
 
@@ -224,14 +281,24 @@ impl GovernanceGuard {
             return Err(Error::CurrentValueMismatch);
         }
 
-        self.bridge.gov_params.insert(param_key.clone(), new_value);
+        self.bridge.gov_params.insert(param_key.clone(), new_value.clone());
         let next_version = version.saturating_add(1);
-        self.bridge.param_versions.insert(param_key, next_version);
+        self.bridge.param_versions.insert(param_key.clone(), next_version);
 
         let proposal = self.proposal_mut(proposal_id)?;
         proposal.status = ProposalStatus::Executed;
         proposal.executor = Some(caller.to_owned());
         proposal.executed_at = Some(now);
+        self.audit_log.push(GovernanceEvent::ProposalExecuted {
+            proposal_id,
+            actor: caller.to_owned(),
+            kind: ProposalKind::ParamChange,
+            param_key: Some(param_key),
+            old_value: Some(old_value),
+            new_value: Some(new_value),
+            version_before: Some(version),
+            version_after: Some(next_version),
+        });
         Ok(())
     }
 
@@ -255,12 +322,22 @@ impl GovernanceGuard {
         }
 
         proposal.status = ProposalStatus::Cancelled;
+        self.audit_log.push(GovernanceEvent::ProposalCancelled {
+            proposal_id,
+            actor: caller.to_owned(),
+        });
         Ok(())
     }
 
     pub fn emergency_pause(&mut self, caller: &str, _reason_hash: impl Into<String>) -> Result<()> {
         self.require_guardian(caller)?;
+        let previous_state = self.bridge.emergency_paused;
         self.bridge.emergency_paused = true;
+        self.audit_log.push(GovernanceEvent::PauseSet {
+            actor: caller.to_owned(),
+            previous_state,
+            next_state: true,
+        });
         Ok(())
     }
 
@@ -295,6 +372,11 @@ impl GovernanceGuard {
             executed_at: None,
         };
         self.proposals.insert(id, proposal);
+        self.audit_log.push(GovernanceEvent::PauseRestoreScheduled {
+            proposal_id: id,
+            proposer: caller.to_owned(),
+            eta,
+        });
         Ok(id)
     }
 
@@ -331,6 +413,20 @@ impl GovernanceGuard {
         proposal.status = ProposalStatus::Executed;
         proposal.executor = Some(caller.to_owned());
         proposal.executed_at = Some(now);
+        self.audit_log.push(GovernanceEvent::PauseRestoreExecuted {
+            proposal_id,
+            actor: caller.to_owned(),
+        });
+        self.audit_log.push(GovernanceEvent::ProposalExecuted {
+            proposal_id,
+            actor: caller.to_owned(),
+            kind: ProposalKind::EmergencyUnpause,
+            param_key: Some("emergency_pause".to_string()),
+            old_value: Some("true".to_string()),
+            new_value: Some("false".to_string()),
+            version_before: None,
+            version_after: None,
+        });
         Ok(())
     }
 
@@ -340,6 +436,14 @@ impl GovernanceGuard {
 
     pub fn bridge_state(&self) -> &GovernanceBridgeState {
         &self.bridge
+    }
+
+    pub fn audit_log(&self) -> &[GovernanceEvent] {
+        &self.audit_log
+    }
+
+    pub fn consume_audit_log(&mut self) -> Vec<GovernanceEvent> {
+        std::mem::take(&mut self.audit_log)
     }
 
     fn require_admin(&self, caller: &str) -> Result<()> {
@@ -535,6 +639,87 @@ mod tests {
 
         let p = gov.proposal(pid2).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
+    }
+
+    #[test]
+    fn audit_log_records_param_and_pause_events() {
+        let mut gov = setup();
+        let now = 8_000;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "170",
+                eta,
+                "reason-audit",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.execute("exec", pid, eta - 1).unwrap_err();
+
+        gov.execute("exec", pid, eta).unwrap();
+
+        gov.emergency_pause("guardian", "incident").unwrap();
+        let restore_eta = eta + 60;
+        let restore_id = gov
+            .schedule_unpause("guardian", restore_eta, "recover", eta)
+            .unwrap();
+        gov.execute_unpause("exec", restore_id, restore_eta).unwrap();
+
+        let logs = gov.consume_audit_log();
+
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalProposed { proposal_id, proposer, kind: ProposalKind::ParamChange, eta: logged_eta, .. }
+                if *proposal_id == pid
+                    && proposer == "alice"
+                    && *logged_eta == eta
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalQueued { proposal_id, actor } if *proposal_id == pid && actor == "alice"
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted {
+                proposal_id,
+                actor,
+                kind: ProposalKind::ParamChange,
+                version_before,
+                version_after,
+                ..
+            } if *proposal_id == pid
+                && actor == "exec"
+                && version_before == &Some(0)
+                && version_after == &Some(1)
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseSet { actor, previous_state, next_state }
+                if actor == "guardian" && !*previous_state && *next_state
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreScheduled {
+                proposal_id,
+                proposer,
+                eta: logged_restore_eta,
+            } if *proposal_id == restore_id
+                && proposer == "guardian"
+                && *logged_restore_eta == restore_eta
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor }
+                if *proposal_id == restore_id
+                    && actor == "exec"
+        )));
+
+        assert!(gov.audit_log().is_empty());
     }
 
     #[test]
