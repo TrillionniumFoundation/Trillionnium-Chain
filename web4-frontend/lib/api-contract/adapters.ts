@@ -10,8 +10,9 @@ import type {
   QueryCapabilityAuditResult,
   QueryEventsResult,
   QueryTaskResult,
-  TaskStatus,
   QueryNormalizedAuditEventsResult,
+  TaskStatus,
+  NormalizedAuditEventsQuery,
 } from "./types";
 import { FrontendApiError } from "./errors";
 
@@ -277,9 +278,36 @@ export const adaptQueryEvents = (
 
 export const adaptQueryNormalizedAuditEvents = (
   payload: unknown,
+  _query?: NormalizedAuditEventsQuery,
 ): QueryNormalizedAuditEventsResult => {
   const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    const data = canonical.data as {
+      events: Array<{
+        source: string;
+        event_type: string;
+        actor?: string;
+        object_id?: string;
+        related_id?: string;
+        amount?: string | number;
+        reason?: string;
+        note?: string;
+        checkedAt?: string;
+        timestamp?: string;
+        subject?: string;
+      }>;
+      nextCursor?: string;
+      hasMore?: boolean;
+      total?: number;
+    };
+
+    return {
+      events: data.events,
+      nextCursor: data.nextCursor,
+      hasMore: data.hasMore,
+      total: data.total,
+    };
+  }
 
   const rpc = z.array(
     z.object({
@@ -294,7 +322,7 @@ export const adaptQueryNormalizedAuditEvents = (
       checkedAt: checkedAtSchema.optional(),
       recordedAt: z.string().datetime().optional(),
       subject: z.string().optional(),
-    })
+    }),
   ).safeParse(payload);
 
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
@@ -313,7 +341,7 @@ export const adaptQueryNormalizedAuditEvents = (
     subject: event.subject,
   }));
 
-  return { events };
+  return { events, hasMore: false };
 };
 
 export const adaptQueryCapabilityAudit = (

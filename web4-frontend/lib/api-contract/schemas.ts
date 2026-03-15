@@ -67,6 +67,16 @@ export const normalizedAuditEventSchema = z.object({
   subject: z.string().optional(),
 });
 
-export const queryNormalizedAuditEventsResponseSchema = z.object({
+export const queryNormalizedAuditEventsPageSchema = z.object({
   events: z.array(normalizedAuditEventSchema),
+  nextCursor: z.string().min(1).optional(),
+  hasMore: z.boolean().optional(),
+  total: z.number().int().nonnegative().optional(),
 });
+
+export const queryNormalizedAuditEventsResponseSchema = z.union([
+  queryNormalizedAuditEventsPageSchema,
+  z.object({
+    events: z.array(normalizedAuditEventSchema),
+  }),
+]);

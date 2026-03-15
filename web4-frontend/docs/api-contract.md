@@ -56,7 +56,11 @@ const api = createFrontendApiClient({ baseUrl: "https://rpc.example.com" });
 const task = await api.queryTask("task-123");
 const events = await api.queryEvents("task-123", { retries: 3 });
 const audit = await api.queryCapabilityAudit("alice");
-const normalizedEvents = await api.queryNormalizedAuditEvents();
+const normalizedEvents = await api.queryNormalizedAuditEvents({
+  source: "governance-guard",
+  eventType: "governance.proposal_executed",
+  limit: 20,
+});
 ```
 
 ## 变更规则
@@ -67,3 +71,17 @@ const normalizedEvents = await api.queryNormalizedAuditEvents();
   - `schemas.ts`
   - `adapters.ts`
   - 本文档
+
+
+## 统一审计事件分页约定（可选）
+
+`queryNormalizedAuditEvents(query?, options?)` 支持分页参数：
+- `source`：按合约来源过滤（如 `"bridge-relay"` / `"governance-guard"` / `"settlement-vault"`）
+- `eventType`：按事件类型过滤（支持前缀或全量匹配）
+- `limit`：每页数量（正整数）
+- `cursor`：游标（上一次返回 `nextCursor` 继续拉取）
+
+响应可选返回字段：
+- `nextCursor`：下一页游标
+- `hasMore`：是否有更多
+- `total`：后端可选的总记录数估计

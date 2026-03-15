@@ -64,4 +64,15 @@ export type NormalizedAuditEvent = {
 
 export type QueryNormalizedAuditEventsResult = {
   events: NormalizedAuditEvent[];
+  nextCursor?: string;
+  hasMore?: boolean;
+  total?: number;
 };
+
+export type NormalizedAuditEventsQuery = {
+  source?: string;
+  eventType?: string;
+  limit?: number;
+  cursor?: string;
+};
+

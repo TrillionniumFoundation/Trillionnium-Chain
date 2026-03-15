@@ -11,6 +11,7 @@ import type {
   QueryEventsResult,
   QueryNormalizedAuditEventsResult,
   QueryTaskResult,
+  NormalizedAuditEventsQuery,
 } from "./types";
 
 type BaseClientConfig = {
@@ -150,10 +151,20 @@ export function createFrontendApiClient(config: BaseClientConfig) {
     },
 
     queryNormalizedAuditEvents(
+      query: NormalizedAuditEventsQuery = {},
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
-      return getJson(`/query-normalized-audit-events`, options).then(
-        adaptQueryNormalizedAuditEvents,
+      const params = new URLSearchParams();
+      if (query.source) params.set("source", query.source);
+      if (query.eventType) params.set("eventType", query.eventType);
+      if (query.cursor) params.set("cursor", query.cursor);
+      if (query.limit != null && Number.isFinite(query.limit) && query.limit > 0) {
+        params.set("limit", String(Math.trunc(query.limit)));
+      }
+      const qs = params.toString();
+
+      return getJson(`/query-normalized-audit-events${qs ? `?${qs}` : ""}`, options).then(
+        (payload) => adaptQueryNormalizedAuditEvents(payload, query),
       );
     },
 

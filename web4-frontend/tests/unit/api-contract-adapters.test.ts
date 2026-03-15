@@ -306,7 +306,30 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("adapts canonical paginated normalized audit-events payload", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "bridge-relay",
+          event_type: "bridge_relay.proof_submitted",
+          actor: "validator-1",
+          checkedAt: "height:777",
+          note: "first page",
+        },
+      ],
+      hasMore: true,
+      nextCursor: "c2",
+      total: 42,
+    });
+
+    expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
+    expect(out.hasMore).toBe(true);
+    expect(out.nextCursor).toBe("c2");
+    expect(out.total).toBe(42);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
+
     const out = adaptQueryNormalizedAuditEvents({
       events: [
         {
