@@ -1,19 +1,15 @@
 use anyhow::Result;
-use serde::Serialize;
 use std::path::PathBuf;
 
-use crate::{append_submission, commitment, execute_payload, next_task_id};
+use crate::append_submission;
+#[path = "workflow_ops.rs"]
+mod workflow_ops;
 
-#[derive(Debug, Serialize)]
-struct RunOnceOutput {
-    task_id: u64,
-    worker: String,
-    result_hash: String,
-    salt_hex: String,
-    commit_hash: String,
-    template_commit: String,
-    template_reveal: String,
-}
+use crate::next_task_id;
+use workflow_ops::{
+    build_run_once_output, commit_template, compute_commit_hash, compute_result_and_salt,
+    reveal_template,
+};
 
 pub(crate) fn handle_pull_task(state: PathBuf) -> Result<()> {
     let task_id = next_task_id(&state)?;
@@ -22,7 +18,7 @@ pub(crate) fn handle_pull_task(state: PathBuf) -> Result<()> {
 }
 
 pub(crate) fn handle_execute(task_id: u64, worker: String, payload: String) -> Result<()> {
-    let (result_hash, salt_hex) = execute_payload(&payload, task_id);
+    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload);
     println!("[agent] executed task_id={} worker={}", task_id, worker);
     println!("result_hash={}", result_hash);
     println!("salt_hex={}", salt_hex);
@@ -37,19 +33,23 @@ pub(crate) fn handle_commit_reveal(
     submit: bool,
     submit_log: PathBuf,
 ) -> Result<()> {
-    let c = commitment(task_id, &result_hash, &salt_hex, &worker);
+    let commit_hash = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
+    let commit_cmd = commit_template(task_id, &worker, &commit_hash, task_id);
+    let reveal_cmd = reveal_template(task_id, &result_hash, &salt_hex);
+
     println!("[agent] task_id={} worker={}", task_id, worker);
-    println!("commit_hash={}", c);
-    println!(
-        "template_commit=trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, c, task_id
-    );
-    println!(
-        "template_reveal=trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    println!("commit_hash={}", commit_hash);
+    println!("template_commit={}", commit_cmd);
+    println!("template_reveal={}", reveal_cmd);
     if submit {
-        append_submission(&submit_log, task_id, &worker, &c, &result_hash, &salt_hex)?;
+        append_submission(
+            &submit_log,
+            task_id,
+            &worker,
+            &commit_hash,
+            &result_hash,
+            &salt_hex,
+        )?;
         println!("submitted=true submit_log={}", submit_log.display());
     }
     Ok(())
@@ -63,8 +63,8 @@ pub(crate) fn handle_run_once(
     submit_log: PathBuf,
 ) -> Result<()> {
     let task_id = next_task_id(&state)?;
-    let (result_hash, salt_hex) = execute_payload(&payload, task_id);
-    let commit_hash = commitment(task_id, &result_hash, &salt_hex, &worker);
+    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload);
+    let commit_hash = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
     if submit {
         append_submission(
             &submit_log,
@@ -75,21 +75,7 @@ pub(crate) fn handle_run_once(
             &salt_hex,
         )?;
     }
-    let out = RunOnceOutput {
-        task_id,
-        worker: worker.clone(),
-        result_hash: result_hash.clone(),
-        salt_hex: salt_hex.clone(),
-        commit_hash: commit_hash.clone(),
-        template_commit: format!(
-            "trnm-node tx commit-result {} {} {} {}",
-            task_id, worker, commit_hash, task_id
-        ),
-        template_reveal: format!(
-            "trnm-node tx reveal-result {} {} {}",
-            task_id, result_hash, salt_hex
-        ),
-    };
+    let out = build_run_once_output(task_id, &worker, &result_hash, &salt_hex, &commit_hash);
     println!("{}", serde_json::to_string_pretty(&out)?);
     if submit {
         eprintln!("submitted=true submit_log={}", submit_log.display());
