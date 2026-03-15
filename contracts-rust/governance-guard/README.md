@@ -26,6 +26,7 @@ Rust 版外置治理骨架（in-memory state machine）：
 - `proposer`：发起/排队参数提案
 - `executor`：执行已到期提案与 unpause
 - `guardian`：取消提案、触发紧急暂停、安排恢复
+- `proposer`：可撤销自己的待执行提案
 
 ## 与 trnm-state 的映射
 

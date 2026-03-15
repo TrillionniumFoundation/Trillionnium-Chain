@@ -213,11 +213,24 @@ impl GovernanceGuard {
     }
 
     pub fn cancel(&mut self, caller: &str, proposal_id: ProposalId) -> Result<()> {
-        self.require_guardian(caller)?;
+        let (status, proposer) = {
+            let proposal = self.proposal_mut(proposal_id)?;
+            if matches!(proposal.status, ProposalStatus::Executed | ProposalStatus::Cancelled) {
+                return Err(Error::AlreadyFinalized);
+            }
+
+            (proposal.status.clone(), proposal.proposer.clone())
+        };
+
+        if proposer != caller && !self.guardians.contains(caller) {
+            return Err(Error::Unauthorized);
+        }
+
         let proposal = self.proposal_mut(proposal_id)?;
-        if matches!(proposal.status, ProposalStatus::Executed | ProposalStatus::Cancelled) {
+        if proposal.status != status {
             return Err(Error::AlreadyFinalized);
         }
+
         proposal.status = ProposalStatus::Cancelled;
         Ok(())
     }
@@ -480,6 +493,76 @@ mod tests {
 
         let err = gov.queue("bob", pid).unwrap_err();
         assert_eq!(err, Error::WrongProposer);
+
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Pending);
+    }
+
+    #[test]
+    fn proposer_can_cancel_own_proposal() {
+        let mut gov = setup();
+        let now = 2_900;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "140",
+                eta,
+                "reason-cancel",
+                now,
+            )
+            .unwrap();
+
+        gov.cancel("alice", pid).unwrap();
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Cancelled);
+    }
+
+    #[test]
+    fn guardian_can_cancel_any_active_proposal() {
+        let mut gov = setup();
+        let now = 3_000;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "150",
+                eta,
+                "reason-4",
+                now,
+            )
+            .unwrap();
+
+        gov.cancel("guardian", pid).unwrap();
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Cancelled);
+    }
+
+    #[test]
+    fn unauthorized_cancel_is_rejected() {
+        let mut gov = setup();
+        let now = 3_100;
+        let eta = now + 60;
+        gov.set_role("admin", "bob", true, false).unwrap();
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "160",
+                eta,
+                "reason-5",
+                now,
+            )
+            .unwrap();
+
+        let err = gov.cancel("bob", pid).unwrap_err();
+        assert_eq!(err, Error::Unauthorized);
 
         let p = gov.proposal(pid).unwrap();
         assert_eq!(p.status, ProposalStatus::Pending);
