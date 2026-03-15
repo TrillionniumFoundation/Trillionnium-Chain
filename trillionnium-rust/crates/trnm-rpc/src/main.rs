@@ -28,8 +28,17 @@ use trnm_types::{
     TaskStatus, TransferTx,
 };
 
+mod envpaths;
 mod http;
 
+#[cfg(test)]
+use crate::envpaths::run_root;
+use crate::envpaths::{
+    account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
+    faucet_limits_file, identity_registry_file, ingress_file, market_bids_file,
+    market_lock_stale_after_ms, market_lock_timeout_ms, market_reputation_file, market_tasks_file,
+    normalized_path_from_env, submit_message_max_bytes, task_state_file, tx_lifecycle_file,
+};
 #[cfg(test)]
 use crate::http::parse_http_get_path;
 use crate::http::{
@@ -973,14 +982,6 @@ fn governance_state() -> StateStore {
     st
 }
 
-fn run_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."))
-}
-
 fn now_ms() -> u128 {
     if let Ok(v) = std::env::var("TRNM_RPC_NOW_MS") {
         if let Ok(parsed) = v.parse::<u128>() {
@@ -991,13 +992,6 @@ fn now_ms() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0)
-}
-
-fn identity_registry_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
-        return path;
-    }
-    run_root().join("run/rpc/identity_registry.json")
 }
 
 fn load_identity_registry(path: &Path) -> IdentityRegistry {
@@ -1050,36 +1044,6 @@ fn query_capability_audit(
     })
 }
 
-fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
-    std::env::var(name)
-        .ok()
-        .and_then(|v| {
-            let normalized = normalize_wrapped_env_value(&v);
-            if normalized.is_empty() {
-                None
-            } else {
-                normalized.parse::<u64>().ok()
-            }
-        })
-        .map(|v| v.max(min))
-        .unwrap_or(default.max(min))
-}
-
-fn env_u32_with_min(name: &str, default: u32, min: u32) -> u32 {
-    std::env::var(name)
-        .ok()
-        .and_then(|v| {
-            let normalized = normalize_wrapped_env_value(&v);
-            if normalized.is_empty() {
-                None
-            } else {
-                normalized.parse::<u32>().ok()
-            }
-        })
-        .map(|v| v.max(min))
-        .unwrap_or(default.max(min))
-}
-
 fn make_request_id(
     channel: &str,
     user_id: &str,
@@ -1099,63 +1063,6 @@ fn make_request_id(
     h.update(ts.to_string().as_bytes());
     let digest = hex::encode(h.finalize());
     format!("req_{}", &digest[..16])
-}
-
-fn ingress_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_INGRESS_FILE") {
-        return path;
-    }
-    run_root().join("run/message-gateway/requests.jsonl")
-}
-
-fn submit_message_max_bytes() -> u64 {
-    env_u64_with_min(
-        SUBMIT_MESSAGE_MAX_BYTES_ENV,
-        SUBMIT_MESSAGE_MAX_BYTES_DEFAULT,
-        SUBMIT_MESSAGE_MAX_BYTES_MIN,
-    )
-}
-
-fn normalize_wrapped_env_value(raw: &str) -> &str {
-    let mut normalized = raw.trim();
-    while normalized.len() >= 2 {
-        let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
-            || (normalized.starts_with('\'') && normalized.ends_with('\''))
-            || (normalized.starts_with('`') && normalized.ends_with('`'));
-        if !wrapped_by_quotes {
-            break;
-        }
-        normalized = normalized[1..normalized.len() - 1].trim();
-    }
-    normalized
-}
-
-fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
-    let raw = std::env::var(name).ok()?;
-    let normalized = normalize_wrapped_env_value(&raw);
-    if normalized.is_empty() {
-        None
-    } else {
-        Some(PathBuf::from(normalized))
-    }
-}
-
-fn market_tasks_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE") {
-        return path;
-    }
-    run_root().join("run/market/tasks.jsonl")
-}
-
-fn market_bids_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_BIDS_FILE") {
-        return path;
-    }
-    run_root().join("run/market/bids.jsonl")
-}
-
-fn task_state_file() -> Option<PathBuf> {
-    normalized_path_from_env(TASK_STATE_FILE_ENV)
 }
 
 fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
@@ -1281,32 +1188,6 @@ fn market_lock_path(path: &Path) -> PathBuf {
     path.with_file_name(format!("{}.lock", file_name))
 }
 
-fn market_lock_stale_after_ms() -> Option<u128> {
-    let raw = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok()?;
-    let normalized = normalize_wrapped_env_value(&raw);
-    if normalized.is_empty() {
-        return None;
-    }
-    let parsed = normalized.parse::<u128>().ok()?;
-    Some(parsed.clamp(1_000, 15 * 60 * 1_000))
-}
-
-fn market_lock_timeout_ms() -> u64 {
-    let raw = match std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") {
-        Ok(v) => v,
-        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
-    };
-    let normalized = normalize_wrapped_env_value(&raw);
-    if normalized.is_empty() {
-        return MARKET_LOCK_TIMEOUT_MS_DEFAULT;
-    }
-    let parsed = match normalized.parse::<u64>() {
-        Ok(v) => v,
-        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
-    };
-    parsed.clamp(MARKET_LOCK_TIMEOUT_MS_MIN, MARKET_LOCK_TIMEOUT_MS_MAX)
-}
-
 fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
     let lock_path = market_lock_path(path);
     if let Some(parent) = lock_path.parent() {
@@ -1420,13 +1301,6 @@ fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
         out.push('\n');
     }
     write_string_atomically(&path, &out)
-}
-
-fn market_reputation_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env(MARKET_REPUTATION_FILE_ENV) {
-        return path;
-    }
-    run_root().join("run/market/reputation.json")
 }
 
 fn normalize_market_worker_key(raw: &str) -> Option<String> {
@@ -1548,22 +1422,6 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
         }
     }
     normalized
-}
-
-fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
-    std::env::var(name)
-        .ok()
-        .and_then(|v| normalize_wrapped_env_value(&v).parse::<u128>().ok())
-        .map(|v| v.clamp(min, max))
-        .unwrap_or(default)
-}
-
-fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
-    std::env::var(name)
-        .ok()
-        .and_then(|v| normalize_wrapped_env_value(&v).parse::<i64>().ok())
-        .map(|v| v.clamp(min, max))
-        .unwrap_or(default)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -1954,13 +1812,6 @@ fn transition_request_status(current: &str, to: RequestStatus) -> Result<String>
     Ok(next.as_str().to_string())
 }
 
-fn account_state_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_ACCOUNTS_FILE") {
-        return path;
-    }
-    run_root().join("run/rpc/accounts.json")
-}
-
 fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
@@ -1973,24 +1824,10 @@ fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) ->
     atomic_write_text_file(path, &content)
 }
 
-fn tx_lifecycle_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_TX_FILE") {
-        return path;
-    }
-    run_root().join("run/rpc/txs.json")
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct FaucetRateEntry {
     window_start_unix_ms: u128,
     count_in_window: u32,
-}
-
-fn faucet_limits_file() -> PathBuf {
-    if let Some(path) = normalized_path_from_env("TRNM_RPC_FAUCET_LIMITS_FILE") {
-        return path;
-    }
-    run_root().join("run/rpc/faucet_limits.json")
 }
 
 fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
