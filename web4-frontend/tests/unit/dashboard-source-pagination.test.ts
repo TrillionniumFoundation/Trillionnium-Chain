@@ -90,6 +90,72 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("falls back to defaults when env values are invalid", async () => {
+    const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+    const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = "bad";
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "-1";
+
+    try {
+      const mockClient = {
+        queryTask: vi
+          .fn()
+          .mockResolvedValue({
+            task: {
+              id: "343",
+              owner: "ops",
+              status: "running",
+              createdAt: "2026-03-01T00:00:00.000Z",
+              metadata: {},
+            },
+          }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "343",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi
+          .fn()
+          .mockResolvedValue({
+            events: [],
+            hasMore: false,
+          }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      const snapshot = await fetchDashboardSnapshot();
+
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledWith({
+        limit: 60,
+      });
+      expect(snapshot.events).toBeDefined();
+    } finally {
+      if (previousLimit === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = previousLimit;
+      }
+
+      if (previousPages === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = previousPages;
+      }
+    }
+  });
+
   it("loads multiple normalized audit pages and merges into dashboard events", async () => {
     const mockClient = {
       queryTask: vi

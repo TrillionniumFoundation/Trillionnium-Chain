@@ -72,6 +72,8 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 
 说明：若设置非法值（空/非数字/小于等于 0），系统回退为默认值。
 
+推荐把上述变量同步维护在 `web4-frontend/.env.example`，按环境复制为 `.env.local`/部署注入。
+
 
 ## Dashboard 消费策略
 
