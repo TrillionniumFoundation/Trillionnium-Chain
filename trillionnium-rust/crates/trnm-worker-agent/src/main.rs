@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::HashSet,
     env,
     fs::{self, OpenOptions},
     io::Write,
@@ -12,8 +12,20 @@ use std::{
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
+#[cfg(test)]
+use std::collections::BTreeMap;
+mod audit;
 mod proof_adapter;
 
+use audit::{handle_export_audit, handle_query_audit};
+#[cfg(test)]
+pub(crate) use audit::{
+    audit_export_index_path, build_audit_export_index, build_provenance_fingerprint,
+    detect_audit_export_format, query_audit_export_by_provenance_fingerprint,
+    query_audit_export_by_task_id, render_enterprise_audit_markdown, to_enterprise_audit_export,
+    validate_audit_export_index, AuditExportFormat, AuditExportIndex,
+    EnterpriseAuditExportRecord, QueryAuditOutput,
+};
 use proof_adapter::{build_proof_adapter, ProofAdapter, DEFAULT_PROOF_ADAPTER};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
@@ -186,457 +198,53 @@ struct SubmissionRecord {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MessageIngressRecord {
-    request_id: String,
-    task_id: u64,
-    channel: String,
-    user_id: String,
-    session_id: String,
-    text: String,
-    idempotency_key: String,
-    status: String,
-    created_at_unix_ms: u128,
+pub(crate) struct MessageIngressRecord {
+    pub(crate) request_id: String,
+    pub(crate) task_id: u64,
+    pub(crate) channel: String,
+    pub(crate) user_id: String,
+    pub(crate) session_id: String,
+    pub(crate) text: String,
+    pub(crate) idempotency_key: String,
+    pub(crate) status: String,
+    pub(crate) created_at_unix_ms: u128,
     #[serde(default)]
-    assigned_worker: Option<String>,
+    pub(crate) assigned_worker: Option<String>,
     #[serde(default)]
-    assigned_at_unix_ms: Option<u128>,
+    pub(crate) assigned_at_unix_ms: Option<u128>,
     #[serde(default)]
-    model_output: Option<String>,
+    pub(crate) model_output: Option<String>,
     #[serde(default)]
-    provider_request_id: Option<String>,
+    pub(crate) provider_request_id: Option<String>,
     #[serde(default)]
-    provenance_schema_version: Option<String>,
+    pub(crate) provenance_schema_version: Option<String>,
     #[serde(default)]
-    llm_provenance: Option<LlmProvenanceRecord>,
+    pub(crate) llm_provenance: Option<LlmProvenanceRecord>,
     #[serde(default)]
-    result_hash: Option<String>,
+    pub(crate) result_hash: Option<String>,
     #[serde(default)]
-    verifier_status: Option<String>,
+    pub(crate) verifier_status: Option<String>,
     #[serde(default)]
-    resolution_code: Option<String>,
+    pub(crate) resolution_code: Option<String>,
     #[serde(default)]
-    commit_tx_hash: Option<String>,
+    pub(crate) commit_tx_hash: Option<String>,
     #[serde(default)]
-    reveal_tx_hash: Option<String>,
+    pub(crate) reveal_tx_hash: Option<String>,
     #[serde(default)]
-    adapter_error: Option<String>,
+    pub(crate) adapter_error: Option<String>,
     #[serde(default)]
-    reputation_delta: Option<i32>,
+    pub(crate) reputation_delta: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct LlmProvenanceRecord {
-    provider: Option<String>,
-    model: Option<String>,
-    adapter: Option<String>,
+pub(crate) struct LlmProvenanceRecord {
+    pub(crate) provider: Option<String>,
+    pub(crate) model: Option<String>,
+    pub(crate) adapter: Option<String>,
     #[serde(default)]
-    agent_protocol: Option<String>,
+    pub(crate) agent_protocol: Option<String>,
     #[serde(default)]
-    compliance_profile: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-struct EnterpriseAuditExportRecord {
-    request_id: String,
-    task_id: u64,
-    status: String,
-    provider_request_id: Option<String>,
-    provenance_schema_version: Option<String>,
-    provenance_fingerprint: Option<String>,
-    provider: Option<String>,
-    model: Option<String>,
-    adapter: Option<String>,
-    agent_protocol: Option<String>,
-    compliance_profile: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-struct AuditExportIndex {
-    version: u8,
-    total_records: usize,
-    by_task_id: BTreeMap<String, Vec<usize>>,
-    by_status: BTreeMap<String, Vec<usize>>,
-    by_status_phase: BTreeMap<String, Vec<usize>>,
-    by_provider: BTreeMap<String, Vec<usize>>,
-    by_model: BTreeMap<String, Vec<usize>>,
-    by_agent_protocol: BTreeMap<String, Vec<usize>>,
-    by_compliance_profile: BTreeMap<String, Vec<usize>>,
-    by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
-}
-
-fn audit_status_phase(status: &str) -> &'static str {
-    match status {
-        "completed" | "slashed" | "rejected" | "cancelled" => "terminal",
-        _ => "active",
-    }
-}
-
-fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
-    let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_status = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_status_phase = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_model = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_compliance_profile = BTreeMap::<String, Vec<usize>>::new();
-    let mut by_provenance_fingerprint = BTreeMap::<String, Vec<usize>>::new();
-
-    for (idx, rec) in exports.iter().enumerate() {
-        by_task_id
-            .entry(rec.task_id.to_string())
-            .or_default()
-            .push(idx);
-
-        if let Some(status) = normalized_optional_field(Some(rec.status.as_str())) {
-            let normalized_status = status.to_ascii_lowercase();
-            by_status
-                .entry(normalized_status.clone())
-                .or_default()
-                .push(idx);
-            by_status_phase
-                .entry(audit_status_phase(&normalized_status).to_string())
-                .or_default()
-                .push(idx);
-        }
-
-        if let Some(provider) = normalized_optional_field(rec.provider.as_deref()) {
-            by_provider.entry(provider).or_default().push(idx);
-        }
-
-        if let Some(model) = normalized_optional_field(rec.model.as_deref()) {
-            by_model.entry(model).or_default().push(idx);
-        }
-
-        if let Some(agent_protocol) = normalized_agent_protocol(rec.agent_protocol.as_deref()) {
-            by_agent_protocol
-                .entry(agent_protocol)
-                .or_default()
-                .push(idx);
-        }
-
-        if let Some(compliance_profile) =
-            normalized_compliance_profile(rec.compliance_profile.as_deref())
-        {
-            by_compliance_profile
-                .entry(compliance_profile)
-                .or_default()
-                .push(idx);
-        }
-
-        if let Some(fingerprint) =
-            normalized_provenance_label(rec.provenance_fingerprint.as_deref(), 128)
-                .map(|value| value.to_ascii_lowercase())
-        {
-            by_provenance_fingerprint
-                .entry(fingerprint)
-                .or_default()
-                .push(idx);
-        }
-    }
-
-    AuditExportIndex {
-        version: 1,
-        total_records: exports.len(),
-        by_task_id,
-        by_status,
-        by_status_phase,
-        by_provider,
-        by_model,
-        by_agent_protocol,
-        by_compliance_profile,
-        by_provenance_fingerprint,
-    }
-}
-
-fn query_audit_export_by_task_id<'a>(
-    exports: &'a [EnterpriseAuditExportRecord],
-    index: &AuditExportIndex,
-    task_id: u64,
-) -> Vec<&'a EnterpriseAuditExportRecord> {
-    index
-        .by_task_id
-        .get(&task_id.to_string())
-        .into_iter()
-        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
-        .collect()
-}
-
-fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
-    let mut normalized =
-        trim_boundary_audit_fillers(normalized_optional_field(Some(value))?.as_str()).to_string();
-
-    // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
-    // while still fail-closing on empty/invalid labels after normalization.
-    // Keep recursive unwrapping bounded, but generous enough to tolerate repeated
-    // shell/env forwarding hops seen in automation pipelines.
-    for _ in 0..16 {
-        let bytes = normalized.as_bytes();
-        let mut peeled = false;
-
-        if bytes.len() >= 2
-            && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
-                || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
-                || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
-        {
-            normalized = normalized[1..normalized.len() - 1].trim().to_string();
-            peeled = true;
-        } else if bytes.len() >= 4
-            && bytes[0] == b'\\'
-            && bytes[bytes.len() - 2] == b'\\'
-            && ((bytes[1] == b'\'' && bytes[bytes.len() - 1] == b'\'')
-                || (bytes[1] == b'"' && bytes[bytes.len() - 1] == b'"')
-                || (bytes[1] == b'`' && bytes[bytes.len() - 1] == b'`'))
-        {
-            normalized = normalized[2..normalized.len() - 2].trim().to_string();
-            peeled = true;
-        }
-
-        if peeled {
-            normalized = trim_boundary_audit_fillers(normalized.as_str()).to_string();
-            if normalized.is_empty() {
-                return None;
-            }
-            continue;
-        }
-
-        break;
-    }
-    normalized_provenance_label(Some(normalized.as_str()), 128).map(|v| v.to_ascii_lowercase())
-}
-
-fn query_audit_export_by_provenance_fingerprint<'a>(
-    exports: &'a [EnterpriseAuditExportRecord],
-    index: &AuditExportIndex,
-    provenance_fingerprint: &str,
-) -> Vec<&'a EnterpriseAuditExportRecord> {
-    let Some(normalized) = normalize_provenance_fingerprint_lookup(provenance_fingerprint) else {
-        return Vec::new();
-    };
-    index
-        .by_provenance_fingerprint
-        .get(&normalized)
-        .into_iter()
-        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
-        .collect()
-}
-
-#[derive(Debug, Serialize)]
-struct QueryAuditRecord {
-    #[serde(flatten)]
-    record: EnterpriseAuditExportRecord,
-    proof_type: Option<String>,
-    settlement_status: String,
-    timestamp_unix_ms: Option<u128>,
-}
-
-impl From<EnterpriseAuditExportRecord> for QueryAuditRecord {
-    fn from(record: EnterpriseAuditExportRecord) -> Self {
-        let settlement_status = record.status.clone();
-        Self {
-            record,
-            proof_type: None,
-            settlement_status,
-            timestamp_unix_ms: None,
-        }
-    }
-}
-
-#[derive(Debug, Serialize)]
-struct QueryAuditOutput {
-    hit_indexes: Vec<usize>,
-    records: Vec<QueryAuditRecord>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    provenance_fingerprint: Option<String>,
-}
-
-fn audit_export_index_path(output_file: &Path) -> PathBuf {
-    PathBuf::from(format!("{}.index.json", output_file.display()))
-}
-
-fn validate_audit_export_index(index: &AuditExportIndex, exports_len: usize) -> Result<()> {
-    if index.version != 1 {
-        anyhow::bail!(
-            "unsupported audit index version={} (expected=1)",
-            index.version
-        );
-    }
-    if index.total_records != exports_len {
-        anyhow::bail!(
-            "audit index total_records mismatch: index={} exports={}",
-            index.total_records,
-            exports_len
-        );
-    }
-
-    for (label, offsets) in [
-        ("by_task_id", &index.by_task_id),
-        ("by_status", &index.by_status),
-        ("by_status_phase", &index.by_status_phase),
-        ("by_provider", &index.by_provider),
-        ("by_model", &index.by_model),
-        ("by_agent_protocol", &index.by_agent_protocol),
-        ("by_compliance_profile", &index.by_compliance_profile),
-        (
-            "by_provenance_fingerprint",
-            &index.by_provenance_fingerprint,
-        ),
-    ] {
-        for (key, rows) in offsets {
-            for idx in rows {
-                if *idx >= index.total_records {
-                    anyhow::bail!(
-                        "audit index offset out of bounds: map={} key={} idx={} total_records={}",
-                        label,
-                        key,
-                        idx,
-                        index.total_records
-                    );
-                }
-            }
-        }
-    }
-
-    Ok(())
-}
-
-fn build_provenance_fingerprint(
-    schema_version: Option<&str>,
-    provider: Option<&str>,
-    model: Option<&str>,
-    adapter: Option<&str>,
-    agent_protocol: Option<&str>,
-    compliance_profile: Option<&str>,
-) -> Option<String> {
-    let schema = schema_version?;
-    let has_any_provenance_label = provider.is_some()
-        || model.is_some()
-        || adapter.is_some()
-        || agent_protocol.is_some()
-        || compliance_profile.is_some();
-    if !has_any_provenance_label {
-        return None;
-    }
-
-    let material = format!(
-        "schema={};provider={};model={};adapter={};agent_protocol={};compliance_profile={}",
-        schema,
-        provider.unwrap_or("-"),
-        model.unwrap_or("-"),
-        adapter.unwrap_or("-"),
-        agent_protocol.unwrap_or("-"),
-        compliance_profile.unwrap_or("-")
-    );
-    let mut h = Sha256::new();
-    h.update(material.as_bytes());
-    Some(hex::encode(h.finalize()))
-}
-
-fn normalized_schema_version(value: Option<&str>) -> Option<String> {
-    let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
-    let alias_key: String = normalized
-        .chars()
-        .filter(|c| c.is_ascii_alphanumeric())
-        .collect();
-    match alias_key.as_str() {
-        "llmv1" | "llm1" => Some("llm.v1".to_string()),
-        "llmv2" | "llm2" => Some("llm.v2".to_string()),
-        _ => None,
-    }
-}
-
-fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExportRecord {
-    let provenance = rec.llm_provenance.as_ref();
-    let schema_version = normalized_schema_version(rec.provenance_schema_version.as_deref());
-    let is_v2 = schema_version.as_deref() == Some("llm.v2");
-
-    // Re-normalize persisted provenance to fail-closed on legacy/corrupt snapshots.
-    let provider = normalized_provenance_label(provenance.and_then(|p| p.provider.as_deref()), 64);
-    let model = normalized_provenance_label(provenance.and_then(|p| p.model.as_deref()), 128);
-    let adapter = normalized_provenance_label(provenance.and_then(|p| p.adapter.as_deref()), 64);
-    let agent_protocol = is_v2
-        .then(|| normalized_agent_protocol(provenance.and_then(|p| p.agent_protocol.as_deref())))
-        .flatten();
-    let compliance_profile = is_v2
-        .then(|| {
-            normalized_compliance_profile(provenance.and_then(|p| p.compliance_profile.as_deref()))
-        })
-        .flatten();
-
-    let provenance_fingerprint = build_provenance_fingerprint(
-        schema_version.as_deref(),
-        provider.as_deref(),
-        model.as_deref(),
-        adapter.as_deref(),
-        agent_protocol.as_deref(),
-        compliance_profile.as_deref(),
-    );
-
-    EnterpriseAuditExportRecord {
-        request_id: rec.request_id.clone(),
-        task_id: rec.task_id,
-        status: rec.status.clone(),
-        provider_request_id: normalized_provider_request_id(rec.provider_request_id.as_deref()),
-        provenance_schema_version: schema_version,
-        provenance_fingerprint,
-        provider,
-        model,
-        adapter,
-        agent_protocol,
-        compliance_profile,
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum AuditExportFormat {
-    Jsonl,
-    Markdown,
-}
-
-fn detect_audit_export_format(path: &Path) -> AuditExportFormat {
-    if path
-        .extension()
-        .and_then(|ext| ext.to_str())
-        .map(|ext| ext.eq_ignore_ascii_case("md") || ext.eq_ignore_ascii_case("markdown"))
-        .unwrap_or(false)
-    {
-        AuditExportFormat::Markdown
-    } else {
-        AuditExportFormat::Jsonl
-    }
-}
-
-fn markdown_escape(value: Option<&str>) -> String {
-    value
-        .unwrap_or("-")
-        .replace(['\r', '\n'], " ")
-        .replace('|', "\\|")
-}
-
-fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> String {
-    let mut out = String::from(
-        "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
-    );
-    out.push_str("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
-
-    for rec in exports {
-        let row = format!(
-            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
-            markdown_escape(Some(rec.request_id.as_str())),
-            rec.task_id,
-            markdown_escape(Some(rec.status.as_str())),
-            markdown_escape(rec.provider_request_id.as_deref()),
-            markdown_escape(rec.provenance_schema_version.as_deref()),
-            markdown_escape(rec.provenance_fingerprint.as_deref()),
-            markdown_escape(rec.provider.as_deref()),
-            markdown_escape(rec.model.as_deref()),
-            markdown_escape(rec.adapter.as_deref()),
-            markdown_escape(rec.agent_protocol.as_deref()),
-            markdown_escape(rec.compliance_profile.as_deref()),
-        );
-        out.push_str(&row);
-    }
-
-    out
+    pub(crate) compliance_profile: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -830,7 +438,7 @@ fn is_task_acked(ack_log: &PathBuf, task_id: u64) -> bool {
     load_acked(ack_log).contains(&task_id)
 }
 
-fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
+pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
     if !path.exists() {
         return Ok(vec![]);
     }
@@ -1624,18 +1232,18 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
     ("accepted", "ok")
 }
 
-fn normalized_optional_field(value: Option<&str>) -> Option<String> {
+pub(crate) fn normalized_optional_field(value: Option<&str>) -> Option<String> {
     value
         .map(str::trim)
         .filter(|v| !v.is_empty())
         .map(ToOwned::to_owned)
 }
 
-fn trim_boundary_audit_fillers(value: &str) -> &str {
+pub(crate) fn trim_boundary_audit_fillers(value: &str) -> &str {
     value.trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
 }
 
-fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
+pub(crate) fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
     let normalized =
         trim_boundary_audit_fillers(normalized_optional_field(value)?.as_str()).to_string();
     if normalized.is_empty() {
@@ -1657,7 +1265,7 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
     }
 }
 
-fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
+pub(crate) fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
     let normalized = normalized_optional_field(value)?;
     let has_disallowed_chars = normalized
         .chars()
@@ -1669,7 +1277,7 @@ fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<St
     }
 }
 
-fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
+pub(crate) fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
     let has_disallowed_chars = normalized
         .chars()
@@ -2068,7 +1676,7 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     }
 }
 
-fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
+pub(crate) fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let raw = normalized_optional_field(value)?.to_ascii_lowercase();
     let has_disallowed_chars = raw
         .chars()
@@ -2803,122 +2411,12 @@ fn main() -> Result<()> {
         Command::ExportAudit {
             ingress_file,
             output_file,
-        } => {
-            let records = load_ingress_records(&ingress_file)?;
-            let mut exports = Vec::new();
-
-            for rec in records.iter() {
-                // Only export finalized or processed requests
-                if matches!(
-                    rec.status.as_str(),
-                    "reveal_submitted" | "rejected" | "failed_submission" | "failed_adapter"
-                ) {
-                    exports.push(to_enterprise_audit_export(rec));
-                }
-            }
-
-            if let Some(parent) = output_file.parent() {
-                fs::create_dir_all(parent)?;
-            }
-
-            let mut file = fs::File::create(&output_file)?;
-            match detect_audit_export_format(&output_file) {
-                AuditExportFormat::Jsonl => {
-                    for export in exports.iter() {
-                        let line = serde_json::to_string(export)?;
-                        file.write_all(line.as_bytes())?;
-                        file.write_all(b"\n")?;
-                    }
-                }
-                AuditExportFormat::Markdown => {
-                    file.write_all(render_enterprise_audit_markdown(&exports).as_bytes())?;
-                }
-            }
-
-            let index = build_audit_export_index(&exports);
-            if let Some(first) = exports.first() {
-                let _ = query_audit_export_by_task_id(&exports, &index, first.task_id);
-            }
-            let index_file = audit_export_index_path(&output_file);
-            fs::write(&index_file, serde_json::to_string_pretty(&index)?)?;
-
-            println!(
-                "[agent] exported audit records={} file={} index_file={} format={:?}",
-                exports.len(),
-                output_file.display(),
-                index_file.display(),
-                detect_audit_export_format(&output_file)
-            );
-        }
+        } => handle_export_audit(ingress_file, output_file)?,
         Command::QueryAudit {
             output_file,
             task_id,
             provenance_fingerprint,
-        } => {
-            if task_id.is_some() == provenance_fingerprint.is_some() {
-                return Err(anyhow!(
-                    "query-audit requires exactly one filter: --task-id or --provenance-fingerprint"
-                ));
-            }
-
-            let index_file = audit_export_index_path(&output_file);
-            if !index_file.exists() {
-                return Err(anyhow!(
-                    "query-audit missing index file: {}",
-                    index_file.display()
-                ));
-            }
-
-            if detect_audit_export_format(&output_file) != AuditExportFormat::Jsonl {
-                return Err(anyhow!(
-                    "query-audit only supports JSONL audit exports: {}",
-                    output_file.display()
-                ));
-            }
-
-            let mut exports = Vec::new();
-            for line in fs::read_to_string(&output_file)?.lines() {
-                if line.trim().is_empty() {
-                    continue;
-                }
-                exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
-            }
-            let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
-            validate_audit_export_index(&index, exports.len())?;
-
-            let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
-                let key = task_id.to_string();
-                let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();
-                let rows: Vec<EnterpriseAuditExportRecord> =
-                    query_audit_export_by_task_id(&exports, &index, task_id)
-                        .into_iter()
-                        .cloned()
-                        .collect();
-                (hits, rows, None)
-            } else {
-                let raw = provenance_fingerprint.expect("checked above");
-                let normalized = normalize_provenance_fingerprint_lookup(raw.as_str())
-                    .ok_or_else(|| anyhow!("invalid provenance fingerprint filter"))?;
-                let hits = index
-                    .by_provenance_fingerprint
-                    .get(&normalized)
-                    .cloned()
-                    .unwrap_or_default();
-                let rows: Vec<EnterpriseAuditExportRecord> =
-                    query_audit_export_by_provenance_fingerprint(&exports, &index, &normalized)
-                        .into_iter()
-                        .cloned()
-                        .collect();
-                (hits, rows, Some(normalized))
-            };
-
-            let out = QueryAuditOutput {
-                hit_indexes,
-                records: records.into_iter().map(QueryAuditRecord::from).collect(),
-                provenance_fingerprint: normalized_fp,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        } => handle_query_audit(output_file, task_id, provenance_fingerprint)?,
     }
     Ok(())
 }
