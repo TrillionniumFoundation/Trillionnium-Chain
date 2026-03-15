@@ -7,3 +7,4 @@ license = "MIT"
 
 [dependencies]
 sha2 = "0.10"
+sha3 = "0.10"

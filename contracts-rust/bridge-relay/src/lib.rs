@@ -1,18 +1,9 @@
-use sha2::{Digest, Sha256};
+use sha2::{Digest as Sha256Digest, Sha256};
+use sha3::{Digest as KeccakDigest, Keccak256};
 use std::collections::HashSet;
 
-pub const ACTION_SETTLEMENT_FINALIZE: [u8; 32] = keccak_placeholder(b"SETTLEMENT_FINALIZE");
-
-const fn keccak_placeholder(input: &[u8]) -> [u8; 32] {
-    // Deterministic placeholder constant builder for MVP skeleton.
-    // Not cryptographic keccak. Used only for fixed action domain value.
-    let mut out = [0u8; 32];
-    let mut i = 0;
-    while i < input.len() && i < 32 {
-        out[i] = input[i];
-        i += 1;
-    }
-    out
+pub fn action_settlement_finalize() -> [u8; 32] {
+    Keccak256::digest(b"SETTLEMENT_FINALIZE").into()
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -38,6 +29,9 @@ pub enum BridgeRelayError {
     SettlementAlreadyFinalized { settlement_id: [u8; 32] },
     InvalidTargetChain { expected: u64, got: u64 },
     InvalidTargetBridge { expected: [u8; 20], got: [u8; 20] },
+    InvalidValidatorSignatureLength { got: usize },
+    UnknownValidator { validator: [u8; 32] },
+    DuplicateValidatorSignature { validator: [u8; 32] },
     NotEnoughValidatorSignatures { required: usize, got: usize },
 }
 
@@ -46,12 +40,17 @@ pub struct BridgeRelay {
     proof_used: HashSet<[u8; 32]>,
     nonce_used: HashSet<[u8; 32]>,
     settlement_finalized: HashSet<[u8; 32]>,
+    validators: HashSet<[u8; 32]>,
     min_validator_signatures: usize,
 }
 
 impl BridgeRelay {
-    pub fn new(min_validator_signatures: usize) -> Self {
+    pub fn new(
+        min_validator_signatures: usize,
+        validators: impl IntoIterator<Item = [u8; 32]>,
+    ) -> Self {
         Self {
+            validators: validators.into_iter().collect(),
             min_validator_signatures,
             ..Self::default()
         }
@@ -77,7 +76,7 @@ impl BridgeRelay {
             return Err(BridgeRelayError::ProofAlreadyUsed { proof_digest });
         }
 
-        let valid_count = signatures.len();
+        let valid_count = self.validate_validator_signatures(signatures)?;
         if valid_count < self.min_validator_signatures {
             return Err(BridgeRelayError::NotEnoughValidatorSignatures {
                 required: self.min_validator_signatures,
@@ -143,7 +142,7 @@ impl BridgeRelay {
             message.source_bridge_id,
             message.target_chain_id,
             message.target_bridge,
-            ACTION_SETTLEMENT_FINALIZE,
+            action_settlement_finalize(),
             message.nonce,
         )?;
 
@@ -181,6 +180,37 @@ impl BridgeRelay {
 
         Ok(())
     }
+
+    fn validate_validator_signatures(
+        &self,
+        signatures: &[Vec<u8>],
+    ) -> Result<usize, BridgeRelayError> {
+        let mut seen = HashSet::new();
+
+        for signature in signatures {
+            let validator = parse_validator_signature(signature)?;
+            if !self.validators.contains(&validator) {
+                return Err(BridgeRelayError::UnknownValidator { validator });
+            }
+            if !seen.insert(validator) {
+                return Err(BridgeRelayError::DuplicateValidatorSignature { validator });
+            }
+        }
+
+        Ok(seen.len())
+    }
+}
+
+fn parse_validator_signature(signature: &[u8]) -> Result<[u8; 32], BridgeRelayError> {
+    if signature.len() != 32 {
+        return Err(BridgeRelayError::InvalidValidatorSignatureLength {
+            got: signature.len(),
+        });
+    }
+
+    let mut validator = [0u8; 32];
+    validator.copy_from_slice(signature);
+    Ok(validator)
 }
 
 pub fn nonce_key(
@@ -240,6 +270,14 @@ mod tests {
         [b; 32]
     }
 
+    fn sig(b: u8) -> Vec<u8> {
+        b32(b).to_vec()
+    }
+
+    fn relay(min_validator_signatures: usize, validators: &[u8]) -> BridgeRelay {
+        BridgeRelay::new(min_validator_signatures, validators.iter().copied().map(b32))
+    }
+
     fn sample_msg() -> BridgeSettlementMessage {
         BridgeSettlementMessage {
             source_chain_id: 1,
@@ -258,10 +296,10 @@ mod tests {
 
     #[test]
     fn nonce_domain_isolation_and_replay_protection() {
-        let mut relay = BridgeRelay::new(1);
+        let mut relay = relay(1, &[7]);
 
         let n1 = relay
-            .consume_nonce(1, b32(1), 31337, addr(9), ACTION_SETTLEMENT_FINALIZE, 10)
+            .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
             .unwrap();
 
         let n2 = relay
@@ -271,32 +309,32 @@ mod tests {
         assert_ne!(n1, n2, "different action should isolate nonce domains");
 
         let err = relay
-            .consume_nonce(1, b32(1), 31337, addr(9), ACTION_SETTLEMENT_FINALIZE, 10)
+            .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::NonceAlreadyUsed { .. }));
     }
 
     #[test]
     fn fail_closed_on_expired_proof() {
-        let mut relay = BridgeRelay::new(1);
+        let mut relay = relay(1, &[1]);
         let msg = sample_msg();
         let err = relay
-            .submit_proof(&msg, &[vec![1]], 900, 901, 31337, addr(9))
+            .submit_proof(&msg, &[sig(1)], 900, 901, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::ProofExpired { .. }));
     }
 
     #[test]
     fn fail_closed_on_duplicate_finalize() {
-        let mut relay = BridgeRelay::new(1);
+        let mut relay = relay(1, &[7]);
         let msg = sample_msg();
 
         relay
-            .finalize_settlement(&msg, &[vec![7]], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
             .unwrap();
 
         let err = relay
-            .finalize_settlement(&msg, &[vec![7]], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(
@@ -307,14 +345,44 @@ mod tests {
 
     #[test]
     fn fail_closed_on_chain_domain_mismatch() {
-        let mut relay = BridgeRelay::new(1);
+        let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
         msg.target_chain_id = 10;
 
         let err = relay
-            .finalize_settlement(&msg, &[vec![7]], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(err, BridgeRelayError::InvalidTargetChain { .. }));
+    }
+
+    #[test]
+    fn duplicate_validator_signatures_do_not_count_twice() {
+        let mut relay = relay(2, &[7]);
+        let msg = sample_msg();
+
+        let err = relay
+            .submit_proof(&msg, &[sig(7), sig(7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::DuplicateValidatorSignature { validator } if validator == b32(7)
+        ));
+    }
+
+    #[test]
+    fn unknown_validator_signature_fails_closed() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        let err = relay
+            .submit_proof(&msg, &[sig(8)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::UnknownValidator { validator } if validator == b32(8)
+        ));
     }
 }

@@ -121,8 +121,18 @@ const rawSnapshot: unknown = {
   ],
 };
 
-const apiBaseUrl =
-  process.env.NEXT_PUBLIC_QUERY_API_BASE_URL ?? "http://127.0.0.1:8080";
+const resolveQueryApiBaseUrl = (): string => {
+  const fromEnv = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL?.trim();
+  if (fromEnv) return fromEnv;
+
+  if (typeof window !== "undefined") {
+    return window.location.origin.replace(/\/+$/, "");
+  }
+
+  return "http://127.0.0.1:8080";
+};
+
+const apiBaseUrl = resolveQueryApiBaseUrl();
 const defaultTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID ?? "341";
 const defaultAuditSubject =
   process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trnm:core-rpc";

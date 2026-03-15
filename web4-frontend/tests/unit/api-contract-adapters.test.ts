@@ -325,6 +325,24 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("accepts canonical capability audit payload with height marker checkedAt", () => {
+    const out = adaptQueryCapabilityAudit({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: true,
+          checkedAt: "height:321",
+          reason: "delegated",
+        },
+      ],
+    });
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.checkedAt).toBe("height:321");
+    expect(out.audits[0]?.granted).toBe(true);
+  });
+
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });

@@ -14,6 +14,7 @@ pub enum VaultError {
     DuplicateRequest,
     RequestNotFound,
     InvalidStateTransition,
+    BalanceOverflow,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -66,18 +67,17 @@ impl SettlementVault {
 
     pub fn deposit(
         &mut self,
-        _caller: &str,
+        caller: &str,
         account: &str,
         amount: u128,
     ) -> Result<(), VaultError> {
+        self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
         if amount == 0 {
             return Err(VaultError::InvalidAmount);
         }
 
-        let entry = self.balances.entry(account.to_string()).or_insert(0);
-        *entry += amount;
-        Ok(())
+        self.credit_balance(account, amount)
     }
 
     pub fn lock(
@@ -119,17 +119,21 @@ impl SettlementVault {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
 
-        let lock = self
-            .locks
-            .get_mut(request_id)
-            .ok_or(VaultError::RequestNotFound)?;
+        let (account, amount) = {
+            let lock = self
+                .locks
+                .get_mut(request_id)
+                .ok_or(VaultError::RequestNotFound)?;
 
-        if lock.status != LockStatus::Locked {
-            return Err(VaultError::InvalidStateTransition);
-        }
+            if lock.status != LockStatus::Locked {
+                return Err(VaultError::InvalidStateTransition);
+            }
 
-        lock.status = LockStatus::Released;
-        Ok(())
+            lock.status = LockStatus::Released;
+            (lock.account.clone(), lock.amount)
+        };
+
+        self.credit_balance(&account, amount)
     }
 
     pub fn slash(
@@ -141,20 +145,21 @@ impl SettlementVault {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
 
-        let lock = self
-            .locks
-            .get_mut(request_id)
-            .ok_or(VaultError::RequestNotFound)?;
+        let amount = {
+            let lock = self
+                .locks
+                .get_mut(request_id)
+                .ok_or(VaultError::RequestNotFound)?;
 
-        if lock.status != LockStatus::Locked {
-            return Err(VaultError::InvalidStateTransition);
-        }
+            if lock.status != LockStatus::Locked {
+                return Err(VaultError::InvalidStateTransition);
+            }
 
-        lock.status = LockStatus::Slashed;
-        let entry = self.balances.entry(beneficiary.to_string()).or_insert(0);
-        *entry += lock.amount;
+            lock.status = LockStatus::Slashed;
+            lock.amount
+        };
 
-        Ok(())
+        self.credit_balance(beneficiary, amount)
     }
 
     pub fn pause(&mut self, caller: &str) -> Result<(), VaultError> {
@@ -190,6 +195,12 @@ impl SettlementVault {
         }
         Ok(())
     }
+
+    fn credit_balance(&mut self, account: &str, amount: u128) -> Result<(), VaultError> {
+        let entry = self.balances.entry(account.to_string()).or_insert(0);
+        *entry = entry.checked_add(amount).ok_or(VaultError::BalanceOverflow)?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -200,7 +211,7 @@ mod tests {
     fn deposit_lock_release_happy_path() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 100).unwrap();
+        vault.deposit("owner", "alice", 100).unwrap();
         assert_eq!(vault.balance_of("alice"), 100);
 
         vault.lock("owner", "req-1", "alice", 60).unwrap();
@@ -211,6 +222,7 @@ mod tests {
         );
 
         vault.release("owner", "req-1").unwrap();
+        assert_eq!(vault.balance_of("alice"), 100);
         assert_eq!(
             vault.lock_record("req-1").unwrap().status,
             LockStatus::Released
@@ -221,7 +233,7 @@ mod tests {
     fn duplicate_request_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 100).unwrap();
+        vault.deposit("owner", "alice", 100).unwrap();
         vault.lock("owner", "req-dup", "alice", 10).unwrap();
 
         let err = vault
@@ -234,7 +246,11 @@ mod tests {
     fn unauthorized_actions_are_rejected() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 50).unwrap();
+        assert_eq!(
+            vault.deposit("alice", "alice", 50).unwrap_err(),
+            VaultError::Unauthorized
+        );
+        vault.deposit("owner", "alice", 50).unwrap();
 
         assert_eq!(
             vault.lock("mallory", "req-1", "alice", 10).unwrap_err(),
@@ -248,7 +264,7 @@ mod tests {
     fn illegal_state_transition_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 100).unwrap();
+        vault.deposit("owner", "alice", 100).unwrap();
         vault.lock("owner", "req-1", "alice", 20).unwrap();
         vault.release("owner", "req-1").unwrap();
 
@@ -262,12 +278,12 @@ mod tests {
     fn pause_blocks_state_changes_until_unpause() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 100).unwrap();
+        vault.deposit("owner", "alice", 100).unwrap();
         vault.pause("owner").unwrap();
 
         assert_eq!(vault.pause("owner").unwrap_err(), VaultError::AlreadyPaused);
         assert_eq!(
-            vault.deposit("alice", "alice", 1).unwrap_err(),
+            vault.deposit("owner", "alice", 1).unwrap_err(),
             VaultError::Paused
         );
         assert_eq!(
@@ -285,7 +301,7 @@ mod tests {
     fn slash_transfers_to_beneficiary() {
         let mut vault = SettlementVault::new("owner");
 
-        vault.deposit("alice", "alice", 30).unwrap();
+        vault.deposit("owner", "alice", 30).unwrap();
         vault.lock("owner", "req-2", "alice", 30).unwrap();
         vault.slash("owner", "req-2", "treasury").unwrap();
 

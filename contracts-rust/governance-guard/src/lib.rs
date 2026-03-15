@@ -50,6 +50,8 @@ pub enum Error {
     SelfExecutionForbidden,
     PauseNotActive,
     GuardianExecutorConflict,
+    WrongProposer,
+    CurrentValueMismatch,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -159,6 +161,15 @@ impl GovernanceGuard {
         if matches!(proposal.status, ProposalStatus::Executed | ProposalStatus::Cancelled) {
             return Err(Error::AlreadyFinalized);
         }
+        if proposal.proposer != caller {
+            return Err(Error::WrongProposer);
+        }
+        if proposal.status == ProposalStatus::Queued {
+            return Ok(());
+        }
+        if proposal.status != ProposalStatus::Pending {
+            return Err(Error::NotQueued);
+        }
         proposal.status = ProposalStatus::Queued;
         Ok(())
     }
@@ -177,6 +188,16 @@ impl GovernanceGuard {
             }
             if now < proposal.eta {
                 return Err(Error::NotReady);
+            }
+
+            let current = self
+                .bridge
+                .gov_params
+                .get(&proposal.param_key)
+                .cloned()
+                .unwrap_or_default();
+            if current != proposal.old_value {
+                return Err(Error::CurrentValueMismatch);
             }
 
             (proposal.param_key.clone(), proposal.new_value.clone())
@@ -345,7 +366,18 @@ mod tests {
         gov.set_role("admin", "exec", false, true).unwrap();
         gov.set_allowed_param_key("admin", "challenge_window_blocks", true)
             .unwrap();
+        gov.bridge.gov_params.insert(
+            "challenge_window_blocks".to_string(),
+            "100".to_string(),
+        );
         gov
+    }
+
+    fn seed_param(gov: &mut GovernanceGuard, value: &str) {
+        gov.bridge.gov_params.insert(
+            "challenge_window_blocks".to_string(),
+            value.to_string(),
+        );
     }
 
     #[test]
@@ -386,7 +418,7 @@ mod tests {
             .propose(
                 "alice",
                 "challenge_window_blocks",
-                "120",
+                "100",
                 "160",
                 eta,
                 "reason-2",
@@ -401,6 +433,59 @@ mod tests {
     }
 
     #[test]
+    fn execute_rejects_if_param_value_drifts_before_execution() {
+        let mut gov = setup();
+        let now = 2_500;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "200",
+                eta,
+                "reason-stale",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+
+        seed_param(&mut gov, "99");
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::CurrentValueMismatch);
+
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Queued);
+    }
+
+    #[test]
+    fn queue_rejects_non_proposer_caller() {
+        let mut gov = setup();
+        gov.set_role("admin", "bob", true, false).unwrap();
+
+        let now = 2_800;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "130",
+                eta,
+                "reason-3",
+                now,
+            )
+            .unwrap();
+
+        let err = gov.queue("bob", pid).unwrap_err();
+        assert_eq!(err, Error::WrongProposer);
+
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Pending);
+    }
+
+    #[test]
     fn permission_drift_revocation_fails_closed() {
         let mut gov = setup();
         let now = 3_000;
@@ -411,10 +496,10 @@ mod tests {
             gov.propose(
                 "alice",
                 "challenge_window_blocks",
-                "1",
-                "2",
+                "100",
+                "140",
                 eta,
-                "reason-3",
+                "reason-4",
                 now,
             )
             .unwrap_err(),
@@ -426,10 +511,10 @@ mod tests {
             .propose(
                 "alice",
                 "challenge_window_blocks",
-                "1",
-                "2",
+                "100",
+                "150",
                 eta,
-                "reason-4",
+                "reason-5",
                 now,
             )
             .unwrap();

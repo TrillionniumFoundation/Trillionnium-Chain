@@ -28,12 +28,14 @@ export const chainEventSchema = z.object({
   payload: z.record(z.string(), z.unknown()).default({}),
 });
 
+const checkedAtSchema = z.string().regex(/^height:\d+$/).or(z.string().datetime());
+
 export const capabilityAuditEntrySchema = z.object({
   subject: z.string().min(1),
   capability: z.string().min(1),
   granted: z.boolean(),
   reason: z.string().optional(),
-  checkedAt: z.string().datetime(),
+  checkedAt: checkedAtSchema,
 });
 
 export const queryTaskResponseSchema = z.object({
