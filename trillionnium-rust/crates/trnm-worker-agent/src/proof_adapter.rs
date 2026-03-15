@@ -1,7 +1,7 @@
 use crate::{
+    proof_adapter_rules::{is_tee_receipt_adapter_label, is_zk_receipt_adapter_label},
     proof_adapter_utils::{
-        has_non_empty_auditable_value, normalize_adapter_label, normalize_adapter_value,
-        parse_response_with_standard_rules,
+        has_non_empty_auditable_value, normalize_adapter_label, parse_response_with_standard_rules,
     },
     LlmAdapterResponse,
 };
@@ -68,25 +68,7 @@ impl ProofAdapter for TeeReceiptProofAdapter {
             return Err("tee-receipt-missing-provider-request-id".to_string());
         }
 
-        let adapter_ok = parsed
-            .adapter
-            .as_deref()
-            .map(normalize_adapter_value)
-            .map(|normalized| {
-                normalized == "tee-receipt"
-                    || normalized == "tee_receipt"
-                    || normalized == "tee-receipt-v1"
-                    || normalized == "tee_receipt_v1"
-                    || normalized == "tee-attestation"
-                    || normalized == "tee_attestation"
-                    || normalized == "tee-attestation-v1"
-                    || normalized == "tee_attestation_v1"
-                    || normalized == "teereceipt"
-                    || normalized == "teereceiptv1"
-                    || normalized == "teeattestation"
-                    || normalized == "teeattestationv1"
-            })
-            .unwrap_or(false);
+        let adapter_ok = is_tee_receipt_adapter_label(parsed.adapter.as_deref());
         if !adapter_ok {
             return Err("tee-receipt-missing-adapter-label".to_string());
         }
@@ -112,25 +94,7 @@ impl ProofAdapter for ZkReceiptProofAdapter {
             return Err("zk-receipt-missing-provider-request-id".to_string());
         }
 
-        let adapter_ok = parsed
-            .adapter
-            .as_deref()
-            .map(normalize_adapter_value)
-            .map(|normalized| {
-                normalized == "zk-receipt"
-                    || normalized == "zk_receipt"
-                    || normalized == "zk-receipt-v1"
-                    || normalized == "zk_receipt_v1"
-                    || normalized == "zk-proof"
-                    || normalized == "zk_proof"
-                    || normalized == "zk-proof-v1"
-                    || normalized == "zk_proof_v1"
-                    || normalized == "zkreceipt"
-                    || normalized == "zkreceiptv1"
-                    || normalized == "zkproof"
-                    || normalized == "zkproofv1"
-            })
-            .unwrap_or(false);
+        let adapter_ok = is_zk_receipt_adapter_label(parsed.adapter.as_deref());
         if !adapter_ok {
             return Err("zk-receipt-missing-adapter-label".to_string());
         }

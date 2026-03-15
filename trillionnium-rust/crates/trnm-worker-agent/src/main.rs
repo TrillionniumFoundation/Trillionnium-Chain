@@ -17,6 +17,7 @@ mod command_runtime;
 mod dispatch;
 mod flush;
 mod proof_adapter;
+mod proof_adapter_rules;
 mod proof_adapter_utils;
 mod state;
 mod workflow;
