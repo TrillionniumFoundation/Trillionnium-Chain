@@ -14,5 +14,13 @@ mod tests_status_parse;
 mod tests_adapter_path;
 
 #[cfg(test)]
-#[path = "tests_audit_provenance.rs"]
-mod tests_audit_provenance;
+#[path = "tests_audit_export.rs"]
+mod tests_audit_export;
+
+#[cfg(test)]
+#[path = "tests_audit_provenance_fields.rs"]
+mod tests_audit_provenance_fields;
+
+#[cfg(test)]
+#[path = "tests_compliance_profile.rs"]
+mod tests_compliance_profile;
