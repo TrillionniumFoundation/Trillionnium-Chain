@@ -2,10 +2,8 @@ use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-#[cfg(test)]
-use std::io::{Read, Seek, SeekFrom};
 use std::{
-    collections::{BTreeMap, BTreeSet, HashSet},
+    collections::{BTreeMap, HashSet},
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::Write,
@@ -31,25 +29,32 @@ use trnm_types::{
 mod envpaths;
 mod http;
 mod metering;
+mod node_events;
 
-#[cfg(test)]
-use crate::envpaths::run_root;
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
     faucet_limits_file, identity_registry_file, ingress_file, market_bids_file,
     market_lock_stale_after_ms, market_lock_timeout_ms, market_reputation_file, market_tasks_file,
-    normalized_path_from_env, submit_message_max_bytes, task_state_file, tx_lifecycle_file,
+    submit_message_max_bytes, task_state_file, tx_lifecycle_file,
 };
+#[cfg(test)]
+use crate::envpaths::{normalized_path_from_env, run_root};
 #[cfg(test)]
 use crate::http::parse_http_get_path;
 use crate::http::{
     configure_health_stream, http_json_response, parse_http_get_target,
     parse_query_events_limit_from_path, read_http_request_head,
 };
+use crate::metering::build_task_metering_query_response;
+#[cfg(test)]
 use crate::metering::{
-    build_task_metering_query_response, normalize_opt_kv, parse_event_log_kv,
-    parse_event_metering_query_response, parse_i128_kv_value, parse_u128_kv_value,
-    parse_u64_kv_value,
+    parse_event_log_kv, parse_i128_kv_value, parse_u128_kv_value, parse_u64_kv_value,
+};
+use crate::node_events::load_node_events;
+#[cfg(test)]
+use crate::node_events::{
+    discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
+    load_node_events_from_root, read_log_tail,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -311,24 +316,24 @@ struct MessageIngressRecord {
 }
 
 #[derive(Debug, Clone)]
-struct NodeEventRecord {
-    event_type: String,
-    task_id: u64,
-    from_status: String,
-    to_status: String,
-    actor: String,
-    tx_id: u64,
-    block_height: u64,
-    state_root: String,
-    ts_unix_ms: u128,
-    signer: Option<String>,
-    challenger: Option<String>,
-    tx_hash: Option<String>,
-    resolution_code: Option<String>,
-    treasury_delta: Option<i128>,
-    challenger_delta: Option<i128>,
-    bond_disposition: Option<String>,
-    metering: Option<TaskMeteringQueryResponse>,
+pub(crate) struct NodeEventRecord {
+    pub(crate) event_type: String,
+    pub(crate) task_id: u64,
+    pub(crate) from_status: String,
+    pub(crate) to_status: String,
+    pub(crate) actor: String,
+    pub(crate) tx_id: u64,
+    pub(crate) block_height: u64,
+    pub(crate) state_root: String,
+    pub(crate) ts_unix_ms: u128,
+    pub(crate) signer: Option<String>,
+    pub(crate) challenger: Option<String>,
+    pub(crate) tx_hash: Option<String>,
+    pub(crate) resolution_code: Option<String>,
+    pub(crate) treasury_delta: Option<i128>,
+    pub(crate) challenger_delta: Option<i128>,
+    pub(crate) bond_disposition: Option<String>,
+    pub(crate) metering: Option<TaskMeteringQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -397,7 +402,7 @@ struct ChallengeTreasuryQueryResponse {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum NodeEventScanMode {
+pub(crate) enum NodeEventScanMode {
     Authoritative,
     #[cfg(test)]
     RecentTail,
@@ -414,10 +419,10 @@ impl NodeEventScanMode {
 }
 
 #[derive(Debug, Clone)]
-struct LoadedNodeEvents {
-    events: Vec<NodeEventRecord>,
-    mode: NodeEventScanMode,
-    truncated: bool,
+pub(crate) struct LoadedNodeEvents {
+    pub(crate) events: Vec<NodeEventRecord>,
+    pub(crate) mode: NodeEventScanMode,
+    pub(crate) truncated: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -483,243 +488,6 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         .filter(|l| !l.trim().is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
         .collect()
-}
-
-#[cfg(test)]
-fn node_event_log_tail_bytes() -> u64 {
-    std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES")
-        .ok()
-        .and_then(|v| v.parse::<u64>().ok())
-        .map(|v| v.min(NODE_EVENT_LOG_TAIL_BYTES_MAX))
-        .filter(|v| *v > 0)
-        .unwrap_or(NODE_EVENT_LOG_TAIL_BYTES_DEFAULT)
-}
-
-#[cfg(test)]
-fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
-    let mut file = fs::File::open(path).ok()?;
-    let size = file.metadata().ok()?.len();
-    let start = size.saturating_sub(tail_bytes);
-    let mut started_mid_line = false;
-    if start > 0 {
-        if file.seek(SeekFrom::Start(start.saturating_sub(1))).is_err() {
-            return None;
-        }
-        let mut prev = [0u8; 1];
-        if file.read_exact(&mut prev).is_err() {
-            return None;
-        }
-        started_mid_line = prev[0] != b'\n';
-    }
-    if file.seek(SeekFrom::Start(start)).is_err() {
-        return None;
-    }
-    let mut bytes = Vec::new();
-    if file.read_to_end(&mut bytes).is_err() {
-        return None;
-    }
-    let buf = String::from_utf8_lossy(&bytes).into_owned();
-    if start > 0 && started_mid_line {
-        if let Some(idx) = buf.find('\n') {
-            return Some(buf[idx + 1..].to_string());
-        }
-        return Some(String::new());
-    }
-    Some(buf)
-}
-
-fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(trimmed))
-            }
-        })
-        .collect()
-}
-
-fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
-    let run_dir = root.join("run");
-    let mut out = BTreeSet::<PathBuf>::new();
-    for seed in ["event-field-check.log", "parallel-sanity.log"] {
-        let candidate = run_dir.join(seed);
-        if candidate.is_file() {
-            out.insert(candidate);
-        }
-    }
-    if let Ok(entries) = fs::read_dir(&run_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if !path.is_file() {
-                continue;
-            }
-            let Some(name) = path.file_name().and_then(|v| v.to_str()) else {
-                continue;
-            };
-            if name.ends_with(".log") {
-                out.insert(path);
-            }
-        }
-    }
-    out.into_iter().collect()
-}
-
-fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
-    let mut sources = BTreeSet::<PathBuf>::new();
-
-    if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
-        if let Ok(raw) = fs::read_to_string(&manifest_path) {
-            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(trimmed);
-                let resolved = if path.is_absolute() {
-                    path
-                } else {
-                    manifest_dir.join(path)
-                };
-                sources.insert(resolved);
-            }
-        }
-    }
-
-    if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
-        for path in parse_node_event_log_sources_list(&raw) {
-            let resolved = if path.is_absolute() {
-                path
-            } else {
-                root.join(path)
-            };
-            sources.insert(resolved);
-        }
-    }
-
-    if sources.is_empty() {
-        return discover_default_node_event_log_sources(root);
-    }
-
-    sources.into_iter().collect()
-}
-
-fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
-    load_node_event_log_sources(root)
-}
-
-fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNodeEvents {
-    let candidates = node_event_log_candidates(root);
-    #[cfg(test)]
-    let tail_bytes = node_event_log_tail_bytes();
-    let mut lines = Vec::new();
-    #[cfg(test)]
-    let mut truncated = false;
-    #[cfg(not(test))]
-    let truncated = false;
-    for p in candidates {
-        let raw = match mode {
-            NodeEventScanMode::Authoritative => fs::read_to_string(&p).ok(),
-            #[cfg(test)]
-            NodeEventScanMode::RecentTail => {
-                if let Ok(meta) = fs::metadata(&p) {
-                    if meta.len() > tail_bytes {
-                        truncated = true;
-                    }
-                }
-                read_log_tail(&p, tail_bytes)
-            }
-        };
-        if let Some(raw) = raw {
-            lines.extend(raw.lines().map(str::to_string));
-        }
-    }
-
-    let mut out = Vec::new();
-    for line in lines {
-        let Some(event_pos) = line.find("[event]") else {
-            continue;
-        };
-        let event_line = &line[event_pos..];
-        if !event_line.contains("event_type=") {
-            continue;
-        }
-        let kv = parse_event_log_kv(event_line);
-
-        let Some(task_id) = kv.get("task_id").and_then(|s| parse_u64_kv_value(s)) else {
-            continue;
-        };
-        let Some(tx_id) = kv.get("tx_id").and_then(|s| parse_u64_kv_value(s)) else {
-            continue;
-        };
-        let Some(block_height) = kv.get("block_height").and_then(|s| parse_u64_kv_value(s)) else {
-            continue;
-        };
-        let ts_unix_ms = kv
-            .get("ts_unix_ms")
-            .and_then(|s| parse_u128_kv_value(s))
-            .unwrap_or(0);
-
-        let normalize_opt = |k: &str| normalize_opt_kv(&kv, k);
-
-        out.push(NodeEventRecord {
-            event_type: kv
-                .get("event_type")
-                .cloned()
-                .unwrap_or_else(|| "unknown".into()),
-            task_id,
-            from_status: kv
-                .get("from_status")
-                .cloned()
-                .unwrap_or_else(|| "NONE".into()),
-            to_status: kv
-                .get("to_status")
-                .cloned()
-                .unwrap_or_else(|| "NONE".into()),
-            actor: kv.get("actor").cloned().unwrap_or_else(|| "unknown".into()),
-            tx_id,
-            block_height,
-            state_root: kv
-                .get("state_root")
-                .cloned()
-                .unwrap_or_else(|| "unknown".into()),
-            ts_unix_ms,
-            signer: normalize_opt("signer"),
-            challenger: normalize_opt("challenger"),
-            tx_hash: normalize_opt("tx_hash"),
-            resolution_code: normalize_opt("resolution_code"),
-            treasury_delta: kv
-                .get("treasury_delta")
-                .and_then(|v| parse_i128_kv_value(v)),
-            challenger_delta: kv
-                .get("challenger_delta")
-                .and_then(|v| parse_i128_kv_value(v)),
-            bond_disposition: normalize_opt("bond_disposition"),
-            metering: parse_event_metering_query_response(&kv),
-        });
-    }
-    LoadedNodeEvents {
-        events: out,
-        mode,
-        truncated,
-    }
-}
-
-fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
-    load_node_events_from_root(&root, mode)
-}
-
-#[cfg(test)]
-fn load_latest_node_events() -> Vec<NodeEventRecord> {
-    load_node_events(NodeEventScanMode::RecentTail).events
 }
 
 fn governance_state() -> StateStore {
