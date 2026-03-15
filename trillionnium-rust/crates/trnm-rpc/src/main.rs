@@ -14,10 +14,9 @@ use std::{
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
-    GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TaskQueryResponse,
-    TxLifecycleRecord,
+    GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse,
+    RequestFullQueryResponse, RpcErrorResponse, TaskMeteringPolicyQueryResponse,
+    TaskMeteringQueryResponse, TaskQueryResponse,
 };
 use trnm_state::StateStore;
 use trnm_types::{
@@ -30,6 +29,7 @@ mod envpaths;
 mod http;
 mod metering;
 mod node_events;
+mod persistence;
 
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
@@ -55,6 +55,10 @@ use crate::node_events::load_node_events;
 use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
     load_node_events_from_root, read_log_tail,
+};
+use crate::persistence::{
+    accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
+    load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -1337,76 +1341,6 @@ fn transition_request_status(current: &str, to: RequestStatus) -> Result<String>
     let from = RequestStatus::parse(current).map_err(|e| anyhow::anyhow!("{}", e))?;
     let next = from.transition(to).map_err(|e| anyhow::anyhow!("{}", e))?;
     Ok(next.as_str().to_string())
-}
-
-fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
-    let Ok(raw) = fs::read_to_string(path) else {
-        return BTreeMap::new();
-    };
-    serde_json::from_str::<BTreeMap<String, AccountState>>(&raw).unwrap_or_default()
-}
-
-fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) -> Result<()> {
-    let content = serde_json::to_string_pretty(accounts)?;
-    atomic_write_text_file(path, &content)
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-struct FaucetRateEntry {
-    window_start_unix_ms: u128,
-    count_in_window: u32,
-}
-
-fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
-    let Ok(raw) = fs::read_to_string(path) else {
-        return BTreeMap::new();
-    };
-    serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw).unwrap_or_default()
-}
-
-fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -> Result<()> {
-    let content = serde_json::to_string_pretty(limits)?;
-    atomic_write_text_file(path, &content)
-}
-
-fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
-        return BTreeMap::new();
-    };
-    match serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw) {
-        Ok(txs) => txs,
-        Err(err) => {
-            eprintln!(
-                "[trnm-rpc][warn][TX_LIFECYCLE_PARSE] path={} err={}",
-                path.display(),
-                err
-            );
-            BTreeMap::new()
-        }
-    }
-}
-
-fn save_tx_lifecycle(path: &Path, txs: &BTreeMap<String, TxLifecycleRecord>) -> Result<()> {
-    let content = serde_json::to_string_pretty(txs)?;
-    atomic_write_text_file(path, &content)
-}
-
-fn accounts_to_ledger(accounts: &BTreeMap<String, AccountState>) -> InMemoryTransferLedger {
-    let mut ledger = InMemoryTransferLedger::new();
-    for account in accounts.values() {
-        ledger.set_account(account.address.clone(), account.balance, account.nonce);
-    }
-    ledger
-}
-
-fn ledger_to_accounts(
-    ledger: &InMemoryTransferLedger,
-    accounts: &mut BTreeMap<String, AccountState>,
-) {
-    for account in accounts.values_mut() {
-        account.balance = ledger.balance_of(&account.address);
-        account.nonce = ledger.next_nonce_of(&account.address);
-    }
 }
 
 fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
