@@ -8,6 +8,7 @@ mod adapter_error;
 mod adapter_flow;
 mod adapter_model;
 mod adapter_parse;
+mod adapter_provenance;
 mod adapter_retry;
 mod assigned;
 mod audit;
