@@ -8,6 +8,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 
 - `submit_proof`：
   - 检查外部 `deadline`
+  - `admin` 可配置 validator 集合与阈值（预留用于后续治理联动）
   - 检查消息域（`target_chain_id`/`target_bridge`）
   - 检查消息内 `deadline`
   - 做 proof digest 去重（重放防护）
@@ -33,6 +34,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 3. 链域不匹配拒绝（`InvalidTargetChain`）
 4. nonce 域隔离 + 重放防护（相同 nonce、不同 action 可并存；同域重复消费拒绝）
 5. 签名长度不合法与签名绑定失配拒绝
+6. 非管理员不能篡改 validator 配置
 
 ## 运行测试
 

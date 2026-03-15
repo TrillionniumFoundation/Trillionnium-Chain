@@ -1,5 +1,7 @@
 use sha2::{Digest as Sha256Digest, Sha256};
 use sha3::Keccak256;
+
+const ADMIN_UNSET: [u8; 32] = [0u8; 32];
 use std::collections::HashSet;
 
 const VALIDATOR_SIGNATURE_LEN: usize = 64;
@@ -32,6 +34,7 @@ pub enum BridgeRelayError {
     InvalidTargetChain { expected: u64, got: u64 },
     InvalidTargetBridge { expected: [u8; 20], got: [u8; 20] },
     InvalidValidatorSignatureLength { got: usize },
+    Unauthorized,
     UnknownValidator { validator: [u8; 32] },
     DuplicateValidatorSignature { validator: [u8; 32] },
     InvalidValidatorSignature { validator: [u8; 32], expected: [u8; 32], got: [u8; 32] },
@@ -45,6 +48,7 @@ pub struct BridgeRelay {
     settlement_finalized: HashSet<[u8; 32]>,
     validators: HashSet<[u8; 32]>,
     min_validator_signatures: usize,
+    admin: [u8; 32],
 }
 
 impl BridgeRelay {
@@ -52,9 +56,18 @@ impl BridgeRelay {
         min_validator_signatures: usize,
         validators: impl IntoIterator<Item = [u8; 32]>,
     ) -> Self {
+        Self::with_admin(min_validator_signatures, validators, ADMIN_UNSET)
+    }
+
+    pub fn with_admin(
+        min_validator_signatures: usize,
+        validators: impl IntoIterator<Item = [u8; 32]>,
+        admin: [u8; 32],
+    ) -> Self {
         Self {
             validators: validators.into_iter().collect(),
             min_validator_signatures,
+            admin,
             ..Self::default()
         }
     }
@@ -117,6 +130,24 @@ impl BridgeRelay {
         Ok(nonce_key)
     }
 
+    pub fn set_admin(&mut self, caller: &[u8; 32], new_admin: [u8; 32]) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.admin = new_admin;
+        Ok(())
+    }
+
+    pub fn set_min_validator_signatures(&mut self, caller: &[u8; 32], min: usize) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.min_validator_signatures = min;
+        Ok(())
+    }
+
+    pub fn set_validators(&mut self, caller: &[u8; 32], validators: impl IntoIterator<Item = [u8; 32]>) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.validators = validators.into_iter().collect();
+        Ok(())
+    }
+
     pub fn finalize_settlement(
         &mut self,
         message: &BridgeSettlementMessage,
@@ -151,6 +182,14 @@ impl BridgeRelay {
 
         self.settlement_finalized.insert(settlement_id);
         Ok(settlement_id)
+    }
+
+    fn require_admin(&self, caller: &[u8; 32]) -> Result<(), BridgeRelayError> {
+        if self.admin == ADMIN_UNSET || self.admin == *caller {
+            Ok(())
+        } else {
+            Err(BridgeRelayError::Unauthorized)
+        }
     }
 
     fn validate_message_domain(
@@ -193,7 +232,7 @@ impl BridgeRelay {
         let mut seen = HashSet::new();
 
         for signature in signatures {
-            let (validator, expected_tag) = parse_validator_signature(signature)?;
+            let (validator, provided_tag) = parse_validator_signature(signature)?;
 
             if !self.validators.contains(&validator) {
                 return Err(BridgeRelayError::UnknownValidator { validator });
@@ -202,12 +241,12 @@ impl BridgeRelay {
                 return Err(BridgeRelayError::DuplicateValidatorSignature { validator });
             }
 
-            let actual_tag = validator_signature_tag(&validator, &message_digest);
-            if actual_tag != expected_tag {
+            let expected_tag = validator_signature_tag(&validator, &message_digest);
+            if expected_tag != provided_tag {
                 return Err(BridgeRelayError::InvalidValidatorSignature {
                     validator,
-                    expected: actual_tag,
-                    got: expected_tag,
+                    expected: expected_tag,
+                    got: provided_tag,
                 });
             }
         }
@@ -409,6 +448,49 @@ mod tests {
             err,
             BridgeRelayError::DuplicateValidatorSignature { validator } if validator == b32(7)
         ));
+    }
+
+    #[test]
+    fn governance_like_admin_can_rotate_validator_set_and_threshold() {
+        let mut relay = BridgeRelay::with_admin(1, vec![b32(7)], b32(9));
+
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+        relay
+            .set_validators(&b32(9), vec![b32(7), b32(8)])
+            .unwrap();
+
+        let msg = sample_msg();
+        let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
+
+        relay
+            .submit_proof(&msg, &sigs, 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let mut fallback = sample_msg();
+        fallback.nonce = 100;
+        let err = relay
+            .submit_proof(&fallback, &[sig_for(&fallback, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::NotEnoughValidatorSignatures {
+                required,
+                ..
+            } if required == 2
+        ));
+    }
+
+    #[test]
+    fn governance_like_admin_restrains_configuration_changes() {
+        let mut relay = BridgeRelay::with_admin(1, vec![b32(7)], b32(9));
+
+        let err = relay
+            .set_min_validator_signatures(&b32(8), 2)
+            .unwrap_err();
+        assert!(matches!(err, BridgeRelayError::Unauthorized));
     }
 
     #[test]
