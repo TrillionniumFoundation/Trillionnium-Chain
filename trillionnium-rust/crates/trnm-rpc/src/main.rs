@@ -30,6 +30,7 @@ mod market_score;
 mod metering;
 mod node_events;
 mod persistence;
+mod request_query;
 mod rpc_util;
 mod runtime;
 mod snapshot;
@@ -90,6 +91,7 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
+use crate::request_query::{handle_query_request, handle_query_request_full};
 use crate::rpc_util::{clamp_limit, rpc_fail};
 #[cfg(test)]
 use crate::rpc_util::resolve_ops_window;
@@ -99,7 +101,7 @@ use crate::snapshot::query_task_from_state_snapshot;
 use crate::snapshot::{governance_state, load_latest_adapter_records};
 #[cfg(test)]
 use crate::taskview::query_task_from_node_events;
-use crate::taskview::{filtered_node_events_for_task, query_events_response, query_task_response};
+use crate::taskview::{query_events_response, query_task_response};
 use crate::treasury::{handle_query_challenge_treasury, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT};
 #[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
@@ -332,31 +334,31 @@ struct MarketReport {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct MessageIngressRecord {
-    request_id: String,
-    task_id: u64,
-    channel: String,
-    user_id: String,
-    session_id: String,
-    text: String,
-    idempotency_key: String,
-    status: String,
-    created_at_unix_ms: u128,
+    pub(crate) request_id: String,
+    pub(crate) task_id: u64,
+    pub(crate) channel: String,
+    pub(crate) user_id: String,
+    pub(crate) session_id: String,
+    pub(crate) text: String,
+    pub(crate) idempotency_key: String,
+    pub(crate) status: String,
+    pub(crate) created_at_unix_ms: u128,
     #[serde(default)]
-    assigned_worker: Option<String>,
+    pub(crate) assigned_worker: Option<String>,
     #[serde(default)]
-    assigned_at_unix_ms: Option<u128>,
+    pub(crate) assigned_at_unix_ms: Option<u128>,
     #[serde(default)]
-    model_output: Option<String>,
+    pub(crate) model_output: Option<String>,
     #[serde(default)]
-    result_hash: Option<String>,
+    pub(crate) result_hash: Option<String>,
     #[serde(default)]
-    verifier_status: Option<String>,
+    pub(crate) verifier_status: Option<String>,
     #[serde(default)]
-    resolution_code: Option<String>,
+    pub(crate) resolution_code: Option<String>,
     #[serde(default)]
-    commit_tx_hash: Option<String>,
+    pub(crate) commit_tx_hash: Option<String>,
     #[serde(default)]
-    reveal_tx_hash: Option<String>,
+    pub(crate) reveal_tx_hash: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -852,112 +854,9 @@ fn main() -> Result<()> {
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
-        Command::QueryRequest { request_id } => {
-            let records = load_ingress_records();
-            let Some(rec) = records
-                .into_iter()
-                .rev()
-                .find(|r| r.request_id == request_id)
-            else {
-                bail!("request not found: {}", request_id);
-            };
-            let out = MessageRequestQueryResponse {
-                request_id: rec.request_id,
-                task_id: rec.task_id,
-                channel: rec.channel,
-                user_id: rec.user_id,
-                session_id: rec.session_id,
-                text: rec.text,
-                idempotency_key: rec.idempotency_key,
-                status: rec.status,
-                created_at_unix_ms: rec.created_at_unix_ms,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        Command::QueryRequest { request_id } => handle_query_request(&request_id)?,
         Command::QueryRequestFull { request_id, limit } => {
-            let limit = clamp_limit(
-                "QueryRequestFull",
-                limit,
-                QUERY_FULL_LIMIT_DEFAULT,
-                QUERY_FULL_LIMIT_MAX,
-            );
-            let records = load_ingress_records();
-            let Some(rec) = records
-                .into_iter()
-                .rev()
-                .find(|r| r.request_id == request_id)
-            else {
-                bail!("request not found: {}", request_id);
-            };
-
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let mut events = Vec::new();
-            for e in filtered_node_events_for_task(rec.task_id, &node_events.events) {
-                let Some(actor) = normalize_actor_or_signer(&e.actor) else {
-                    continue;
-                };
-                let signer = e
-                    .signer
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .or_else(|| Some(actor.clone()));
-                let tx_hash = match e.event_type.as_str() {
-                    "commit" => rec.commit_tx_hash.clone().or_else(|| e.tx_hash.clone()),
-                    "reveal" => rec.reveal_tx_hash.clone().or_else(|| e.tx_hash.clone()),
-                    _ => e.tx_hash.clone(),
-                };
-                let resolution_code = if e.event_type == "resolve" {
-                    rec.resolution_code
-                        .clone()
-                        .or_else(|| e.resolution_code.clone())
-                } else {
-                    e.resolution_code.clone()
-                };
-                push_tail_limited(
-                    &mut events,
-                    EventQueryResponse {
-                        event_type: e.event_type.clone(),
-                        task_id: rec.task_id,
-                        from_status: e.from_status.clone(),
-                        to_status: e.to_status.clone(),
-                        actor,
-                        tx_id: e.tx_id,
-                        block_height: e.block_height,
-                        state_root: e.state_root.clone(),
-                        ts_unix_ms: e.ts_unix_ms,
-                        signer,
-                        challenger: e.challenger.clone(),
-                        tx_hash,
-                        resolution_code,
-                        treasury_delta: e.treasury_delta,
-                        challenger_delta: e.challenger_delta,
-                        bond_disposition: e.bond_disposition.clone(),
-                        metering: e.metering.clone(),
-                    },
-                    limit,
-                );
-            }
-
-            let out = RequestFullQueryResponse {
-                request: MessageRequestQueryResponse {
-                    request_id: rec.request_id,
-                    task_id: rec.task_id,
-                    channel: rec.channel,
-                    user_id: rec.user_id,
-                    session_id: rec.session_id,
-                    text: rec.text,
-                    idempotency_key: rec.idempotency_key,
-                    status: rec.status,
-                    created_at_unix_ms: rec.created_at_unix_ms,
-                },
-                verifier_status: rec.verifier_status,
-                resolution_code: rec.resolution_code,
-                result_hash: rec.result_hash,
-                commit_tx_hash: rec.commit_tx_hash,
-                reveal_tx_hash: rec.reveal_tx_hash,
-                events,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
+            handle_query_request_full(&request_id, limit)?
         }
         Command::MarketCreateTask {
             creator,
