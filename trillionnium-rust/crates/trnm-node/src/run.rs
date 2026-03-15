@@ -4,13 +4,12 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
-use trnm_state::{CheckpointMeta, WalMeta};
-
 use crate::args::Args;
 use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::run_apply::{apply_committed_height, ApplyRuntimeTelemetry};
 use crate::run_bft::BftHeightTelemetry;
+use crate::run_persist::{persist_committed_height, persist_uncommitted_height};
 use crate::config::load_config;
 use crate::demo::init_demo_state_and_mempool;
 use crate::hash::hash32_hex;
@@ -22,11 +21,8 @@ use crate::ordering::decide_order_for_commit;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
 use crate::rl::build_rl_advisor;
 use crate::summary::{emit_consensus_summary, ConsensusSummaryInputs};
-use crate::types::{ConsensusWal, RlAdviceContext};
-use crate::wal::{
-    load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
-    persist_wal_meta_entries, resolve_wal_dir,
-};
+use crate::types::RlAdviceContext;
+use crate::wal::{load_checkpoint_meta, load_wal_meta_entries, resolve_wal_dir};
 
 pub(crate) fn run_node(args: Args) -> Result<()> {
     let cfg = load_config(&args.config)?;
@@ -152,23 +148,13 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
                 bft.leader_missed_snapshot
             );
             requeue_uncommitted_txs(&mut mempool, picked);
-            let wal_entry = WalMeta {
-                height,
-                round: bft.committed_round,
-                proposal_hash: proposal_hash.clone(),
-                committed: false,
-                state_root_hex: hex::encode(state.state_root()),
-                prev_hash_hex: wal_entries.last().map(|e| e.content_hash_hex()),
-            };
-            wal_entries.push(wal_entry);
-            persist_wal_meta_entries(&wal_dir, &wal_entries)?;
-            persist_consensus_wal(
+            persist_uncommitted_height(
                 &wal_dir,
-                &ConsensusWal {
-                    next_height: height + 1,
-                    last_round: bft.committed_round,
-                    locked_block_hash: Some(proposal_hash.clone()),
-                },
+                &mut wal_entries,
+                height,
+                bft.committed_round,
+                &proposal_hash,
+                hex::encode(state.state_root()),
             )?;
             if args.max_blocks > 0 && height >= args.max_blocks {
                 println!("[node] reached max_blocks={}, exiting", args.max_blocks);
@@ -292,35 +278,15 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             elapsed_ms
         );
 
-        let wal_entry = WalMeta {
-            height,
-            round: bft.committed_round,
-            proposal_hash: proposal_hash.clone(),
-            committed: true,
-            state_root_hex: apply_outcome.root.clone(),
-            prev_hash_hex: wal_entries.last().map(|e| e.content_hash_hex()),
-        };
-        let wal_hash = wal_entry.content_hash_hex();
-        wal_entries.push(wal_entry);
-        persist_wal_meta_entries(&wal_dir, &wal_entries)?;
-
-        if args.bft_checkpoint_interval > 0 && height % args.bft_checkpoint_interval == 0 {
-            checkpoints.push(CheckpointMeta {
-                height,
-                state_root_hex: apply_outcome.root.clone(),
-                wal_entry_hash_hex: wal_hash,
-            });
-            persist_checkpoint_meta(&wal_dir, &checkpoints)?;
-            println!("[bft-checkpoint] height={} state_root={}", height, apply_outcome.root);
-        }
-
-        persist_consensus_wal(
+        persist_committed_height(
             &wal_dir,
-            &ConsensusWal {
-                next_height: height + 1,
-                last_round: bft.committed_round,
-                locked_block_hash: Some(proposal_hash.clone()),
-            },
+            &mut wal_entries,
+            &mut checkpoints,
+            height,
+            bft.committed_round,
+            &proposal_hash,
+            &apply_outcome.root,
+            args.bft_checkpoint_interval,
         )?;
 
         if args.max_blocks > 0 && height >= args.max_blocks {
