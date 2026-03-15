@@ -18,6 +18,10 @@ mod tests_adapter_path;
 mod tests_audit_export;
 
 #[cfg(test)]
+#[path = "tests_audit_query.rs"]
+mod tests_audit_query;
+
+#[cfg(test)]
 #[path = "tests_audit_provenance_fields.rs"]
 mod tests_audit_provenance_fields;
 
