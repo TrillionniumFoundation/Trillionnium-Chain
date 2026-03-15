@@ -60,7 +60,7 @@ pub(crate) fn handle_run_assigned(
         ) {
             Ok(v) => v,
             Err(e) => {
-                let (resolution_code, failure_tag) = classify_adapter_error(&e);
+                let (resolution_code, failure_tag): (&str, &str) = classify_adapter_error(&e);
                 rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
                 rec.verifier_status = Some("rejected".to_string());
                 rec.resolution_code = Some(resolution_code.to_string());

@@ -3,6 +3,7 @@ use clap::Parser;
 #[cfg(test)]
 use std::collections::BTreeMap;
 mod adapter;
+mod adapter_error;
 mod adapter_parse;
 mod adapter_retry;
 mod assigned;
