@@ -1,7 +1,9 @@
 use crate::{
     proof_adapter_rules::{is_tee_receipt_adapter_label, is_zk_receipt_adapter_label},
-    proof_adapter_utils::{
-        has_non_empty_auditable_value, normalize_adapter_label, parse_response_with_standard_rules,
+    proof_adapter_utils::{normalize_adapter_label, parse_response_with_standard_rules},
+    proof_adapter_verify::{
+        validate_receipt_adapter_response, verify_standard_adapter_output,
+        verify_tee_receipt_adapter_output, verify_zk_receipt_adapter_output,
     },
     LlmAdapterResponse,
 };
@@ -42,8 +44,7 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
 
 impl ProofAdapter for StandardProofAdapter {
     fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
-        let (status, code): (&str, &str) = crate::verify_model_output(output, max_chars);
-        (status == "accepted", code.to_string())
+        verify_standard_adapter_output(output, max_chars)
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
@@ -53,52 +54,24 @@ impl ProofAdapter for StandardProofAdapter {
 
 impl ProofAdapter for TeeReceiptProofAdapter {
     fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
-        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
-        if !ok {
-            return (false, code);
-        }
-        (true, "tee_receipt_ok".to_string())
+        verify_tee_receipt_adapter_output(output, max_chars)
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
         let parsed = parse_response_with_standard_rules(stdout)?;
-
-        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
-        if !request_id_ok {
-            return Err("tee-receipt-missing-provider-request-id".to_string());
-        }
-
-        let adapter_ok = is_tee_receipt_adapter_label(parsed.adapter.as_deref());
-        if !adapter_ok {
-            return Err("tee-receipt-missing-adapter-label".to_string());
-        }
-
+        validate_receipt_adapter_response("tee-receipt", &parsed, is_tee_receipt_adapter_label)?;
         Ok(parsed)
     }
 }
 
 impl ProofAdapter for ZkReceiptProofAdapter {
     fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
-        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
-        if !ok {
-            return (false, code);
-        }
-        (true, "zk_receipt_ok".to_string())
+        verify_zk_receipt_adapter_output(output, max_chars)
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
         let parsed = parse_response_with_standard_rules(stdout)?;
-
-        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
-        if !request_id_ok {
-            return Err("zk-receipt-missing-provider-request-id".to_string());
-        }
-
-        let adapter_ok = is_zk_receipt_adapter_label(parsed.adapter.as_deref());
-        if !adapter_ok {
-            return Err("zk-receipt-missing-adapter-label".to_string());
-        }
-
+        validate_receipt_adapter_response("zk-receipt", &parsed, is_zk_receipt_adapter_label)?;
         Ok(parsed)
     }
 }
