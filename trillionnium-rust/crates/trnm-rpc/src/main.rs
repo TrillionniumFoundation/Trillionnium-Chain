@@ -90,7 +90,9 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
-use crate::rpc_util::{clamp_limit, resolve_ops_window, rpc_fail};
+use crate::rpc_util::{clamp_limit, rpc_fail};
+#[cfg(test)]
+use crate::rpc_util::resolve_ops_window;
 use crate::runtime::{make_request_id, now_ms};
 #[cfg(test)]
 use crate::snapshot::query_task_from_state_snapshot;
@@ -98,6 +100,8 @@ use crate::snapshot::{governance_state, load_latest_adapter_records};
 #[cfg(test)]
 use crate::taskview::query_task_from_node_events;
 use crate::taskview::{filtered_node_events_for_task, query_events_response, query_task_response};
+use crate::treasury::{handle_query_challenge_treasury, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT};
+#[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
 use crate::validate::{transition_request_status, validate_submit_message_metadata};
 
@@ -107,8 +111,6 @@ const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
 const QUERY_FULL_LIMIT_MAX: usize = 200;
 const DISPATCH_OPEN_LIMIT_DEFAULT: usize = 20;
 const DISPATCH_OPEN_LIMIT_MAX: usize = 100;
-const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
-const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
 #[cfg(test)]
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
 #[cfg(test)]
@@ -582,29 +584,14 @@ fn main() -> Result<()> {
             from_unix_ms,
             to_unix_ms,
             json,
-        } => {
-            let limit = clamp_limit(
-                "QueryChallengeTreasury",
-                limit,
-                CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
-                CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
-            );
-            let summary_window = resolve_ops_window(window, from_unix_ms, to_unix_ms, now_ms())?;
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let out = summarize_challenge_treasury(
-                &node_events.events,
-                limit,
-                summary_window,
-                node_events.mode,
-                node_events.truncated,
-            );
-            if json {
-                println!("{}", serde_json::to_string_pretty(&out)?);
-            } else {
-                // Keep backward compatibility: default remains JSON output.
-                println!("{}", serde_json::to_string_pretty(&out)?);
-            }
-        }
+        } => handle_query_challenge_treasury(
+            limit,
+            window,
+            from_unix_ms,
+            to_unix_ms,
+            json,
+            now_ms(),
+        )?,
         Command::QueryBalance { address } => {
             let accounts = load_account_state(&account_state_file());
             let account =

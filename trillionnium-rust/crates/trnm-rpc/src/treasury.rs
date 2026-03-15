@@ -1,9 +1,14 @@
-use crate::{NodeEventRecord, NodeEventScanMode};
+use crate::node_events::load_node_events;
+use crate::rpc_util::{clamp_limit, resolve_ops_window};
+use crate::{NodeEventRecord, NodeEventScanMode, OpsWindowArg};
+use anyhow::Result;
 use serde::Serialize;
 use std::collections::{BTreeMap, HashSet};
 
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
+pub(crate) const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
+pub(crate) const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct ChallengeTreasuryEventView {
@@ -58,6 +63,37 @@ pub(crate) struct ChallengeTreasuryQueryResponse {
     pub(crate) window: Option<ChallengeWindowView>,
     pub(crate) node_event_source_mode: String,
     pub(crate) node_event_log_truncated: bool,
+}
+
+pub(crate) fn handle_query_challenge_treasury(
+    limit: usize,
+    window: Option<OpsWindowArg>,
+    from_unix_ms: Option<u128>,
+    to_unix_ms: Option<u128>,
+    json: bool,
+    now_unix_ms: u128,
+) -> Result<()> {
+    let limit = clamp_limit(
+        "QueryChallengeTreasury",
+        limit,
+        CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
+        CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
+    );
+    let summary_window = resolve_ops_window(window, from_unix_ms, to_unix_ms, now_unix_ms)?;
+    let node_events = load_node_events(NodeEventScanMode::Authoritative);
+    let out = summarize_challenge_treasury(
+        &node_events.events,
+        limit,
+        summary_window,
+        node_events.mode,
+        node_events.truncated,
+    );
+    if json {
+        println!("{}", serde_json::to_string_pretty(&out)?);
+    } else {
+        println!("{}", serde_json::to_string_pretty(&out)?);
+    }
+    Ok(())
 }
 
 pub(crate) fn summarize_challenge_treasury(
