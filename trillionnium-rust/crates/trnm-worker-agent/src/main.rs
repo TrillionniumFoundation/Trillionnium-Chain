@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 mod adapter;
 mod adapter_constants;
 mod adapter_error;
+mod adapter_flow;
 mod adapter_model;
 mod adapter_parse;
 mod adapter_retry;
@@ -27,6 +28,7 @@ pub(crate) use adapter_constants::{
     TX_ADAPTER_BACKOFF_MS_ENV, TX_ADAPTER_MAX_RETRIES_ENV, WORKER_EVENT_LOG_ENV,
     WORKER_PROGRESS_LOG_ENV,
 };
+pub(crate) use adapter_flow::{persisted_ack_hashes_for_task, should_execute_reveal};
 pub(crate) use adapter_model::LlmAdapterResponse;
 pub(crate) use adapter_parse::{
     normalized_agent_protocol, normalized_compliance_profile, normalized_optional_field,
