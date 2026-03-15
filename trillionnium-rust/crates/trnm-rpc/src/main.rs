@@ -19,12 +19,14 @@ use trnm_rpc::{
     TaskMeteringQueryResponse, TaskQueryResponse,
 };
 use trnm_state::StateStore;
+#[cfg(test)]
+use trnm_types::IdentityRegistry;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
-    TaskStatus, TransferTx,
+    GovParamObject, GovProposalObject, GovProposalStatus, PrivacyTier, RequestStatus, TaskMetadata,
+    TaskMeteringSnapshot, TaskObject, TaskStatus, TransferTx,
 };
 
+mod capability;
 mod envpaths;
 mod http;
 mod metering;
@@ -32,6 +34,9 @@ mod node_events;
 mod persistence;
 mod taskview;
 
+use crate::capability::{
+    load_identity_registry, query_capability_audit, resolve_capability_token_subject_or_token,
+};
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
     faucet_limits_file, identity_registry_file, ingress_file, market_bids_file,
@@ -433,36 +438,6 @@ pub(crate) struct LoadedNodeEvents {
     pub(crate) truncated: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct CapabilityAuditQueryResponse {
-    token: CapabilityToken,
-    owner_history: Vec<AuditEvent>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum CapabilityAuditQueryError {
-    TokenNotFound(u64),
-    InvalidRegistryState { field: &'static str, value: String },
-}
-
-impl CapabilityAuditQueryError {
-    fn to_rpc_error(&self) -> RpcErrorResponse {
-        match self {
-            Self::TokenNotFound(token_id) => RpcErrorResponse {
-                code: "CAPABILITY_NOT_FOUND",
-                message: format!("capability token not found: {}", token_id),
-            },
-            Self::InvalidRegistryState { field, value } => RpcErrorResponse {
-                code: "INVALID_REGISTRY_STATE",
-                message: format!(
-                    "non-canonical {} in identity registry snapshot: {}",
-                    field, value
-                ),
-            },
-        }
-    }
-}
-
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -527,56 +502,6 @@ fn now_ms() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0)
-}
-
-fn load_identity_registry(path: &Path) -> IdentityRegistry {
-    let Ok(raw) = fs::read_to_string(path) else {
-        return IdentityRegistry::default();
-    };
-    serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
-}
-
-fn query_capability_audit(
-    registry: &IdentityRegistry,
-    token_id: u64,
-) -> Result<CapabilityAuditQueryResponse, CapabilityAuditQueryError> {
-    let Some(token) = registry.capability(token_id).cloned() else {
-        return Err(CapabilityAuditQueryError::TokenNotFound(token_id));
-    };
-
-    if !IdentityRegistry::is_canonical_did(&token.subject_did) {
-        return Err(CapabilityAuditQueryError::InvalidRegistryState {
-            field: "subject_did",
-            value: token.subject_did.clone(),
-        });
-    }
-
-    let mut owner_history: Vec<_> = registry
-        .audit_trail()
-        .iter()
-        .filter(|event| event.subject == token.subject_did)
-        .cloned()
-        .collect();
-
-    if let Some(invalid_subject) = owner_history
-        .iter()
-        .map(|event| event.subject.as_str())
-        .find(|subject| !IdentityRegistry::is_canonical_did(subject))
-    {
-        return Err(CapabilityAuditQueryError::InvalidRegistryState {
-            field: "owner_history.subject",
-            value: invalid_subject.to_string(),
-        });
-    }
-
-    // Keep audit query output deterministic even when registry snapshots are
-    // merged/imported with non-canonical ordering.
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
-
-    Ok(CapabilityAuditQueryResponse {
-        token,
-        owner_history,
-    })
 }
 
 fn make_request_id(
@@ -1713,50 +1638,6 @@ fn summarize_challenge_treasury(
         node_event_source_mode: node_event_source_mode.as_str().to_string(),
         node_event_log_truncated,
     }
-}
-
-fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
-        .chars()
-        .filter_map(|ch| match ch {
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
-            _ if ch.is_control() => None,
-            _ => Some(ch),
-        })
-        .collect::<String>();
-    if normalized.is_empty() {
-        None
-    } else {
-        Some(normalized)
-    }
-}
-
-fn resolve_capability_token_subject_or_token(
-    registry: &IdentityRegistry,
-    subject_or_token: &str,
-) -> Option<u64> {
-    let normalized = normalize_capability_subject_lookup(subject_or_token)?;
-    if let Ok(token_id) = normalized.parse::<u64>() {
-        return Some(token_id);
-    }
-
-    if !IdentityRegistry::is_canonical_did(&normalized) {
-        return None;
-    }
-
-    let mut subject_tokens = registry
-        .capability_ids_by_subject(&normalized)
-        .into_iter()
-        .filter(|token_id| {
-            registry
-                .capability(*token_id)
-                .map(|token| token.subject_did == normalized)
-                .unwrap_or(false)
-        })
-        .collect::<Vec<_>>();
-    subject_tokens.sort_unstable();
-    subject_tokens.last().copied()
 }
 
 fn serve_health(host: &str, port: u16) -> Result<()> {
