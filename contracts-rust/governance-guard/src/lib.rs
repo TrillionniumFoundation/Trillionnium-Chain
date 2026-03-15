@@ -26,6 +26,7 @@ pub struct Proposal {
     pub param_key: String,
     pub old_value: String,
     pub new_value: String,
+    pub base_version: Option<u64>,
     pub reason_hash: String,
     pub status: ProposalStatus,
     pub executed_at: Option<u64>,
@@ -34,6 +35,7 @@ pub struct Proposal {
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct GovernanceBridgeState {
     pub gov_params: HashMap<String, String>,
+    pub param_versions: HashMap<String, u64>,
     pub emergency_paused: bool,
 }
 
@@ -52,6 +54,7 @@ pub enum Error {
     GuardianExecutorConflict,
     WrongProposer,
     CurrentValueMismatch,
+    ParamVersionMismatch,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -138,6 +141,13 @@ impl GovernanceGuard {
         }
 
         let id = self.next_id();
+        let base_version = self
+            .bridge
+            .param_versions
+            .get(&param_key)
+            .copied()
+            .unwrap_or_default();
+
         let proposal = Proposal {
             id,
             kind: ProposalKind::ParamChange,
@@ -147,6 +157,7 @@ impl GovernanceGuard {
             param_key,
             old_value: old_value.into(),
             new_value: new_value.into(),
+            base_version: Some(base_version),
             reason_hash: reason_hash.into(),
             status: ProposalStatus::Pending,
             executed_at: None,
@@ -177,7 +188,7 @@ impl GovernanceGuard {
     pub fn execute(&mut self, caller: &str, proposal_id: ProposalId, now: u64) -> Result<()> {
         self.require_executor(caller)?;
 
-        let (param_key, new_value, old_value) = {
+        let (param_key, new_value, old_value, base_version) = {
             let proposal = self.proposal_mut(proposal_id)?;
 
             if proposal.kind != ProposalKind::ParamChange {
@@ -194,8 +205,14 @@ impl GovernanceGuard {
                 proposal.param_key.clone(),
                 proposal.new_value.clone(),
                 proposal.old_value.clone(),
+                proposal.base_version,
             )
         };
+
+        let version = self.bridge.param_versions.get(&param_key).copied().unwrap_or_default();
+        if base_version != Some(version) {
+            return Err(Error::ParamVersionMismatch);
+        }
 
         let current = self
             .bridge
@@ -207,7 +224,9 @@ impl GovernanceGuard {
             return Err(Error::CurrentValueMismatch);
         }
 
-        self.bridge.gov_params.insert(param_key, new_value);
+        self.bridge.gov_params.insert(param_key.clone(), new_value);
+        let next_version = version.saturating_add(1);
+        self.bridge.param_versions.insert(param_key, next_version);
 
         let proposal = self.proposal_mut(proposal_id)?;
         proposal.status = ProposalStatus::Executed;
@@ -270,6 +289,7 @@ impl GovernanceGuard {
             param_key: "emergency_pause".to_string(),
             old_value: "true".to_string(),
             new_value: "false".to_string(),
+            base_version: None,
             reason_hash: reason_hash.into(),
             status: ProposalStatus::Queued,
             executed_at: None,
@@ -473,6 +493,47 @@ mod tests {
         assert_eq!(err, Error::CurrentValueMismatch);
 
         let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Queued);
+    }
+
+    #[test]
+    fn execute_rejects_if_param_version_shifted() {
+        let mut gov = setup();
+        let now = 3_200;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "130",
+                eta,
+                "reason-a",
+                now,
+            )
+            .unwrap();
+        let pid2 = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "140",
+                eta,
+                "reason-b",
+                now,
+            )
+            .unwrap();
+
+        gov.queue("alice", pid).unwrap();
+        gov.queue("alice", pid2).unwrap();
+
+        gov.execute("exec", pid, eta).unwrap();
+
+        let err = gov.execute("exec", pid2, eta).unwrap_err();
+        assert_eq!(err, Error::ParamVersionMismatch);
+
+        let p = gov.proposal(pid2).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
     }
 

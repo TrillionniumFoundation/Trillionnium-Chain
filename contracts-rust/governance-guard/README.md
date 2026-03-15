@@ -28,6 +28,12 @@ Rust 版外置治理骨架（in-memory state machine）：
 - `guardian`：取消提案、触发紧急暂停、安排恢复
 - `proposer`：可撤销自己的待执行提案
 
+并发一致性（v2+）：
+
+- 每个参数提案在 `propose` 时会快照 `base_version`。
+- `execute` 时要求当前 `param_version` 未变化；若期间有其他提案成功写入同参数，会返回 `ParamVersionMismatch`，避免并发提案覆盖。
+- 参数执行成功后会触发 `param_version + 1`。
+
 ## 与 trnm-state 的映射
 
 外置 `param_key` 直接映射 `trnm-state` 的治理参数键（`set_gov_param*` 的 key 语义）。
@@ -61,5 +67,6 @@ Rust 版外置治理骨架（in-memory state machine）：
 
 1. **timelock 绕过**：未到 `eta` 执行失败，且无状态副作用
 2. **重复执行**：同一 proposal 二次执行失败
-3. **权限漂移**：撤销 proposer/executor/guardian 后调用失败
-4. **pause 恢复**：pause 立即生效；unpause 到期前失败、到期后成功
+3. **版本漂移保护**：同参数并发提案会因版本改变而拒绝执行，避免覆盖
+4. **权限漂移**：撤销 proposer/executor/guardian 后调用失败
+5. **pause 恢复**：pause 立即生效；unpause 到期前失败、到期后成功
