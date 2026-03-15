@@ -1,6 +1,7 @@
 use crate::{
     proof_adapter_rules::{is_tee_receipt_adapter_label, is_zk_receipt_adapter_label},
-    proof_adapter_utils::{normalize_adapter_label, parse_response_with_standard_rules},
+    proof_adapter_selector::{classify_proof_adapter, ProofAdapterKind},
+    proof_adapter_utils::parse_response_with_standard_rules,
     proof_adapter_verify::{
         validate_receipt_adapter_response, verify_standard_adapter_output,
         verify_tee_receipt_adapter_output, verify_zk_receipt_adapter_output,
@@ -20,25 +21,10 @@ pub struct TeeReceiptProofAdapter;
 pub struct ZkReceiptProofAdapter;
 
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
-    let normalized = normalize_adapter_label(name);
-    match normalized.as_str() {
-        ""
-        | DEFAULT_PROOF_ADAPTER
-        | "fraud-proof"
-        | "fraud_proof"
-        | "fraud-proof-v1"
-        | "fraud_proof_v1"
-        | "fraudproof"
-        | "fraudproofv1" => Ok(Box::new(StandardProofAdapter)),
-        "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1" | "tee-attestation"
-        | "tee_attestation" | "tee-attestation-v1" | "tee_attestation_v1" | "teereceipt"
-        | "teeattestation" | "teereceiptv1" | "teeattestationv1" => {
-            Ok(Box::new(TeeReceiptProofAdapter))
-        }
-        "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
-        | "zk_proof" | "zk-proof-v1" | "zk_proof_v1" | "zkreceipt" | "zkproof" | "zkproofv1"
-        | "zkreceiptv1" => Ok(Box::new(ZkReceiptProofAdapter)),
-        other => Err(format!("unsupported-proof-adapter:{other}")),
+    match classify_proof_adapter(name, DEFAULT_PROOF_ADAPTER)? {
+        ProofAdapterKind::Standard => Ok(Box::new(StandardProofAdapter)),
+        ProofAdapterKind::TeeReceipt => Ok(Box::new(TeeReceiptProofAdapter)),
+        ProofAdapterKind::ZkReceipt => Ok(Box::new(ZkReceiptProofAdapter)),
     }
 }
 
