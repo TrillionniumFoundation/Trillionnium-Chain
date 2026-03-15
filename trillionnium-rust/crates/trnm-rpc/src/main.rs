@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::Parser;
 #[cfg(test)]
 use std::path::PathBuf;
 #[cfg(test)]
@@ -16,6 +16,7 @@ use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 mod account_tx;
 mod capability;
+mod cli;
 mod envpaths;
 mod fsutil;
 mod health;
@@ -47,6 +48,7 @@ use crate::account_tx::{
     FAUCET_MAX_REQUESTS_DEFAULT, FAUCET_MAX_REQUESTS_MIN, FAUCET_WINDOW_SECONDS_DEFAULT,
     FAUCET_WINDOW_SECONDS_MIN,
 };
+use crate::cli::{Args, Command};
 #[cfg(test)]
 use crate::capability::resolve_capability_token_subject_or_token;
 #[cfg(test)]
@@ -88,9 +90,9 @@ use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
     load_node_events_from_root, read_log_tail,
 };
-use crate::ingress_flow::{handle_dispatch_open, handle_submit_message, DISPATCH_OPEN_LIMIT_DEFAULT};
+use crate::ingress_flow::{handle_dispatch_open, handle_submit_message};
 #[cfg(test)]
-use crate::ingress_flow::DISPATCH_OPEN_LIMIT_MAX;
+use crate::ingress_flow::{DISPATCH_OPEN_LIMIT_DEFAULT, DISPATCH_OPEN_LIMIT_MAX};
 use crate::market_flow::{
     handle_market_create_task, handle_market_match_task, handle_market_report,
     handle_market_submit_bid,
@@ -119,7 +121,7 @@ use crate::snapshot::{governance_state, load_latest_adapter_records};
 use crate::taskview::query_task_from_node_events;
 #[cfg(test)]
 use crate::taskview::query_events_response;
-use crate::treasury::{handle_query_challenge_treasury, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT};
+use crate::treasury::handle_query_challenge_treasury;
 #[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
 #[cfg(test)]
@@ -158,146 +160,6 @@ const HEALTH_SOCKET_READ_TIMEOUT_MS: u64 = 2_000;
 const HEALTH_SOCKET_WRITE_TIMEOUT_MS: u64 = 2_000;
 const HEALTH_REQUEST_HEADER_MAX_BYTES: usize = 4 * 1024;
 const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
-
-#[derive(Debug, Parser)]
-#[command(
-    name = "trnm-rpc",
-    version,
-    about = "Trillionnium RPC (state-backed query schema)"
-)]
-struct Args {
-    #[command(subcommand)]
-    cmd: Command,
-}
-
-#[derive(Debug, Subcommand)]
-enum Command {
-    QueryTask {
-        task_id: u64,
-    },
-    QueryProposal {
-        proposal_id: u64,
-    },
-    QueryParam {
-        key: String,
-    },
-    QueryEvents {
-        task_id: u64,
-        #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
-        limit: usize,
-    },
-    QueryCapabilityAudit {
-        #[arg(long)]
-        token_id: u64,
-    },
-    /// Query challenge treasury/forfeits current summary and recent related events
-    QueryChallengeTreasury {
-        #[arg(long, default_value_t = CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT)]
-        limit: usize,
-        /// Rolling window preset for ops summary (24h / 7d / custom)
-        #[arg(long, value_enum)]
-        window: Option<OpsWindowArg>,
-        /// Start unix timestamp (ms), required when --window custom
-        #[arg(long)]
-        from_unix_ms: Option<u128>,
-        /// End unix timestamp (ms), required when --window custom
-        #[arg(long)]
-        to_unix_ms: Option<u128>,
-        /// Force JSON output (backward-compatible no-op, kept for dashboard scripts)
-        #[arg(long, default_value_t = false)]
-        json: bool,
-    },
-    QueryBalance {
-        address: String,
-    },
-    QueryNonce {
-        address: String,
-    },
-    SendTx {
-        #[arg(long)]
-        from: String,
-        #[arg(long)]
-        to: String,
-        #[arg(long)]
-        amount: u128,
-        #[arg(long, default_value_t = 0)]
-        fee: u128,
-        #[arg(long)]
-        nonce: u64,
-        #[arg(long)]
-        signature: String,
-    },
-    GetTx {
-        #[arg(long)]
-        tx_hash: String,
-    },
-    FaucetRequest {
-        #[arg(long)]
-        address: String,
-        #[arg(long, default_value_t = 1000)]
-        amount: u128,
-    },
-    SubmitMessage {
-        #[arg(long)]
-        channel: String,
-        #[arg(long)]
-        user_id: String,
-        #[arg(long)]
-        session_id: String,
-        #[arg(long)]
-        text: String,
-        #[arg(long)]
-        idempotency_key: String,
-    },
-    QueryRequest {
-        #[arg(long)]
-        request_id: String,
-    },
-    QueryRequestFull {
-        #[arg(long)]
-        request_id: String,
-        #[arg(long, default_value_t = QUERY_FULL_LIMIT_DEFAULT)]
-        limit: usize,
-    },
-    #[command(name = "market.create_task", visible_alias = "market-create-task")]
-    MarketCreateTask {
-        #[arg(long)]
-        creator: String,
-        #[arg(long)]
-        bounty: u128,
-        #[arg(long)]
-        description: String,
-    },
-    #[command(name = "market.submit_bid", visible_alias = "market-submit-bid")]
-    MarketSubmitBid {
-        #[arg(long)]
-        task_id: u64,
-        #[arg(long)]
-        worker: String,
-        #[arg(long)]
-        price: u128,
-    },
-    #[command(name = "market.match_task", visible_alias = "market-match-task")]
-    MarketMatchTask {
-        #[arg(long)]
-        task_id: u64,
-    },
-    #[command(name = "market.report", visible_alias = "market-report")]
-    MarketReport {},
-    DispatchOpen {
-        #[arg(long, default_value = "worker-1")]
-        worker_id: String,
-        #[arg(long, default_value_t = DISPATCH_OPEN_LIMIT_DEFAULT)]
-        limit: usize,
-    },
-    /// Run minimal RPC health server for service mode
-    Serve {
-        #[arg(long, default_value = "127.0.0.1")]
-        host: String,
-        #[arg(long, default_value_t = 8545)]
-        port: u16,
-    },
-}
 
 fn main() -> Result<()> {
     let args = Args::parse();
