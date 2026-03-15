@@ -42,6 +42,7 @@ mod run;
 mod run_apply;
 mod run_bft;
 mod run_bootstrap;
+mod run_height;
 mod run_metrics;
 mod run_persist;
 mod rwset;
