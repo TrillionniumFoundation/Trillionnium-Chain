@@ -17,6 +17,7 @@ use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 mod account_tx;
 mod capability;
 mod cli;
+mod dispatch;
 mod envpaths;
 mod fsutil;
 mod health;
@@ -39,16 +40,13 @@ mod taskview;
 mod treasury;
 mod validate;
 
-use crate::account_tx::{
-    handle_faucet_request, handle_get_tx, handle_query_balance, handle_query_nonce,
-    handle_send_tx,
-};
 #[cfg(test)]
 use crate::account_tx::{
     FAUCET_MAX_REQUESTS_DEFAULT, FAUCET_MAX_REQUESTS_MIN, FAUCET_WINDOW_SECONDS_DEFAULT,
     FAUCET_WINDOW_SECONDS_MIN,
 };
-use crate::cli::{Args, Command};
+use crate::cli::Args;
+use crate::dispatch::dispatch_command;
 #[cfg(test)]
 use crate::capability::resolve_capability_token_subject_or_token;
 #[cfg(test)]
@@ -62,7 +60,6 @@ use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state
 use crate::envpaths::{normalized_path_from_env, run_root};
 #[cfg(test)]
 use crate::fsutil::atomic_write_text_file;
-use crate::health::serve_health;
 #[cfg(test)]
 use crate::http::{
     configure_health_stream, parse_http_get_path, parse_query_events_limit_from_path,
@@ -90,22 +87,13 @@ use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
     load_node_events_from_root, read_log_tail,
 };
-use crate::ingress_flow::{handle_dispatch_open, handle_submit_message};
 #[cfg(test)]
 use crate::ingress_flow::{DISPATCH_OPEN_LIMIT_DEFAULT, DISPATCH_OPEN_LIMIT_MAX};
-use crate::market_flow::{
-    handle_market_create_task, handle_market_match_task, handle_market_report,
-    handle_market_submit_bid,
-};
-use crate::read_query::{
-    handle_query_capability_audit, handle_query_events, handle_query_param, handle_query_proposal,
-    handle_query_task,
-};
-use crate::request_query::{handle_query_request, handle_query_request_full};
 #[cfg(test)]
 use crate::rpc_util::{clamp_limit, resolve_ops_window};
 #[cfg(test)]
 use crate::runtime::make_request_id;
+#[cfg(test)]
 use crate::runtime::now_ms;
 pub(crate) use crate::shared::{
     normalize_actor_or_signer, normalize_tx_hash_lookup, push_tail_limited, AdapterRecord,
@@ -121,7 +109,6 @@ use crate::snapshot::{governance_state, load_latest_adapter_records};
 use crate::taskview::query_task_from_node_events;
 #[cfg(test)]
 use crate::taskview::query_events_response;
-use crate::treasury::handle_query_challenge_treasury;
 #[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
 #[cfg(test)]
@@ -163,73 +150,7 @@ const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 
 fn main() -> Result<()> {
     let args = Args::parse();
-
-    match args.cmd {
-        Command::QueryTask { task_id } => handle_query_task(task_id)?,
-        Command::QueryProposal { proposal_id } => handle_query_proposal(proposal_id)?,
-        Command::QueryParam { key } => handle_query_param(&key)?,
-        Command::QueryEvents { task_id, limit } => handle_query_events(task_id, limit)?,
-        Command::QueryCapabilityAudit { token_id } => handle_query_capability_audit(token_id)?,
-        Command::QueryChallengeTreasury {
-            limit,
-            window,
-            from_unix_ms,
-            to_unix_ms,
-            json,
-        } => handle_query_challenge_treasury(
-            limit,
-            window,
-            from_unix_ms,
-            to_unix_ms,
-            json,
-            now_ms(),
-        )?,
-        Command::QueryBalance { address } => handle_query_balance(&address)?,
-        Command::QueryNonce { address } => handle_query_nonce(&address)?,
-        Command::SendTx {
-            from,
-            to,
-            amount,
-            fee,
-            nonce,
-            signature,
-        } => handle_send_tx(from, to, amount, fee, nonce, signature, now_ms())?,
-        Command::GetTx { tx_hash } => handle_get_tx(&tx_hash, now_ms())?,
-        Command::FaucetRequest { address, amount } => {
-            handle_faucet_request(address, amount, now_ms())?
-        }
-        Command::SubmitMessage {
-            channel,
-            user_id,
-            session_id,
-            text,
-            idempotency_key,
-        } => handle_submit_message(channel, user_id, session_id, text, idempotency_key, now_ms())?,
-        Command::QueryRequest { request_id } => handle_query_request(&request_id)?,
-        Command::QueryRequestFull { request_id, limit } => {
-            handle_query_request_full(&request_id, limit)?
-        }
-        Command::MarketCreateTask {
-            creator,
-            bounty,
-            description,
-        } => handle_market_create_task(creator, bounty, description, now_ms())?,
-        Command::MarketSubmitBid {
-            task_id,
-            worker,
-            price,
-        } => handle_market_submit_bid(task_id, worker, price, now_ms())?,
-        Command::MarketMatchTask { task_id } => handle_market_match_task(task_id)?,
-        Command::MarketReport {} => handle_market_report()?,
-        Command::DispatchOpen { worker_id, limit } => {
-            handle_dispatch_open(worker_id, limit, now_ms())?
-        }
-        Command::Serve { host, port } => {
-            serve_health(&host, port)?;
-        }
-    }
-
-    Ok(())
+    dispatch_command(args.cmd)
 }
 
 #[cfg(test)]
