@@ -11,14 +11,14 @@ use crate::apply::{apply_one, verified_signer_of};
 use crate::args::Args;
 use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{BftJitterControl, LeaderHealth};
+use crate::run_bft::BftHeightTelemetry;
 use crate::config::load_config;
 use crate::demo::init_demo_state_and_mempool;
 use crate::error_kind::classify_apply_error;
 use crate::events::{emit_event, event_type_of, status_name};
 use crate::hash::hash32_hex;
 use crate::hot::{
-    hot_object_tail_share_ppm, hot_object_top_label_share_ppm, missed_proposals_added_since,
-    summarize_hot_objects,
+    hot_object_tail_share_ppm, hot_object_top_label_share_ppm, summarize_hot_objects,
 };
 use crate::mempool::{pick_txs_with_critical_guard, requeue_uncommitted_txs};
 use crate::ordering::decide_order_for_commit;
@@ -127,19 +127,7 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
     let mut rollback_total: u64 = 0;
     let mut rollback_block_total: u64 = 0;
     let mut timeout_migrated_total: u64 = 0;
-    let mut bft_observed_heights: u64 = 0;
-    let mut bft_committed_heights: u64 = 0;
-    let mut bft_round_change_total: u64 = 0;
-    let mut bft_round_change_active_heights: u64 = 0;
-    let mut bft_round_change_backoff_active_heights: u64 = 0;
-    let mut bft_double_vote_total: u64 = 0;
-    let mut bft_auth_reject_bad_sig_total: u64 = 0;
-    let mut bft_auth_reject_replay_total: u64 = 0;
-    let mut bft_auth_reject_stale_nonce_total: u64 = 0;
-    let mut bft_round_change_backoff_total_ms: u64 = 0;
-    let mut bft_round_change_backoff_max_ms: u64 = 0;
-    let mut bft_leader_missed_active_heights: u64 = 0;
-    let mut bft_leader_missed_previous_snapshot: Vec<u64> = vec![0; args.validators.max(1)];
+    let mut bft_telemetry = BftHeightTelemetry::new(args.validators);
     let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
     let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
     let mut bft_jitter = BftJitterControl {
@@ -166,30 +154,8 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             restored_lock.take(),
             &mut bft_jitter,
         );
-        bft_observed_heights += 1;
+        bft_telemetry.record(&bft);
         if !bft.committed {
-            bft_round_change_total += bft.round_changes;
-            if bft.round_changes > 0 {
-                bft_round_change_active_heights += 1;
-            }
-            bft_double_vote_total += bft.double_vote_events as u64;
-            bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
-            bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
-            bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
-            bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
-            if bft.round_change_backoff_total_ms > 0 {
-                bft_round_change_backoff_active_heights += 1;
-            }
-            bft_round_change_backoff_max_ms =
-                bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
-            let leader_missed_added = missed_proposals_added_since(
-                &bft_leader_missed_previous_snapshot,
-                &bft.leader_missed_snapshot,
-            );
-            if leader_missed_added > 0 {
-                bft_leader_missed_active_heights += 1;
-            }
-            bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
             println!(
                 "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={} round_backoff_ms={} leader_missed={:?}",
                 cfg.node_id,
@@ -228,28 +194,6 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             thread::sleep(Duration::from_millis(args.block_ms));
             continue;
         }
-        bft_round_change_total += bft.round_changes;
-        if bft.round_changes > 0 {
-            bft_round_change_active_heights += 1;
-        }
-        bft_double_vote_total += bft.double_vote_events as u64;
-        bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
-        bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
-        bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
-        bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
-        if bft.round_change_backoff_total_ms > 0 {
-            bft_round_change_backoff_active_heights += 1;
-        }
-        bft_round_change_backoff_max_ms =
-            bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
-        let leader_missed_added = missed_proposals_added_since(
-            &bft_leader_missed_previous_snapshot,
-            &bft.leader_missed_snapshot,
-        );
-        if leader_missed_added > 0 {
-            bft_leader_missed_active_heights += 1;
-        }
-        bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
         println!(
             "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
             height,
@@ -264,7 +208,6 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             bft.auth_reject_replay,
             bft.auth_reject_stale_nonce
         );
-        bft_committed_heights += 1;
 
         let mut applied = 0u64;
         let scheduler_start = Instant::now();
@@ -564,19 +507,19 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
         rollback_total,
         rollback_block_total,
         timeout_migrated_total,
-        bft_observed_heights,
-        bft_committed_heights,
-        bft_round_change_total,
-        bft_round_change_active_heights,
-        bft_round_change_backoff_total_ms,
-        bft_round_change_backoff_active_heights,
-        bft_round_change_backoff_max_ms,
-        bft_leader_missed_active_heights,
+        bft_observed_heights: bft_telemetry.observed_heights,
+        bft_committed_heights: bft_telemetry.committed_heights,
+        bft_round_change_total: bft_telemetry.round_change_total,
+        bft_round_change_active_heights: bft_telemetry.round_change_active_heights,
+        bft_round_change_backoff_total_ms: bft_telemetry.round_change_backoff_total_ms,
+        bft_round_change_backoff_active_heights: bft_telemetry.round_change_backoff_active_heights,
+        bft_round_change_backoff_max_ms: bft_telemetry.round_change_backoff_max_ms,
+        bft_leader_missed_active_heights: bft_telemetry.leader_missed_active_heights,
         leader_health: &bft_jitter.leader_health,
-        bft_double_vote_total,
-        bft_auth_reject_bad_sig_total,
-        bft_auth_reject_replay_total,
-        bft_auth_reject_stale_nonce_total,
+        bft_double_vote_total: bft_telemetry.double_vote_total,
+        bft_auth_reject_bad_sig_total: bft_telemetry.auth_reject_bad_sig_total,
+        bft_auth_reject_replay_total: bft_telemetry.auth_reject_replay_total,
+        bft_auth_reject_stale_nonce_total: bft_telemetry.auth_reject_stale_nonce_total,
     });
 
     Ok(())
