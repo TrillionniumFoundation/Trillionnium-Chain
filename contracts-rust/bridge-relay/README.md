@@ -19,6 +19,9 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 - `finalize_settlement`：
   - 内部串联 `submit_proof` + `consume_nonce`
   - settlement 只允许 finalize 一次
+- `audit_log()` 与 `consume_audit_log()`：
+  - 记录关键变更与执行路径（配置变更/提交证明/结算完成）
+  - 便于 indexer 与风控模块做链下审计
 
 ## 数据与哈希
 
@@ -35,6 +38,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 4. nonce 域隔离 + 重放防护（相同 nonce、不同 action 可并存；同域重复消费拒绝）
 5. 签名长度不合法与签名绑定失配拒绝
 6. 非管理员不能篡改 validator 配置
+7. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
 
 ## 运行测试
 

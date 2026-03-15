@@ -41,6 +41,20 @@ pub enum BridgeRelayError {
     NotEnoughValidatorSignatures { required: usize, got: usize },
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum BridgeRelayEvent {
+    ProofSubmitted { proof_digest: [u8; 32], validator_count: usize },
+    ProofSubmittedAndStored { proof_digest: [u8; 32] },
+    SettlementFinalized { settlement_id: [u8; 32], proof_digest: [u8; 32] },
+    NonceConsumed { nonce_key: [u8; 32] },
+    AdminUpdated { old_admin: [u8; 32], new_admin: [u8; 32] },
+    MinSignaturesUpdated {
+        old_min: usize,
+        new_min: usize,
+    },
+    ValidatorsUpdated { previous_count: usize, new_count: usize },
+}
+
 #[derive(Debug, Default)]
 pub struct BridgeRelay {
     proof_used: HashSet<[u8; 32]>,
@@ -49,6 +63,7 @@ pub struct BridgeRelay {
     validators: HashSet<[u8; 32]>,
     min_validator_signatures: usize,
     admin: [u8; 32],
+    audit_log: Vec<BridgeRelayEvent>,
 }
 
 impl BridgeRelay {
@@ -100,6 +115,12 @@ impl BridgeRelay {
             });
         }
 
+        self.audit_log.push(BridgeRelayEvent::ProofSubmitted {
+            proof_digest,
+            validator_count: valid_count,
+        });
+        self.audit_log
+            .push(BridgeRelayEvent::ProofSubmittedAndStored { proof_digest });
         self.proof_used.insert(proof_digest);
         Ok(proof_digest)
     }
@@ -127,24 +148,37 @@ impl BridgeRelay {
         }
 
         self.nonce_used.insert(nonce_key);
+        self.audit_log.push(BridgeRelayEvent::NonceConsumed { nonce_key });
         Ok(nonce_key)
     }
 
     pub fn set_admin(&mut self, caller: &[u8; 32], new_admin: [u8; 32]) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
+        let old_admin = self.admin;
         self.admin = new_admin;
+        self.audit_log.push(BridgeRelayEvent::AdminUpdated {
+            old_admin,
+            new_admin,
+        });
         Ok(())
     }
 
     pub fn set_min_validator_signatures(&mut self, caller: &[u8; 32], min: usize) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
+        let old_min = self.min_validator_signatures;
         self.min_validator_signatures = min;
+        self.audit_log.push(BridgeRelayEvent::MinSignaturesUpdated { old_min, new_min: min });
         Ok(())
     }
 
     pub fn set_validators(&mut self, caller: &[u8; 32], validators: impl IntoIterator<Item = [u8; 32]>) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
+        let previous_count = self.validators.len();
         self.validators = validators.into_iter().collect();
+        self.audit_log.push(BridgeRelayEvent::ValidatorsUpdated {
+            previous_count,
+            new_count: self.validators.len(),
+        });
         Ok(())
     }
 
@@ -167,6 +201,7 @@ impl BridgeRelay {
         )?;
 
         let settlement_id = settlement_id(message);
+        let proof_digest = hash_message(message);
         if self.settlement_finalized.contains(&settlement_id) {
             return Err(BridgeRelayError::SettlementAlreadyFinalized { settlement_id });
         }
@@ -181,7 +216,19 @@ impl BridgeRelay {
         )?;
 
         self.settlement_finalized.insert(settlement_id);
+        self.audit_log.push(BridgeRelayEvent::SettlementFinalized {
+            settlement_id,
+            proof_digest: proof_digest,
+        });
         Ok(settlement_id)
+    }
+
+    pub fn audit_log(&self) -> &[BridgeRelayEvent] {
+        &self.audit_log
+    }
+
+    pub fn consume_audit_log(&mut self) -> Vec<BridgeRelayEvent> {
+        std::mem::take(&mut self.audit_log)
     }
 
     fn require_admin(&self, caller: &[u8; 32]) -> Result<(), BridgeRelayError> {
@@ -540,5 +587,47 @@ mod tests {
             err,
             BridgeRelayError::InvalidValidatorSignature { validator, .. } if validator == b32(7)
         ));
+    }
+
+    #[test]
+    fn audit_log_records_admin_and_settlement_flow() {
+        let mut relay = BridgeRelay::with_admin(2, vec![b32(7)], b32(9));
+
+        relay.set_validators(&b32(9), vec![b32(7), b32(8)]).unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let msg = sample_msg();
+        let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
+
+        let proof_digest = relay
+            .submit_proof(&msg, &sigs, 1_000, 999, 31337, addr(9))
+            .unwrap();
+        let mut replay_msg = sample_msg();
+        replay_msg.nonce += 1;
+        let replay_sig = sig_for(&replay_msg, 7);
+        let replay_sig2 = sig_for(&replay_msg, 8);
+        let mut relay2 = BridgeRelay::with_admin(2, vec![b32(7), b32(8)], b32(9));
+        relay2
+            .finalize_settlement(&replay_msg, &[replay_sig, replay_sig2], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let logs = relay.audit_log();
+        assert!(logs.iter().any(|e| matches!(e, BridgeRelayEvent::ValidatorsUpdated { .. })));
+        assert!(logs.iter().any(|e| matches!(e, BridgeRelayEvent::MinSignaturesUpdated { .. })));
+        assert!(logs.iter().any(|e| matches!(e, BridgeRelayEvent::ProofSubmitted { .. })));
+        assert!(logs.iter().any(|e| matches!(e, BridgeRelayEvent::ProofSubmittedAndStored { proof_digest: d } if *d == proof_digest)));
+
+        relay
+            .consume_audit_log()
+            .into_iter()
+            .for_each(|event| {
+                if let BridgeRelayEvent::ProofSubmittedAndStored { proof_digest: stored_digest } = event {
+                    assert_eq!(stored_digest, proof_digest);
+                }
+            });
+
+        assert!(relay.audit_log().is_empty());
     }
 }
