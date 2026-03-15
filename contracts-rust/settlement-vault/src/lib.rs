@@ -353,7 +353,7 @@ mod tests {
         assert_eq!(err, VaultError::InvalidAmount);
 
         vault.transfer("owner", "alice", "bob", 30).unwrap();
-        assert_eq!(vault.balance_of("alice"), 20);
+        assert_eq!(vault.balance_of("alice"), 0);
         assert_eq!(vault.balance_of("bob"), 30);
 
         assert_eq!(

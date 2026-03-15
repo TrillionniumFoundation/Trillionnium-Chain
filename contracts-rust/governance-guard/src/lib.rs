@@ -177,7 +177,7 @@ impl GovernanceGuard {
     pub fn execute(&mut self, caller: &str, proposal_id: ProposalId, now: u64) -> Result<()> {
         self.require_executor(caller)?;
 
-        let (param_key, new_value) = {
+        let (param_key, new_value, old_value) = {
             let proposal = self.proposal_mut(proposal_id)?;
 
             if proposal.kind != ProposalKind::ParamChange {
@@ -190,18 +190,22 @@ impl GovernanceGuard {
                 return Err(Error::NotReady);
             }
 
-            let current = self
-                .bridge
-                .gov_params
-                .get(&proposal.param_key)
-                .cloned()
-                .unwrap_or_default();
-            if current != proposal.old_value {
-                return Err(Error::CurrentValueMismatch);
-            }
-
-            (proposal.param_key.clone(), proposal.new_value.clone())
+            (
+                proposal.param_key.clone(),
+                proposal.new_value.clone(),
+                proposal.old_value.clone(),
+            )
         };
+
+        let current = self
+            .bridge
+            .gov_params
+            .get(&param_key)
+            .cloned()
+            .unwrap_or_default();
+        if current != old_value {
+            return Err(Error::CurrentValueMismatch);
+        }
 
         self.bridge.gov_params.insert(param_key, new_value);
 

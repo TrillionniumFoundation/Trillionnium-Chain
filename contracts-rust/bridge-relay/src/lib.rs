@@ -1,5 +1,5 @@
 use sha2::{Digest as Sha256Digest, Sha256};
-use sha3::{Digest as KeccakDigest, Keccak256};
+use sha3::Keccak256;
 use std::collections::HashSet;
 
 const VALIDATOR_SIGNATURE_LEN: usize = 64;
