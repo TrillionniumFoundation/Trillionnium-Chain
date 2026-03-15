@@ -1,6 +1,6 @@
 use crate::{
     proof_adapter_rules::{is_tee_receipt_adapter_label, is_zk_receipt_adapter_label},
-    proof_adapter_selector::{classify_proof_adapter, ProofAdapterKind},
+    proof_adapter_selector::classify_proof_adapter,
     proof_adapter_utils::parse_response_with_standard_rules,
     proof_adapter_verify::{
         validate_receipt_adapter_response, verify_standard_adapter_output,
@@ -14,6 +14,11 @@ pub trait ProofAdapter {
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String>;
 }
 
+#[path = "proof_adapter_factory.rs"]
+mod proof_adapter_factory;
+
+use self::proof_adapter_factory::build_proof_adapter_of_kind;
+
 pub const DEFAULT_PROOF_ADAPTER: &str = "standard";
 
 pub struct StandardProofAdapter;
@@ -21,11 +26,8 @@ pub struct TeeReceiptProofAdapter;
 pub struct ZkReceiptProofAdapter;
 
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
-    match classify_proof_adapter(name, DEFAULT_PROOF_ADAPTER)? {
-        ProofAdapterKind::Standard => Ok(Box::new(StandardProofAdapter)),
-        ProofAdapterKind::TeeReceipt => Ok(Box::new(TeeReceiptProofAdapter)),
-        ProofAdapterKind::ZkReceipt => Ok(Box::new(ZkReceiptProofAdapter)),
-    }
+    let kind = classify_proof_adapter(name, DEFAULT_PROOF_ADAPTER)?;
+    build_proof_adapter_of_kind(kind)
 }
 
 impl ProofAdapter for StandardProofAdapter {
