@@ -2,6 +2,8 @@ use sha2::{Digest as Sha256Digest, Sha256};
 use sha3::{Digest as KeccakDigest, Keccak256};
 use std::collections::HashSet;
 
+const VALIDATOR_SIGNATURE_LEN: usize = 64;
+
 pub fn action_settlement_finalize() -> [u8; 32] {
     Keccak256::digest(b"SETTLEMENT_FINALIZE").into()
 }
@@ -32,6 +34,7 @@ pub enum BridgeRelayError {
     InvalidValidatorSignatureLength { got: usize },
     UnknownValidator { validator: [u8; 32] },
     DuplicateValidatorSignature { validator: [u8; 32] },
+    InvalidValidatorSignature { validator: [u8; 32], expected: [u8; 32], got: [u8; 32] },
     NotEnoughValidatorSignatures { required: usize, got: usize },
 }
 
@@ -76,7 +79,7 @@ impl BridgeRelay {
             return Err(BridgeRelayError::ProofAlreadyUsed { proof_digest });
         }
 
-        let valid_count = self.validate_validator_signatures(signatures)?;
+        let valid_count = self.validate_validator_signatures(message, signatures)?;
         if valid_count < self.min_validator_signatures {
             return Err(BridgeRelayError::NotEnoughValidatorSignatures {
                 required: self.min_validator_signatures,
@@ -183,17 +186,29 @@ impl BridgeRelay {
 
     fn validate_validator_signatures(
         &self,
+        message: &BridgeSettlementMessage,
         signatures: &[Vec<u8>],
     ) -> Result<usize, BridgeRelayError> {
+        let message_digest = hash_message(message);
         let mut seen = HashSet::new();
 
         for signature in signatures {
-            let validator = parse_validator_signature(signature)?;
+            let (validator, expected_tag) = parse_validator_signature(signature)?;
+
             if !self.validators.contains(&validator) {
                 return Err(BridgeRelayError::UnknownValidator { validator });
             }
             if !seen.insert(validator) {
                 return Err(BridgeRelayError::DuplicateValidatorSignature { validator });
+            }
+
+            let actual_tag = validator_signature_tag(&validator, &message_digest);
+            if actual_tag != expected_tag {
+                return Err(BridgeRelayError::InvalidValidatorSignature {
+                    validator,
+                    expected: actual_tag,
+                    got: expected_tag,
+                });
             }
         }
 
@@ -201,16 +216,27 @@ impl BridgeRelay {
     }
 }
 
-fn parse_validator_signature(signature: &[u8]) -> Result<[u8; 32], BridgeRelayError> {
-    if signature.len() != 32 {
+fn parse_validator_signature(signature: &[u8]) -> Result<([u8; 32], [u8; 32]), BridgeRelayError> {
+    if signature.len() != VALIDATOR_SIGNATURE_LEN {
         return Err(BridgeRelayError::InvalidValidatorSignatureLength {
             got: signature.len(),
         });
     }
 
     let mut validator = [0u8; 32];
-    validator.copy_from_slice(signature);
-    Ok(validator)
+    let mut tag = [0u8; 32];
+
+    validator.copy_from_slice(&signature[..32]);
+    tag.copy_from_slice(&signature[32..]);
+
+    Ok((validator, tag))
+}
+
+pub fn validator_signature_tag(validator: &[u8; 32], message_digest: &[u8; 32]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(message_digest);
+    hasher.update(validator);
+    hasher.finalize().into()
 }
 
 pub fn nonce_key(
@@ -270,8 +296,15 @@ mod tests {
         [b; 32]
     }
 
-    fn sig(b: u8) -> Vec<u8> {
-        b32(b).to_vec()
+    fn sig_for(message: &BridgeSettlementMessage, validator: u8) -> Vec<u8> {
+        let validator_id = b32(validator);
+        let digest = hash_message(message);
+        let tag = validator_signature_tag(&validator_id, &digest);
+
+        let mut out = [0u8; 64];
+        out[..32].copy_from_slice(&validator_id);
+        out[32..].copy_from_slice(&tag);
+        out.to_vec()
     }
 
     fn relay(min_validator_signatures: usize, validators: &[u8]) -> BridgeRelay {
@@ -319,7 +352,7 @@ mod tests {
         let mut relay = relay(1, &[1]);
         let msg = sample_msg();
         let err = relay
-            .submit_proof(&msg, &[sig(1)], 900, 901, 31337, addr(9))
+            .submit_proof(&msg, &[sig_for(&msg, 1)], 900, 901, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::ProofExpired { .. }));
     }
@@ -330,11 +363,11 @@ mod tests {
         let msg = sample_msg();
 
         relay
-            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap();
 
         let err = relay
-            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(
@@ -350,7 +383,7 @@ mod tests {
         msg.target_chain_id = 10;
 
         let err = relay
-            .finalize_settlement(&msg, &[sig(7)], 1_000, 999, 31337, addr(9))
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(err, BridgeRelayError::InvalidTargetChain { .. }));
@@ -362,7 +395,14 @@ mod tests {
         let msg = sample_msg();
 
         let err = relay
-            .submit_proof(&msg, &[sig(7), sig(7)], 1_000, 999, 31337, addr(9))
+            .submit_proof(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
             .unwrap_err();
 
         assert!(matches!(
@@ -377,12 +417,46 @@ mod tests {
         let msg = sample_msg();
 
         let err = relay
-            .submit_proof(&msg, &[sig(8)], 1_000, 999, 31337, addr(9))
+            .submit_proof(&msg, &[sig_for(&msg, 8)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(
             err,
             BridgeRelayError::UnknownValidator { validator } if validator == b32(8)
+        ));
+    }
+
+    #[test]
+    fn malformed_signature_length_is_rejected() {
+        let mut relay = relay(1, &[9]);
+        let msg = sample_msg();
+        let short = vec![9u8; 63];
+
+        let err = relay
+            .submit_proof(&msg, &[short], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorSignatureLength { got } if got == 63
+        ));
+    }
+
+    #[test]
+    fn invalid_signature_binding_is_rejected() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+        let mut modified = sample_msg();
+        modified.amount = 999;
+
+        let bad_sig = sig_for(&msg, 7);
+        let err = relay
+            .submit_proof(&modified, &[bad_sig], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorSignature { validator, .. } if validator == b32(7)
         ));
     }
 }
