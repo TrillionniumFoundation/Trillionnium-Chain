@@ -17,6 +17,37 @@ pub enum VaultError {
     BalanceOverflow,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum VaultEvent {
+    Deposited {
+        caller: String,
+        account: String,
+        amount: u128,
+    },
+    Locked {
+        request_id: String,
+        account: String,
+        amount: u128,
+    },
+    Released {
+        request_id: String,
+        account: String,
+        amount: u128,
+    },
+    Slashed {
+        request_id: String,
+        beneficiary: String,
+        amount: u128,
+    },
+    Transferred {
+        from: String,
+        to: String,
+        amount: u128,
+    },
+    Paused,
+    Unpaused,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LockStatus {
     Locked,
@@ -37,6 +68,7 @@ pub struct SettlementVault {
     paused: bool,
     balances: HashMap<AccountId, u128>,
     locks: HashMap<RequestId, LockRecord>,
+    audit_log: Vec<VaultEvent>,
 }
 
 impl SettlementVault {
@@ -46,6 +78,7 @@ impl SettlementVault {
             paused: false,
             balances: HashMap::new(),
             locks: HashMap::new(),
+            audit_log: Vec::new(),
         }
     }
 
@@ -65,6 +98,14 @@ impl SettlementVault {
         self.locks.get(request_id)
     }
 
+    pub fn audit_log(&self) -> &[VaultEvent] {
+        &self.audit_log
+    }
+
+    pub fn consume_audit_log(&mut self) -> Vec<VaultEvent> {
+        std::mem::take(&mut self.audit_log)
+    }
+
     pub fn deposit(
         &mut self,
         caller: &str,
@@ -77,7 +118,13 @@ impl SettlementVault {
             return Err(VaultError::InvalidAmount);
         }
 
-        self.credit_balance(account, amount)
+        self.credit_balance(account, amount)?;
+        self.audit_log.push(VaultEvent::Deposited {
+            caller: caller.to_string(),
+            account: account.to_string(),
+            amount,
+        });
+        Ok(())
     }
 
     pub fn lock(
@@ -112,6 +159,12 @@ impl SettlementVault {
             },
         );
 
+        self.audit_log.push(VaultEvent::Locked {
+            request_id: request_id.to_string(),
+            account: account.to_string(),
+            amount,
+        });
+
         Ok(())
     }
 
@@ -133,7 +186,13 @@ impl SettlementVault {
             (lock.account.clone(), lock.amount)
         };
 
-        self.credit_balance(&account, amount)
+        self.credit_balance(&account, amount)?;
+        self.audit_log.push(VaultEvent::Released {
+            request_id: request_id.to_string(),
+            account,
+            amount,
+        });
+        Ok(())
     }
 
     pub fn slash(
@@ -159,7 +218,13 @@ impl SettlementVault {
             lock.amount
         };
 
-        self.credit_balance(beneficiary, amount)
+        self.credit_balance(beneficiary, amount)?;
+        self.audit_log.push(VaultEvent::Slashed {
+            request_id: request_id.to_string(),
+            beneficiary: beneficiary.to_string(),
+            amount,
+        });
+        Ok(())
     }
 
     pub fn transfer(
@@ -181,7 +246,13 @@ impl SettlementVault {
         }
         *from_entry -= amount;
 
-        self.credit_balance(to, amount)
+        self.credit_balance(to, amount)?;
+        self.audit_log.push(VaultEvent::Transferred {
+            from: from.to_string(),
+            to: to.to_string(),
+            amount,
+        });
+        Ok(())
     }
 
     pub fn pause(&mut self, caller: &str) -> Result<(), VaultError> {
@@ -191,6 +262,7 @@ impl SettlementVault {
         }
 
         self.paused = true;
+        self.audit_log.push(VaultEvent::Paused);
         Ok(())
     }
 
@@ -201,6 +273,7 @@ impl SettlementVault {
         }
 
         self.paused = false;
+        self.audit_log.push(VaultEvent::Unpaused);
         Ok(())
     }
 
@@ -333,6 +406,76 @@ mod tests {
             vault.lock_record("req-2").unwrap().status,
             LockStatus::Slashed
         );
+    }
+
+    #[test]
+    fn audit_log_records_vault_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-1", "alice", 25).unwrap();
+        vault.release("owner", "req-1").unwrap();
+
+        vault.deposit("owner", "alice", 30).unwrap();
+        vault.transfer("owner", "alice", "bob", 20).unwrap();
+
+        vault.pause("owner").unwrap();
+        vault.unpause("owner").unwrap();
+        assert_eq!(vault.unpause("owner").unwrap_err(), VaultError::NotPaused);
+
+        vault.lock("owner", "req-2", "alice", 10).unwrap();
+        vault.slash("owner", "req-2", "treasury").unwrap();
+
+        let logs = vault.consume_audit_log();
+
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Deposited { caller, account, amount }
+                    if caller == "owner" && account == "alice" && *amount == 100
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Locked { request_id, account, amount }
+                    if request_id == "req-1" && account == "alice" && *amount == 25
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Released { request_id, account, amount }
+                    if request_id == "req-1" && account == "alice" && *amount == 25
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Transferred { from, to, amount }
+                    if from == "alice" && to == "bob" && *amount == 20
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Paused
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Unpaused
+            ))
+        );
+        assert!(
+            logs.iter().any(|event| matches!(
+                event,
+                VaultEvent::Slashed { request_id, beneficiary, amount }
+                    if request_id == "req-2" && beneficiary == "treasury" && *amount == 10
+            ))
+        );
+        assert!(vault.audit_log().is_empty());
     }
 
     #[test]

@@ -39,3 +39,12 @@ cargo test
 ```text
 trnm(contract-rs-vault): ...
 ```
+
+
+## 可观测能力（审计事件）
+
+新增 `SettlementVault` 可观测能力：
+- `audit_log() -> &[VaultEvent]`
+- `consume_audit_log() -> Vec<VaultEvent>`
+
+事件包括：`Deposited`、`Locked`、`Released`、`Slashed`、`Transferred`、`Paused`、`Unpaused`。
