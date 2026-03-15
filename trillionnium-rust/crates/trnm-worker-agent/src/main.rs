@@ -20,6 +20,7 @@ mod cli;
 mod dispatch;
 mod flush;
 mod proof_adapter;
+mod workflow;
 
 use audit::{handle_export_audit, handle_query_audit};
 use cli::Args;
@@ -68,17 +69,6 @@ pub(crate) struct PersistedAckHashes {
 #[derive(Debug, Serialize, Deserialize)]
 struct WorkerState {
     last_task_id: u64,
-}
-
-#[derive(Debug, Serialize)]
-struct RunOnceOutput {
-    task_id: u64,
-    worker: String,
-    result_hash: String,
-    salt_hex: String,
-    commit_hash: String,
-    template_commit: String,
-    template_reveal: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -205,7 +195,7 @@ pub(crate) fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, wo
     hex::encode(h.finalize())
 }
 
-fn next_task_id(state: &PathBuf) -> Result<u64> {
+pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     let mut s = if state.exists() {
         serde_json::from_str::<WorkerState>(&fs::read_to_string(state)?)?
     } else {

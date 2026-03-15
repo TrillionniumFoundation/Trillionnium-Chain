@@ -3,24 +3,19 @@ use anyhow::Result;
 use crate::assigned::handle_run_assigned;
 use crate::cli::Command;
 use crate::flush::handle_flush_submissions;
+use crate::workflow::{
+    handle_commit_reveal, handle_execute, handle_pull_task, handle_run_once,
+};
 use crate::*;
 
 pub(crate) fn dispatch_command(cmd: Command) -> Result<()> {
     match cmd {
-        Command::PullTask { state } => {
-            let task_id = next_task_id(&state)?;
-            println!("[agent] pulled task_id={}", task_id);
-        }
+        Command::PullTask { state } => handle_pull_task(state)?,
         Command::Execute {
             task_id,
             worker,
             payload,
-        } => {
-            let (result_hash, salt_hex) = execute_payload(&payload, task_id);
-            println!("[agent] executed task_id={} worker={}", task_id, worker);
-            println!("result_hash={}", result_hash);
-            println!("salt_hex={}", salt_hex);
-        }
+        } => handle_execute(task_id, worker, payload)?,
         Command::CommitReveal {
             task_id,
             worker,
@@ -28,63 +23,14 @@ pub(crate) fn dispatch_command(cmd: Command) -> Result<()> {
             salt_hex,
             submit,
             submit_log,
-        } => {
-            let c = commitment(task_id, &result_hash, &salt_hex, &worker);
-            println!("[agent] task_id={} worker={}", task_id, worker);
-            println!("commit_hash={}", c);
-            println!(
-                "template_commit=trnm-node tx commit-result {} {} {} {}",
-                task_id, worker, c, task_id
-            );
-            println!(
-                "template_reveal=trnm-node tx reveal-result {} {} {}",
-                task_id, result_hash, salt_hex
-            );
-            if submit {
-                append_submission(&submit_log, task_id, &worker, &c, &result_hash, &salt_hex)?;
-                println!("submitted=true submit_log={}", submit_log.display());
-            }
-        }
+        } => handle_commit_reveal(task_id, worker, result_hash, salt_hex, submit, submit_log)?,
         Command::RunOnce {
             state,
             worker,
             payload,
             submit,
             submit_log,
-        } => {
-            let task_id = next_task_id(&state)?;
-            let (result_hash, salt_hex) = execute_payload(&payload, task_id);
-            let commit_hash = commitment(task_id, &result_hash, &salt_hex, &worker);
-            if submit {
-                append_submission(
-                    &submit_log,
-                    task_id,
-                    &worker,
-                    &commit_hash,
-                    &result_hash,
-                    &salt_hex,
-                )?;
-            }
-            let out = RunOnceOutput {
-                task_id,
-                worker: worker.clone(),
-                result_hash: result_hash.clone(),
-                salt_hex: salt_hex.clone(),
-                commit_hash: commit_hash.clone(),
-                template_commit: format!(
-                    "trnm-node tx commit-result {} {} {} {}",
-                    task_id, worker, commit_hash, task_id
-                ),
-                template_reveal: format!(
-                    "trnm-node tx reveal-result {} {} {}",
-                    task_id, result_hash, salt_hex
-                ),
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-            if submit {
-                eprintln!("submitted=true submit_log={}", submit_log.display());
-            }
-        }
+        } => handle_run_once(state, worker, payload, submit, submit_log)?,
         Command::RunAssigned {
             worker,
             ingress_file,
