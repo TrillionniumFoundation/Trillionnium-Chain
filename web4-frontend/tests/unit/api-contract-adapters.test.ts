@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   adaptQueryCapabilityAudit,
   adaptQueryEvents,
+  adaptQueryNormalizedAuditEvents,
   adaptQueryTask,
 } from "@/lib/api-contract/adapters";
 import { FrontendApiError } from "@/lib/api-contract/errors";
@@ -305,7 +306,57 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("adapts canonical normalized audit-events payload", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "governance-guard",
+          event_type: "governance.proposal_executed",
+          actor: "alice",
+          object_id: "pp-1",
+          related_id: "param",
+          amount: "1",
+          reason: "ok",
+          note: "version drift",
+          timestamp: "2026-03-03T00:00:00.000Z",
+        },
+      ],
+    });
+
+    expect(out.events[0]?.source).toBe("governance-guard");
+    expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
+  });
+
+  it("adapts legacy snake_case normalized audit-events payload", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      source: "bridge-relay",
+      events: [],
+    });
+
+    expect(out.events).toEqual([]);
+  });
+
+  it("adapts normalized audit-events fallback with eventType/objectId aliases", () => {
+    const out = adaptQueryNormalizedAuditEvents([
+      {
+        source: "settlement-vault",
+        eventType: "vault.deposited",
+        actor: "alice",
+        objectId: "alice",
+        relatedId: "req-1",
+        amount: 20,
+        note: "deposit",
+        recordedAt: "2026-03-03T00:01:00.000Z",
+      },
+    ]);
+
+    expect(out.events[0]?.event_type).toBe("vault.deposited");
+    expect(out.events[0]?.object_id).toBe("alice");
+    expect(out.events[0]?.related_id).toBe("req-1");
+  });
+
   it("adapts rpc capability audit payload", () => {
+
     const out = adaptQueryCapabilityAudit({
       token: {
         subject_did: "did:trnm:bob",

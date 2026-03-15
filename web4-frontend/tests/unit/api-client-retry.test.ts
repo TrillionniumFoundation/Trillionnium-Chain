@@ -56,6 +56,25 @@ describe("api-contract client and retry hardening", () => {
     });
   });
 
+
+  it("uses normalized audit endpoint", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+    await client.queryNormalizedAuditEvents();
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-normalized-audit-events",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(

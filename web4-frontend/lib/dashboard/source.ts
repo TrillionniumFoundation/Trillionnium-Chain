@@ -3,6 +3,7 @@ import type {
   CapabilityAuditEntry,
   ChainEvent,
   ChainTask,
+  NormalizedAuditEvent,
 } from "@/lib/api-contract/types";
 import { adaptDashboardSnapshot, type DashboardSnapshot } from "./adapter";
 
@@ -174,7 +175,42 @@ const mapEventCategory = (
   if (/deploy/i.test(type)) return "Deploy";
   if (/security|auth|audit/i.test(type)) return "Security";
   if (/govern/i.test(type)) return "Governance";
+  if (/vault/i.test(type) || /bridge.*relay/i.test(type) || /bridge_relay|settlement_vault|governance/i.test(type)) {
+    return "Security";
+  }
   return "Incident";
+};
+
+const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
+  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${event.event_type}`.toLowerCase();
+
+  if (tokens.includes("error") || tokens.includes("fail") || tokens.includes("reject") || tokens.includes("invalid")) {
+    return "Critical";
+  }
+  if (tokens.includes("warn") || tokens.includes("drift") || tokens.includes("mismatch")) {
+    return "Warning";
+  }
+  return "Info";
+};
+
+const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime: string): DashboardSnapshot["events"][number] => {
+  return {
+    id: event.object_id
+      ? `${event.source}:${event.object_id}`
+      : `${event.source}:${event.event_type}:${event.actor ?? "system"}`,
+    time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
+    category: mapEventCategory(event.event_type),
+    summary: `${event.source} · ${event.event_type}`,
+    severity: mapNormalizedAuditSeverity(event),
+    details: JSON.stringify({
+      actor: event.actor,
+      objectId: event.object_id,
+      relatedId: event.related_id,
+      amount: event.amount,
+      reason: event.reason,
+      note: event.note,
+    }),
+  };
 };
 
 const mapAuditResult = (
@@ -187,10 +223,13 @@ const mapAuditResult = (
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
 
-  const [taskResp, eventsResp, auditsResp] = await Promise.all([
+  const [taskResp, eventsResp, auditsResp, normalizedAuditResp] = await Promise.all([
     client.queryTask(defaultTaskId),
     client.queryEvents(defaultTaskId),
     client.queryCapabilityAudit(defaultAuditSubject),
+    client
+      .queryNormalizedAuditEvents()
+      .catch(() => ({ events: [] as NormalizedAuditEvent[] })),
   ]);
 
   const mapped = {
@@ -239,14 +278,26 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         description: JSON.stringify(taskResp.task.metadata),
       },
     ],
-    events: eventsResp.events.map((event) => ({
-      id: event.id,
-      time: toDisplayTime(event.timestamp),
-      category: mapEventCategory(event.type),
-      summary: event.type,
-      severity: mapEventSeverity(event.level),
-      details: JSON.stringify(event.payload),
-    })),
+    events: [
+      ...eventsResp.events.map((event) => ({
+        id: event.id,
+        time: toDisplayTime(event.timestamp),
+        category: mapEventCategory(event.type),
+        summary: event.type,
+        severity: mapEventSeverity(event.level),
+        details: JSON.stringify(event.payload),
+      })),
+      ...normalizedAuditResp.events.map((event) =>
+        mapNormalizedAuditToDashboardEvent(
+          event,
+          eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
+        ),
+      ),
+    ].sort((left, right) => {
+      const leftTime = Date.parse(toDisplayTime(left.time));
+      const rightTime = Date.parse(toDisplayTime(right.time));
+      return rightTime - leftTime;
+    }),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
       control: audit.capability,

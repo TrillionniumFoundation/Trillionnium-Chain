@@ -28,7 +28,7 @@ export const chainEventSchema = z.object({
   payload: z.record(z.string(), z.unknown()).default({}),
 });
 
-const checkedAtSchema = z.string().regex(/^height:\d+$/).or(z.string().datetime());
+export const checkedAtSchema = z.string().regex(/^height:\d+$/).or(z.string().datetime());
 
 export const capabilityAuditEntrySchema = z.object({
   subject: z.string().min(1),
@@ -50,4 +50,23 @@ export const queryEventsResponseSchema = z.object({
 export const queryCapabilityAuditResponseSchema = z.object({
   subject: z.string().min(1),
   audits: z.array(capabilityAuditEntrySchema),
+});
+
+
+export const normalizedAuditEventSchema = z.object({
+  source: z.string().min(1),
+  event_type: z.string().min(1),
+  actor: z.string().min(1).optional(),
+  object_id: z.string().optional(),
+  related_id: z.string().optional(),
+  amount: z.union([z.string(), z.number().nonnegative()]).optional(),
+  reason: z.string().optional(),
+  note: z.string().optional(),
+  checkedAt: checkedAtSchema.optional(),
+  timestamp: z.string().datetime().optional(),
+  subject: z.string().optional(),
+});
+
+export const queryNormalizedAuditEventsResponseSchema = z.object({
+  events: z.array(normalizedAuditEventSchema),
 });

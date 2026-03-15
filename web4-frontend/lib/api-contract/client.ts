@@ -1,6 +1,7 @@
 import {
   adaptQueryCapabilityAudit,
   adaptQueryEvents,
+  adaptQueryNormalizedAuditEvents,
   adaptQueryTask,
 } from "./adapters";
 import { FrontendApiError, isRetryableStatus } from "./errors";
@@ -8,6 +9,7 @@ import { withRetry, type RetryOptions } from "./retry";
 import type {
   QueryCapabilityAuditResult,
   QueryEventsResult,
+  QueryNormalizedAuditEventsResult,
   QueryTaskResult,
 } from "./types";
 
@@ -144,6 +146,14 @@ export function createFrontendApiClient(config: BaseClientConfig) {
     queryEvents(taskId: string, options?: QueryOptions): Promise<QueryEventsResult> {
       return getJson(`/query-events/${encodeURIComponent(taskId)}`, options).then(
         (payload) => adaptQueryEvents(payload, taskId),
+      );
+    },
+
+    queryNormalizedAuditEvents(
+      options?: QueryOptions,
+    ): Promise<QueryNormalizedAuditEventsResult> {
+      return getJson(`/query-normalized-audit-events`, options).then(
+        adaptQueryNormalizedAuditEvents,
       );
     },
 

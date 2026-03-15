@@ -7,6 +7,7 @@
 - `GET /query-task/:taskId`
 - `GET /query-events/:taskId`
 - `GET /query-capability-audit/:subject`
+- `GET /query-normalized-audit-events` (可选：统一事件流，若未部署则前端静默退化)
 
 实现目录：`lib/api-contract/`
 
@@ -55,6 +56,7 @@ const api = createFrontendApiClient({ baseUrl: "https://rpc.example.com" });
 const task = await api.queryTask("task-123");
 const events = await api.queryEvents("task-123", { retries: 3 });
 const audit = await api.queryCapabilityAudit("alice");
+const normalizedEvents = await api.queryNormalizedAuditEvents();
 ```
 
 ## 变更规则

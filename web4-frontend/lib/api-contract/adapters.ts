@@ -2,13 +2,16 @@ import { z } from "zod";
 import {
   queryCapabilityAuditResponseSchema,
   queryEventsResponseSchema,
+  queryNormalizedAuditEventsResponseSchema,
   queryTaskResponseSchema,
+  checkedAtSchema,
 } from "./schemas";
 import type {
   QueryCapabilityAuditResult,
   QueryEventsResult,
   QueryTaskResult,
   TaskStatus,
+  QueryNormalizedAuditEventsResult,
 } from "./types";
 import { FrontendApiError } from "./errors";
 
@@ -268,6 +271,49 @@ export const adaptQueryEvents = (
       };
     }),
   };
+};
+
+
+
+export const adaptQueryNormalizedAuditEvents = (
+  payload: unknown,
+): QueryNormalizedAuditEventsResult => {
+  const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
+  if (canonical.success) return canonical.data;
+
+  const rpc = z.array(
+    z.object({
+      source: z.string().min(1),
+      eventType: z.string().min(1),
+      actor: z.string().min(1).optional(),
+      objectId: z.string().min(1).optional(),
+      relatedId: z.string().min(1).optional(),
+      amount: z.union([z.string(), z.number().nonnegative()]).optional(),
+      reason: z.string().optional(),
+      note: z.string().optional(),
+      checkedAt: checkedAtSchema.optional(),
+      recordedAt: z.string().datetime().optional(),
+      subject: z.string().optional(),
+    })
+  ).safeParse(payload);
+
+  if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
+
+  const events = rpc.data.map((event) => ({
+    source: event.source,
+    event_type: event.eventType,
+    actor: event.actor,
+    object_id: event.objectId,
+    related_id: event.relatedId,
+    amount: event.amount,
+    reason: event.reason,
+    note: event.note,
+    checkedAt: event.checkedAt,
+    timestamp: event.recordedAt,
+    subject: event.subject,
+  }));
+
+  return { events };
 };
 
 export const adaptQueryCapabilityAudit = (

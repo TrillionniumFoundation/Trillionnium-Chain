@@ -46,3 +46,22 @@ export type QueryCapabilityAuditResult = {
   subject: string;
   audits: CapabilityAuditEntry[];
 };
+
+
+export type NormalizedAuditEvent = {
+  source: string;
+  event_type: string;
+  actor?: string;
+  object_id?: string;
+  related_id?: string;
+  amount?: string | number;
+  reason?: string;
+  note?: string;
+  checkedAt?: string;
+  timestamp?: string;
+  subject?: string;
+};
+
+export type QueryNormalizedAuditEventsResult = {
+  events: NormalizedAuditEvent[];
+};
