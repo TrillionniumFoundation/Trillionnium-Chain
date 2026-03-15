@@ -1,0 +1,12 @@
+[package]
+name = "audit-events"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Shared normalized audit event schema for Trillionnium Rust MVP modules."
+
+[lib]
+name = "audit_events"
+path = "src/lib.rs"
+
+[dependencies]

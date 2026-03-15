@@ -1,3 +1,4 @@
+use audit_events::AuditEvent;
 use std::collections::HashMap;
 
 pub type AccountId = String;
@@ -106,12 +107,78 @@ impl SettlementVault {
         std::mem::take(&mut self.audit_log)
     }
 
-    pub fn deposit(
-        &mut self,
-        caller: &str,
-        account: &str,
-        amount: u128,
-    ) -> Result<(), VaultError> {
+    pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
+        self.audit_log
+            .iter()
+            .map(Self::normalize_audit_event)
+            .collect()
+    }
+
+    fn normalize_audit_event(event: &VaultEvent) -> AuditEvent {
+        match event {
+            VaultEvent::Deposited {
+                caller,
+                account,
+                amount,
+            } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.deposited");
+                normalized.actor = Some(caller.clone());
+                normalized.object_id = Some(account.clone());
+                normalized.amount = Some(*amount);
+                normalized
+            }
+            VaultEvent::Locked {
+                request_id,
+                account,
+                amount,
+            } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.locked");
+                normalized.actor = Some(account.clone());
+                normalized.object_id = Some(request_id.clone());
+                normalized.amount = Some(*amount);
+                normalized
+            }
+            VaultEvent::Released {
+                request_id,
+                account,
+                amount,
+            } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.released");
+                normalized.actor = Some(account.clone());
+                normalized.object_id = Some(request_id.clone());
+                normalized.amount = Some(*amount);
+                normalized
+            }
+            VaultEvent::Slashed {
+                request_id,
+                beneficiary,
+                amount,
+            } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.slashed");
+                normalized.actor = Some(beneficiary.clone());
+                normalized.object_id = Some(request_id.clone());
+                normalized.amount = Some(*amount);
+                normalized
+            }
+            VaultEvent::Transferred { from, to, amount } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
+                normalized.actor = Some(from.clone());
+                normalized.object_id = Some(to.clone());
+                normalized.amount = Some(*amount);
+                normalized
+            }
+            VaultEvent::Paused => {
+                let normalized = AuditEvent::new("settlement-vault", "vault.paused");
+                normalized
+            }
+            VaultEvent::Unpaused => {
+                let normalized = AuditEvent::new("settlement-vault", "vault.unpaused");
+                normalized
+            }
+        }
+    }
+
+    pub fn deposit(&mut self, caller: &str, account: &str, amount: u128) -> Result<(), VaultError> {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
         if amount == 0 {
@@ -293,7 +360,9 @@ impl SettlementVault {
 
     fn credit_balance(&mut self, account: &str, amount: u128) -> Result<(), VaultError> {
         let entry = self.balances.entry(account.to_string()).or_insert(0);
-        *entry = entry.checked_add(amount).ok_or(VaultError::BalanceOverflow)?;
+        *entry = entry
+            .checked_add(amount)
+            .ok_or(VaultError::BalanceOverflow)?;
         Ok(())
     }
 }
@@ -351,8 +420,14 @@ mod tests {
             vault.lock("mallory", "req-1", "alice", 10).unwrap_err(),
             VaultError::Unauthorized
         );
-        assert_eq!(vault.pause("mallory").unwrap_err(), VaultError::Unauthorized);
-        assert_eq!(vault.unpause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(
+            vault.pause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.unpause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
     }
 
     #[test]
@@ -426,55 +501,58 @@ mod tests {
         vault.lock("owner", "req-2", "alice", 10).unwrap();
         vault.slash("owner", "req-2", "treasury").unwrap();
 
+        let normalized = vault.normalized_audit_log();
         let logs = vault.consume_audit_log();
 
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Deposited { caller, account, amount }
-                    if caller == "owner" && account == "alice" && *amount == 100
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Locked { request_id, account, amount }
-                    if request_id == "req-1" && account == "alice" && *amount == 25
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Released { request_id, account, amount }
-                    if request_id == "req-1" && account == "alice" && *amount == 25
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Transferred { from, to, amount }
-                    if from == "alice" && to == "bob" && *amount == 20
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Paused
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Unpaused
-            ))
-        );
-        assert!(
-            logs.iter().any(|event| matches!(
-                event,
-                VaultEvent::Slashed { request_id, beneficiary, amount }
-                    if request_id == "req-2" && beneficiary == "treasury" && *amount == 10
-            ))
-        );
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Deposited { caller, account, amount }
+                if caller == "owner" && account == "alice" && *amount == 100
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Locked { request_id, account, amount }
+                if request_id == "req-1" && account == "alice" && *amount == 25
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Released { request_id, account, amount }
+                if request_id == "req-1" && account == "alice" && *amount == 25
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Transferred { from, to, amount }
+                if from == "alice" && to == "bob" && *amount == 20
+        )));
+        assert!(logs.iter().any(|event| matches!(event, VaultEvent::Paused)));
+        assert!(logs
+            .iter()
+            .any(|event| matches!(event, VaultEvent::Unpaused)));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Slashed { request_id, beneficiary, amount }
+                if request_id == "req-2" && beneficiary == "treasury" && *amount == 10
+        )));
+
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "vault.deposited"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "vault.locked"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "vault.released"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "vault.transferred"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "vault.slashed"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.source == "settlement-vault"));
+
         assert!(vault.audit_log().is_empty());
     }
 
@@ -485,14 +563,10 @@ mod tests {
         vault.deposit("owner", "alice", 50).unwrap();
         vault.lock("owner", "req-1", "alice", 20).unwrap();
 
-        let err = vault
-            .transfer("mallory", "alice", "bob", 10)
-            .unwrap_err();
+        let err = vault.transfer("mallory", "alice", "bob", 10).unwrap_err();
         assert_eq!(err, VaultError::Unauthorized);
 
-        let err = vault
-            .transfer("owner", "alice", "bob", 0)
-            .unwrap_err();
+        let err = vault.transfer("owner", "alice", "bob", 0).unwrap_err();
         assert_eq!(err, VaultError::InvalidAmount);
 
         vault.transfer("owner", "alice", "bob", 30).unwrap();

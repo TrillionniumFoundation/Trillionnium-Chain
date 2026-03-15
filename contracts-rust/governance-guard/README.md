@@ -79,3 +79,11 @@ Rust 版外置治理骨架（in-memory state machine）：
 - `consume_audit_log() -> Vec<GovernanceEvent>`
 
 事件包括：`ProposalProposed`、`ProposalQueued`、`ProposalExecuted`、`ProposalCancelled`、`PauseSet`、`PauseRestoreScheduled`、`PauseRestoreExecuted`。
+
+
+## 标准化审计事件（v1）
+
+新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
+- `source: "governance-guard"`
+- `event_type`：`governance.proposal_proposed` / `governance.proposal_queued` / `governance.proposal_executed` / `governance.proposal_cancelled` / `governance.pause_set` / `governance.pause_restore_scheduled` / `governance.pause_restore_executed`。
+- 可携带 `actor`（提案人/执行人/守护者）、`object_id`（提案 id）、`related_id`（参数名/前后状态）用于链下检索。

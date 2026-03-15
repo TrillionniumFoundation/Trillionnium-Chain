@@ -10,3 +10,5 @@ name = "settlement_vault"
 path = "src/lib.rs"
 
 [dependencies]
+
+audit-events = { path = "../audit-events" }

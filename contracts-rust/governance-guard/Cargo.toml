@@ -10,3 +10,5 @@ name = "governance_guard"
 path = "src/lib.rs"
 
 [dependencies]
+
+audit-events = { path = "../audit-events" }

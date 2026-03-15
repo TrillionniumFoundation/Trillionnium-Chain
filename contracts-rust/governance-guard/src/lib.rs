@@ -1,3 +1,4 @@
+use audit_events::AuditEvent;
 use std::collections::{HashMap, HashSet};
 
 pub type ProposalId = u64;
@@ -118,7 +119,11 @@ pub struct GovernanceGuard {
 }
 
 impl GovernanceGuard {
-    pub fn new(admin: impl Into<String>, guardian: impl Into<String>, min_timelock_delay_secs: u64) -> Self {
+    pub fn new(
+        admin: impl Into<String>,
+        guardian: impl Into<String>,
+        min_timelock_delay_secs: u64,
+    ) -> Self {
         let admin = admin.into();
         let guardian = guardian.into();
         let mut guardians = HashSet::new();
@@ -152,14 +157,24 @@ impl GovernanceGuard {
         Ok(())
     }
 
-    pub fn set_guardian(&mut self, caller: &str, who: impl Into<String>, enabled: bool) -> Result<()> {
+    pub fn set_guardian(
+        &mut self,
+        caller: &str,
+        who: impl Into<String>,
+        enabled: bool,
+    ) -> Result<()> {
         self.require_admin(caller)?;
         let who = who.into();
         Self::set_membership(&mut self.guardians, &who, enabled);
         Ok(())
     }
 
-    pub fn set_allowed_param_key(&mut self, caller: &str, key: impl Into<String>, enabled: bool) -> Result<()> {
+    pub fn set_allowed_param_key(
+        &mut self,
+        caller: &str,
+        key: impl Into<String>,
+        enabled: bool,
+    ) -> Result<()> {
         self.require_admin(caller)?;
         let key = key.into();
         Self::set_membership(&mut self.allowed_param_keys, &key, enabled);
@@ -222,7 +237,10 @@ impl GovernanceGuard {
     pub fn queue(&mut self, caller: &str, proposal_id: ProposalId) -> Result<()> {
         self.require_proposer(caller)?;
         let proposal = self.proposal_mut(proposal_id)?;
-        if matches!(proposal.status, ProposalStatus::Executed | ProposalStatus::Cancelled) {
+        if matches!(
+            proposal.status,
+            ProposalStatus::Executed | ProposalStatus::Cancelled
+        ) {
             return Err(Error::AlreadyFinalized);
         }
         if proposal.proposer != caller {
@@ -266,7 +284,12 @@ impl GovernanceGuard {
             )
         };
 
-        let version = self.bridge.param_versions.get(&param_key).copied().unwrap_or_default();
+        let version = self
+            .bridge
+            .param_versions
+            .get(&param_key)
+            .copied()
+            .unwrap_or_default();
         if base_version != Some(version) {
             return Err(Error::ParamVersionMismatch);
         }
@@ -281,9 +304,13 @@ impl GovernanceGuard {
             return Err(Error::CurrentValueMismatch);
         }
 
-        self.bridge.gov_params.insert(param_key.clone(), new_value.clone());
+        self.bridge
+            .gov_params
+            .insert(param_key.clone(), new_value.clone());
         let next_version = version.saturating_add(1);
-        self.bridge.param_versions.insert(param_key.clone(), next_version);
+        self.bridge
+            .param_versions
+            .insert(param_key.clone(), next_version);
 
         let proposal = self.proposal_mut(proposal_id)?;
         proposal.status = ProposalStatus::Executed;
@@ -305,7 +332,10 @@ impl GovernanceGuard {
     pub fn cancel(&mut self, caller: &str, proposal_id: ProposalId) -> Result<()> {
         let (status, proposer) = {
             let proposal = self.proposal_mut(proposal_id)?;
-            if matches!(proposal.status, ProposalStatus::Executed | ProposalStatus::Cancelled) {
+            if matches!(
+                proposal.status,
+                ProposalStatus::Executed | ProposalStatus::Cancelled
+            ) {
                 return Err(Error::AlreadyFinalized);
             }
 
@@ -380,7 +410,12 @@ impl GovernanceGuard {
         Ok(id)
     }
 
-    pub fn execute_unpause(&mut self, caller: &str, proposal_id: ProposalId, now: u64) -> Result<()> {
+    pub fn execute_unpause(
+        &mut self,
+        caller: &str,
+        proposal_id: ProposalId,
+        now: u64,
+    ) -> Result<()> {
         self.require_executor(caller)?;
         if self.guardians.contains(caller) {
             return Err(Error::GuardianExecutorConflict);
@@ -446,6 +481,112 @@ impl GovernanceGuard {
         std::mem::take(&mut self.audit_log)
     }
 
+    pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
+        self.audit_log
+            .iter()
+            .map(Self::normalize_audit_event)
+            .collect()
+    }
+
+    fn normalize_audit_event(event: &GovernanceEvent) -> AuditEvent {
+        match event {
+            GovernanceEvent::ProposalProposed {
+                proposal_id,
+                proposer,
+                kind,
+                param_key,
+                eta,
+            } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.proposal_proposed");
+                normalized.actor = Some(proposer.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized.reason = Some(format!("kind={kind:?}"));
+                if let Some(key) = param_key {
+                    normalized.related_id = Some(key.clone());
+                }
+                normalized.note = Some(format!("eta={eta}"));
+                normalized
+            }
+            GovernanceEvent::ProposalQueued { proposal_id, actor } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.proposal_queued");
+                normalized.actor = Some(actor.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized
+            }
+            GovernanceEvent::ProposalExecuted {
+                proposal_id,
+                actor,
+                kind,
+                param_key,
+                old_value,
+                new_value,
+                version_before,
+                version_after,
+            } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.proposal_executed");
+                normalized.actor = Some(actor.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized.reason = Some(format!("kind={kind:?}"));
+                if let Some(key) = param_key {
+                    normalized.related_id = Some(key.clone());
+                }
+                if let (Some(before), Some(after)) = (version_before, version_after) {
+                    normalized.amount = Some((*after - *before) as u128);
+                    normalized.note = Some(format!("version={before}->{after}"));
+                }
+                if let (Some(old), Some(new_value)) = (old_value, new_value) {
+                    normalized.note = Some(format!(
+                        "value={old}->{new_value}, {}",
+                        normalized.note.as_deref().unwrap_or("-")
+                    ));
+                }
+                normalized
+            }
+            GovernanceEvent::ProposalCancelled { proposal_id, actor } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.proposal_cancelled");
+                normalized.actor = Some(actor.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized
+            }
+            GovernanceEvent::PauseSet {
+                actor,
+                previous_state,
+                next_state,
+            } => {
+                let mut normalized = AuditEvent::new("governance-guard", "governance.pause_set");
+                normalized.actor = Some(actor.clone());
+                normalized.related_id = Some(format!("{previous_state}->{next_state}"));
+                normalized
+            }
+            GovernanceEvent::PauseRestoreScheduled {
+                proposal_id,
+                proposer,
+                eta,
+            } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.pause_restore_scheduled");
+                normalized.actor = Some(proposer.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized.note = Some(format!("eta={eta}"));
+                normalized
+            }
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor } => {
+                let mut normalized =
+                    AuditEvent::new("governance-guard", "governance.pause_restore_executed");
+                normalized.actor = Some(actor.clone());
+                normalized.object_id = Some(proposal_id.to_string());
+                normalized
+            }
+            GovernanceEvent::AuditLogCleared => {
+                AuditEvent::new("governance-guard", "governance.audit_log_cleared")
+            }
+        }
+    }
+
     fn require_admin(&self, caller: &str) -> Result<()> {
         if caller == self.admin {
             Ok(())
@@ -507,18 +648,16 @@ mod tests {
         gov.set_role("admin", "exec", false, true).unwrap();
         gov.set_allowed_param_key("admin", "challenge_window_blocks", true)
             .unwrap();
-        gov.bridge.gov_params.insert(
-            "challenge_window_blocks".to_string(),
-            "100".to_string(),
-        );
+        gov.bridge
+            .gov_params
+            .insert("challenge_window_blocks".to_string(), "100".to_string());
         gov
     }
 
     fn seed_param(gov: &mut GovernanceGuard, value: &str) {
-        gov.bridge.gov_params.insert(
-            "challenge_window_blocks".to_string(),
-            value.to_string(),
-        );
+        gov.bridge
+            .gov_params
+            .insert("challenge_window_blocks".to_string(), value.to_string());
     }
 
     #[test]
@@ -540,13 +679,23 @@ mod tests {
             .unwrap();
         gov.queue("alice", pid).unwrap();
 
-        let before = gov.bridge_state().gov_params.get("challenge_window_blocks").cloned();
+        let before = gov
+            .bridge_state()
+            .gov_params
+            .get("challenge_window_blocks")
+            .cloned();
         let err = gov.execute("exec", pid, eta - 1).unwrap_err();
         assert_eq!(err, Error::NotReady);
 
         let p = gov.proposal(pid).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
-        assert_eq!(before, gov.bridge_state().gov_params.get("challenge_window_blocks").cloned());
+        assert_eq!(
+            before,
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .cloned()
+        );
     }
 
     #[test]
@@ -668,8 +817,10 @@ mod tests {
         let restore_id = gov
             .schedule_unpause("guardian", restore_eta, "recover", eta)
             .unwrap();
-        gov.execute_unpause("exec", restore_id, restore_eta).unwrap();
+        gov.execute_unpause("exec", restore_id, restore_eta)
+            .unwrap();
 
+        let normalized = gov.normalized_audit_log();
         let logs = gov.consume_audit_log();
 
         assert!(logs.iter().any(|event| matches!(
@@ -718,6 +869,16 @@ mod tests {
                 if *proposal_id == restore_id
                     && actor == "exec"
         )));
+
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "governance.proposal_executed"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.event_type == "governance.pause_set"));
+        assert!(normalized
+            .iter()
+            .any(|event| event.source == "governance-guard"));
 
         assert!(gov.audit_log().is_empty());
     }
@@ -854,10 +1015,16 @@ mod tests {
         gov.queue("alice", pid).unwrap();
 
         gov.set_role("admin", "exec", false, false).unwrap();
-        assert_eq!(gov.execute("exec", pid, eta).unwrap_err(), Error::Unauthorized);
+        assert_eq!(
+            gov.execute("exec", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
 
         gov.set_guardian("admin", "guardian", false).unwrap();
-        assert_eq!(gov.cancel("guardian", pid).unwrap_err(), Error::Unauthorized);
+        assert_eq!(
+            gov.cancel("guardian", pid).unwrap_err(),
+            Error::Unauthorized
+        );
     }
 
     #[test]

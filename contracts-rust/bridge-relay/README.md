@@ -52,3 +52,10 @@ cargo test
 - 对接真实签名验证算法（例如 EIP-712/Ed25519/Secp256k1）
 - 对接真实执行层（资产结算/状态提交）
 - 增加更多 domain 约束与 fuzz/property 测试
+
+## 标准化审计事件（v1）
+
+新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
+- `source: "bridge-relay"`
+- `event_type`：`bridge_relay.proof_submitted` / `bridge_relay.proof_submitted_and_stored` / `bridge_relay.settlement_finalized` / `bridge_relay.nonce_consumed` / `bridge_relay.admin_updated` / `bridge_relay.min_signatures_updated` / `bridge_relay.validators_updated`
+- 关键字段填充：`object_id` 常用于 `proof_digest/settlement_id/nonce_key`，`amount` 记录签名阈值或签名计数。

@@ -48,3 +48,11 @@ trnm(contract-rs-vault): ...
 - `consume_audit_log() -> Vec<VaultEvent>`
 
 事件包括：`Deposited`、`Locked`、`Released`、`Slashed`、`Transferred`、`Paused`、`Unpaused`。
+
+
+## 标准化审计事件（v1）
+
+新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
+- `source: "settlement-vault"`
+- `event_type`：`vault.deposited` / `vault.locked` / `vault.released` / `vault.slashed` / `vault.transferred` / `vault.paused` / `vault.unpaused`。
+- `amount` 与 `object_id` 分别承载金额、`request_id` 或账户信息。
