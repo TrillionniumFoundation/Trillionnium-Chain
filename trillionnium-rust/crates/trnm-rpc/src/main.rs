@@ -1,7 +1,8 @@
 use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
+#[cfg(test)]
+use std::path::PathBuf;
 #[cfg(test)]
 use std::time::{Duration, Instant};
 use std::{
@@ -9,23 +10,19 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     net::TcpListener,
-    path::{Path, PathBuf},
-    time::{SystemTime, UNIX_EPOCH},
+    path::Path,
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
     GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse,
-    RequestFullQueryResponse, RpcErrorResponse, TaskMeteringPolicyQueryResponse,
-    TaskMeteringQueryResponse, TaskQueryResponse,
+    RequestFullQueryResponse, RpcErrorResponse, TaskMeteringQueryResponse,
 };
-use trnm_state::StateStore;
 #[cfg(test)]
 use trnm_types::IdentityRegistry;
-use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, PrivacyTier, RequestStatus, TaskMetadata,
-    TaskMeteringSnapshot, TaskObject, TaskStatus, TransferTx,
-};
+use trnm_types::{GovParamObject, PrivacyTier, RequestStatus, TaskMetadata, TransferTx};
+#[cfg(test)]
+use trnm_types::{TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 mod capability;
 mod envpaths;
@@ -35,6 +32,8 @@ mod market_io;
 mod metering;
 mod node_events;
 mod persistence;
+mod runtime;
+mod snapshot;
 mod taskview;
 
 use crate::capability::{
@@ -43,10 +42,10 @@ use crate::capability::{
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
     faucet_limits_file, identity_registry_file, ingress_file, market_bids_file, market_tasks_file,
-    submit_message_max_bytes, task_state_file, tx_lifecycle_file,
+    submit_message_max_bytes, tx_lifecycle_file,
 };
 #[cfg(test)]
-use crate::envpaths::{market_lock_timeout_ms, market_reputation_file};
+use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state_file};
 #[cfg(test)]
 use crate::envpaths::{normalized_path_from_env, run_root};
 #[cfg(test)]
@@ -68,7 +67,6 @@ use crate::market_io::{
     market_worker_tie_break_key, normalize_market_status_key, normalize_market_worker_key,
     save_market_bids, save_market_tasks,
 };
-use crate::metering::build_task_metering_query_response;
 #[cfg(test)]
 use crate::metering::{
     parse_event_log_kv, parse_i128_kv_value, parse_u128_kv_value, parse_u64_kv_value,
@@ -83,6 +81,10 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
+use crate::runtime::{make_request_id, now_ms};
+#[cfg(test)]
+use crate::snapshot::query_task_from_state_snapshot;
+use crate::snapshot::{governance_state, load_latest_adapter_records};
 #[cfg(test)]
 use crate::taskview::query_task_from_node_events;
 use crate::taskview::{filtered_node_events_for_task, query_events_response, query_task_response};
@@ -453,201 +455,6 @@ pub(crate) struct LoadedNodeEvents {
     pub(crate) events: Vec<NodeEventRecord>,
     pub(crate) mode: NodeEventScanMode,
     pub(crate) truncated: bool,
-}
-
-fn load_latest_adapter_records() -> Vec<AdapterRecord> {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
-    let dir = root.join("run/worker-agent");
-    let Ok(entries) = fs::read_dir(&dir) else {
-        return vec![];
-    };
-
-    let mut files: Vec<PathBuf> = entries
-        .flatten()
-        .map(|e| e.path())
-        .filter(|p| {
-            p.file_name()
-                .and_then(|n| n.to_str())
-                .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
-                .unwrap_or(false)
-        })
-        .collect();
-    files.sort();
-    let Some(latest) = files.last() else {
-        return vec![];
-    };
-
-    let Ok(raw) = fs::read_to_string(latest) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
-        .collect()
-}
-
-fn governance_state() -> StateStore {
-    let mut st = StateStore::new();
-    let _ = st.put_proposal_new(GovProposalObject {
-        proposal_id: 9001,
-        title: "update max_block_ms".into(),
-        proposer: "alice".into(),
-        status: GovProposalStatus::Voting,
-        version: 1,
-    });
-    let _ = st.set_gov_param(0, 7001, "max_block_ms".into(), "10".into());
-    let _ = st.set_gov_param(
-        0,
-        EMERGENCY_PAUSE_KEY_ID,
-        "emergency_pause".into(),
-        "false".into(),
-    );
-    st
-}
-
-fn now_ms() -> u128 {
-    if let Ok(v) = std::env::var("TRNM_RPC_NOW_MS") {
-        if let Ok(parsed) = v.parse::<u128>() {
-            return parsed;
-        }
-    }
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis())
-        .unwrap_or(0)
-}
-
-fn make_request_id(
-    channel: &str,
-    user_id: &str,
-    session_id: &str,
-    idempotency_key: &str,
-    ts: u128,
-) -> String {
-    let mut h = Sha256::new();
-    h.update(channel.as_bytes());
-    h.update(b"|");
-    h.update(user_id.as_bytes());
-    h.update(b"|");
-    h.update(session_id.as_bytes());
-    h.update(b"|");
-    h.update(idempotency_key.as_bytes());
-    h.update(b"|");
-    h.update(ts.to_string().as_bytes());
-    let digest = hex::encode(h.finalize());
-    format!("req_{}", &digest[..16])
-}
-
-fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
-    let Some(path) = task_state_file() else {
-        return Ok(vec![]);
-    };
-    let raw = match fs::read_to_string(&path) {
-        Ok(raw) => raw,
-        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
-        Err(err) => {
-            return Err(anyhow!(
-                "failed to read task state snapshot {}: {}",
-                path.display(),
-                err
-            ))
-        }
-    };
-
-    let mut tasks = Vec::new();
-    for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
-            continue;
-        }
-        let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
-            anyhow!(
-                "failed to parse task state snapshot {} line {}: {}",
-                path.display(),
-                idx + 1,
-                err
-            )
-        })?;
-        tasks.push(task);
-    }
-    Ok(tasks)
-}
-
-fn task_status_path(status: TaskStatus) -> String {
-    match status {
-        TaskStatus::Open => "Open",
-        TaskStatus::Assigned => "Assigned",
-        TaskStatus::Committed => "Committed",
-        TaskStatus::Revealed => "Revealed",
-        TaskStatus::Challenged => "Challenged",
-        TaskStatus::Completed => "Completed",
-        TaskStatus::Slashed => "Slashed",
-    }
-    .to_string()
-}
-
-fn task_metering_query_response(
-    snapshot: &TaskMeteringSnapshot,
-    path: String,
-) -> TaskMeteringQueryResponse {
-    let policy = TaskMeteringPolicyQueryResponse {
-        snapshot_version: snapshot.policy_snapshot_version,
-        min_accept_work_units: snapshot.min_accept_work_units,
-        challenge_success_bounty_base: snapshot.challenge_success_bounty_base,
-        challenge_success_bounty_per_work_unit_num: snapshot
-            .challenge_success_bounty_per_work_unit_num,
-        challenge_success_bounty_per_work_unit_den: snapshot
-            .challenge_success_bounty_per_work_unit_den,
-        worker_completion_bonus_per_work_unit_num: snapshot
-            .worker_completion_bonus_per_work_unit_num,
-        worker_completion_bonus_per_work_unit_den: snapshot
-            .worker_completion_bonus_per_work_unit_den,
-        worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
-        worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
-    };
-    build_task_metering_query_response(
-        path,
-        snapshot.workload_class.clone(),
-        snapshot.metering_schema.clone(),
-        snapshot.receipt_hash.clone(),
-        snapshot.prompt_tokens,
-        snapshot.generated_tokens,
-        snapshot.decode_steps,
-        snapshot.kv_bytes_moved,
-        snapshot.normalized_work_units,
-        snapshot.prompt_token_weight,
-        snapshot.generated_token_weight,
-        snapshot.decode_step_weight,
-        snapshot.kv_byte_weight,
-        policy,
-    )
-}
-
-pub(crate) fn query_task_from_state_snapshot(
-    task_id: u64,
-    tasks: &[TaskObject],
-) -> Option<TaskQueryResponse> {
-    let task = tasks
-        .iter()
-        .filter(|task| task.task_id == task_id)
-        .max_by_key(|task| task.version)?;
-
-    Some(TaskQueryResponse {
-        task_id: task.task_id,
-        status: task.status,
-        worker: task.worker.clone(),
-        bounty: task.bounty,
-        result_hash_hex: task.result_hash.map(hex::encode),
-        version: task.version,
-        metering: task
-            .metadata
-            .as_ref()
-            .and_then(|metadata| metadata.metering.as_ref())
-            .map(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
-    })
 }
 
 pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
