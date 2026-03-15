@@ -213,13 +213,28 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   };
 };
 
-const normalizedAuditPageLimit = 60;
-const normalizedAuditMaxPages = 4;
+const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
+  const normalized = value?.trim();
+  if (!normalized) return fallback;
+
+  const parsed = Number.parseInt(normalized, 10);
+  if (Number.isNaN(parsed) || parsed <= 0) return fallback;
+
+  return parsed;
+};
+
+const resolveNormalizedAuditPageLimit = (): number =>
+  parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT, 60);
+
+const resolveNormalizedAuditMaxPages = (): number =>
+  parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES, 4);
 
 const fetchNormalizedAuditEventsWithPagination = async (
   client: ReturnType<typeof createFrontendApiClient>,
 ): Promise<NormalizedAuditEvent[]> => {
   const allEvents: NormalizedAuditEvent[] = [];
+  const normalizedAuditPageLimit = resolveNormalizedAuditPageLimit();
+  const normalizedAuditMaxPages = resolveNormalizedAuditMaxPages();
 
   let cursor: string | undefined;
   let page = 0;

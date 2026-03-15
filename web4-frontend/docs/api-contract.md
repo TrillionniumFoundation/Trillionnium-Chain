@@ -63,6 +63,16 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 });
 ```
 
+## Dashboard 环境变量
+
+可选环境变量（`web4-frontend`）
+
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT`：标准化审计事件分页大小（正整数，默认 `60`）
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES`：单次快照抓取最大页数（正整数，默认 `4`）
+
+说明：若设置非法值（空/非数字/小于等于 0），系统回退为默认值。
+
+
 ## Dashboard 消费策略
 
 `fetchReadonlySnapshotFromApi()` 会自动分页拉取标准化审计事件流（默认 60 条/页，最多 4 页），用于将 `Bridge/Governance/Settlement` 的统一审计事件并入前端事件面板。

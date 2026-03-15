@@ -11,6 +11,85 @@ describe("dashboard source normalized audit pagination", () => {
     vi.restoreAllMocks();
   });
 
+  it("uses env-configured pagination limits for normalized audit events", async () => {
+    const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+    const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = "2";
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "1";
+
+    try {
+      const mockClient = {
+        queryTask: vi
+          .fn()
+          .mockResolvedValue({
+            task: {
+              id: "342",
+              owner: "ops",
+              status: "running",
+              createdAt: "2026-03-01T00:00:00.000Z",
+              metadata: {},
+            },
+          }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "342",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi
+          .fn()
+          .mockResolvedValueOnce({
+            events: [
+              {
+                source: "settlement-vault",
+                event_type: "vault.deposited",
+                actor: "alice",
+                object_id: "alice",
+                timestamp: "2026-03-01T00:03:00.000Z",
+                reason: "ok",
+              },
+            ],
+            hasMore: true,
+            nextCursor: "cursor-1",
+          }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      const snapshot = await fetchDashboardSnapshot();
+
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledWith({
+        limit: 2,
+      });
+      expect(
+        snapshot.events.find((event) => event.summary === "settlement-vault · vault.deposited"),
+      ).toBeDefined();
+    } finally {
+      if (previousLimit === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = previousLimit;
+      }
+
+      if (previousPages === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = previousPages;
+      }
+    }
+  });
+
   it("loads multiple normalized audit pages and merges into dashboard events", async () => {
     const mockClient = {
       queryTask: vi
@@ -85,8 +164,12 @@ describe("dashboard source normalized audit pagination", () => {
       cursor: "cursor-1",
     });
 
-    expect(snapshot.events.find((event) => event.summary === "governance-guard · governance.proposal_executed")).toBeDefined();
-    expect(snapshot.events.find((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted")).toBeDefined();
+    expect(
+      snapshot.events.find((event) => event.summary === "governance-guard · governance.proposal_executed"),
+    ).toBeDefined();
+    expect(
+      snapshot.events.find((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted"),
+    ).toBeDefined();
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
 });
