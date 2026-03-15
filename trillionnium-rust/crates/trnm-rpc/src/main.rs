@@ -8,17 +8,16 @@ use std::time::{Duration, Instant};
 #[cfg(test)]
 use std::{fs, io::Write};
 use trnm_rpc::{
-    get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
-    AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskMeteringQueryResponse,
+    EventQueryResponse, MessageRequestQueryResponse, RequestFullQueryResponse,
+    RpcErrorResponse, TaskMeteringQueryResponse,
 };
 #[cfg(test)]
 use trnm_types::IdentityRegistry;
-use trnm_types::{RequestStatus, TransferTx};
+use trnm_types::RequestStatus;
 #[cfg(test)]
 use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 
+mod account_tx;
 mod capability;
 mod envpaths;
 mod fsutil;
@@ -39,11 +38,21 @@ mod taskview;
 mod treasury;
 mod validate;
 
+use crate::account_tx::{
+    handle_faucet_request, handle_get_tx, handle_query_balance, handle_query_nonce,
+    handle_send_tx,
+};
+#[cfg(test)]
+use crate::account_tx::{
+    FAUCET_MAX_REQUESTS_DEFAULT, FAUCET_MAX_REQUESTS_MIN, FAUCET_WINDOW_SECONDS_DEFAULT,
+    FAUCET_WINDOW_SECONDS_MIN,
+};
 #[cfg(test)]
 use crate::capability::resolve_capability_token_subject_or_token;
+use crate::envpaths::{ingress_file, market_bids_file, market_tasks_file, submit_message_max_bytes};
+#[cfg(test)]
 use crate::envpaths::{
-    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file, ingress_file,
-    market_bids_file, market_tasks_file, submit_message_max_bytes, tx_lifecycle_file,
+    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file, tx_lifecycle_file,
 };
 #[cfg(test)]
 use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state_file};
@@ -85,10 +94,6 @@ use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
     load_node_events_from_root, read_log_tail,
 };
-use crate::persistence::{
-    accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
-    load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
-};
 use crate::read_query::{
     handle_query_capability_audit, handle_query_events, handle_query_param, handle_query_proposal,
     handle_query_task,
@@ -124,10 +129,6 @@ const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
 const NODE_EVENT_LOG_SOURCES_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_SOURCES";
 const NODE_EVENT_LOG_MANIFEST_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_MANIFEST";
 const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
-const FAUCET_WINDOW_SECONDS_DEFAULT: u64 = 60;
-const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
-const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
-const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const MARKET_REPUTATION_FILE_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_FILE";
 const TASK_STATE_FILE_ENV: &str = "TRNM_RPC_TASK_STATE_FILE";
@@ -551,28 +552,8 @@ fn main() -> Result<()> {
             json,
             now_ms(),
         )?,
-        Command::QueryBalance { address } => {
-            let accounts = load_account_state(&account_state_file());
-            let account =
-                query_account_state(&accounts, &address).map_err(|e| rpc_fail(e.to_rpc_error()))?;
-            let out = AccountBalanceQueryResponse {
-                address: account.address,
-                balance: account.balance,
-                version: 1,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
-        Command::QueryNonce { address } => {
-            let accounts = load_account_state(&account_state_file());
-            let account =
-                query_account_state(&accounts, &address).map_err(|e| rpc_fail(e.to_rpc_error()))?;
-            let out = AccountNonceQueryResponse {
-                address: account.address,
-                nonce: account.nonce,
-                version: 1,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        Command::QueryBalance { address } => handle_query_balance(&address)?,
+        Command::QueryNonce { address } => handle_query_nonce(&address)?,
         Command::SendTx {
             from,
             to,
@@ -580,160 +561,10 @@ fn main() -> Result<()> {
             fee,
             nonce,
             signature,
-        } => {
-            let tx_path = tx_lifecycle_file();
-            let _tx_lock = acquire_market_file_lock(&tx_path)?;
-            let mut txs = load_tx_lifecycle(&tx_path);
-            let tx = TransferTx {
-                from,
-                to,
-                amount,
-                fee,
-                nonce,
-                signature,
-            };
-            let out = submit_tx(&mut txs, tx, now_ms());
-            save_tx_lifecycle(&tx_path, &txs)?;
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
-        Command::GetTx { tx_hash } => {
-            let tx_path = tx_lifecycle_file();
-            let _tx_lock = acquire_market_file_lock(&tx_path)?;
-            let mut txs = load_tx_lifecycle(&tx_path);
-
-            let account_path = account_state_file();
-            let _account_lock = acquire_market_file_lock(&account_path)?;
-            let mut accounts = load_account_state(&account_path);
-            let mut ledger = accounts_to_ledger(&accounts);
-            let tx_hash = normalize_tx_hash_lookup(&tx_hash);
-            if !is_hex_like_tx_hash(&tx_hash) {
-                return Err(rpc_fail(RpcErrorResponse {
-                    code: "INVALID_ARGUMENT",
-                    message: format!(
-                        "invalid tx hash format: expected 0x-prefixed hexadecimal, got {}",
-                        tx_hash
-                    ),
-                }));
-            }
-
-            let out = get_tx(&mut txs, &mut ledger, &tx_hash, now_ms()).map_err(|e| match e {
-                GetTxError::NotFound(tx_hash) => rpc_fail(RpcErrorResponse {
-                    code: "TX_NOT_FOUND",
-                    message: format!("tx not found: {}", tx_hash),
-                }),
-            })?;
-
-            ledger_to_accounts(&ledger, &mut accounts);
-            save_tx_lifecycle(&tx_path, &txs)?;
-            save_account_state(&account_path, &accounts)?;
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        } => handle_send_tx(from, to, amount, fee, nonce, signature, now_ms())?,
+        Command::GetTx { tx_hash } => handle_get_tx(&tx_hash, now_ms())?,
         Command::FaucetRequest { address, amount } => {
-            let window_seconds = env_u64_with_min(
-                "TRNM_RPC_FAUCET_WINDOW_SECONDS",
-                FAUCET_WINDOW_SECONDS_DEFAULT,
-                FAUCET_WINDOW_SECONDS_MIN,
-            );
-            let max_requests_in_window = env_u32_with_min(
-                "TRNM_RPC_FAUCET_MAX_REQUESTS",
-                FAUCET_MAX_REQUESTS_DEFAULT,
-                FAUCET_MAX_REQUESTS_MIN,
-            );
-            let now = now_ms();
-
-            if validate_trnm_address(&address).is_err() {
-                let out = FaucetRequestResponse {
-                    ok: false,
-                    code: "INVALID_ADDRESS".into(),
-                    message: format!("invalid address format: {}", address),
-                    address,
-                    requested_amount: amount,
-                    granted_amount: 0,
-                    balance: None,
-                    nonce: None,
-                    window_seconds,
-                    next_allowed_unix_ms: now,
-                    version: 1,
-                };
-                println!("{}", serde_json::to_string_pretty(&out)?);
-                return Ok(());
-            }
-
-            let limits_path = faucet_limits_file();
-            let _limits_lock = acquire_market_file_lock(&limits_path)?;
-            let mut limits = load_faucet_limits(&limits_path);
-            let window_ms = (window_seconds as u128) * 1000;
-            let next_allowed_unix_ms;
-            let mut allowed = true;
-
-            {
-                let entry = limits.entry(address.clone()).or_default();
-                if entry.window_start_unix_ms == 0
-                    || now.saturating_sub(entry.window_start_unix_ms) >= window_ms
-                {
-                    entry.window_start_unix_ms = now;
-                    entry.count_in_window = 0;
-                }
-                if entry.count_in_window >= max_requests_in_window {
-                    allowed = false;
-                }
-                next_allowed_unix_ms = entry.window_start_unix_ms + window_ms;
-            }
-
-            let account_path = account_state_file();
-            let _account_lock = acquire_market_file_lock(&account_path)?;
-            let mut accounts = load_account_state(&account_path);
-
-            if !allowed {
-                let acct = accounts.get(&address).cloned();
-                let out = FaucetRequestResponse {
-                    ok: false,
-                    code: "RATE_LIMITED".into(),
-                    message: "faucet rate limit exceeded".into(),
-                    address,
-                    requested_amount: amount,
-                    granted_amount: 0,
-                    balance: acct.as_ref().map(|a| a.balance),
-                    nonce: acct.as_ref().map(|a| a.nonce),
-                    window_seconds,
-                    next_allowed_unix_ms,
-                    version: 1,
-                };
-                println!("{}", serde_json::to_string_pretty(&out)?);
-                return Ok(());
-            }
-
-            let (new_balance, nonce) = {
-                let acct = accounts.entry(address.clone()).or_insert(AccountState {
-                    address: address.clone(),
-                    balance: 0,
-                    nonce: 0,
-                });
-                acct.balance = acct.balance.saturating_add(amount);
-                (acct.balance, acct.nonce)
-            };
-
-            if let Some(entry) = limits.get_mut(&address) {
-                entry.count_in_window = entry.count_in_window.saturating_add(1);
-            }
-
-            save_account_state(&account_path, &accounts)?;
-            save_faucet_limits(&limits_path, &limits)?;
-
-            let out = FaucetRequestResponse {
-                ok: true,
-                code: "OK".into(),
-                message: "faucet granted".into(),
-                address,
-                requested_amount: amount,
-                granted_amount: amount,
-                balance: Some(new_balance),
-                nonce: Some(nonce),
-                window_seconds,
-                next_allowed_unix_ms,
-                version: 1,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
+            handle_faucet_request(address, amount, now_ms())?
         }
         Command::SubmitMessage {
             channel,
