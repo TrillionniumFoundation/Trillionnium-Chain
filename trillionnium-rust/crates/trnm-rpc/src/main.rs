@@ -29,6 +29,7 @@ mod envpaths;
 mod http;
 mod ingress;
 mod market_io;
+mod market_score;
 mod metering;
 mod node_events;
 mod persistence;
@@ -42,8 +43,8 @@ use crate::capability::{
     load_identity_registry, query_capability_audit, resolve_capability_token_subject_or_token,
 };
 use crate::envpaths::{
-    account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
-    faucet_limits_file, identity_registry_file, ingress_file, market_bids_file, market_tasks_file,
+    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file,
+    identity_registry_file, ingress_file, market_bids_file, market_tasks_file,
     submit_message_max_bytes, tx_lifecycle_file,
 };
 #[cfg(test)]
@@ -68,6 +69,12 @@ use crate::market_io::{
     acquire_market_file_lock, load_market_bids, load_market_reputation, load_market_tasks,
     market_worker_tie_break_key, normalize_market_status_key, normalize_market_worker_key,
     save_market_bids, save_market_tasks,
+};
+#[cfg(test)]
+use crate::market_score::market_effective_score;
+use crate::market_score::{
+    clamp_reputation_for_market, market_effective_score_with_config, market_score_config,
+    MarketScoreConfigOutput,
 };
 #[cfg(test)]
 use crate::metering::{
@@ -480,76 +487,6 @@ pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     } else {
         Some(collapsed)
     }
-}
-
-#[derive(Debug, Clone, Copy)]
-struct MarketScoreConfig {
-    price_weight: u128,
-    reputation_weight: u128,
-    reputation_clamp: i64,
-}
-
-#[derive(Debug, Serialize)]
-struct MarketScoreConfigOutput {
-    price_weight: u128,
-    reputation_weight: u128,
-    reputation_clamp: i64,
-}
-
-impl From<MarketScoreConfig> for MarketScoreConfigOutput {
-    fn from(value: MarketScoreConfig) -> Self {
-        Self {
-            price_weight: value.price_weight,
-            reputation_weight: value.reputation_weight,
-            reputation_clamp: value.reputation_clamp,
-        }
-    }
-}
-
-fn market_score_config() -> MarketScoreConfig {
-    MarketScoreConfig {
-        price_weight: env_u128_clamped(
-            MARKET_PRICE_WEIGHT_ENV,
-            MARKET_PRICE_WEIGHT_DEFAULT,
-            MARKET_WEIGHT_MIN,
-            MARKET_WEIGHT_MAX,
-        ),
-        reputation_weight: env_u128_clamped(
-            MARKET_REPUTATION_WEIGHT_ENV,
-            MARKET_REPUTATION_WEIGHT_DEFAULT,
-            MARKET_WEIGHT_MIN,
-            MARKET_WEIGHT_MAX,
-        ),
-        reputation_clamp: env_i64_clamped(
-            MARKET_REPUTATION_CLAMP_ENV,
-            MARKET_REPUTATION_CLAMP_DEFAULT,
-            MARKET_REPUTATION_CLAMP_MIN,
-            MARKET_REPUTATION_CLAMP_MAX,
-        ),
-    }
-}
-
-fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
-    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
-}
-
-fn market_effective_score_with_config(
-    price: u128,
-    reputation: i64,
-    cfg: MarketScoreConfig,
-) -> u128 {
-    let rep = clamp_reputation_for_market(reputation, cfg);
-    let base = price.saturating_mul(cfg.price_weight);
-    if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
-    } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
-    }
-}
-
-#[cfg(test)]
-fn market_effective_score(price: u128, reputation: i64) -> u128 {
-    market_effective_score_with_config(price, reputation, market_score_config())
 }
 
 fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
