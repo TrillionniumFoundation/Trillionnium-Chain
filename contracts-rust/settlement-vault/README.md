@@ -10,6 +10,7 @@
 - `lock`
 - `release`
 - `slash`
+- `transfer`
 - `pause`
 - `unpause`
 

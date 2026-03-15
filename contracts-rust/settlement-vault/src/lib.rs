@@ -162,6 +162,28 @@ impl SettlementVault {
         self.credit_balance(beneficiary, amount)
     }
 
+    pub fn transfer(
+        &mut self,
+        caller: &str,
+        from: &str,
+        to: &str,
+        amount: u128,
+    ) -> Result<(), VaultError> {
+        self.ensure_owner(caller)?;
+        self.ensure_not_paused()?;
+        if amount == 0 {
+            return Err(VaultError::InvalidAmount);
+        }
+
+        let from_entry = self.balances.entry(from.to_string()).or_insert(0);
+        if *from_entry < amount {
+            return Err(VaultError::InsufficientBalance);
+        }
+        *from_entry -= amount;
+
+        self.credit_balance(to, amount)
+    }
+
     pub fn pause(&mut self, caller: &str) -> Result<(), VaultError> {
         self.ensure_owner(caller)?;
         if self.paused {
@@ -310,6 +332,33 @@ mod tests {
         assert_eq!(
             vault.lock_record("req-2").unwrap().status,
             LockStatus::Slashed
+        );
+    }
+
+    #[test]
+    fn transfer_moves_balance_between_accounts() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 50).unwrap();
+        vault.lock("owner", "req-1", "alice", 20).unwrap();
+
+        let err = vault
+            .transfer("mallory", "alice", "bob", 10)
+            .unwrap_err();
+        assert_eq!(err, VaultError::Unauthorized);
+
+        let err = vault
+            .transfer("owner", "alice", "bob", 0)
+            .unwrap_err();
+        assert_eq!(err, VaultError::InvalidAmount);
+
+        vault.transfer("owner", "alice", "bob", 30).unwrap();
+        assert_eq!(vault.balance_of("alice"), 20);
+        assert_eq!(vault.balance_of("bob"), 30);
+
+        assert_eq!(
+            vault.transfer("owner", "alice", "bob", 999).unwrap_err(),
+            VaultError::InsufficientBalance
         );
     }
 }
