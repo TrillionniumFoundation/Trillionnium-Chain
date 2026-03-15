@@ -18,6 +18,7 @@ mod assigned;
 mod audit;
 mod cli;
 mod dispatch;
+mod flush;
 mod proof_adapter;
 
 use audit::{handle_export_audit, handle_query_audit};
@@ -49,19 +50,19 @@ const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 pub(crate) const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
-const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
-const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
+pub(crate) const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
+pub(crate) const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
 const RC_SLO_VIOLATION: i32 = 11;
-const RC_SKIPPED: i32 = -1;
+pub(crate) const RC_SKIPPED: i32 = -1;
 
 #[derive(Debug, Clone)]
-struct PersistedAckHashes {
-    commit_tx_hash: Option<String>,
-    reveal_tx_hash: Option<String>,
+pub(crate) struct PersistedAckHashes {
+    pub(crate) commit_tx_hash: Option<String>,
+    pub(crate) reveal_tx_hash: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -81,16 +82,16 @@ struct RunOnceOutput {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct SubmissionRecord {
-    ts_unix_ms: u128,
-    task_id: u64,
-    worker: String,
-    nonce: Option<u64>,
-    commit_hash: String,
-    result_hash: String,
-    salt_hex: String,
-    commit_cmd: String,
-    reveal_cmd: String,
+pub(crate) struct SubmissionRecord {
+    pub(crate) ts_unix_ms: u128,
+    pub(crate) task_id: u64,
+    pub(crate) worker: String,
+    pub(crate) nonce: Option<u64>,
+    pub(crate) commit_hash: String,
+    pub(crate) result_hash: String,
+    pub(crate) salt_hex: String,
+    pub(crate) commit_cmd: String,
+    pub(crate) reveal_cmd: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -144,45 +145,45 @@ pub(crate) struct LlmProvenanceRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct AckRecord {
-    ts_unix_ms: u128,
-    task_id: u64,
-    status: String,
-    commit_tx_hash: Option<String>,
-    reveal_tx_hash: Option<String>,
+pub(crate) struct AckRecord {
+    pub(crate) ts_unix_ms: u128,
+    pub(crate) task_id: u64,
+    pub(crate) status: String,
+    pub(crate) commit_tx_hash: Option<String>,
+    pub(crate) reveal_tx_hash: Option<String>,
     #[serde(default)]
-    reason_code: Option<String>,
+    pub(crate) reason_code: Option<String>,
     #[serde(default)]
-    run_id: Option<String>,
+    pub(crate) run_id: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
-struct WorkerEvent {
-    ts_unix_ms: u128,
-    run_id: String,
-    event_type: String,
-    task_id: u64,
-    status: String,
-    reason_code: String,
-    commit_rc: i32,
-    reveal_rc: i32,
+pub(crate) struct WorkerEvent {
+    pub(crate) ts_unix_ms: u128,
+    pub(crate) run_id: String,
+    pub(crate) event_type: String,
+    pub(crate) task_id: u64,
+    pub(crate) status: String,
+    pub(crate) reason_code: String,
+    pub(crate) commit_rc: i32,
+    pub(crate) reveal_rc: i32,
 }
 
 #[derive(Debug, Serialize)]
-struct ProgressRecord {
-    ts_unix_ms: u128,
-    run_id: String,
-    task_id: u64,
-    state: String,
-    note: String,
+pub(crate) struct ProgressRecord {
+    pub(crate) ts_unix_ms: u128,
+    pub(crate) run_id: String,
+    pub(crate) task_id: u64,
+    pub(crate) state: String,
+    pub(crate) note: String,
 }
 
 #[derive(Debug)]
-struct AdapterExecResult {
-    ok: bool,
-    rc: i32,
-    tx_hash: Option<String>,
-    terminal: bool,
+pub(crate) struct AdapterExecResult {
+    pub(crate) ok: bool,
+    pub(crate) rc: i32,
+    pub(crate) tx_hash: Option<String>,
+    pub(crate) terminal: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -223,7 +224,7 @@ pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
     (result_hash, salt_hex)
 }
 
-fn now_ms() -> u128 {
+pub(crate) fn now_ms() -> u128 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
@@ -288,7 +289,7 @@ fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
         .unwrap_or_default()
 }
 
-fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
+pub(crate) fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
     load_ack_records(ack_log)
         .into_iter()
         .filter(|rec| rec.status == "accepted")
@@ -296,7 +297,7 @@ fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
         .collect()
 }
 
-struct TaskExecutionLock {
+pub(crate) struct TaskExecutionLock {
     path: PathBuf,
 }
 
@@ -318,7 +319,7 @@ fn task_lock_path(ack_log: &PathBuf, task_id: u64) -> PathBuf {
     parent.join(format!(".{base}.task-{task_id}.lock"))
 }
 
-fn try_acquire_task_lock(ack_log: &PathBuf, task_id: u64) -> Result<Option<TaskExecutionLock>> {
+pub(crate) fn try_acquire_task_lock(ack_log: &PathBuf, task_id: u64) -> Result<Option<TaskExecutionLock>> {
     let path = task_lock_path(ack_log, task_id);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -330,7 +331,7 @@ fn try_acquire_task_lock(ack_log: &PathBuf, task_id: u64) -> Result<Option<TaskE
     }
 }
 
-fn is_task_acked(ack_log: &PathBuf, task_id: u64) -> bool {
+pub(crate) fn is_task_acked(ack_log: &PathBuf, task_id: u64) -> bool {
     load_acked(ack_log).contains(&task_id)
 }
 
@@ -365,7 +366,7 @@ pub(crate) fn transition_request_status(current: &str, to: RequestStatus) -> Res
     Ok(next.as_str().to_string())
 }
 
-fn append_ack(
+pub(crate) fn append_ack(
     ack_log: &PathBuf,
     task_id: u64,
     status: &str,
@@ -387,17 +388,17 @@ fn append_ack(
     append_json_line(ack_log, &line)
 }
 
-fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
+pub(crate) fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
     let line = serde_json::to_string(event)?;
     append_json_line(event_log, &line)
 }
 
-fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
+pub(crate) fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     let line = serde_json::to_string(rec)?;
     append_json_line(progress_log, &line)
 }
 
-fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) -> PathBuf {
+pub(crate) fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) -> PathBuf {
     if path == PathBuf::from(default_path) {
         if let Some(value) = env::var_os(env_name) {
             if !value.is_empty() {
@@ -727,15 +728,15 @@ fn is_deterministic_rejection(rc: i32) -> bool {
     matches!(rc, RC_DUPLICATE | RC_NONCE_REJECTED | RC_SLO_VIOLATION)
 }
 
-fn is_idempotent_duplicate_ok(rc: i32) -> bool {
+pub(crate) fn is_idempotent_duplicate_ok(rc: i32) -> bool {
     rc == RC_DUPLICATE
 }
 
-fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
+pub(crate) fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
     commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
 }
 
-fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
+pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
@@ -797,7 +798,7 @@ fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
     Ok((program, args))
 }
 
-fn run_adapter_with_retry(
+pub(crate) fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
     max_retries: u32,
@@ -902,7 +903,7 @@ fn resolve_u64(cli: Option<u64>, env_raw: Option<&str>, default: u64, min: u64) 
         .unwrap_or_else(|| parse_u64_with_min(env_raw, default, min))
 }
 
-fn resolve_tx_retry_policy(
+pub(crate) fn resolve_tx_retry_policy(
     max_retries_cli: Option<u32>,
     backoff_ms_cli: Option<u64>,
 ) -> RetryPolicy {
