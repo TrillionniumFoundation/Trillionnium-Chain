@@ -3,7 +3,9 @@ use clap::Parser;
 #[cfg(test)]
 use std::collections::BTreeMap;
 mod adapter;
+mod adapter_constants;
 mod adapter_error;
+mod adapter_model;
 mod adapter_parse;
 mod adapter_retry;
 mod assigned;
@@ -17,6 +19,15 @@ mod state;
 mod workflow;
 
 pub(crate) use adapter::*;
+pub(crate) use adapter_constants::{
+    DEFAULT_LLM_ADAPTER_BACKOFF_MS, DEFAULT_LLM_ADAPTER_MAX_RETRIES,
+    DEFAULT_LLM_ADAPTER_TIMEOUT_MS, DEFAULT_TX_ADAPTER_BACKOFF_MS, DEFAULT_TX_ADAPTER_MAX_RETRIES,
+    LLM_ADAPTER_BACKOFF_MS_ENV, LLM_ADAPTER_MAX_RETRIES_ENV, LLM_ADAPTER_TIMEOUT_ENV,
+    PROOF_ADAPTER_ENV, RC_DUPLICATE, RC_NONCE_REJECTED, RC_OK, RC_SKIPPED, RC_SLO_VIOLATION,
+    TX_ADAPTER_BACKOFF_MS_ENV, TX_ADAPTER_MAX_RETRIES_ENV, WORKER_EVENT_LOG_ENV,
+    WORKER_PROGRESS_LOG_ENV,
+};
+pub(crate) use adapter_model::LlmAdapterResponse;
 pub(crate) use adapter_parse::{
     normalized_agent_protocol, normalized_compliance_profile, normalized_optional_field,
     normalized_provenance_label, normalized_provider_request_id, trim_boundary_audit_fillers,
