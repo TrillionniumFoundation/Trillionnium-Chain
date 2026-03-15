@@ -6,84 +6,41 @@ use std::{
 };
 use crate::args::Args;
 use crate::bft::height::simulate_bft_height;
-use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::run_apply::{apply_committed_height, ApplyRuntimeTelemetry};
 use crate::run_bft::BftHeightTelemetry;
+use crate::run_bootstrap::{bootstrap_node_runtime, BootstrappedNodeRuntime};
 use crate::run_persist::{persist_committed_height, persist_uncommitted_height};
-use crate::config::load_config;
-use crate::demo::init_demo_state_and_mempool;
 use crate::hash::hash32_hex;
 use crate::hot::{
     hot_object_tail_share_ppm, hot_object_top_label_share_ppm, summarize_hot_objects,
 };
 use crate::mempool::{pick_txs_with_critical_guard, requeue_uncommitted_txs};
 use crate::ordering::decide_order_for_commit;
-use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
 use crate::rl::build_rl_advisor;
 use crate::summary::{emit_consensus_summary, ConsensusSummaryInputs};
 use crate::types::RlAdviceContext;
-use crate::wal::{load_checkpoint_meta, load_wal_meta_entries, resolve_wal_dir};
 
 pub(crate) fn run_node(args: Args) -> Result<()> {
-    let cfg = load_config(&args.config)?;
-
-    println!("[node] start");
-    println!(
-        "[node] id={} rpc={} p2p={}",
-        cfg.node_id, cfg.rpc_addr, cfg.p2p_addr
-    );
-    println!(
-        "[node] block_ms={} max_blocks={}",
-        args.block_ms, args.max_blocks
-    );
-    println!(
-        "[node] load demo_tasks={} demo_keys={}",
-        args.demo_tasks, args.demo_keys
-    );
-    println!("[node] parallel_workers={}", args.parallel_workers);
-    println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} wal_mode={:?} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={} da_ordering_decouple={} rl_shadow={} rl_shadow_topk={}",
-        args.validators,
-        args.byzantine,
-        args.bft_max_rounds,
-        args.bft_fault_rounds,
-        args.bft_missed_proposal_threshold,
-        args.bft_leader_penalty_rounds,
-        args.bft_round_change_backoff_ms,
-        args.bft_round_change_backoff_max_ms,
-        args.bft_wal_dir,
-        args.bft_wal_mode,
-        args.bft_checkpoint_interval,
-        args.pouw_timeout_scan,
-        args.pouw_timeout_scan_every_blocks,
-        args.enable_da_ordering_decouple,
-        args.rl_advisor_shadow,
-        args.rl_advisor_shadow_topk
-    );
-
-    let (wal_dir, wal_notice) = resolve_wal_dir(&args)?;
-    if let Some(notice) = wal_notice {
-        println!("{}", notice);
-    }
-    println!("[bft-wal] using wal_dir={}", wal_dir.display());
-    let recovered = recover_wal_state(&wal_dir)?;
-    let mut restored_lock: Option<String> = recovered.restored_lock.clone();
-    let mut height: u64 = recovered.next_height.max(1);
-    println!(
-        "[bft-recover] restored height={} lock={} checkpoint={} truncated={} metadata_only_recovery={}",
+    let boot = bootstrap_node_runtime(&args)?;
+    let BootstrappedNodeRuntime {
+        cfg,
+        wal_dir,
+        restored_lock,
         height,
-        restored_lock.clone().unwrap_or_else(|| "none".to_string()),
-        recovered
-            .last_checkpoint
-            .as_ref()
-            .map(|cp| cp.height.to_string())
-            .unwrap_or_else(|| "none".to_string()),
-        recovered.truncated,
-        recovered.metadata_only_recovery
-    );
-    ensure_recoverable_wal_state(&wal_dir, &recovered)?;
+        state,
+        mempool,
+        wal_entries,
+        checkpoints,
+        bft_jitter,
+    } = boot;
 
-    let (mut state, mut mempool) = init_demo_state_and_mempool(args.demo_tasks, args.demo_keys);
+    let mut restored_lock = restored_lock;
+    let mut height = height;
+    let mut state = state;
+    let mut mempool = mempool;
+    let mut wal_entries = wal_entries;
+    let mut checkpoints = checkpoints;
+    let mut bft_jitter = bft_jitter;
     let mut known_task_ids: HashSet<u64> = HashSet::new();
     let mut finality_samples_ms: Vec<u128> = Vec::new();
     let mut scheduler_samples_ms: Vec<u128> = Vec::new();
@@ -108,15 +65,6 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
     let mut apply_telemetry = ApplyRuntimeTelemetry::default();
     let mut rollback_block_total: u64 = 0;
     let mut bft_telemetry = BftHeightTelemetry::new(args.validators);
-    let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
-    let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
-    let mut bft_jitter = BftJitterControl {
-        missed_threshold: args.bft_missed_proposal_threshold,
-        penalty_rounds: args.bft_leader_penalty_rounds,
-        round_change_backoff_ms: args.bft_round_change_backoff_ms,
-        round_change_backoff_cap_ms: args.bft_round_change_backoff_max_ms,
-        leader_health: vec![LeaderHealth::default(); args.validators.max(1)],
-    };
 
     loop {
         let block_start = Instant::now();

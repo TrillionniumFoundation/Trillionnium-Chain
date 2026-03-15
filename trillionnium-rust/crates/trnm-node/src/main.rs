@@ -41,6 +41,7 @@ mod rollback;
 mod run;
 mod run_apply;
 mod run_bft;
+mod run_bootstrap;
 mod run_persist;
 mod rwset;
 mod summary;
