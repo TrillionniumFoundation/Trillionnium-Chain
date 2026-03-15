@@ -2,6 +2,8 @@ use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+#[cfg(test)]
+use std::time::{Duration, Instant};
 use std::{
     collections::{BTreeMap, HashSet},
     fs::{self, OpenOptions},
@@ -9,7 +11,7 @@ use std::{
     io::Write,
     net::TcpListener,
     path::{Path, PathBuf},
-    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    time::{SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
@@ -29,6 +31,7 @@ use trnm_types::{
 mod capability;
 mod envpaths;
 mod http;
+mod market_io;
 mod metering;
 mod node_events;
 mod persistence;
@@ -39,10 +42,11 @@ use crate::capability::{
 };
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
-    faucet_limits_file, identity_registry_file, ingress_file, market_bids_file,
-    market_lock_stale_after_ms, market_lock_timeout_ms, market_reputation_file, market_tasks_file,
+    faucet_limits_file, identity_registry_file, ingress_file, market_bids_file, market_tasks_file,
     submit_message_max_bytes, task_state_file, tx_lifecycle_file,
 };
+#[cfg(test)]
+use crate::envpaths::{market_lock_timeout_ms, market_reputation_file};
 #[cfg(test)]
 use crate::envpaths::{normalized_path_from_env, run_root};
 #[cfg(test)]
@@ -50,6 +54,13 @@ use crate::http::parse_http_get_path;
 use crate::http::{
     configure_health_stream, http_json_response, parse_http_get_target,
     parse_query_events_limit_from_path, read_http_request_head,
+};
+#[cfg(test)]
+use crate::market_io::market_lock_path;
+use crate::market_io::{
+    acquire_market_file_lock, load_market_bids, load_market_reputation, load_market_tasks,
+    market_worker_tie_break_key, normalize_market_status_key, normalize_market_worker_key,
+    save_market_bids, save_market_tasks,
 };
 use crate::metering::build_task_metering_query_response;
 #[cfg(test)]
@@ -267,7 +278,7 @@ pub(crate) struct AdapterRecord {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MarketTask {
+pub(crate) struct MarketTask {
     task_id: u64,
     creator: String,
     bounty: u128,
@@ -277,7 +288,7 @@ struct MarketTask {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MarketBid {
+pub(crate) struct MarketBid {
     task_id: u64,
     worker: String,
     price: u128,
@@ -633,193 +644,6 @@ pub(crate) fn query_task_from_state_snapshot(
     })
 }
 
-struct MarketFileLock {
-    lock_path: PathBuf,
-}
-
-impl Drop for MarketFileLock {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.lock_path);
-    }
-}
-
-fn market_lock_path(path: &Path) -> PathBuf {
-    let file_name = path
-        .file_name()
-        .and_then(|v| v.to_str())
-        .unwrap_or("market-data");
-    path.with_file_name(format!("{}.lock", file_name))
-}
-
-fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
-    let lock_path = market_lock_path(path);
-    if let Some(parent) = lock_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    let stale_after_ms = market_lock_stale_after_ms();
-    let timeout = Duration::from_millis(market_lock_timeout_ms());
-    let start = Instant::now();
-    loop {
-        match OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .open(&lock_path)
-        {
-            Ok(mut file) => {
-                writeln!(file, "{}", std::process::id())?;
-                return Ok(MarketFileLock { lock_path });
-            }
-            Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {
-                if let Some(stale_after_ms) = stale_after_ms {
-                    if let Ok(meta) = fs::metadata(&lock_path) {
-                        if let Ok(modified) = meta.modified() {
-                            if let Ok(elapsed) = SystemTime::now().duration_since(modified) {
-                                if elapsed.as_millis() > stale_after_ms {
-                                    let _ = fs::remove_file(&lock_path);
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                }
-                if start.elapsed() >= timeout {
-                    return Err(anyhow!(
-                        "timed out waiting for market file lock after {}ms: {}",
-                        timeout.as_millis(),
-                        lock_path.display()
-                    ));
-                }
-                std::thread::sleep(Duration::from_millis(10));
-            }
-            Err(err) => {
-                return Err(anyhow!(
-                    "failed to acquire market file lock {}: {}",
-                    lock_path.display(),
-                    err
-                ));
-            }
-        }
-    }
-}
-
-fn write_string_atomically(path: &Path, content: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    let ts = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
-    let tmp = path.with_file_name(format!(
-        ".{}.tmp.{}.{}",
-        path.file_name()
-            .and_then(|v| v.to_str())
-            .unwrap_or("market"),
-        std::process::id(),
-        ts
-    ));
-
-    fs::write(&tmp, content)?;
-    if let Err(err) = fs::rename(&tmp, path) {
-        let _ = fs::remove_file(&tmp);
-        return Err(err.into());
-    }
-    Ok(())
-}
-
-fn load_market_tasks() -> Vec<MarketTask> {
-    let path = market_tasks_file();
-    let Ok(raw) = fs::read_to_string(path) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MarketTask>(l).ok())
-        .collect()
-}
-
-fn save_market_tasks(tasks: &[MarketTask]) -> Result<()> {
-    let path = market_tasks_file();
-    let mut out = String::new();
-    for t in tasks {
-        out.push_str(&serde_json::to_string(t)?);
-        out.push('\n');
-    }
-    write_string_atomically(&path, &out)
-}
-
-fn load_market_bids() -> Vec<MarketBid> {
-    let path = market_bids_file();
-    let Ok(raw) = fs::read_to_string(path) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MarketBid>(l).ok())
-        .collect()
-}
-
-fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
-    let path = market_bids_file();
-    let mut out = String::new();
-    for b in bids {
-        out.push_str(&serde_json::to_string(b)?);
-        out.push('\n');
-    }
-    write_string_atomically(&path, &out)
-}
-
-fn normalize_market_worker_key(raw: &str) -> Option<String> {
-    let sanitized = raw
-        .trim()
-        .chars()
-        // M2 micro-hardening: strip invisible joiner/ZWSP/word-joiner/BOM
-        // and soft-hyphen code points so alias normalization cannot be bypassed
-        // by hidden chars while preserving visible delimiters like '-' used by
-        // existing worker IDs.
-        .filter_map(|ch| match ch {
-            // Treat invisible separators as whitespace so aliases like
-            // "worker\u200ba" and "worker\u2060b" collapse to canonical keys.
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            // Strip soft-hyphen entirely to avoid creating fake separators.
-            '\u{00AD}' => None,
-            // Treat control bytes as whitespace separators so malformed/injected
-            // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
-            _ if ch.is_control() => Some(' '),
-            _ => Some(ch),
-        })
-        .collect::<String>();
-    let normalized = sanitized
-        .to_ascii_lowercase()
-        .split_ascii_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
-    if normalized.is_empty() {
-        None
-    } else {
-        Some(normalized)
-    }
-}
-
-fn market_worker_tie_break_key(raw: &str) -> String {
-    normalize_market_worker_key(raw).unwrap_or_else(|| raw.trim().to_ascii_lowercase())
-}
-
-fn normalize_market_status_key(raw: &str) -> String {
-    raw.trim()
-        .chars()
-        .filter_map(|ch| match ch {
-            // Treat invisible/control separators as whitespace so status checks
-            // remain stable against malformed JSONL producers and hidden-char drift.
-            '\u{00AD}' => None,
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
-            _ => Some(ch),
-        })
-        .collect::<String>()
-        .to_ascii_lowercase()
-        .split_ascii_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
 pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     let sanitized: String = raw
         .trim()
@@ -839,52 +663,6 @@ pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     } else {
         Some(collapsed)
     }
-}
-
-fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
-    value
-        .as_i64()
-        .or_else(|| {
-            let float = value.as_f64()?;
-            if !float.is_finite() || float.fract() != 0.0 {
-                return None;
-            }
-            if float < i64::MIN as f64 || float > i64::MAX as f64 {
-                return None;
-            }
-            Some(float as i64)
-        })
-        .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
-}
-
-fn load_market_reputation() -> BTreeMap<String, i64> {
-    let path = market_reputation_file();
-    let Ok(raw) = fs::read_to_string(path) else {
-        return BTreeMap::new();
-    };
-
-    // M2 resilience: tolerate partially malformed fixtures by salvaging any
-    // object entries that still deserialize into i64 reputation values.
-    let parsed = serde_json::from_str::<serde_json::Value>(&raw)
-        .ok()
-        .and_then(|value| value.as_object().cloned())
-        .unwrap_or_default();
-
-    let mut normalized: BTreeMap<String, i64> = BTreeMap::new();
-    for (worker, rep_value) in parsed {
-        let Some(rep) = parse_market_reputation_value(&rep_value) else {
-            continue;
-        };
-        if let Some(key) = normalize_market_worker_key(&worker) {
-            normalized
-                .entry(key)
-                // M2 hardening: if aliases normalize to the same worker key,
-                // keep the strongest reputation signal to avoid accidental downgrade.
-                .and_modify(|existing| *existing = (*existing).max(rep))
-                .or_insert(rep);
-        }
-    }
-    normalized
 }
 
 #[derive(Debug, Clone, Copy)]
