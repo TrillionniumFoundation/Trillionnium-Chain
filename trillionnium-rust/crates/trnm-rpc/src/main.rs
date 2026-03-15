@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 #[cfg(test)]
@@ -13,6 +13,7 @@ use trnm_rpc::{
 };
 #[cfg(test)]
 use trnm_types::IdentityRegistry;
+#[cfg(test)]
 use trnm_types::RequestStatus;
 #[cfg(test)]
 use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
@@ -24,6 +25,7 @@ mod fsutil;
 mod health;
 mod http;
 mod ingress;
+mod ingress_flow;
 mod market_io;
 mod market_score;
 mod metering;
@@ -49,10 +51,11 @@ use crate::account_tx::{
 };
 #[cfg(test)]
 use crate::capability::resolve_capability_token_subject_or_token;
-use crate::envpaths::{ingress_file, market_bids_file, market_tasks_file, submit_message_max_bytes};
+use crate::envpaths::{market_bids_file, market_tasks_file};
 #[cfg(test)]
 use crate::envpaths::{
-    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file, tx_lifecycle_file,
+    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file, ingress_file,
+    tx_lifecycle_file,
 };
 #[cfg(test)]
 use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state_file};
@@ -68,10 +71,8 @@ use crate::http::{
 };
 #[cfg(test)]
 use crate::ingress::ingress_quarantine_file_for;
-use crate::ingress::{
-    is_same_submit_message_idempotency_scope, load_ingress_records, next_ingress_task_id,
-    save_ingress_records,
-};
+#[cfg(test)]
+use crate::ingress::{is_same_submit_message_idempotency_scope, load_ingress_records};
 #[cfg(test)]
 use crate::market_io::market_lock_path;
 use crate::market_io::{
@@ -94,15 +95,20 @@ use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
     load_node_events_from_root, read_log_tail,
 };
+use crate::ingress_flow::{handle_dispatch_open, handle_submit_message, DISPATCH_OPEN_LIMIT_DEFAULT};
+#[cfg(test)]
+use crate::ingress_flow::DISPATCH_OPEN_LIMIT_MAX;
 use crate::read_query::{
     handle_query_capability_audit, handle_query_events, handle_query_param, handle_query_proposal,
     handle_query_task,
 };
 use crate::request_query::{handle_query_request, handle_query_request_full};
-use crate::rpc_util::{clamp_limit, rpc_fail};
+use crate::rpc_util::rpc_fail;
 #[cfg(test)]
-use crate::rpc_util::resolve_ops_window;
-use crate::runtime::{make_request_id, now_ms};
+use crate::rpc_util::{clamp_limit, resolve_ops_window};
+#[cfg(test)]
+use crate::runtime::make_request_id;
+use crate::runtime::now_ms;
 #[cfg(test)]
 use crate::snapshot::query_task_from_state_snapshot;
 #[cfg(test)]
@@ -114,14 +120,13 @@ use crate::taskview::query_events_response;
 use crate::treasury::{handle_query_challenge_treasury, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT};
 #[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
-use crate::validate::{transition_request_status, validate_submit_message_metadata};
+#[cfg(test)]
+use crate::validate::transition_request_status;
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
 const QUERY_EVENTS_LIMIT_MAX: usize = 500;
 const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
 const QUERY_FULL_LIMIT_MAX: usize = 200;
-const DISPATCH_OPEN_LIMIT_DEFAULT: usize = 20;
-const DISPATCH_OPEN_LIMIT_MAX: usize = 100;
 #[cfg(test)]
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
 #[cfg(test)]
@@ -572,76 +577,7 @@ fn main() -> Result<()> {
             session_id,
             text,
             idempotency_key,
-        } => {
-            let path = ingress_file();
-            let _lock = acquire_market_file_lock(&path)?;
-
-            let mut records = load_ingress_records();
-            if let Some(found) = records.iter().rev().find(|r| {
-                is_same_submit_message_idempotency_scope(
-                    r,
-                    &channel,
-                    &user_id,
-                    &session_id,
-                    &idempotency_key,
-                )
-            }) {
-                println!("{}", serde_json::to_string_pretty(found)?);
-                return Ok(());
-            }
-
-            // Quota gate applies to fresh ingress only. Existing idempotent records
-            // must still replay successfully under tighter runtime limits.
-            let max_bytes = submit_message_max_bytes() as usize;
-            if text.len() > max_bytes {
-                bail!(
-                    "submit-message text exceeds {} bytes limit (got {})",
-                    max_bytes,
-                    text.len()
-                );
-            }
-
-            validate_submit_message_metadata(&text)?;
-
-            let ts = now_ms();
-            let request_id = make_request_id(&channel, &user_id, &session_id, &idempotency_key, ts);
-            let task_id = next_ingress_task_id(&records)?;
-            let rec = MessageIngressRecord {
-                request_id,
-                task_id,
-                channel,
-                user_id,
-                session_id,
-                text,
-                idempotency_key,
-                status: RequestStatus::Open.as_str().into(),
-                created_at_unix_ms: ts,
-                assigned_worker: None,
-                assigned_at_unix_ms: None,
-                model_output: None,
-                result_hash: None,
-                verifier_status: None,
-                resolution_code: None,
-                commit_tx_hash: None,
-                reveal_tx_hash: None,
-            };
-
-            records.push(rec.clone());
-            save_ingress_records(&records)?;
-
-            let out = MessageRequestQueryResponse {
-                request_id: rec.request_id,
-                task_id: rec.task_id,
-                channel: rec.channel,
-                user_id: rec.user_id,
-                session_id: rec.session_id,
-                text: rec.text,
-                idempotency_key: rec.idempotency_key,
-                status: rec.status,
-                created_at_unix_ms: rec.created_at_unix_ms,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        } => handle_submit_message(channel, user_id, session_id, text, idempotency_key, now_ms())?,
         Command::QueryRequest { request_id } => handle_query_request(&request_id)?,
         Command::QueryRequestFull { request_id, limit } => {
             handle_query_request_full(&request_id, limit)?
@@ -922,42 +858,7 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
-            let limit = clamp_limit(
-                "DispatchOpen",
-                limit,
-                DISPATCH_OPEN_LIMIT_DEFAULT,
-                DISPATCH_OPEN_LIMIT_MAX,
-            );
-            let path = ingress_file();
-            let _lock = acquire_market_file_lock(&path)?;
-            let mut records = load_ingress_records();
-            let mut assigned = Vec::<MessageRequestQueryResponse>::new();
-            let ts = now_ms();
-            let mut n = 0usize;
-            for rec in records.iter_mut() {
-                if n >= limit {
-                    break;
-                }
-                if rec.status == RequestStatus::Open.as_str() {
-                    rec.status = transition_request_status(&rec.status, RequestStatus::Assigned)?;
-                    rec.assigned_worker = Some(worker_id.clone());
-                    rec.assigned_at_unix_ms = Some(ts);
-                    assigned.push(MessageRequestQueryResponse {
-                        request_id: rec.request_id.clone(),
-                        task_id: rec.task_id,
-                        channel: rec.channel.clone(),
-                        user_id: rec.user_id.clone(),
-                        session_id: rec.session_id.clone(),
-                        text: rec.text.clone(),
-                        idempotency_key: rec.idempotency_key.clone(),
-                        status: rec.status.clone(),
-                        created_at_unix_ms: rec.created_at_unix_ms,
-                    });
-                    n += 1;
-                }
-            }
-            save_ingress_records(&records)?;
-            println!("{}", serde_json::to_string_pretty(&assigned)?);
+            handle_dispatch_open(worker_id, limit, now_ms())?
         }
         Command::Serve { host, port } => {
             serve_health(&host, port)?;
