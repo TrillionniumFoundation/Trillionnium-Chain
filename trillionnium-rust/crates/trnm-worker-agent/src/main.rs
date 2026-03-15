@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -15,9 +15,11 @@ use std::{
 #[cfg(test)]
 use std::collections::BTreeMap;
 mod audit;
+mod cli;
 mod proof_adapter;
 
 use audit::{handle_export_audit, handle_query_audit};
+use cli::{Args, Command};
 #[cfg(test)]
 pub(crate) use audit::{
     audit_export_index_path, build_audit_export_index, build_provenance_fingerprint,
@@ -55,117 +57,6 @@ const RC_SKIPPED: i32 = -1;
 struct PersistedAckHashes {
     commit_tx_hash: Option<String>,
     reveal_tx_hash: Option<String>,
-}
-
-#[derive(Debug, Parser)]
-#[command(
-    name = "trnm-worker-agent",
-    version,
-    about = "Trillionnium PoUW worker-agent (MVP skeleton)"
-)]
-struct Args {
-    #[command(subcommand)]
-    cmd: Command,
-}
-
-#[derive(Debug, Subcommand)]
-enum Command {
-    PullTask {
-        #[arg(long, default_value = "worker-state.json")]
-        state: PathBuf,
-    },
-    Execute {
-        #[arg(long)]
-        task_id: u64,
-        #[arg(long)]
-        worker: String,
-        #[arg(long, default_value = "demo-result")]
-        payload: String,
-    },
-    CommitReveal {
-        #[arg(long)]
-        task_id: u64,
-        #[arg(long)]
-        worker: String,
-        #[arg(long)]
-        result_hash: String,
-        #[arg(long)]
-        salt_hex: String,
-        #[arg(long, default_value_t = false)]
-        submit: bool,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
-        submit_log: PathBuf,
-    },
-    RunOnce {
-        #[arg(long, default_value = "worker-state.json")]
-        state: PathBuf,
-        #[arg(long)]
-        worker: String,
-        #[arg(long, default_value = "demo-result")]
-        payload: String,
-        #[arg(long, default_value_t = false)]
-        submit: bool,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
-        submit_log: PathBuf,
-    },
-    RunAssigned {
-        #[arg(long)]
-        worker: String,
-        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
-        ingress_file: PathBuf,
-        #[arg(long, default_value_t = 10)]
-        limit: usize,
-        #[arg(long, default_value_t = true)]
-        submit: bool,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
-        submit_log: PathBuf,
-        #[arg(long, default_value = "./scripts/llm_adapter_mock.sh")]
-        llm_adapter_cmd: String,
-        #[arg(long, default_value_t = 4000)]
-        verifier_max_output_chars: usize,
-        #[arg(long)]
-        llm_adapter_max_retries: Option<u32>,
-        #[arg(long)]
-        llm_adapter_backoff_ms: Option<u64>,
-        #[arg(long)]
-        llm_adapter_timeout_ms: Option<u64>,
-    },
-    FlushSubmissions {
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
-        submit_log: PathBuf,
-        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
-        ingress_file: PathBuf,
-        #[arg(long, default_value_t = true)]
-        update_ingress: bool,
-        #[arg(long, default_value_t = false)]
-        execute: bool,
-        #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
-        adapter_cmd: String,
-        #[arg(long)]
-        max_retries: Option<u32>,
-        #[arg(long)]
-        backoff_ms: Option<u64>,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-acks.jsonl")]
-        ack_log: PathBuf,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-events.jsonl")]
-        event_log: PathBuf,
-        #[arg(long, default_value = "/tmp/trnm-worker-agent-progress.jsonl")]
-        progress_log: PathBuf,
-    },
-    ExportAudit {
-        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
-        ingress_file: PathBuf,
-        #[arg(long, default_value = "audit-export.jsonl")]
-        output_file: PathBuf,
-    },
-    QueryAudit {
-        #[arg(long, default_value = "audit-export.jsonl")]
-        output_file: PathBuf,
-        #[arg(long)]
-        task_id: Option<u64>,
-        #[arg(long)]
-        provenance_fingerprint: Option<String>,
-    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
