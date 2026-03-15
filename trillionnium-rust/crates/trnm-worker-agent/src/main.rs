@@ -14,6 +14,7 @@ use std::{
 };
 #[cfg(test)]
 use std::collections::BTreeMap;
+mod assigned;
 mod audit;
 mod cli;
 mod dispatch;
@@ -30,7 +31,9 @@ pub(crate) use audit::{
     validate_audit_export_index, AuditExportFormat, AuditExportIndex,
     EnterpriseAuditExportRecord, QueryAuditOutput,
 };
-use proof_adapter::{build_proof_adapter, ProofAdapter, DEFAULT_PROOF_ADAPTER};
+use proof_adapter::ProofAdapter;
+#[cfg(test)]
+use proof_adapter::build_proof_adapter;
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -45,7 +48,7 @@ const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
-const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
+pub(crate) const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
 const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
 const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
@@ -183,18 +186,18 @@ struct AdapterExecResult {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct RetryPolicy {
-    max_retries: u32,
-    backoff_ms: u64,
+pub(crate) struct RetryPolicy {
+    pub(crate) max_retries: u32,
+    pub(crate) backoff_ms: u64,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct LlmAdapterPolicy {
-    retry: RetryPolicy,
-    timeout_ms: u64,
+pub(crate) struct LlmAdapterPolicy {
+    pub(crate) retry: RetryPolicy,
+    pub(crate) timeout_ms: u64,
 }
 
-fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
+pub(crate) fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
     let payload = format!("{}|{}|{}|{}", task_id, result_hash_hex, salt_hex, worker);
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
@@ -212,7 +215,7 @@ fn next_task_id(state: &PathBuf) -> Result<u64> {
     Ok(s.last_task_id)
 }
 
-fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
@@ -238,7 +241,7 @@ fn append_json_line(path: &PathBuf, line: &str) -> Result<()> {
     Ok(())
 }
 
-fn append_submission(
+pub(crate) fn append_submission(
     submit_log: &PathBuf,
     task_id: u64,
     worker: &str,
@@ -343,7 +346,7 @@ pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressR
         .collect())
 }
 
-fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
+pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
@@ -356,7 +359,7 @@ fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Res
     Ok(())
 }
 
-fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
+pub(crate) fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
     let from = RequestStatus::parse(current).map_err(|e| anyhow::anyhow!("{}", e))?;
     let next = from.transition(to).map_err(|e| anyhow::anyhow!("{}", e))?;
     Ok(next.as_str().to_string())
@@ -852,20 +855,20 @@ fn run_adapter_with_retry(
 }
 
 #[derive(Debug, Deserialize)]
-struct LlmAdapterResponse {
-    output_text: String,
+pub(crate) struct LlmAdapterResponse {
+    pub(crate) output_text: String,
     #[serde(default)]
-    provider_request_id: Option<String>,
+    pub(crate) provider_request_id: Option<String>,
     #[serde(default)]
-    provider: Option<String>,
+    pub(crate) provider: Option<String>,
     #[serde(default)]
-    model: Option<String>,
+    pub(crate) model: Option<String>,
     #[serde(default)]
-    adapter: Option<String>,
+    pub(crate) adapter: Option<String>,
     #[serde(default)]
-    agent_protocol: Option<String>,
+    pub(crate) agent_protocol: Option<String>,
     #[serde(default)]
-    compliance_profile: Option<String>,
+    pub(crate) compliance_profile: Option<String>,
 }
 
 fn truncate_for_error(raw: &str, max_chars: usize) -> String {
@@ -919,7 +922,7 @@ fn resolve_tx_retry_policy(
     }
 }
 
-fn resolve_llm_adapter_policy(
+pub(crate) fn resolve_llm_adapter_policy(
     max_retries_cli: Option<u32>,
     backoff_ms_cli: Option<u64>,
     timeout_ms_cli: Option<u64>,
@@ -972,15 +975,15 @@ fn run_command_with_timeout(
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum AdapterErrorKind {
+pub(crate) enum AdapterErrorKind {
     Retriable,
     NonRetriable,
 }
 
 #[derive(Debug, Clone)]
-struct AdapterError {
-    kind: AdapterErrorKind,
-    context: String,
+pub(crate) struct AdapterError {
+    pub(crate) kind: AdapterErrorKind,
+    pub(crate) context: String,
 }
 
 fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -1063,7 +1066,7 @@ where
     }))
 }
 
-fn run_llm_adapter_with_retry(
+pub(crate) fn run_llm_adapter_with_retry(
     adapter_cmd: &str,
     prompt: &str,
     retry: RetryPolicy,
@@ -1626,7 +1629,7 @@ pub(crate) fn normalized_compliance_profile(value: Option<&str>) -> Option<Strin
     }
 }
 
-fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
+pub(crate) fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
     rec.provider_request_id = normalized_provider_request_id(llm.provider_request_id.as_deref());
 
     let provider = normalized_provenance_label(llm.provider.as_deref(), 64);
@@ -1703,7 +1706,7 @@ fn context_matches_token(context: &str, token: &str) -> bool {
             && normalized_context_compact.contains(&normalized_token_compact))
 }
 
-fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
+pub(crate) fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     if context_matches_token(&err.context, "proof-missing")
         || context_matches_token(&err.context, "missing-provider-request-id")
     {
@@ -1732,14 +1735,14 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum ReputationSignal {
+pub(crate) enum ReputationSignal {
     Accepted,
     VerifierRejected,
     AdapterRetryExhausted,
     AdapterNonRetriable,
 }
 
-fn reputation_delta(signal: ReputationSignal) -> i32 {
+pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     match signal {
         ReputationSignal::Accepted => 3,
         ReputationSignal::VerifierRejected => -2,
@@ -1748,7 +1751,7 @@ fn reputation_delta(signal: ReputationSignal) -> i32 {
     }
 }
 
-fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
+pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
     match kind {
         AdapterErrorKind::Retriable => ReputationSignal::AdapterRetryExhausted,
         AdapterErrorKind::NonRetriable => ReputationSignal::AdapterNonRetriable,
