@@ -30,6 +30,7 @@ mod http;
 mod metering;
 mod node_events;
 mod persistence;
+mod taskview;
 
 use crate::envpaths::{
     account_state_file, env_i64_clamped, env_u128_clamped, env_u32_with_min, env_u64_with_min,
@@ -60,6 +61,9 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
+#[cfg(test)]
+use crate::taskview::query_task_from_node_events;
+use crate::taskview::{filtered_node_events_for_task, query_events_response, query_task_response};
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
 const QUERY_EVENTS_LIMIT_MAX: usize = 500;
@@ -246,7 +250,7 @@ enum Command {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct AdapterRecord {
+pub(crate) struct AdapterRecord {
     ts: u64,
     kind: String,
     task_id: u64,
@@ -680,7 +684,10 @@ fn task_metering_query_response(
     )
 }
 
-fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<TaskQueryResponse> {
+pub(crate) fn query_task_from_state_snapshot(
+    task_id: u64,
+    tasks: &[TaskObject],
+) -> Option<TaskQueryResponse> {
     let task = tasks
         .iter()
         .filter(|task| task.task_id == task_id)
@@ -888,7 +895,7 @@ fn normalize_market_status_key(raw: &str) -> String {
         .join(" ")
 }
 
-fn normalize_actor_or_signer(raw: &str) -> Option<String> {
+pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     let sanitized: String = raw
         .trim()
         .chars()
@@ -1371,7 +1378,7 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
-fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
+pub(crate) fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
     if limit == 0 {
         return;
     }
@@ -1382,7 +1389,7 @@ fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
     }
 }
 
-fn normalize_tx_hash_lookup(raw: &str) -> String {
+pub(crate) fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
         c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
     });
@@ -1442,7 +1449,7 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
     normalized
 }
 
-fn is_hex_like_tx_hash(raw: &str) -> bool {
+pub(crate) fn is_hex_like_tx_hash(raw: &str) -> bool {
     raw.strip_prefix("0x")
         .map(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_hexdigit()))
         .unwrap_or(false)
@@ -1879,273 +1886,6 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
     }
 
     Ok(())
-}
-
-fn task_status_from_node_status(status: &str) -> Option<TaskStatus> {
-    match status {
-        "Open" => Some(TaskStatus::Open),
-        "Assigned" => Some(TaskStatus::Assigned),
-        "Committed" => Some(TaskStatus::Committed),
-        "Revealed" => Some(TaskStatus::Revealed),
-        "Challenged" => Some(TaskStatus::Challenged),
-        "Completed" => Some(TaskStatus::Completed),
-        "Slashed" => Some(TaskStatus::Slashed),
-        _ => None,
-    }
-}
-
-fn is_legal_node_event_transition(event_type: &str, from_status: &str, to_status: &str) -> bool {
-    matches!(
-        (event_type, from_status, to_status),
-        ("create", "NONE", "Open")
-            | ("accept", "Open", "Assigned")
-            | ("commit", "Assigned", "Committed")
-            | ("reveal", "Committed", "Revealed")
-            | ("challenge", "Revealed", "Challenged")
-            | ("resolve", "Challenged", "Completed")
-            | ("resolve", "Challenged", "Slashed")
-            | ("timeout", "Committed", "Slashed")
-            | ("timeout", "Revealed", "Completed")
-            | ("timeout", "Challenged", "Completed")
-    )
-}
-
-fn is_trusted_event_source(event: &NodeEventRecord) -> bool {
-    let Some(actor) = normalize_actor_or_signer(&event.actor) else {
-        return false;
-    };
-    let signer = event
-        .signer
-        .as_deref()
-        .and_then(normalize_actor_or_signer)
-        .unwrap_or_else(|| actor.clone());
-
-    match event.event_type.as_str() {
-        "accept" | "commit" | "reveal" | "challenge" | "create" => signer == actor,
-        // Hardening: terminal resolve events must be adjudicated by governance
-        // authority only; reserve `system` for timeout automation paths.
-        "resolve" => signer == actor && actor == "authority",
-        "timeout" => signer == actor && matches!(actor.as_str(), "authority" | "system"),
-        _ => false,
-    }
-}
-
-fn filtered_node_events_for_task<'a>(
-    task_id: u64,
-    node_events: &'a [NodeEventRecord],
-) -> impl Iterator<Item = &'a NodeEventRecord> {
-    node_events.iter().filter(move |event| {
-        event.task_id == task_id
-            && is_legal_node_event_transition(
-                event.event_type.as_str(),
-                event.from_status.as_str(),
-                event.to_status.as_str(),
-            )
-            && is_trusted_event_source(event)
-    })
-}
-
-fn query_task_from_node_events(
-    task_id: u64,
-    node_events: &[NodeEventRecord],
-) -> Option<TaskQueryResponse> {
-    let mut version: u64 = 0;
-    let mut status: Option<TaskStatus> = None;
-    let mut worker: Option<String> = None;
-
-    for event in filtered_node_events_for_task(task_id, node_events) {
-        version += 1;
-        if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
-            status = Some(mapped);
-        }
-        if event.event_type == "accept"
-            || event.event_type == "commit"
-            || event.event_type == "reveal"
-        {
-            worker = normalize_actor_or_signer(&event.actor);
-        }
-    }
-
-    status.map(|status| TaskQueryResponse {
-        task_id,
-        status,
-        worker,
-        bounty: 100,
-        result_hash_hex: None,
-        version,
-        metering: None,
-    })
-}
-
-fn query_task_response(
-    task_id: u64,
-    node_events: &[NodeEventRecord],
-    recs: &[AdapterRecord],
-) -> Result<TaskQueryResponse> {
-    let task_state_snapshot = load_task_state_snapshot()?;
-    if let Some(out) = query_task_from_state_snapshot(task_id, &task_state_snapshot) {
-        return Ok(out);
-    }
-    if let Some(out) = query_task_from_node_events(task_id, node_events) {
-        return Ok(out);
-    }
-
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
-    if task_recs.is_empty() {
-        bail!("task not found: {}", task_id);
-    }
-    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
-    let has_commit = task_recs.iter().any(|r| r.kind == "commit");
-    let status = if has_reveal {
-        TaskStatus::Revealed
-    } else if has_commit {
-        TaskStatus::Committed
-    } else {
-        TaskStatus::Open
-    };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
-    let result_hash_hex = task_recs.iter().rev().find_map(|r| {
-        if r.kind == "reveal" {
-            r.result_hash.clone()
-        } else {
-            None
-        }
-    });
-    Ok(TaskQueryResponse {
-        task_id,
-        status,
-        worker,
-        bounty: 100,
-        result_hash_hex,
-        version: task_recs.len() as u64,
-        metering: None,
-    })
-}
-
-fn query_events_response(
-    task_id: u64,
-    limit: usize,
-    node_events: &[NodeEventRecord],
-    recs: &[AdapterRecord],
-) -> Result<Vec<EventQueryResponse>> {
-    let limit = clamp_limit(
-        "QueryEvents",
-        limit,
-        QUERY_EVENTS_LIMIT_DEFAULT,
-        QUERY_EVENTS_LIMIT_MAX,
-    );
-    let mut events = Vec::new();
-
-    for e in filtered_node_events_for_task(task_id, node_events) {
-        let Some(actor) = normalize_actor_or_signer(&e.actor) else {
-            continue;
-        };
-        let signer = e
-            .signer
-            .as_deref()
-            .and_then(normalize_actor_or_signer)
-            .or_else(|| Some(actor.clone()));
-        push_tail_limited(
-            &mut events,
-            EventQueryResponse {
-                event_type: e.event_type.clone(),
-                task_id,
-                from_status: e.from_status.clone(),
-                to_status: e.to_status.clone(),
-                actor,
-                tx_id: e.tx_id,
-                block_height: e.block_height,
-                state_root: e.state_root.clone(),
-                ts_unix_ms: e.ts_unix_ms,
-                signer,
-                challenger: e.challenger.clone(),
-                tx_hash: e.tx_hash.clone(),
-                resolution_code: e.resolution_code.clone(),
-                treasury_delta: e.treasury_delta,
-                challenger_delta: e.challenger_delta,
-                bond_disposition: e.bond_disposition.clone(),
-                metering: e.metering.clone(),
-            },
-            limit,
-        );
-    }
-
-    if events.is_empty() {
-        let mut tx_id = 1u64;
-        let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
-            let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
-                continue;
-            };
-            let kind = r.kind.clone();
-            if kind == "reveal" && !has_commit {
-                continue;
-            }
-            let Some((from_status, to_status)) = (match kind.as_str() {
-                "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
-                "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
-                _ => None,
-            }) else {
-                continue;
-            };
-
-            let tx_hash = r.tx_hash.clone().and_then(|v| {
-                let normalized = normalize_tx_hash_lookup(&v);
-                if is_hex_like_tx_hash(&normalized) {
-                    Some(normalized)
-                } else {
-                    None
-                }
-            });
-
-            push_tail_limited(
-                &mut events,
-                EventQueryResponse {
-                    event_type: kind.clone(),
-                    task_id,
-                    from_status,
-                    to_status,
-                    actor: actor.clone(),
-                    tx_id,
-                    block_height: tx_id,
-                    state_root: "adapter_state".into(),
-                    ts_unix_ms: r.ts as u128,
-                    signer: Some(actor),
-                    challenger: None,
-                    tx_hash,
-                    resolution_code: None,
-                    treasury_delta: None,
-                    challenger_delta: None,
-                    bond_disposition: None,
-                    metering: None,
-                },
-                limit,
-            );
-            if kind == "commit" {
-                has_commit = true;
-            }
-            tx_id += 1;
-        }
-    }
-
-    if events.is_empty() {
-        bail!("events not found for task_id={}", task_id);
-    }
-    Ok(events)
 }
 
 fn main() -> Result<()> {
