@@ -4,7 +4,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use trnm_rpc::{AccountState, InMemoryTransferLedger, TxLifecycleRecord};
 
-use crate::atomic_write_text_file;
+use crate::fsutil::atomic_write_text_file;
 
 pub(crate) fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
     let Ok(raw) = fs::read_to_string(path) else {

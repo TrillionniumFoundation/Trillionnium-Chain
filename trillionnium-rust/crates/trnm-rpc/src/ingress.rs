@@ -8,9 +8,10 @@ use std::{
 use anyhow::{anyhow, Result};
 
 use crate::envpaths::ingress_file;
+use crate::fsutil::atomic_write_text_file;
 use crate::market_io::acquire_market_file_lock;
 use crate::runtime::now_ms;
-use crate::{atomic_write_text_file, IngressQuarantineRecord, MessageIngressRecord};
+use crate::{IngressQuarantineRecord, MessageIngressRecord};
 
 pub(crate) fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
     let file_name = path

@@ -1,16 +1,13 @@
 use anyhow::{bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, HashSet};
 #[cfg(test)]
 use std::path::PathBuf;
 #[cfg(test)]
 use std::time::{Duration, Instant};
-use std::{
-    collections::{BTreeMap, HashSet},
-    fs::{self, OpenOptions},
-    io::Write,
-    path::Path,
-};
+#[cfg(test)]
+use std::{fs, io::Write};
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
@@ -25,6 +22,7 @@ use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 mod capability;
 mod envpaths;
+mod fsutil;
 mod health;
 mod http;
 mod ingress;
@@ -51,6 +49,8 @@ use crate::envpaths::{
 use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state_file};
 #[cfg(test)]
 use crate::envpaths::{normalized_path_from_env, run_root};
+#[cfg(test)]
+use crate::fsutil::atomic_write_text_file;
 use crate::health::serve_health;
 #[cfg(test)]
 use crate::http::{
@@ -487,39 +487,6 @@ pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     } else {
         Some(collapsed)
     }
-}
-
-fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-
-    let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("tmp");
-    let tmp = path.with_file_name(format!(
-        ".{}.tmp-{}-{}",
-        file_name,
-        std::process::id(),
-        now_ms()
-    ));
-
-    {
-        let mut file = OpenOptions::new().create_new(true).write(true).open(&tmp)?;
-        file.write_all(content.as_bytes())?;
-        file.sync_all()?;
-    }
-
-    fs::rename(&tmp, path)?;
-
-    #[cfg(unix)]
-    {
-        if let Some(parent) = path.parent() {
-            if let Ok(dir) = OpenOptions::new().read(true).open(parent) {
-                let _ = dir.sync_all();
-            }
-        }
-    }
-
-    Ok(())
 }
 
 #[derive(Debug, Serialize)]
