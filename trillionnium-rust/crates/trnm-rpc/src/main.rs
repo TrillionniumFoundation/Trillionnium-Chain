@@ -10,12 +10,12 @@ use std::{fs, io::Write};
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
-    GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse,
-    RequestFullQueryResponse, RpcErrorResponse, TaskMeteringQueryResponse,
+    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
+    TaskMeteringQueryResponse,
 };
 #[cfg(test)]
 use trnm_types::IdentityRegistry;
-use trnm_types::{GovParamObject, RequestStatus, TransferTx};
+use trnm_types::{RequestStatus, TransferTx};
 #[cfg(test)]
 use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 
@@ -30,6 +30,7 @@ mod market_score;
 mod metering;
 mod node_events;
 mod persistence;
+mod read_query;
 mod request_query;
 mod rpc_util;
 mod runtime;
@@ -40,11 +41,9 @@ mod validate;
 
 #[cfg(test)]
 use crate::capability::resolve_capability_token_subject_or_token;
-use crate::capability::{load_identity_registry, query_capability_audit};
 use crate::envpaths::{
-    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file,
-    identity_registry_file, ingress_file, market_bids_file, market_tasks_file,
-    submit_message_max_bytes, tx_lifecycle_file,
+    account_state_file, env_u32_with_min, env_u64_with_min, faucet_limits_file, ingress_file,
+    market_bids_file, market_tasks_file, submit_message_max_bytes, tx_lifecycle_file,
 };
 #[cfg(test)]
 use crate::envpaths::{market_lock_timeout_ms, market_reputation_file, task_state_file};
@@ -81,7 +80,6 @@ use crate::market_score::{
 use crate::metering::{
     parse_event_log_kv, parse_i128_kv_value, parse_u128_kv_value, parse_u64_kv_value,
 };
-use crate::node_events::load_node_events;
 #[cfg(test)]
 use crate::node_events::{
     discover_default_node_event_log_sources, load_latest_node_events, load_node_event_log_sources,
@@ -91,6 +89,10 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
+use crate::read_query::{
+    handle_query_capability_audit, handle_query_events, handle_query_param, handle_query_proposal,
+    handle_query_task,
+};
 use crate::request_query::{handle_query_request, handle_query_request_full};
 use crate::rpc_util::{clamp_limit, rpc_fail};
 #[cfg(test)]
@@ -98,10 +100,12 @@ use crate::rpc_util::resolve_ops_window;
 use crate::runtime::{make_request_id, now_ms};
 #[cfg(test)]
 use crate::snapshot::query_task_from_state_snapshot;
+#[cfg(test)]
 use crate::snapshot::{governance_state, load_latest_adapter_records};
 #[cfg(test)]
 use crate::taskview::query_task_from_node_events;
-use crate::taskview::{query_events_response, query_task_response};
+#[cfg(test)]
+use crate::taskview::query_events_response;
 use crate::treasury::{handle_query_challenge_treasury, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT};
 #[cfg(test)]
 use crate::treasury::summarize_challenge_treasury;
@@ -526,60 +530,13 @@ pub(crate) fn is_hex_like_tx_hash(raw: &str) -> bool {
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    let st = governance_state();
-    let recs = load_latest_adapter_records();
 
     match args.cmd {
-        Command::QueryTask { task_id } => {
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let out = query_task_response(task_id, &node_events.events, &recs)?;
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
-        Command::QueryProposal { proposal_id } => {
-            let Some(p) = st.get_proposal(proposal_id) else {
-                bail!("proposal not found: {}", proposal_id);
-            };
-            let out = GovProposalQueryResponse {
-                proposal_id: p.proposal_id,
-                title: p.title,
-                proposer: p.proposer,
-                status: p.status,
-                version: p.version,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
-        Command::QueryParam { key } => {
-            let ids = [7001u64, 7999u64];
-            let mut found: Option<GovParamObject> = None;
-            for id in ids {
-                if let Some(p) = st.get_param(id) {
-                    if p.key == key {
-                        found = Some(p);
-                        break;
-                    }
-                }
-            }
-            let Some(p) = found else {
-                bail!("param not found: {}", key);
-            };
-            let out = GovParamQueryResponse {
-                key: p.key,
-                value: p.value,
-                version: p.version,
-            };
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
-        Command::QueryEvents { task_id, limit } => {
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let events = query_events_response(task_id, limit, &node_events.events, &recs)?;
-            println!("{}", serde_json::to_string_pretty(&events)?);
-        }
-        Command::QueryCapabilityAudit { token_id } => {
-            let registry = load_identity_registry(&identity_registry_file());
-            let out = query_capability_audit(&registry, token_id)
-                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
-            println!("{}", serde_json::to_string_pretty(&out)?);
-        }
+        Command::QueryTask { task_id } => handle_query_task(task_id)?,
+        Command::QueryProposal { proposal_id } => handle_query_proposal(proposal_id)?,
+        Command::QueryParam { key } => handle_query_param(&key)?,
+        Command::QueryEvents { task_id, limit } => handle_query_events(task_id, limit)?,
+        Command::QueryCapabilityAudit { token_id } => handle_query_capability_audit(token_id)?,
         Command::QueryChallengeTreasury {
             limit,
             window,
