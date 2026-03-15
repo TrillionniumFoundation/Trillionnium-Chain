@@ -14,6 +14,23 @@ npm run dev
 
 打开 <http://localhost:3000>
 
+## 环境变量（可选）
+
+生产/测试环境建议使用本地化配置文件：
+
+```bash
+cp web4-frontend/.env.example web4-frontend/.env.local
+```
+
+可选变量说明见：
+- `NEXT_PUBLIC_QUERY_API_BASE_URL`
+- `NEXT_PUBLIC_DASHBOARD_TASK_ID`
+- `NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT`
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT`
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES`
+
+未设置时使用内置默认值（参考 `web4-frontend/docs/api-contract.md`）。
+
 ## 常用命令（统一）
 
 - `npm run dev`：本地开发

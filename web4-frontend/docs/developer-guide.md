@@ -22,6 +22,20 @@ npm run typecheck
 npm run test
 ```
 
+
+## 环境配置
+
+推荐在本地和部署前拷贝并维护：`web4-frontend/.env.example`（执行 `cp web4-frontend/.env.example web4-frontend/.env.local`）。
+
+关键变量：
+- `NEXT_PUBLIC_QUERY_API_BASE_URL`（后端查询 API 地址）
+- `NEXT_PUBLIC_DASHBOARD_TASK_ID`（默认展示任务）
+- `NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT`（`queryCapabilityAudit` 的默认 subject）
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT`（标准化审计分页大小，默认 60）
+- `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES`（标准化审计分页页数，默认 4）
+
+非法值会回退默认值，不会中断前端启动。
+
 ## API 合约开发约束
 
 涉及 `lib/api-contract/` 的改动，必须同步：
