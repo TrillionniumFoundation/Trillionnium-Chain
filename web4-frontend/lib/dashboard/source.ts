@@ -213,6 +213,35 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   };
 };
 
+const normalizedAuditPageLimit = 60;
+const normalizedAuditMaxPages = 4;
+
+const fetchNormalizedAuditEventsWithPagination = async (
+  client: ReturnType<typeof createFrontendApiClient>,
+): Promise<NormalizedAuditEvent[]> => {
+  const allEvents: NormalizedAuditEvent[] = [];
+
+  let cursor: string | undefined;
+  let page = 0;
+  let hasMore = true;
+
+  while (hasMore && page < normalizedAuditMaxPages) {
+    const query = cursor == null ? {} : { cursor };
+    const pageResp = await client.queryNormalizedAuditEvents({ ...query, limit: normalizedAuditPageLimit });
+    allEvents.push(...pageResp.events);
+
+    const nextCursor = pageResp.nextCursor?.trim();
+    hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
+
+    if (!hasMore) break;
+
+    cursor = nextCursor;
+    page += 1;
+  }
+
+  return allEvents;
+};
+
 const mapAuditResult = (
   entry: CapabilityAuditEntry,
 ): DashboardSnapshot["audits"][number]["result"] => {
@@ -223,13 +252,11 @@ const mapAuditResult = (
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
 
-  const [taskResp, eventsResp, auditsResp, normalizedAuditResp] = await Promise.all([
+  const [taskResp, eventsResp, auditsResp, normalizedAuditEvents] = await Promise.all([
     client.queryTask(defaultTaskId),
     client.queryEvents(defaultTaskId),
     client.queryCapabilityAudit(defaultAuditSubject),
-    client
-      .queryNormalizedAuditEvents()
-      .catch(() => ({ events: [] as NormalizedAuditEvent[] })),
+    fetchNormalizedAuditEventsWithPagination(client).catch(() => [] as NormalizedAuditEvent[]),
   ]);
 
   const mapped = {
@@ -248,10 +275,14 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       },
       {
         label: "Open Incidents",
-        value: String(eventsResp.events.filter((event) => event.level === "error").length),
+        value: String(
+          eventsResp.events.filter((event) => event.level === "error").length
+            + normalizedAuditEvents.filter((event) => mapNormalizedAuditSeverity(event) === "Critical").length,
+        ),
         delta: "live",
         health:
-          eventsResp.events.some((event) => event.level === "error")
+          eventsResp.events.some((event) => event.level === "error") ||
+          normalizedAuditEvents.some((event) => mapNormalizedAuditSeverity(event) === "Critical")
             ? ("risk" as const)
             : ("healthy" as const),
       },
@@ -287,7 +318,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         severity: mapEventSeverity(event.level),
         details: JSON.stringify(event.payload),
       })),
-      ...normalizedAuditResp.events.map((event) =>
+      ...normalizedAuditEvents.map((event) =>
         mapNormalizedAuditToDashboardEvent(
           event,
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,

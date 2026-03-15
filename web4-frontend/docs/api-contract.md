@@ -63,6 +63,11 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 });
 ```
 
+## Dashboard 消费策略
+
+`fetchReadonlySnapshotFromApi()` 会自动分页拉取标准化审计事件流（默认 60 条/页，最多 4 页），用于将 `Bridge/Governance/Settlement` 的统一审计事件并入前端事件面板。
+如服务端不返回 `nextCursor`/`hasMore`，会走单页读取并继续退化。
+
 ## 变更规则
 
 - 仅允许**向后兼容**的增量字段变更。
