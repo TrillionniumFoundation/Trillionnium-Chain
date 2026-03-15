@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 #[cfg(test)]
@@ -32,6 +32,7 @@ mod market_io;
 mod metering;
 mod node_events;
 mod persistence;
+mod rpc_util;
 mod runtime;
 mod snapshot;
 mod taskview;
@@ -82,6 +83,7 @@ use crate::persistence::{
     accounts_to_ledger, ledger_to_accounts, load_account_state, load_faucet_limits,
     load_tx_lifecycle, save_account_state, save_faucet_limits, save_tx_lifecycle,
 };
+use crate::rpc_util::{clamp_limit, resolve_ops_window, rpc_fail};
 use crate::runtime::{make_request_id, now_ms};
 #[cfg(test)]
 use crate::snapshot::query_task_from_state_snapshot;
@@ -385,7 +387,7 @@ struct ChallengeTreasuryEventView {
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
-enum OpsWindowArg {
+pub(crate) enum OpsWindowArg {
     #[value(name = "24h")]
     H24,
     #[value(name = "7d")]
@@ -593,34 +595,6 @@ pub(crate) struct IngressQuarantineRecord {
     quarantined_at_unix_ms: u128,
 }
 
-fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
-    let body = serde_json::to_string_pretty(&err).unwrap_or_else(|_| {
-        format!(
-            "{{\"code\":\"{}\",\"message\":\"{}\"}}",
-            err.code, err.message
-        )
-    });
-    anyhow::anyhow!(body)
-}
-
-fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usize) -> usize {
-    if requested == 0 {
-        eprintln!(
-            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} max={}",
-            op, default_limit, max_limit
-        );
-        return default_limit;
-    }
-    if requested > max_limit {
-        eprintln!(
-            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit={} clamped_limit={} max={}",
-            op, requested, max_limit, max_limit
-        );
-        return max_limit;
-    }
-    requested
-}
-
 pub(crate) fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
     if limit == 0 {
         return;
@@ -696,43 +670,6 @@ pub(crate) fn is_hex_like_tx_hash(raw: &str) -> bool {
     raw.strip_prefix("0x")
         .map(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_hexdigit()))
         .unwrap_or(false)
-}
-
-fn resolve_ops_window(
-    window: Option<OpsWindowArg>,
-    from_unix_ms: Option<u128>,
-    to_unix_ms: Option<u128>,
-    now_unix_ms: u128,
-) -> Result<Option<(u128, u128, String)>> {
-    match window {
-        None => Ok(None),
-        Some(OpsWindowArg::H24) => Ok(Some((
-            now_unix_ms.saturating_sub(24 * 60 * 60 * 1000),
-            now_unix_ms,
-            "24h".to_string(),
-        ))),
-        Some(OpsWindowArg::D7) => Ok(Some((
-            now_unix_ms.saturating_sub(7 * 24 * 60 * 60 * 1000),
-            now_unix_ms,
-            "7d".to_string(),
-        ))),
-        Some(OpsWindowArg::Custom) => {
-            let from = from_unix_ms
-                .ok_or_else(|| anyhow!("--from-unix-ms is required when --window custom"))?;
-            let to = to_unix_ms
-                .ok_or_else(|| anyhow!("--to-unix-ms is required when --window custom"))?;
-            if from > to {
-                bail!("invalid custom window: from_unix_ms ({from}) must be <= to_unix_ms ({to})");
-            }
-            let span = to.saturating_sub(from);
-            if span > OPS_WINDOW_CUSTOM_MAX_MS {
-                bail!(
-                    "custom window too large: span_ms ({span}) exceeds max_ms ({OPS_WINDOW_CUSTOM_MAX_MS})"
-                );
-            }
-            Ok(Some((from, to, "custom".to_string())))
-        }
-    }
 }
 
 fn summarize_challenge_treasury(

@@ -1,9 +1,10 @@
 use std::{io::Read, net::TcpStream, time::Duration};
 
 use crate::envpaths::normalize_wrapped_env_value;
+use crate::rpc_util::clamp_limit;
 use crate::{
-    clamp_limit, HEALTH_REQUEST_HEADER_MAX_BYTES, HEALTH_SOCKET_READ_TIMEOUT_MS,
-    HEALTH_SOCKET_WRITE_TIMEOUT_MS, QUERY_EVENTS_LIMIT_DEFAULT, QUERY_EVENTS_LIMIT_MAX,
+    HEALTH_REQUEST_HEADER_MAX_BYTES, HEALTH_SOCKET_READ_TIMEOUT_MS, HEALTH_SOCKET_WRITE_TIMEOUT_MS,
+    QUERY_EVENTS_LIMIT_DEFAULT, QUERY_EVENTS_LIMIT_MAX,
 };
 
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
