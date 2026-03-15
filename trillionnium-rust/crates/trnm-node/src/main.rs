@@ -39,6 +39,7 @@ mod risk;
 mod rl;
 mod rollback;
 mod run;
+mod run_apply;
 mod run_bft;
 mod rwset;
 mod summary;

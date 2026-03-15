@@ -6,16 +6,13 @@ use std::{
 };
 use trnm_state::{CheckpointMeta, WalMeta};
 
-use crate::accounting::EventDelta;
-use crate::apply::{apply_one, verified_signer_of};
 use crate::args::Args;
 use crate::bft::height::simulate_bft_height;
 use crate::bft::model::{BftJitterControl, LeaderHealth};
+use crate::run_apply::{apply_committed_height, ApplyRuntimeTelemetry};
 use crate::run_bft::BftHeightTelemetry;
 use crate::config::load_config;
 use crate::demo::init_demo_state_and_mempool;
-use crate::error_kind::classify_apply_error;
-use crate::events::{emit_event, event_type_of, status_name};
 use crate::hash::hash32_hex;
 use crate::hot::{
     hot_object_tail_share_ppm, hot_object_top_label_share_ppm, summarize_hot_objects,
@@ -23,15 +20,9 @@ use crate::hot::{
 use crate::mempool::{pick_txs_with_critical_guard, requeue_uncommitted_txs};
 use crate::ordering::decide_order_for_commit;
 use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
-use crate::risk::is_rejected_by_emergency_pause;
 use crate::rl::build_rl_advisor;
-use crate::rollback::{
-    balance_deltas_from_snapshot, capture_rollback_snapshot, rollback_tx_snapshot,
-};
 use crate::summary::{emit_consensus_summary, ConsensusSummaryInputs};
-use crate::timeout::scan_and_apply_timeouts;
-use crate::txmeta::task_id_of;
-use crate::types::{ConsensusWal, MockTx, RlAdviceContext};
+use crate::types::{ConsensusWal, RlAdviceContext};
 use crate::wal::{
     load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
     persist_wal_meta_entries, resolve_wal_dir,
@@ -118,15 +109,8 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
     let mut hot_object_active_tail_share_total_ppm: u128 = 0;
     let mut preexec_reject_total: u64 = 0;
     let mut preexec_reject_active_heights: u64 = 0;
-    let mut apply_error_total: u64 = 0;
-    let mut apply_error_preexec_conflict_miss_total: u64 = 0;
-    let mut apply_error_version_conflict_total: u64 = 0;
-    let mut apply_error_invalid_transition_total: u64 = 0;
-    let mut apply_error_deadline_exceeded_total: u64 = 0;
-    let mut apply_error_semantic_fail_total: u64 = 0;
-    let mut rollback_total: u64 = 0;
+    let mut apply_telemetry = ApplyRuntimeTelemetry::default();
     let mut rollback_block_total: u64 = 0;
-    let mut timeout_migrated_total: u64 = 0;
     let mut bft_telemetry = BftHeightTelemetry::new(args.validators);
     let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
     let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
@@ -209,7 +193,6 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             bft.auth_reject_stale_nonce
         );
 
-        let mut applied = 0u64;
         let scheduler_start = Instant::now();
         let ordering_decision = decide_order_for_commit(
             &state,
@@ -272,147 +255,23 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
         }
 
         let commit_start = Instant::now();
-        let mut last_state_root_hex: Option<String> = None;
-        let mut state_root_total_ms = 0u128;
-        let mut rollback_count = 0u64;
-        for id in ordering_decision.ordered_ids {
-            let idx = (id - 1) as usize;
-            let tx = picked[idx].clone();
-            let task_id = task_id_of(&tx);
-            let from_status = status_name(&state, task_id);
-
-            if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
-                println!(
-                    "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
-                    height,
-                    id,
-                    event_type_of(&tx)
-                );
-                continue;
-            }
-
-            let before = capture_rollback_snapshot(&state, &tx);
-            if let Err(e) = apply_one(&mut state, tx.clone(), height) {
-                let err_kind = classify_apply_error(&e);
-                let err_text = e.to_string();
-                if err_kind == "resolve_approval_staged" {
-                    applied += 1;
-                    known_task_ids.insert(task_id);
-                    let to_status = status_name(&state, task_id);
-                    let state_root_start = Instant::now();
-                    let root = hex::encode(state.state_root());
-                    state_root_total_ms += state_root_start.elapsed().as_millis();
-                    last_state_root_hex = Some(root.clone());
-                    let challenger_account: Option<String> = match &tx {
-                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                        MockTx::Resolve { .. } => {
-                            before.task.as_ref().and_then(|t| t.challenger.clone())
-                        }
-                        _ => None,
-                    };
-                    let treasury_delta = EventDelta {
-                        numeric: Some(0),
-                        text: "0".to_string(),
-                    };
-                    let challenger_delta = challenger_account.as_ref().map(|_| EventDelta {
-                        numeric: Some(0),
-                        text: "0".to_string(),
-                    });
-                    let signer = verified_signer_of(&state, &tx);
-                    emit_event(
-                        &state,
-                        &tx,
-                        &signer,
-                        id,
-                        height,
-                        &from_status,
-                        &to_status,
-                        &root,
-                        &treasury_delta,
-                        challenger_delta.as_ref(),
-                        challenger_account.as_deref(),
-                        Some(err_kind),
-                    );
-                } else {
-                    rollback_tx_snapshot(&mut state, before);
-                    apply_error_total += 1;
-                    rollback_total += 1;
-                    rollback_count += 1;
-                    match err_kind {
-                        "version_conflict" => apply_error_version_conflict_total += 1,
-                        "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
-                        "invalid_transition" => apply_error_invalid_transition_total += 1,
-                        "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
-                        _ => apply_error_semantic_fail_total += 1,
-                    }
-                    println!(
-                        "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
-                        height, id, err_kind, err_text
-                    );
-                }
-            } else {
-                applied += 1;
-                known_task_ids.insert(task_id);
-                let to_status = status_name(&state, task_id);
-                let state_root_start = Instant::now();
-                let root = hex::encode(state.state_root());
-                state_root_total_ms += state_root_start.elapsed().as_millis();
-                last_state_root_hex = Some(root.clone());
-                let challenger_account: Option<String> = match &tx {
-                    MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                    MockTx::Resolve { .. } => {
-                        before.task.as_ref().and_then(|t| t.challenger.clone())
-                    }
-                    _ => None,
-                };
-                let (treasury_delta, challenger_delta) =
-                    balance_deltas_from_snapshot(&before, &state, challenger_account.as_deref());
-                let signer = verified_signer_of(&state, &tx);
-                emit_event(
-                    &state,
-                    &tx,
-                    &signer,
-                    id,
-                    height,
-                    &from_status,
-                    &to_status,
-                    &root,
-                    &treasury_delta,
-                    challenger_delta.as_ref(),
-                    challenger_account.as_deref(),
-                    None,
-                );
-            }
-        }
-
-        let scan_every = args.pouw_timeout_scan_every_blocks.max(1);
-        if args.pouw_timeout_scan && height % scan_every == 0 {
-            let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
-            timeout_migrated_total += migrated;
-            if migrated > 0 {
-                last_state_root_hex = None;
-                println!(
-                    "[timeout] height={} migrated={} cumulative_migrated={}",
-                    height, migrated, timeout_migrated_total
-                );
-            }
-        }
-
-        let root = if let Some(root) = last_state_root_hex.clone() {
-            root
-        } else {
-            let state_root_start = Instant::now();
-            let root = hex::encode(state.state_root());
-            state_root_total_ms += state_root_start.elapsed().as_millis();
-            root
-        };
+        let apply_outcome = apply_committed_height(
+            &mut state,
+            &picked,
+            &ordering_decision.ordered_ids,
+            height,
+            &mut known_task_ids,
+            &mut apply_telemetry,
+            args.pouw_timeout_scan,
+            args.pouw_timeout_scan_every_blocks,
+        );
         let commit_elapsed_ms = commit_start.elapsed().as_millis();
         commit_samples_ms.push(commit_elapsed_ms);
-        state_root_total_samples_ms.push(state_root_total_ms);
-        block_txs_samples.push(applied as u128);
+        state_root_total_samples_ms.push(apply_outcome.state_root_total_ms);
+        block_txs_samples.push(apply_outcome.applied as u128);
         block_groups_samples.push(group_count as u128);
-        rollback_samples.push(rollback_count as u128);
-        if rollback_count > 0 {
+        rollback_samples.push(apply_outcome.rollback_count as u128);
+        if apply_outcome.rollback_count > 0 {
             rollback_block_total += 1;
         }
         let elapsed_ms = block_start.elapsed().as_millis();
@@ -421,15 +280,15 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             "[block] node={} height={} txs={} groups={} rollback_count={} critical_wait_blocks={} scheduler_elapsed_ms={} preexec_elapsed_ms={} commit_elapsed_ms={} state_root_total_ms={} state_root={} elapsed_ms={}",
             cfg.node_id,
             height,
-            applied,
+            apply_outcome.applied,
             group_count,
-            rollback_count,
+            apply_outcome.rollback_count,
             ordering_decision.critical_wait_blocks,
             scheduler_elapsed_ms,
             ordering_decision.preexec_elapsed_ms,
             commit_elapsed_ms,
-            state_root_total_ms,
-            root,
+            apply_outcome.state_root_total_ms,
+            apply_outcome.root,
             elapsed_ms
         );
 
@@ -438,7 +297,7 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
             round: bft.committed_round,
             proposal_hash: proposal_hash.clone(),
             committed: true,
-            state_root_hex: root.clone(),
+            state_root_hex: apply_outcome.root.clone(),
             prev_hash_hex: wal_entries.last().map(|e| e.content_hash_hex()),
         };
         let wal_hash = wal_entry.content_hash_hex();
@@ -448,11 +307,11 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
         if args.bft_checkpoint_interval > 0 && height % args.bft_checkpoint_interval == 0 {
             checkpoints.push(CheckpointMeta {
                 height,
-                state_root_hex: root.clone(),
+                state_root_hex: apply_outcome.root.clone(),
                 wal_entry_hash_hex: wal_hash,
             });
             persist_checkpoint_meta(&wal_dir, &checkpoints)?;
-            println!("[bft-checkpoint] height={} state_root={}", height, root);
+            println!("[bft-checkpoint] height={} state_root={}", height, apply_outcome.root);
         }
 
         persist_consensus_wal(
@@ -498,15 +357,15 @@ pub(crate) fn run_node(args: Args) -> Result<()> {
         critical_wait_total,
         preexec_reject_total,
         preexec_reject_active_heights,
-        apply_error_total,
-        apply_error_preexec_conflict_miss_total,
-        apply_error_version_conflict_total,
-        apply_error_invalid_transition_total,
-        apply_error_deadline_exceeded_total,
-        apply_error_semantic_fail_total,
-        rollback_total,
+        apply_error_total: apply_telemetry.apply_error_total,
+        apply_error_preexec_conflict_miss_total: apply_telemetry.apply_error_preexec_conflict_miss_total,
+        apply_error_version_conflict_total: apply_telemetry.apply_error_version_conflict_total,
+        apply_error_invalid_transition_total: apply_telemetry.apply_error_invalid_transition_total,
+        apply_error_deadline_exceeded_total: apply_telemetry.apply_error_deadline_exceeded_total,
+        apply_error_semantic_fail_total: apply_telemetry.apply_error_semantic_fail_total,
+        rollback_total: apply_telemetry.rollback_total,
         rollback_block_total,
-        timeout_migrated_total,
+        timeout_migrated_total: apply_telemetry.timeout_migrated_total,
         bft_observed_heights: bft_telemetry.observed_heights,
         bft_committed_heights: bft_telemetry.committed_heights,
         bft_round_change_total: bft_telemetry.round_change_total,
