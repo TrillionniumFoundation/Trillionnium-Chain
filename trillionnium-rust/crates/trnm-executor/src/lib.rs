@@ -445,7 +445,6 @@ fn build_parallel_groups_aggressive_profile(
     // but keeps Aggressive strategy identity/flags and metrics interface stable.
     if !aggr_deep_scan_enabled() {
         let mut groups: Vec<Vec<Tx>> = Vec::new();
-<<<<<<< HEAD
         let map_cap = access_map_capacity_hint(original_txs);
         let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
         let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
@@ -533,93 +532,6 @@ fn build_parallel_groups_aggressive_profile(
     let map_cap = access_map_capacity_hint(original_txs);
     let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
     let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
-=======
-        let map_cap = (original_txs.len() / 2).max(64);
-        let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-        let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-
-        let mut conflict_checks = 0usize;
-        let mut conflict_hits = 0usize;
-
-        for tx in ordered {
-            let read_keys = dedup_access_keys(&tx.read_set);
-            let write_keys = dedup_access_keys(&tx.write_set);
-
-            let mut min_group = 0usize;
-            for key in &read_keys {
-                conflict_checks += 1;
-                if let Some(&g) = latest_writer_group.get(key) {
-                    conflict_hits += 1;
-                    min_group = min_group.max(g + 1);
-                }
-            }
-            for key in &write_keys {
-                conflict_checks += 1;
-                if let Some(&g) = latest_writer_group.get(key) {
-                    conflict_hits += 1;
-                    min_group = min_group.max(g + 1);
-                }
-                conflict_checks += 1;
-                if let Some(&g) = latest_reader_group.get(key) {
-                    conflict_hits += 1;
-                    min_group = min_group.max(g + 1);
-                }
-            }
-
-            if groups.len() <= min_group {
-                groups.resize_with(min_group + 1, Vec::new);
-            }
-            groups[min_group].push(tx);
-
-            for key in read_keys {
-                latest_reader_group.insert(key, min_group);
-            }
-            for key in write_keys {
-                latest_writer_group.insert(key, min_group);
-            }
-        }
-
-        let group_count = groups.len();
-        let grouped_count: usize = groups.iter().map(|g| g.len()).sum();
-        let max_group_size = groups.iter().map(|g| g.len()).max().unwrap_or(0);
-        let min_group_size = groups.iter().map(|g| g.len()).min().unwrap_or(0);
-        let avg_group_size = if group_count == 0 {
-            0.0
-        } else {
-            grouped_count as f64 / group_count as f64
-        };
-
-        return (
-            groups,
-            GroupingProfile {
-                tx_count: original_txs.len(),
-                group_count,
-                grouped_count,
-                max_group_size,
-                min_group_size,
-                avg_group_size,
-                conflict_checks,
-                conflict_hits,
-                candidate_groups_scanned: 0,
-                stage_ww_checks: 0,
-                stage_ww_hits: 0,
-                stage_wr_checks: 0,
-                stage_wr_hits: 0,
-                stage_rw_checks: 0,
-                stage_rw_hits: 0,
-            },
-        );
-    }
-
-    // Deep scan path (experiment-only).
-    let mut groups: Vec<Vec<Tx>> = Vec::new();
-    let mut group_read_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
-    let mut group_write_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
-
-    let map_cap = (original_txs.len() / 2).max(64);
-    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
->>>>>>> feat/p2.3-stability-observability
 
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
@@ -632,11 +544,8 @@ fn build_parallel_groups_aggressive_profile(
     let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
     let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
-<<<<<<< HEAD
     let rr_enabled = aggr_scan_round_robin_enabled();
     let mut rr_cursor = aggr_scan_round_robin_seed();
-=======
->>>>>>> feat/p2.3-stability-observability
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -677,10 +586,7 @@ fn build_parallel_groups_aggressive_profile(
             candidate_groups_scanned += 1;
 
             if !skip_empty_stage_checks || !write_empty {
-<<<<<<< HEAD
                 conflict_checks += 1;
-=======
->>>>>>> feat/p2.3-stability-observability
                 stage_ww_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
                     conflict_hits += 1;
@@ -688,10 +594,7 @@ fn build_parallel_groups_aggressive_profile(
                     continue;
                 }
 
-<<<<<<< HEAD
                 conflict_checks += 1;
-=======
->>>>>>> feat/p2.3-stability-observability
                 stage_wr_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
                     conflict_hits += 1;
@@ -701,10 +604,7 @@ fn build_parallel_groups_aggressive_profile(
             }
 
             if !skip_empty_stage_checks || !read_empty {
-<<<<<<< HEAD
                 conflict_checks += 1;
-=======
->>>>>>> feat/p2.3-stability-observability
                 stage_rw_checks += 1;
                 if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
                     conflict_hits += 1;
@@ -1054,26 +954,6 @@ fn aggr_scan_round_robin_enabled() -> bool {
 
 fn aggr_scan_round_robin_seed() -> usize {
     parse_grouped_env_usize("TRNM_AGGR_SCAN_RR_SEED").unwrap_or(0)
-}
-
-fn aggr_skip_empty_stage_checks() -> bool {
-    std::env::var("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS")
-        .ok()
-        .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
-        })
-        .unwrap_or(true)
-}
-
-fn aggr_deep_scan_enabled() -> bool {
-    std::env::var("TRNM_AGGR_DEEP_SCAN")
-        .ok()
-        .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
-        })
-        .unwrap_or(false)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
