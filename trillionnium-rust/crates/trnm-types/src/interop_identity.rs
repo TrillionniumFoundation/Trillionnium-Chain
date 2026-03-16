@@ -1221,8 +1221,8 @@ mod tests {
         assert_eq!(rec.settlement_tx.as_deref(), Some("0xok"));
     }
 
-    fn settlement_state_machine_enforces_pending_terminal_model() {
-        let route = BridgeRoute {
+    #[test]
+    fn settlement_state_machine_enforces_pending_terminal_model() {        let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
             source_chain: "ethereum".to_string(),
             target_chain: "trillionnium".to_string(),
