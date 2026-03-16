@@ -33,7 +33,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 已覆盖：
 
 1. 过期 proof 拒绝（`ProofExpired`）
-2. 重复 finalize 拒绝（`ProofAlreadyUsed` / `SettlementAlreadyFinalized`）
+2. 重复 finalize 拒绝（`SettlementAlreadyFinalized` 为 finalize 终态优先拒绝；`ProofAlreadyUsed` 仍用于 `submit_proof` 重放）
 3. 结算标识域绑定：`settlement_id` 覆盖 source/target chain 与 bridge 字段，避免跨域/目标复用导致身份碰撞
 4. 链域不匹配拒绝（`InvalidTargetChain`）
 5. nonce 域隔离 + 重放防护（相同 nonce、不同 action 可并存；同域重复消费拒绝）
@@ -43,6 +43,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 9. 配置版本一致性检查（`message.config_version` 必须匹配当前配置版本）
 10. tx receipt 约束：`tx_receipt_status` 必须为成功（`TX_RECEIPT_SUCCESS`）以绑定执行/回执状态
 11. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
+12. finalize 终态幂等绑定：同一 `settlement_id` 一旦进入终态，后续 finalize 重放（含不同 `nonce`）统一返回 `SettlementAlreadyFinalized`，`submit_proof` 重放仍返回 `ProofAlreadyUsed`
 
 ## 运行测试
 

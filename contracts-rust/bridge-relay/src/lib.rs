@@ -374,6 +374,11 @@ impl BridgeRelay {
         current_chain_id: u64,
         self_bridge: [u8; 20],
     ) -> Result<[u8; 32], BridgeRelayError> {
+        let settlement_id = settlement_id(message);
+        if self.settlement_finalized.contains(&settlement_id) {
+            return Err(BridgeRelayError::SettlementAlreadyFinalized { settlement_id });
+        }
+
         let _ = self.submit_proof(
             message,
             signatures,
@@ -383,12 +388,7 @@ impl BridgeRelay {
             self_bridge,
         )?;
 
-        let settlement_id = settlement_id(message);
         let proof_digest = hash_message(message);
-        if self.settlement_finalized.contains(&settlement_id) {
-            return Err(BridgeRelayError::SettlementAlreadyFinalized { settlement_id });
-        }
-
         let _ = self.consume_nonce(
             message.source_chain_id,
             message.source_bridge_id,
@@ -796,10 +796,55 @@ mod tests {
             .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
+        let expected_settlement_id = settlement_id(&msg);
         assert!(matches!(
             err,
-            BridgeRelayError::ProofAlreadyUsed { .. }
-                | BridgeRelayError::SettlementAlreadyFinalized { .. }
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == expected_settlement_id
+        ));
+    }
+
+    #[test]
+    fn finalize_settlement_replay_with_new_nonce_still_rejects_terminal_state() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let mut replay = sample_msg();
+        replay.nonce = msg.nonce + 1;
+
+        let err = relay
+            .finalize_settlement(&replay, &[sig_for(&replay, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        let expected_settlement_id = settlement_id(&msg);
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == expected_settlement_id
+        ));
+    }
+
+    #[test]
+    fn submit_proof_replay_after_finalize_stays_proof_replay_bound() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let proof_digest = hash_message(&msg);
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::ProofAlreadyUsed { proof_digest: used } if used == proof_digest
         ));
     }
 
