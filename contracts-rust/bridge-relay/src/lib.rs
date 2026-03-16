@@ -477,13 +477,6 @@ fn parse_validator_signature(
     ))
 }
 
-pub fn validator_signature_tag(validator: &[u8; 32], message_digest: &[u8; 32]) -> [u8; 32] {
-    let mut hasher = Sha256::new();
-    hasher.update(message_digest);
-    hasher.update(validator);
-    hasher.finalize().into()
-}
-
 pub fn nonce_key(
     source_chain_id: u64,
     source_bridge_id: [u8; 32],
@@ -736,6 +729,26 @@ mod tests {
         assert!(matches!(
             err,
             BridgeRelayError::UnknownValidator { validator } if validator == validator_pub(8)
+        ));
+    }
+
+    #[test]
+    fn invalid_validator_pubkey_is_rejected_even_if_allowlisted() {
+        let mut relay = BridgeRelay::with_admin(1, vec![[0u8; 32]], b32(9));
+        let msg = sample_msg();
+        let mut bad_sig = sig_for(&msg, 7);
+        bad_sig[..VALIDATOR_SIGNATURE_KEY_LEN].fill(0);
+
+        let err = relay
+            .submit_proof(&msg, &[bad_sig], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorSignature {
+                validator,
+                ..
+            } if validator == [0u8; 32]
         ));
     }
 
