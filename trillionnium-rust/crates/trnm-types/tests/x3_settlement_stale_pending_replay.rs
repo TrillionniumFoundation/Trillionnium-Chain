@@ -81,3 +81,50 @@ fn settlement_finalization_rejects_failed_tx_receipt() {
             if expected == 1
     ));
 }
+
+#[test]
+fn terminal_finalize_replay_with_failed_tx_receipt_is_rejected_without_mutation() {
+    let route = BridgeRoute {
+        route_id: "eth->trnm".to_string(),
+        source_chain: "ethereum".to_string(),
+        target_chain: "trillionnium".to_string(),
+    };
+
+    let mut rec = SettlementRecord {
+        settlement_id: 303,
+        route,
+        status: SettlementStatus::Pending,
+        at_height: 10_020,
+        settlement_tx: None,
+        revert_reason: None,
+    };
+
+    rec.apply_status(
+        SettlementStatus::Finalized,
+        10_021,
+        Some("0xsettled303".to_string()),
+        None,
+    )
+    .expect("initial finalize must succeed");
+
+    let snapshot = rec.clone();
+
+    let err = rec
+        .apply_status_with_receipt_status(
+            SettlementStatus::Finalized,
+            10_022,
+            Some("0xignored-replay".to_string()),
+            Some(0),
+            None,
+        )
+        .expect_err("terminal finalize replay with failed receipt must be rejected");
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::InvalidSettlementReceiptStatus {
+            expected,
+            got: 0,
+        } if expected == 1
+    ));
+    assert_eq!(rec, snapshot);
+}
