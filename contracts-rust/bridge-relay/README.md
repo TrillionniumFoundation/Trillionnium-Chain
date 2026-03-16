@@ -12,7 +12,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
   - 检查消息域（`target_chain_id`/`target_bridge`）
   - 检查消息内 `deadline`
   - 做 proof digest 去重（重放防护）
-  - 做 `validator` 白名单、去重和“签名绑定消息摘要”校验
+  - 做 `validator` 白名单、去重和 Ed25519 签名校验（签名格式：32 字节 validator 公钥 + 64 字节签名）
 - `consume_nonce`：
   - 使用域隔离键 `nonce_key(source_chain_id, source_bridge_id, target_chain_id, target_bridge, action, nonce)`
   - 一次消费后不可重复
@@ -49,7 +49,7 @@ cargo test
 
 ## 下一步（v1）
 
-- 对接真实签名验证算法（例如 EIP-712/Ed25519/Secp256k1）
+- 对接真实签名密钥生命周期与链上治理更新（签名验证链路已对接 Ed25519 示例验签，可继续扩展为生产签名算法）
 - 对接真实执行层（资产结算/状态提交）
 - 增加更多 domain 约束与 fuzz/property 测试
 

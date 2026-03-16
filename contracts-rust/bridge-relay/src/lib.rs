@@ -1,11 +1,14 @@
 use audit_events::AuditEvent;
+use ed25519_dalek::{Signature, VerifyingKey, Verifier};
 use sha2::{Digest as Sha256Digest, Sha256};
 use sha3::Keccak256;
 
 const ADMIN_UNSET: [u8; 32] = [0u8; 32];
 use std::collections::HashSet;
 
-const VALIDATOR_SIGNATURE_LEN: usize = 64;
+const VALIDATOR_SIGNATURE_LEN: usize = 96;
+const VALIDATOR_SIGNATURE_KEY_LEN: usize = 32;
+const VALIDATOR_SIGNATURE_BYTES_LEN: usize = 64;
 
 pub fn action_settlement_finalize() -> [u8; 32] {
     Keccak256::digest(b"SETTLEMENT_FINALIZE").into()
@@ -415,7 +418,7 @@ impl BridgeRelay {
         let mut seen = HashSet::new();
 
         for signature in signatures {
-            let (validator, provided_tag) = parse_validator_signature(signature)?;
+            let (validator, provided_signature) = parse_validator_signature(signature)?;
 
             if !self.validators.contains(&validator) {
                 return Err(BridgeRelayError::UnknownValidator { validator });
@@ -424,12 +427,27 @@ impl BridgeRelay {
                 return Err(BridgeRelayError::DuplicateValidatorSignature { validator });
             }
 
-            let expected_tag = validator_signature_tag(&validator, &message_digest);
-            if expected_tag != provided_tag {
+            let verifier = VerifyingKey::from_bytes(&validator).map_err(|_| {
+                BridgeRelayError::InvalidValidatorSignature {
+                    validator,
+                    expected: [0u8; 32],
+                    got: [0u8; 32],
+                }
+            })?;
+
+            if verifier
+                .verify(message_digest.as_slice(), &provided_signature)
+                .is_err()
+            {
                 return Err(BridgeRelayError::InvalidValidatorSignature {
                     validator,
-                    expected: expected_tag,
-                    got: provided_tag,
+                    expected: [0u8; 32],
+                    got: {
+                        let bytes = provided_signature.to_bytes();
+                        let mut got = [0u8; 32];
+                        got.copy_from_slice(&bytes[..32]);
+                        got
+                    },
                 });
             }
         }
@@ -438,20 +456,25 @@ impl BridgeRelay {
     }
 }
 
-fn parse_validator_signature(signature: &[u8]) -> Result<([u8; 32], [u8; 32]), BridgeRelayError> {
+fn parse_validator_signature(
+    signature: &[u8],
+) -> Result<([u8; 32], Signature), BridgeRelayError> {
     if signature.len() != VALIDATOR_SIGNATURE_LEN {
         return Err(BridgeRelayError::InvalidValidatorSignatureLength {
             got: signature.len(),
         });
     }
 
-    let mut validator = [0u8; 32];
-    let mut tag = [0u8; 32];
+    let mut validator = [0u8; VALIDATOR_SIGNATURE_KEY_LEN];
+    validator.copy_from_slice(&signature[..VALIDATOR_SIGNATURE_KEY_LEN]);
 
-    validator.copy_from_slice(&signature[..32]);
-    tag.copy_from_slice(&signature[32..]);
+    let mut raw_signature = [0u8; VALIDATOR_SIGNATURE_BYTES_LEN];
+    raw_signature.copy_from_slice(&signature[VALIDATOR_SIGNATURE_KEY_LEN..]);
 
-    Ok((validator, tag))
+    Ok((
+        validator,
+        Signature::from_bytes(&raw_signature),
+    ))
 }
 
 pub fn validator_signature_tag(validator: &[u8; 32], message_digest: &[u8; 32]) -> [u8; 32] {
@@ -517,6 +540,7 @@ pub fn hash_message(message: &BridgeSettlementMessage) -> [u8; 32] {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ed25519_dalek::Signer;
 
     fn addr(b: u8) -> [u8; 20] {
         [b; 20]
@@ -526,21 +550,32 @@ mod tests {
         [b; 32]
     }
 
-    fn sig_for(message: &BridgeSettlementMessage, validator: u8) -> Vec<u8> {
-        let validator_id = b32(validator);
-        let digest = hash_message(message);
-        let tag = validator_signature_tag(&validator_id, &digest);
+    fn validator_pub(seed: u8) -> [u8; 32] {
+        let seed_bytes = [seed; 32];
+        let signing_key = ed25519_dalek::SigningKey::from_bytes(&seed_bytes);
+        signing_key.verifying_key().to_bytes()
+    }
 
-        let mut out = [0u8; 64];
-        out[..32].copy_from_slice(&validator_id);
-        out[32..].copy_from_slice(&tag);
+    fn sig_for(message: &BridgeSettlementMessage, seed: u8) -> Vec<u8> {
+        let seed_bytes = [seed; 32];
+        let signing_key = ed25519_dalek::SigningKey::from_bytes(&seed_bytes);
+        let signature = signing_key.sign(message_digest_bytes(message).as_slice());
+        let signature_bytes = signature.to_bytes();
+
+        let mut out = [0u8; VALIDATOR_SIGNATURE_LEN];
+        out[..VALIDATOR_SIGNATURE_KEY_LEN].copy_from_slice(&signing_key.verifying_key().to_bytes());
+        out[VALIDATOR_SIGNATURE_KEY_LEN..].copy_from_slice(&signature_bytes);
         out.to_vec()
+    }
+
+    fn message_digest_bytes(message: &BridgeSettlementMessage) -> [u8; 32] {
+        hash_message(message)
     }
 
     fn relay(min_validator_signatures: usize, validators: &[u8]) -> BridgeRelay {
         BridgeRelay::new(
             min_validator_signatures,
-            validators.iter().copied().map(b32),
+            validators.iter().copied().map(validator_pub),
         )
     }
 
@@ -641,16 +676,16 @@ mod tests {
 
         assert!(matches!(
             err,
-            BridgeRelayError::DuplicateValidatorSignature { validator } if validator == b32(7)
+            BridgeRelayError::DuplicateValidatorSignature { validator } if validator == validator_pub(7)
         ));
     }
 
     #[test]
     fn governance_like_admin_can_rotate_validator_set_and_threshold() {
-        let mut relay = BridgeRelay::with_admin(1, vec![b32(7)], b32(9));
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
 
         relay.set_min_validator_signatures(&b32(9), 2).unwrap();
-        relay.set_validators(&b32(9), vec![b32(7), b32(8)]).unwrap();
+        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
 
         let msg = sample_msg();
         let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
@@ -683,7 +718,7 @@ mod tests {
 
     #[test]
     fn governance_like_admin_restrains_configuration_changes() {
-        let mut relay = BridgeRelay::with_admin(1, vec![b32(7)], b32(9));
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
 
         let err = relay.set_min_validator_signatures(&b32(8), 2).unwrap_err();
         assert!(matches!(err, BridgeRelayError::Unauthorized));
@@ -700,7 +735,7 @@ mod tests {
 
         assert!(matches!(
             err,
-            BridgeRelayError::UnknownValidator { validator } if validator == b32(8)
+            BridgeRelayError::UnknownValidator { validator } if validator == validator_pub(8)
         ));
     }
 
@@ -734,15 +769,15 @@ mod tests {
 
         assert!(matches!(
             err,
-            BridgeRelayError::InvalidValidatorSignature { validator, .. } if validator == b32(7)
+            BridgeRelayError::InvalidValidatorSignature { validator, .. } if validator == validator_pub(7)
         ));
     }
 
     #[test]
     fn audit_log_records_admin_and_settlement_flow() {
-        let mut relay = BridgeRelay::with_admin(2, vec![b32(7)], b32(9));
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
 
-        relay.set_validators(&b32(9), vec![b32(7), b32(8)]).unwrap();
+        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
         relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let msg = sample_msg();
@@ -755,7 +790,7 @@ mod tests {
         replay_msg.nonce += 1;
         let replay_sig = sig_for(&replay_msg, 7);
         let replay_sig2 = sig_for(&replay_msg, 8);
-        let mut relay2 = BridgeRelay::with_admin(2, vec![b32(7), b32(8)], b32(9));
+        let mut relay2 = BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
         relay2
             .finalize_settlement(
                 &replay_msg,
