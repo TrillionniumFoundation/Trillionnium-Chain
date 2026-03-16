@@ -1,0 +1,32 @@
+use super::*;
+
+#[test]
+fn market_score_config_uses_defaults_for_empty_wrapped_env_values() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, " '' "),
+            (MARKET_REPUTATION_WEIGHT_ENV, " \"\" "),
+            (MARKET_REPUTATION_CLAMP_ENV, " ` ` "),
+        ],
+        || {
+            assert_eq!(market_effective_score(10, 5), 9_500);
+        },
+    );
+}
+
+#[test]
+fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, "''"),
+            (MARKET_REPUTATION_WEIGHT_ENV, "0"),
+            (MARKET_REPUTATION_CLAMP_ENV, "0"),
+        ],
+        || {
+            let cfg = market_score_config();
+            assert_eq!(cfg.price_weight, MARKET_PRICE_WEIGHT_DEFAULT);
+            assert_eq!(cfg.reputation_weight, MARKET_WEIGHT_MIN);
+            assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+        },
+    );
+}
