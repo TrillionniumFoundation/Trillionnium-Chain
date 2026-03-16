@@ -9,6 +9,7 @@ use std::collections::HashSet;
 const VALIDATOR_SIGNATURE_LEN: usize = 96;
 const VALIDATOR_SIGNATURE_KEY_LEN: usize = 32;
 const VALIDATOR_SIGNATURE_BYTES_LEN: usize = 64;
+const TX_RECEIPT_SUCCESS: u8 = 1;
 
 pub fn action_settlement_finalize() -> [u8; 32] {
     Keccak256::digest(b"SETTLEMENT_FINALIZE").into()
@@ -27,6 +28,7 @@ pub struct BridgeSettlementMessage {
     pub amount: u128,
     pub nonce: u64,
     pub deadline: u64,
+    pub tx_receipt_status: u8,
     pub config_version: u64,
 }
 
@@ -75,6 +77,9 @@ pub enum BridgeRelayError {
     InvalidConfigVersion {
         expected: u64,
         got: u64,
+    },
+    InvalidTransactionReceipt {
+        status: u8,
     },
     NotEnoughValidatorSignatures {
         required: usize,
@@ -170,6 +175,7 @@ impl BridgeRelay {
         self.validate_validator_signature_config(self.min_validator_signatures, self.validators.len())?;
         self.validate_message_domain(message, now_ts, current_chain_id, self_bridge)?;
         self.validate_message_config(message)?;
+        self.validate_message_receipt(message)?;
 
         let proof_digest = hash_message(message);
         if self.proof_used.contains(&proof_digest) {
@@ -516,6 +522,19 @@ impl BridgeRelay {
         Ok(())
     }
 
+    fn validate_message_receipt(
+        &self,
+        message: &BridgeSettlementMessage,
+    ) -> Result<(), BridgeRelayError> {
+        if message.tx_receipt_status != TX_RECEIPT_SUCCESS {
+            return Err(BridgeRelayError::InvalidTransactionReceipt {
+                status: message.tx_receipt_status,
+            });
+        }
+
+        Ok(())
+    }
+
     fn validate_message_domain(
         &self,
         message: &BridgeSettlementMessage,
@@ -666,6 +685,7 @@ pub fn hash_message(message: &BridgeSettlementMessage) -> [u8; 32] {
     hasher.update(message.amount.to_be_bytes());
     hasher.update(message.nonce.to_be_bytes());
     hasher.update(message.deadline.to_be_bytes());
+    hasher.update(message.tx_receipt_status.to_be_bytes());
     hasher.update(message.config_version.to_be_bytes());
     hasher.finalize().into()
 }
@@ -725,6 +745,7 @@ mod tests {
             amount: 42,
             nonce: 99,
             deadline: 1_000,
+            tx_receipt_status: TX_RECEIPT_SUCCESS,
             config_version: 1,
         }
     }
@@ -1005,6 +1026,79 @@ mod tests {
             err,
             BridgeRelayError::InvalidValidatorSignature { validator, .. } if validator == validator_pub(7)
         ));
+    }
+
+    #[test]
+    fn submit_proof_rejects_non_success_tx_receipt() {
+        let mut relay = relay(1, &[7]);
+        let mut msg = sample_msg();
+        msg.tx_receipt_status = 0;
+
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidTransactionReceipt { status: 0 }
+        ));
+
+        let mut good_msg = sample_msg();
+        good_msg.nonce = 100;
+        good_msg.config_version = 1;
+        let proof = relay
+            .submit_proof(
+                &good_msg,
+                &[sig_for(&good_msg, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+        assert!(!proof.iter().all(|b| *b == 0));
+    }
+
+    #[test]
+    fn finalize_settlement_rejects_non_success_tx_receipt() {
+        let mut relay = relay(1, &[7]);
+        let mut msg = sample_msg();
+        msg.tx_receipt_status = 0;
+
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidTransactionReceipt { status: 0 }
+        ));
+
+        let mut settled_msg = sample_msg();
+        settled_msg.nonce = 11;
+        let settlement_id = relay
+            .finalize_settlement(
+                &settled_msg,
+                &[sig_for(&settled_msg, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+
+        let fallback = relay.consume_nonce(
+            settled_msg.source_chain_id,
+            settled_msg.source_bridge_id,
+            settled_msg.target_chain_id,
+            settled_msg.target_bridge,
+            action_settlement_finalize(),
+            settled_msg.nonce,
+        )
+        .unwrap_err();
+        assert!(matches!(fallback, BridgeRelayError::NonceAlreadyUsed { .. }));
+
+        assert_ne!(settlement_id, [0u8; 32]);
     }
 
     #[test]

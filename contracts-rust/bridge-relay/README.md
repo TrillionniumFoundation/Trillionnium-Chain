@@ -40,7 +40,8 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 6. 配置一致性约束：`min_validator_signatures > 0` 且 `min_validator_signatures <= validators.len()`；不允许将 validator 集合清空或收缩到低于阈值以下
 7. 非管理员不能篡改 validator 配置
 8. 配置版本一致性检查（`message.config_version` 必须匹配当前配置版本）
-9. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
+9. tx receipt 约束：`tx_receipt_status` 必须为成功（`TX_RECEIPT_SUCCESS`）以绑定执行/回执状态
+10. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
 
 ## 运行测试
 
