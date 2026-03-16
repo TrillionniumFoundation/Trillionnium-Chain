@@ -477,6 +477,26 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 
 Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-9 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准。
 
+## PR-9 Weekly Alert Governance（每周告警治理）
+
+每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、TopN异常、阈值建议变更。
+
+执行：
+
+```bash
+python3 ./scripts/v2/pr9_weekly_alert_governance.py
+```
+
+默认输出：
+- `run/pr9/weekly-alert-governance.md`
+
+nightly 接入建议：
+- workflow step 使用 `continue-on-error: true`
+- 上传 `run/pr9/**` 到 artifacts
+- Step Summary 增加 `PR-9 Weekly Alert Governance`
+
+Runbook：`docs/runbooks/pr9-weekly-alert-governance.md`
+
 ## Agent↔User P2P Phase A（MVP）
 
 文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`

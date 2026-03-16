@@ -24,6 +24,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 SEVERITY = {"INFO": 0, "WARN": 1, "CRITICAL": 2}
 STATUS_TO_LEVEL = {"PASS": "INFO", "WARN": "WARN", "FAIL": "CRITICAL"}
@@ -149,6 +150,49 @@ def level_cooldowns_from_args(args: argparse.Namespace) -> dict[str, int]:
     }
 
 
+def parse_hhmm(raw: str) -> tuple[int, int]:
+    s = raw.strip()
+    hh, mm = s.split(":", 1)
+    h = int(hh)
+    m = int(mm)
+    if h < 0 or h > 23 or m < 0 or m > 59:
+        raise ValueError(f"invalid HH:MM value: {raw}")
+    return h, m
+
+
+def is_in_quiet_hours(*, now_utc: dt.datetime, tz_name: str, start_hhmm: str, end_hhmm: str) -> bool:
+    local_now = now_utc.astimezone(ZoneInfo(tz_name))
+    sh, sm = parse_hhmm(start_hhmm)
+    eh, em = parse_hhmm(end_hhmm)
+    now_m = local_now.hour * 60 + local_now.minute
+    start_m = sh * 60 + sm
+    end_m = eh * 60 + em
+    if start_m == end_m:
+        return False
+    if start_m < end_m:
+        return start_m <= now_m < end_m
+    # cross-midnight (e.g. 23:00-08:00)
+    return now_m >= start_m or now_m < end_m
+
+
+def update_warn_streaks(streaks: dict, class_fp: str, now_ts: int, window_seconds: int) -> int:
+    streak = streaks.get(class_fp)
+    if not isinstance(streak, dict):
+        streak = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+    if not isinstance(streak.get("last_ts"), int) or now_ts - int(streak["last_ts"]) >= max(0, window_seconds):
+        streak = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+    streak["count"] = int(streak.get("count", 0)) + 1
+    streak["last_ts"] = now_ts
+    streaks[class_fp] = streak
+    return int(streak["count"])
+
+
+def clear_warn_streaks(streaks: dict, class_fp: str, now_ts: int) -> None:
+    streaks[class_fp] = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+
 def update_group(groups: dict, class_fp: str, now_ts: int, aggregate_seconds: int) -> int:
     group = groups.get(class_fp)
     if not isinstance(group, dict):
@@ -167,7 +211,17 @@ def clear_group(groups: dict, class_fp: str, now_ts: int) -> None:
     groups[class_fp] = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
 
 
-def build_message(report: dict[str, str], report_path: Path, level: str, aggregate_count: int, aggregate_seconds: int) -> str:
+def build_message(
+    report: dict[str, str],
+    report_path: Path,
+    level: str,
+    aggregate_count: int,
+    aggregate_seconds: int,
+    *,
+    escalated_from_warn: bool = False,
+    warn_streak_count: int = 0,
+    warn_escalate_count: int = 0,
+) -> str:
     status = report.get("status", "UNKNOWN")
     code = report.get("alert_code", "PR6_ALERT_RULES")
     msg = report.get("alert_message", "")
@@ -180,10 +234,17 @@ def build_message(report: dict[str, str], report_path: Path, level: str, aggrega
     if aggregate_count > 1:
         agg_line = f"\n- aggregated={aggregate_count} similar alerts within {aggregate_seconds}s"
 
+    escalate_line = ""
+    if escalated_from_warn:
+        escalate_line = (
+            "\n"
+            f"- escalated_from=WARN (streak={warn_streak_count}, threshold={warn_escalate_count})"
+        )
+
     return (
         f"[{code}][{level}] {msg}\n"
         f"- source_status={status}, unresolved={unresolved}, forfeits_daily_increase={forfeits}, escrow_nonzero_hours={escrow_h}\n"
-        f"- generated_at_utc={ts}{agg_line}\n"
+        f"- generated_at_utc={ts}{agg_line}{escalate_line}\n"
         f"- report={report_path}"
     )
 
@@ -299,6 +360,12 @@ def main() -> int:
     ap.add_argument("--max-retries", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_RETRIES", "3")))
     ap.add_argument("--base-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_BASE_BACKOFF_MS", "500")))
     ap.add_argument("--max-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_BACKOFF_MS", "8000")))
+    ap.add_argument("--quiet-hours-enabled", action="store_true", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_ENABLED", "0") == "1")
+    ap.add_argument("--quiet-hours-start", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_START", "23:00"))
+    ap.add_argument("--quiet-hours-end", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_END", "08:00"))
+    ap.add_argument("--quiet-hours-tz", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_TZ", "Asia/Shanghai"))
+    ap.add_argument("--warn-escalate-count", type=int, default=int(os.environ.get("ALERT_NOTIFY_WARN_ESCALATE_COUNT", "0")))
+    ap.add_argument("--warn-escalate-window-seconds", type=int, default=int(os.environ.get("ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS", "3600")))
     ap.add_argument("--dry-run", action="store_true", default=os.environ.get("DRY_RUN", "0") == "1")
     ap.add_argument(
         "--dry-run-simulate-failures",
@@ -314,6 +381,10 @@ def main() -> int:
         return 2
 
     report = parse_report(report_path)
+    now_utc = dt.datetime.now(dt.timezone.utc)
+    now_ts = int(now_utc.timestamp())
+    now_iso = now_utc.isoformat()
+
     try:
         level = normalize_level(report)
         min_level = normalize_min_level(args.min_level)
@@ -321,23 +392,65 @@ def main() -> int:
         print(f"[PR7][FAIL] {e}", file=sys.stderr)
         return 2
 
-    if not should_trigger(level, min_level):
-        print(f"[PR7] skip: level={level} below min_level={min_level}")
-        return 0
-
-    now_ts = int(dt.datetime.now(dt.timezone.utc).timestamp())
-    now_iso = dt.datetime.now(dt.timezone.utc).isoformat()
-
-    exact_fp = mk_exact_fingerprint(report, level)
-    class_fp = mk_class_fingerprint(report, level)
-
     state_path = Path(args.state_file)
     state = load_state(state_path)
     state.setdefault("last_sent", {})  # backward compatible exact dedup store
     state.setdefault("last_sent_exact", {})
     state.setdefault("last_sent_class", {})
     state.setdefault("groups", {})
+    state.setdefault("warn_streaks", {})
     stats = ensure_stats(state)
+
+    escalated_from_warn = False
+    warn_streak_count = 0
+    warn_escalate_count = max(0, args.warn_escalate_count)
+    if level == "WARN" and warn_escalate_count > 0:
+        warn_class_fp = mk_class_fingerprint(report, "WARN")
+        warn_streak_count = update_warn_streaks(
+            state["warn_streaks"], warn_class_fp, now_ts, max(0, args.warn_escalate_window_seconds)
+        )
+        if warn_streak_count >= warn_escalate_count:
+            level = "CRITICAL"
+            escalated_from_warn = True
+
+    if args.quiet_hours_enabled and level != "CRITICAL":
+        try:
+            in_quiet = is_in_quiet_hours(
+                now_utc=now_utc,
+                tz_name=args.quiet_hours_tz,
+                start_hhmm=args.quiet_hours_start,
+                end_hhmm=args.quiet_hours_end,
+            )
+        except Exception as e:
+            print(f"[PR7][FAIL] invalid quiet-hours config: {e}", file=sys.stderr)
+            return 2
+        if in_quiet:
+            stats["alerts_suppressed"] += 1
+            qh_fp = mk_class_fingerprint(report, level)
+            record_delivery(
+                state,
+                event="suppressed",
+                reason=(
+                    f"quiet_hours_{args.quiet_hours_start}-{args.quiet_hours_end}@{args.quiet_hours_tz}"
+                ),
+                channel=args.channel,
+                report_status=report.get("status", "UNKNOWN"),
+                fingerprint=qh_fp,
+                report_path=report_path,
+            )
+            save_state(state_path, state)
+            print(
+                f"[PR7] suppressed(quiet-hours): level={level} window={args.quiet_hours_start}-{args.quiet_hours_end} tz={args.quiet_hours_tz}"
+            )
+            return 0
+
+    if not should_trigger(level, min_level):
+        print(f"[PR7] skip: level={level} below min_level={min_level}")
+        save_state(state_path, state)
+        return 0
+
+    exact_fp = mk_exact_fingerprint(report, level)
+    class_fp = mk_class_fingerprint(report, level)
 
     cooldowns = level_cooldowns_from_args(args)
     cooldown = cooldowns[level]
@@ -382,7 +495,16 @@ def main() -> int:
         return 0
 
     aggregate_count = update_group(state["groups"], class_fp, now_ts, args.aggregate_seconds)
-    text = build_message(report, report_path, level, aggregate_count, args.aggregate_seconds)
+    text = build_message(
+        report,
+        report_path,
+        level,
+        aggregate_count,
+        args.aggregate_seconds,
+        escalated_from_warn=escalated_from_warn,
+        warn_streak_count=warn_streak_count,
+        warn_escalate_count=warn_escalate_count,
+    )
 
     ok, attempts, err = send_with_retry(
         channel=args.channel,
@@ -434,6 +556,8 @@ def main() -> int:
     state["last_sent_exact"][exact_fp] = now_ts
     state["last_sent_class"][class_fp] = now_ts
     clear_group(state["groups"], class_fp, now_ts)
+    if escalated_from_warn:
+        clear_warn_streaks(state["warn_streaks"], mk_class_fingerprint(report, "WARN"), now_ts)
     record_delivery(
         state,
         event="sent",
@@ -448,7 +572,8 @@ def main() -> int:
     mode = "DRY_RUN" if args.dry_run else "LIVE"
     print(
         f"[PR7] sent mode={mode} level={level} channel={args.channel} "
-        f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts}"
+        f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts} "
+        f"escalated_from_warn={escalated_from_warn} warn_streak={warn_streak_count}"
     )
     return 0
 
