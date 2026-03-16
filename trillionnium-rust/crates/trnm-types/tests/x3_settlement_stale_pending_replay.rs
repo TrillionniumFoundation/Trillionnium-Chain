@@ -47,3 +47,37 @@ fn stale_pending_replay_after_finalize_is_rejected_without_mutation() {
     ));
     assert_eq!(rec, snapshot);
 }
+
+#[test]
+fn settlement_finalization_rejects_failed_tx_receipt() {
+    let route = BridgeRoute {
+        route_id: "eth->trnm".to_string(),
+        source_chain: "ethereum".to_string(),
+        target_chain: "trillionnium".to_string(),
+    };
+
+    let mut rec = SettlementRecord {
+        settlement_id: 302,
+        route,
+        status: SettlementStatus::Pending,
+        at_height: 10_010,
+        settlement_tx: None,
+        revert_reason: None,
+    };
+
+    let err = rec
+        .apply_status_with_receipt_status(
+            SettlementStatus::Finalized,
+            10_011,
+            Some("0xdead".to_string()),
+            Some(0),
+            None,
+        )
+        .expect_err("failed tx receipt status must be rejected");
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::InvalidSettlementReceiptStatus { expected, got: 0 }
+            if expected == 1
+    ));
+}

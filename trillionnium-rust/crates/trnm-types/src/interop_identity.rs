@@ -18,6 +18,8 @@ pub enum SettlementStatus {
     Reverted,
 }
 
+pub const SETTLEMENT_TX_RECEIPT_SUCCESS: u8 = 1;
+
 impl SettlementStatus {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -186,6 +188,23 @@ impl SettlementRecord {
         settlement_tx: Option<String>,
         revert_reason: Option<String>,
     ) -> Result<(), InteropIdentityError> {
+        self.apply_status_with_receipt_status(
+            to,
+            at_height,
+            settlement_tx,
+            None,
+            revert_reason,
+        )
+    }
+
+    pub fn apply_status_with_receipt_status(
+        &mut self,
+        to: SettlementStatus,
+        at_height: u64,
+        settlement_tx: Option<String>,
+        tx_receipt_status: Option<u8>,
+        revert_reason: Option<String>,
+    ) -> Result<(), InteropIdentityError> {
         if at_height < self.at_height {
             return Err(InteropIdentityError::InvalidSettlementHeightRegression {
                 current_at: self.at_height,
@@ -197,6 +216,15 @@ impl SettlementRecord {
 
         let (next_settlement_tx, next_revert_reason) = match to {
             SettlementStatus::Finalized => {
+                let expected = SETTLEMENT_TX_RECEIPT_SUCCESS;
+                let got = tx_receipt_status.unwrap_or(expected);
+                if got != expected {
+                    return Err(InteropIdentityError::InvalidSettlementReceiptStatus {
+                        expected,
+                        got,
+                    });
+                }
+
                 let provided_tx = settlement_tx
                     .as_deref()
                     .map(str::trim)
@@ -924,6 +952,10 @@ pub enum InteropIdentityError {
         existing: String,
         provided: String,
     },
+    InvalidSettlementReceiptStatus {
+        expected: u8,
+        got: u8,
+    },
     DidAlreadyExists {
         did: String,
     },
@@ -1010,6 +1042,14 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "terminal settlement payload conflict for {:?}: existing {:?}, provided {:?}",
                     status, existing, provided
+                )
+            }
+            InteropIdentityError::InvalidSettlementReceiptStatus { expected, got } => {
+                write!(
+                    f,
+                    "invalid settlement receipt status: expected {}, got {}",
+                    expected,
+                    got
                 )
             }
             InteropIdentityError::DidAlreadyExists { did } => {
@@ -1137,6 +1177,50 @@ mod tests {
     use super::*;
 
     #[test]
+    fn settlement_state_machine_enforces_receipt_success_for_finalization() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 6,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 100,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        let err = rec
+            .apply_status_with_receipt_status(
+                SettlementStatus::Finalized,
+                105,
+                Some("0xfailed".to_string()),
+                Some(0),
+                None,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidSettlementReceiptStatus {
+                expected: 1,
+                got: 0
+            }
+        ));
+
+        rec
+            .apply_status_with_receipt_status(
+                SettlementStatus::Finalized,
+                105,
+                Some("0xok".to_string()),
+                Some(SETTLEMENT_TX_RECEIPT_SUCCESS),
+                None,
+            )
+            .unwrap();
+        assert_eq!(rec.settlement_tx.as_deref(), Some("0xok"));
+    }
+
     fn settlement_state_machine_enforces_pending_terminal_model() {
         let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
