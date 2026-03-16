@@ -2,6 +2,8 @@ use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+#[cfg(test)]
+use std::io::{Seek, SeekFrom};
 use std::{
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
@@ -11,15 +13,13 @@ use std::{
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
-#[cfg(test)]
-use std::io::{Seek, SeekFrom};
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
     GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
     MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
-    TaskMeteringQueryResponse, TaskQueryResponse, TxLifecycleRecord,
+    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
+    TaskQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::StateStore;
 use trnm_types::{
@@ -30,6 +30,8 @@ use trnm_types::{
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
 const QUERY_EVENTS_LIMIT_MAX: usize = 500;
+const QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT: usize = 60;
+const QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_MAX: usize = 500;
 const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
 const QUERY_FULL_LIMIT_MAX: usize = 200;
 const DISPATCH_OPEN_LIMIT_DEFAULT: usize = 20;
@@ -305,6 +307,43 @@ struct NodeEventRecord {
     challenger_delta: Option<i128>,
     bond_disposition: Option<String>,
     metering: Option<TaskMeteringQueryResponse>,
+}
+
+#[derive(Debug, Clone)]
+struct QueryNormalizedAuditEventsQuery {
+    source: Option<String>,
+    event_type: Option<String>,
+    cursor: Option<usize>,
+    limit: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NormalizedAuditEvent {
+    source: String,
+    event_type: String,
+    actor: Option<String>,
+    object_id: Option<String>,
+    related_id: Option<String>,
+    amount: Option<String>,
+    reason: Option<String>,
+    note: Option<String>,
+    #[serde(rename = "checkedAt")]
+    checked_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    timestamp: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    subject: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct QueryNormalizedAuditEventsResponse {
+    events: Vec<NormalizedAuditEvent>,
+    #[serde(rename = "nextCursor", skip_serializing_if = "Option::is_none")]
+    next_cursor: Option<String>,
+    #[serde(rename = "hasMore", skip_serializing_if = "Option::is_none")]
+    has_more: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    total: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -2611,6 +2650,196 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
+fn parse_query_normalized_audit_events_query_from_path(
+    path: &str,
+) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
+    let path_without_query = path.split('?').next().unwrap_or(path);
+    let normalized_path = path_without_query.to_ascii_lowercase();
+    if !path_without_query.starts_with('/')
+        || !path_without_query.starts_with("/query-normalized-audit-events")
+        || path_without_query.contains('\x5c')
+        || path_without_query.contains('#')
+        || normalized_path.contains("%5c")
+        || normalized_path.contains("%23")
+        || normalized_path.contains("%2f")
+        || normalized_path.contains("%2e")
+        || normalized_path.contains("%0d")
+        || normalized_path.contains("%0a")
+        || normalized_path.contains("%09")
+        || normalized_path.contains("%0b")
+        || normalized_path.contains("%0c")
+        || normalized_path.contains("%20")
+        || path_without_query
+            .split('/')
+            .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+        ));
+    }
+
+    let Some(query) = path.split_once('?').map(|(_, query)| query) else {
+        return Ok(QueryNormalizedAuditEventsQuery {
+            source: None,
+            event_type: None,
+            cursor: None,
+            limit: QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT,
+        });
+    };
+
+    if query.is_empty()
+        || query.contains('?')
+        || query.contains('#')
+        || query.chars().any(|ch| ch.is_control())
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+        ));
+    }
+
+    let normalized_query = query.to_ascii_lowercase();
+    if normalized_query.contains("%26")
+        || normalized_query.contains("%3d")
+        || normalized_query.contains("%23")
+        || normalized_query.contains("%3f")
+        || normalized_query.contains("%0d")
+        || normalized_query.contains("%0a")
+        || normalized_query.contains("%09")
+        || normalized_query.contains("%0b")
+        || normalized_query.contains("%0c")
+        || normalized_query.contains("%20")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+        ));
+    }
+
+    let mut query_params = QueryNormalizedAuditEventsQuery {
+        source: None,
+        event_type: None,
+        cursor: None,
+        limit: QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT,
+    };
+    let mut parsed_limit: Option<usize> = None;
+
+    for pair in query.split('&') {
+        if pair.is_empty() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+            ));
+        }
+
+        let Some((key, value)) = pair.split_once('=') else {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+            ));
+        };
+
+        let normalized_key = normalize_wrapped_env_value(key);
+        match normalized_key {
+            key if key.eq_ignore_ascii_case("source") && key == "source" => {
+                if query_params.source.is_some() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate source"}"#,
+                    ));
+                }
+                let normalized = normalize_wrapped_env_value(value);
+                if normalized.is_empty() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
+                    ));
+                }
+                query_params.source = Some(normalized.to_string());
+            }
+            key if key.eq_ignore_ascii_case("eventType") && key == "eventType" => {
+                if query_params.event_type.is_some() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate eventType"}"#,
+                    ));
+                }
+                let normalized = normalize_wrapped_env_value(value);
+                if normalized.is_empty() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
+                    ));
+                }
+                query_params.event_type = Some(normalized.to_string());
+            }
+            key if key.eq_ignore_ascii_case("cursor") && key == "cursor" => {
+                if query_params.cursor.is_some() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate cursor"}"#,
+                    ));
+                }
+                let normalized = normalize_wrapped_env_value(value);
+                if normalized.is_empty() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
+                    ));
+                }
+                let parsed = normalized.parse::<usize>().map_err(|_| {
+                    http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
+                    )
+                })?;
+                query_params.cursor = Some(parsed);
+            }
+            key if key.eq_ignore_ascii_case("limit") && key == "limit" => {
+                if parsed_limit.is_some() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate limit"}"#,
+                    ));
+                }
+                let normalized = normalize_wrapped_env_value(value);
+                if normalized.is_empty() {
+                    return Err(http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
+                    ));
+                }
+                let requested = normalized.parse::<usize>().map_err(|_| {
+                    http_json_response(
+                        "400 Bad Request",
+                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
+                    )
+                })?;
+                parsed_limit = Some(clamp_limit(
+                    "QueryNormalizedAuditEventsHttp",
+                    requested,
+                    QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT,
+                    QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_MAX,
+                ));
+            }
+            _ => {
+                return Err(http_json_response(
+                    "400 Bad Request",
+                    r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                ));
+            }
+        }
+    }
+
+    if let Some(limit) = parsed_limit {
+        query_params.limit = limit;
+    }
+
+    Ok(query_params)
+}
+
+
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
     let normalized = raw
         .trim()
@@ -2749,6 +2978,21 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
+            (Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
+                let query = parse_query_normalized_audit_events_query_from_path(target);
+                match query {
+                    Ok(query) => {
+                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
+                        let recs = load_latest_adapter_records();
+                        let out = query_normalized_audit_events(&node_events.events, &recs, &query);
+                        let body = serde_json::to_string(&out)
+                            .unwrap_or_else(|_| r#"{"ok":false,"code":"SERDE_ERROR"}"#.to_string());
+                        http_json_response("200 OK", &body)
+                    }
+                    Err(err) => err,
+                }
+            }
+
             (Some(path), _) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
@@ -3049,6 +3293,149 @@ fn query_events_response(
         bail!("events not found for task_id={}", task_id);
     }
     Ok(events)
+}
+
+fn query_normalized_audit_events(
+    node_events: &[NodeEventRecord],
+    recs: &[AdapterRecord],
+    query: &QueryNormalizedAuditEventsQuery,
+) -> QueryNormalizedAuditEventsResponse {
+    let mut events: Vec<NormalizedAuditEvent> = Vec::new();
+    let limit = clamp_limit(
+        "QueryNormalizedAuditEvents",
+        query.limit,
+        QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT,
+        QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_MAX,
+    );
+
+    for e in node_events {
+        if !is_legal_node_event_transition(&e.event_type, &e.from_status, &e.to_status)
+            || !is_trusted_event_source(e)
+        {
+            continue;
+        }
+
+        let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+            continue;
+        };
+
+        let event_type = format!("trnm.task.{}", e.event_type);
+        if query
+            .source
+            .as_deref()
+            .is_some_and(|filter| filter != "trnm.task")
+        {
+            continue;
+        }
+        if query
+            .event_type
+            .as_deref()
+            .is_some_and(|filter| filter != event_type)
+        {
+            continue;
+        }
+
+        let reason = Some(format!("{} -> {}", e.from_status, e.to_status));
+        events.push(NormalizedAuditEvent {
+            source: "trnm.task".into(),
+            event_type,
+            actor: Some(actor),
+            object_id: Some(format!("task:{}", e.task_id)),
+            related_id: None,
+            amount: None,
+            reason,
+            note: e.resolution_code.clone(),
+            checked_at: Some(format!("height:{}", e.block_height)),
+            timestamp: None,
+            subject: None,
+        });
+    }
+
+    for rec in recs.iter().filter(|r| r.status == "accepted") {
+        let Some(actor) = rec.worker.as_deref().and_then(normalize_actor_or_signer) else {
+            continue;
+        };
+
+        let event_type = format!("trnm.adapter.{}", rec.kind);
+        if query
+            .source
+            .as_deref()
+            .is_some_and(|filter| filter != "trnm.adapter")
+        {
+            continue;
+        }
+        if query
+            .event_type
+            .as_deref()
+            .is_some_and(|filter| filter != event_type)
+        {
+            continue;
+        }
+
+        events.push(NormalizedAuditEvent {
+            source: "trnm.adapter".into(),
+            event_type,
+            actor: Some(actor),
+            object_id: Some(format!("task:{}", rec.task_id)),
+            related_id: None,
+            amount: None,
+            reason: Some("adapter-event".into()),
+            note: rec.tx_hash.clone().or(rec.result_hash.clone()),
+            checked_at: Some(format!("height:{}", rec.ts)),
+            timestamp: None,
+            subject: None,
+        });
+    }
+
+    events.sort_by(|left, right| {
+        let left_height = left
+            .checked_at
+            .as_deref()
+            .and_then(|value| {
+                value
+                    .strip_prefix("height:")
+                    .and_then(|value| value.parse::<u64>().ok())
+            })
+            .unwrap_or(0);
+        let right_height = right
+            .checked_at
+            .as_deref()
+            .and_then(|value| {
+                value
+                    .strip_prefix("height:")
+                    .and_then(|value| value.parse::<u64>().ok())
+            })
+            .unwrap_or(0);
+        right_height
+            .cmp(&left_height)
+            .then_with(|| left.event_type.cmp(&right.event_type))
+    });
+
+    let total = events.len();
+    let start = query.cursor.unwrap_or(0);
+    if start >= total {
+        return QueryNormalizedAuditEventsResponse {
+            events: Vec::new(),
+            next_cursor: None,
+            has_more: Some(false),
+            total: Some(total),
+        };
+    }
+
+    let end = (start + limit).min(total);
+    let has_more = end < total;
+    let page = events.into_iter().skip(start).take(limit).collect();
+
+    QueryNormalizedAuditEventsResponse {
+        events: page,
+        next_cursor: if has_more {
+            Some(end.to_string())
+        } else {
+            None
+        },
+        has_more: Some(has_more),
+        total: Some(total),
+    }
 }
 
 fn main() -> Result<()> {
@@ -3481,7 +3868,6 @@ fn main() -> Result<()> {
                     limit,
                 );
             }
-
 
             let out = RequestFullQueryResponse {
                 request: MessageRequestQueryResponse {
@@ -4228,6 +4614,149 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
+        let out =
+            parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
+                .expect("default should parse");
+        assert_eq!(out.limit, QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT);
+        assert!(out.source.is_none());
+        assert!(out.event_type.is_none());
+        assert!(out.cursor.is_none());
+
+        let out = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?source=trnm.task&eventType=trnm.task.commit&limit=3&cursor=2"
+        )
+        .expect("explicit query should parse");
+        assert_eq!(out.source.as_deref(), Some("trnm.task"));
+        assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
+        assert_eq!(out.limit, 3);
+        assert_eq!(out.cursor, Some(2));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_unrelated_query_keys() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?source=trnm.task&foo=bar",
+        )
+        .expect_err("unexpected keys should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid query"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?cursor=bad",
+        )
+        .expect_err("invalid cursor should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_supports_pagination_and_event_filters() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 1,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "s1".into(),
+                ts_unix_ms: 100,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: Some("accepted".into()),
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 1,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 20,
+                state_root: "s2".into(),
+                ts_unix_ms: 200,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+        ];
+
+        let first = query_normalized_audit_events(
+            &events,
+            &[],
+            &QueryNormalizedAuditEventsQuery {
+                source: Some("trnm.task".into()),
+                event_type: None,
+                cursor: None,
+                limit: 1,
+            },
+        );
+        assert_eq!(first.total, Some(2));
+        assert_eq!(first.events.len(), 1);
+        assert_eq!(first.events[0].event_type, "trnm.task.commit");
+        assert_eq!(first.has_more, Some(true));
+        assert_eq!(first.next_cursor.as_deref(), Some("1"));
+
+        let second = query_normalized_audit_events(
+            &events,
+            &[],
+            &QueryNormalizedAuditEventsQuery {
+                source: Some("trnm.task".into()),
+                event_type: Some("trnm.task.accept".into()),
+                cursor: Some(0),
+                limit: 10,
+            },
+        );
+        assert_eq!(second.total, Some(1));
+        assert_eq!(second.events.len(), 1);
+        assert_eq!(second.events[0].event_type, "trnm.task.accept");
+        assert_eq!(second.has_more, Some(false));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_supports_adapter_source_filter() {
+        let recs = vec![AdapterRecord {
+            ts: 99,
+            kind: "commit".into(),
+            task_id: 5,
+            worker: Some("worker-b".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xfeed".into()),
+        }];
+
+        let out = query_normalized_audit_events(
+            &[],
+            &recs,
+            &QueryNormalizedAuditEventsQuery {
+                source: Some("trnm.adapter".into()),
+                event_type: None,
+                cursor: None,
+                limit: 10,
+            },
+        );
+        assert_eq!(out.total, Some(1));
+        assert_eq!(out.events.len(), 1);
+        assert_eq!(out.events[0].source, "trnm.adapter");
+        assert_eq!(out.events[0].event_type, "trnm.adapter.commit");
+    }
+
+    #[test]
     fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
         assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health"), None);
@@ -4299,9 +4828,15 @@ mod tests {
 
     #[test]
     fn task_state_file_uses_trimmed_env_path() {
-        with_market_path_env(&[(TASK_STATE_FILE_ENV, Some("  '/tmp/task-state.jsonl'  "))], || {
-            assert_eq!(task_state_file(), Some(PathBuf::from("/tmp/task-state.jsonl")));
-        });
+        with_market_path_env(
+            &[(TASK_STATE_FILE_ENV, Some("  '/tmp/task-state.jsonl'  "))],
+            || {
+                assert_eq!(
+                    task_state_file(),
+                    Some(PathBuf::from("/tmp/task-state.jsonl"))
+                );
+            },
+        );
     }
 
     #[test]
@@ -6412,12 +6947,18 @@ mod tests {
         let out = query_task_from_state_snapshot(42, &tasks).expect("task expected");
         let expected_result_hash = hex::encode([0xabu8; 32]);
         assert_eq!(out.bounty, 777);
-        assert_eq!(out.result_hash_hex.as_deref(), Some(expected_result_hash.as_str()));
+        assert_eq!(
+            out.result_hash_hex.as_deref(),
+            Some(expected_result_hash.as_str())
+        );
         let metering = out.metering.expect("metering expected");
         assert_eq!(metering.normalized_work_units, 192);
         assert_eq!(metering.policy.snapshot_version, 1);
         assert_eq!(metering.policy.min_accept_work_units, 100);
-        assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
+        assert_eq!(
+            metering.policy.challenge_success_bounty_per_work_unit_den,
+            192
+        );
         assert_eq!(metering.derived.path, "Revealed");
         assert_eq!(metering.derived.challenge_bonus_total, 2);
     }
@@ -6683,11 +7224,17 @@ mod tests {
 
         let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
         assert_eq!(loaded.events.len(), 1);
-        let metering = loaded.events[0].metering.as_ref().expect("metering expected");
+        let metering = loaded.events[0]
+            .metering
+            .as_ref()
+            .expect("metering expected");
         assert_eq!(metering.normalized_work_units, 192);
         assert_eq!(metering.policy.snapshot_version, 1);
         assert_eq!(metering.policy.min_accept_work_units, 100);
-        assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
+        assert_eq!(
+            metering.policy.challenge_success_bounty_per_work_unit_den,
+            192
+        );
         assert_eq!(metering.derived.path, "Completed");
         assert_eq!(metering.derived.challenge_bonus_total, 2);
     }
