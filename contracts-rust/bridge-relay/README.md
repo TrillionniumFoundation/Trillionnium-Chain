@@ -52,6 +52,11 @@ cargo test
 ## 下一步（v1）
 
 - 对接真实签名密钥生命周期与链上治理更新（签名验证链路已对接 Ed25519 示例验签，可继续扩展为生产签名算法）
+- 已对接治理变更并发控制（最小治理接线）：
+  - 对外提供 `config_version()` 查询当前配置版本。
+  - 新增治理写入的带版本方法（`set_admin_with_version` / `set_min_validator_signatures_with_version` / `set_validators_with_version`）：
+    - 要求调用携带期望版本，过期版本调用将被 `InvalidConfigVersion` 拒绝，避免并发配置更新竞争。
+
 - 对接真实执行层（资产结算/状态提交）
 - 增加更多 domain 约束与 fuzz/property 测试
 

@@ -136,6 +136,10 @@ impl BridgeRelay {
         Self::with_admin(min_validator_signatures, validators, ADMIN_UNSET)
     }
 
+    pub fn config_version(&self) -> u64 {
+        self.config_version
+    }
+
     pub fn with_admin(
         min_validator_signatures: usize,
         validators: impl IntoIterator<Item = [u8; 32]>,
@@ -293,6 +297,50 @@ impl BridgeRelay {
                 old_version,
                 new_version,
             });
+        Ok(())
+    }
+
+    pub fn set_admin_with_version(
+        &mut self,
+        caller: &[u8; 32],
+        expected_config_version: u64,
+        new_admin: [u8; 32],
+    ) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.require_config_version(expected_config_version)?;
+        self.set_admin(caller, new_admin)
+    }
+
+    pub fn set_min_validator_signatures_with_version(
+        &mut self,
+        caller: &[u8; 32],
+        expected_config_version: u64,
+        min: usize,
+    ) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.require_config_version(expected_config_version)?;
+        self.set_min_validator_signatures(caller, min)
+    }
+
+    pub fn set_validators_with_version(
+        &mut self,
+        caller: &[u8; 32],
+        expected_config_version: u64,
+        validators: impl IntoIterator<Item = [u8; 32]>,
+    ) -> Result<(), BridgeRelayError> {
+        self.require_admin(caller)?;
+        self.require_config_version(expected_config_version)?;
+        self.set_validators(caller, validators)
+    }
+
+    fn require_config_version(&self, expected_config_version: u64) -> Result<(), BridgeRelayError> {
+        if self.config_version != expected_config_version {
+            return Err(BridgeRelayError::InvalidConfigVersion {
+                expected: self.config_version,
+                got: expected_config_version,
+            });
+        }
+
         Ok(())
     }
 
@@ -1027,6 +1075,48 @@ mod tests {
             )
             .unwrap();
         assert!(!proof.iter().all(|b| *b == 0));
+    }
+
+    #[test]
+    fn config_version_gating_rejects_stale_expected_version() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators_with_version(&b32(9), relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+
+        let expected = relay.config_version();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let err = relay
+            .set_admin_with_version(&b32(9), expected, b32(10))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion {
+                expected: current,
+                got,
+            } if current > 0 && got == expected
+        ));
+    }
+
+    #[test]
+    fn config_version_gating_accepts_matching_version() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        let expected = relay.config_version();
+
+        relay
+            .set_validators_with_version(&b32(9), expected, vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+
+        assert_eq!(relay.config_version(), expected + 1);
+
+        relay
+            .set_min_validator_signatures_with_version(&b32(9), expected + 1, 2)
+            .unwrap();
+        assert_eq!(relay.config_version(), expected + 2);
     }
 
     #[test]
