@@ -23,4 +23,10 @@ cargo test -p trnm-pouw --lib registry_zk_vector_invalid_payload_reaches_backend
 # so backend vector checks cannot pass while task_id/worker/proof_type/result_hash contract regresses.
 cargo test -p trnm-pouw --lib registry_zk_vector_fixture_style_payload_ignores_backend_metadata_variation
 
+# Keep this gate lightweight, but do not let it stop at verifier-local mocked paths only.
+# If a real backend feature lands later, wire it in here; for now we require registry/backend
+# vector smokes that exercise the backend dispatch boundary end-to-end.
+cargo test -p trnm-pouw --lib registry_zk_vector_valid_payload_reaches_backend_path
+cargo test -p trnm-pouw --lib registry_zk_vector_invalid_payload_reaches_backend_rejection_path
+
 echo "[PASS] V1 proof backend CI gate"
