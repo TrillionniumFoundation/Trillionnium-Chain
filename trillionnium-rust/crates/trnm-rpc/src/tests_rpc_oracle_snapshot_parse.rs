@@ -1,0 +1,63 @@
+use super::*;
+
+#[test]
+fn parse_http_query_params_decodes_percent_and_plus() {
+    let params = parse_http_query_params(
+            "/oracle/validate_snapshot?snapshot=%2Ftmp%2Foracle+snapshot.json&policy=%2Ftmp%2Fpolicy.json&now_ts_ms=10100",
+        )
+        .expect("query params");
+
+    assert_eq!(
+        params.get("snapshot").map(String::as_str),
+        Some("/tmp/oracle snapshot.json")
+    );
+    assert_eq!(
+        params.get("policy").map(String::as_str),
+        Some("/tmp/policy.json")
+    );
+    assert_eq!(params.get("now_ts_ms").map(String::as_str), Some("10100"));
+}
+#[test]
+fn parse_http_query_params_rejects_duplicate_keys() {
+    assert!(
+            parse_http_query_params(
+                "/oracle/validate_snapshot?snapshot=/tmp/a.json&snapshot=/tmp/b.json&policy=/tmp/p.json"
+            )
+            .is_none(),
+            "duplicate query keys must fail closed"
+        );
+}
+#[test]
+fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
+    let request = parse_oracle_validate_snapshot_target(
+            "/oracle/validate_snapshot?snapshot=%2Ftmp%2Foracle+snapshot.json&policy=%2Ftmp%2Fpolicy.json&now_ts_ms=10100",
+        )
+        .expect("oracle request");
+
+    assert_eq!(request.snapshot, "/tmp/oracle snapshot.json");
+    assert_eq!(request.policy, "/tmp/policy.json");
+    assert_eq!(request.now_ts_ms, Some(10_100));
+}
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_unknown_query_keys() {
+    let err = parse_oracle_validate_snapshot_target(
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&feed_id=btc%2Fusd",
+    )
+    .expect_err("unknown key must fail closed");
+
+    assert!(err.contains("unknown query parameter: feed_id"), "{err}");
+}
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_empty_snapshot_or_policy() {
+    let snapshot_err = parse_oracle_validate_snapshot_target(
+        "/oracle/validate_snapshot?snapshot=&policy=/tmp/p.json",
+    )
+    .expect_err("empty snapshot must fail closed");
+    assert_eq!(snapshot_err, "empty snapshot");
+
+    let policy_err = parse_oracle_validate_snapshot_target(
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=+",
+    )
+    .expect_err("empty policy must fail closed");
+    assert_eq!(policy_err, "empty policy");
+}
