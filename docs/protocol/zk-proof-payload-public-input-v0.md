@@ -171,11 +171,6 @@ v0 允许：
 - 只要求字符串层面的稳定引用语义；解析方式由对应 backend 负责
 - 平台层不解释其内部路径结构，但会把它作为审计/可观测字段保留下来
 - backend 不得在未记录审计痕迹的情况下 silently rewrite `vk_ref`
-- v0 router / registry 必须能把 `vk_ref` 解析为稳定的 verifier 元数据；对于 ZK 路径，至少包括 canonical `zk_system`（如 `groth16`、`plonk`）
-- 若 `vk_ref` 无法解析，或解析结果缺失该 canonical `zk_system` 元数据，**MUST fail closed**
-- payload 中声明的 `zk_system` **MUST** 与 `vk_ref` 解析出的 canonical `zk_system` 一致
-- 若 payload 显式给出 `backend_id`，且 router/backend selection 能从该 backend token 推断 proving-system hint，则该 hint **MUST** 与 `vk_ref` 解析出的 canonical `zk_system` 一致
-- backend router 选中的最终 backend 若带有可推断的 proving-system hint，也 **MUST** 与 `vk_ref` 解析出的 canonical `zk_system` 一致；不得跨 proving system 静默 fallback
 
 ---
 
