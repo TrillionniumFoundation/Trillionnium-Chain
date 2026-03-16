@@ -849,6 +849,27 @@ mod tests {
     }
 
     #[test]
+    fn finalize_settlement_replay_with_invalid_signature_after_terminal_still_blocked_by_terminal_bound() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let err = relay
+            .finalize_settlement(&msg, &[vec![0u8; 64]], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        let expected_settlement_id = settlement_id(&msg);
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == expected_settlement_id
+        ));
+    }
+
+    #[test]
     fn fail_closed_on_chain_domain_mismatch() {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
