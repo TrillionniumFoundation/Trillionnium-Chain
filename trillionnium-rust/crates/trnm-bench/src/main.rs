@@ -123,6 +123,7 @@ fn main() {
     ];
 
     if args.profile {
+<<<<<<< HEAD
         let coverage_ratio = grouped as f64 / n as f64;
         let ungrouped_count = n.saturating_sub(grouped);
         let grouping_complete = ungrouped_count == 0;
@@ -208,6 +209,23 @@ fn main() {
             format!("profile.stage_rw_checks={}", profile.stage_rw_checks),
             format!("profile.stage_rw_hits={}", profile.stage_rw_hits),
         ]);
+=======
+        println!("profile.tx_count={}", profile.tx_count);
+        println!("profile.group_count={}", profile.group_count);
+        println!("profile.grouped_count={}", profile.grouped_count);
+        println!("profile.max_group_size={}", profile.max_group_size);
+        println!("profile.min_group_size={}", profile.min_group_size);
+        println!("profile.avg_group_size={:.4}", profile.avg_group_size);
+        println!("profile.conflict_checks={}", profile.conflict_checks);
+        println!("profile.conflict_hits={}", profile.conflict_hits);
+        println!("profile.candidate_groups_scanned={}", profile.candidate_groups_scanned);
+        println!("profile.stage_ww_checks={}", profile.stage_ww_checks);
+        println!("profile.stage_ww_hits={}", profile.stage_ww_hits);
+        println!("profile.stage_wr_checks={}", profile.stage_wr_checks);
+        println!("profile.stage_wr_hits={}", profile.stage_wr_hits);
+        println!("profile.stage_rw_checks={}", profile.stage_rw_checks);
+        println!("profile.stage_rw_hits={}", profile.stage_rw_hits);
+>>>>>>> feat/p2.3-stability-observability
         let hit_rate = if profile.conflict_checks == 0 {
             0.0
         } else {
