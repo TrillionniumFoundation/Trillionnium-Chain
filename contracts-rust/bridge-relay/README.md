@@ -39,7 +39,8 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 5. 签名长度不合法与签名绑定失配拒绝
 6. 配置一致性约束：`min_validator_signatures > 0` 且 `min_validator_signatures <= validators.len()`；不允许将 validator 集合清空或收缩到低于阈值以下
 7. 非管理员不能篡改 validator 配置
-8. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
+8. 配置版本一致性检查（`message.config_version` 必须匹配当前配置版本）
+9. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
 
 ## 运行测试
 
@@ -58,5 +59,5 @@ cargo test
 
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "bridge-relay"`
-- `event_type`：`bridge_relay.proof_submitted` / `bridge_relay.proof_submitted_and_stored` / `bridge_relay.settlement_finalized` / `bridge_relay.nonce_consumed` / `bridge_relay.admin_updated` / `bridge_relay.min_signatures_updated` / `bridge_relay.validators_updated`
+- `event_type`：`bridge_relay.proof_submitted` / `bridge_relay.proof_submitted_and_stored` / `bridge_relay.settlement_finalized` / `bridge_relay.nonce_consumed` / `bridge_relay.admin_updated` / `bridge_relay.min_signatures_updated` / `bridge_relay.validators_updated` / `bridge_relay.config_version_updated`
 - 关键字段填充：`object_id` 常用于 `proof_digest/settlement_id/nonce_key`，`amount` 记录签名阈值或签名计数。
