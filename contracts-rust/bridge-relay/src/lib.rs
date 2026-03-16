@@ -663,8 +663,11 @@ fn hex32(value: &[u8]) -> String {
 pub fn settlement_id(message: &BridgeSettlementMessage) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(message.source_chain_id.to_be_bytes());
+    hasher.update(message.source_bridge_id);
     hasher.update(message.source_tx_hash);
     hasher.update(message.source_log_index.to_be_bytes());
+    hasher.update(message.target_chain_id.to_be_bytes());
+    hasher.update(message.target_bridge);
     hasher.update(message.receiver);
     hasher.update(message.asset);
     hasher.update(message.amount.to_be_bytes());
@@ -1211,6 +1214,55 @@ mod tests {
             .set_min_validator_signatures_with_version(&b32(9), expected + 1, 2)
             .unwrap();
         assert_eq!(relay.config_version(), expected + 2);
+    }
+
+    #[test]
+    fn settlement_id_is_scoped_to_domain_fields() {
+        let msg_a = sample_msg();
+        let mut msg_b = sample_msg();
+        let mut msg_c = sample_msg();
+        let mut msg_d = sample_msg();
+
+        msg_b.source_bridge_id = [11u8; 32];
+        msg_c.target_bridge = [12u8; 20];
+        msg_d.target_chain_id = 4_200;
+
+        let source_settlement_id = settlement_id(&msg_a);
+        assert_ne!(source_settlement_id, settlement_id(&msg_b));
+        assert_ne!(source_settlement_id, settlement_id(&msg_c));
+        assert_ne!(source_settlement_id, settlement_id(&msg_d));
+    }
+
+    #[test]
+    fn finalize_settlement_is_idempotent_by_settlement_id_even_with_new_nonce() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+        let sig = vec![sig_for(&msg, 7)];
+
+        let _ = relay
+            .finalize_settlement(&msg, &sig, 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let mut replay_msg = sample_msg();
+        replay_msg.nonce = msg.nonce + 1;
+
+        let replay_sig = sig_for(&replay_msg, 7);
+        let err = relay
+            .finalize_settlement(
+                &replay_msg,
+                &vec![replay_sig],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
     }
 
     #[test]
