@@ -9,7 +9,7 @@ use crate::{
     AdapterError, AdapterErrorKind, LlmAdapterResponse, RC_OK,
 };
 
-use super::adapter_retry_policy::{exp_backoff_delay_ms, truncate_for_error};
+use super::adapter_retry_policy::{backoff_delay_ms, exp_backoff_delay_ms, truncate_for_error};
 
 pub(crate) fn run_adapter_with_retry(
     adapter_cmd: &str,
@@ -55,9 +55,7 @@ pub(crate) fn run_adapter_with_retry(
         }
 
         if attempt < max_retries {
-            thread::sleep(Duration::from_millis(
-                backoff_ms.saturating_mul(attempt as u64 + 1),
-            ));
+            thread::sleep(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
         }
     }
 
