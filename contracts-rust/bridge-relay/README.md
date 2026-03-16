@@ -53,6 +53,7 @@ cargo test
 
 - 对接真实签名密钥生命周期与链上治理更新（签名验证链路已对接 Ed25519 示例验签，可继续扩展为生产签名算法）
 - 已对接治理变更并发控制（最小治理接线）：
+- 参考接线协议：`docs/reviews/TRNM_REVIEW_BRIDGE_RELAY_CONFIG_VERSION_GOVERNANCE_PROTOCOL_2026-03-16.md`
   - 对外提供 `config_version()` 查询当前配置版本。
   - 新增治理写入的带版本方法（`set_admin_with_version` / `set_min_validator_signatures_with_version` / `set_validators_with_version`）：
     - 要求调用携带期望版本，过期版本调用将被 `InvalidConfigVersion` 拒绝，避免并发配置更新竞争。
