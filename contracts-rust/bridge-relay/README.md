@@ -37,8 +37,9 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 3. 链域不匹配拒绝（`InvalidTargetChain`）
 4. nonce 域隔离 + 重放防护（相同 nonce、不同 action 可并存；同域重复消费拒绝）
 5. 签名长度不合法与签名绑定失配拒绝
-6. 非管理员不能篡改 validator 配置
-7. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
+6. 配置一致性约束：`min_validator_signatures > 0` 且 `min_validator_signatures <= validators.len()`；不允许将 validator 集合清空或收缩到低于阈值以下
+7. 非管理员不能篡改 validator 配置
+8. 审计日志可查询与清空（`audit_log` / `consume_audit_log`）
 
 ## 运行测试
 

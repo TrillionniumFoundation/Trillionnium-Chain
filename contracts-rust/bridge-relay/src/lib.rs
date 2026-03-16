@@ -55,6 +55,10 @@ pub enum BridgeRelayError {
     InvalidValidatorSignatureLength {
         got: usize,
     },
+    InvalidValidatorConfiguration {
+        min_validator_signatures: usize,
+        available_validators: usize,
+    },
     Unauthorized,
     UnknownValidator {
         validator: [u8; 32],
@@ -148,6 +152,7 @@ impl BridgeRelay {
             return Err(BridgeRelayError::ProofExpired { now_ts, deadline });
         }
 
+        self.validate_validator_signature_config(self.min_validator_signatures, self.validators.len())?;
         self.validate_message_domain(message, now_ts, current_chain_id, self_bridge)?;
 
         let proof_digest = hash_message(message);
@@ -222,6 +227,8 @@ impl BridgeRelay {
         min: usize,
     ) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
+        self.validate_validator_signature_config(min, self.validators.len())?;
+
         let old_min = self.min_validator_signatures;
         self.min_validator_signatures = min;
         self.audit_log.push(BridgeRelayEvent::MinSignaturesUpdated {
@@ -238,11 +245,31 @@ impl BridgeRelay {
     ) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
         let previous_count = self.validators.len();
-        self.validators = validators.into_iter().collect();
+        let new_validators = validators.into_iter().collect::<std::collections::HashSet<_>>();
+        let new_count = new_validators.len();
+
+        self.validate_validator_signature_config(self.min_validator_signatures, new_count)?;
+        self.validators = new_validators;
+
         self.audit_log.push(BridgeRelayEvent::ValidatorsUpdated {
             previous_count,
             new_count: self.validators.len(),
         });
+        Ok(())
+    }
+
+    fn validate_validator_signature_config(
+        &self,
+        min_validator_signatures: usize,
+        validator_count: usize,
+    ) -> Result<(), BridgeRelayError> {
+        if validator_count == 0 || min_validator_signatures == 0 || min_validator_signatures > validator_count {
+            return Err(BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures,
+                available_validators: validator_count,
+            });
+        }
+
         Ok(())
     }
 
@@ -653,7 +680,7 @@ mod tests {
 
     #[test]
     fn duplicate_validator_signatures_do_not_count_twice() {
-        let mut relay = relay(2, &[7]);
+        let mut relay = relay(1, &[7]);
         let msg = sample_msg();
 
         let err = relay
@@ -677,8 +704,8 @@ mod tests {
     fn governance_like_admin_can_rotate_validator_set_and_threshold() {
         let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
 
-        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
         relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let msg = sample_msg();
         let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
@@ -715,6 +742,84 @@ mod tests {
 
         let err = relay.set_min_validator_signatures(&b32(8), 2).unwrap_err();
         assert!(matches!(err, BridgeRelayError::Unauthorized));
+    }
+
+    #[test]
+    fn governance_like_admin_rejects_zero_min_signatures() {
+        let mut relay = relay(1, &[7]);
+        let err = relay.set_min_validator_signatures(&b32(7), 0).unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures: 0,
+                available_validators: 1,
+            }
+        ));
+    }
+
+    #[test]
+    fn governance_like_admin_rejects_validator_set_below_threshold() {
+        let mut relay = relay(2, &[7]);
+        let err = relay
+            .set_validators(&b32(7), vec![validator_pub(7)])
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures: 2,
+                available_validators: 1,
+            }
+        ));
+    }
+
+    #[test]
+    fn governance_like_admin_rejects_empty_validator_set() {
+        let mut relay = relay(1, &[7]);
+        let err = relay
+            .set_validators(&b32(7), Vec::<[u8; 32]>::new())
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures: 1,
+                available_validators: 0,
+            }
+        ));
+    }
+
+    #[test]
+    fn governance_like_admin_rejects_configuration_without_validators() {
+        let mut relay = BridgeRelay::with_admin(1, vec![], b32(9));
+        let err = relay.set_min_validator_signatures(&b32(9), 1).unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures: 1,
+                available_validators: 0,
+            }
+        ));
+    }
+
+    #[test]
+    fn submit_proof_rejects_invalid_validator_signature_configuration() {
+        let mut relay = BridgeRelay::with_admin(0, vec![validator_pub(7)], b32(9));
+        let msg = sample_msg();
+
+        let err = relay
+            .submit_proof(&msg, &[], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidValidatorConfiguration {
+                min_validator_signatures: 0,
+                available_validators: 1,
+            }
+        ));
     }
 
     #[test]
