@@ -768,6 +768,9 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.task_id != id || task.version == 0 {
+                    if self.pending_resolve_approvals.remove(&id).is_some() {
+                        self.invalidate_state_root_cache();
+                    }
                     return;
                 }
                 if self
@@ -2224,6 +2227,90 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_stale_pending_resolve_snapshot_on_invalid_replacement() {
+        let mut st = StateStore::new();
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 17,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 1,
+            }),
+        );
+        st.restore_pending_resolve_approval(
+            17,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 18,
+                creator: "mallory".into(),
+                bounty: 99,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 2,
+            }),
+        );
+
+        assert_eq!(
+            st.get_task(17)
+                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
+            Some((17, "alice".into(), 10, TaskStatus::Challenged, 1)),
+            "invalid replacement must not clobber the existing challenged task object"
+        );
+        assert_eq!(
+            st.pending_resolve_approval(17),
+            None,
+            "invalid replacement must scrub stale pending resolve approval residue"
+        );
+        assert_ne!(
+            st.state_root(),
+            root_before,
+            "scrubbing stale pending resolve approval residue must perturb the state root"
         );
     }
 
