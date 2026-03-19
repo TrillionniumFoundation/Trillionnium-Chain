@@ -2829,3 +2829,55 @@ fn policy_tick_cooldown_throttles_repeated_schedule_points() {
     assert!(st.policy_tick(4).is_none(), "cooldown should block h=4");
     assert!(st.policy_tick(6).is_some(), "cooldown should allow h=6");
 }
+
+#[test]
+fn restore_pending_gov_update_unknown_key_fails_closed_without_materializing_queue_entry() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "totally_unknown_key",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "totally_unknown_key".into(),
+            value: "120".into(),
+            activate_at_height: 330,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("totally_unknown_key").is_none(),
+        "restore_pending_gov_update must fail closed for non-whitelisted governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "unknown pending governance keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_non_sensitive_key_fails_closed_without_aliasing_immediate_param() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 118,
+            key: "max_block_ms".into(),
+            value: "450".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "restore_pending_gov_update must fail closed for non-sensitive immediate governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-sensitive governance keys must not be restorable into the pending timelock queue"
+    );
+}
