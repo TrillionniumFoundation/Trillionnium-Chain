@@ -2485,6 +2485,38 @@ fn state_root_changes_when_pending_resolve_authority_set_changes() {
 }
 
 #[test]
+fn pending_resolve_restore_canonicalizes_authority_metadata_for_state_root() {
+    let mut staged = StateStore::new();
+    staged
+        .stage_or_confirm_resolve_approval(
+            5_200,
+            7,
+            true,
+            "Authority-A",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
+
+    let mut restored = StateStore::new();
+    restored.restore_pending_resolve_approval(
+        5_200,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        staged.state_root(),
+        restored.state_root(),
+        "state_root should ignore authority-set ordering and approver casing noise for equivalent pending resolve snapshots"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_picks_latest_valid() {
     let e1 = WalMeta {
         height: 1,
