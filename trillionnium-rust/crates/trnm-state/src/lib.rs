@@ -1332,19 +1332,37 @@ impl StateStore {
         snapshot: Option<PendingGovParamUpdate>,
     ) {
         self.invalidate_state_root_cache();
+        let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
+                let key_id_mismatch = self
+                    .gov_param_key_index
+                    .get(key)
+                    .copied()
+                    .is_some_and(|existing_key_id| existing_key_id != snapshot.key_id);
                 if snapshot.key != key
                     || !GOV_ALLOWED_KEYS.contains(&key)
                     || !is_sensitive_gov_param(key)
+                    || validate_governance_key_id(key, snapshot.key_id).is_err()
+                    || key_id_mismatch
+                    || validate_gov_param_value(key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
+                    }
                     return;
                 }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
             None => {
                 self.pending_gov_updates.remove(key);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
         }
     }
