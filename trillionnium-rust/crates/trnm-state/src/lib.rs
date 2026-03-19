@@ -238,11 +238,89 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     Ok(())
 }
 
+fn validate_governance_registry_shape() -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    if allowed_unique.len() != GOV_ALLOWED_KEYS.len() {
+        return Err("governance allowed-key registry contains duplicate entries".into());
+    }
+
+    let sensitive_unique: std::collections::BTreeSet<&str> =
+        GOV_SENSITIVE_KEYS.iter().copied().collect();
+    if sensitive_unique.len() != GOV_SENSITIVE_KEYS.len() {
+        return Err("governance sensitive-key registry contains duplicate entries".into());
+    }
+
+    let validator_unique: std::collections::BTreeSet<&str> = [
+        "max_block_ms",
+        "max_parallel_workers",
+        "challenge_window_blocks",
+        "min_worker_stake",
+        "challenge_min_bond",
+        "challenge_success_bounty",
+        "challenge_min_bond_bounty_bps",
+        "challenge_min_bond_worker_stake_bps",
+        "llm_meter_prompt_token_weight",
+        "llm_meter_generated_token_weight",
+        "llm_meter_decode_step_weight",
+        "llm_meter_kv_byte_weight",
+        "llm_meter_min_accept_work_units",
+        "llm_meter_challenge_success_bounty_per_work_unit_num",
+        "llm_meter_challenge_success_bounty_per_work_unit_den",
+        "llm_meter_worker_completion_bonus_per_work_unit_num",
+        "llm_meter_worker_completion_bonus_per_work_unit_den",
+        "llm_meter_worker_slash_rebate_per_work_unit_num",
+        "llm_meter_worker_slash_rebate_per_work_unit_den",
+        "resolve_authority",
+        "emergency_pause",
+        "monetary_policy_tick_interval_blocks",
+        "monetary_policy_tick_cooldown_blocks",
+        "monetary_base_issuance_per_tick",
+        "monetary_base_burn_per_tick",
+    ]
+    .into_iter()
+    .collect();
+
+    if validator_unique.len() != allowed_unique.len() {
+        return Err("governance explicit-validator registry drifted from allowed-key registry".into());
+    }
+
+    for key in &allowed_unique {
+        if !has_explicit_gov_param_validator(key) {
+            return Err(format!(
+                "governance validator coverage missing for allowed key: {}",
+                key
+            ));
+        }
+    }
+
+    for key in &validator_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance explicit-validator registry contains non-whitelisted key: {}",
+                key
+            ));
+        }
+    }
+
+    for key in &sensitive_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance sensitive-key coverage missing from allowed key registry: {}",
+                key
+            ));
+        }
+    }
+
+    Ok(())
+}
+
 fn validate_governance_key_registration(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
     key_id: u64,
 ) -> Result<(), String> {
+    validate_governance_registry_shape()?;
     if !GOV_ALLOWED_KEYS.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
     }
@@ -486,6 +564,7 @@ fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
 }
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    validate_governance_registry_shape()?;
     validate_governance_validator_coverage(key)?;
     validate_governance_sensitive_key_coverage(key)?;
 
@@ -4319,6 +4398,12 @@ mod tests {
         );
         assert!(st.pending_gov_update("emergency_pause").is_none());
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn governance_registry_shape_merge_gate_fails_closed() {
+        validate_governance_registry_shape()
+            .expect("governance registry shape must remain explicit, unique, and fail-closed");
     }
 
     #[test]
