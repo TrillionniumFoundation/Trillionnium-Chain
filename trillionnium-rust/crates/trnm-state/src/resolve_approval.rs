@@ -170,6 +170,11 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
+                if task_id == 0 || self.get_task(task_id).is_none() {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                }
+
                 self.pending_resolve_approvals.insert(
                     task_id,
                     PendingResolveApproval {
