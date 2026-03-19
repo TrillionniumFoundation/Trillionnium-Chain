@@ -80,8 +80,12 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            let mut preflight = request.clone();
+            preflight.settle_authorized(token, height)?;
+
             if let Some(observed) = heartbeat.heartbeat {
-                if height < observed.target_height {
+                let max_confirm_height = observed.source_height.saturating_add(1);
+                if height < observed.target_height || height > max_confirm_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
             }
