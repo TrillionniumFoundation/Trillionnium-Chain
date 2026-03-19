@@ -740,7 +740,7 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
-                if task.task_id != id {
+                if task.task_id != id || task.version == 0 {
                     self.objects.remove(&id);
                     return;
                 }
@@ -1923,6 +1923,41 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_version_snapshot() {
+        let mut st = StateStore::new();
+        let invalid = TaskObject {
+            task_id: 7,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        };
+
+        st.restore_task(7, Some(invalid));
+
+        assert!(st.get_task(7).is_none(), "restore must reject zero-version task snapshots");
+        assert!(
+            st.get_ref(7).is_none(),
+            "restore must not create an object ref for zero-version tasks"
+        );
     }
 
     #[test]
