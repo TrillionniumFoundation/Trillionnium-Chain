@@ -1817,7 +1817,10 @@ pub fn verify_wal_and_find_checkpoint(
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
             // during restart recovery.
-            if e.height != last_height.saturating_add(1) {
+            let Some(expected_height) = last_height.checked_add(1) else {
+                return Ok(best_checkpoint);
+            };
+            if e.height != expected_height {
                 return Ok(best_checkpoint);
             }
         } else if e.height != 1 {
@@ -5036,6 +5039,61 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 2);
         assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_fails_closed_on_height_overflow_tail() {
+        let e1 = WalMeta {
+            height: u64::MAX - 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: u64::MAX,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let overflowing_tail = WalMeta {
+            height: 0,
+            round: 2,
+            proposal_hash: "p3-overflow-tail".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h2),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 0,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: overflowing_tail.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, overflowing_tail])
+            .unwrap();
+        assert!(
+            got.is_none(),
+            "overflowed WAL height tails must fail closed instead of wrapping to a forged checkpoint"
+        );
     }
 
     #[test]
