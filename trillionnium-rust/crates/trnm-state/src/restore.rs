@@ -48,7 +48,7 @@ impl StateStore {
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
         match snapshot {
-            Some(task) => {
+            Some(task) if task.task_id == id => {
                 self.objects.insert(
                     id,
                     VersionedObject {
@@ -57,7 +57,7 @@ impl StateStore {
                     },
                 );
             }
-            None => {
+            Some(_) | None => {
                 self.objects.remove(&id);
             }
         }
@@ -100,7 +100,22 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+        let matching_height: Vec<&CheckpointMeta> =
+            checkpoints.iter().filter(|cp| cp.height == e.height).collect();
+        if matching_height.len() > 1 {
+            let canonical_matches = matching_height
+                .iter()
+                .filter(|cp| {
+                    cp.state_root_hex == e.state_root_hex
+                        && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+                })
+                .count();
+            if canonical_matches != 1 {
+                return Ok(best_checkpoint);
+            }
+        }
+
+        for cp in matching_height {
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
