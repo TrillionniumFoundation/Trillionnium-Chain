@@ -713,6 +713,12 @@ impl StateStore {
         {
             return;
         }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return;
+        }
 
         self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
@@ -2782,7 +2788,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_allows_canonical_snapshot_without_backing_task() {
+    fn restore_pending_resolve_approval_rejects_snapshot_without_backing_challenged_task() {
         let mut st = StateStore::new();
         let baseline = st.state_root();
 
@@ -2797,17 +2803,42 @@ mod tests {
             }),
         );
 
-        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
-        assert_ne!(
+        assert_eq!(st.pending_resolve_approval(9_901), None);
+        assert_eq!(
             st.state_root(),
             baseline,
-            "canonical restored pending approvals must remain state-root-visible even before the backing challenged task is replayed"
+            "restore must ignore canonical-looking pending approvals when no challenged task object exists"
         );
     }
 
     #[test]
     fn restore_pending_resolve_approval_rejects_invalid_replacement_without_clobbering_existing_state() {
         let mut st = StateStore::new();
+        st.restore_task(
+            9_901,
+            Some(TaskObject {
+                task_id: 9_901,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
         st.restore_pending_resolve_approval(
             9_901,
             Some(PendingResolveApprovalSnapshot {
