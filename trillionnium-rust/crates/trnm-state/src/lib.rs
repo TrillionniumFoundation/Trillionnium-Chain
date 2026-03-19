@@ -580,6 +580,7 @@ impl StateStore {
             return Err("resolve approval task version must be >= 1".into());
         }
 
+        let approver_audit = approver.trim().to_string();
         let approver_canonical = validate_resolve_approver_token(approver)?;
         let authority_canonical = canonicalize_resolve_authority_set(authority_set)?;
         if !authority_canonical
@@ -629,7 +630,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver_canonical.clone(),
+                    first_approver: approver_audit,
                     authority_set: authority_canonical.clone(),
                     task_version,
                 });
@@ -699,10 +700,12 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
+        let first_approver_audit = snapshot.first_approver.trim().to_string();
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
         };
+        let authority_audit = snapshot.authority_set.clone();
         let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
         else {
             return;
@@ -734,8 +737,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
+                first_approver: first_approver_audit,
+                authority_set: authority_audit,
                 task_version: snapshot.task_version,
             },
         );
@@ -1834,8 +1837,12 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
-            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
+            let first_approver_canonical = validate_resolve_approver_token(&pending.first_approver)
+                .unwrap_or_else(|_| pending.first_approver.clone());
+            let authority_canonical = canonicalize_resolve_authority_set(&pending.authority_set)
+                .unwrap_or_else(|_| pending.authority_set.clone());
+            hash_len_prefixed_str(&mut hasher, &first_approver_canonical);
+            hash_len_prefixed_str(&mut hasher, &authority_canonical);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
@@ -2903,7 +2910,7 @@ mod tests {
             Some(PendingResolveApprovalSnapshot {
                 slash_worker: true,
                 confirmations: 1,
-                first_approver: "authority-a".into(),
+                first_approver: "Authority-A".into(),
                 authority_set: "authority-b,authority-a".into(),
                 task_version: 3,
             }),
@@ -2923,15 +2930,15 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("authority-a".to_string()),
-            "restore should store the canonical approver token"
+            Some("Authority-A".to_string()),
+            "restore should preserve the original approver spelling for auditability"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-a,authority-b".to_string()),
-            "restore should store the canonical authority-set ordering"
+            Some("authority-b,authority-a".to_string()),
+            "restore should preserve the original authority-set spelling for auditability"
         );
         assert_eq!(
             restored.state_root(),
