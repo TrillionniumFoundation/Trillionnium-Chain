@@ -85,6 +85,15 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 quarantined.len(),
                 ingress_quarantine_file_for(&path).display()
             );
+
+            if let Err(err) = save_ingress_records(&records) {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_REWRITE] path={} retained={} err={}",
+                    path.display(),
+                    records.len(),
+                    err
+                );
+            }
         }
     }
     records

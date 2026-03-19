@@ -128,3 +128,81 @@ fn submit_message_duplicate_lookup_prefers_latest_record() {
         "duplicate submit should not append a third row when key already exists"
     );
 }
+
+#[test]
+fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
+    let ingress = unique_fixture_path("submit_message_quarantine_rewrite", "jsonl");
+    let quarantine = ingress.with_file_name(format!(
+        "{}.quarantine.jsonl",
+        ingress
+            .file_name()
+            .and_then(|v| v.to_str())
+            .expect("ingress file name")
+    ));
+    let _ = fs::remove_file(&ingress);
+    let _ = fs::remove_file(&quarantine);
+
+    let seed = [
+        r#"{"request_id":"r-1","task_id":10001,"channel":"telegram","user_id":"u-1","session_id":"s-1","text":"hello","idempotency_key":"k-1","status":"Open","created_at_unix_ms":1}"#,
+        "not-json",
+    ]
+    .join("\n");
+    fs::write(&ingress, format!("{}\n", seed)).expect("seed ingress");
+
+    let run_submit = |key: &str| {
+        Command::new("cargo")
+            .args(["run", "-p", "trnm-rpc", "--"])
+            .args([
+                "submit-message",
+                "--channel",
+                "telegram",
+                "--user-id",
+                "u-3",
+                "--session-id",
+                "s-3",
+                "--text",
+                "next",
+                "--idempotency-key",
+                key,
+            ])
+            .env("TRNM_RPC_INGRESS_FILE", &ingress)
+            .output()
+            .expect("run submit-message")
+    };
+
+    let first = run_submit("k-3");
+    assert!(
+        first.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&first.stderr)
+    );
+
+    let rewritten = fs::read_to_string(&ingress).expect("read rewritten ingress");
+    let rewritten_lines: Vec<&str> = rewritten.lines().filter(|l| !l.trim().is_empty()).collect();
+    assert_eq!(rewritten_lines.len(), 2, "invalid row should be removed after first submit replay");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let quarantine_lines: Vec<&str> = quarantine_raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    assert_eq!(quarantine_lines.len(), 1, "first replay should quarantine exactly once");
+
+    let second = run_submit("k-3");
+    assert!(
+        second.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&second.stderr)
+    );
+
+    let quarantine_raw_second = fs::read_to_string(&quarantine).expect("read quarantine file again");
+    let quarantine_lines_second: Vec<&str> = quarantine_raw_second
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    assert_eq!(
+        quarantine_lines_second.len(),
+        1,
+        "quarantine noise should stay bounded across repeated idempotent replays"
+    );
+}
