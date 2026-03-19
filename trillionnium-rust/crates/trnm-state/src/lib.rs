@@ -687,10 +687,10 @@ impl StateStore {
         task_id: u64,
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
-        self.invalidate_state_root_cache();
-        self.pending_resolve_approvals.remove(&task_id);
-
         let Some(snapshot) = snapshot else {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
             return;
         };
         if task_id == 0 || snapshot.task_version == 0 {
@@ -714,6 +714,8 @@ impl StateStore {
             return;
         }
 
+        self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&task_id);
         self.pending_resolve_approvals.insert(
             task_id,
             PendingResolveApproval {
@@ -2705,6 +2707,45 @@ mod tests {
             st.state_root(),
             baseline,
             "canonical restored pending approvals must remain state-root-visible even before the backing challenged task is replayed"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_invalid_replacement_without_clobbering_existing_state() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_901),
+            Some("authority-a".to_string()),
+            "invalid restore snapshot must not clobber the existing staged approver"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "invalid restore snapshot must not perturb the existing pending-approval state root"
         );
     }
 
