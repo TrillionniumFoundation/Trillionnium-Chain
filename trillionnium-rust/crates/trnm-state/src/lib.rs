@@ -265,28 +265,35 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     Ok(())
 }
 
-fn validate_governance_registry_shape() -> Result<(), String> {
+fn validate_governance_registry_shape_lists(
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+) -> Result<(), String> {
     let allowed_unique: std::collections::BTreeSet<&str> =
-        GOV_ALLOWED_KEYS.iter().copied().collect();
-    if allowed_unique.len() != GOV_ALLOWED_KEYS.len() {
+        allowed_keys.iter().copied().collect();
+    if allowed_unique.len() != allowed_keys.len() {
         return Err("governance allowed-key registry contains duplicate entries".into());
     }
 
     let sensitive_unique: std::collections::BTreeSet<&str> =
-        GOV_SENSITIVE_KEYS.iter().copied().collect();
-    if sensitive_unique.len() != GOV_SENSITIVE_KEYS.len() {
+        sensitive_keys.iter().copied().collect();
+    if sensitive_unique.len() != sensitive_keys.len() {
         return Err("governance sensitive-key registry contains duplicate entries".into());
     }
 
     let validator_unique: std::collections::BTreeSet<&str> =
-        GOV_EXPLICIT_VALIDATOR_KEYS.iter().copied().collect();
+        explicit_validator_keys.iter().copied().collect();
+    if validator_unique.len() != explicit_validator_keys.len() {
+        return Err("governance explicit-validator registry contains duplicate entries".into());
+    }
 
     if validator_unique.len() != allowed_unique.len() {
         return Err("governance explicit-validator registry drifted from allowed-key registry".into());
     }
 
     for key in &allowed_unique {
-        if !has_explicit_gov_param_validator(key) {
+        if !validator_unique.contains(key) {
             return Err(format!(
                 "governance validator coverage missing for allowed key: {}",
                 key
@@ -313,6 +320,14 @@ fn validate_governance_registry_shape() -> Result<(), String> {
     }
 
     Ok(())
+}
+
+fn validate_governance_registry_shape() -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+    )
 }
 
 fn validate_governance_key_registration(
@@ -2771,6 +2786,21 @@ mod tests {
             .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
         assert!(err.contains("not allowed"));
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_duplicate_entries_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "max_block_ms"],
+        )
+        .expect_err("duplicate explicit-validator registry entries must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
     }
 
     #[test]
