@@ -754,7 +754,7 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key_id != key_id {
+                if snapshot.key_id != key_id || snapshot.version == 0 {
                     self.objects.remove(&key_id);
                     return;
                 }
@@ -1948,6 +1948,28 @@ mod tests {
         assert!(
             st.get_ref(7).is_none(),
             "restore must not create an object ref for zero-version tasks"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_version_snapshot() {
+        let mut st = StateStore::new();
+        let invalid = GovParamObject {
+            key_id: 17,
+            key: "monetary_base_burn_per_tick".into(),
+            value: "11".into(),
+            version: 0,
+        };
+
+        st.restore_gov_param(17, Some(invalid));
+
+        assert!(
+            st.get_param(17).is_none(),
+            "restore must reject zero-version governance param snapshots"
+        );
+        assert!(
+            st.get_ref(17).is_none(),
+            "restore must not create an object ref for zero-version governance param snapshots"
         );
     }
 
