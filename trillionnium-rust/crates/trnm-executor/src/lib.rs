@@ -240,15 +240,6 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
 }
 
 #[inline]
-fn append_unique_keys(keys: &mut Vec<u64>, objs: &[ObjectRef]) {
-    for key in dedup_access_keys(objs) {
-        if !keys.contains(&key) {
-            keys.push(key);
-        }
-    }
-}
-
-#[inline]
 fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64> {
     let keys = dedup_access_keys(read_set);
     if keys.is_empty() || write_keys.is_empty() {
@@ -274,10 +265,15 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
 fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
     // Keep telemetry/object-domain reporting aligned with scheduler hotspot
     // selection: writes carry the stronger conflict signal, while reads extend the
-    // object scope only when they introduce additional keys.
-    let mut keys = Vec::with_capacity(tx.write_set.len() + tx.read_set.len());
-    append_unique_keys(&mut keys, &tx.write_set);
-    append_unique_keys(&mut keys, &tx.read_set);
+    // object scope only when they introduce additional keys. Reuse the same
+    // read-domain filtering helper as the scheduler so grouping and reporting
+    // stay on a single deterministic object-scoped path.
+    let write_keys = dedup_access_keys(&tx.write_set);
+    let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
+
+    let mut keys = Vec::with_capacity(write_keys.len() + read_keys.len());
+    keys.extend(write_keys);
+    keys.extend(read_keys);
     keys
 }
 
