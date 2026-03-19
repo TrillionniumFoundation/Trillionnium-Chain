@@ -329,9 +329,16 @@ impl OracleValidationReport {
     }
 
     pub fn bridge_contract_consistent(&self) -> bool {
+        let result_label_consistent = if self.ok {
+            self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
+        } else {
+            self.error.is_some() && self.metrics.accepted_total == 0
+        };
+
         self.observation_matches_metrics()
             && self.classified_outcome_conserves_sample_count()
             && self.observation_classified_outcome_conserves_sample_count()
+            && result_label_consistent
     }
 }
 
@@ -1055,5 +1062,26 @@ mod tests {
         assert!(report.observation_matches_metrics());
         assert!(!report.observation_classified_outcome_conserves_sample_count());
         assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_ok_error_coherence_drift() {
+        let mut success = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            10_100,
+        );
+        assert!(success.bridge_contract_consistent());
+        success.error = Some("stale".to_string());
+        assert!(!success.bridge_contract_consistent());
+
+        let mut failure = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            16_000,
+        );
+        assert!(failure.bridge_contract_consistent());
+        failure.error = None;
+        assert!(!failure.bridge_contract_consistent());
     }
 }
