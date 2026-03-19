@@ -629,8 +629,8 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver.trim().to_string(),
-                    authority_set: authority_set.to_string(),
+                    first_approver: approver_canonical.clone(),
+                    authority_set: authority_canonical.clone(),
                     task_version,
                 });
         if entry.slash_worker != slash_worker {
@@ -728,8 +728,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -4563,6 +4563,78 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn pending_resolve_snapshot_canonicalization_keeps_semantically_identical_state_roots_equal() {
+        let staged_task = TaskObject {
+            task_id: 501,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        };
+
+        let mut staged = StateStore::new();
+        staged.put_task_new(staged_task.clone()).unwrap();
+        staged
+            .stage_or_confirm_resolve_approval(501, 1, true, "Authority-B", "Authority-B,authority-a")
+            .unwrap();
+
+        let mut restored = StateStore::new();
+        restored.put_task_new(staged_task).unwrap();
+        restored.restore_pending_resolve_approval(
+            501,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,authority-a".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            staged.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            staged.pending_resolve_approval_snapshot(501)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            restored.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(501)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            staged.state_root(),
+            restored.state_root(),
+            "restore/stage paths must canonicalize semantically equivalent pending resolve snapshots identically"
         );
     }
 
