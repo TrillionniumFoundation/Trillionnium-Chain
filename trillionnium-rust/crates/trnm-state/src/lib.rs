@@ -699,6 +699,14 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
+        if self.is_emergency_paused() {
+            let Some(task) = self.get_task(task_id) else {
+                return;
+            };
+            if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+                return;
+            }
+        }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;

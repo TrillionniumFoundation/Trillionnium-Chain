@@ -4561,7 +4561,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_task_boundary() 
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_011);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 511);
 
-    st.set_gov_param(98_224, 8_000, "emergency_pause".into(), "true".into())
+    st.set_gov_param(98_224, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
 
