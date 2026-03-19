@@ -5002,6 +5002,13 @@
     }
 
     #[test]
+    fn timeout_scan_orders_known_task_ids_for_stable_event_surface() {
+        let known: HashSet<u64> = [7003u64, 7001u64, 7002u64].into_iter().collect();
+
+        assert_eq!(ordered_known_task_ids(&known), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
     fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
