@@ -699,12 +699,6 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
-        }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
@@ -2691,7 +2685,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_rejects_missing_task_snapshot() {
+    fn restore_pending_resolve_approval_allows_canonical_snapshot_without_backing_task() {
         let mut st = StateStore::new();
         let baseline = st.state_root();
 
@@ -2706,11 +2700,11 @@ mod tests {
             }),
         );
 
-        assert_eq!(st.pending_resolve_approval(9_901), None);
-        assert_eq!(
+        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
+        assert_ne!(
             st.state_root(),
             baseline,
-            "restore must not admit dangling pending approvals that would perturb state root without a backing challenged task"
+            "canonical restored pending approvals must remain state-root-visible even before the backing challenged task is replayed"
         );
     }
 
