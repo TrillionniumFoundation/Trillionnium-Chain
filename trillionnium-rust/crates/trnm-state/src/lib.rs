@@ -716,12 +716,6 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
             return;
         }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
-        }
 
         self.pending_resolve_approvals.insert(
             task_id,

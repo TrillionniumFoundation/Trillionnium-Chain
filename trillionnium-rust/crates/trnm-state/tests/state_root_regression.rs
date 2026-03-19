@@ -1915,6 +1915,10 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    // Replay/restore may rebuild pending resolve snapshots before task bodies are
+    // restored; staged single-approval snapshots must still round-trip, while any
+    // un-encodable finalized quorum must scrub fail-closed.
+
     state_a.restore_pending_resolve_approval(
         5_150,
         Some(PendingResolveApprovalSnapshot {
