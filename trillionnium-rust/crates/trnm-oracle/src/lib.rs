@@ -192,6 +192,13 @@ impl OraclePolicy {
             });
         }
 
+        if snapshot.sample_count < snapshot.sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
+                actual_sources: snapshot.sources.len() as u32,
+                sample_count: snapshot.sample_count,
+            });
+        }
+
         if snapshot.sample_count > self.max_update_rate_per_window {
             return Err(OracleError::UpdateRateExceeded {
                 sample_count: snapshot.sample_count,
@@ -430,6 +437,13 @@ pub enum OracleError {
         max_deviation_bps: u32,
     },
     #[error(
+        "inconsistent sample count: sources={actual_sources}, sample_count={sample_count}"
+    )]
+    InconsistentSampleCount {
+        actual_sources: u32,
+        sample_count: u32,
+    },
+    #[error(
         "update rate exceeded: sample_count={sample_count}, max_update_rate_per_window={max_update_rate_per_window}"
     )]
     UpdateRateExceeded {
@@ -523,6 +537,34 @@ mod tests {
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot should fail update-rate cap");
         assert!(matches!(err, OracleError::UpdateRateExceeded { .. }));
+    }
+
+    #[test]
+    fn rejects_sample_count_below_source_cardinality() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink"), source("pyth")],
+            2,
+            Some(100_000),
+            None,
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("snapshot should fail inconsistent accounting guardrail");
+        assert!(matches!(
+            err,
+            OracleError::InconsistentSampleCount {
+                actual_sources: 3,
+                sample_count: 2,
+            }
+        ));
     }
 
     #[test]
