@@ -734,6 +734,16 @@ impl StateStore {
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
+
+        let existing_is_non_task = self
+            .objects
+            .get(&id)
+            .map(|existing| !matches!(existing.value, ObjectValue::Task(_)))
+            .unwrap_or(false);
+        if existing_is_non_task {
+            return;
+        }
+
         match snapshot {
             Some(task) => {
                 if task.task_id != id || task.version == 0 {
@@ -1979,7 +1989,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_does_not_clear_unrelated_gov_param_key_index_on_id_collision() {
+    fn restore_task_refuses_cross_type_id_collision_and_preserves_state_root() {
         let mut st = StateStore::new();
         st.restore_gov_param(
             17,
@@ -2018,17 +2028,30 @@ mod tests {
             }),
         );
 
+        assert!(
+            st.get_task(17).is_none(),
+            "task restore must fail closed on cross-type object id collisions"
+        );
+        assert_eq!(
+            st.get_param(17).map(|param| (param.key, param.value, param.version)),
+            Some((
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "cross-type task restore must preserve the existing governance object"
+        );
         assert_eq!(
             st.gov_param_key_index
                 .get("monetary_base_burn_per_tick")
                 .copied(),
             Some(17),
-            "task restore must not clear unrelated governance key-index entries when ids collide"
+            "task restore must not clear governance key-index entries when the colliding object is rejected"
         );
-        assert_ne!(
+        assert_eq!(
             st.state_root(),
             root_before,
-            "adding a task may change state root, but must preserve the governance key-index contribution"
+            "rejected cross-type restore must leave state_root unchanged"
         );
     }
 
