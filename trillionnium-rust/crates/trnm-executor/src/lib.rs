@@ -1684,6 +1684,20 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_long_duplicate_singleton_write_domain_preserves_read_order() {
+        let write_keys = vec![44; 64];
+
+        let keys = read_domain_only_keys(
+            &[o(44), o(5), o(44), o(99), o(123), o(99), o(5), o(44)],
+            &write_keys,
+        );
+
+        // Long duplicate-only write domains should stay on the singleton
+        // shared-object path instead of widening the effective access domain.
+        assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
     fn read_domain_only_keys_small_duplicate_write_domain_preserves_shared_filtering() {
         let write_keys = vec![11, 22, 22, 33, 44, 44, 55, 66];
 
