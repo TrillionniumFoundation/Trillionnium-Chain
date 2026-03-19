@@ -246,6 +246,14 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
         return keys;
     }
 
+    // Singleton write domains are common for owned-object fast paths; avoid
+    // building an intermediate domain structure while preserving first-seen read
+    // order for deterministic object-scope reporting.
+    if write_keys.len() == 1 {
+        let shared = write_keys[0];
+        return keys.into_iter().filter(|key| *key != shared).collect();
+    }
+
     // Keep object-scoped access domains deterministic while avoiding quadratic
     // write-key probes once shared domains become large.
     if write_keys.len() <= 8 {
@@ -1590,6 +1598,17 @@ mod tests {
         // and write footprints, with writes first so telemetry matches the
         // scheduler's stronger conflict signal.
         assert_eq!(keys, vec![22, 44, 11, 33]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_single_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![44];
+
+        let keys = read_domain_only_keys(&[o(44), o(5), o(44), o(99), o(123), o(99)], &write_keys);
+
+        // The singleton owned/shared fast path should filter the shared object
+        // without disturbing first-seen ordering for surviving read-only keys.
+        assert_eq!(keys, vec![5, 99, 123]);
     }
 
     #[test]
