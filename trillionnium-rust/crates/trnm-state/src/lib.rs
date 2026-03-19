@@ -699,6 +699,12 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return;
+        }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
@@ -4629,6 +4635,113 @@ mod tests {
             staged.state_root(),
             restored.state_root(),
             "restore/stage paths must canonicalize semantically equivalent pending resolve snapshots identically"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_snapshot_requires_matching_challenged_task() {
+        let snapshot = Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Authority-B".into(),
+            authority_set: "Authority-B,authority-a".into(),
+            task_version: 1,
+        });
+
+        let mut missing_task = StateStore::new();
+        missing_task.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            missing_task.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must fail closed when the referenced challenged task is absent"
+        );
+
+        let mut wrong_status = StateStore::new();
+        wrong_status
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            })
+            .unwrap();
+        wrong_status.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            wrong_status.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must reject pending resolve snapshots for tasks that are no longer challenged"
+        );
+
+        let mut wrong_version = StateStore::new();
+        let wrong_version_ref = wrong_version
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        wrong_version
+            .update_task(
+                wrong_version_ref,
+                TaskObject {
+                    task_id: 501,
+                    creator: "alice".into(),
+                    bounty: 100,
+                    status: TaskStatus::Challenged,
+                    proof_type: Default::default(),
+                    metadata: None,
+                    worker: Some("worker-1".into()),
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: Some(25),
+                    resolve_deadline_height: Some(35),
+                    challenge_bond: Some(500),
+                    challenger: Some("bob".into()),
+                    challenge_bond_forfeited: Some(false),
+                    version: 1,
+                },
+            )
+            .unwrap();
+        wrong_version.restore_pending_resolve_approval(501, snapshot);
+        assert!(
+            wrong_version.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must reject stale pending resolve snapshots whose task version no longer matches"
         );
     }
 
