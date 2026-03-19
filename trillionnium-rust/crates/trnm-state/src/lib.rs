@@ -985,6 +985,13 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
+                if self
+                    .objects
+                    .get(&key_id)
+                    .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
+                {
+                    return;
+                }
                 if snapshot.key_id != key_id {
                     self.objects.remove(&key_id);
                     return;
@@ -4777,6 +4784,48 @@ mod tests {
         );
 
         assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_non_param_object_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 8_125,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(task.clone()).expect("task bootstrap should succeed");
+
+        st.restore_gov_param(
+            8_125,
+            Some(GovParamObject {
+                key_id: 8_125,
+                key: "max_block_ms".into(),
+                value: "15".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(st.get_task(8_125), Some(task));
+        assert!(st.get_param(8_125).is_none());
         assert!(st.gov_param_string("max_block_ms").is_none());
     }
 
