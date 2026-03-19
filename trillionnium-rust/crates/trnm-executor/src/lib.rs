@@ -1174,29 +1174,13 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
-    // Prefer write-domain signal when present, then fall back to read-domain
-    // signal. Skip duplicates so repeated refs to the same object do not erase a
-    // second distinct access key that would better represent the tx's object scope.
-    let mut key_a = None;
-    let mut key_b = None;
-
-    for key in tx
-        .write_set
-        .iter()
-        .chain(tx.read_set.iter())
-        .map(access_key)
-    {
-        if key_a.is_none() {
-            key_a = Some(key);
-            continue;
-        }
-        if Some(key) != key_a {
-            key_b = Some(key);
-            break;
-        }
-    }
-
-    (key_a.unwrap_or(0), key_b.unwrap_or(0))
+    // Reuse the same write-first, read-domain-filtered object scope as grouping
+    // and telemetry so hotspot bucketing cannot drift from executor conflict
+    // semantics on duplicate/shared-object footprints.
+    let keys = tx_access_domain_keys(tx);
+    let key_a = keys.first().copied().unwrap_or(0);
+    let key_b = keys.get(1).copied().unwrap_or(0);
+    (key_a, key_b)
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
@@ -1597,16 +1581,7 @@ mod tests {
         let write_keys = vec![11, 22, 33, 44, 55, 66, 77, 88];
 
         let keys = read_domain_only_keys(
-            &[
-                o(22),
-                o(5),
-                o(44),
-                o(5),
-                o(99),
-                o(77),
-                o(99),
-                o(123),
-            ],
+            &[o(22), o(5), o(44), o(5), o(99), o(77), o(99), o(123)],
             &write_keys,
         );
 
@@ -1651,6 +1626,22 @@ mod tests {
         let (key_a, key_b) = hot_bucket_keys(&tx);
 
         assert_eq!(keys, vec![7, 9, 30, 40, 50]);
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
+        let tx = tx(
+            1,
+            vec![o(8), o(8), o(9), o(10)],
+            vec![o(8), o(8), o(40), o(40), o(50)],
+        );
+
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
+
+        assert_eq!(keys, vec![8, 40, 50, 9, 10]);
+        assert_eq!((key_a, key_b), (8, 40));
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
     }
 
