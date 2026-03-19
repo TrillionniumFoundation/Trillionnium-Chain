@@ -743,6 +743,16 @@ impl StateStore {
                 if task.task_id != id || task.version == 0 {
                     return;
                 }
+                if self
+                    .pending_resolve_approvals
+                    .get(&id)
+                    .map(|pending| {
+                        pending.task_version != task.version || task.status != TaskStatus::Challenged
+                    })
+                    .unwrap_or(false)
+                {
+                    self.pending_resolve_approvals.remove(&id);
+                }
                 self.invalidate_state_root_cache();
                 self.objects.insert(
                     id,
@@ -753,7 +763,9 @@ impl StateStore {
                 );
             }
             None => {
-                if self.objects.remove(&id).is_some() {
+                let removed_task = self.objects.remove(&id).is_some();
+                let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
+                if removed_task || removed_pending {
                     self.invalidate_state_root_cache();
                 }
             }
@@ -2173,6 +2185,89 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_snapshot_when_version_or_status_changes() {
+        let mut st = StateStore::new();
+        st.restore_task(
+            82,
+            Some(TaskObject {
+                task_id: 82,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 1,
+            }),
+        );
+        st.restore_pending_resolve_approval(
+            82,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "val-1".into(),
+                authority_set: "val-1,val-2".into(),
+                task_version: 1,
+            }),
+        );
+        let challenged_root = st.state_root();
+
+        st.restore_task(
+            82,
+            Some(TaskObject {
+                task_id: 82,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 2,
+            }),
+        );
+
+        assert_eq!(
+            st.get_task(82).map(|task| (task.status, task.version)),
+            Some((TaskStatus::Assigned, 2)),
+            "restore should still install the replacement task snapshot"
+        );
+        assert_eq!(
+            st.pending_resolve_approval(82),
+            None,
+            "restore must clear stale pending resolve approval snapshots when the task version/status no longer matches"
+        );
+        assert_ne!(
+            st.state_root(),
+            challenged_root,
+            "state_root must change when stale pending resolve approval residue is scrubbed during restore"
         );
     }
 
