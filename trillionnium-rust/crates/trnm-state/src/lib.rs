@@ -343,6 +343,49 @@ fn is_effective_resolve_authority_match(st: &StateStore, authority_set: &str) ->
     ensure_effective_resolve_authority_match(st, authority_set).is_ok()
 }
 
+fn validated_restorable_pending_resolve_snapshot(
+    st: &StateStore,
+    task_id: u64,
+    snapshot: PendingResolveApprovalSnapshot,
+) -> Option<PendingResolveApproval> {
+    if task_id == 0 || snapshot.task_version == 0 {
+        return None;
+    }
+    if snapshot.confirmations != 1 {
+        return None;
+    }
+    let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+    else {
+        return None;
+    };
+    let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set) else {
+        return None;
+    };
+    if !authority_canonical
+        .split(',')
+        .any(|member| member == first_approver_canonical)
+    {
+        return None;
+    }
+    if !is_effective_resolve_authority_match(st, &snapshot.authority_set) {
+        return None;
+    }
+    let Some(task) = st.get_task(task_id) else {
+        return None;
+    };
+    if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+        return None;
+    }
+
+    Some(PendingResolveApproval {
+        slash_worker: snapshot.slash_worker,
+        confirmations: snapshot.confirmations,
+        first_approver: first_approver_canonical,
+        authority_set: authority_canonical,
+        task_version: snapshot.task_version,
+    })
+}
+
 fn is_sensitive_gov_param(key: &str) -> bool {
     GOV_SENSITIVE_KEYS.contains(&key)
 }
@@ -693,45 +736,12 @@ impl StateStore {
         let Some(snapshot) = snapshot else {
             return;
         };
-        if task_id == 0 || snapshot.task_version == 0 {
-            return;
-        }
-        if snapshot.confirmations != 1 {
-            return;
-        }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        let Some(snapshot) = validated_restorable_pending_resolve_snapshot(self, task_id, snapshot)
         else {
             return;
         };
-        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
-        else {
-            return;
-        };
-        if !authority_canonical
-            .split(',')
-            .any(|member| member == first_approver_canonical)
-        {
-            return;
-        }
-        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
-            return;
-        }
-        if let Some(task) = self.get_task(task_id) {
-            if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-                return;
-            }
-        }
 
-        self.pending_resolve_approvals.insert(
-            task_id,
-            PendingResolveApproval {
-                slash_worker: snapshot.slash_worker,
-                confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
-                task_version: snapshot.task_version,
-            },
-        );
+        self.pending_resolve_approvals.insert(task_id, snapshot);
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
