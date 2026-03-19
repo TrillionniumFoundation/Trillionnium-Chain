@@ -237,6 +237,26 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     }
     Ok(())
 }
+
+fn validate_governance_key_registration(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!("governance key not allowed: {}", key));
+    }
+    validate_governance_key_id(key, key_id)?;
+    if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
+        if existing_key_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                key, existing_key_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -1073,18 +1093,7 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        validate_governance_key_id(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_governance_key_registration(&self.gov_param_key_index, &key, key_id)?;
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -1146,18 +1155,7 @@ impl StateStore {
         value: String,
         action: GovPendingUpdateAction,
     ) -> Result<GovParamUpdateOutcome, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        validate_governance_key_id(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_governance_key_registration(&self.gov_param_key_index, &key, key_id)?;
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
@@ -3554,6 +3552,43 @@ mod tests {
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_key_id_fail_closed_error_stays_aligned_across_write_entrypoints() {
+        // REF03 guard: the pinned emergency_pause key id must come from one shared gate so
+        // unchecked, checked, and replace entrypoints all fail closed with the same boundary.
+        let mut unchecked = StateStore::new();
+        let mut checked = StateStore::new();
+        let mut replace = StateStore::new();
+
+        let unchecked_err = unchecked
+            .set_gov_param_unchecked(8_000, "emergency_pause".into(), "true".into())
+            .expect_err("unchecked non-canonical emergency_pause key_id must be rejected");
+        let checked_err = checked
+            .set_gov_param(8_052, 8_000, "emergency_pause".into(), "true".into())
+            .expect_err("checked non-canonical emergency_pause key_id must be rejected");
+        let replace_err = replace
+            .set_gov_param_with_action(
+                8_053,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace non-canonical emergency_pause key_id must be rejected");
+
+        for err in [&unchecked_err, &checked_err, &replace_err] {
+            assert!(
+                err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+                "{err}"
+            );
+        }
+        assert!(!unchecked.is_emergency_paused());
+        assert!(!checked.is_emergency_paused());
+        assert!(!replace.is_emergency_paused());
+        assert!(checked.pending_gov_update("emergency_pause").is_none());
+        assert!(replace.pending_gov_update("emergency_pause").is_none());
     }
 
     #[test]
