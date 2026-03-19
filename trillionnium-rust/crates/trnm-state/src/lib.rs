@@ -733,8 +733,6 @@ impl StateStore {
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
-        self.invalidate_state_root_cache();
-
         let existing_is_non_task = self
             .objects
             .get(&id)
@@ -747,9 +745,12 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.task_id != id || task.version == 0 {
-                    self.objects.remove(&id);
+                    if self.objects.remove(&id).is_some() {
+                        self.invalidate_state_root_cache();
+                    }
                     return;
                 }
+                self.invalidate_state_root_cache();
                 self.objects.insert(
                     id,
                     VersionedObject {
@@ -759,7 +760,9 @@ impl StateStore {
                 );
             }
             None => {
-                self.objects.remove(&id);
+                if self.objects.remove(&id).is_some() {
+                    self.invalidate_state_root_cache();
+                }
             }
         }
     }
@@ -2063,6 +2066,48 @@ mod tests {
             st.state_root(),
             root_before,
             "rejected cross-type restore must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_mismatched_snapshot_without_perturbing_state_root() {
+        let mut st = StateStore::new();
+        let root_before = st.state_root();
+
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 18,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.get_task(17).is_none(),
+            "restore must reject mismatched task snapshots"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejected mismatched restore must leave state_root unchanged"
         );
     }
 
