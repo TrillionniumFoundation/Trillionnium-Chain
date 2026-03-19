@@ -43,6 +43,10 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
+                if task.task_id != id {
+                    self.objects.remove(&id);
+                    return;
+                }
                 self.objects.insert(
                     id,
                     VersionedObject {
