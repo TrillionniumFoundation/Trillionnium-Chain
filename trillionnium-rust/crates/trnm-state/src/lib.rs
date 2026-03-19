@@ -707,8 +707,6 @@ impl StateStore {
         else {
             return;
         };
-        let snapshot_first_approver = snapshot.first_approver.clone();
-        let snapshot_authority_set = snapshot.authority_set.clone();
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
@@ -736,8 +734,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot_first_approver,
-                authority_set: snapshot_authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -2866,6 +2864,51 @@ mod tests {
             st.state_root(),
             baseline,
             "restore must materialize a canonical pending approval snapshot even without a backing challenged task object"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_normalizes_canonical_identity_for_state_root() {
+        let mut restored = StateStore::new();
+        restored.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 3,
+            }),
+        );
+
+        let mut canonical = StateStore::new();
+        canonical.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_first_approver(9_901),
+            Some("authority-a".to_string()),
+            "restore should store the canonical approver token"
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(9_901)
+                .map(|snapshot| snapshot.authority_set),
+            Some("authority-a,authority-b".to_string()),
+            "restore should store the canonical authority-set ordering"
+        );
+        assert_eq!(
+            restored.state_root(),
+            canonical.state_root(),
+            "restore must normalize canonical-equivalent snapshots to the same pending-approval state root"
         );
     }
 
