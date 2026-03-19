@@ -707,6 +707,8 @@ impl StateStore {
         else {
             return;
         };
+        let snapshot_first_approver = snapshot.first_approver.clone();
+        let snapshot_authority_set = snapshot.authority_set.clone();
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
@@ -734,8 +736,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
+                first_approver: snapshot_first_approver,
+                authority_set: snapshot_authority_set,
                 task_version: snapshot.task_version,
             },
         );
