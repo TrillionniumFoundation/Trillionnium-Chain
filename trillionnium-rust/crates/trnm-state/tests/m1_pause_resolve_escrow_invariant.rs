@@ -4553,6 +4553,59 @@ fn paused_state_rejects_zero_task_id_resolve_approval_without_side_effects() {
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_task_boundary() {
+    // M1 micro-hardening: paused rollback/restore must fail closed when no challenged task
+    // exists, so WAL/snapshot replay cannot revive pending resolve quorum against a missing task.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_029);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_011);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 511);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(
+        9_928,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval_snapshot(9_928), None);
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "scrubbing missing-task restore input must not perturb paused custody or quorum state"
+    );
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_id_boundary() {
     // M1 micro-hardening: paused rollback/restore must also fail closed on task-id zero so
     // malformed snapshots cannot revive pending resolve quorum outside a real challenged task.
