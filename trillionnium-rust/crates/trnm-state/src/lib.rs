@@ -716,6 +716,16 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
             return;
         }
+        if self.is_emergency_paused()
+            && !matches!(
+                self.get_task(task_id),
+                Some(task)
+                    if task.status == TaskStatus::Challenged
+                        && task.version == snapshot.task_version
+            )
+        {
+            return;
+        }
 
         self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
