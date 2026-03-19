@@ -517,7 +517,13 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
 }
 
 fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
-    if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!(
+            "governance validator coverage requested for non-whitelisted key: {}",
+            key
+        ));
+    }
+    if !has_explicit_gov_param_validator(key) {
         return Err(format!(
             "governance validator coverage missing for allowed key: {}",
             key
@@ -4409,8 +4415,12 @@ mod tests {
                 .expect("allowed governance key must remain covered by an explicit validator");
         }
 
-        validate_governance_validator_coverage("not_whitelisted")
-            .expect("non-whitelisted keys are rejected by registration, not validator coverage");
+        let err = validate_governance_validator_coverage("not_whitelisted")
+            .expect_err("validator coverage helper must fail closed for non-whitelisted keys");
+        assert!(
+            err.contains("non-whitelisted key"),
+            "unexpected validator coverage error for non-whitelisted key: {err}"
+        );
     }
 
     #[test]
