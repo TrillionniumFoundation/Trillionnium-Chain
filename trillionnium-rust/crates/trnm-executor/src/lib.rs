@@ -1593,6 +1593,29 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_small_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![11, 22, 33, 44, 55, 66, 77, 88];
+
+        let keys = read_domain_only_keys(
+            &[
+                o(22),
+                o(5),
+                o(44),
+                o(5),
+                o(99),
+                o(77),
+                o(99),
+                o(123),
+            ],
+            &write_keys,
+        );
+
+        // The small write-domain fast path should filter shared objects without
+        // disturbing first-seen ordering for surviving read-only keys.
+        assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
     fn read_domain_only_keys_large_write_domain_preserves_read_order_after_filtering() {
         let write_keys = vec![100, 200, 300, 400, 500, 600, 700, 800, 900, 1_000];
 
