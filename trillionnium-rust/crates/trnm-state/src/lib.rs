@@ -3218,6 +3218,38 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_scrubs_zero_identity_inputs() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            0,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(0), None);
+        assert_eq!(st.state_root(), baseline);
+
+        st.restore_pending_resolve_approval(
+            9_903,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 0,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_903), None);
+        assert_eq!(st.state_root(), baseline);
+    }
+
+    #[test]
     fn resolve_approval_clears_stale_stage_on_authority_set_rotation() {
         let mut st = StateStore::new();
 
