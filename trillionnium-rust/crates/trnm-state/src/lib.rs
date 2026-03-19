@@ -1499,12 +1499,19 @@ impl StateStore {
                     .any(|(existing_key, &existing_key_id)| {
                         existing_key != key && existing_key_id == snapshot.key_id
                     });
+                let pending_key_id_collision = self
+                    .pending_gov_updates
+                    .iter()
+                    .any(|(existing_key, existing_pending)| {
+                        existing_key != key && existing_pending.key_id == snapshot.key_id
+                    });
                 if snapshot.key != key
                     || !GOV_ALLOWED_KEYS.contains(&key)
                     || !is_sensitive_gov_param(key)
                     || validate_governance_key_id(key, snapshot.key_id).is_err()
                     || key_id_mismatch
                     || foreign_key_id_collision
+                    || pending_key_id_collision
                     || validate_gov_param_value(key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);
@@ -2841,6 +2848,51 @@ mod tests {
         assert!(
             err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
             "{err}"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_cross_key_pending_key_id_collision_fail_closed() {
+        let mut st = StateStore::new();
+
+        let shared_key_id = 7_310;
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 1_200,
+            }),
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("resolve_authority snapshot should restore")
+                .key_id,
+            shared_key_id
+        );
+
+        st.restore_pending_gov_update(
+            "monetary_base_issuance_per_tick",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "monetary_base_issuance_per_tick".into(),
+                value: "42".into(),
+                activate_at_height: 1_250,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("original pending update must remain intact")
+                .key_id,
+            shared_key_id
+        );
+        assert_eq!(
+            st.pending_gov_update("monetary_base_issuance_per_tick"),
+            None,
+            "restore path must reject cross-key pending key-id reuse fail-closed"
         );
     }
 
