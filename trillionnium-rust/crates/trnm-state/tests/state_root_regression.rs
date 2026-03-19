@@ -2639,6 +2639,37 @@ fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
 }
 
 #[test]
+fn restore_gov_param_rejects_noncanonical_emergency_pause_key_id_without_aliasing_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_gov_param(
+        7_998,
+        Some(GovParamObject {
+            key_id: 7_998,
+            key: "emergency_pause".to_string(),
+            value: "true".to_string(),
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_param(7_998).is_none(),
+        "restore must fail closed when emergency_pause arrives through a non-canonical key id"
+    );
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        None,
+        "non-canonical emergency_pause restore must not alias into the canonical governance key registry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting a non-canonical emergency_pause restore must preserve the baseline deterministic root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();

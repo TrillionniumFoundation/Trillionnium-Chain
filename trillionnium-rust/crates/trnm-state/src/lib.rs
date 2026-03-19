@@ -863,19 +863,19 @@ impl StateStore {
                     self.objects.remove(&key_id);
                     return;
                 }
-                if validate_governance_key_id(&snapshot.key, key_id).is_err() {
+                if validate_governance_key_registration(
+                    &self.gov_param_key_index,
+                    &snapshot.key,
+                    key_id,
+                )
+                .is_err()
+                {
                     self.objects.remove(&key_id);
                     return;
                 }
                 if validate_gov_param_value(&snapshot.key, &snapshot.value).is_err() {
                     self.objects.remove(&key_id);
                     return;
-                }
-                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
-                    if existing_id != key_id {
-                        self.objects.remove(&key_id);
-                        return;
-                    }
                 }
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
