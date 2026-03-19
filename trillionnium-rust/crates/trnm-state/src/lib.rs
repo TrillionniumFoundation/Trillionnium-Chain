@@ -734,7 +734,6 @@ impl StateStore {
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
-        self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
                 if task.task_id != id || task.version == 0 {
@@ -1976,6 +1975,60 @@ mod tests {
         assert!(
             st.get_ref(17).is_none(),
             "restore must not create an object ref for zero-version governance param snapshots"
+        );
+    }
+
+    #[test]
+    fn restore_task_does_not_clear_unrelated_gov_param_key_index_on_id_collision() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 17,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 17,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_key_index
+                .get("monetary_base_burn_per_tick")
+                .copied(),
+            Some(17),
+            "task restore must not clear unrelated governance key-index entries when ids collide"
+        );
+        assert_ne!(
+            st.state_root(),
+            root_before,
+            "adding a task may change state root, but must preserve the governance key-index contribution"
         );
     }
 
