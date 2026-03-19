@@ -824,7 +824,9 @@ impl StateStore {
                 );
             }
             None => {
-                if self.objects.contains_key(&key_id) {
+                let had_object = self.objects.contains_key(&key_id);
+                let had_index = self.gov_param_key_index.values().any(|mapped_id| *mapped_id == key_id);
+                if had_object || had_index {
                     self.invalidate_state_root_cache();
                 }
                 self.remove_gov_param_key_index_for_id(key_id);
@@ -2437,6 +2439,32 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_none_invalidates_cached_state_root_when_clearing_stale_key_index() {
+        let mut st = StateStore::new();
+        let empty_root = st.state_root();
+
+        st.gov_param_key_index.insert("max_block_ms".into(), 77);
+        st.invalidate_state_root_cache();
+        let indexed_root = st.state_root();
+        assert_ne!(
+            indexed_root, empty_root,
+            "state_root must account for governance key-index residue even before a backing object is present"
+        );
+
+        st.restore_gov_param(77, None);
+
+        assert_eq!(
+            st.state_root(),
+            empty_root,
+            "restore_gov_param(None) must invalidate the cached state_root when it clears stale key-index residue"
+        );
+        assert!(
+            st.gov_param_key_index.is_empty(),
+            "restore_gov_param(None) should remove the stale governance key-index entry"
         );
     }
 
