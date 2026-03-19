@@ -249,6 +249,15 @@ fn append_unique_keys(keys: &mut Vec<u64>, objs: &[ObjectRef]) {
 }
 
 #[inline]
+fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64> {
+    let mut keys = dedup_access_keys(read_set);
+    if !keys.is_empty() && !write_keys.is_empty() {
+        keys.retain(|key| !write_keys.contains(key));
+    }
+    keys
+}
+
+#[inline]
 fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
     // Keep telemetry/object-domain reporting aligned with scheduler hotspot
     // selection: writes carry the stronger conflict signal, while reads extend the
@@ -379,8 +388,8 @@ pub fn build_parallel_groups_profile_with_strategy(
         let mut required_group = 0usize;
 
         // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
-        let read_keys = dedup_access_keys(&tx.read_set);
         let write_keys = dedup_access_keys(&tx.write_set);
+        let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
 
         // read conflicts with previous writers on the same object
         for key in &read_keys {
@@ -468,8 +477,8 @@ fn build_parallel_groups_aggressive_profile(
         let mut conflict_hits = 0usize;
 
         for tx in ordered {
-            let read_keys = dedup_access_keys(&tx.read_set);
             let write_keys = dedup_access_keys(&tx.write_set);
+            let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
 
             let mut min_group = 0usize;
             for key in &read_keys {
@@ -564,8 +573,8 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let read_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").read_set);
         let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
+        let read_keys = read_domain_only_keys(&tx_slot.as_ref().expect("tx must exist").read_set, &write_keys);
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
@@ -1584,6 +1593,25 @@ mod tests {
 
         assert_eq!(keys, vec![7, 9, 30, 40, 50]);
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn overlapping_read_write_domains_do_not_double_count_shared_object_conflicts() {
+        let txs = vec![
+            tx(1, vec![o(7)], vec![o(7)]),
+            tx(2, vec![], vec![o(7)]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1]);
+        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![2]);
+        // The first tx still pays its normal write-domain probes, but the shared
+        // read/write key should not be recorded twice and inflate later hit counts.
+        assert_eq!(profile.conflict_checks, 4);
+        assert_eq!(profile.conflict_hits, 1);
     }
 
     #[test]
