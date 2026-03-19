@@ -287,6 +287,10 @@ impl AdmissionGate {
             // As soon as all known retries are drained, release any stale fairness reservations
             // so newly arriving free-ingress traffic is not pointlessly deferred.
             self.retry_reservations = 0;
+            // Also drop stale retry FIFO markers immediately instead of waiting for the next
+            // admit()/pop_ready() boundary. This keeps retry bookkeeping cold after the last
+            // recovered retry is accepted during low-churn recovery windows.
+            self.backpressured_fifo.clear();
         }
         // Keep fairness marker until the next dequeue boundary. This preserves
         // idempotency for a just-deferred id when the queue re-saturates before
@@ -1007,6 +1011,27 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 0);
+    }
+
+    #[test]
+    fn admitting_last_known_retry_clears_stale_retry_fifo_markers_immediately() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Simulate restored/churned runtime state where stale FIFO markers survived
+        // around the one real retry id.
+        gate.backpressured_fifo.extend([9, 42, 9, 43]);
+        assert!(!gate.backpressured_fifo.is_empty());
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+        assert!(gate.backpressured_ids.is_empty());
+        assert!(gate.backpressured_fifo.is_empty());
+        assert_eq!(gate.retry_reservations, 0);
     }
 
     #[test]
