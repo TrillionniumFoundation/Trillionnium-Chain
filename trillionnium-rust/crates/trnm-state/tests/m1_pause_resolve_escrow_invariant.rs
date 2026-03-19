@@ -3181,6 +3181,61 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authori
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_governance_authority_boundary() {
+    // REF05 micro-hardening: restore must fail closed when snapshot metadata references a
+    // resolve authority set but governance has no configured or pending authority to anchor it.
+    // Audit-proof snapshots cannot be treated as self-authenticating authority metadata.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_929,
+        Some(TaskObject {
+            task_id: 9_929,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_929,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_929), None);
+    assert_eq!(st.pending_resolve_first_approver(9_929), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_929), None);
+    assert_eq!(st.gov_param_string("resolve_authority"), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority(
 ) {
     // M1 micro-hardening: paused rollback/restore must accept semantically identical

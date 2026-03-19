@@ -373,6 +373,11 @@ fn validated_restorable_pending_resolve_snapshot(
     {
         return None;
     }
+    if st.pending_gov_update("resolve_authority").is_none()
+        && st.gov_param_string("resolve_authority").is_none()
+    {
+        return None;
+    }
     if !is_effective_resolve_authority_match(st, &snapshot.authority_set) {
         return None;
     }
