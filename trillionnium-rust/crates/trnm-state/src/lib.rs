@@ -218,6 +218,25 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "resolve_authority",
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    match key {
+        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
+        _ => None,
+    }
+}
+
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id(key) {
+        if key_id != expected_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -1049,12 +1068,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -1127,12 +1141,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -4245,6 +4254,31 @@ mod tests {
                 key,
                 err
             );
+        }
+    }
+
+    #[test]
+    fn governance_pinned_key_ids_merge_gate_is_explicit() {
+        let expected_pinned = [("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+
+        for key in GOV_ALLOWED_KEYS {
+            let pinned = governance_pinned_key_id(key);
+            let expected = expected_pinned
+                .iter()
+                .find_map(|(expected_key, expected_id)| (*expected_key == *key).then_some(*expected_id));
+            assert_eq!(
+                pinned, expected,
+                "governance pinned key-id map changed; update merge gate for key: {}",
+                key
+            );
+        }
+
+        for (key, expected_id) in expected_pinned {
+            let err = validate_governance_key_id(key, expected_id + 1)
+                .expect_err("mismatched pinned governance key id must be rejected");
+            assert!(err.contains("governance key id mismatch for"), "{err}");
+            validate_governance_key_id(key, expected_id)
+                .expect("canonical pinned governance key id must remain accepted");
         }
     }
 
