@@ -372,6 +372,37 @@ fn insertion_order_of_applied_gov_params_keeps_state_root_deterministic() {
 }
 
 #[test]
+fn applied_gov_param_embedded_key_id_must_affect_state_root_even_when_slot_key_and_value_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+    state_b.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 115,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "applied governance embedded key_id must contribute to state_root so malformed restore snapshots cannot alias a canonical applied slot"
+    );
+}
+
+#[test]
 fn applied_gov_param_version_must_affect_state_root_even_when_key_and_value_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -1989,6 +2020,58 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
         state_b.state_root(),
         root_a,
         "restoring the original staged snapshot should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 0,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_eq!(state_b.pending_resolve_approval(5_151), None);
+    assert_ne!(
+        root_a, root_b,
+        "zero-confirmation restore snapshots must scrub instead of materializing an incomplete pending resolve quorum"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original staged snapshot should rewind the deterministic root exactly after scrubbing an incomplete snapshot"
     );
 }
 

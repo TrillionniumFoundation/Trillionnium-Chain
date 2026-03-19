@@ -219,6 +219,7 @@ impl StateStore {
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
+                    hash_u64(&mut hasher, p.key_id);
                     hash_str(&mut hasher, &p.key);
                     hash_str(&mut hasher, &p.value);
                     hash_u64(&mut hasher, p.version);
