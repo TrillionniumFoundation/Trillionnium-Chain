@@ -1,6 +1,9 @@
 use super::governance::{is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_SENSITIVE_KEYS};
 use super::*;
-use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
+use trnm_types::{
+    GovProposalObject, GovProposalStatus, ProofType, TaskMetadata, TaskMeteringSnapshot,
+    TaskObject, TaskStatus,
+};
 
 #[test]
 fn put_and_version_update() {
@@ -34,6 +37,76 @@ fn put_and_version_update() {
     t2.status = TaskStatus::Assigned;
     let r2 = st.update_task(r1, t2).unwrap();
     assert_eq!(r2.version, 2);
+}
+
+#[test]
+fn task_metering_snapshot_affects_state_root() {
+    let mut without_metering = StateStore::new();
+    let mut with_metering = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 404,
+        creator: "alice".into(),
+        bounty: 25,
+        status: TaskStatus::Completed,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(40),
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 2,
+    };
+
+    let mut metered_task = base_task.clone();
+    metered_task.metadata = Some(TaskMetadata {
+        note: Some("metered task".into()),
+        task_type: Some("inference".into()),
+        input_hash: Some("ab".repeat(32)),
+        model: None,
+        provenance: None,
+        metering: Some(TaskMeteringSnapshot {
+            workload_class: "llm_inference".into(),
+            metering_schema: "llm_token_meter_v1".into(),
+            policy_snapshot_version: 2,
+            receipt_hash: "cd".repeat(32),
+            prompt_tokens: 144,
+            generated_tokens: 55,
+            decode_steps: 13,
+            kv_bytes_moved: 4096,
+            normalized_work_units: 987,
+            prompt_token_weight: 3,
+            generated_token_weight: 5,
+            decode_step_weight: 7,
+            kv_byte_weight: 11,
+            min_accept_work_units: 100,
+            challenge_success_bounty_base: 17,
+            challenge_success_bounty_per_work_unit_num: 19,
+            challenge_success_bounty_per_work_unit_den: 23,
+            worker_completion_bonus_per_work_unit_num: 29,
+            worker_completion_bonus_per_work_unit_den: 31,
+            worker_slash_rebate_per_work_unit_num: 37,
+            worker_slash_rebate_per_work_unit_den: 41,
+        }),
+    });
+
+    without_metering.put_task_new(base_task).unwrap();
+    with_metering.put_task_new(metered_task).unwrap();
+
+    assert_ne!(
+        without_metering.state_root(),
+        with_metering.state_root(),
+        "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+    );
 }
 
 #[test]
@@ -2683,6 +2756,32 @@ fn wal_checkpoint_verification_stops_before_uncommitted_tail() {
         .expect("checkpoint");
     assert_eq!(got.height, 1);
     assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_content_hash_length_frames_variable_metadata_fields() {
+    let a = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "ab".into(),
+        committed: true,
+        state_root_hex: "c".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+    let b = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "a".into(),
+        committed: true,
+        state_root_hex: "bc".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+
+    assert_ne!(
+        a.content_hash_hex(),
+        b.content_hash_hex(),
+        "wal content hash must length-frame proposal and state-root metadata so proof material cannot collide across field boundaries"
+    );
 }
 
 #[test]
