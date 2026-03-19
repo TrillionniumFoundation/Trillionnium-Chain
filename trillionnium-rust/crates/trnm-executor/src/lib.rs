@@ -255,22 +255,24 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
     }
 
     // Keep object-scoped access domains deterministic while avoiding quadratic
-    // write-key probes once shared domains become large.
-    if write_keys.len() <= 8 {
-        let mut write_domain: Vec<u64> = Vec::with_capacity(write_keys.len());
-        for key in write_keys {
-            if !write_domain.contains(key) {
-                write_domain.push(*key);
+    // write-key probes once shared domains become large. Duplicate-heavy callers
+    // can still have a tiny effective write domain even when the raw slice is
+    // longer than the small-path threshold, so probe unique keys first before
+    // paying for a HashSet allocation.
+    let mut write_domain: Vec<u64> = Vec::with_capacity(write_keys.len().min(8));
+    for key in write_keys {
+        if !write_domain.contains(key) {
+            if write_domain.len() == 8 {
+                let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
+                return keys
+                    .into_iter()
+                    .filter(|read_key| !write_domain.contains(read_key))
+                    .collect();
             }
+            write_domain.push(*key);
         }
-
-        return keys
-            .into_iter()
-            .filter(|key| !write_domain.contains(key))
-            .collect();
     }
 
-    let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
     keys.into_iter()
         .filter(|key| !write_domain.contains(key))
         .collect()
@@ -1660,6 +1662,20 @@ mod tests {
 
         // Small-domain filtering should stay deterministic even if the caller
         // hands us duplicate write keys from a shared-object scope.
+        assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_large_duplicate_write_domain_preserves_shared_filtering() {
+        let write_keys = vec![11, 22, 22, 33, 44, 44, 55, 66, 66, 55, 44, 33];
+
+        let keys = read_domain_only_keys(
+            &[o(22), o(5), o(44), o(5), o(99), o(66), o(123), o(11)],
+            &write_keys,
+        );
+
+        // Duplicate-heavy callers should stay on the deterministic small-domain
+        // path when the effective shared-object scope is still tiny.
         assert_eq!(keys, vec![5, 99, 123]);
     }
 
