@@ -742,7 +742,18 @@ impl StateStore {
             Some(task) => {
                 if task.task_id != id {
                     self.objects.remove(&id);
+                    self.pending_resolve_approvals.remove(&id);
                     return;
+                }
+                if self
+                    .pending_resolve_approvals
+                    .get(&id)
+                    .map(|pending| {
+                        task.status != TaskStatus::Challenged || pending.task_version != task.version
+                    })
+                    .unwrap_or(false)
+                {
+                    self.pending_resolve_approvals.remove(&id);
                 }
                 self.objects.insert(
                     id,
@@ -754,6 +765,7 @@ impl StateStore {
             }
             None => {
                 self.objects.remove(&id);
+                self.pending_resolve_approvals.remove(&id);
             }
         }
     }
@@ -4688,6 +4700,42 @@ mod tests {
         assert!(
             wrong_status.pending_resolve_approval_snapshot(501).is_none(),
             "restore must reject pending resolve snapshots for tasks that are no longer challenged"
+        );
+
+        let mut stale_cleanup = StateStore::new();
+        stale_cleanup
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        stale_cleanup.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            stale_cleanup.pending_resolve_approval_snapshot(501).is_some(),
+            "setup must restore a matching challenged pending resolve snapshot before cleanup"
+        );
+        stale_cleanup.restore_task(501, None);
+        assert!(
+            stale_cleanup.pending_resolve_approval_snapshot(501).is_none(),
+            "task restore removal must scrub stale pending resolve snapshots for snapshot completeness"
         );
 
         let mut wrong_version = StateStore::new();
