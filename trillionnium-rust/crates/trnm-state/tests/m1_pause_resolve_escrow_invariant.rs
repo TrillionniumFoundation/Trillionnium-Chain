@@ -14,15 +14,11 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
         .expect("bootstrap resolve_authority write should succeed");
     st.set_gov_param(98_350, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
         .expect("bootstrap resolve_authority should apply after timelock");
-    st.set_gov_param(98_351, 7_999, "emergency_pause".into(), "true".into())
-        .expect("emergency pause should enable successfully");
-    assert!(st.is_emergency_paused());
-
     st.put_task_new(TaskObject {
         task_id: 9_937,
         creator: "alice".into(),
         bounty: 10,
-        status: TaskStatus::Open,
+        status: TaskStatus::Challenged,
         proof_type: Default::default(),
         metadata: None,
         worker: None,
@@ -40,7 +36,52 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
         challenge_bond_forfeited: None,
         version: 7,
     })
-    .expect("non-challenged task should exist before restore attempt");
+    .expect("challenged task should exist before staging pending quorum");
+    let task_version = st
+        .get_task(9_937)
+        .expect("challenged task should be queryable after insertion")
+        .version;
+    st.stage_or_confirm_resolve_approval(
+        9_937,
+        task_version,
+        true,
+        "authority-a",
+        "authority-a,authority-b",
+    )
+    .expect("paused challenged task should allow staging pending quorum");
+    assert_eq!(task_version, 1, "newly inserted task should start at version 1");
+    assert_eq!(st.pending_resolve_approval(9_937), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    st.set_gov_param(98_351, 7_999, "emergency_pause".into(), "true".into())
+        .expect("emergency pause should enable successfully");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_937,
+        Some(TaskObject {
+            task_id: 9_937,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: task_version,
+        }),
+    );
 
     st.restore_pending_resolve_approval(
         9_937,
@@ -49,13 +90,18 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
             confirmations: 1,
             first_approver: "authority-a".into(),
             authority_set: "authority-a,authority-b".into(),
-            task_version: 7,
+            task_version,
         }),
     );
 
     assert_eq!(st.pending_resolve_approval(9_937), None);
     assert_eq!(st.pending_resolve_first_approver(9_937), None);
     assert_eq!(st.pending_resolve_approval_snapshot(9_937), None);
+    assert_ne!(
+        st.state_root(),
+        root_with_pending,
+        "scrubbing stale pending resolve approvals must invalidate cached state root"
+    );
     assert!(st.pending_gov_update("resolve_authority").is_none());
     assert!(st.is_emergency_paused());
 }

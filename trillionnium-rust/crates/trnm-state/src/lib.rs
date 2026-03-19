@@ -688,35 +688,45 @@ impl StateStore {
         task_id: u64,
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
-        let Some(snapshot) = snapshot else {
-            if self.pending_resolve_approvals.remove(&task_id).is_some() {
-                self.invalidate_state_root_cache();
+        fn scrub_pending(st: &mut StateStore, task_id: u64) {
+            if st.pending_resolve_approvals.remove(&task_id).is_some() {
+                st.invalidate_state_root_cache();
             }
+        }
+
+        let Some(snapshot) = snapshot else {
+            scrub_pending(self, task_id);
             return;
         };
         if task_id == 0 || snapshot.task_version == 0 {
+            scrub_pending(self, task_id);
             return;
         }
         if snapshot.confirmations != 1 {
+            scrub_pending(self, task_id);
             return;
         }
         let first_approver_audit = snapshot.first_approver.trim().to_string();
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
+            scrub_pending(self, task_id);
             return;
         };
         let authority_audit = snapshot.authority_set.clone();
         let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
         else {
+            scrub_pending(self, task_id);
             return;
         };
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
         {
+            scrub_pending(self, task_id);
             return;
         }
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
+            scrub_pending(self, task_id);
             return;
         }
         if self.is_emergency_paused()
@@ -727,6 +737,7 @@ impl StateStore {
                         && task.version == snapshot.task_version
             )
         {
+            scrub_pending(self, task_id);
             return;
         }
 
@@ -2948,7 +2959,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_rejects_invalid_replacement_without_clobbering_existing_state() {
+    fn restore_pending_resolve_approval_scrubs_invalid_replacement_from_existing_state() {
         let mut st = StateStore::new();
         st.restore_task(
             9_901,
@@ -2998,16 +3009,16 @@ mod tests {
             }),
         );
 
-        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
+        assert_eq!(st.pending_resolve_approval(9_901), None);
         assert_eq!(
             st.pending_resolve_first_approver(9_901),
-            Some("authority-a".to_string()),
-            "invalid restore snapshot must not clobber the existing staged approver"
+            None,
+            "invalid restore snapshot must scrub the existing staged approver"
         );
-        assert_eq!(
+        assert_ne!(
             st.state_root(),
             root_before,
-            "invalid restore snapshot must not perturb the existing pending-approval state root"
+            "invalid restore snapshot must invalidate the pending-approval state root"
         );
     }
 
