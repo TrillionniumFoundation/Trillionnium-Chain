@@ -123,7 +123,44 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+fn has_explicit_gov_param_validator(key: &str) -> bool {
+    matches!(
+        key,
+        "max_block_ms"
+            | "max_parallel_workers"
+            | "challenge_window_blocks"
+            | "min_worker_stake"
+            | "challenge_min_bond"
+            | "challenge_success_bounty"
+            | "challenge_min_bond_bounty_bps"
+            | "challenge_min_bond_worker_stake_bps"
+            | "llm_meter_prompt_token_weight"
+            | "llm_meter_generated_token_weight"
+            | "llm_meter_decode_step_weight"
+            | "llm_meter_kv_byte_weight"
+            | "llm_meter_min_accept_work_units"
+            | "llm_meter_challenge_success_bounty_per_work_unit_num"
+            | "llm_meter_challenge_success_bounty_per_work_unit_den"
+            | "llm_meter_worker_completion_bonus_per_work_unit_num"
+            | "llm_meter_worker_completion_bonus_per_work_unit_den"
+            | "llm_meter_worker_slash_rebate_per_work_unit_num"
+            | "llm_meter_worker_slash_rebate_per_work_unit_den"
+            | "resolve_authority"
+            | "emergency_pause"
+            | "monetary_policy_tick_interval_blocks"
+            | "monetary_policy_tick_cooldown_blocks"
+            | "monetary_base_issuance_per_tick"
+            | "monetary_base_burn_per_tick"
+    )
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    debug_assert!(
+        !GOV_ALLOWED_KEYS.contains(&key) || has_explicit_gov_param_validator(key),
+        "allowed governance key missing explicit validator: {}",
+        key
+    );
+
     match key {
         "max_block_ms" => {
             let _ = parse_u64_in_range(key, value, 10, 120_000)?;
@@ -648,6 +685,31 @@ impl StateStore {
         match &object.value {
             ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
             _ => None,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{has_explicit_gov_param_validator, validate_gov_param_value, GOV_ALLOWED_KEYS};
+
+    #[test]
+    fn governance_allowed_keys_have_explicit_value_validators() {
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                has_explicit_gov_param_validator(key),
+                "allowed governance key missing explicit validator: {}",
+                key
+            );
+
+            let err = validate_gov_param_value(key, "__merge_gate_invalid_sample__")
+                .expect_err("invalid sample should be rejected fail-closed");
+            assert!(
+                !err.contains("no explicit validator registered"),
+                "allowed governance key fell through explicit validator registry: {} => {}",
+                key,
+                err
+            );
         }
     }
 }
