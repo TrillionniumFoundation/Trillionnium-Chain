@@ -776,7 +776,13 @@ impl StateStore {
                 );
             }
             None => {
-                let removed_task = self.objects.remove(&id).is_some();
+                let removed_task = matches!(
+                    self.objects.get(&id),
+                    Some(VersionedObject {
+                        value: ObjectValue::Task(_),
+                        ..
+                    })
+                ) && self.objects.remove(&id).is_some();
                 let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
                 if removed_task || removed_pending {
                     self.invalidate_state_root_cache();
@@ -2198,6 +2204,49 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_none_preserves_cross_type_object_and_state_root() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 17,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_task(17, None);
+
+        assert!(
+            st.get_task(17).is_none(),
+            "task deletion on a cross-type id must not materialize a task"
+        );
+        assert_eq!(
+            st.get_param(17).map(|param| (param.key, param.value, param.version)),
+            Some((
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "task deletion must not remove a non-task object that shares the id"
+        );
+        assert_eq!(
+            st.gov_param_key_index
+                .get("monetary_base_burn_per_tick")
+                .copied(),
+            Some(17),
+            "cross-type task deletion must preserve governance key-index entries"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "cross-type task deletion must leave state_root unchanged"
         );
     }
 
