@@ -9,13 +9,11 @@ fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _ = fs::remove_file(&quarantine);
     std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-    fs::write(
-            &path,
-            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
+    let fixture = r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
 not-json
-"#,
-        )
-        .expect("write ingress fixture");
+"#;
+
+    fs::write(&path, fixture).expect("write ingress fixture");
 
     let records = load_ingress_records();
     assert_eq!(
@@ -38,6 +36,22 @@ not-json
     assert_eq!(entries[0]["line_number"], 2);
     assert_eq!(entries[0]["raw_line"], "not-json");
     assert_eq!(entries[0]["source_path"], path.display().to_string());
+
+    fs::write(&path, fixture).expect("rewrite ingress fixture with same malformed row");
+    let records_second = load_ingress_records();
+    assert_eq!(records_second.len(), 1, "salvage should remain stable on replay");
+
+    let quarantine_raw_second = fs::read_to_string(&quarantine).expect("read quarantine file again");
+    let entries_second: Vec<serde_json::Value> = quarantine_raw_second
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries_second.len(),
+        1,
+        "reintroduced malformed row should not amplify quarantine noise"
+    );
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);

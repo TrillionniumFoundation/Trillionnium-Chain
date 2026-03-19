@@ -36,11 +36,41 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
+
+    let mut seen = std::collections::HashSet::new();
+    if let Ok(existing_raw) = fs::read_to_string(&quarantine_path) {
+        for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
+            if let Ok(existing) = serde_json::from_str::<IngressQuarantineRecord>(line) {
+                seen.insert((
+                    existing.source_path,
+                    existing.line_number,
+                    existing.line_hash,
+                    existing.raw_line,
+                ));
+            }
+        }
+    }
+
+    let fresh: Vec<&IngressQuarantineRecord> = entries
+        .iter()
+        .filter(|entry| {
+            seen.insert((
+                entry.source_path.clone(),
+                entry.line_number,
+                entry.line_hash,
+                entry.raw_line.clone(),
+            ))
+        })
+        .collect();
+    if fresh.is_empty() {
+        return Ok(());
+    }
+
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(&quarantine_path)?;
-    for entry in entries {
+    for entry in fresh {
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
