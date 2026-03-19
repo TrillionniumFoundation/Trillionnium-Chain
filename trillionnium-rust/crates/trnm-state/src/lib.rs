@@ -217,6 +217,33 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
 ];
+const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
+    "max_block_ms",
+    "max_parallel_workers",
+    "challenge_window_blocks",
+    "min_worker_stake",
+    "challenge_min_bond",
+    "challenge_success_bounty",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
+    "resolve_authority",
+    "emergency_pause",
+    "monetary_policy_tick_interval_blocks",
+    "monetary_policy_tick_cooldown_blocks",
+    "monetary_base_issuance_per_tick",
+    "monetary_base_burn_per_tick",
+];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
@@ -251,35 +278,8 @@ fn validate_governance_registry_shape() -> Result<(), String> {
         return Err("governance sensitive-key registry contains duplicate entries".into());
     }
 
-    let validator_unique: std::collections::BTreeSet<&str> = [
-        "max_block_ms",
-        "max_parallel_workers",
-        "challenge_window_blocks",
-        "min_worker_stake",
-        "challenge_min_bond",
-        "challenge_success_bounty",
-        "challenge_min_bond_bounty_bps",
-        "challenge_min_bond_worker_stake_bps",
-        "llm_meter_prompt_token_weight",
-        "llm_meter_generated_token_weight",
-        "llm_meter_decode_step_weight",
-        "llm_meter_kv_byte_weight",
-        "llm_meter_min_accept_work_units",
-        "llm_meter_challenge_success_bounty_per_work_unit_num",
-        "llm_meter_challenge_success_bounty_per_work_unit_den",
-        "llm_meter_worker_completion_bonus_per_work_unit_num",
-        "llm_meter_worker_completion_bonus_per_work_unit_den",
-        "llm_meter_worker_slash_rebate_per_work_unit_num",
-        "llm_meter_worker_slash_rebate_per_work_unit_den",
-        "resolve_authority",
-        "emergency_pause",
-        "monetary_policy_tick_interval_blocks",
-        "monetary_policy_tick_cooldown_blocks",
-        "monetary_base_issuance_per_tick",
-        "monetary_base_burn_per_tick",
-    ]
-    .into_iter()
-    .collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_EXPLICIT_VALIDATOR_KEYS.iter().copied().collect();
 
     if validator_unique.len() != allowed_unique.len() {
         return Err("governance explicit-validator registry drifted from allowed-key registry".into());
@@ -513,34 +513,7 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
 }
 
 fn has_explicit_gov_param_validator(key: &str) -> bool {
-    matches!(
-        key,
-        "max_block_ms"
-            | "max_parallel_workers"
-            | "challenge_window_blocks"
-            | "min_worker_stake"
-            | "challenge_min_bond"
-            | "challenge_success_bounty"
-            | "challenge_min_bond_bounty_bps"
-            | "challenge_min_bond_worker_stake_bps"
-            | "llm_meter_prompt_token_weight"
-            | "llm_meter_generated_token_weight"
-            | "llm_meter_decode_step_weight"
-            | "llm_meter_kv_byte_weight"
-            | "llm_meter_min_accept_work_units"
-            | "llm_meter_challenge_success_bounty_per_work_unit_num"
-            | "llm_meter_challenge_success_bounty_per_work_unit_den"
-            | "llm_meter_worker_completion_bonus_per_work_unit_num"
-            | "llm_meter_worker_completion_bonus_per_work_unit_den"
-            | "llm_meter_worker_slash_rebate_per_work_unit_num"
-            | "llm_meter_worker_slash_rebate_per_work_unit_den"
-            | "resolve_authority"
-            | "emergency_pause"
-            | "monetary_policy_tick_interval_blocks"
-            | "monetary_policy_tick_cooldown_blocks"
-            | "monetary_base_issuance_per_tick"
-            | "monetary_base_burn_per_tick"
-    )
+    GOV_EXPLICIT_VALIDATOR_KEYS.contains(&key)
 }
 
 fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
@@ -4408,7 +4381,25 @@ mod tests {
 
     #[test]
     fn governance_validator_coverage_merge_gate_is_explicit() {
+        let validator_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALIDATOR_KEYS.iter().copied().collect();
+        assert_eq!(
+            validator_unique.len(),
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            "explicit validator-key registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit validator-key registry drifted from allowed governance-key registry"
+        );
+
         for key in GOV_ALLOWED_KEYS {
+            assert!(
+                validator_unique.contains(key),
+                "allowed governance key missing from explicit validator-key registry: {}",
+                key
+            );
             assert!(
                 has_explicit_gov_param_validator(key),
                 "allowed governance key missing explicit validator: {}",
