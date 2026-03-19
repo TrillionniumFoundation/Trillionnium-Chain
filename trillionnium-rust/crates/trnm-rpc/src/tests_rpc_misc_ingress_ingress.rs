@@ -24,20 +24,35 @@ not-json
         "valid ingress rows should survive salvage"
     );
 
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let entries: Vec<serde_json::Value> = quarantine_raw
+    let first_quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let first_entries: Vec<serde_json::Value> = first_quarantine_raw
         .lines()
         .filter(|line| !line.trim().is_empty())
         .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
         .collect();
     assert_eq!(
-        entries.len(),
+        first_entries.len(),
         1,
         "malformed ingress row should be quarantined"
     );
-    assert_eq!(entries[0]["line_number"], 2);
-    assert_eq!(entries[0]["raw_line"], "not-json");
-    assert_eq!(entries[0]["source_path"], path.display().to_string());
+    assert_eq!(first_entries[0]["line_number"], 2);
+    assert_eq!(first_entries[0]["raw_line"], "not-json");
+    assert_eq!(first_entries[0]["source_path"], path.display().to_string());
+
+    let second_records = load_ingress_records();
+    assert_eq!(second_records.len(), 1, "salvage should stay stable on reload");
+
+    let second_quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let second_entries: Vec<serde_json::Value> = second_quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        second_entries.len(),
+        1,
+        "reloading the same malformed ingress line must not duplicate quarantine accounting"
+    );
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);

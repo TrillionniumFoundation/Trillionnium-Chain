@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::Write,
@@ -27,6 +28,21 @@ fn stable_line_hash(raw: &str) -> u64 {
     hasher.finish()
 }
 
+fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeSet::new();
+    };
+    raw.lines()
+        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+        .filter_map(|value| {
+            Some((
+                value.get("line_number")?.as_u64()? as usize,
+                value.get("line_hash")?.as_u64()?,
+            ))
+        })
+        .collect()
+}
+
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     if entries.is_empty() {
         return Ok(());
@@ -36,11 +52,19 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
+    let existing = existing_quarantine_fingerprints(&quarantine_path);
+    let pending = entries
+        .iter()
+        .filter(|entry| !existing.contains(&(entry.line_number, entry.line_hash)))
+        .collect::<Vec<_>>();
+    if pending.is_empty() {
+        return Ok(());
+    }
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(&quarantine_path)?;
-    for entry in entries {
+    for entry in pending {
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
