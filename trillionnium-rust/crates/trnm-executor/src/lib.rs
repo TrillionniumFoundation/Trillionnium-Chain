@@ -1223,9 +1223,10 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     let (key_a, key_b) = hot_bucket_keys(tx);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
-        // Fast-path hot scheduler probes: avoid division in the common power-of-two
-        // bucket layout while keeping deterministic bucket mapping.
-        (mixed as usize) & (buckets_n - 1)
+        // Fast-path hot scheduler probes: keep the reduction in u64-space so
+        // high-bit object ids cannot truncate on 32-bit targets before bucket
+        // selection. For power-of-two divisors this matches modulo exactly.
+        (mixed & ((buckets_n as u64) - 1)) as usize
     } else {
         // Reduce in u64-space first; casting mixed directly to usize would truncate
         // high bits on 32-bit targets and skew bucket selection under wide key domains.
@@ -2125,6 +2126,19 @@ mod tests {
             let expected = ((key_a ^ key_b.rotate_left(7)) % buckets_n as u64) as usize;
             assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
         }
+    }
+
+    #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_keeps_high_bits_before_reduce() {
+        let buckets_n = 8usize;
+        let tx = tx(6, vec![], vec![o((1u64 << 40) + 5), o(3)]);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
+        let mixed = key_a ^ key_b.rotate_left(7);
+
+        // Power-of-two bucket layouts must preserve the full u64 mix before the
+        // reduction step so 32-bit targets cannot truncate high bits and skew
+        // deterministic object-domain bucketing.
+        assert_eq!(hot_bucket_hint(&tx, buckets_n), (mixed % buckets_n as u64) as usize);
     }
 
     #[test]
