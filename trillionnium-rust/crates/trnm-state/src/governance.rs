@@ -154,6 +154,25 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
     GOV_KEYS_WITH_EXPLICIT_VALIDATORS.contains(&key)
 }
 
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    match key {
+        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
+        _ => None,
+    }
+}
+
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id(key) {
+        if expected_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
+
 fn ensure_allowed_key_has_explicit_validator(key: &str) -> Result<(), String> {
     if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
         return Err(format!(
@@ -419,12 +438,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -497,12 +511,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -698,8 +707,9 @@ impl StateStore {
 #[cfg(test)]
 mod tests {
     use super::{
-        ensure_allowed_key_has_explicit_validator, has_explicit_gov_param_validator,
-        validate_gov_param_value, GOV_ALLOWED_KEYS,
+        ensure_allowed_key_has_explicit_validator, governance_pinned_key_id,
+        has_explicit_gov_param_validator, validate_gov_param_value,
+        validate_governance_key_id, GOV_ALLOWED_KEYS,
     };
 
     #[test]
@@ -728,5 +738,20 @@ mod tests {
                 err
             );
         }
+    }
+
+    #[test]
+    fn governance_pinned_key_id_guard_is_single_source_and_fail_closed() {
+        assert_eq!(governance_pinned_key_id("emergency_pause"), Some(7_999));
+        assert_eq!(governance_pinned_key_id("max_block_ms"), None);
+
+        let err = validate_governance_key_id("emergency_pause", 8_000)
+            .expect_err("pinned governance key ids must fail closed on mismatch");
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        validate_governance_key_id("emergency_pause", 7_999)
+            .expect("canonical pinned governance key id should be accepted");
+        validate_governance_key_id("max_block_ms", 9_601)
+            .expect("unpinned governance keys should stay free of accidental pinning");
     }
 }
