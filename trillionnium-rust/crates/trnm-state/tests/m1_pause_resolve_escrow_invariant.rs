@@ -4,6 +4,70 @@ use trnm_state::{
 use trnm_types::{TaskObject, TaskStatus};
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_live_task_version_mismatch_boundary() {
+    // L03 boundary hardening: paused rollback/restore must not revive pending resolve quorum
+    // when the snapshot task_version no longer matches the live challenged task version.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(98_329, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_349, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_350, 7_999, "emergency_pause".into(), "true".into())
+        .expect("emergency pause should enable successfully");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_936,
+        Some(TaskObject {
+            task_id: 9_936,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 8,
+        }),
+    );
+
+    let root_before = st.state_root();
+    st.restore_pending_resolve_approval(
+        9_936,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_936), None);
+    assert_eq!(st.pending_resolve_first_approver(9_936), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_936), None);
+    assert!(st.pending_gov_update("resolve_authority").is_none());
+    assert!(st.is_emergency_paused());
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "scrubbing mismatched-version restore input must leave paused state unchanged"
+    );
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boundary() {
     // L03 boundary hardening: paused rollback/restore must not revive pending resolve quorum
     // onto a task that is no longer challenged, even if task version and authority set still

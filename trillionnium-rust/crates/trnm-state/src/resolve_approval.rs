@@ -170,7 +170,12 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if task_id == 0 || self.get_task(task_id).is_none() {
+                let Some(task) = self.get_task(task_id) else {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                };
+                if task_id == 0 || snapshot.task_version == 0 || task.version != snapshot.task_version
+                {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }
