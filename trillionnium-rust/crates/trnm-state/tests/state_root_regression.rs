@@ -2056,6 +2056,51 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
+fn pending_resolve_restore_canonicalizes_metadata_before_hashing() {
+    let mut canonical = StateStore::new();
+    let mut mixed_case = StateStore::new();
+
+    canonical.restore_pending_resolve_approval(
+        5_300,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    mixed_case.restore_pending_resolve_approval(
+        5_300,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Resolver-A".into(),
+            authority_set: "Resolver-B,Resolver-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        mixed_case.pending_resolve_first_approver(5_300).as_deref(),
+        Some("resolver-a"),
+        "restore_pending_resolve_approval must store canonical approver metadata"
+    );
+    assert_eq!(
+        mixed_case
+            .pending_resolve_approval_snapshot(5_300)
+            .map(|snapshot| snapshot.authority_set),
+        Some("resolver-a,resolver-b".into()),
+        "restore_pending_resolve_approval must store canonical authority-set metadata"
+    );
+    assert_eq!(
+        mixed_case.state_root(),
+        canonical.state_root(),
+        "case-only restore metadata drift must canonicalize to the same deterministic state root"
+    );
+}
+
+#[test]
 fn pending_resolve_task_slot_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
