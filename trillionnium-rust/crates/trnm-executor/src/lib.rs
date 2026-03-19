@@ -249,9 +249,16 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
     // Keep object-scoped access domains deterministic while avoiding quadratic
     // write-key probes once shared domains become large.
     if write_keys.len() <= 8 {
+        let mut write_domain: Vec<u64> = Vec::with_capacity(write_keys.len());
+        for key in write_keys {
+            if !write_domain.contains(key) {
+                write_domain.push(*key);
+            }
+        }
+
         return keys
             .into_iter()
-            .filter(|key| !write_keys.contains(key))
+            .filter(|key| !write_domain.contains(key))
             .collect();
     }
 
@@ -1621,6 +1628,20 @@ mod tests {
         // Shared objects should be filtered once, while surviving read-only
         // objects keep first-seen order for deterministic access-domain reporting.
         assert_eq!(keys, vec![42, 77, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_small_duplicate_write_domain_preserves_shared_filtering() {
+        let write_keys = vec![11, 22, 22, 33, 44, 44, 55, 66];
+
+        let keys = read_domain_only_keys(
+            &[o(22), o(5), o(44), o(5), o(99), o(22), o(123)],
+            &write_keys,
+        );
+
+        // Small-domain filtering should stay deterministic even if the caller
+        // hands us duplicate write keys from a shared-object scope.
+        assert_eq!(keys, vec![5, 99, 123]);
     }
 
     #[test]
