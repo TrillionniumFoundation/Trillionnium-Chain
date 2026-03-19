@@ -265,6 +265,30 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     Ok(())
 }
 
+fn format_governance_registry_membership_drift(
+    allowed_unique: &std::collections::BTreeSet<&str>,
+    validator_unique: &std::collections::BTreeSet<&str>,
+) -> Option<String> {
+    let missing_allowed_keys: Vec<&str> = allowed_unique
+        .difference(validator_unique)
+        .copied()
+        .collect();
+    let rogue_validator_keys: Vec<&str> = validator_unique
+        .difference(allowed_unique)
+        .copied()
+        .collect();
+
+    if missing_allowed_keys.is_empty() && rogue_validator_keys.is_empty() {
+        return None;
+    }
+
+    Some(format!(
+        "governance explicit-validator registry drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        missing_allowed_keys.join(", "),
+        rogue_validator_keys.join(", "),
+    ))
+}
+
 fn validate_governance_registry_shape_lists(
     allowed_keys: &[&str],
     sensitive_keys: &[&str],
@@ -289,8 +313,10 @@ fn validate_governance_registry_shape_lists(
         return Err("governance explicit-validator registry contains duplicate entries".into());
     }
 
-    if validator_unique.len() != allowed_unique.len() {
-        return Err("governance explicit-validator registry drifted from allowed-key registry".into());
+    if let Some(err) =
+        format_governance_registry_membership_drift(&allowed_unique, &validator_unique)
+    {
+        return Err(err);
     }
 
     for key in &allowed_unique {
@@ -2840,6 +2866,24 @@ mod tests {
             err.contains("explicit-validator registry contains duplicate entries"),
             "{err}"
         );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "ghost_validator_key"],
+            &[],
+        )
+        .expect_err("explicit-validator registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
     }
 
     #[test]
