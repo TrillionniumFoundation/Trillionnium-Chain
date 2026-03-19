@@ -475,8 +475,19 @@ fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
     Ok(())
 }
 
+fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
+    if GOV_SENSITIVE_KEYS.contains(&key) && !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!(
+            "governance sensitive-key coverage missing from allowed key registry: {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     validate_governance_validator_coverage(key)?;
+    validate_governance_sensitive_key_coverage(key)?;
 
     match key {
         "max_block_ms" => {
@@ -4320,6 +4331,26 @@ mod tests {
 
         validate_governance_validator_coverage("not_whitelisted")
             .expect("non-whitelisted keys are rejected by registration, not validator coverage");
+    }
+
+    #[test]
+    fn governance_sensitive_key_coverage_merge_gate_is_explicit() {
+        for key in GOV_SENSITIVE_KEYS {
+            assert!(
+                GOV_ALLOWED_KEYS.contains(key),
+                "sensitive governance key missing from allowed-key registry: {}",
+                key
+            );
+            validate_governance_sensitive_key_coverage(key)
+                .expect("sensitive governance key must remain present in allowed-key registry");
+            validate_governance_validator_coverage(key)
+                .expect("sensitive governance key must remain covered by an explicit validator");
+        }
+
+        validate_governance_sensitive_key_coverage("emergency_pause")
+            .expect("non-sensitive allowed keys should not trip sensitive-key coverage");
+        validate_governance_sensitive_key_coverage("not_whitelisted")
+            .expect("non-sensitive non-whitelisted keys are rejected by registration, not sensitive coverage");
     }
 
     #[test]
