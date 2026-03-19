@@ -170,6 +170,7 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -247,10 +248,9 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
-    match key {
-        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
-        _ => None,
-    }
+    GOV_PINNED_KEY_IDS
+        .iter()
+        .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
 }
 
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
@@ -269,6 +269,7 @@ fn validate_governance_registry_shape_lists(
     allowed_keys: &[&str],
     sensitive_keys: &[&str],
     explicit_validator_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
     let allowed_unique: std::collections::BTreeSet<&str> =
         allowed_keys.iter().copied().collect();
@@ -319,6 +320,28 @@ fn validate_governance_registry_shape_lists(
         }
     }
 
+    let mut pinned_unique = std::collections::BTreeSet::new();
+    for (key, _) in pinned_key_ids {
+        if !pinned_unique.insert(*key) {
+            return Err(format!(
+                "governance pinned-key registry contains duplicate entries for {}",
+                key
+            ));
+        }
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance pinned-key registry contains non-whitelisted key: {}",
+                key
+            ));
+        }
+        if !validator_unique.contains(key) {
+            return Err(format!(
+                "governance pinned-key registry missing explicit-validator coverage for {}",
+                key
+            ));
+        }
+    }
+
     Ok(())
 }
 
@@ -327,6 +350,7 @@ fn validate_governance_registry_shape() -> Result<(), String> {
         GOV_ALLOWED_KEYS,
         GOV_SENSITIVE_KEYS,
         GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_PINNED_KEY_IDS,
     )
 }
 
@@ -2794,11 +2818,28 @@ mod tests {
             &["max_block_ms", "max_parallel_workers"],
             &[],
             &["max_block_ms", "max_parallel_workers", "max_block_ms"],
+            &[],
         )
         .expect_err("duplicate explicit-validator registry entries must fail closed");
 
         assert!(
             err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_non_whitelisted_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &[("ghost_pinned_key", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("pinned governance keys must stay inside the allowed registry");
+
+        assert!(
+            err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
             "{err}"
         );
     }
