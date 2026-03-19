@@ -321,11 +321,18 @@ fn validate_governance_registry_shape_lists(
     }
 
     let mut pinned_unique = std::collections::BTreeSet::new();
-    for (key, _) in pinned_key_ids {
+    let mut pinned_ids = std::collections::BTreeMap::new();
+    for (key, pinned_id) in pinned_key_ids {
         if !pinned_unique.insert(*key) {
             return Err(format!(
                 "governance pinned-key registry contains duplicate entries for {}",
                 key
+            ));
+        }
+        if let Some(existing_key) = pinned_ids.insert(*pinned_id, *key) {
+            return Err(format!(
+                "governance pinned-key registry reuses pinned id {} across {} and {}",
+                pinned_id, existing_key, key
             ));
         }
         if !allowed_unique.contains(key) {
@@ -2847,6 +2854,27 @@ mod tests {
 
         assert!(
             err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_cross_key_id_reuse_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("pinned governance keys must not reuse the same pinned id across different keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
             "{err}"
         );
     }
