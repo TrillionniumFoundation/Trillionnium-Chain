@@ -240,13 +240,22 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
 }
 
 #[inline]
-fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
-    let mut keys = dedup_access_keys(&tx.read_set);
-    for key in dedup_access_keys(&tx.write_set) {
+fn append_unique_keys(keys: &mut Vec<u64>, objs: &[ObjectRef]) {
+    for key in dedup_access_keys(objs) {
         if !keys.contains(&key) {
             keys.push(key);
         }
     }
+}
+
+#[inline]
+fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
+    // Keep telemetry/object-domain reporting aligned with scheduler hotspot
+    // selection: writes carry the stronger conflict signal, while reads extend the
+    // object scope only when they introduce additional keys.
+    let mut keys = Vec::with_capacity(tx.write_set.len() + tx.read_set.len());
+    append_unique_keys(&mut keys, &tx.write_set);
+    append_unique_keys(&mut keys, &tx.read_set);
     keys
 }
 
@@ -1557,8 +1566,24 @@ mod tests {
         ));
 
         // Object-scoped access domains should stay deduplicated across both read
-        // and write footprints so grouping/telemetry reason about the same key set.
-        assert_eq!(keys, vec![11, 22, 33, 44]);
+        // and write footprints, with writes first so telemetry matches the
+        // scheduler's stronger conflict signal.
+        assert_eq!(keys, vec![22, 44, 11, 33]);
+    }
+
+    #[test]
+    fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
+        let tx = tx(
+            1,
+            vec![o(9), o(9), o(40), o(50)],
+            vec![o(7), o(7), o(9), o(30)],
+        );
+
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
+
+        assert_eq!(keys, vec![7, 9, 30, 40, 50]);
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
     }
 
     #[test]
