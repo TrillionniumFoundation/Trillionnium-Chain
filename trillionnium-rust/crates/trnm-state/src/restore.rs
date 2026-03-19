@@ -21,18 +21,24 @@ pub struct WalMeta {
     pub prev_hash_hex: Option<String>,
 }
 
+fn hash_len_framed_str(hasher: &mut Sha256, value: &str) {
+    hasher.update((value.len() as u64).to_le_bytes());
+    hasher.update(value.as_bytes());
+}
+
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        hash_len_framed_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
+        hash_len_framed_str(&mut hasher, &self.state_root_hex);
         if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
+            hasher.update([1]);
+            hash_len_framed_str(&mut hasher, prev);
         } else {
-            hasher.update(b"genesis");
+            hasher.update([0]);
         }
         hex::encode(hasher.finalize())
     }
