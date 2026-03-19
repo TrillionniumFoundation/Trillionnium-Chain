@@ -762,6 +762,9 @@ impl StateStore {
             .map(|existing| !matches!(existing.value, ObjectValue::Task(_)))
             .unwrap_or(false);
         if existing_is_non_task {
+            if self.pending_resolve_approvals.remove(&id).is_some() {
+                self.invalidate_state_root_cache();
+            }
             return;
         }
 
@@ -2113,6 +2116,77 @@ mod tests {
             st.state_root(),
             root_before,
             "rejected cross-type restore must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_cross_type_collision_scrubs_stale_pending_resolve_residue() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 17,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        st.restore_pending_resolve_approval(
+            17,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 17,
+                creator: "mallory".into(),
+                bounty: 99,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-9".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 2,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(17),
+            None,
+            "cross-type task restore rejection must scrub stale pending resolve approval residue"
+        );
+        assert_eq!(
+            st.get_param(17).map(|param| (param.key, param.value, param.version)),
+            Some((
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "cross-type task restore rejection must preserve the existing governance object"
+        );
+        assert_ne!(
+            st.state_root(),
+            root_before,
+            "scrubbing stale pending resolve approval residue must perturb the state root"
         );
     }
 
