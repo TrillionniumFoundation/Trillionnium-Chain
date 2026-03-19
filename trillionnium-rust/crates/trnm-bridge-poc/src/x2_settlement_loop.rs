@@ -80,6 +80,12 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if let Some(observed) = heartbeat.heartbeat {
+                if height < observed.target_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
+            }
+
             request.settle_authorized(token, height)?;
             let event = SettlementEvent {
                 phase: "settlement_confirmed",
