@@ -737,11 +737,15 @@ impl StateStore {
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
-        self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
                 if task.task_id != id {
-                    self.objects.remove(&id);
+                    if matches!(
+                        self.objects.get(&id).map(|existing| &existing.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
+                    }
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
@@ -764,7 +768,12 @@ impl StateStore {
                 );
             }
             None => {
-                self.objects.remove(&id);
+                if matches!(
+                    self.objects.get(&id).map(|existing| &existing.value),
+                    Some(ObjectValue::Task(_))
+                ) {
+                    self.objects.remove(&id);
+                }
                 self.pending_resolve_approvals.remove(&id);
             }
         }
@@ -4736,6 +4745,27 @@ mod tests {
         assert!(
             stale_cleanup.pending_resolve_approval_snapshot(501).is_none(),
             "task restore removal must scrub stale pending resolve snapshots for snapshot completeness"
+        );
+
+        let mut key_index_collision = StateStore::new();
+        key_index_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param with overlapping key id");
+        assert_eq!(
+            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "setup must confirm the governance key index points at the overlapping key id"
+        );
+        key_index_collision.restore_task(501, None);
+        assert_eq!(
+            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "task restore removal must not evict an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            key_index_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "overlapping governance param object must remain restorable after task cleanup"
         );
 
         let mut wrong_version = StateStore::new();
