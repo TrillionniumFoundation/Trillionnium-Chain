@@ -1909,11 +1909,14 @@ pub fn verify_wal_and_find_checkpoint(
             checkpoints.iter().filter(|cp| cp.height == e.height).collect();
 
         if matching_height_checkpoints.iter().any(|cp| {
-            cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-                && cp.state_root_hex != e.state_root_hex
+            (cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+                && cp.state_root_hex != e.state_root_hex)
+                || (cp.state_root_hex == e.state_root_hex
+                    && cur_hash.as_str() != cp.wal_entry_hash_hex.as_str())
         }) {
-            // Fail closed on conflicting checkpoint metadata: a WAL entry hash must not
-            // simultaneously claim multiple state roots at the same height.
+            // Fail closed on conflicting checkpoint metadata: a committed WAL entry at a given
+            // height must not simultaneously claim multiple state roots, and a checkpointed
+            // state root at that height must not simultaneously point at multiple WAL hashes.
             return Ok(best_checkpoint);
         }
 
@@ -5554,6 +5557,52 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 2);
         assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_same_height_state_root_claimed_by_different_wal_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "forged-h2".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "conflicting checkpoint metadata for the same height/state root must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
