@@ -250,11 +250,24 @@ fn append_unique_keys(keys: &mut Vec<u64>, objs: &[ObjectRef]) {
 
 #[inline]
 fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64> {
-    let mut keys = dedup_access_keys(read_set);
-    if !keys.is_empty() && !write_keys.is_empty() {
-        keys.retain(|key| !write_keys.contains(key));
+    let keys = dedup_access_keys(read_set);
+    if keys.is_empty() || write_keys.is_empty() {
+        return keys;
     }
-    keys
+
+    // Keep object-scoped access domains deterministic while avoiding quadratic
+    // write-key probes once shared domains become large.
+    if write_keys.len() <= 8 {
+        return keys
+            .into_iter()
+            .filter(|key| !write_keys.contains(key))
+            .collect();
+    }
+
+    let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
+    keys.into_iter()
+        .filter(|key| !write_domain.contains(key))
+        .collect()
 }
 
 #[inline]
@@ -574,7 +587,10 @@ fn build_parallel_groups_aggressive_profile(
     for tx in ordered {
         let mut tx_slot = Some(tx);
         let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
-        let read_keys = read_domain_only_keys(&tx_slot.as_ref().expect("tx must exist").read_set, &write_keys);
+        let read_keys = read_domain_only_keys(
+            &tx_slot.as_ref().expect("tx must exist").read_set,
+            &write_keys,
+        );
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
@@ -1581,6 +1597,30 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_large_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![100, 200, 300, 400, 500, 600, 700, 800, 900, 1_000];
+
+        let keys = read_domain_only_keys(
+            &[
+                o(200),
+                o(42),
+                o(500),
+                o(42),
+                o(77),
+                o(800),
+                o(77),
+                o(900),
+                o(123),
+            ],
+            &write_keys,
+        );
+
+        // Shared objects should be filtered once, while surviving read-only
+        // objects keep first-seen order for deterministic access-domain reporting.
+        assert_eq!(keys, vec![42, 77, 123]);
+    }
+
+    #[test]
     fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
         let tx = tx(
             1,
@@ -1597,17 +1637,20 @@ mod tests {
 
     #[test]
     fn overlapping_read_write_domains_do_not_double_count_shared_object_conflicts() {
-        let txs = vec![
-            tx(1, vec![o(7)], vec![o(7)]),
-            tx(2, vec![], vec![o(7)]),
-        ];
+        let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
 
         let (groups, profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
 
         assert_eq!(groups.len(), 2);
-        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1]);
-        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![2]);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![2]
+        );
         // The first tx still pays its normal write-domain probes, but the shared
         // read/write key should not be recorded twice and inflate later hit counts.
         assert_eq!(profile.conflict_checks, 4);
