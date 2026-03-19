@@ -253,16 +253,17 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
     // paying for a HashSet allocation.
     let mut write_domain: Vec<u64> = Vec::with_capacity(write_keys.len().min(8));
     for key in write_keys {
-        if !write_domain.contains(key) {
-            if write_domain.len() == 8 {
-                let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
-                return keys
-                    .into_iter()
-                    .filter(|read_key| !write_domain.contains(read_key))
-                    .collect();
-            }
-            write_domain.push(*key);
+        if write_domain.contains(key) {
+            continue;
         }
+        if write_domain.len() == 8 {
+            let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
+            return keys
+                .into_iter()
+                .filter(|read_key| !write_domain.contains(read_key))
+                .collect();
+        }
+        write_domain.push(*key);
     }
 
     // Duplicate-heavy owned/shared domains can still collapse to one effective
@@ -1687,6 +1688,20 @@ mod tests {
 
         // Duplicate-heavy callers should stay on the deterministic small-domain
         // path when the effective shared-object scope is still tiny.
+        assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_duplicate_tail_after_eight_unique_writes_keeps_shared_filtering() {
+        let write_keys = vec![11, 22, 33, 44, 55, 66, 77, 88, 88, 77, 66, 55];
+
+        let keys = read_domain_only_keys(
+            &[o(22), o(5), o(44), o(5), o(99), o(77), o(123), o(88)],
+            &write_keys,
+        );
+
+        // A duplicate tail after eight unique writes should not widen the
+        // effective shared-object domain or disturb deterministic filtering.
         assert_eq!(keys, vec![5, 99, 123]);
     }
 
