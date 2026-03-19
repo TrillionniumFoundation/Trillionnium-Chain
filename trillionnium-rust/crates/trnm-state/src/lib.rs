@@ -728,8 +728,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
+                first_approver: snapshot.first_approver,
+                authority_set: snapshot.authority_set,
                 task_version: snapshot.task_version,
             },
         );
@@ -1788,8 +1788,12 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
-            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
+            let first_approver_hashed = validate_resolve_approver_token(&pending.first_approver)
+                .unwrap_or_else(|_| pending.first_approver.clone());
+            let authority_set_hashed = canonicalize_resolve_authority_set(&pending.authority_set)
+                .unwrap_or_else(|_| pending.authority_set.clone());
+            hash_len_prefixed_str(&mut hasher, &first_approver_hashed);
+            hash_len_prefixed_str(&mut hasher, &authority_set_hashed);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
@@ -4622,14 +4626,14 @@ mod tests {
         );
         assert_eq!(
             restored.pending_resolve_first_approver(501).as_deref(),
-            Some("authority-b")
+            Some("Authority-B")
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(501)
                 .as_ref()
                 .map(|snapshot| snapshot.authority_set.as_str()),
-            Some("authority-a,authority-b")
+            Some("Authority-B,authority-a")
         );
         assert_eq!(
             staged.state_root(),
