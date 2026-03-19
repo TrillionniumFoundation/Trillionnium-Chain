@@ -154,12 +154,18 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
     )
 }
 
+fn ensure_allowed_key_has_explicit_validator(key: &str) -> Result<(), String> {
+    if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
+        return Err(format!(
+            "governance key {} is allowed but missing explicit validator registration",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
-    debug_assert!(
-        !GOV_ALLOWED_KEYS.contains(&key) || has_explicit_gov_param_validator(key),
-        "allowed governance key missing explicit validator: {}",
-        key
-    );
+    ensure_allowed_key_has_explicit_validator(key)?;
 
     match key {
         "max_block_ms" => {
@@ -691,7 +697,10 @@ impl StateStore {
 
 #[cfg(test)]
 mod tests {
-    use super::{has_explicit_gov_param_validator, validate_gov_param_value, GOV_ALLOWED_KEYS};
+    use super::{
+        ensure_allowed_key_has_explicit_validator, has_explicit_gov_param_validator,
+        validate_gov_param_value, GOV_ALLOWED_KEYS,
+    };
 
     #[test]
     fn governance_allowed_keys_have_explicit_value_validators() {
@@ -701,12 +710,20 @@ mod tests {
                 "allowed governance key missing explicit validator: {}",
                 key
             );
+            ensure_allowed_key_has_explicit_validator(key)
+                .expect("allowed governance key should have a runtime explicitness guard");
 
             let err = validate_gov_param_value(key, "__merge_gate_invalid_sample__")
                 .expect_err("invalid sample should be rejected fail-closed");
             assert!(
                 !err.contains("no explicit validator registered"),
                 "allowed governance key fell through explicit validator registry: {} => {}",
+                key,
+                err
+            );
+            assert!(
+                !err.contains("missing explicit validator registration"),
+                "allowed governance key tripped runtime explicitness guard unexpectedly: {} => {}",
                 key,
                 err
             );
