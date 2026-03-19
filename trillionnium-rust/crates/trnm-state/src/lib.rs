@@ -766,19 +766,29 @@ impl StateStore {
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
         self.invalidate_state_root_cache();
-        self.remove_gov_param_key_index_for_id(key_id);
+
+        let existing_is_non_param = self
+            .objects
+            .get(&key_id)
+            .map(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
+            .unwrap_or(false);
+        if existing_is_non_param {
+            return;
+        }
+
         match snapshot {
             Some(snapshot) => {
                 if snapshot.key_id != key_id || snapshot.version == 0 {
+                    self.remove_gov_param_key_index_for_id(key_id);
                     self.objects.remove(&key_id);
                     return;
                 }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
-                        self.objects.remove(&key_id);
                         return;
                     }
                 }
+                self.remove_gov_param_key_index_for_id(key_id);
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
                 self.objects.insert(
@@ -790,6 +800,7 @@ impl StateStore {
                 );
             }
             None => {
+                self.remove_gov_param_key_index_for_id(key_id);
                 self.objects.remove(&key_id);
             }
         }
@@ -2047,6 +2058,60 @@ mod tests {
                 .copied(),
             Some(17),
             "task restore must not clear governance key-index entries when the colliding object is rejected"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejected cross-type restore must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_refuses_cross_type_id_collision_and_preserves_state_root() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 17,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+        let root_before = st.state_root();
+
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 17,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.get_param(17).is_none(),
+            "gov param restore must fail closed on cross-type object id collisions"
+        );
+        assert_eq!(
+            st.get_task(17).map(|task| (task.task_id, task.creator, task.version)),
+            Some((17, "alice".into(), 1)),
+            "cross-type gov-param restore must preserve the existing task object"
         );
         assert_eq!(
             st.state_root(),
