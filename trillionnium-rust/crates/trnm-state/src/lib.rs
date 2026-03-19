@@ -785,6 +785,14 @@ impl StateStore {
                     self.objects.remove(&key_id);
                     return;
                 }
+                if !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str()) {
+                    self.objects.remove(&key_id);
+                    return;
+                }
+                if validate_governance_key_id(&snapshot.key, key_id).is_err() {
+                    self.objects.remove(&key_id);
+                    return;
+                }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
                         self.objects.remove(&key_id);
@@ -4280,6 +4288,43 @@ mod tests {
             validate_governance_key_id(key, expected_id)
                 .expect("canonical pinned governance key id must remain accepted");
         }
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_non_canonical_pinned_key_id_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_000,
+            Some(GovParamObject {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(!st.is_emergency_paused());
+        assert!(st.get_param(8_000).is_none());
+        assert!(st.gov_param_string("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_unknown_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_123,
+            Some(GovParamObject {
+                key_id: 8_123,
+                key: "forbidden_key".into(),
+                value: "1".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_123).is_none());
+        assert!(st.gov_param_string("forbidden_key").is_none());
     }
 
     #[test]
