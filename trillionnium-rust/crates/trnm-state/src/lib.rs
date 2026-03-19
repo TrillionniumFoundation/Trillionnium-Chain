@@ -765,8 +765,6 @@ impl StateStore {
     }
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
-        self.invalidate_state_root_cache();
-
         let existing_is_non_param = self
             .objects
             .get(&key_id)
@@ -779,8 +777,6 @@ impl StateStore {
         match snapshot {
             Some(snapshot) => {
                 if snapshot.key_id != key_id || snapshot.version == 0 {
-                    self.remove_gov_param_key_index_for_id(key_id);
-                    self.objects.remove(&key_id);
                     return;
                 }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
@@ -788,6 +784,7 @@ impl StateStore {
                         return;
                     }
                 }
+                self.invalidate_state_root_cache();
                 self.remove_gov_param_key_index_for_id(key_id);
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
@@ -800,6 +797,9 @@ impl StateStore {
                 );
             }
             None => {
+                if self.objects.contains_key(&key_id) {
+                    self.invalidate_state_root_cache();
+                }
                 self.remove_gov_param_key_index_for_id(key_id);
                 self.objects.remove(&key_id);
             }
@@ -2231,6 +2231,59 @@ mod tests {
             st.state_root(),
             root_before,
             "rejected cross-type restore must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_invalid_replacement_without_clobbering_existing_object() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 17,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_gov_param(
+            17,
+            Some(GovParamObject {
+                key_id: 18,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "99".into(),
+                version: 2,
+            }),
+        );
+
+        assert_eq!(
+            st.get_param(17).map(|param| (param.key_id, param.key, param.value, param.version)),
+            Some((
+                17,
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "invalid restore snapshot must not clobber the existing governance object"
+        );
+        assert_eq!(
+            st.get_ref(17),
+            Some(ObjectRef { id: 17, version: 1 }),
+            "invalid restore snapshot must preserve the existing object version"
+        );
+        assert_eq!(
+            st.gov_param_key_index
+                .get("monetary_base_burn_per_tick")
+                .copied(),
+            Some(17),
+            "invalid restore snapshot must preserve governance key indexing"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "invalid restore snapshot must leave state_root unchanged"
         );
     }
 
