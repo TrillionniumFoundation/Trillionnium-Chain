@@ -608,12 +608,21 @@ fn build_parallel_groups_aggressive_profile(
         let mut placed = false;
         let mut scanned = 0usize;
         let candidate_span = groups.len().saturating_sub(min_group);
+
+        if skip_empty_stage_checks && read_empty && write_empty && candidate_span > 0 {
+            groups[min_group].push(tx_slot.take().expect("tx already moved"));
+            placed = true;
+        }
+
         let start_offset = if rr_enabled && candidate_span > 1 {
             rr_cursor % candidate_span
         } else {
             0
         };
         for step in 0..candidate_span {
+            if placed {
+                break;
+            }
             if scan_window > 0 && scanned >= scan_window {
                 break;
             }
@@ -2120,6 +2129,35 @@ mod tests {
         let (_groups, profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
 
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+    }
+
+    #[test]
+    fn aggressive_skip_empty_stage_checks_avoids_candidate_group_scans_for_empty_access() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "2");
+        let _skip_empty = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![], vec![]),    // empty access set should not pay scan cost
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 10]);
+        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3]);
+        assert_eq!(profile.candidate_groups_scanned, 0);
         assert_eq!(profile.stage_ww_checks, 0);
         assert_eq!(profile.stage_wr_checks, 0);
         assert_eq!(profile.stage_rw_checks, 0);
