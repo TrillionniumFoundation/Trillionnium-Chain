@@ -1,6 +1,6 @@
 # Rust Native External Contracts Architecture (2026-03-05)
 
-> Decision lock: **all external smart contracts move to Rust-native implementation**. Solidity route is discontinued.
+> Decision lock: **all external smart contracts move to Rust-native implementation**.
 
 ## 0. Scope and Goals
 
@@ -19,7 +19,7 @@ This document defines the architecture spec for external contracts on the curren
    - `BridgeRelay`
    - `GovernanceGuard`
 4. Define bridge boundaries to Rust L1 components (`trnm-state/trnm-node/trnm-rpc`).
-5. Provide migration path from prior Solidity skeleton to `contracts-rust/`.
+5. Provide migration path from prior legacy external-contract skeleton to `contracts-rust/`.
 
 ---
 
@@ -39,7 +39,7 @@ Rationale:
 
 - Keeps execution deterministic across validators.
 - Rust tooling uniformity with L1 codebase.
-- Better static analysis/testability than mixed Solidity/EVM path in current stack.
+- Better static analysis/testability than a mixed VM path in the current stack.
 
 ## 1.2 Package Layout (target)
 
@@ -305,12 +305,12 @@ RPC compatibility policy:
 
 ---
 
-## 7. Migration: Solidity Skeleton -> `contracts-rust/`
+## 7. Migration: Legacy External-Contract Skeleton -> `contracts-rust/`
 
 ## 7.1 Migration Steps
 
-1. **Freeze Solidity line**
-   - Mark Solidity skeleton read-only.
+1. **Freeze legacy contract line**
+   - Mark the legacy external-contract skeleton read-only.
    - Stop adding features; only archival reference.
 
 2. **Create Rust contract workspace**
@@ -337,13 +337,13 @@ RPC compatibility policy:
    - Enable Rust contracts as canonical path.
    - Keep rollback feature flag for one release window.
 
-8. **Remove Solidity runtime dependencies**
-   - Delete or archive Solidity execution glue after stabilization.
+8. **Remove legacy external-contract runtime dependencies**
+   - Delete or archive legacy execution glue after stabilization.
 
 ## 7.2 Key Risks and Mitigations
 
-1. **Semantic drift from Solidity behavior**
-   - Mitigation: method-level parity tests + fixtures from old skeleton.
+1. **Semantic drift from legacy contract behavior**
+   - Mitigation: method-level parity tests + fixtures from the old skeleton.
 
 2. **Encoding incompatibility**
    - Mitigation: single canonical codec + vector tests in CI.
@@ -393,3 +393,8 @@ Cutover acceptance requires all:
 ---
 
 **Status:** architecture baseline approved for Rust-native external contracts.
+l contracts.
+ive external contracts.
+l contracts.
+rnal contracts.
+l contracts.
