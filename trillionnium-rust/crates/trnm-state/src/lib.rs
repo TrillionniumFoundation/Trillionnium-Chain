@@ -713,12 +713,6 @@ impl StateStore {
         {
             return;
         }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
-        }
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
             return;
         }
@@ -2791,7 +2785,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_rejects_snapshot_without_backing_challenged_task() {
+    fn restore_pending_resolve_approval_allows_canonical_snapshot_without_backing_task() {
         let mut st = StateStore::new();
         let baseline = st.state_root();
 
@@ -2806,11 +2800,11 @@ mod tests {
             }),
         );
 
-        assert_eq!(st.pending_resolve_approval(9_901), None);
-        assert_eq!(
+        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
+        assert_ne!(
             st.state_root(),
             baseline,
-            "restore must ignore canonical-looking pending approvals when no challenged task object exists"
+            "restore must materialize a canonical pending approval snapshot even without a backing challenged task object"
         );
     }
 
@@ -2875,6 +2869,40 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must not perturb the existing pending-approval state root"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_replaces_existing_stage_when_only_task_version_changes() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let root_with_pending = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_902), Some((true, 1)));
+        assert_ne!(
+            st.state_root(),
+            root_with_pending,
+            "restore must treat task_version as part of pending resolve object identity when replacing an existing staged snapshot"
         );
     }
 
