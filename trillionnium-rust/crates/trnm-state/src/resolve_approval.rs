@@ -3,6 +3,7 @@ use crate::{
     CHALLENGE_FORFEIT_TREASURY_ACCOUNT, DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
     RESERVED_SYSTEM_AUTHORITY, WORKER_SLASH_TREASURY_ACCOUNT,
 };
+use trnm_types::TaskStatus;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PendingResolveApprovalSnapshot {
@@ -174,7 +175,10 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 };
-                if task_id == 0 || snapshot.task_version == 0 || task.version != snapshot.task_version
+                if task_id == 0
+                    || snapshot.task_version == 0
+                    || task.version != snapshot.task_version
+                    || task.status != TaskStatus::Challenged
                 {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;

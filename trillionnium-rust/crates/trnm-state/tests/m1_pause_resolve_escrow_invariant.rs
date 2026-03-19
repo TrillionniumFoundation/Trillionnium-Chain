@@ -82,29 +82,31 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
         .expect("emergency pause should enable successfully");
     assert!(st.is_emergency_paused());
 
-    st.put_task_new(TaskObject {
-        task_id: 9_937,
-        creator: "alice".into(),
-        bounty: 10,
-        status: TaskStatus::Open,
-        proof_type: Default::default(),
-        metadata: None,
-        worker: None,
-        committed_hash: None,
-        result_hash: None,
-        reveal_salt: None,
-        committed_at_height: None,
-        reveal_deadline_height: None,
-        challenge_deadline_height: None,
-        challenge_window_blocks_snapshot: None,
-        challenged_at_height: None,
-        resolve_deadline_height: None,
-        challenge_bond: None,
-        challenger: None,
-        challenge_bond_forfeited: None,
-        version: 7,
-    })
-    .expect("non-challenged task should exist before restore attempt");
+    st.restore_task(
+        9_937,
+        Some(TaskObject {
+            task_id: 9_937,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 7,
+        }),
+    );
 
     st.restore_pending_resolve_approval(
         9_937,
