@@ -816,10 +816,15 @@ impl RelayService {
 
         // New batch ack path: ack all envelopes in this session whose sequence <= upto_seq.
         if let Some(upto_seq) = req.upto_seq {
-            for env in &state.queue {
-                if env.sequence <= upto_seq {
-                    state.acked_ids.insert(env.envelope_id);
+            // Queue order is sequence order and advance_poll_start_idx guarantees the
+            // prefix before poll_start_idx is already acked. Start from the live poll
+            // cursor and stop once we cross the requested range to avoid rescanning
+            // long fully-acked prefixes on hot ack loops.
+            for env in state.queue.iter().skip(state.poll_start_idx) {
+                if env.sequence > upto_seq {
+                    break;
                 }
+                state.acked_ids.insert(env.envelope_id);
             }
         }
 
@@ -1298,6 +1303,72 @@ mod tests {
             .unwrap();
         assert_eq!(pending.envelopes.len(), 2);
         assert!(pending.envelopes.iter().all(|e| e.sequence > 2));
+    }
+
+    #[test]
+    fn relay_ack_upto_seq_respects_poll_cursor_after_prefix_ack() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2-cursor-scan".into(),
+            })
+            .unwrap();
+
+        for payload in [b"m1".as_slice(), b"m2".as_slice(), b"m3".as_slice()] {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "s2-cursor-scan".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: payload.to_vec(),
+                    source: None,
+                })
+                .unwrap();
+        }
+
+        let first_two = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 2,
+            })
+            .unwrap();
+        assert_eq!(first_two.envelopes.len(), 2);
+
+        let ack_prefix = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: first_two.envelopes.iter().map(|e| e.envelope_id).collect(),
+                upto_seq: None,
+            })
+            .unwrap();
+        assert_eq!(ack_prefix.acked, 2);
+
+        {
+            let g = relay.sessions.lock().unwrap();
+            let state = g.get("s2-cursor-scan").unwrap();
+            assert_eq!(state.poll_start_idx, 2);
+        }
+
+        let ack_through_four = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(4),
+            })
+            .unwrap();
+        assert_eq!(ack_through_four.acked, 2);
+
+        let pending = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 10,
+            })
+            .unwrap();
+        let pending_seqs: Vec<u64> = pending.envelopes.iter().map(|e| e.sequence).collect();
+        assert_eq!(pending_seqs, vec![5, 6]);
     }
 
     #[test]
