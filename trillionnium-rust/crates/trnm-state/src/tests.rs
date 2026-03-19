@@ -1,4 +1,7 @@
-use super::governance::{is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_SENSITIVE_KEYS};
+use super::governance::{
+    is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_KEYS_WITH_EXPLICIT_VALIDATORS,
+    GOV_SENSITIVE_KEYS,
+};
 use super::*;
 use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
 
@@ -2181,6 +2184,24 @@ fn governance_timelock_classification_merge_gate_keeps_emergency_pause_immediate
     );
     assert!(st.pending_gov_update("emergency_pause").is_none());
     assert!(!st.is_emergency_paused());
+}
+
+#[test]
+fn governance_allowed_keys_have_single_explicit_validator_registry() {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.iter().copied().collect();
+
+    assert_eq!(
+        validator_unique.len(),
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.len(),
+        "GOV_KEYS_WITH_EXPLICIT_VALIDATORS contains duplicate entries"
+    );
+    assert_eq!(
+        allowed_unique, validator_unique,
+        "allowed governance keys and explicit validator registry must stay identical"
+    );
 }
 
 #[test]
