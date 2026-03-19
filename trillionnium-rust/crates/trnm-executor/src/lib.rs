@@ -71,6 +71,9 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
 
 #[inline]
 fn access_key(obj: &ObjectRef) -> u64 {
+    // Conflict grouping stays object-scoped, not version-scoped: different
+    // versions of the same logical object must serialize through the same
+    // access domain so executor scheduling stays aligned with trnm-state.
     obj.id
 }
 
@@ -1426,6 +1429,9 @@ mod tests {
     fn o(id: u64) -> ObjectRef {
         ObjectRef { id, version: 1 }
     }
+    fn ov(id: u64, version: u64) -> ObjectRef {
+        ObjectRef { id, version }
+    }
     fn tx(id: u64, r: Vec<ObjectRef>, w: Vec<ObjectRef>) -> Tx {
         Tx {
             id,
@@ -1602,6 +1608,19 @@ mod tests {
         // and write footprints, with writes first so telemetry matches the
         // scheduler's stronger conflict signal.
         assert_eq!(keys, vec![22, 44, 11, 33]);
+    }
+
+    #[test]
+    fn tx_access_domain_keys_treat_object_versions_as_one_conflict_domain() {
+        let keys = tx_access_domain_keys(&tx(
+            1,
+            vec![ov(11, 1), ov(11, 9), ov(33, 2)],
+            vec![ov(11, 7), ov(22, 3), ov(22, 8)],
+        ));
+
+        // Grouping must stay object-scoped even when trnm-state surfaces
+        // different versions of the same object across read/write footprints.
+        assert_eq!(keys, vec![11, 22, 33]);
     }
 
     #[test]
