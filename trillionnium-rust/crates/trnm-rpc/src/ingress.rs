@@ -43,9 +43,9 @@ fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
         .collect()
 }
 
-fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
+fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<usize> {
     if entries.is_empty() {
-        return Ok(());
+        return Ok(0);
     }
     let quarantine_path = ingress_quarantine_file_for(path);
     let _lock = acquire_market_file_lock(&quarantine_path)?;
@@ -58,8 +58,9 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         .filter(|entry| !existing.contains(&(entry.line_number, entry.line_hash)))
         .collect::<Vec<_>>();
     if pending.is_empty() {
-        return Ok(());
+        return Ok(0);
     }
+    let appended = pending.len();
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
@@ -68,7 +69,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
-    Ok(())
+    Ok(appended)
 }
 
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -95,20 +96,24 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
     }
     if !quarantined.is_empty() {
-        if let Err(err) = append_quarantine_records(&path, &quarantined) {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
-                path.display(),
-                quarantined.len(),
-                err
-            );
-        } else {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
-                path.display(),
-                quarantined.len(),
-                ingress_quarantine_file_for(&path).display()
-            );
+        match append_quarantine_records(&path, &quarantined) {
+            Err(err) => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                    path.display(),
+                    quarantined.len(),
+                    err
+                );
+            }
+            Ok(appended) if appended > 0 => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                    path.display(),
+                    appended,
+                    ingress_quarantine_file_for(&path).display()
+                );
+            }
+            Ok(_) => {}
         }
     }
     records

@@ -1,6 +1,37 @@
 use super::*;
 
 #[test]
+fn append_quarantine_records_reports_only_new_entries() {
+    let path = unique_tmp_path("ingress-quarantine-count", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+
+    let entry = IngressQuarantineRecord {
+        source_path: path.display().to_string(),
+        line_number: 2,
+        line_hash: 7,
+        raw_line: "not-json".to_string(),
+        error: "expected value".to_string(),
+        quarantined_at_unix_ms: 1,
+    };
+
+    let appended = append_quarantine_records(&path, &[entry.clone()]).expect("append first");
+    assert_eq!(appended, 1, "first malformed ingress row should be counted once");
+
+    let duplicated = append_quarantine_records(&path, &[entry]).expect("append duplicate");
+    assert_eq!(
+        duplicated, 0,
+        "reloading the same malformed ingress row must not inflate quarantine accounting"
+    );
+
+    let raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    assert_eq!(raw.lines().filter(|line| !line.trim().is_empty()).count(), 1);
+
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");
