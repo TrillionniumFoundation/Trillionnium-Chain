@@ -36,6 +36,17 @@ pub(crate) const GOV_ALLOWED_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "challenge_window_blocks",
     "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
@@ -44,12 +55,23 @@ pub(crate) const GOV_ALLOWED_KEYS: &[&str] = &[
     "monetary_base_burn_per_tick",
 ];
 pub(crate) const GOV_SENSITIVE_KEYS: &[&str] = &[
-    "challenge_window_blocks",
-    "challenge_min_bond",
-    "challenge_success_bounty",
     "min_worker_stake",
+    "challenge_min_bond",
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
 ];
 pub(crate) const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
@@ -129,6 +151,23 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         }
         "challenge_min_bond_bounty_bps" | "challenge_min_bond_worker_stake_bps" => {
             let _ = parse_u64_in_range(key, value, 0, 100_000)?;
+            Ok(())
+        }
+        "llm_meter_prompt_token_weight"
+        | "llm_meter_generated_token_weight"
+        | "llm_meter_decode_step_weight"
+        | "llm_meter_kv_byte_weight"
+        | "llm_meter_min_accept_work_units"
+        | "llm_meter_challenge_success_bounty_per_work_unit_num"
+        | "llm_meter_worker_completion_bonus_per_work_unit_num"
+        | "llm_meter_worker_slash_rebate_per_work_unit_num" => {
+            let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "llm_meter_challenge_success_bounty_per_work_unit_den"
+        | "llm_meter_worker_completion_bonus_per_work_unit_den"
+        | "llm_meter_worker_slash_rebate_per_work_unit_den" => {
+            let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
             Ok(())
         }
         "resolve_authority" => {
@@ -245,7 +284,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
-        _ => Ok(()),
+        _ => Err(format!(
+            "invalid governance value for {}: no explicit validator registered",
+            key
+        )),
     }
 }
 

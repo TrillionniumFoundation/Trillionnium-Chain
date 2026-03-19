@@ -2235,6 +2235,31 @@ fn governance_allowed_keys_schema_merge_gate_is_explicit() {
 }
 
 #[test]
+fn governance_llm_meter_schema_is_explicit_and_fail_closed() {
+    let mut st = StateStore::new();
+
+    st.set_gov_param_unchecked(
+        97_050,
+        "llm_meter_prompt_token_weight".into(),
+        "42".into(),
+    )
+    .expect("llm meter key with explicit validator should be accepted");
+    assert_eq!(
+        st.gov_param_u64("llm_meter_prompt_token_weight"),
+        Some(42)
+    );
+
+    let err = st
+        .set_gov_param_unchecked(
+            97_051,
+            "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+            "0".into(),
+        )
+        .expect_err("denominator zero must fail closed");
+    assert!(err.contains("invalid governance value"), "{err}");
+}
+
+#[test]
 fn governance_resolve_authority_rejects_reserved_or_placeholder_values() {
     let mut st = StateStore::new();
 
