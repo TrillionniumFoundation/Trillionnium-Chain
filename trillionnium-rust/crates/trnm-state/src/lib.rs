@@ -745,9 +745,6 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.task_id != id || task.version == 0 {
-                    if self.objects.remove(&id).is_some() {
-                        self.invalidate_state_root_cache();
-                    }
                     return;
                 }
                 self.invalidate_state_root_cache();
@@ -2108,6 +2105,78 @@ mod tests {
             st.state_root(),
             root_before,
             "rejected mismatched restore must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_invalid_replacement_without_clobbering_existing_object() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 17,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+        let root_before = st.state_root();
+
+        st.restore_task(
+            17,
+            Some(TaskObject {
+                task_id: 18,
+                creator: "mallory".into(),
+                bounty: 99,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 2,
+            }),
+        );
+
+        assert_eq!(
+            st.get_task(17)
+                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
+            Some((17, "alice".into(), 10, TaskStatus::Open, 1)),
+            "invalid restore snapshot must not clobber the existing task object"
+        );
+        assert_eq!(
+            st.get_ref(17),
+            Some(ObjectRef { id: 17, version: 1 }),
+            "invalid restore snapshot must preserve the existing object version"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "invalid restore snapshot must leave state_root unchanged"
         );
     }
 
