@@ -172,6 +172,11 @@ impl OraclePolicy {
         now_ts_ms: u64,
     ) -> Result<(), OracleError> {
         self.validate()?;
+
+        if canonical_source_cardinality(snapshot) != snapshot.sources.len() as u32 {
+            return Err(OracleError::DuplicateSources);
+        }
+
         snapshot.validate_hash()?;
 
         if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
@@ -953,11 +958,31 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert!(matches!(
-            report.error.as_deref(),
-            Some(error) if error.starts_with("snapshot hash mismatch:")
-        ));
+        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    }
+
+    #[test]
+    fn rejects_deserialized_duplicate_sources_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized duplicate sources must fail guardrail");
+        assert_eq!(err, OracleError::DuplicateSources);
     }
 
     #[test]
