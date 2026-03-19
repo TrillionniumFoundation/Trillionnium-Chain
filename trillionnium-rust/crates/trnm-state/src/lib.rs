@@ -867,6 +867,10 @@ impl StateStore {
                     self.objects.remove(&key_id);
                     return;
                 }
+                if validate_gov_param_value(&snapshot.key, &snapshot.value).is_err() {
+                    self.objects.remove(&key_id);
+                    return;
+                }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
                         self.objects.remove(&key_id);
@@ -4475,6 +4479,24 @@ mod tests {
 
         assert!(st.get_param(8_123).is_none());
         assert!(st.gov_param_string("forbidden_key").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_schema_invalid_allowed_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_124,
+            Some(GovParamObject {
+                key_id: 8_124,
+                key: "max_block_ms".into(),
+                value: "9".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
     }
 
     #[test]
