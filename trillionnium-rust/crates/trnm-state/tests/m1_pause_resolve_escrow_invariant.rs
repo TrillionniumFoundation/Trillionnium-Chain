@@ -3261,12 +3261,11 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
         Some("Authority-B"),
         "restore should preserve approver audit spelling while accepting equivalent authority-set semantics"
     );
-    assert_eq!(
-        st.pending_resolve_approval_snapshot(9_930)
-            .expect("equivalent snapshot should survive paused restore")
-            .authority_set,
-        "Authority-B,Authority-A"
-    );
+    let restored_snapshot = st
+        .pending_resolve_approval_snapshot(9_930)
+        .expect("equivalent snapshot should survive paused restore");
+    assert_eq!(restored_snapshot.first_approver, "Authority-B");
+    assert_eq!(restored_snapshot.authority_set, "Authority-B,Authority-A");
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into())

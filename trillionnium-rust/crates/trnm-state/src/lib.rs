@@ -386,8 +386,10 @@ fn validated_restorable_pending_resolve_snapshot(
     Some(PendingResolveApproval {
         slash_worker: snapshot.slash_worker,
         confirmations: snapshot.confirmations,
-        first_approver: first_approver_canonical,
-        authority_set: authority_canonical,
+        // Preserve the original snapshot spelling for auditability while validating
+        // membership/equivalence against canonical forms above.
+        first_approver: snapshot.first_approver,
+        authority_set: snapshot.authority_set,
         task_version: snapshot.task_version,
     })
 }
