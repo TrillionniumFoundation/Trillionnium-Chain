@@ -1071,6 +1071,36 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
 }
 
 #[test]
+fn governance_proposal_string_field_boundaries_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    st1.put_proposal_new(GovProposalObject {
+        proposal_id: 9_601,
+        title: "ab".into(),
+        proposer: "c".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    })
+    .expect("first proposal should be accepted");
+
+    st2.put_proposal_new(GovProposalObject {
+        proposal_id: 9_601,
+        title: "a".into(),
+        proposer: "bc".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    })
+    .expect("second proposal should be accepted");
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root should length-frame governance proposal strings so audit-proof snapshot material cannot collide across field boundaries"
+    );
+}
+
+#[test]
 fn treasury_balance_address_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
