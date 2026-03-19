@@ -699,13 +699,11 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
-        if self.is_emergency_paused() {
-            let Some(task) = self.get_task(task_id) else {
-                return;
-            };
-            if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-                return;
-            }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
@@ -2381,6 +2379,30 @@ mod tests {
         assert_eq!(
             root_after_clear, baseline,
             "after stale-stage clear, state root should match an empty store"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_missing_task_snapshot() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), None);
+        assert_eq!(
+            st.state_root(),
+            baseline,
+            "restore must not admit dangling pending approvals that would perturb state root without a backing challenged task"
         );
     }
 
