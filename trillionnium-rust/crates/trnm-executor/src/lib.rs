@@ -246,14 +246,6 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
         return keys;
     }
 
-    // Singleton write domains are common for owned-object fast paths; avoid
-    // building an intermediate domain structure while preserving first-seen read
-    // order for deterministic object-scope reporting.
-    if write_keys.len() == 1 {
-        let shared = write_keys[0];
-        return keys.into_iter().filter(|key| *key != shared).collect();
-    }
-
     // Keep object-scoped access domains deterministic while avoiding quadratic
     // write-key probes once shared domains become large. Duplicate-heavy callers
     // can still have a tiny effective write domain even when the raw slice is
@@ -271,6 +263,14 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
             }
             write_domain.push(*key);
         }
+    }
+
+    // Duplicate-heavy owned/shared domains can still collapse to one effective
+    // shared object. Preserve the cheap singleton filter after dedup so hot
+    // duplicate bursts stay on the narrowest deterministic path.
+    if write_domain.len() == 1 {
+        let shared = write_domain[0];
+        return keys.into_iter().filter(|key| *key != shared).collect();
     }
 
     keys.into_iter()
@@ -1649,6 +1649,17 @@ mod tests {
         // Shared objects should be filtered once, while surviving read-only
         // objects keep first-seen order for deterministic access-domain reporting.
         assert_eq!(keys, vec![42, 77, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_duplicate_singleton_write_domain_preserves_read_order() {
+        let write_keys = vec![44, 44, 44, 44, 44, 44, 44, 44, 44];
+
+        let keys = read_domain_only_keys(&[o(44), o(5), o(44), o(99), o(123), o(99)], &write_keys);
+
+        // Duplicate-heavy callers should still collapse to the singleton
+        // owned/shared fast path when the effective write domain is one object.
+        assert_eq!(keys, vec![5, 99, 123]);
     }
 
     #[test]
