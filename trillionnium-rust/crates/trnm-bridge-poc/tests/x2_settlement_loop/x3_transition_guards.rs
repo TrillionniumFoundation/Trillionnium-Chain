@@ -112,7 +112,7 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
         &mut request,
         &token,
         &heartbeat,
-        SettlementConfirm::Confirmed { height: 312 },
+        SettlementConfirm::Confirmed { height: 311 },
     )
     .unwrap_err();
 
@@ -145,6 +145,29 @@ fn x3_prep_confirm_below_observed_target_height_is_rejected_without_state_change
     assert_eq!(
         err,
         trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 698 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_above_observed_source_plus_one_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-above-source-plus-one".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 702 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 702 }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
