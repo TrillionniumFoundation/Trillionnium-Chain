@@ -1338,11 +1338,18 @@ impl StateStore {
                     .get(key)
                     .copied()
                     .is_some_and(|existing_key_id| existing_key_id != snapshot.key_id);
+                let foreign_key_id_collision = self
+                    .gov_param_key_index
+                    .iter()
+                    .any(|(existing_key, &existing_key_id)| {
+                        existing_key != key && existing_key_id == snapshot.key_id
+                    });
                 if snapshot.key != key
                     || !GOV_ALLOWED_KEYS.contains(&key)
                     || !is_sensitive_gov_param(key)
                     || validate_governance_key_id(key, snapshot.key_id).is_err()
                     || key_id_mismatch
+                    || foreign_key_id_collision
                     || validate_gov_param_value(key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);

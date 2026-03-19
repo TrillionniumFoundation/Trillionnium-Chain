@@ -2881,3 +2881,37 @@ fn restore_pending_gov_update_non_sensitive_key_fails_closed_without_aliasing_im
         "non-sensitive governance keys must not be restorable into the pending timelock queue"
     );
 }
+
+#[test]
+fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param_unchecked(113, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let root_with_canonical_param = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_success_bounty",
+        Some(PendingGovParamUpdate {
+            key_id: 113,
+            key: "challenge_success_bounty".into(),
+            value: "6000".into(),
+            activate_at_height: 350,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "restore_pending_gov_update must fail closed when a snapshot reuses another governance key's canonical id"
+    );
+    assert_eq!(
+        state.gov_param_string("challenge_min_bond"),
+        Some("5000".into()),
+        "foreign key-id collision must not disturb the existing canonical governance registration"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_canonical_param,
+        "foreign key-id collision must leave the deterministic root unchanged"
+    );
+}
