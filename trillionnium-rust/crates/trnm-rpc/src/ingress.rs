@@ -48,6 +48,19 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 }
 
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
+    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+
+    fn truncate_for_quarantine(raw: &str) -> String {
+        if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+            return raw.to_string();
+        }
+        let mut end = INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES;
+        while end > 0 && !raw.is_char_boundary(end) {
+            end -= 1;
+        }
+        raw[..end].to_string()
+    }
+
     let path = ingress_file();
     let Ok(raw) = fs::read_to_string(&path) else {
         return vec![];
@@ -64,7 +77,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 source_path: path.display().to_string(),
                 line_number: idx + 1,
                 line_hash: stable_line_hash(line),
-                raw_line: line.to_string(),
+                raw_line: truncate_for_quarantine(line),
                 error: err.to_string(),
                 quarantined_at_unix_ms: now_ms(),
             }),

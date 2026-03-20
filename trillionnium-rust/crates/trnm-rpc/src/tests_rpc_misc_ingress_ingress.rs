@@ -36,7 +36,14 @@ not-json
         "malformed ingress row should be quarantined"
     );
     assert_eq!(entries[0]["line_number"], 2);
-    assert_eq!(entries[0]["raw_line"], "not-json");
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw_line should be a string");
+    assert_eq!(raw_line.len(), 4096, "quarantine raw_line should be bounded");
+    assert!(
+        oversized_malformed.starts_with(raw_line),
+        "quarantine raw_line should preserve the malformed prefix"
+    );
     assert_eq!(entries[0]["source_path"], path.display().to_string());
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
