@@ -82,7 +82,7 @@ pub fn drive_minimal_settlement(
         SettlementConfirm::Confirmed { height } => {
             if let Some(observed) = heartbeat.heartbeat {
                 let max_confirm_height = observed.source_height.saturating_add(1);
-                if height < observed.target_height || height > max_confirm_height {
+                if height <= observed.target_height || height > max_confirm_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
             }
