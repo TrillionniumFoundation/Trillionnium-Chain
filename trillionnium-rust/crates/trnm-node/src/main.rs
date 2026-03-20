@@ -2296,6 +2296,16 @@ fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
     task_ids
 }
 
+fn timeout_bond_disposition(
+    was_challenged: bool,
+    challenge_bond_forfeited: Option<bool>,
+) -> Option<&'static str> {
+    if !was_challenged {
+        return None;
+    }
+    challenge_bond_forfeited.map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+}
+
 fn scan_and_apply_timeouts(
     st: &mut StateStore,
     known_task_ids: &HashSet<u64>,
@@ -2325,6 +2335,7 @@ fn scan_and_apply_timeouts(
             continue;
         }
         let from_status = format!("{:?}", task.status);
+        let was_challenged = matches!(task.status, TaskStatus::Challenged);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
@@ -2336,14 +2347,11 @@ fn scan_and_apply_timeouts(
             let root = hex::encode(st.state_root());
             let (treasury_delta, challenger_delta) =
                 balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = if from_status == "Challenged" {
-                st.get_task(task_id).and_then(|t| {
-                    t.challenge_bond_forfeited
-                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
-                })
-            } else {
-                None
-            };
+            let bond_disposition = timeout_bond_disposition(
+                was_challenged,
+                st.get_task(task_id)
+                    .and_then(|t| t.challenge_bond_forfeited),
+            );
             emit_timeout_event(
                 st,
                 task_id,
@@ -7619,6 +7627,14 @@ mod tests {
         let known: HashSet<u64> = [7003u64, 7001u64, 7002u64].into_iter().collect();
 
         assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
+    fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
+        assert_eq!(timeout_bond_disposition(false, Some(true)), None);
+        assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
+        assert_eq!(timeout_bond_disposition(true, Some(true)), Some("forfeited"));
+        assert_eq!(timeout_bond_disposition(true, None), None);
     }
 
     #[test]
