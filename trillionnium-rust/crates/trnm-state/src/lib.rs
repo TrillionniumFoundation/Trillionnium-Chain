@@ -170,12 +170,12 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
 fn governance_expected_key_id(key: &str) -> Option<u64> {
-    match key {
-        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
-        _ => None,
-    }
+    GOV_PINNED_KEY_IDS
+        .iter()
+        .find_map(|(pinned_key, pinned_key_id)| (*pinned_key == key).then_some(*pinned_key_id))
 }
 
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
@@ -3346,6 +3346,35 @@ mod tests {
     }
 
     #[test]
+    fn governance_accessors_fail_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: "algorand_governance_key_id".into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("algorand_governance_key_id".into(), 9_200);
+
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "string accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert!(
+            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
     fn governance_accessors_fail_closed_on_key_name_registry_mismatch() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7316, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
@@ -3680,14 +3709,19 @@ mod tests {
 
     #[test]
     fn governance_expected_key_id_registry_merge_gate_is_explicit() {
-        let expected = [("emergency_pause", Some(7_999)), ("resolve_authority", None)];
-
-        for (key, expected_key_id) in expected {
-            assert_eq!(governance_expected_key_id(key), expected_key_id, "{key}");
+        for (key, expected_key_id) in GOV_PINNED_KEY_IDS {
+            assert_eq!(
+                governance_expected_key_id(key),
+                Some(*expected_key_id),
+                "{key}"
+            );
         }
 
         for key in GOV_ALLOWED_KEYS {
-            if *key != "emergency_pause" {
+            if !GOV_PINNED_KEY_IDS
+                .iter()
+                .any(|(pinned_key, _)| pinned_key == key)
+            {
                 assert_eq!(
                     governance_expected_key_id(key),
                     None,
@@ -3695,6 +3729,8 @@ mod tests {
                 );
             }
         }
+
+        assert_eq!(governance_expected_key_id("resolve_authority"), None);
     }
 
     #[test]
