@@ -499,16 +499,34 @@ fn validate_governance_registry_shape() -> Result<(), String> {
     )
 }
 
-fn validate_governance_key_registration(
+fn validate_governance_key_registration_lists(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
     key_id: u64,
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
-    validate_governance_registry_shape()?;
-    if !GOV_ALLOWED_KEYS.contains(&key) {
+    if !allowed_keys.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
     }
-    validate_governance_key_id(key, key_id)?;
+    if !explicit_validator_keys.contains(&key) {
+        return Err(format!(
+            "governance validator coverage missing for allowed key: {}",
+            key
+        ));
+    }
+    if let Some((_, expected_id)) = pinned_key_ids
+        .iter()
+        .find(|(pinned_key, _)| *pinned_key == key)
+    {
+        if key_id != *expected_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
     if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
         if existing_key_id != key_id {
             return Err(format!(
@@ -518,6 +536,22 @@ fn validate_governance_key_registration(
         }
     }
     Ok(())
+}
+
+fn validate_governance_key_registration(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    validate_governance_registry_shape()?;
+    validate_governance_key_registration_lists(
+        gov_param_key_index,
+        key,
+        key_id,
+        GOV_ALLOWED_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_PINNED_KEY_IDS,
+    )
 }
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
@@ -3007,6 +3041,24 @@ mod tests {
 
         assert!(
             err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_requires_explicit_validator_coverage_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+        )
+        .expect_err("registration must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("governance validator coverage missing for allowed key: max_parallel_workers"),
             "{err}"
         );
     }
