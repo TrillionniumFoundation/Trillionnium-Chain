@@ -225,7 +225,7 @@ fn load_ingress_records_bounds_invalid_utf8_quarantine_raw_line_after_lossy_deco
         "lossy quarantine output should preserve invalid utf-8 markers for debugging"
     );
     assert!(
-        raw_line.len() <= 4096,
+        raw_line.as_bytes().len() <= 4096,
         "quarantine raw_line should stay byte-bounded after lossy utf-8 decoding"
     );
 
