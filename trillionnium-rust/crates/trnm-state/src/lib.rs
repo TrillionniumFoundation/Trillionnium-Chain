@@ -289,24 +289,64 @@ fn format_governance_registry_membership_drift(
     ))
 }
 
+fn validate_governance_registry_key_canonical(
+    registry_name: &str,
+    key: &str,
+) -> Result<(), String> {
+    if key.trim() != key {
+        return Err(format!(
+            "governance {} contains non-canonical key with surrounding whitespace: {}",
+            registry_name, key
+        ));
+    }
+    if key.is_empty() {
+        return Err(format!(
+            "governance {} contains empty key entry",
+            registry_name
+        ));
+    }
+    if !key.is_ascii() {
+        return Err(format!(
+            "governance {} contains non-ascii key entry: {}",
+            registry_name, key
+        ));
+    }
+    if key.chars().any(|ch| ch.is_ascii_uppercase()) {
+        return Err(format!(
+            "governance {} contains non-canonical uppercase key: {}",
+            registry_name, key
+        ));
+    }
+    Ok(())
+}
+
 fn validate_governance_registry_shape_lists(
     allowed_keys: &[&str],
     sensitive_keys: &[&str],
     explicit_validator_keys: &[&str],
     pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
+    for key in allowed_keys {
+        validate_governance_registry_key_canonical("allowed-key registry", key)?;
+    }
     let allowed_unique: std::collections::BTreeSet<&str> =
         allowed_keys.iter().copied().collect();
     if allowed_unique.len() != allowed_keys.len() {
         return Err("governance allowed-key registry contains duplicate entries".into());
     }
 
+    for key in sensitive_keys {
+        validate_governance_registry_key_canonical("sensitive-key registry", key)?;
+    }
     let sensitive_unique: std::collections::BTreeSet<&str> =
         sensitive_keys.iter().copied().collect();
     if sensitive_unique.len() != sensitive_keys.len() {
         return Err("governance sensitive-key registry contains duplicate entries".into());
     }
 
+    for key in explicit_validator_keys {
+        validate_governance_registry_key_canonical("explicit-validator registry", key)?;
+    }
     let validator_unique: std::collections::BTreeSet<&str> =
         explicit_validator_keys.iter().copied().collect();
     if validator_unique.len() != explicit_validator_keys.len() {
@@ -349,6 +389,7 @@ fn validate_governance_registry_shape_lists(
     let mut pinned_unique = std::collections::BTreeSet::new();
     let mut pinned_ids = std::collections::BTreeMap::new();
     for (key, pinned_id) in pinned_key_ids {
+        validate_governance_registry_key_canonical("pinned-key registry", key)?;
         if !pinned_unique.insert(*key) {
             return Err(format!(
                 "governance pinned-key registry contains duplicate entries for {}",
@@ -2871,6 +2912,39 @@ mod tests {
 
         assert!(
             err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_noncanonical_uppercase_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+        )
+        .expect_err("uppercase governance registry keys must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical uppercase key")
+                || err.contains("allowed-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_whitespace_pinned_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &[(" emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("whitespace-padded pinned governance keys must fail closed");
+
+        assert!(
+            err.contains("pinned-key registry contains non-canonical key with surrounding whitespace"),
             "{err}"
         );
     }
