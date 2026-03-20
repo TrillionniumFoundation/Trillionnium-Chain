@@ -212,6 +212,9 @@ fn validate_gov_param_registry_binding(
     if !GOV_ALLOWED_KEYS.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
     }
+    // Shared single-source gate: enforce both the forward pinned-key mapping
+    // (key -> canonical key_id) and the reverse reserved-id mapping
+    // (reserved key_id -> canonical key) before consulting the mutable registry.
     validate_gov_param_key_id_policy(key, key_id)?;
     if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
         if existing_key_id != key_id {
@@ -3821,6 +3824,10 @@ mod tests {
         let err = validate_gov_param_registry_binding(&empty_index, "emergency_pause", 8_000)
             .expect_err("pinned governance key must reject non-canonical key ids at the shared registry gate");
         assert!(err.contains("expected_id=7999"), "{err}");
+
+        let err = validate_gov_param_registry_binding(&empty_index, "resolve_authority", 7_999)
+            .expect_err("shared registry gate must reject routing another governance key through the reserved emergency_pause key id");
+        assert!(err.contains("expected_key=emergency_pause"), "{err}");
 
         let mut indexed = BTreeMap::new();
         indexed.insert("resolve_authority".to_string(), 7_313);
