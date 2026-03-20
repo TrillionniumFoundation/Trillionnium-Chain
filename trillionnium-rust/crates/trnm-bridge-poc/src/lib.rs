@@ -127,6 +127,9 @@ pub mod bridge_status {
         InvalidHeight {
             height: u64,
         },
+        HeartbeatRetryPending {
+            reason: String,
+        },
         InvalidRevertReason,
         MalformedRequest {
             reason: &'static str,
