@@ -121,16 +121,23 @@ pub struct WalMeta {
 
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
+        fn update_len_prefixed(hasher: &mut Sha256, bytes: &[u8]) {
+            hasher.update((bytes.len() as u64).to_le_bytes());
+            hasher.update(bytes);
+        }
+
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        update_len_prefixed(&mut hasher, self.proposal_hash.as_bytes());
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
-        if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
-        } else {
-            hasher.update(b"genesis");
+        update_len_prefixed(&mut hasher, self.state_root_hex.as_bytes());
+        match &self.prev_hash_hex {
+            Some(prev) => {
+                hasher.update([1]);
+                update_len_prefixed(&mut hasher, prev.as_bytes());
+            }
+            None => hasher.update([0]),
         }
         hex::encode(hasher.finalize())
     }
@@ -2018,6 +2025,30 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn wal_content_hash_distinguishes_ambiguous_variable_length_fields() {
+        let base = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: "c".into(),
+            prev_hash_hex: Some("tail".into()),
+        };
+        let ambiguous = WalMeta {
+            proposal_hash: "a".into(),
+            state_root_hex: "bc".into(),
+            prev_hash_hex: Some("tail".into()),
+            ..base.clone()
+        };
+
+        assert_ne!(
+            base.content_hash_hex(),
+            ambiguous.content_hash_hex(),
+            "WAL content hashes must distinguish variable-length proposal/state-root tuples so checkpoint selection cannot alias semantically different entries"
+        );
     }
 
     #[test]
