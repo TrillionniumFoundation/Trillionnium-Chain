@@ -1,6 +1,6 @@
 use sha2::{Digest, Sha256};
 
-use crate::{ObjectValue, StateStore};
+use crate::{canonicalize_resolve_authority_set, validate_resolve_approver_token, ObjectValue, StateStore};
 use trnm_types::{Hash32, PrivacyTier, TaskMetadata, TaskMeteringSnapshot, TaskModelMetadata, TaskProvenanceMetadata};
 
 fn hash_len_prefixed_bytes(hasher: &mut Sha256, bytes: &[u8]) {
@@ -270,8 +270,12 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
-            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
+            let hashed_first_approver = validate_resolve_approver_token(&pending.first_approver)
+                .unwrap_or_else(|_| pending.first_approver.clone());
+            let hashed_authority_set = canonicalize_resolve_authority_set(&pending.authority_set)
+                .unwrap_or_else(|_| pending.authority_set.clone());
+            hash_len_prefixed_str(&mut hasher, &hashed_first_approver);
+            hash_len_prefixed_str(&mut hasher, &hashed_authority_set);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");

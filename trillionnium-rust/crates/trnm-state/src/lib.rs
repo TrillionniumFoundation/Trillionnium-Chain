@@ -745,12 +745,23 @@ impl StateStore {
         let restored = PendingResolveApproval {
             slash_worker: snapshot.slash_worker,
             confirmations: snapshot.confirmations,
-            first_approver: first_approver_canonical,
-            authority_set: authority_canonical,
+            first_approver: snapshot.first_approver,
+            authority_set: snapshot.authority_set,
             task_version: snapshot.task_version,
         };
-        if self.pending_resolve_approvals.get(&task_id) == Some(&restored) {
-            return;
+        if let Some(existing) = self.pending_resolve_approvals.get(&task_id) {
+            let existing_matches = existing.slash_worker == restored.slash_worker
+                && existing.confirmations == restored.confirmations
+                && existing.task_version == restored.task_version
+                && validate_resolve_approver_token(&existing.first_approver)
+                    .map(|canonical| canonical == first_approver_canonical)
+                    .unwrap_or(false)
+                && canonicalize_resolve_authority_set(&existing.authority_set)
+                    .map(|canonical| canonical == authority_canonical)
+                    .unwrap_or(false);
+            if existing_matches {
+                return;
+            }
         }
 
         self.invalidate_state_root_cache();
@@ -3189,15 +3200,15 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("authority-a".to_string()),
-            "restore should canonicalize approver identity before storing pending resolve state"
+            Some("Authority-A".to_string()),
+            "restore should preserve approver audit spelling while still normalizing state-root identity"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-a,authority-b".to_string()),
-            "restore should canonicalize authority-set identity before storing pending resolve state"
+            Some("authority-b,authority-a".to_string()),
+            "restore should preserve authority-set snapshot spelling while still normalizing state-root identity"
         );
         assert_eq!(
             restored.state_root(),
