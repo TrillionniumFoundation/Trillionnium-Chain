@@ -31,6 +31,28 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
+fn validate_heartbeat_outcome(heartbeat: &HeartbeatOutcome) -> Result<(), SettlementError> {
+    if heartbeat.degraded {
+        return Ok(());
+    }
+
+    let Some(metrics) = heartbeat.heartbeat else {
+        return Ok(());
+    };
+
+    if metrics.source_height == 0 {
+        return Err(SettlementError::InvalidHeight { height: 0 });
+    }
+
+    if metrics.target_height == 0 || metrics.target_height > metrics.source_height {
+        return Err(SettlementError::InvalidHeight {
+            height: metrics.target_height,
+        });
+    }
+
+    Ok(())
+}
+
 fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
     heartbeat
         .heartbeat
@@ -51,6 +73,7 @@ pub fn drive_minimal_settlement(
     heartbeat: &HeartbeatOutcome,
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
+    validate_heartbeat_outcome(heartbeat)?;
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {

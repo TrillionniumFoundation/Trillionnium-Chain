@@ -150,6 +150,37 @@ fn x3_prep_rejects_confirm_height_behind_heartbeat_target_height() {
 }
 
 #[test]
+fn x3_prep_rejects_non_degraded_invalid_heartbeat_progression_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xinvalid-heartbeat-progression".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 701,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 701 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_reorder_confirm_with_older_height_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xreorder-confirm-height".to_string());
     let token = operator_token();
