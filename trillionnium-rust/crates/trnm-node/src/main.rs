@@ -2293,7 +2293,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
     Ok(())
 }
 
-fn sorted_timeout_task_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
+fn ordered_known_task_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
     let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
     task_ids.sort_unstable();
     task_ids
@@ -2306,7 +2306,7 @@ fn scan_and_apply_timeouts(
     tx_id_seed: u64,
 ) -> u64 {
     let mut migrated = 0u64;
-    for task_id in sorted_timeout_task_ids(known_task_ids) {
+    for task_id in ordered_known_task_ids(known_task_ids) {
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
@@ -7618,12 +7618,12 @@ mod tests {
     }
 
     #[test]
-    fn sorted_timeout_task_ids_normalizes_hashset_iteration_order() {
+    fn timeout_scan_orders_known_task_ids_for_stable_event_surface() {
         let ascending: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
         let descending: HashSet<u64> = [7003u64, 7002u64, 7001u64].into_iter().collect();
 
-        assert_eq!(sorted_timeout_task_ids(&ascending), vec![7001, 7002, 7003]);
-        assert_eq!(sorted_timeout_task_ids(&descending), vec![7001, 7002, 7003]);
+        assert_eq!(ordered_known_task_ids(&ascending), vec![7001, 7002, 7003]);
+        assert_eq!(ordered_known_task_ids(&descending), vec![7001, 7002, 7003]);
     }
 
     #[test]
