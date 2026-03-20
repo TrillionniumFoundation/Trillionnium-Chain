@@ -231,8 +231,41 @@ fn validate_governance_validator_registry_shape() -> Result<(), String> {
     Ok(())
 }
 
+fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let schema_sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+        .iter()
+        .map(|(key, _)| *key)
+        .collect();
+    let schema_unique: std::collections::BTreeSet<&str> =
+        schema_sample_keys.iter().copied().collect();
+
+    if schema_unique.len() != schema_sample_keys.len() {
+        return Err("governance schema invalid-sample registry contains duplicate entries".into());
+    }
+    if allowed_unique != schema_unique {
+        let missing_schema_keys: Vec<&str> = allowed_unique
+            .difference(&schema_unique)
+            .copied()
+            .collect();
+        let rogue_schema_keys: Vec<&str> = schema_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance schema invalid-sample registry drifted from allowed-key registry: missing_schema_keys=[{}], rogue_schema_keys=[{}]",
+            missing_schema_keys.join(", "),
+            rogue_schema_keys.join(", "),
+        ));
+    }
+
+    Ok(())
+}
+
 fn ensure_allowed_key_has_explicit_validator(key: &str) -> Result<(), String> {
     validate_governance_validator_registry_shape()?;
+    validate_governance_schema_sample_registry_shape()?;
     if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
         return Err(format!(
             "governance key {} is allowed but missing explicit validator registration",
@@ -768,7 +801,7 @@ mod tests {
     use super::{
         ensure_allowed_key_has_explicit_validator, governance_pinned_key_id,
         has_explicit_gov_param_validator, validate_gov_param_value,
-        validate_governance_key_id, GOV_ALLOWED_KEYS,
+        validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
     };
 
     #[test]
@@ -812,5 +845,20 @@ mod tests {
             .expect("canonical pinned governance key id should be accepted");
         validate_governance_key_id("max_block_ms", 9_601)
             .expect("unpinned governance keys should stay free of accidental pinning");
+    }
+
+    #[test]
+    fn governance_schema_invalid_samples_cover_allowed_keys_once() {
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        let sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+            .iter()
+            .map(|(key, _)| *key)
+            .collect();
+        let sample_unique: std::collections::BTreeSet<&str> =
+            sample_keys.iter().copied().collect();
+
+        assert_eq!(sample_unique.len(), sample_keys.len());
+        assert_eq!(allowed_unique, sample_unique);
     }
 }
