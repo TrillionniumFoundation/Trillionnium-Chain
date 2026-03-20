@@ -70,6 +70,26 @@ fn borrowed_last_critical_slot_keeps_fresh_critical_retry_backpressured_until_dr
 }
 
 #[test]
+fn active_critical_backlog_blocks_normal_from_borrowing_last_reserved_slot() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    // Fill dedicated normal capacity, then borrow only surplus critical headroom.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // One immediate critical slot must remain available while critical backlog is active.
+    assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 2, 4));
+
+    // Fresh normal retries must stay backpressured and keep queue accounting flat
+    // instead of borrowing the final reserved critical slot.
+    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (2, 2, 4));
+}
+
+#[test]
 fn reserve_only_backpressured_critical_id_stays_fresh_across_cross_class_retries_until_drain() {
     let mut g = LaneAdmissionGate::new(2, 2);
 
@@ -95,7 +115,6 @@ fn reserve_only_backpressured_critical_id_stays_fresh_across_cross_class_retries
     assert_eq!(g.admit(123, IngressClass::Normal), AdmitOutcome::Accepted);
 }
 
-
 #[test]
 fn reserve_only_backpressured_normal_id_stays_fresh_across_cross_class_retries_until_drain() {
     let mut g = LaneAdmissionGate::new(2, 2);
@@ -106,8 +125,14 @@ fn reserve_only_backpressured_normal_id_stays_fresh_across_cross_class_retries_u
 
     // Fresh normal ingress under saturation must remain Backpressured even when
     // retried across classes before any dequeue occurs.
-    assert_eq!(g.admit(124, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(g.admit(124, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(124, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        g.admit(124, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
 
     // After one dequeue, the previously backpressured id must still admit as fresh.
     assert!(g.pop_ready().is_some());

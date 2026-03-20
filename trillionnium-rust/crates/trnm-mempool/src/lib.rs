@@ -126,6 +126,22 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn normal_can_borrow_critical_headroom(&self) -> bool {
+        let critical_free = self
+            .critical
+            .capacity
+            .saturating_sub(self.critical.queue.len());
+
+        if self.normal.capacity == 0 {
+            // Reserve-only mode keeps free-ingress throughput live by borrowing any
+            // idle critical headroom because there is no dedicated normal lane.
+            return critical_free > 0;
+        }
+
+        let critical_idle = self.critical.queue.is_empty();
+        critical_free > 1 || (critical_idle && critical_free > 0)
+    }
+
     fn queues_contain_tx(&self, tx_id: u64, in_normal_seen: bool, in_critical_seen: bool) -> bool {
         if in_normal_seen && in_critical_seen {
             self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
@@ -293,30 +309,19 @@ impl LaneAdmissionGate {
             IngressClass::Normal => {
                 let normal_was_empty = self.normal.queue.is_empty();
                 let primary = self.normal.admit(tx_id);
-                let out = if matches!(primary, AdmitOutcome::Backpressured) {
-                    let critical_free = self
-                        .critical
-                        .capacity
-                        .saturating_sub(self.critical.queue.len());
-
-                    let critical_idle = self.critical.queue.is_empty();
-                    if (self.normal.capacity == 0 && critical_free > 0)
-                        || (self.normal.capacity > 0
-                            && (critical_free > 1 || (critical_idle && critical_free > 0)))
-                    {
-                        // Keep free-ingress throughput live for reserve-only configs
-                        // (normal capacity == 0) by borrowing available critical
-                        // headroom.
-                        //
-                        // For non-degenerate splits, allow bounded normal spillover
-                        // while preserving one immediate critical slot whenever
-                        // critical backlog is active. If the critical lane is idle,
-                        // temporarily borrow the last free critical slot to keep
-                        // normal free-ingress throughput live.
-                        self.critical.admit(tx_id)
-                    } else {
-                        primary
-                    }
+                let out = if matches!(primary, AdmitOutcome::Backpressured)
+                    && self.normal_can_borrow_critical_headroom()
+                {
+                    // Keep free-ingress throughput live for reserve-only configs
+                    // (normal capacity == 0) by borrowing available critical
+                    // headroom.
+                    //
+                    // For non-degenerate splits, allow bounded normal spillover
+                    // while preserving one immediate critical slot whenever
+                    // critical backlog is active. If the critical lane is idle,
+                    // temporarily borrow the last free critical slot to keep
+                    // normal free-ingress throughput live.
+                    self.critical.admit(tx_id)
                 } else {
                     primary
                 };
