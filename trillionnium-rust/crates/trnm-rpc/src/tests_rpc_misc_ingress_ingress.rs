@@ -33,6 +33,51 @@ fn append_quarantine_records_reports_only_new_entries() {
 
 
 #[test]
+fn append_quarantine_records_deduplicates_same_batch_entries() {
+    let path = unique_tmp_path("ingress-quarantine-batch", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+
+    let appended = append_quarantine_records(
+        &path,
+        &[
+            IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: 2,
+                line_hash: 7,
+                raw_line: "not-json".to_string(),
+                error: "expected value".to_string(),
+                quarantined_at_unix_ms: 1,
+            },
+            IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: 2,
+                line_hash: 7,
+                raw_line: "not-json".to_string(),
+                error: "expected value".to_string(),
+                quarantined_at_unix_ms: 1,
+            },
+        ],
+    )
+    .expect("append duplicated batch");
+    assert_eq!(
+        appended, 1,
+        "duplicate malformed rows in the same batch must not inflate quarantine accounting"
+    );
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "batch dedup should persist exactly one entry");
+
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");

@@ -28,6 +28,10 @@ fn stable_line_hash(raw: &str) -> u64 {
     hasher.finish()
 }
 
+fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (usize, u64) {
+    (entry.line_number, entry.line_hash)
+}
+
 fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeSet::new();
@@ -55,7 +59,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     let mut seen = existing_quarantine_fingerprints(&quarantine_path);
     let pending = entries
         .iter()
-        .filter(|entry| seen.insert((entry.line_number, entry.line_hash)))
+        .filter(|entry| seen.insert(quarantine_fingerprint(entry)))
         .collect::<Vec<_>>();
     if pending.is_empty() {
         return Ok(0);
