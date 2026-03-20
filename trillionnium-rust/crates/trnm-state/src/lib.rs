@@ -497,6 +497,12 @@ fn validate_governance_registry_shape_lists(
                 key
             ));
         }
+        if !explicit_value_rule_unique.contains(key) {
+            return Err(format!(
+                "governance pinned-key registry missing explicit-value-rule coverage for {}",
+                key
+            ));
+        }
     }
 
     Ok(())
@@ -3467,6 +3473,26 @@ mod tests {
 
         assert!(
             err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_value_rule_coverage_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("pinned governance keys must keep explicit value-rule coverage");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry")
+                || err.contains(
+                    "pinned-key registry missing explicit-value-rule coverage for emergency_pause"
+                ),
             "{err}"
         );
     }
