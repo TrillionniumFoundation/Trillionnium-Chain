@@ -171,12 +171,21 @@ const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 
+fn governance_expected_key_id(key: &str) -> Option<u64> {
+    match key {
+        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
+        _ => None,
+    }
+}
+
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
-    if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-        return Err(format!(
-            "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-            key, EMERGENCY_PAUSE_KEY_ID, key_id
-        ));
+    if let Some(expected_key_id) = governance_expected_key_id(key) {
+        if key_id != expected_key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_key_id, key_id
+            ));
+        }
     }
     Ok(())
 }
@@ -3588,6 +3597,25 @@ mod tests {
             .expect_err("unchecked non-canonical emergency_pause key_id must be rejected");
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn governance_expected_key_id_registry_merge_gate_is_explicit() {
+        let expected = [("emergency_pause", Some(7_999)), ("resolve_authority", None)];
+
+        for (key, expected_key_id) in expected {
+            assert_eq!(governance_expected_key_id(key), expected_key_id, "{key}");
+        }
+
+        for key in GOV_ALLOWED_KEYS {
+            if *key != "emergency_pause" {
+                assert_eq!(
+                    governance_expected_key_id(key),
+                    None,
+                    "unexpected pinned governance key-id policy for {key}"
+                );
+            }
+        }
     }
 
     #[test]
