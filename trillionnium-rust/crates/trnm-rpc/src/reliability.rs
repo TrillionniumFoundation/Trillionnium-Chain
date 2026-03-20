@@ -492,11 +492,12 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     if retry.circuit_breaker_threshold == 0 {
         retry.circuit_breaker_threshold = 1;
     }
-    if retry.circuit_open_ms < retry.base_backoff_ms {
-        // Keep circuit-open window at least one base retry interval so repeated
-        // retry-exhaustion rounds cannot immediately re-open under undersized
-        // operator configs.
-        retry.circuit_open_ms = retry.base_backoff_ms;
+    let min_circuit_open_ms = retry.max_backoff_ms.max(retry.base_backoff_ms);
+    if retry.circuit_open_ms < min_circuit_open_ms {
+        // Keep circuit-open windows at least as wide as the effective retry
+        // ceiling so repeated retry-exhaustion rounds cannot re-enter earlier
+        // than the longest sanitized free-ingress backoff boundary.
+        retry.circuit_open_ms = min_circuit_open_ms;
     }
     retry
 }
@@ -1754,6 +1755,24 @@ mod tests {
         assert_eq!(engine.retry.max_attempts, 1);
         assert_eq!(engine.retry.circuit_breaker_threshold, 1);
         assert_eq!(engine.retry.circuit_open_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_circuit_open_window_to_retry_ceiling() {
+        let engine = ReliabilityEngine::new(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 5,
+                max_backoff_ms: 80,
+                max_attempts: 3,
+                circuit_breaker_threshold: 2,
+                circuit_open_ms: 7,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 5);
+        assert_eq!(engine.retry.max_backoff_ms, 80);
+        assert_eq!(engine.retry.circuit_open_ms, 80);
     }
 
     #[test]
