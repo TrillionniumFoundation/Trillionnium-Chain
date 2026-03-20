@@ -821,13 +821,44 @@ impl StateStore {
             return;
         }
 
+        let scrub_target_slot = |state: &mut Self| {
+            let had_object = matches!(
+                state.objects.get(&key_id),
+                Some(VersionedObject {
+                    value: ObjectValue::GovParam(_),
+                    ..
+                })
+            );
+            let had_index = state
+                .gov_param_key_index
+                .values()
+                .any(|mapped_id| *mapped_id == key_id);
+            if had_object || had_index {
+                state.invalidate_state_root_cache();
+                state.remove_gov_param_key_index_for_id(key_id);
+                state.objects.remove(&key_id);
+            }
+        };
+
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key_id != key_id || snapshot.version == 0 {
+                let existing_param = self.get_param(key_id);
+                if snapshot.version == 0 {
+                    return;
+                }
+                if snapshot.key_id != key_id {
+                    if existing_param
+                        .as_ref()
+                        .map(|existing| existing.key != snapshot.key)
+                        .unwrap_or(false)
+                    {
+                        scrub_target_slot(self);
+                    }
                     return;
                 }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
+                        scrub_target_slot(self);
                         return;
                     }
                 }
