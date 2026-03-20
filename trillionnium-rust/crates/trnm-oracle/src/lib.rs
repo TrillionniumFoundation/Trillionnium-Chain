@@ -173,6 +173,23 @@ impl OraclePolicy {
     ) -> Result<(), OracleError> {
         self.validate()?;
 
+        let canonical_feed_id = snapshot.feed_id.trim().to_ascii_lowercase();
+        if canonical_feed_id.is_empty() {
+            return Err(OracleError::EmptyFeedId);
+        }
+        if snapshot.feed_id != canonical_feed_id {
+            return Err(OracleError::NonCanonicalFeedId {
+                raw: snapshot.feed_id.clone(),
+                canonical: canonical_feed_id,
+            });
+        }
+        if snapshot.window_end_ms < snapshot.window_start_ms {
+            return Err(OracleError::InvalidWindow {
+                start_ms: snapshot.window_start_ms,
+                end_ms: snapshot.window_end_ms,
+            });
+        }
+
         if canonical_source_cardinality(snapshot) != snapshot.sources.len() as u32 {
             return Err(OracleError::DuplicateSources);
         }
@@ -413,6 +430,8 @@ pub enum OracleError {
     NonCanonicalSourceId { raw: String, canonical: String },
     #[error("feed id is empty")]
     EmptyFeedId,
+    #[error("feed id must be canonical lowercase+trim: raw={raw}, canonical={canonical}")]
+    NonCanonicalFeedId { raw: String, canonical: String },
     #[error("invalid window: start={start_ms}, end={end_ms}")]
     InvalidWindow { start_ms: u64, end_ms: u64 },
     #[error("duplicate source ids are not allowed")]
@@ -1012,6 +1031,35 @@ mod tests {
             .validate_snapshot(&snapshot, 10_100)
             .expect_err("deserialized duplicate sources must fail guardrail");
         assert_eq!(err, OracleError::DuplicateSources);
+    }
+
+    #[test]
+    fn rejects_deserialized_non_canonical_feed_id_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": " BTC/USD ",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink"],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized non-canonical feed id must fail guardrail");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalFeedId {
+                raw: " BTC/USD ".to_string(),
+                canonical: "btc/usd".to_string(),
+            }
+        );
     }
 
     #[test]
