@@ -167,6 +167,10 @@ pub fn compute_tx_hash(tx: &TransferTx) -> String {
     format!("0x{}", hex::encode(h.finalize()))
 }
 
+fn tx_status_at_ingress(txs: &BTreeMap<String, TxLifecycleRecord>, tx_hash: &str) -> Option<TxStatus> {
+    txs.get(tx_hash).map(|record| record.status.clone())
+}
+
 pub fn submit_tx(
     txs: &mut BTreeMap<String, TxLifecycleRecord>,
     tx: TransferTx,
@@ -182,19 +186,22 @@ pub fn submit_tx(
         };
     }
 
-    if !txs.contains_key(&tx_hash) {
-        txs.insert(
-            tx_hash.clone(),
-            TxLifecycleRecord {
-                tx_hash: tx_hash.clone(),
-                tx,
-                status: TxStatus::Pending,
-                error: None,
-                submitted_at_unix_ms: now_unix_ms,
-                updated_at_unix_ms: now_unix_ms,
-            },
-        );
+    if let Some(status) = tx_status_at_ingress(txs, &tx_hash) {
+        return SendTxResponse { tx_hash, status };
     }
+
+    txs.insert(
+        tx_hash.clone(),
+        TxLifecycleRecord {
+            tx_hash: tx_hash.clone(),
+            tx,
+            status: TxStatus::Pending,
+            error: None,
+            submitted_at_unix_ms: now_unix_ms,
+            updated_at_unix_ms: now_unix_ms,
+        },
+    );
+
     SendTxResponse {
         tx_hash,
         status: TxStatus::Pending,
@@ -564,6 +571,26 @@ mod tests {
             .as_deref()
             .unwrap_or_default()
             .contains("nonce rollback/replay"));
+    }
+
+    #[test]
+    fn submit_tx_duplicate_preserves_existing_fail_status() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), 100, 1);
+        ledger.set_account(bob.clone(), 0, 0);
+        let mut txs = BTreeMap::new();
+        let tx = transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX);
+
+        let submit = submit_tx(&mut txs, tx.clone(), 100);
+        let failed = get_tx(&mut txs, &mut ledger, &submit.tx_hash, 120).unwrap();
+        assert_eq!(failed.status, TxStatus::Fail);
+
+        let duplicate = submit_tx(&mut txs, tx, 130);
+        assert_eq!(duplicate.tx_hash, submit.tx_hash);
+        assert_eq!(duplicate.status, TxStatus::Fail);
     }
 
     #[test]
