@@ -875,13 +875,21 @@ impl StateStore {
                 );
             }
             None => {
-                let had_object = self.objects.contains_key(&key_id);
+                let had_param_object = matches!(
+                    self.objects.get(&key_id),
+                    Some(VersionedObject {
+                        value: ObjectValue::GovParam(_),
+                        ..
+                    })
+                );
                 let had_index = self.gov_param_key_index.values().any(|mapped_id| *mapped_id == key_id);
-                if had_object || had_index {
+                if had_param_object || had_index {
                     self.invalidate_state_root_cache();
                 }
                 self.remove_gov_param_key_index_for_id(key_id);
-                self.objects.remove(&key_id);
+                if had_param_object {
+                    self.objects.remove(&key_id);
+                }
             }
         }
     }
@@ -2649,6 +2657,52 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_none_preserves_cross_type_object_and_state_root() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+        let root_before = st.state_root();
+
+        st.restore_gov_param(77, None);
+
+        assert!(
+            st.get_param(77).is_none(),
+            "gov-param deletion on a cross-type id must not materialize a governance object"
+        );
+        assert_eq!(
+            st.get_task(77).map(|task| (task.task_id, task.creator, task.version)),
+            Some((77, "alice".into(), 1)),
+            "gov-param deletion must not remove a non-governance object that shares the id"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "cross-type gov-param deletion must leave state_root unchanged"
         );
     }
 
