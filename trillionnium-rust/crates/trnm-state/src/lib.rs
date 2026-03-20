@@ -1839,6 +1839,7 @@ pub fn checkpoint_evidence_surface_is_canonical(
     wal_entry: &WalMeta,
 ) -> bool {
     checkpoint.height == wal_entry.height
+        && wal_entry.committed
         && is_canonical_hex_digest(&checkpoint.state_root_hex)
         && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
         && is_canonical_hex_digest(&wal_entry.state_root_hex)

@@ -4009,6 +4009,15 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         "checkpoint height must bind to the exact WAL height so audit evidence surfaces cannot replay canonical hashes across different checkpoint slots"
     );
 
+    let mut uncommitted_wal = wal.clone();
+    uncommitted_wal.committed = false;
+    let mut uncommitted_checkpoint = checkpoint.clone();
+    uncommitted_checkpoint.wal_entry_hash_hex = uncommitted_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uncommitted_checkpoint, &uncommitted_wal),
+        "checkpoint evidence surfaces must reject uncommitted WAL entries so audit-ready checkpoint proofs cannot bind to speculative state-root snapshots"
+    );
+
     let mut blank_proposal_hash_wal = wal.clone();
     blank_proposal_hash_wal.proposal_hash = "".into();
     let mut blank_proposal_hash_checkpoint = checkpoint.clone();
