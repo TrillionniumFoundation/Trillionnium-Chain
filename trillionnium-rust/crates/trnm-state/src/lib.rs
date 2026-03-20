@@ -801,7 +801,12 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key_id != key_id {
+                if key_id == 0
+                    || snapshot.key_id != key_id
+                    || snapshot.version == 0
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                {
                     if matches!(
                         self.objects.get(&key_id).map(|existing| &existing.value),
                         Some(ObjectValue::GovParam(_))
@@ -5021,6 +5026,58 @@ mod tests {
             collision.gov_param_key_index.get("max_block_ms").copied(),
             None,
             "invalid governance restore must not publish a key index entry for a rejected snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
+        let mut collision = StateStore::new();
+        collision
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            })
+            .expect("setup must insert task before invalid governance restore");
+        collision.restore_gov_param(
+            501,
+            Some(GovParamObject {
+                key_id: 501,
+                key: "max_block_ms".into(),
+                value: "500".into(),
+                version: 0,
+            }),
+        );
+        assert_eq!(
+            collision.get_task(501).unwrap().task_id,
+            501,
+            "zero-version governance restore must not delete an unrelated task snapshot when ids overlap"
+        );
+        assert!(
+            collision.get_param(501).is_none(),
+            "zero-version governance restore must fail closed instead of materializing an invalid governance snapshot"
+        );
+        assert_eq!(
+            collision.gov_param_key_index.get("max_block_ms").copied(),
+            None,
+            "zero-version governance restore must not publish a key index entry for a rejected snapshot"
         );
     }
 
