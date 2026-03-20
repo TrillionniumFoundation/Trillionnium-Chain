@@ -746,6 +746,9 @@ impl StateStore {
         if pending.task_version != task.version {
             return false;
         }
+        if pending.confirmations != 1 {
+            return false;
+        }
         self.should_restore_pending_resolve_approval(
             task_id,
             &PendingResolveApprovalSnapshot {
@@ -2527,6 +2530,60 @@ mod tests {
             Some("authority-a")
         );
         assert_eq!(st.state_root(), root_before_reentry);
+    }
+
+    #[test]
+    fn restore_task_scrubs_finalized_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let finalized = st
+            .stage_or_confirm_resolve_approval(
+                task.task_id,
+                3,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
+            .expect("second approval should finalize quorum");
+        assert!(finalized);
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 2)));
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_006), None);
+        assert_eq!(st.pending_resolve_first_approver(9_006), None);
     }
 
     #[test]
