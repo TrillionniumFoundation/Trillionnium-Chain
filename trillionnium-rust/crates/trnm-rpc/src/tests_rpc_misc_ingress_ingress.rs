@@ -61,6 +61,46 @@ fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() 
 }
 
 #[test]
+fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_tails() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-hash-bounds", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let shared_prefix = format!("{{\"broken\":\"{}", "x".repeat(69_000));
+    let malformed_a = format!("{}tail-a", shared_prefix);
+    let malformed_b = format!("{}tail-b", shared_prefix);
+    fs::write(&path, format!("{}\n{}\n", malformed_a, malformed_b)).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed oversized rows should stay quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 2, "both malformed oversized rows should be quarantined");
+    assert_eq!(
+        entries[0]["raw_line"].as_str(),
+        entries[1]["raw_line"].as_str(),
+        "quarantine raw_line truncation may match when only distant tails differ"
+    );
+    assert_ne!(
+        entries[0]["line_hash"],
+        entries[1]["line_hash"],
+        "bounded line hashing should still distinguish different oversized malformed tails"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");
