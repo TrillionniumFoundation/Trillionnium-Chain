@@ -553,6 +553,15 @@ fn validate_governance_key_registration_lists(
             ));
         }
     }
+    if let Some((existing_key, _)) = gov_param_key_index
+        .iter()
+        .find(|(existing_key, existing_key_id)| existing_key.as_str() != key && **existing_key_id == key_id)
+    {
+        return Err(format!(
+            "governance key id collision for {}: id {} already assigned to {}",
+            key, key_id, existing_key
+        ));
+    }
     Ok(())
 }
 
@@ -3164,6 +3173,28 @@ mod tests {
 
         assert!(
             err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_key_id_collision_fail_closed() {
+        let mut gov_param_key_index = BTreeMap::new();
+        gov_param_key_index.insert("max_block_ms".to_string(), 7_001);
+
+        let err = validate_governance_key_registration_lists(
+            &gov_param_key_index,
+            "max_parallel_workers",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed when a different governance key already owns the id");
+
+        assert!(
+            err.contains("governance key id collision for max_parallel_workers: id 7001 already assigned to max_block_ms"),
             "{err}"
         );
     }
