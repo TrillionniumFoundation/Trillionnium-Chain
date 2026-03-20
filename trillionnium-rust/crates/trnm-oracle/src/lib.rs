@@ -693,6 +693,22 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_preserves_exact_drift_boundary_as_drift_label() {
+        let p = policy();
+        let snap = snapshot_with(105_000, Some(100_000), 10_000); // 500 bps
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
     fn observed_report_maps_update_rate_rejection_to_stable_error_label() {
         let p = policy();
         let snap = OracleSnapshot::new(
