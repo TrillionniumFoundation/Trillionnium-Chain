@@ -728,6 +728,7 @@ impl StateStore {
             || task.resolve_deadline_height.is_none()
             || task.challenge_bond.is_none()
             || task.challenger.is_none()
+            || task.challenge_bond_forfeited.is_none()
         {
             return;
         }
