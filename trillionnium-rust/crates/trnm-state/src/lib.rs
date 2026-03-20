@@ -1329,13 +1329,18 @@ impl StateStore {
         }
     }
 
-    fn gov_param_value(&self, key: &str) -> Option<&str> {
-        let id = self.gov_param_key_index.get(key)?;
-        let object = self.objects.get(id)?;
+    fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
+        let id = self.gov_param_key_index.get(key).copied()?;
+        let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
+    }
+
+    fn gov_param_value(&self, key: &str) -> Option<&str> {
+        let (_, param) = self.canonical_gov_param_for_key(key)?;
+        Some(param.value.as_str())
     }
 
     pub fn is_emergency_paused(&self) -> bool {
@@ -1355,12 +1360,7 @@ impl StateStore {
     }
 
     fn gov_param_ref_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
-        let id = self.gov_param_key_index.get(key).copied()?;
-        let object = self.objects.get(&id)?;
-        match &object.value {
-            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
-            _ => None,
-        }
+        self.canonical_gov_param_for_key(key)
     }
 
     fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {
@@ -3195,6 +3195,40 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_key_name_registry_mismatch() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7316, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .expect("initial resolve_authority write should succeed");
+
+        let object = st
+            .objects
+            .get_mut(&7316)
+            .expect("canonical resolve_authority object should exist");
+        let version = object.version;
+        object.value = ObjectValue::GovParam(GovParamObject {
+            key_id: 7316,
+            key: "challenge_min_bond".into(),
+            value: "resolver-v1,resolver-v2".into(),
+            version,
+        });
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when registry key and object key diverge"
+        );
+        assert_eq!(
+            st.gov_param_u128("resolve_authority"),
+            None,
+            "typed accessor must fail closed when registry key and object key diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "object ref accessor must fail closed when registry key and object key diverge"
         );
     }
 
