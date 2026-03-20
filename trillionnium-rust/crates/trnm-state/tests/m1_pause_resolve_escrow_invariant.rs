@@ -1938,6 +1938,66 @@ fn paused_state_rejects_second_resolve_approval_when_live_task_leaves_challenged
 }
 
 #[test]
+fn paused_restore_task_scrubs_pending_resolve_on_same_version_snapshot_drift_boundary() {
+    // Same-version restore snapshots must not preserve staged resolve approvals when the task
+    // object body drifts across the restore boundary; otherwise stale approvals could re-enter
+    // against a different challenged object/version pair.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_224);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 904);
+    st.set_gov_param(98_118, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let original_task = TaskObject {
+        task_id: 9_901_5,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    st.restore_task(9_901_5, Some(original_task.clone()));
+    let first = st
+        .stage_or_confirm_resolve_approval(
+            9_901_5,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first paused approval stage should succeed on challenged task");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_901_5), Some((true, 1)));
+
+    let mut drifted_task = original_task;
+    drifted_task.challenge_window_blocks_snapshot = Some(11);
+    st.restore_task(9_901_5, Some(drifted_task));
+
+    assert_eq!(
+        st.pending_resolve_approval(9_901_5),
+        None,
+        "same-version task snapshot drift must scrub stale pending resolve state"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_901_5), None);
+}
+
+#[test]
 fn paused_state_rejects_noncanonical_resolve_authority_without_escrow_side_effects() {
     // M1 merge-gate invariant: emergency_pause cannot be used to slip malformed
     // authority sets into resolve flow, and any rejection must be side-effect free.

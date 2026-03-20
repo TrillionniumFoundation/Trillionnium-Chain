@@ -768,20 +768,25 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
+                let existing_task = self.get_task(id);
                 let keep_pending_resolve = self
                     .pending_resolve_approvals
                     .get(&id)
                     .map(|pending| {
-                        self.should_restore_pending_resolve_approval(
-                            id,
-                            &PendingResolveApprovalSnapshot {
-                                slash_worker: pending.slash_worker,
-                                confirmations: pending.confirmations,
-                                first_approver: pending.first_approver.clone(),
-                                authority_set: pending.authority_set.clone(),
-                                task_version: pending.task_version,
-                            },
-                        ) && task.status == TaskStatus::Challenged
+                        existing_task
+                            .as_ref()
+                            .is_some_and(|current| current == &task)
+                            && self.should_restore_pending_resolve_approval(
+                                id,
+                                &PendingResolveApprovalSnapshot {
+                                    slash_worker: pending.slash_worker,
+                                    confirmations: pending.confirmations,
+                                    first_approver: pending.first_approver.clone(),
+                                    authority_set: pending.authority_set.clone(),
+                                    task_version: pending.task_version,
+                                },
+                            )
+                            && task.status == TaskStatus::Challenged
                             && pending.task_version == task.version
                     })
                     .unwrap_or(false);
