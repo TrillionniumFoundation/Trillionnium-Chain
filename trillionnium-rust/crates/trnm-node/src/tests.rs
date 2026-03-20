@@ -262,6 +262,29 @@
     }
 
     #[test]
+    fn preexec_preserves_input_order_of_successful_ids_within_group() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4_260,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4_261,
+                creator: "bob".into(),
+                bounty: 11,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 1]);
+
+        assert_eq!(ordered_ids, vec![2, 1]);
+        assert_eq!(rejected, 0);
+    }
+
+    #[test]
     fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
         let baseline = vec![1, 2, 3, 4];
         let advisor = ShadowOnlyRlAdvisor { topk: 2 };
