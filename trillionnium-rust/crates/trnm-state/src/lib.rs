@@ -248,14 +248,23 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
 const GOV_EXPLICIT_VALUE_RULE_KEYS: &[&str] = GOV_EXPLICIT_VALIDATOR_KEYS;
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
-fn governance_pinned_key_id(key: &str) -> Option<u64> {
-    GOV_PINNED_KEY_IDS
+fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
+    pinned_key_ids
         .iter()
         .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
 }
 
-fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
-    if let Some(expected_id) = governance_pinned_key_id(key) {
+#[cfg_attr(not(test), allow(dead_code))]
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
+}
+
+fn validate_governance_key_id_from_lists(
+    pinned_key_ids: &[(&str, u64)],
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id_from_lists(pinned_key_ids, key) {
         if key_id != expected_id {
             return Err(format!(
                 "governance key id mismatch for {}: expected_id={}, attempted_id={}",
@@ -264,6 +273,10 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
 }
 
 fn format_governance_registry_membership_drift(
@@ -620,17 +633,7 @@ fn validate_governance_key_registration_lists(
             key
         ));
     }
-    if let Some((_, expected_id)) = pinned_key_ids
-        .iter()
-        .find(|(pinned_key, _)| *pinned_key == key)
-    {
-        if key_id != *expected_id {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, expected_id, key_id
-            ));
-        }
-    }
+    validate_governance_key_id_from_lists(pinned_key_ids, key, key_id)?;
     if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
         if existing_key_id != key_id {
             return Err(format!(
@@ -3208,6 +3211,25 @@ mod tests {
 
         assert!(
             err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_pinned_key_id_mismatch_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            8_000,
+            &["emergency_pause"],
+            &["emergency_pause"],
+            &["emergency_pause"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("registration helper must fail closed on pinned key-id drift");
+
+        assert!(
+            err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
             "{err}"
         );
     }
