@@ -178,12 +178,26 @@ fn governance_expected_key_id(key: &str) -> Option<u64> {
         .find_map(|(pinned_key, pinned_key_id)| (*pinned_key == key).then_some(*pinned_key_id))
 }
 
+fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
+    GOV_PINNED_KEY_IDS
+        .iter()
+        .find_map(|(pinned_key, pinned_key_id)| (*pinned_key_id == key_id).then_some(*pinned_key))
+}
+
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
     if let Some(expected_key_id) = governance_expected_key_id(key) {
         if key_id != expected_key_id {
             return Err(format!(
                 "governance key id mismatch for {}: expected_id={}, attempted_id={}",
                 key, expected_key_id, key_id
+            ));
+        }
+    }
+    if let Some(expected_key) = governance_expected_key_for_id(key_id) {
+        if key != expected_key {
+            return Err(format!(
+                "governance key id mismatch for id {}: expected_key={}, attempted_key={}",
+                key_id, expected_key, key
             ));
         }
     }
@@ -3745,6 +3759,11 @@ mod tests {
                 Some(*expected_key_id),
                 "{key}"
             );
+            assert_eq!(
+                governance_expected_key_for_id(*expected_key_id),
+                Some(*key),
+                "{expected_key_id}"
+            );
         }
 
         for key in GOV_ALLOWED_KEYS {
@@ -3761,6 +3780,39 @@ mod tests {
         }
 
         assert_eq!(governance_expected_key_id("resolve_authority"), None);
+        assert_eq!(governance_expected_key_for_id(7_312), None);
+    }
+
+    #[test]
+    fn governance_restore_rejects_reusing_canonical_emergency_pause_id_for_another_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "resolve_authority".into(),
+                value: "resolver-v1,resolver-v2".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "restore must fail closed instead of letting another governance key reuse the canonical emergency_pause id"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "accessors must not expose a governance param restored under a pinned id reserved for a different key"
+        );
+        assert!(
+            st.objects.get(&EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "rejected restore must not leave a stray gov param object at the reserved emergency_pause id"
+        );
+        assert!(
+            st.gov_param_key_index.get("resolve_authority").is_none(),
+            "rejected restore must not register another key against the reserved emergency_pause id"
+        );
     }
 
     #[test]
