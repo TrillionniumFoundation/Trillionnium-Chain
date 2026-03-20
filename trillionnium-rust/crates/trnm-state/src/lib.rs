@@ -705,6 +705,14 @@ impl StateStore {
         if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
             return;
         }
+        if task.challenged_at_height.is_none()
+            || task.resolve_deadline_height.is_none()
+            || task.challenge_bond.is_none()
+            || task.challenger.as_deref().map(str::trim).filter(|s| !s.is_empty()).is_none()
+            || task.challenge_bond_forfeited.is_none()
+        {
+            return;
+        }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
@@ -4758,6 +4766,39 @@ mod tests {
         assert!(
             wrong_status.pending_resolve_approval_snapshot(501).is_none(),
             "restore must reject pending resolve snapshots for tasks that are no longer challenged"
+        );
+
+        let mut incomplete_challenge = StateStore::new();
+        incomplete_challenge
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: None,
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        incomplete_challenge.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            incomplete_challenge
+                .pending_resolve_approval_snapshot(501)
+                .is_none(),
+            "restore must reject pending resolve snapshots when the challenged task snapshot is incomplete"
         );
 
         let mut stale_cleanup = StateStore::new();
