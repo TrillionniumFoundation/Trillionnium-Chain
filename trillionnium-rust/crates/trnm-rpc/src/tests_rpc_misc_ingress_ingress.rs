@@ -101,6 +101,55 @@ fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_tails(
 }
 
 #[test]
+fn load_ingress_records_invalid_utf8_quarantine_hash_distinguishes_different_tails() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-invalid-utf8-hash-bounds", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let shared_prefix = vec![b'x'; 69_000];
+    let mut fixture = Vec::new();
+    fixture.extend_from_slice(b"{\"broken\":\"");
+    fixture.extend_from_slice(&shared_prefix);
+    fixture.extend_from_slice(b"tail-a");
+    fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
+    fixture.extend_from_slice(b"\n");
+    fixture.extend_from_slice(b"{\"broken\":\"");
+    fixture.extend_from_slice(&shared_prefix);
+    fixture.extend_from_slice(b"tail-b");
+    fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
+    fixture.extend_from_slice(b"\n");
+    fs::write(&path, fixture).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "invalid utf-8 ingress rows should stay quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 2, "both invalid utf-8 rows should be quarantined");
+    assert_eq!(
+        entries[0]["raw_line"].as_str(),
+        entries[1]["raw_line"].as_str(),
+        "quarantine raw_line truncation may match when only distant tails differ"
+    );
+    assert_ne!(
+        entries[0]["line_hash"],
+        entries[1]["line_hash"],
+        "bounded hashing should distinguish different invalid utf-8 tails beyond quarantine truncation"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_rows() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-invalid-utf8", "jsonl");

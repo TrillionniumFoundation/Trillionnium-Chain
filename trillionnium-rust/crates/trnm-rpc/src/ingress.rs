@@ -21,12 +21,11 @@ pub(crate) fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
     path.with_file_name(format!("{}.quarantine.jsonl", file_name))
 }
 
-fn stable_line_hash(raw: &str) -> u64 {
+fn stable_bounded_bytes_hash(bytes: &[u8]) -> u64 {
     const INGRESS_LINE_HASH_FULL_MAX_BYTES: usize = 8_192;
     const INGRESS_LINE_HASH_EDGE_BYTES: usize = 4_096;
 
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    let bytes = raw.as_bytes();
     bytes.len().hash(&mut hasher);
     if bytes.len() <= INGRESS_LINE_HASH_FULL_MAX_BYTES {
         bytes.hash(&mut hasher);
@@ -35,6 +34,10 @@ fn stable_line_hash(raw: &str) -> u64 {
         bytes[bytes.len() - INGRESS_LINE_HASH_EDGE_BYTES..].hash(&mut hasher);
     }
     hasher.finish()
+}
+
+fn stable_line_hash(raw: &str) -> u64 {
+    stable_bounded_bytes_hash(raw.as_bytes())
 }
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
@@ -112,7 +115,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             Err(_) => {
                 let raw_line = truncate_for_quarantine(&String::from_utf8_lossy(line_bytes));
                 Err((
-                    stable_line_hash(&raw_line),
+                    stable_bounded_bytes_hash(line_bytes),
                     raw_line,
                     anyhow!("ingress line is not valid utf-8"),
                 ))
