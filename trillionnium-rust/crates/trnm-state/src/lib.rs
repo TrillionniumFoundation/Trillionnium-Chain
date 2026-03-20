@@ -730,6 +730,37 @@ fn has_explicit_gov_param_value_rule(key: &str) -> bool {
     GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
 }
 
+fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
+    matches!(
+        key,
+        "max_block_ms"
+            | "max_parallel_workers"
+            | "challenge_window_blocks"
+            | "min_worker_stake"
+            | "challenge_min_bond"
+            | "challenge_success_bounty"
+            | "llm_meter_prompt_token_weight"
+            | "llm_meter_generated_token_weight"
+            | "llm_meter_decode_step_weight"
+            | "llm_meter_kv_byte_weight"
+            | "llm_meter_min_accept_work_units"
+            | "llm_meter_challenge_success_bounty_per_work_unit_num"
+            | "llm_meter_worker_completion_bonus_per_work_unit_num"
+            | "llm_meter_worker_slash_rebate_per_work_unit_num"
+            | "llm_meter_challenge_success_bounty_per_work_unit_den"
+            | "llm_meter_worker_completion_bonus_per_work_unit_den"
+            | "llm_meter_worker_slash_rebate_per_work_unit_den"
+            | "challenge_min_bond_bounty_bps"
+            | "challenge_min_bond_worker_stake_bps"
+            | "resolve_authority"
+            | "emergency_pause"
+            | "monetary_policy_tick_interval_blocks"
+            | "monetary_policy_tick_cooldown_blocks"
+            | "monetary_base_issuance_per_tick"
+            | "monetary_base_burn_per_tick"
+    )
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     validate_governance_registry_shape()?;
     validate_governance_validator_coverage(key)?;
@@ -737,6 +768,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     if !has_explicit_gov_param_value_rule(key) {
         return Err(format!(
             "governance validator missing explicit value rule for allowed key: {}",
+            key
+        ));
+    }
+    if !has_explicit_gov_param_value_match_coverage(key) {
+        return Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
             key
         ));
     }
@@ -901,7 +938,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
-        _ => unreachable!("governance value validation coverage preflight must stay exhaustive"),
+        _ => Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        )),
     }
 }
 
@@ -3029,8 +3069,14 @@ mod tests {
                 "allowed governance key missing explicit value rule: {}",
                 key
             );
+            assert!(
+                has_explicit_gov_param_value_match_coverage(key),
+                "allowed governance key missing explicit value match coverage: {}",
+                key
+            );
         }
         assert!(!has_explicit_gov_param_value_rule("forbidden_key"));
+        assert!(!has_explicit_gov_param_value_match_coverage("forbidden_key"));
     }
 
     #[test]
