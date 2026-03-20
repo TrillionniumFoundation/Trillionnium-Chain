@@ -728,8 +728,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -4654,14 +4654,14 @@ mod tests {
         );
         assert_eq!(
             restored.pending_resolve_first_approver(501).as_deref(),
-            Some("Authority-B")
+            Some("authority-b")
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(501)
                 .as_ref()
                 .map(|snapshot| snapshot.authority_set.as_str()),
-            Some("Authority-B,authority-a")
+            Some("authority-a,authority-b")
         );
         assert_eq!(
             staged.state_root(),
