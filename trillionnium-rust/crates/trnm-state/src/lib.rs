@@ -543,8 +543,22 @@ fn validate_governance_key_registration_lists(
         }
     }
 
-    for (pinned_key, _) in pinned_key_ids {
+    let mut pinned_unique = std::collections::BTreeSet::new();
+    let mut pinned_ids = std::collections::BTreeMap::new();
+    for (pinned_key, pinned_id) in pinned_key_ids {
         validate_governance_registry_key_canonical("pinned-key registry", pinned_key)?;
+        if !pinned_unique.insert(*pinned_key) {
+            return Err(format!(
+                "governance pinned-key registry contains duplicate entries for {}",
+                pinned_key
+            ));
+        }
+        if let Some(existing_key) = pinned_ids.insert(*pinned_id, *pinned_key) {
+            return Err(format!(
+                "governance pinned-key registry reuses pinned id {} across {} and {}",
+                pinned_id, existing_key, pinned_key
+            ));
+        }
         if !allowed_unique.contains(pinned_key) {
             return Err(format!(
                 "governance pinned-key registry contains non-whitelisted key: {}",
@@ -3385,6 +3399,30 @@ mod tests {
             ],
         )
         .expect_err("pinned governance keys must not reuse the same pinned id across different keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_pinned_id_reuse_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            EMERGENCY_PAUSE_KEY_ID,
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("registration helper must fail closed when pinned ids are reused across keys");
 
         assert!(
             err.contains("pinned-key registry reuses pinned id")
