@@ -163,9 +163,10 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
 
     // Medium-small skew path: for 5..=8 keys against a moderately larger domain,
-    // avoid HashSet allocation and probe linearly. Once domains grow beyond this
-    // range, fall back to the HashSet path below to avoid repeated full scans.
-    if small.len() <= 8 && (16..=64).contains(&large.len()) {
+    // avoid HashSet allocation and probe linearly. Extend the guard slightly so
+    // duplicate-heavy domains just above the old 64-key cutoff stay on the same
+    // bounded path before falling back to the HashSet branch.
+    if small.len() <= 8 && (16..=128).contains(&large.len()) {
         let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
             let key = access_key(a);
@@ -1513,6 +1514,21 @@ mod tests {
             &small_write,
             &tx(3, very_wide_read_miss, vec![])
         ));
+    }
+
+    #[test]
+    fn medium_small_vs_just_over_old_large_cutoff_preserves_semantics() {
+        let small_write = tx(
+            1,
+            vec![],
+            vec![o(1_101), o(1_102), o(1_103), o(1_104), o(1_105)],
+        );
+        let mut read_hit: Vec<ObjectRef> = (1..=65).map(|id| o(50_000 + id)).collect();
+        read_hit.push(o(1_104));
+        let read_miss: Vec<ObjectRef> = (1..=65).map(|id| o(60_000 + id)).collect();
+
+        assert!(detect_conflict(&small_write, &tx(2, read_hit, vec![])));
+        assert!(!detect_conflict(&small_write, &tx(3, read_miss, vec![])));
     }
 
     #[test]
