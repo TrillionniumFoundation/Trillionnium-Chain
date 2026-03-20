@@ -1915,9 +1915,33 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    // Replay/restore may rebuild pending resolve snapshots before task bodies are
-    // restored; staged single-approval snapshots must still round-trip, while any
-    // un-encodable finalized quorum must scrub fail-closed.
+    let challenged_task = TaskObject {
+        task_id: 5_150,
+        creator: "creator-a".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 7,
+    };
+    state_a.restore_task(5_150, Some(challenged_task.clone()));
+    state_b.restore_task(5_150, Some(challenged_task));
+
+    // Replay/restore must preserve a staged single-approval snapshot on the same
+    // challenged task, while any un-encodable finalized quorum still scrubs fail-closed.
 
     state_a.restore_pending_resolve_approval(
         5_150,
@@ -1943,6 +1967,7 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let root_a = state_a.state_root();
     let root_b = state_b.state_root();
     assert_eq!(state_b.pending_resolve_approval(5_150), None);
+    assert_eq!(state_b.pending_resolve_first_approver(5_150), None);
     assert_ne!(
         root_a, root_b,
         "finalized restore snapshots without an encoded second approver must scrub instead of materializing a fake quorum"
