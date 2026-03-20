@@ -76,6 +76,12 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn rebuild_seen_global_from_queues(&mut self) {
+        self.seen_global.clear();
+        self.seen_global.extend(self.normal.queue.iter().copied());
+        self.seen_global.extend(self.critical.queue.iter().copied());
+    }
+
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -425,9 +431,7 @@ impl LaneAdmissionGate {
                 // queued survivors exist after dequeue.
                 self.seen_global.clear();
             } else {
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_seen_global_from_queues();
             }
         } else {
             let lane_total = self
@@ -442,9 +446,7 @@ impl LaneAdmissionGate {
                     // Hot idle path after full drain: clear stale cache entries.
                     self.seen_global.clear();
                 } else {
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_seen_global_from_queues();
                 }
             }
         }
