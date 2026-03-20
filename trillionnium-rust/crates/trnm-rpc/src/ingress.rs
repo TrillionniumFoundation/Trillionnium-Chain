@@ -57,7 +57,11 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         .map(|raw| {
             raw.lines()
                 .filter(|line| !line.trim().is_empty())
-                .map(|line| line.to_string())
+                .filter_map(|line| {
+                    serde_json::from_str::<IngressQuarantineRecord>(line)
+                        .ok()
+                        .map(|_| line.to_string())
+                })
                 .collect()
         })
         .unwrap_or_default();
