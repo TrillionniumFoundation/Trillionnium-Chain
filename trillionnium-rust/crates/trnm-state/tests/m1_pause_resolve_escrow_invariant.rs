@@ -3331,6 +3331,61 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_is_noop_when_canonical_entry_is_unchanged() {
+    // REF01 micro-hardening: replaying an identical paused pending-resolve snapshot should be
+    // a pure no-op so restore/state-root equivalence does not churn on an unchanged object.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_262, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    let snapshot = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "authority-b".into(),
+        authority_set: "authority-a,authority-b".into(),
+        task_version: 2,
+    };
+    st.restore_pending_resolve_approval(9_930, Some(snapshot.clone()));
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(9_930, Some(snapshot));
+
+    assert_eq!(st.pending_resolve_approval(9_930), Some((true, 1)));
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "equivalent paused restore must be a no-op for state-root consistency"
+    );
+}
+
+#[test]
 fn paused_state_pending_replacement_resolve_approval_accepts_case_and_order_equivalent_authority_set(
 ) {
     // L03 boundary hardening: while paused, live resolve approvals must accept authority sets

@@ -742,18 +742,19 @@ impl StateStore {
             None => {}
         }
 
+        let restored = PendingResolveApproval {
+            slash_worker: snapshot.slash_worker,
+            confirmations: snapshot.confirmations,
+            first_approver: first_approver_canonical,
+            authority_set: authority_canonical,
+            task_version: snapshot.task_version,
+        };
+        if self.pending_resolve_approvals.get(&task_id) == Some(&restored) {
+            return;
+        }
+
         self.invalidate_state_root_cache();
-        self.pending_resolve_approvals.remove(&task_id);
-        self.pending_resolve_approvals.insert(
-            task_id,
-            PendingResolveApproval {
-                slash_worker: snapshot.slash_worker,
-                confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
-                task_version: snapshot.task_version,
-            },
-        );
+        self.pending_resolve_approvals.insert(task_id, restored);
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
