@@ -518,6 +518,15 @@ fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig 
     if retention.cleanup_interval_ms == 0 {
         retention.cleanup_interval_ms = 1;
     }
+
+    let max_safe_cleanup_interval_ms = retention.dedup_ttl_ms.min(retention.pending_ttl_ms);
+    if retention.cleanup_interval_ms > max_safe_cleanup_interval_ms {
+        // Keep cleanup cadence inside both retention windows so stale dedup/pending
+        // state cannot outlive its configured sponsor/free-ingress accounting bounds
+        // by an entire oversized cleanup interval.
+        retention.cleanup_interval_ms = max_safe_cleanup_interval_ms;
+    }
+
     retention
 }
 
@@ -1773,6 +1782,40 @@ mod tests {
         assert_eq!(engine.retry.base_backoff_ms, 5);
         assert_eq!(engine.retry.max_backoff_ms, 80);
         assert_eq!(engine.retry.circuit_open_ms, 80);
+    }
+
+    #[test]
+    fn reliability_engine_sanitizes_zero_retention_floors() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 0,
+                pending_ttl_ms: 0,
+                cleanup_interval_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 1);
+        assert_eq!(engine.retention.pending_ttl_ms, 1);
+        assert_eq!(engine.retention.cleanup_interval_ms, 1);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_cleanup_interval_to_retention_boundaries() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 25,
+                pending_ttl_ms: 10,
+                cleanup_interval_ms: 250,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 25);
+        assert_eq!(engine.retention.pending_ttl_ms, 10);
+        assert_eq!(engine.retention.cleanup_interval_ms, 10);
     }
 
     #[test]
