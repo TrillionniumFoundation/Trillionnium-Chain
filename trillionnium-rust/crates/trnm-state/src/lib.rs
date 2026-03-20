@@ -560,6 +560,17 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     }
 }
 
+fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
+    task.status == TaskStatus::Challenged
+        && task.challenge_deadline_height.is_some()
+        && task.challenge_window_blocks_snapshot.is_some()
+        && task.challenged_at_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_bond.is_some()
+        && task.challenger.is_some()
+        && task.challenge_bond_forfeited.is_some()
+}
+
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
@@ -719,17 +730,7 @@ impl StateStore {
         let Some(task) = self.get_task(task_id) else {
             return;
         };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
-        }
-        if task.challenge_deadline_height.is_none()
-            || task.challenge_window_blocks_snapshot.is_none()
-            || task.challenged_at_height.is_none()
-            || task.resolve_deadline_height.is_none()
-            || task.challenge_bond.is_none()
-            || task.challenger.is_none()
-            || task.challenge_bond_forfeited.is_none()
-        {
+        if task.version != snapshot.task_version || !task_supports_pending_resolve_restore(&task) {
             return;
         }
 
@@ -751,8 +752,18 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.task_id != id {
+                    self.pending_resolve_approvals.remove(&id);
                     self.objects.remove(&id);
                     return;
+                }
+                match self.pending_resolve_approvals.get(&id) {
+                    Some(pending)
+                        if pending.task_version != task.version
+                            || !task_supports_pending_resolve_restore(&task) =>
+                    {
+                        self.pending_resolve_approvals.remove(&id);
+                    }
+                    _ => {}
                 }
                 self.objects.insert(
                     id,
@@ -763,6 +774,7 @@ impl StateStore {
                 );
             }
             None => {
+                self.pending_resolve_approvals.remove(&id);
                 self.objects.remove(&id);
             }
         }
