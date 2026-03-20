@@ -2086,12 +2086,13 @@ fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
 }
 
 fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usize) -> usize {
+    let clamped_default = default_limit.min(max_limit);
     if requested == 0 {
         eprintln!(
             "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} max={}",
-            op, default_limit, max_limit
+            op, clamped_default, max_limit
         );
-        return default_limit;
+        return clamped_default;
     }
     if requested > max_limit {
         eprintln!(
