@@ -101,6 +101,50 @@ fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_tails(
 }
 
 #[test]
+fn load_ingress_records_oversized_invalid_utf8_quarantines_with_parse_bound_error() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-oversized-invalid-utf8", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let mut fixture = Vec::new();
+    fixture.extend_from_slice(b"{\"broken\":\"");
+    fixture.extend_from_slice(&vec![b'x'; 70_000]);
+    fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
+    fixture.extend_from_slice(b"\n");
+    fs::write(&path, fixture).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "oversized invalid utf-8 ingress rows should stay quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "oversized invalid utf-8 row should be quarantined");
+    assert_eq!(
+        entries[0]["error"],
+        "ingress line exceeds 65536 bytes parse bound (got 70016)"
+    );
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw_line should be a string");
+    assert_eq!(raw_line.len(), 4096, "quarantine raw_line should stay byte-bounded");
+    assert!(
+        !raw_line.contains('�'),
+        "quarantine truncation should avoid lossy decoding of distant oversized invalid tails"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_invalid_utf8_quarantine_hash_distinguishes_different_tails() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-invalid-utf8-hash-bounds", "jsonl");
