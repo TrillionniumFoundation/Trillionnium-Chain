@@ -71,6 +71,12 @@ impl OracleSnapshot {
         if sources.windows(2).any(|w| w[0] == w[1]) {
             return Err(OracleError::DuplicateSources);
         }
+        if sample_count < sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
+                sample_count,
+                source_count: sources.len() as u32,
+            });
+        }
 
         let mut snapshot = Self {
             feed_id,
@@ -397,6 +403,10 @@ pub enum OracleError {
     InvalidWindow { start_ms: u64, end_ms: u64 },
     #[error("duplicate source ids are not allowed")]
     DuplicateSources,
+    #[error(
+        "inconsistent sample_count: sample_count={sample_count}, source_count={source_count}"
+    )]
+    InconsistentSampleCount { sample_count: u32, source_count: u32 },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
@@ -494,6 +504,30 @@ mod tests {
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot should fail quorum");
         assert!(matches!(err, OracleError::InsufficientSources { .. }));
+    }
+
+    #[test]
+    fn rejects_sample_count_below_distinct_source_count() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            1,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot should reject undercounted sample accounting");
+
+        assert!(matches!(
+            err,
+            OracleError::InconsistentSampleCount {
+                sample_count: 1,
+                source_count: 2
+            }
+        ));
     }
 
     #[test]
