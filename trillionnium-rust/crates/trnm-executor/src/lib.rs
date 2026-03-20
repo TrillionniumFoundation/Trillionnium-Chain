@@ -1162,6 +1162,15 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
             .find(|&id| id != key_a)
             .unwrap_or(0)
     };
+    // Canonicalize the two-key access-domain signal so equivalent mixed
+    // read/write domains hash identically even if read/write roles flip.
+    // Keep singleton/keyless behavior unchanged by only reordering when a
+    // distinct secondary key exists.
+    let (key_a, key_b) = if key_b != 0 && key_b < key_a {
+        (key_b, key_a)
+    } else {
+        (key_a, key_b)
+    };
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
@@ -1907,6 +1916,20 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&duplicate_echoes, buckets_n),
             hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_when_read_write_roles_flip_for_same_domain() {
+        let buckets_n = 97usize;
+        let write_then_read = tx(1, vec![o(7)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(7)]);
+
+        // Equivalent two-key access domains should land in the same bucket even
+        // when the read/write roles flip between the keys.
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
         );
     }
 
