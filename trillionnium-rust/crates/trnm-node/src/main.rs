@@ -1950,10 +1950,10 @@ fn emit_event(
 }
 
 fn timeout_outcome_fields(to_status: &str) -> (&'static str, &'static str) {
-    if to_status == "Slashed" {
-        ("true", "slashed")
-    } else {
-        ("false", "completed")
+    match to_status {
+        "Slashed" => ("true", "slashed"),
+        "Completed" | "Resolved" => ("false", "completed"),
+        _ => ("false", "unknown"),
     }
 }
 
@@ -7970,6 +7970,12 @@ mod tests {
     fn timeout_outcome_fields_marks_non_slashed_terminal_status_completed() {
         assert_eq!(timeout_outcome_fields("Completed"), ("false", "completed"));
         assert_eq!(timeout_outcome_fields("Resolved"), ("false", "completed"));
+    }
+
+    #[test]
+    fn timeout_outcome_fields_marks_unexpected_status_unknown_for_visibility() {
+        assert_eq!(timeout_outcome_fields("Challenged"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("Assigned"), ("false", "unknown"));
     }
 
     #[test]
