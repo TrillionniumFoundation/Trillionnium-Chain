@@ -70,6 +70,17 @@ pub mod bridge_status {
         has_disallowed_request_char(ch)
     }
 
+    fn is_non_canonical_request_field(value: &str) -> bool {
+        value.trim() != value
+            || value
+                .chars()
+                .any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
+    }
+
+    fn is_non_canonical_subject(value: &str) -> bool {
+        value.trim() != value || value.chars().any(has_disallowed_subject_char)
+    }
+
     fn normalize_revert_reason(reason: &str) -> Option<String> {
         let sanitized: String = reason
             .chars()
@@ -169,9 +180,7 @@ pub mod bridge_status {
                     reason: "empty tx_hash",
                 });
             }
-            if self.tx_hash.trim() != self.tx_hash
-                || self.tx_hash.chars().any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
-            {
+            if is_non_canonical_request_field(&self.tx_hash) {
                 return Err(SettlementError::MalformedRequest {
                     reason: "non-canonical tx_hash",
                 });
@@ -185,9 +194,7 @@ pub mod bridge_status {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject
-                || token.subject.chars().any(has_disallowed_subject_char)
-            {
+            if is_non_canonical_subject(&token.subject) {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
                 });
