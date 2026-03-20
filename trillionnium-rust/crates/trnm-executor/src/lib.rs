@@ -249,6 +249,14 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
         return keys;
     }
 
+    // Exact singleton write domains are a common owned/shared shape. Keep them
+    // on the narrowest deterministic path before scanning for duplicate-heavy
+    // callers that only collapse to a singleton after dedup.
+    if write_keys.len() == 1 {
+        let shared = write_keys[0];
+        return keys.into_iter().filter(|key| *key != shared).collect();
+    }
+
     // Keep object-scoped access domains deterministic while avoiding quadratic
     // write-key probes once shared domains become large. Duplicate-heavy callers
     // can still have a tiny effective write domain even when the raw slice is
@@ -1652,6 +1660,17 @@ mod tests {
         // The singleton owned/shared fast path should filter the shared object
         // without disturbing first-seen ordering for surviving read-only keys.
         assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_single_write_domain_elides_all_shared_reads() {
+        let write_keys = vec![44];
+
+        let keys = read_domain_only_keys(&[o(44), o(44), o(44), o(44)], &write_keys);
+
+        // Exact singleton write domains should stay object-scoped and avoid
+        // widening the read-only access domain when every read hits that object.
+        assert!(keys.is_empty());
     }
 
     #[test]
