@@ -787,7 +787,27 @@ impl StateStore {
         );
     }
 
+    fn should_noop_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
+        if self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id) {
+            return false;
+        }
+        let Some(current) = self.get_task(id) else {
+            return false;
+        };
+        if current != *task {
+            return false;
+        }
+        self.pending_resolve_approvals.get(&id).is_none()
+            || self.should_preserve_pending_resolve_on_task_restore(id, task)
+    }
+
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+        if let Some(task) = snapshot.as_ref() {
+            if task.task_id == id && self.should_noop_task_restore_reentry(id, task) {
+                return;
+            }
+        }
+
         self.invalidate_state_root_cache();
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {
@@ -2487,6 +2507,7 @@ mod tests {
             }),
         );
         assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+        let root_before_reentry = st.state_root();
 
         st.restore_task(task.task_id, Some(task));
 
@@ -2495,6 +2516,7 @@ mod tests {
             st.pending_resolve_first_approver(9_001).as_deref(),
             Some("authority-a")
         );
+        assert_eq!(st.state_root(), root_before_reentry);
     }
 
     #[test]
