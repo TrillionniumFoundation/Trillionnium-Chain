@@ -521,102 +521,13 @@ fn validate_governance_key_registration_lists(
     explicit_value_rule_keys: &[&str],
     pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
-    for allowed_key in allowed_keys {
-        validate_governance_registry_key_canonical("allowed-key registry", allowed_key)?;
-    }
-    let allowed_unique: std::collections::BTreeSet<&str> =
-        allowed_keys.iter().copied().collect();
-    if allowed_unique.len() != allowed_keys.len() {
-        return Err("governance allowed-key registry contains duplicate entries".into());
-    }
-
-    for validator_key in explicit_validator_keys {
-        validate_governance_registry_key_canonical("explicit-validator registry", validator_key)?;
-    }
-    let validator_unique: std::collections::BTreeSet<&str> =
-        explicit_validator_keys.iter().copied().collect();
-    if validator_unique.len() != explicit_validator_keys.len() {
-        return Err("governance explicit-validator registry contains duplicate entries".into());
-    }
-    if let Some(err) =
-        format_governance_registry_membership_drift(&allowed_unique, &validator_unique)
-    {
-        return Err(err);
-    }
-    for (index, (allowed_key, validator_key)) in allowed_keys
-        .iter()
-        .zip(explicit_validator_keys.iter())
-        .enumerate()
-    {
-        if allowed_key != validator_key {
-            return Err(format!(
-                "governance explicit-validator registry order drifted at index {}: allowed_key={}, validator_key={}",
-                index, allowed_key, validator_key
-            ));
-        }
-    }
-
-    let mut pinned_unique = std::collections::BTreeSet::new();
-    let mut pinned_ids = std::collections::BTreeMap::new();
-    for (pinned_key, pinned_id) in pinned_key_ids {
-        validate_governance_registry_key_canonical("pinned-key registry", pinned_key)?;
-        if !pinned_unique.insert(*pinned_key) {
-            return Err(format!(
-                "governance pinned-key registry contains duplicate entries for {}",
-                pinned_key
-            ));
-        }
-        if let Some(existing_key) = pinned_ids.insert(*pinned_id, *pinned_key) {
-            return Err(format!(
-                "governance pinned-key registry reuses pinned id {} across {} and {}",
-                pinned_id, existing_key, pinned_key
-            ));
-        }
-        if !allowed_unique.contains(pinned_key) {
-            return Err(format!(
-                "governance pinned-key registry contains non-whitelisted key: {}",
-                pinned_key
-            ));
-        }
-        if !validator_unique.contains(pinned_key) {
-            return Err(format!(
-                "governance pinned-key registry missing explicit-validator coverage for {}",
-                pinned_key
-            ));
-        }
-    }
-
-    for explicit_value_rule_key in explicit_value_rule_keys {
-        validate_governance_registry_key_canonical(
-            "explicit-value-rule registry",
-            explicit_value_rule_key,
-        )?;
-    }
-    let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
-        explicit_value_rule_keys.iter().copied().collect();
-    if explicit_value_rule_unique.len() != explicit_value_rule_keys.len() {
-        return Err("governance explicit-value-rule registry contains duplicate entries".into());
-    }
-    if let Some(err) =
-        format_governance_registry_membership_drift(&allowed_unique, &explicit_value_rule_unique)
-    {
-        return Err(err.replace(
-            "explicit-validator registry",
-            "explicit-value-rule registry",
-        ));
-    }
-    for (index, (allowed_key, explicit_value_rule_key)) in allowed_keys
-        .iter()
-        .zip(explicit_value_rule_keys.iter())
-        .enumerate()
-    {
-        if allowed_key != explicit_value_rule_key {
-            return Err(format!(
-                "governance explicit-value-rule registry order drifted at index {}: allowed_key={}, explicit_value_rule_key={}",
-                index, allowed_key, explicit_value_rule_key
-            ));
-        }
-    }
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        &[],
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        pinned_key_ids,
+    )?;
 
     if !allowed_keys.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
@@ -3192,6 +3103,29 @@ mod tests {
 
         assert!(
             err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &[
+                "max_block_ms",
+                "max_parallel_workers",
+                "max_parallel_workers",
+            ],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
             "{err}"
         );
     }
