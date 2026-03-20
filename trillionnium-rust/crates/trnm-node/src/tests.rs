@@ -7576,10 +7576,10 @@ locked_block_hash = "stale-lock"
         let e2 = WalMeta {
             height: 2,
             round: 0,
-            proposal_hash: "h2".into(),
+            proposal_hash: "forked-h2".into(),
             committed: true,
-            state_root_hex: "r2".into(),
-            prev_hash_hex: Some(e1.content_hash_hex()),
+            state_root_hex: "r2-fork".into(),
+            prev_hash_hex: Some("foreign-tip".into()),
         };
         let h1 = e1.content_hash_hex();
 
