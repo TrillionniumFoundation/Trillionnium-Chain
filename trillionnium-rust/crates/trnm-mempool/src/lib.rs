@@ -444,13 +444,10 @@ impl LaneAdmissionGate {
         }
 
         if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
-            // Full-drain boundary: aggressively clear lane-local id caches so
-            // restored-state ghost markers cannot survive until the next admit().
-            self.normal.seen.clear();
-            self.critical.seen.clear();
-            // Also cold-reset fairness bookkeeping immediately on idle so no stale
-            // streak survives between dequeue loops in long-lived schedulers.
-            self.critical_served_streak = 0;
+            // Full-drain boundary: reuse the centralized idle reset so lane-local,
+            // lane-wide, and fairness caches all cold-reset before any subsequent
+            // idle poll or retry-admit probes the emptied gate.
+            self.reset_idle_state(false);
         }
 
         Some(id)
