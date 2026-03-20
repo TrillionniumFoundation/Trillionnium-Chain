@@ -7187,6 +7187,14 @@ locked_block_hash = "stale-lock"
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
         assert_eq!(recovered.wal_entries_retained, 2);
+        assert_eq!(
+            recovered.last_checkpoint,
+            Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            })
+        );
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert_eq!(checkpoints.len(), 2);

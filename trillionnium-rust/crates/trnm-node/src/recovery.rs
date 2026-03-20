@@ -10,7 +10,7 @@ use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta};
 pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let last_checkpoint =
+    let mut last_checkpoint =
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
@@ -113,6 +113,7 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
                 persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
                 truncated = true;
             }
+            last_checkpoint = valid_checkpoints.last().cloned();
         }
     }
 
