@@ -4828,6 +4828,12 @@ mod tests {
     }
 
     #[test]
+    fn clamp_limit_clamps_oversized_default_when_zero_requested() {
+        let got = clamp_limit("FeeBoundaryPrep", 0, 9, 4);
+        assert_eq!(got, 4);
+    }
+
+    #[test]
     fn task_state_file_uses_trimmed_env_path() {
         with_market_path_env(
             &[(TASK_STATE_FILE_ENV, Some("  '/tmp/task-state.jsonl'  "))],
