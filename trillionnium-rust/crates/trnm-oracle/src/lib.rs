@@ -207,9 +207,7 @@ impl OraclePolicy {
 
         if let Some(median) = snapshot.median {
             let deviation = deviation_bps(snapshot.value, median);
-            let exceeds_deviation_boundary = deviation > self.max_deviation_bps
-                || (self.max_deviation_bps != 0 && deviation == self.max_deviation_bps);
-            if exceeds_deviation_boundary {
+            if deviation_reaches_boundary(deviation, self.max_deviation_bps) {
                 return Err(OracleError::DeviationExceeded {
                     deviation_bps: deviation,
                     max_deviation_bps: self.max_deviation_bps,
@@ -219,6 +217,10 @@ impl OraclePolicy {
 
         Ok(())
     }
+}
+
+fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
+    deviation_bps > max_deviation_bps || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
 }
 
 fn deviation_bps(value: i128, baseline: i128) -> u32 {
@@ -611,6 +613,34 @@ mod tests {
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
         assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn zero_baseline_cap_boundary_is_treated_as_drift_guardrail() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(100_000, Some(0), 10_000);
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("zero-baseline cap boundary should fail closed");
+        assert!(matches!(
+            err,
+            OracleError::DeviationExceeded {
+                deviation_bps: MAX_DEVIATION_BPS_CAP,
+                max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            }
+        ));
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
     }
 
     #[test]
