@@ -194,6 +194,47 @@ fn load_ingress_records_invalid_utf8_quarantine_hash_distinguishes_different_tai
 }
 
 #[test]
+fn load_ingress_records_bounds_invalid_utf8_quarantine_raw_line_after_lossy_decode() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-invalid-utf8-lossy-bounds", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let mut fixture = vec![0xFF; 5_000];
+    fixture.push(b'\n');
+    fs::write(&path, fixture).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "invalid utf-8 ingress rows should stay quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "invalid utf-8 ingress row should be quarantined");
+    assert_eq!(entries[0]["error"], "ingress line is not valid utf-8");
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw_line should be a string");
+    assert!(
+        raw_line.contains('�'),
+        "lossy quarantine output should preserve invalid utf-8 markers for debugging"
+    );
+    assert!(
+        raw_line.len() <= 4096,
+        "quarantine raw_line should stay byte-bounded after lossy utf-8 decoding"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_rows() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-invalid-utf8", "jsonl");

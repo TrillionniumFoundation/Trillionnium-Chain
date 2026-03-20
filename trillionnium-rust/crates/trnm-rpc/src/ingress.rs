@@ -98,7 +98,8 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
 
     fn truncate_bytes_for_quarantine(raw: &[u8]) -> String {
         let end = raw.len().min(INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES);
-        String::from_utf8_lossy(&raw[..end]).into_owned()
+        let lossy = String::from_utf8_lossy(&raw[..end]);
+        truncate_for_quarantine(lossy.as_ref())
     }
 
     let path = ingress_file();
