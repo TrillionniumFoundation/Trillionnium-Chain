@@ -7,6 +7,12 @@ use trnm_types::TaskStatus;
 use crate::accounting::balance_deltas_for_transition;
 use crate::events::{emit_timeout_event, status_name};
 
+pub(crate) fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
+    let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
+    task_ids.sort_unstable();
+    task_ids
+}
+
 pub(crate) fn scan_and_apply_timeouts(
     st: &mut StateStore,
     known_task_ids: &HashSet<u64>,
@@ -14,7 +20,7 @@ pub(crate) fn scan_and_apply_timeouts(
     tx_id_seed: u64,
 ) -> u64 {
     let mut migrated = 0u64;
-    for task_id in known_task_ids.iter().copied() {
+    for task_id in sorted_timeout_candidate_ids(known_task_ids) {
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
