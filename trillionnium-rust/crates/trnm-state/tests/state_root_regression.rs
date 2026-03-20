@@ -1992,6 +1992,57 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
 }
 
 #[test]
+fn pending_resolve_restore_rejects_reserved_first_approver_even_when_task_exists() {
+    let mut baseline = StateStore::new();
+    let mut restored = StateStore::new();
+
+    let challenged_task = TaskObject {
+        task_id: 5_152,
+        creator: "creator-a".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 7,
+    };
+    baseline.restore_task(5_152, Some(challenged_task.clone()));
+    restored.restore_task(5_152, Some(challenged_task));
+
+    let baseline_root = baseline.state_root();
+    restored.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "treasury.challenge_escrow".into(),
+            authority_set: "treasury.challenge_escrow,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(restored.pending_resolve_approval(5_152), None);
+    assert_eq!(restored.pending_resolve_first_approver(5_152), None);
+    assert_eq!(
+        restored.state_root(),
+        baseline_root,
+        "restore must fail closed for reserved first approvers even when the referenced challenged task exists"
+    );
+}
+
+#[test]
 fn pending_resolve_first_approver_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
