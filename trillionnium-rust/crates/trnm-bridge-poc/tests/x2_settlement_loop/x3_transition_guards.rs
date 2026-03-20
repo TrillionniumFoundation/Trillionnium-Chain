@@ -257,6 +257,39 @@ fn x3_prep_confirm_below_observed_target_height_is_rejected_without_state_change
 }
 
 #[test]
+fn x3_prep_failed_confirm_with_non_monotonic_heartbeat_payload_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "late target receipt timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 700 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_confirm_above_observed_source_plus_one_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xconfirm-above-source-plus-one".to_string());
     let token = operator_token();

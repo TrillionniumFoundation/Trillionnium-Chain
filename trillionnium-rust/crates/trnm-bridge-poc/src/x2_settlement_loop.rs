@@ -91,11 +91,19 @@ pub fn drive_minimal_settlement(
         });
     }
 
+    if has_invalid_heartbeat_bounds(heartbeat) {
+        let height = match &confirm {
+            SettlementConfirm::Confirmed { height } => *height,
+            SettlementConfirm::Failed { .. } => heartbeat
+                .heartbeat
+                .map(|h| h.target_height.max(h.source_height))
+                .unwrap_or(0),
+        };
+        return Err(SettlementError::InvalidHeight { height });
+    }
+
     match confirm {
         SettlementConfirm::Confirmed { height } => {
-            if has_invalid_heartbeat_bounds(heartbeat) {
-                return Err(SettlementError::InvalidHeight { height });
-            }
 
             if let Some(observed) = heartbeat.heartbeat {
                 let max_confirm_height = observed.source_height.saturating_add(1);
