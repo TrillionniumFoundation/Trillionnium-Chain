@@ -254,7 +254,7 @@ fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str
         .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
 }
 
-#[cfg_attr(not(test), allow(dead_code))]
+#[allow(dead_code)]
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
     governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
 }
@@ -275,6 +275,7 @@ fn validate_governance_key_id_from_lists(
     Ok(())
 }
 
+#[allow(dead_code)]
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
 }
@@ -1759,17 +1760,6 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                let key_id_mismatch = self
-                    .gov_param_key_index
-                    .get(key)
-                    .copied()
-                    .is_some_and(|existing_key_id| existing_key_id != snapshot.key_id);
-                let foreign_key_id_collision = self
-                    .gov_param_key_index
-                    .iter()
-                    .any(|(existing_key, &existing_key_id)| {
-                        existing_key != key && existing_key_id == snapshot.key_id
-                    });
                 let pending_key_id_collision = self
                     .pending_gov_updates
                     .iter()
@@ -1777,11 +1767,13 @@ impl StateStore {
                         existing_key != key && existing_pending.key_id == snapshot.key_id
                     });
                 if snapshot.key != key
-                    || !GOV_ALLOWED_KEYS.contains(&key)
                     || !is_sensitive_gov_param(key)
-                    || validate_governance_key_id(key, snapshot.key_id).is_err()
-                    || key_id_mismatch
-                    || foreign_key_id_collision
+                    || validate_governance_key_registration(
+                        &self.gov_param_key_index,
+                        key,
+                        snapshot.key_id,
+                    )
+                    .is_err()
                     || pending_key_id_collision
                     || validate_gov_param_value(key, &snapshot.value).is_err()
                 {

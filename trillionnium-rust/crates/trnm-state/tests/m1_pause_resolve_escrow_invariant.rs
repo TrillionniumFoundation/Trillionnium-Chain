@@ -1,5 +1,6 @@
 use trnm_state::{
-    GovParamUpdateOutcome, GovPendingUpdateAction, PendingResolveApprovalSnapshot, StateStore,
+    GovParamUpdateOutcome, GovPendingUpdateAction, PendingGovParamUpdate,
+    PendingResolveApprovalSnapshot, StateStore,
 };
 use trnm_types::{TaskObject, TaskStatus};
 
@@ -2032,6 +2033,55 @@ fn pause_toggle_rejects_wrong_key_id_without_mutating_escrow_or_resolve_state() 
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
         forfeits_before
     );
+}
+
+#[test]
+fn paused_restore_pending_resolve_authority_rejects_live_key_id_collision_and_scrubs_quorum() {
+    // REF03 key-id single-source guard: restore paths must reuse the same live governance
+    // registration boundary as scheduled writes. A pending resolve_authority snapshot must fail
+    // closed when its key id is already assigned to another governance key.
+    let mut st = StateStore::new();
+    st.set_balance("treasury.challenge_escrow", 7_065);
+    st.set_balance("treasury.challenge_forfeits", 706);
+
+    st.set_gov_param(98_199, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    st.set_gov_param(98_199, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("resolve_authority baseline must be set");
+    st.set_gov_param(98_199, 7_001, "max_block_ms".into(), "1000".into())
+        .expect("other governance key must occupy the colliding key id");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_910, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_910), Some((true, 1)));
+
+    let escrow_before = st.balance_of("treasury.challenge_escrow");
+    let forfeits_before = st.balance_of("treasury.challenge_forfeits");
+
+    st.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_001,
+            key: "resolve_authority".into(),
+            value: "authority-a,authority-c".into(),
+            activate_at_height: 98_220,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_gov_update("resolve_authority"),
+        None,
+        "restore path must reject pending snapshots that reuse another live governance key id"
+    );
+    assert_eq!(
+        st.pending_resolve_approval(9_910),
+        None,
+        "rejecting a colliding resolve_authority snapshot must scrub stale staged quorum"
+    );
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+    assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeits_before);
 }
 
 #[test]
