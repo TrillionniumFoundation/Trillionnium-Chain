@@ -1148,15 +1148,10 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .unwrap_or(0);
     let key_b = tx
         .write_set
-        .get(1)
-        .or_else(|| {
-            if tx.write_set.is_empty() {
-                tx.read_set.get(1)
-            } else {
-                tx.read_set.first()
-            }
-        })
+        .iter()
+        .chain(tx.read_set.iter())
         .map(|o| o.id)
+        .find(|&id| id != key_a)
         .unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
@@ -1875,6 +1870,21 @@ mod tests {
         // than ignoring the first read key and collapsing onto the write-only bucket.
         assert_ne!(baseline_bucket, mixed_bucket);
         assert_eq!(mixed_bucket, ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize);
+    }
+
+    #[test]
+    fn hot_bucket_hint_skips_duplicate_primary_key_when_mixing_read_write_domain() {
+        let buckets_n = 97usize;
+        let duplicate_primary = tx(1, vec![o(5), o(7)], vec![o(5)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Repeated primary-key echoes across read/write sets should not collapse the
+        // secondary signal back to zero; the first distinct access key should drive
+        // the mixed-domain bucket hint.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_primary, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
     }
 
     #[test]
