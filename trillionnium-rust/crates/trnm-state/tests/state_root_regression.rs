@@ -3958,7 +3958,7 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     };
     let checkpoint = CheckpointMeta {
         height: 1,
-        state_root_hex: "cd".repeat(32),
+        state_root_hex: wal.state_root_hex.clone(),
         wal_entry_hash_hex: wal.content_hash_hex(),
     };
 
@@ -3979,6 +3979,20 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     assert!(
         !checkpoint_evidence_surface_is_canonical(&checkpoint, &bad_wal),
         "WAL state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut mismatched_checkpoint_root = checkpoint.clone();
+    mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal),
+        "checkpoint state_root_hex must match the evidenced WAL state root for audit-ready checkpoint surfaces"
+    );
+
+    let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+    mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal),
+        "checkpoint wal_entry_hash_hex must bind to the exact WAL content hash for audit-ready checkpoint surfaces"
     );
 
     let mut uppercase_checkpoint = checkpoint.clone();

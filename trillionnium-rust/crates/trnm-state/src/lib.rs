@@ -1838,6 +1838,8 @@ pub fn checkpoint_evidence_surface_is_canonical(
             .prev_hash_hex
             .as_deref()
             .is_none_or(is_canonical_hex_digest)
+        && checkpoint.state_root_hex == wal_entry.state_root_hex
+        && checkpoint.wal_entry_hash_hex == wal_entry.content_hash_hex()
 }
 
 pub fn verify_wal_and_find_checkpoint(
@@ -1909,18 +1911,18 @@ mod tests {
 
     #[test]
     fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
-        let checkpoint = CheckpointMeta {
-            height: 7,
-            state_root_hex: "ab".repeat(32),
-            wal_entry_hash_hex: "cd".repeat(32),
-        };
         let wal_entry = WalMeta {
             height: 7,
             round: 0,
             proposal_hash: "proposal".into(),
             committed: true,
-            state_root_hex: "ef".repeat(32),
+            state_root_hex: "ab".repeat(32),
             prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
         assert!(checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry));
@@ -1937,6 +1939,20 @@ mod tests {
         assert!(
             !checkpoint_evidence_surface_is_canonical(&checkpoint, &noncanonical_wal),
             "wal state-root evidence must be canonical hex"
+        );
+
+        let mut mismatched_checkpoint_root = checkpoint.clone();
+        mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal_entry),
+            "checkpoint evidence surfaces must bind the checkpoint state root to the evidenced WAL state root"
+        );
+
+        let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+        mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
+            "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
         );
     }
 
