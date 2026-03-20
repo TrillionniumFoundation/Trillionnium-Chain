@@ -121,3 +121,30 @@ fn critical_retry_bursts_stay_backpressured_once_normal_headroom_is_exhausted() 
     assert_eq!(gate.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }
+
+#[test]
+fn reserved_critical_slot_keeps_unsaturated_normal_retry_burst_backpressured_until_drain() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // One lane-wide slot is still free, but it is the last reserved critical slot.
+    // Fresh normal retries must stay backpressured until critical backlog drains.
+    for retry in [70_u64, 71_u64, 70_u64, 71_u64] {
+        assert_eq!(gate.admit(retry, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (3, 1, 4));
+    }
+
+    assert_eq!(gate.admit(5, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+
+    assert!(matches!(gate.pop_ready(), Some(4) | Some(5)));
+    assert_eq!(gate.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    assert!(matches!(gate.pop_ready(), Some(4) | Some(5)));
+    assert_eq!(gate.admit(70, IngressClass::Normal), AdmitOutcome::Accepted);
+}

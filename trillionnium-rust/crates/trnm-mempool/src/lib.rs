@@ -229,6 +229,27 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn normal_has_admission_headroom(&self) -> bool {
+        self.normal.queue.len() < self.normal.capacity || self.normal_can_borrow_critical_headroom()
+    }
+
+    fn critical_has_admission_headroom(&self) -> bool {
+        self.critical.queue.len() < self.critical.capacity || self.critical_can_borrow_normal_headroom()
+    }
+
+    fn classify_lane_backpressure_guard(&self, class: IngressClass) -> Option<AdmitOutcome> {
+        let has_headroom = match class {
+            IngressClass::Normal => self.normal_has_admission_headroom(),
+            IngressClass::Critical => self.critical_has_admission_headroom(),
+        };
+
+        if has_headroom {
+            None
+        } else {
+            Some(AdmitOutcome::Backpressured)
+        }
+    }
+
     fn finish_admission(&mut self, tx_id: u64, out: AdmitOutcome) -> AdmitOutcome {
         if matches!(out, AdmitOutcome::Accepted) {
             self.seen_global.insert(tx_id);
@@ -369,6 +390,13 @@ impl LaneAdmissionGate {
         if let Some(out) = self.classify_pre_admission_probe(lane_total, is_duplicate) {
             // Exit before lane-specific admission attempts once duplicate/backpressure
             // classification is already known.
+            return out;
+        }
+
+        if let Some(out) = self.classify_lane_backpressure_guard(class) {
+            // When reserve policy blocks this ingress class despite aggregate spare
+            // capacity, bound retry churn by returning the final backpressure result
+            // before touching either lane-local admit path.
             return out;
         }
 
