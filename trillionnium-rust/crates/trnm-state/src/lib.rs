@@ -845,7 +845,7 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
 fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
     if !GOV_ALLOWED_KEYS.contains(&key) {
         return Err(format!(
-            "governance validator coverage requested for non-whitelisted key: {}",
+            "no explicit validator registered for governance key: {}",
             key
         ));
     }
@@ -3282,6 +3282,16 @@ mod tests {
     }
 
     #[test]
+    fn governance_unknown_key_validator_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_gov_param_value("forbidden_key", "1")
+            .expect_err("unknown governance keys must fail closed at the validator boundary");
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected validator-boundary error: {err}"
+        );
+    }
+
+    #[test]
     fn governance_explicit_value_rule_registry_rejects_membership_drift_fail_closed() {
         let err = validate_governance_registry_shape_lists(
             &["max_block_ms", "max_parallel_workers"],
@@ -5144,7 +5154,7 @@ mod tests {
         let err = validate_governance_validator_coverage("not_whitelisted")
             .expect_err("validator coverage helper must fail closed for non-whitelisted keys");
         assert!(
-            err.contains("non-whitelisted key"),
+            err.contains("no explicit validator registered for governance key: not_whitelisted"),
             "unexpected validator coverage error for non-whitelisted key: {err}"
         );
     }
