@@ -562,11 +562,11 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
 
 fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
     task.status == TaskStatus::Challenged
-        && task.challenge_deadline_height.is_some()
-        && task.challenge_window_blocks_snapshot.is_some()
-        && task.challenged_at_height.is_some()
-        && task.resolve_deadline_height.is_some()
-        && task.challenge_bond.is_some()
+        && matches!(task.challenge_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_window_blocks_snapshot, Some(window) if window > 0)
+        && matches!(task.challenged_at_height, Some(height) if height > 0)
+        && matches!(task.resolve_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_bond, Some(bond) if bond > 0)
         && task.challenger.is_some()
 }
 
