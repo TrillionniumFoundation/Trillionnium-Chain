@@ -1333,7 +1333,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
             _ => None,
         }
     }
@@ -1358,7 +1358,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key).copied()?;
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
     }
@@ -3166,6 +3166,35 @@ mod tests {
         assert!(
             st.pending_gov_update("resolve_authority").is_none(),
             "rejected key-id shadowing must not enqueue pending updates"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_key_id_registry_mismatch() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7315,
+            Some(GovParamObject {
+                key_id: 9001,
+                key: "resolve_authority".into(),
+                value: "resolver-v1,resolver-v2".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert_eq!(
+            st.gov_param_u64("resolve_authority"),
+            None,
+            "typed accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "object ref accessor must fail closed when registry id and object key_id diverge"
         );
     }
 
