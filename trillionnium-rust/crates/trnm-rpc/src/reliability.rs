@@ -472,6 +472,7 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
 }
 
 const MIN_FREE_INGRESS_BACKOFF_MS: u64 = 1;
+const MIN_RETENTION_FLOOR_MS: u64 = 1;
 
 fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     // Keep free-ingress retry pacing on a strictly positive floor so malformed
@@ -504,19 +505,19 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
 
 fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig {
     // Zero dedup ttl disables idempotency memory and allows immediate duplicate
-    // replays under concurrent ingress. Keep a 1ms floor so dedup remains active.
+    // replays under concurrent ingress. Keep a shared 1ms floor so dedup remains active.
     if retention.dedup_ttl_ms == 0 {
-        retention.dedup_ttl_ms = 1;
+        retention.dedup_ttl_ms = MIN_RETENTION_FLOOR_MS;
     }
     // Zero pending ttl drops retry state instantly and can starve in-flight
     // reliability guarantees under short backoff loops.
     if retention.pending_ttl_ms == 0 {
-        retention.pending_ttl_ms = 1;
+        retention.pending_ttl_ms = MIN_RETENTION_FLOOR_MS;
     }
     // Zero cleanup interval causes cleanup to run on every receive(), which can
     // become a self-inflicted backpressure hotspot under sustained ingress.
     if retention.cleanup_interval_ms == 0 {
-        retention.cleanup_interval_ms = 1;
+        retention.cleanup_interval_ms = MIN_RETENTION_FLOOR_MS;
     }
 
     let max_safe_cleanup_interval_ms = retention.dedup_ttl_ms.min(retention.pending_ttl_ms);
@@ -1796,9 +1797,26 @@ mod tests {
             },
         );
 
-        assert_eq!(engine.retention.dedup_ttl_ms, 1);
-        assert_eq!(engine.retention.pending_ttl_ms, 1);
-        assert_eq!(engine.retention.cleanup_interval_ms, 1);
+        assert_eq!(engine.retention.dedup_ttl_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.pending_ttl_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.cleanup_interval_ms, MIN_RETENTION_FLOOR_MS);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_cleanup_interval_to_smallest_retention_window() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 25,
+                pending_ttl_ms: 10,
+                cleanup_interval_ms: 250,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 25);
+        assert_eq!(engine.retention.pending_ttl_ms, 10);
+        assert_eq!(engine.retention.cleanup_interval_ms, 10);
     }
 
     #[test]
