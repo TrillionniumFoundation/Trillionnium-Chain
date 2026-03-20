@@ -471,11 +471,12 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     collect_rr_cursor: usize,
 }
 
+const MIN_FREE_INGRESS_BACKOFF_MS: u64 = 1;
+
 fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     // Keep free-ingress retry pacing on a strictly positive floor so malformed
     // configs cannot collapse backoff/circuit timing into immediate hot loops.
-    let min_backoff_floor = 1;
-    retry.base_backoff_ms = retry.base_backoff_ms.max(min_backoff_floor);
+    retry.base_backoff_ms = retry.base_backoff_ms.max(MIN_FREE_INGRESS_BACKOFF_MS);
 
     if retry.max_backoff_ms == 0 {
         retry.max_backoff_ms = retry.base_backoff_ms;
@@ -490,9 +491,6 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     }
     if retry.circuit_breaker_threshold == 0 {
         retry.circuit_breaker_threshold = 1;
-    }
-    if retry.circuit_open_ms == 0 {
-        retry.circuit_open_ms = retry.base_backoff_ms;
     }
     if retry.circuit_open_ms < retry.base_backoff_ms {
         // Keep circuit-open window at least one base retry interval so repeated
@@ -1736,6 +1734,26 @@ mod tests {
 
         let exact_first_attempt = exp_backoff_ms(u64::MAX - 7, u64::MAX, 1);
         assert_eq!(exact_first_attempt, u64::MAX - 7);
+    }
+
+    #[test]
+    fn reliability_engine_sanitizes_zero_retry_floor_for_free_ingress_boundaries() {
+        let engine = ReliabilityEngine::new(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                max_attempts: 0,
+                circuit_breaker_threshold: 0,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+        assert_eq!(engine.retry.max_backoff_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+        assert_eq!(engine.retry.max_attempts, 1);
+        assert_eq!(engine.retry.circuit_breaker_threshold, 1);
+        assert_eq!(engine.retry.circuit_open_ms, MIN_FREE_INGRESS_BACKOFF_MS);
     }
 
     #[test]
