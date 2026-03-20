@@ -1206,7 +1206,10 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
             None => key_a = Some(id),
             Some(a) if id == a => {}
             Some(a) if id < a => {
-                key_b = Some(a);
+                key_b = match key_b {
+                    Some(b) if b < a => Some(b),
+                    _ => Some(a),
+                };
                 key_a = Some(id);
             }
             Some(_) => match key_b {
@@ -2110,6 +2113,15 @@ mod tests {
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
+    }
+
+    #[test]
+    fn hot_bucket_hint_tracks_two_smallest_distinct_keys_when_new_min_arrives_last() {
+        let t = tx(1, vec![o(3)], vec![o(5), o(4)]);
+        let buckets_n = 8usize;
+        let expected = ((3u64 ^ 4u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+        assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
     }
 
     #[test]
