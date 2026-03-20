@@ -1350,6 +1350,8 @@ impl StateStore {
                     || canonical_key.is_empty()
                     || canonical_key != snapshot.key
                     || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || !is_sensitive_gov_param(&snapshot.key)
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);
                     return;

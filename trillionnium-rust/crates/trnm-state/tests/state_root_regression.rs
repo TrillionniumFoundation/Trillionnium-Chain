@@ -578,6 +578,43 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
+fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 116,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+    let queued_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "true".into(),
+            activate_at_height: 321,
+        }),
+    );
+
+    assert_eq!(
+        state.pending_gov_update("emergency_pause"),
+        None,
+        "non-sensitive emergency_pause metadata must not be restorable into the pending governance queue"
+    );
+    assert_eq!(
+        state.state_root(),
+        queued_root,
+        "rejecting non-sensitive pending governance metadata must leave unrelated queued proof material untouched"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
