@@ -120,6 +120,22 @@ fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
     true
 }
 
+fn combined_access_domain_versions_are_consistent(reads: &[ObjectRef], writes: &[ObjectRef]) -> bool {
+    if reads.len() + writes.len() <= 1 {
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(reads.len() + writes.len());
+    for obj in writes.iter().chain(reads.iter()) {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
@@ -1153,6 +1169,11 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    debug_assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+
     // Defensive guard: keep helper total for misconfigured callers and tests.
     // Production reorder path always uses buckets_n>=1, but this preserves
     // fail-closed deterministic behavior if future call sites pass zero.
@@ -2060,6 +2081,18 @@ mod tests {
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn hot_bucket_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+        let t = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_hint(&t, 8);
     }
 
     #[test]
