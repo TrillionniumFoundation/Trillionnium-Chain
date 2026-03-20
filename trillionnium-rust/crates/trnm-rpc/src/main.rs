@@ -1751,10 +1751,11 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
             continue;
         }
-        match serde_json::from_str::<MessageIngressRecord>(line) {
+        match serde_json::from_str::<MessageIngressRecord>(trimmed) {
             Ok(record) => records.push(record),
             Err(err) => quarantined.push(IngressQuarantineRecord {
                 source_path: path.display().to_string(),

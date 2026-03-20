@@ -11,7 +11,7 @@ fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
 
     fs::write(
             &path,
-            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
+            r#"  {"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}  
 not-json
 "#,
         )
@@ -21,8 +21,9 @@ not-json
     assert_eq!(
         records.len(),
         1,
-        "valid ingress rows should survive salvage"
+        "whitespace-wrapped valid ingress rows should survive salvage"
     );
+    assert_eq!(records[0].request_id, "req-1");
 
     let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let entries: Vec<serde_json::Value> = quarantine_raw
@@ -33,7 +34,7 @@ not-json
     assert_eq!(
         entries.len(),
         1,
-        "malformed ingress row should be quarantined"
+        "only malformed ingress rows should be quarantined"
     );
     assert_eq!(entries[0]["line_number"], 2);
     assert_eq!(entries[0]["raw_line"], "not-json");
