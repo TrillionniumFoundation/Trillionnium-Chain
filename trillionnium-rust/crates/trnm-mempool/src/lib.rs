@@ -154,21 +154,25 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_saturated_probe(&self, is_duplicate: bool) -> AdmitOutcome {
+        // Saturated retry probes are hot under ingress bursts. Return the final
+        // duplicate-vs-backpressure classification directly so callers avoid
+        // drifting into lane-specific admit paths that would only re-check the
+        // same capacity guards.
+        if is_duplicate {
+            AdmitOutcome::Duplicate
+        } else {
+            AdmitOutcome::Backpressured
+        }
+    }
+
     fn classify_pre_admission_probe(
         &self,
         lane_total: usize,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
         if lane_total >= self.total_capacity {
-            // Saturated retry probes are hot under ingress bursts. Return the final
-            // duplicate-vs-backpressure classification directly so callers avoid
-            // drifting into lane-specific admit paths that would only re-check the
-            // same capacity guards.
-            return Some(if is_duplicate {
-                AdmitOutcome::Duplicate
-            } else {
-                AdmitOutcome::Backpressured
-            });
+            return Some(self.classify_saturated_probe(is_duplicate));
         }
 
         if is_duplicate {
@@ -564,6 +568,29 @@ mod tests {
 
         assert_eq!(g.pop_ready(), Some(100));
         assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn saturated_retry_burst_stays_backpressured_until_headroom_reopens() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 1, 2));
+
+        for class in [
+            IngressClass::Critical,
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+        ] {
+            assert_eq!(g.admit(30, class), AdmitOutcome::Backpressured);
+            assert_eq!(g.queued_counts(), (1, 1, 2));
+        }
+
+        assert!(matches!(g.pop_ready(), Some(10) | Some(20)));
+        assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
     }
 
     #[test]
