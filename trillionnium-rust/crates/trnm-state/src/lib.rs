@@ -722,6 +722,15 @@ impl StateStore {
         if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
             return;
         }
+        if task.challenge_deadline_height.is_none()
+            || task.challenge_window_blocks_snapshot.is_none()
+            || task.challenged_at_height.is_none()
+            || task.resolve_deadline_height.is_none()
+            || task.challenge_bond.is_none()
+            || task.challenger.is_none()
+        {
+            return;
+        }
 
         self.pending_resolve_approvals.insert(
             task_id,
