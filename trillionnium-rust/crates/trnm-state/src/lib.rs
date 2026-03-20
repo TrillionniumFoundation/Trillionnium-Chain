@@ -170,6 +170,17 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+
+fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
+    if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
+        return Err(format!(
+            "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+            key, EMERGENCY_PAUSE_KEY_ID, key_id
+        ));
+    }
+    Ok(())
+}
+
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -766,6 +777,10 @@ impl StateStore {
                     self.objects.remove(&key_id);
                     return;
                 }
+                if validate_gov_param_key_id_policy(&snapshot.key, key_id).is_err() {
+                    self.objects.remove(&key_id);
+                    return;
+                }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
                         self.objects.remove(&key_id);
@@ -1049,12 +1064,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_gov_param_key_id_policy(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -1127,12 +1137,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        validate_gov_param_key_id_policy(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -3195,6 +3200,34 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_restore_rejects_non_canonical_emergency_pause_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            8_000,
+            Some(GovParamObject {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "restore must not expose non-canonical emergency_pause registry entries"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "restore must fail closed instead of honoring a non-canonical emergency_pause slot"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "restore must not leave a resolvable ref for a non-canonical emergency_pause slot"
         );
     }
 
