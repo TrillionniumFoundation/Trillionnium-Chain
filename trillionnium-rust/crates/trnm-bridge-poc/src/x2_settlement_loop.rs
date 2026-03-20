@@ -138,6 +138,12 @@ pub fn drive_minimal_settlement(
                     return Err(SettlementError::InvalidHeight { height });
                 }
             }
+            if let Some(source_height) = hb_src {
+                let max_confirm_height = source_height.saturating_add(1);
+                if height > max_confirm_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
+            }
             request.settle_authorized(token, height)?;
             let event = SettlementEvent {
                 phase: "settlement_confirmed",
@@ -276,7 +282,11 @@ pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::normalize_compensation_reason;
+    use super::{drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm};
+    use crate::bridge_status::{
+        BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
+    };
+    use crate::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
 
     #[test]
     fn normalize_compensation_reason_strips_controls_and_invisibles() {
@@ -398,5 +408,35 @@ mod tests {
         let raw = "target\u{1680}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn drive_minimal_settlement_rejects_confirm_height_past_source_finality_window() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-height-jump".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 702 },
+        )
+        .unwrap_err();
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 702 });
+        assert_eq!(request.status, BridgeStatus::Pending);
     }
 }
