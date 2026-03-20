@@ -387,10 +387,23 @@ fn validated_restorable_pending_resolve_snapshot(
     if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
         return None;
     }
-    if task.challenger.is_none() {
+    let has_canonical_actor = |actor: &str| {
+        let trimmed = actor.trim();
+        !trimmed.is_empty() && trimmed == actor && !trimmed.chars().any(|c| c.is_whitespace())
+    };
+    if !task
+        .challenger
+        .as_deref()
+        .is_some_and(has_canonical_actor)
+    {
         return None;
     }
-    if snapshot.slash_worker && task.worker.is_none() {
+    if snapshot.slash_worker
+        && !task
+            .worker
+            .as_deref()
+            .is_some_and(has_canonical_actor)
+    {
         return None;
     }
 
