@@ -774,7 +774,7 @@ impl StateStore {
                     .get(&id)
                     .map(|pending| {
                         existing_task.as_ref().is_some_and(|current| {
-                            current.task_id == task.task_id
+                            current == &task
                                 && self.should_restore_pending_resolve_approval(
                                     id,
                                     &PendingResolveApprovalSnapshot {
@@ -2442,7 +2442,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_preserves_pending_resolve_across_same_version_snapshot_reentry() {
+    fn restore_task_preserves_pending_resolve_across_identical_same_version_snapshot_reentry() {
         let mut st = StateStore::new();
         let task = TaskObject {
             task_id: 9_001,
@@ -2479,9 +2479,7 @@ mod tests {
         );
         assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
 
-        let mut restored = task;
-        restored.worker = Some("worker-b".into());
-        st.restore_task(restored.task_id, Some(restored));
+        st.restore_task(task.task_id, Some(task));
 
         assert_eq!(st.pending_resolve_approval(9_001), Some((true, 1)));
         assert_eq!(
