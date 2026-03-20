@@ -1822,6 +1822,11 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
+        // Fail closed on incomplete restore/replay metadata. Snapshot recovery must
+        // not trust checkpoint/WAL records that omit core identity fields.
+        if e.proposal_hash.is_empty() || e.state_root_hex.is_empty() {
+            return Ok(best_checkpoint);
+        }
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
@@ -1847,6 +1852,9 @@ pub fn verify_wal_and_find_checkpoint(
         prev_height = Some(e.height);
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+            if cp.state_root_hex.is_empty() || cp.wal_entry_hash_hex.is_empty() {
+                continue;
+            }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -4813,6 +4821,29 @@ mod tests {
         assert!(
             got.is_none(),
             "genesis WAL metadata with a forged prev hash must fail closed instead of claiming checkpoint recovery"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_genesis_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint-only recovery must fail closed when WAL metadata omits proposal identity"
         );
     }
 
