@@ -170,8 +170,8 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hasher.update(pending.first_approver.as_bytes());
-            hasher.update(pending.authority_set.as_bytes());
+            hash_str_with_len(&mut hasher, &pending.first_approver);
+            hash_str_with_len(&mut hasher, &pending.authority_set);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
