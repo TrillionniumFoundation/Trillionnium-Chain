@@ -11,7 +11,7 @@ use crate::envpaths::ingress_file;
 use crate::fsutil::atomic_write_text_file;
 use crate::market_io::acquire_market_file_lock;
 use crate::runtime::now_ms;
-use crate::{IngressQuarantineRecord, MessageIngressRecord};
+use crate::{IngressQuarantineRecord, MessageIngressRecord, push_tail_limited};
 
 pub(crate) fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
     let file_name = path
@@ -50,6 +50,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     const INGRESS_LINE_PARSE_MAX_BYTES: usize = 65_536;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+    const INGRESS_QUARANTINE_APPEND_MAX_RECORDS: usize = 128;
 
     fn truncate_for_quarantine(raw: &str) -> String {
         if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
@@ -68,6 +69,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
+    let mut quarantined_total = 0usize;
     for (idx, line) in raw.lines().enumerate() {
         if line.trim().is_empty() {
             continue;
@@ -83,28 +85,37 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         };
         match parse_result {
             Ok(record) => records.push(record),
-            Err(err) => quarantined.push(IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: idx + 1,
-                line_hash: stable_line_hash(line),
-                raw_line: truncate_for_quarantine(line),
-                error: err.to_string(),
-                quarantined_at_unix_ms: now_ms(),
-            }),
+            Err(err) => {
+                quarantined_total += 1;
+                push_tail_limited(
+                    &mut quarantined,
+                    IngressQuarantineRecord {
+                        source_path: path.display().to_string(),
+                        line_number: idx + 1,
+                        line_hash: stable_line_hash(line),
+                        raw_line: truncate_for_quarantine(line),
+                        error: err.to_string(),
+                        quarantined_at_unix_ms: now_ms(),
+                    },
+                    INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
+                );
+            }
         }
     }
     if !quarantined.is_empty() {
         if let Err(err) = append_quarantine_records(&path, &quarantined) {
             eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined_total={} quarantined_written={} err={}",
                 path.display(),
+                quarantined_total,
                 quarantined.len(),
                 err
             );
         } else {
             eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined_total={} quarantined_written={} quarantine_path={}",
                 path.display(),
+                quarantined_total,
                 quarantined.len(),
                 ingress_quarantine_file_for(&path).display()
             );
