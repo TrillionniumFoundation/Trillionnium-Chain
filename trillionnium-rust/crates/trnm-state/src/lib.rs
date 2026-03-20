@@ -531,7 +531,10 @@ fn validate_governance_key_registration_lists(
     validate_requested_governance_key_canonical(key)?;
 
     if !allowed_keys.contains(&key) {
-        return Err(format!("governance key not allowed: {}", key));
+        return Err(format!(
+            "no explicit validator registered for governance key: {}",
+            key
+        ));
     }
     if !explicit_validator_keys.contains(&key) {
         return Err(format!(
@@ -3076,7 +3079,29 @@ mod tests {
         let err = st
             .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
-        assert!(err.contains("not allowed"));
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_unknown_key_registration_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "forbidden_key",
+            7002,
+            GOV_ALLOWED_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_PINNED_KEY_IDS,
+        )
+        .expect_err("unknown governance keys must fail closed at the registration boundary");
+
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected registration-boundary error: {err}"
+        );
     }
 
     #[test]
