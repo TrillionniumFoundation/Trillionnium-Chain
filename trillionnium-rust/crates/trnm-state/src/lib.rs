@@ -749,6 +749,16 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
+                if task.task_id == 0 || task.version == 0 {
+                    if matches!(
+                        self.objects.get(&id).map(|existing| &existing.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
+                    }
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
                 if matches!(
                     self.objects.get(&id).map(|existing| &existing.value),
                     Some(value) if !matches!(value, ObjectValue::Task(_))
@@ -4876,6 +4886,62 @@ mod tests {
         assert!(
             wrong_version.pending_resolve_approval_snapshot(501).is_none(),
             "restore must reject stale pending resolve snapshots whose task version no longer matches"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
+        let snapshot = Some(PendingResolveApprovalSnapshot {
+            first_approver: "validator-1".into(),
+            slash_worker: false,
+            confirmations: 1,
+            authority_set: "committee-a".into(),
+            task_version: 1,
+        });
+
+        let mut zero_version_collision = StateStore::new();
+        zero_version_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param before invalid task restore");
+        zero_version_collision.restore_pending_resolve_approval(501, snapshot);
+        zero_version_collision.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 0,
+            }),
+        );
+        assert_eq!(
+            zero_version_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "invalid task restore must fail closed without corrupting an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            zero_version_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "invalid task restore must not overwrite an unrelated governance snapshot when ids overlap"
+        );
+        assert!(
+            zero_version_collision.pending_resolve_approval_snapshot(501).is_none(),
+            "invalid task restore must scrub stale pending resolve snapshots for snapshot completeness"
         );
     }
 
