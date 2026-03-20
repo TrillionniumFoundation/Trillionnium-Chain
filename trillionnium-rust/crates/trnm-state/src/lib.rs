@@ -190,6 +190,26 @@ fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String
     Ok(())
 }
 
+fn validate_gov_param_registry_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!("governance key not allowed: {}", key));
+    }
+    validate_gov_param_key_id_policy(key, key_id)?;
+    if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
+        if existing_key_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                key, existing_key_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
+
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -1070,18 +1090,7 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        validate_gov_param_key_id_policy(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -1143,18 +1152,7 @@ impl StateStore {
         value: String,
         action: GovPendingUpdateAction,
     ) -> Result<GovParamUpdateOutcome, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        validate_gov_param_key_id_policy(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
@@ -1348,7 +1346,7 @@ impl StateStore {
 
     fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
         let id = self.gov_param_key_index.get(key).copied()?;
-        if validate_gov_param_key_id_policy(key, id).is_err() {
+        if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
         }
         let object = self.objects.get(&id)?;
@@ -3625,6 +3623,20 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn governance_registry_binding_merge_gate_rejects_non_canonical_emergency_pause_routing() {
+        let empty_index = BTreeMap::new();
+        let err = validate_gov_param_registry_binding(&empty_index, "emergency_pause", 8_000)
+            .expect_err("pinned governance key must reject non-canonical key ids at the shared registry gate");
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+        let err = validate_gov_param_registry_binding(&indexed, "resolve_authority", 9_001)
+            .expect_err("registry gate must reject mismatched indexed governance key ids");
+        assert!(err.contains("existing_id=7313"), "{err}");
     }
 
     #[test]
