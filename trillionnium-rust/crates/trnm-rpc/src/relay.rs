@@ -718,7 +718,6 @@ impl RelayService {
     pub fn send(&self, req: RelaySendRequest) -> Result<RelaySendResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         validate_route(&req.route)?;
-        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
             self.relay_send_rejected_route_not_registered_total
                 .fetch_add(1, Ordering::Relaxed);
@@ -727,6 +726,7 @@ impl RelayService {
                 format!("route not registered: {}", req.route),
             ));
         }
+        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
 
         let mut g = self
             .sessions
@@ -1700,6 +1700,72 @@ mod tests {
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_route"));
         assert_eq!(relay.relay_send_rejected_route_not_registered_total(), 1);
+    }
+
+    #[test]
+    fn relay_unregistered_route_rejection_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route-quota".into(),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .send(RelaySendRequest {
+                    session_id: "s-route-quota".into(),
+                    route: "relay.unknown".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"noise".to_vec(),
+                    source: Some("src-route-noise".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/invalid_route"));
+        }
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-1".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("invalid-route noise should not burn relay quota");
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-2".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("registered traffic should still use the full configured budget");
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-3".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
