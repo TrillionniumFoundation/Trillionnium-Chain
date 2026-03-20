@@ -128,6 +128,31 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
 }
 
 #[test]
+fn x3_prep_confirm_during_heartbeat_retry_window_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-retry-window".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_failure("target relay timeout #1");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 699 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::RetryPending {
+            phase: "relay_heartbeat",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_confirm_equal_to_observed_target_height_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xconfirm-equal-target-height".to_string());
     let token = operator_token();

@@ -87,6 +87,12 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if heartbeat.should_retry {
+                return Err(SettlementError::RetryPending {
+                    phase: "relay_heartbeat",
+                });
+            }
+
             if has_invalid_heartbeat_bounds(heartbeat) {
                 return Err(SettlementError::InvalidHeight { height });
             }
