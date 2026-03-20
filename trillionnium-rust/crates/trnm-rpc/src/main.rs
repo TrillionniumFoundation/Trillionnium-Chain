@@ -1745,6 +1745,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+    const INGRESS_PARSE_LINE_MAX_BYTES: usize = 64 * 1024;
 
     fn truncate_for_quarantine(raw: &str) -> String {
         if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
@@ -1765,6 +1766,21 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut quarantined = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
         if line.trim().is_empty() {
+            continue;
+        }
+        if line.len() > INGRESS_PARSE_LINE_MAX_BYTES {
+            quarantined.push(IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash: stable_line_hash(line),
+                raw_line: truncate_for_quarantine(line),
+                error: format!(
+                    "ingress line exceeds {} bytes parse bound (got {})",
+                    INGRESS_PARSE_LINE_MAX_BYTES,
+                    line.len()
+                ),
+                quarantined_at_unix_ms: now_ms(),
+            });
             continue;
         }
         match serde_json::from_str::<MessageIngressRecord>(line) {

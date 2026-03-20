@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
+fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
@@ -9,13 +9,18 @@ fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _ = fs::remove_file(&quarantine);
     std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
+    let oversized_malformed = format!("{{\"broken\":\"{}", "x".repeat(70_000));
     fs::write(
-            &path,
-            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
-not-json
-"#,
-        )
-        .expect("write ingress fixture");
+        &path,
+        format!(
+            concat!(
+                "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+                "{}\n"
+            ),
+            oversized_malformed
+        ),
+    )
+    .expect("write ingress fixture");
 
     let records = load_ingress_records();
     assert_eq!(
@@ -33,7 +38,7 @@ not-json
     assert_eq!(
         entries.len(),
         1,
-        "malformed ingress row should be quarantined"
+        "oversized malformed ingress row should be quarantined"
     );
     assert_eq!(entries[0]["line_number"], 2);
     let raw_line = entries[0]["raw_line"]
@@ -43,6 +48,10 @@ not-json
     assert!(
         oversized_malformed.starts_with(raw_line),
         "quarantine raw_line should preserve the malformed prefix"
+    );
+    assert_eq!(
+        entries[0]["error"],
+        "ingress line exceeds 65536 bytes parse bound (got 70010)"
     );
     assert_eq!(entries[0]["source_path"], path.display().to_string());
 
