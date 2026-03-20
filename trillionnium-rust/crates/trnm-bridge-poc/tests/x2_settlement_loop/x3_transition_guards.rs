@@ -127,6 +127,29 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
 }
 
 #[test]
+fn x3_prep_rejects_confirm_height_behind_heartbeat_target_height() {
+    let mut request = SettlementRequest::new(1, "0xstale-confirm-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 698 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 698 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_reorder_confirm_with_older_height_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xreorder-confirm-height".to_string());
     let token = operator_token();
