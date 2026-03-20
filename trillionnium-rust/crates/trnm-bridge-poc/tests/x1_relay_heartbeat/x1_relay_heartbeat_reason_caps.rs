@@ -20,3 +20,11 @@ fn relay_heartbeat_failure_reason_at_limit_does_not_append_ellipsis() {
     assert!(!out.message.ends_with('…'));
     assert_eq!(out.message, exact_limit_reason);
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_braille_blank_for_log_consensus() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("target\u{2800}relay timeout");
+    assert_eq!(out.message, "target relay timeout");
+}
