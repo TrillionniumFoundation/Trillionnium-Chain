@@ -411,6 +411,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_interlinear_annotation_controls_for_replay_stability() {
+        let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn drive_minimal_settlement_rejects_confirm_height_past_source_finality_window() {
         let mut request = SettlementRequest::new(1, "0xconfirm-height-jump".to_string());
         let token = CapabilityToken {
