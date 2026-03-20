@@ -1877,7 +1877,10 @@ pub fn verify_wal_and_find_checkpoint(
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
             if cp.state_root_hex.is_empty() || cp.wal_entry_hash_hex.is_empty() {
-                continue;
+                // Fail closed on incomplete checkpoint metadata at a validated WAL height.
+                // Snapshot restore must not silently rewind to an older checkpoint when the
+                // most recent checkpoint record is present but truncated/corrupt.
+                return Ok(None);
             }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
@@ -5331,6 +5334,46 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 2);
         assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_metadata_at_latest_valid_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed instead of rewinding to an older checkpoint"
+        );
     }
 
     #[test]
