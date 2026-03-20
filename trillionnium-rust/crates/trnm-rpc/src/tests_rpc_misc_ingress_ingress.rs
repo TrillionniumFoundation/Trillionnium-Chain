@@ -102,6 +102,35 @@ fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
         "all malformed rows should stay fail-closed in quarantine"
     );
 
+    let salvaged_raw = fs::read_to_string(&path).expect("read salvaged ingress file");
+    let salvaged_lines: Vec<&str> = salvaged_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(
+        salvaged_lines.len(),
+        1,
+        "salvage should retain only valid ingress rows after quarantine succeeds"
+    );
+
+    let records_second = load_ingress_records();
+    assert_eq!(
+        records_second.len(),
+        1,
+        "subsequent scans should keep the salvaged valid row"
+    );
+    let quarantine_second_raw = fs::read_to_string(&quarantine).expect("read quarantine file again");
+    let entries_second: Vec<serde_json::Value> = quarantine_second_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries_second.len(),
+        128,
+        "subsequent scans should not append duplicate quarantine noise once salvage rewrites ingress"
+    );
+
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
