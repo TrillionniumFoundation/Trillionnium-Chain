@@ -1195,7 +1195,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
-    debug_assert!(
+    assert!(
         combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
         "mixed access domain contains the same object id with multiple versions"
     );
