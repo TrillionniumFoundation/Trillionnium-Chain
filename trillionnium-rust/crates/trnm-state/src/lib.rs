@@ -1766,6 +1766,10 @@ impl StateStore {
                     .any(|(existing_key, existing_pending)| {
                         existing_key != key && existing_pending.key_id == snapshot.key_id
                     });
+                let non_gov_param_key_id_collision = self
+                    .objects
+                    .get(&snapshot.key_id)
+                    .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)));
                 if snapshot.key != key
                     || !is_sensitive_gov_param(key)
                     || validate_governance_key_registration(
@@ -1775,6 +1779,7 @@ impl StateStore {
                     )
                     .is_err()
                     || pending_key_id_collision
+                    || non_gov_param_key_id_collision
                     || validate_gov_param_value(key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);
