@@ -792,8 +792,20 @@ fn has_explicit_gov_param_value_rule(key: &str) -> bool {
     GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
 }
 
+fn has_explicit_gov_param_value_match_coverage_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
 fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
-    GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
+    has_explicit_gov_param_value_match_coverage_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
 }
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
@@ -3244,6 +3256,31 @@ mod tests {
         }
         assert!(!has_explicit_gov_param_value_rule("forbidden_key"));
         assert!(!has_explicit_gov_param_value_match_coverage("forbidden_key"));
+    }
+
+    #[test]
+    fn governance_value_match_coverage_requires_validator_and_value_rule_fail_closed() {
+        assert!(has_explicit_gov_param_value_match_coverage_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit validator coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit value-rule coverage"
+        );
     }
 
     #[test]
