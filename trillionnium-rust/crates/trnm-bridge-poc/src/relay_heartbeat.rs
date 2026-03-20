@@ -133,6 +133,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{1160}'
             | '\u{1680}'
             | '\u{180E}'
+            | '\u{2800}'
             | '\u{3164}'
             | '\u{2000}'
             | '\u{2001}'
@@ -277,6 +278,13 @@ mod tests {
         let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
     }
 
     #[test]
