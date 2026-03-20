@@ -63,6 +63,24 @@ pub struct LaneAdmissionGate {
     normal_has_dedicated_capacity: bool,
 }
 impl LaneAdmissionGate {
+    fn clear_seen_caches(&mut self) {
+        self.normal.seen.clear();
+        self.critical.seen.clear();
+        self.seen_global.clear();
+    }
+
+    fn rebuild_seen_from_queues(&mut self) {
+        self.normal.seen.clear();
+        self.normal.seen.extend(self.normal.queue.iter().copied());
+        self.critical.seen.clear();
+        self.critical
+            .seen
+            .extend(self.critical.queue.iter().copied());
+        self.seen_global.clear();
+        self.seen_global.extend(self.normal.queue.iter().copied());
+        self.seen_global.extend(self.critical.queue.iter().copied());
+    }
+
     fn maybe_warm_normal_fairness(&mut self, normal_was_empty: bool, out: AdmitOutcome) {
         if self.normal_has_dedicated_capacity
             && matches!(out, AdmitOutcome::Accepted)
@@ -126,9 +144,7 @@ impl LaneAdmissionGate {
                 && self.critical.seen.is_empty()
                 && self.seen_global.is_empty())
             {
-                self.normal.seen.clear();
-                self.critical.seen.clear();
-                self.seen_global.clear();
+                self.clear_seen_caches();
             }
             // Fully idle lane state must also reset fairness streak; otherwise a
             // restored stale streak can spuriously preempt fresh critical work.
@@ -145,15 +161,7 @@ impl LaneAdmissionGate {
                 // Lane-local seen sets are stale (typically from restored-state skew).
                 // Rebuild from authoritative queue contents so duplicate probes stay
                 // correct without scanning queues on the steady-state hot path.
-                self.normal.seen.clear();
-                self.normal.seen.extend(self.normal.queue.iter().copied());
-                self.critical.seen.clear();
-                self.critical
-                    .seen
-                    .extend(self.critical.queue.iter().copied());
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_seen_from_queues();
             } else if self.seen_global.len() != lane_total {
                 // Defensive self-heal for transient restored-state skew: lane-local queues
                 // remain source of truth for saturation, and rebuild lane-wide id set.
@@ -183,15 +191,7 @@ impl LaneAdmissionGate {
             // id is absent, rebuild from authoritative queue state immediately instead
             // of probing both queues first.
             if !in_normal_seen && !in_critical_seen {
-                self.normal.seen.clear();
-                self.normal.seen.extend(self.normal.queue.iter().copied());
-                self.critical.seen.clear();
-                self.critical
-                    .seen
-                    .extend(self.critical.queue.iter().copied());
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_seen_from_queues();
                 is_duplicate = self.seen_global.contains(&tx_id);
             } else {
                 // Duplicate probes are hot under replay pressure. Narrow queue probes to
@@ -364,9 +364,7 @@ impl LaneAdmissionGate {
                     && self.critical.seen.is_empty()
                     && self.seen_global.is_empty())
             {
-                self.normal.seen.clear();
-                self.critical.seen.clear();
-                self.seen_global.clear();
+                self.clear_seen_caches();
             }
             if self.critical_served_streak != 0 {
                 self.critical_served_streak = 0;
@@ -989,7 +987,10 @@ mod tests {
         assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.pop_ready(), None);
     }
 
@@ -1063,8 +1064,14 @@ mod tests {
 
         // Cross-class retries for the ghost id must remain Backpressured while the
         // lane is full; the ghost cache entry must not poison classification.
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
 
         // Once a real queued tx drains, the ghost id should admit as fresh on retry.
         assert!(matches!(g.pop_ready(), Some(10) | Some(20)));
@@ -1452,7 +1459,10 @@ mod tests {
         // Duplicate for a queued tx must still be preserved even on the saturated
         // fast path, and a fresh id must remain backpressured instead of duplicate.
         assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(300, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(300, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -1503,11 +1513,15 @@ mod tests {
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
 
         // Distinct fresh ids must still be backpressured while the stop is active.
-        assert_eq!(g.admit(7, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(7, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
-    fn hard_stop_mode_lane_local_duplicate_survives_repeated_cross_class_probes_without_poisoning_fresh_ids() {
+    fn hard_stop_mode_lane_local_duplicate_survives_repeated_cross_class_probes_without_poisoning_fresh_ids(
+    ) {
         let mut g = LaneAdmissionGate::new(0, 0);
 
         // Simulate restored-state duplicate knowledge carried only by lane-local
@@ -1522,8 +1536,14 @@ mod tests {
 
         // Fresh ids must remain backpressured and must not become duplicate on
         // subsequent retries just because hard-stop mode observed them before.
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -1548,8 +1568,14 @@ mod tests {
         assert_eq!(g.critical_served_streak, 0);
 
         // Fresh ids remain backpressured rather than being poisoned into duplicate.
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -1578,7 +1604,8 @@ mod tests {
     }
 
     #[test]
-    fn equal_cardinality_cross_lane_and_global_skew_self_heals_without_false_duplicate_or_poisoned_retry() {
+    fn equal_cardinality_cross_lane_and_global_skew_self_heals_without_false_duplicate_or_poisoned_retry(
+    ) {
         let mut g = LaneAdmissionGate::new(3, 1);
 
         assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
@@ -1603,7 +1630,10 @@ mod tests {
 
         // Inline self-heal must also restore duplicate semantics for the real queued ids.
         assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(200, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(
+            g.admit(200, IngressClass::Critical),
+            AdmitOutcome::Duplicate
+        );
         assert_eq!(g.queued_counts(), (2, 1, 3));
     }
 
@@ -1622,7 +1652,10 @@ mod tests {
         assert_eq!(g.seen_global.len(), 3);
 
         // While saturated, the ghost id must stay fresh/backpressured rather than duplicate.
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         // Drain once to trigger pop-side self-heal and remove the saturation boundary.
         assert!(matches!(g.pop_ready(), Some(10) | Some(20)));
