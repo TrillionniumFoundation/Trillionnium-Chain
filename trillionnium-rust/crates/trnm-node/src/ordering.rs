@@ -122,13 +122,20 @@ impl PreExecPool {
                 match entry {
                     PreExecQueueEntry::Run(job) => {
                         for id in job.ids {
-                            let idx = (id - 1) as usize;
+                            let Some(idx) = id.checked_sub(1).map(|raw| raw as usize) else {
+                                let _ = job
+                                    .result_tx
+                                    .send((id, false, "invalid_preexec_tx_id".into()));
+                                continue;
+                            };
+                            let Some(tx) = picked_cloned.get(idx).cloned() else {
+                                let _ = job
+                                    .result_tx
+                                    .send((id, false, "invalid_preexec_tx_id".into()));
+                                continue;
+                            };
                             let mut local_state = snapshot_cloned.as_ref().clone();
-                            let res = apply_one(
-                                &mut local_state,
-                                picked_cloned[idx].clone(),
-                                candidate_height,
-                            );
+                            let res = apply_one(&mut local_state, tx, candidate_height);
                             match res {
                                 Ok(_) => {
                                     let _ = job.result_tx.send((id, true, String::new()));

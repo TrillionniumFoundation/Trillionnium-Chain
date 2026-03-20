@@ -246,6 +246,22 @@
     }
 
     #[test]
+    fn preexec_rejects_out_of_range_tx_ids_without_worker_panic() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![MockTx::CreateTask {
+            task_id: 4_250,
+            creator: "alice".into(),
+            bounty: 10,
+        }]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![0, 1, 2]);
+
+        assert_eq!(ordered_ids, vec![1]);
+        assert_eq!(rejected, 2);
+    }
+
+    #[test]
     fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
         let baseline = vec![1, 2, 3, 4];
         let advisor = ShadowOnlyRlAdvisor { topk: 2 };
