@@ -171,6 +171,10 @@ fn tx_status_at_ingress(txs: &BTreeMap<String, TxLifecycleRecord>, tx_hash: &str
     txs.get(tx_hash).map(|record| record.status.clone())
 }
 
+fn has_ingress_accounting_overflow(tx: &TransferTx) -> bool {
+    tx.amount.checked_add(tx.fee).is_none()
+}
+
 pub fn submit_tx(
     txs: &mut BTreeMap<String, TxLifecycleRecord>,
     tx: TransferTx,
@@ -179,7 +183,7 @@ pub fn submit_tx(
     let tx_hash = compute_tx_hash(&tx);
 
     // Ingress hardening: reject obviously invalid txs before entering pending pool.
-    if tx.validate_basic().is_err() {
+    if tx.validate_basic().is_err() || has_ingress_accounting_overflow(&tx) {
         return SendTxResponse {
             tx_hash,
             status: TxStatus::Fail,
@@ -520,6 +524,22 @@ mod tests {
                 nonce: 0,
                 signature: "not-a-valid-signature".into(),
             },
+            100,
+        );
+
+        assert_eq!(out.status, TxStatus::Fail);
+        assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn submit_tx_rejects_amount_plus_fee_overflow_at_ingress() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut txs = BTreeMap::new();
+        let out = submit_tx(
+            &mut txs,
+            transfer_tx(&alice, &bob, u128::MAX, 1, 0, ALICE_SK_HEX),
             100,
         );
 
