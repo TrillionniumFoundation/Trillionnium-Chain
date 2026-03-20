@@ -2804,6 +2804,51 @@ fn wal_checkpoint_verification_fails_closed_on_ambiguous_metadata_at_same_height
 }
 
 #[test]
+fn wal_checkpoint_verification_fails_closed_on_incomplete_checkpoint_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: String::new(),
+            wal_entry_hash_hex: "missing-root".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
 fn wal_content_hash_length_frames_variable_metadata_fields() {
     let a = WalMeta {
         height: 7,

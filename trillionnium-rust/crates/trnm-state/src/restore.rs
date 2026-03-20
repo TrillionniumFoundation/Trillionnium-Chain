@@ -26,6 +26,20 @@ fn hash_len_framed_str(hasher: &mut Sha256, value: &str) {
     hasher.update(value.as_bytes());
 }
 
+fn has_complete_checkpoint_meta(checkpoint: &CheckpointMeta) -> bool {
+    !checkpoint.state_root_hex.is_empty() && !checkpoint.wal_entry_hash_hex.is_empty()
+}
+
+fn has_complete_wal_meta(entry: &WalMeta) -> bool {
+    !entry.proposal_hash.is_empty()
+        && !entry.state_root_hex.is_empty()
+        && entry
+            .prev_hash_hex
+            .as_ref()
+            .map(|prev| !prev.is_empty())
+            .unwrap_or(true)
+}
+
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
         let mut hasher = Sha256::new();
@@ -90,6 +104,9 @@ pub fn verify_wal_and_find_checkpoint(
                 return Ok(best_checkpoint);
             }
         }
+        if !has_complete_wal_meta(e) {
+            return Ok(best_checkpoint);
+        }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
         }
@@ -102,6 +119,9 @@ pub fn verify_wal_and_find_checkpoint(
 
         let matching_height: Vec<&CheckpointMeta> =
             checkpoints.iter().filter(|cp| cp.height == e.height).collect();
+        if matching_height.iter().any(|cp| !has_complete_checkpoint_meta(cp)) {
+            return Ok(best_checkpoint);
+        }
         if matching_height.len() > 1 {
             let canonical_matches = matching_height
                 .iter()
