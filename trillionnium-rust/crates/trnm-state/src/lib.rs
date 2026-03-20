@@ -570,6 +570,10 @@ fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
         && task.challenger.is_some()
 }
 
+fn task_supports_pending_resolve_snapshot_restore(task: &TaskObject) -> bool {
+    task_supports_pending_resolve_restore(task) && task.challenge_bond_forfeited.is_some()
+}
+
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
@@ -735,7 +739,9 @@ impl StateStore {
         let Some(task) = self.get_task(task_id) else {
             return;
         };
-        if task.version != snapshot.task_version || !task_supports_pending_resolve_restore(&task) {
+        if task.version != snapshot.task_version
+            || !task_supports_pending_resolve_snapshot_restore(&task)
+        {
             return;
         }
 
@@ -764,7 +770,7 @@ impl StateStore {
                 match self.pending_resolve_approvals.get(&id) {
                     Some(pending)
                         if pending.task_version != task.version
-                            || !task_supports_pending_resolve_restore(&task) =>
+                            || !task_supports_pending_resolve_snapshot_restore(&task) =>
                     {
                         self.pending_resolve_approvals.remove(&id);
                     }
