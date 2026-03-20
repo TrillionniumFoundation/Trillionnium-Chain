@@ -102,6 +102,23 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn queues_contain_tx(
+        &self,
+        tx_id: u64,
+        in_normal_seen: bool,
+        in_critical_seen: bool,
+    ) -> bool {
+        if in_normal_seen && in_critical_seen {
+            self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
+        } else if in_normal_seen {
+            self.normal.queue.contains(&tx_id)
+        } else if in_critical_seen {
+            self.critical.queue.contains(&tx_id)
+        } else {
+            false
+        }
+    }
+
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -202,13 +219,8 @@ impl LaneAdmissionGate {
             } else {
                 // Duplicate probes are hot under replay pressure. Narrow queue probes to
                 // lanes that claim membership instead of always scanning both queues.
-                let queue_contains = if in_normal_seen && in_critical_seen {
-                    self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
-                } else if in_normal_seen {
-                    self.normal.queue.contains(&tx_id)
-                } else {
-                    self.critical.queue.contains(&tx_id)
-                };
+                let queue_contains =
+                    self.queues_contain_tx(tx_id, in_normal_seen, in_critical_seen);
 
                 if !queue_contains {
                     // Defensive self-heal: restored-state skew can preserve lane-wide
@@ -229,13 +241,8 @@ impl LaneAdmissionGate {
             let in_critical_seen = self.critical.seen.contains(&tx_id);
             let lane_local_duplicate = in_normal_seen || in_critical_seen;
             if lane_local_duplicate {
-                let queue_contains = if in_normal_seen && in_critical_seen {
-                    self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
-                } else if in_normal_seen {
-                    self.normal.queue.contains(&tx_id)
-                } else {
-                    self.critical.queue.contains(&tx_id)
-                };
+                let queue_contains =
+                    self.queues_contain_tx(tx_id, in_normal_seen, in_critical_seen);
 
                 if queue_contains {
                     is_duplicate = true;
@@ -476,6 +483,24 @@ mod tests {
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.pop_ready(), Some(7));
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // Simulate restored-state skew where both lane-local seen caches claim the
+        // same ghost id while neither queue actually contains it.
+        g.normal.seen.insert(99);
+        g.critical.seen.insert(99);
+        g.seen_global.clear();
+
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 0, 1));
     }
 
     #[test]
