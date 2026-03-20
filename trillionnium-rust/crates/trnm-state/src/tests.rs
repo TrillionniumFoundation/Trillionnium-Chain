@@ -1,6 +1,6 @@
 use super::governance::{
     is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_KEYS_WITH_EXPLICIT_VALIDATORS,
-    GOV_SENSITIVE_KEYS,
+    GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
 };
 use super::*;
 use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
@@ -2207,32 +2207,15 @@ fn governance_allowed_keys_have_single_explicit_validator_registry() {
 #[test]
 fn governance_allowed_keys_schema_merge_gate_is_explicit() {
     // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
-    // must update this table with an invalid sample that is expected to fail.
-    let expected_invalid_samples = [
-        ("max_block_ms", "9"),
-        ("max_parallel_workers", "0"),
-        ("min_worker_stake", "0"),
-        ("challenge_min_bond", "0"),
-        ("challenge_min_bond_bounty_bps", "100001"),
-        ("challenge_min_bond_worker_stake_bps", "100001"),
-        ("challenge_window_blocks", "99"),
-        ("challenge_success_bounty", "-1"),
-        ("resolve_authority", "   "),
-        ("emergency_pause", "TRUE"),
-        ("monetary_policy_tick_interval_blocks", "0"),
-        ("monetary_policy_tick_cooldown_blocks", "0"),
-        ("monetary_base_issuance_per_tick", "1000000000001"),
-        ("monetary_base_burn_per_tick", "1000000000001"),
-    ];
-
+    // must update the source-side invalid-sample registry beside the validators.
     assert_eq!(
         GOV_ALLOWED_KEYS.len(),
-        expected_invalid_samples.len(),
-        "governance allowed-key list changed; update schema merge gate"
+        GOV_SCHEMA_INVALID_SAMPLES.len(),
+        "governance allowed-key list changed; update source-side schema merge gate"
     );
 
     let mut st = StateStore::new();
-    for (i, (key, bad_value)) in expected_invalid_samples.iter().enumerate() {
+    for (i, (key, bad_value)) in GOV_SCHEMA_INVALID_SAMPLES.iter().enumerate() {
         assert!(
             GOV_ALLOWED_KEYS.contains(key),
             "schema merge gate contains non-whitelisted key: {}",

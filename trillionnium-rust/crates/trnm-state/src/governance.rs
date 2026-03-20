@@ -101,6 +101,33 @@ pub(crate) const GOV_KEYS_WITH_EXPLICIT_VALIDATORS: &[&str] = &[
     "monetary_base_issuance_per_tick",
     "monetary_base_burn_per_tick",
 ];
+pub(crate) const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
+    ("max_block_ms", "9"),
+    ("max_parallel_workers", "0"),
+    ("min_worker_stake", "0"),
+    ("challenge_min_bond", "0"),
+    ("challenge_min_bond_bounty_bps", "100001"),
+    ("challenge_min_bond_worker_stake_bps", "100001"),
+    ("challenge_window_blocks", "99"),
+    ("challenge_success_bounty", "-1"),
+    ("llm_meter_prompt_token_weight", "-1"),
+    ("llm_meter_generated_token_weight", "-1"),
+    ("llm_meter_decode_step_weight", "-1"),
+    ("llm_meter_kv_byte_weight", "-1"),
+    ("llm_meter_min_accept_work_units", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
+    ("resolve_authority", "   "),
+    ("emergency_pause", "TRUE"),
+    ("monetary_policy_tick_interval_blocks", "0"),
+    ("monetary_policy_tick_cooldown_blocks", "0"),
+    ("monetary_base_issuance_per_tick", "1000000000001"),
+    ("monetary_base_burn_per_tick", "1000000000001"),
+];
 pub(crate) const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 pub(crate) const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 pub(crate) const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
