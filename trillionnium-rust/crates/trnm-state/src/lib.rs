@@ -727,16 +727,19 @@ impl StateStore {
             scrub_pending(self, task_id);
             return;
         }
-        if self.is_emergency_paused()
-            && !matches!(
-                self.get_task(task_id),
-                Some(task)
-                    if task.status == TaskStatus::Challenged
-                        && task.version == snapshot.task_version
-            )
-        {
-            scrub_pending(self, task_id);
-            return;
+        match self.get_task(task_id) {
+            Some(task)
+                if task.status == TaskStatus::Challenged
+                    && task.version == snapshot.task_version => {}
+            Some(_) => {
+                scrub_pending(self, task_id);
+                return;
+            }
+            None if self.is_emergency_paused() => {
+                scrub_pending(self, task_id);
+                return;
+            }
+            None => {}
         }
 
         self.invalidate_state_root_cache();
@@ -3263,6 +3266,55 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must invalidate the pending-approval state root"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_snapshot_when_backing_task_is_not_challenged() {
+        let mut st = StateStore::new();
+        st.restore_task(
+            9_904,
+            Some(TaskObject {
+                task_id: 9_904,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_904), None);
+        assert_eq!(
+            st.state_root(),
+            baseline,
+            "restore must reject pending resolve snapshots that do not match the backing task lifecycle"
         );
     }
 
