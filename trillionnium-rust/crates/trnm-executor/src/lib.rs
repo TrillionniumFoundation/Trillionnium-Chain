@@ -1148,14 +1148,20 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .map(|o| o.id)
         .unwrap_or(0);
     let key_b = if tx.write_set.is_empty() {
-        tx.read_set.iter().skip(1).map(|o| o.id).find(|&id| id != key_a)
+        tx.read_set
+            .iter()
+            .skip(1)
+            .map(|o| o.id)
+            .filter(|&id| id != key_a)
+            .min()
     } else {
         tx.write_set
             .iter()
             .skip(1)
             .chain(tx.read_set.iter())
             .map(|o| o.id)
-            .find(|&id| id != key_a)
+            .filter(|&id| id != key_a)
+            .min()
     };
     // Canonicalize the two-key access-domain signal so equivalent mixed
     // read/write domains hash identically even if read/write roles flip.
@@ -1940,6 +1946,21 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&write_then_read, buckets_n),
             hot_bucket_hint(&read_then_write, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_uses_stable_secondary_key_across_permuted_three_key_domains() {
+        let buckets_n = 97usize;
+        let baseline = tx(1, vec![o(11), o(13)], vec![o(7)]);
+        let permuted = tx(2, vec![o(13), o(11)], vec![o(7)]);
+
+        // Equivalent three-key access domains should not drift buckets just because
+        // the first distinct secondary key appeared in a different read-set order.
+        assert_eq!(hot_bucket_hint(&baseline, buckets_n), hot_bucket_hint(&permuted, buckets_n));
+        assert_eq!(
+            hot_bucket_hint(&baseline, buckets_n),
+            ((7u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
