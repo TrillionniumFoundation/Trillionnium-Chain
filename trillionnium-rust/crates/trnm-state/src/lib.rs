@@ -523,13 +523,14 @@ fn validate_governance_key_registration_lists(
     key: &str,
     key_id: u64,
     allowed_keys: &[&str],
+    sensitive_keys: &[&str],
     explicit_validator_keys: &[&str],
     explicit_value_rule_keys: &[&str],
     pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
     validate_governance_registry_shape_lists(
         allowed_keys,
-        &[],
+        sensitive_keys,
         explicit_validator_keys,
         explicit_value_rule_keys,
         pinned_key_ids,
@@ -586,6 +587,7 @@ fn validate_governance_key_registration(
         key,
         key_id,
         GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
         GOV_EXPLICIT_VALIDATOR_KEYS,
         GOV_EXPLICIT_VALUE_RULE_KEYS,
         GOV_PINNED_KEY_IDS,
@@ -3098,6 +3100,7 @@ mod tests {
             "forbidden_key",
             7002,
             GOV_ALLOWED_KEYS,
+            GOV_SENSITIVE_KEYS,
             GOV_EXPLICIT_VALIDATOR_KEYS,
             GOV_EXPLICIT_VALUE_RULE_KEYS,
             GOV_PINNED_KEY_IDS,
@@ -3149,6 +3152,7 @@ mod tests {
             "max_parallel_workers",
             7_002,
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms"],
             &["max_block_ms", "max_parallel_workers"],
             &[],
@@ -3169,6 +3173,7 @@ mod tests {
             "max_parallel_workers",
             7_002,
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &[
                 "max_block_ms",
                 "max_parallel_workers",
@@ -3196,6 +3201,7 @@ mod tests {
                 "max_parallel_workers",
                 "max_parallel_workers",
             ],
+            &[],
             &["max_block_ms", "max_parallel_workers"],
             &["max_block_ms", "max_parallel_workers"],
             &[],
@@ -3215,6 +3221,7 @@ mod tests {
             "max_block_ms",
             7_001,
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_parallel_workers", "max_block_ms"],
             &["max_block_ms", "max_parallel_workers"],
             &[],
@@ -3228,12 +3235,33 @@ mod tests {
     }
 
     #[test]
+    fn governance_key_registration_rejects_sensitive_registry_membership_drift_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_block_ms",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_sensitive_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on sensitive-key registry drift");
+
+        assert!(
+            err.contains("governance sensitive-key coverage missing from allowed key registry: ghost_sensitive_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_key_registration_rejects_pinned_key_id_mismatch_fail_closed() {
         let err = validate_governance_key_registration_lists(
             &BTreeMap::new(),
             "emergency_pause",
             8_000,
             &["emergency_pause"],
+            &[],
             &["emergency_pause"],
             &["emergency_pause"],
             &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
@@ -3256,6 +3284,7 @@ mod tests {
             "max_parallel_workers",
             7_001,
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms", "max_parallel_workers"],
             &["max_block_ms", "max_parallel_workers"],
             &[],
@@ -3526,6 +3555,7 @@ mod tests {
             "emergency_pause",
             EMERGENCY_PAUSE_KEY_ID,
             &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
             &["max_block_ms", "emergency_pause", "resolve_authority"],
             &["max_block_ms", "emergency_pause", "resolve_authority"],
             &[
