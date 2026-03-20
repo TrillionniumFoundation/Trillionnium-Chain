@@ -1343,7 +1343,14 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key {
+                let canonical_key = snapshot.key.trim();
+                if snapshot.key != key
+                    || key.trim() != key
+                    || key.is_empty()
+                    || canonical_key.is_empty()
+                    || canonical_key != snapshot.key
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                {
                     self.pending_gov_updates.remove(key);
                     return;
                 }

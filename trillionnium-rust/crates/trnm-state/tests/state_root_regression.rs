@@ -3558,6 +3558,41 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
+fn restore_pending_gov_update_non_canonical_metadata_fails_closed_without_aliasing_snapshot_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "challenge_min_bond ".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "non-canonical restore metadata must clear the requested slot instead of staging a whitespace-variant pending key"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond ").is_none(),
+        "non-canonical restore metadata must not materialize a foreign pending entry under the malformed snapshot key"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-canonical pending governance metadata must fail closed without perturbing the deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after rejecting malformed pending governance metadata should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
