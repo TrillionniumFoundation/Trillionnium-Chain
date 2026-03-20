@@ -101,6 +101,54 @@ fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_tails(
 }
 
 #[test]
+fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_rows() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-invalid-utf8", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let mut fixture = Vec::new();
+    fixture.extend_from_slice(b"{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n");
+    fixture.extend_from_slice(b"{\"broken\":\"");
+    fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
+    fixture.extend_from_slice(b"\"}\n");
+    fs::write(&path, fixture).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "valid utf-8 ingress rows should survive salvage");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "invalid utf-8 ingress row should be quarantined");
+    assert_eq!(entries[0]["line_number"], 2);
+    assert_eq!(entries[0]["error"], "ingress line is not valid utf-8");
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw_line should be a string");
+    assert!(
+        raw_line.contains('�'),
+        "invalid utf-8 should be lossily preserved in quarantine for debugging"
+    );
+
+    let salvaged_raw = fs::read_to_string(&path).expect("read salvaged ingress file");
+    let salvaged_lines: Vec<&str> = salvaged_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(salvaged_lines.len(), 1, "salvage should retain only valid ingress rows");
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");

@@ -74,43 +74,67 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     }
 
     let path = ingress_file();
-    let Ok(raw) = fs::read_to_string(&path) else {
+    let Ok(raw) = fs::read(&path) else {
         return vec![];
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
     let mut quarantined_total = 0usize;
-    for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+    for (idx, line_bytes) in raw.split(|byte| *byte == b'\n').enumerate() {
+        let line_bytes = match line_bytes.strip_suffix(b"\r") {
+            Some(trimmed) => trimmed,
+            None => line_bytes,
+        };
+        if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
             continue;
         }
-        let parse_result = if line.len() > INGRESS_LINE_PARSE_MAX_BYTES {
-            Err(anyhow!(
-                "ingress line exceeds {} bytes parse bound (got {})",
-                INGRESS_LINE_PARSE_MAX_BYTES,
-                line.len()
-            ))
-        } else {
-            serde_json::from_str::<MessageIngressRecord>(line).map_err(Into::into)
-        };
-        match parse_result {
-            Ok(record) => records.push(record),
-            Err(err) => {
-                quarantined_total += 1;
-                push_tail_limited(
-                    &mut quarantined,
-                    IngressQuarantineRecord {
-                        source_path: path.display().to_string(),
-                        line_number: idx + 1,
-                        line_hash: stable_line_hash(line),
-                        raw_line: truncate_for_quarantine(line),
-                        error: err.to_string(),
-                        quarantined_at_unix_ms: now_ms(),
-                    },
-                    INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
-                );
+        let parse_result = match std::str::from_utf8(line_bytes) {
+            Ok(line) if line.len() > INGRESS_LINE_PARSE_MAX_BYTES => Err((
+                stable_line_hash(line),
+                truncate_for_quarantine(line),
+                anyhow!(
+                    "ingress line exceeds {} bytes parse bound (got {})",
+                    INGRESS_LINE_PARSE_MAX_BYTES,
+                    line.len()
+                ),
+            )),
+            Ok(line) => match serde_json::from_str::<MessageIngressRecord>(line) {
+                Ok(record) => {
+                    records.push(record);
+                    continue;
+                }
+                Err(err) => Err((
+                    stable_line_hash(line),
+                    truncate_for_quarantine(line),
+                    err.into(),
+                )),
+            },
+            Err(_) => {
+                let raw_line = truncate_for_quarantine(&String::from_utf8_lossy(line_bytes));
+                Err((
+                    stable_line_hash(&raw_line),
+                    raw_line,
+                    anyhow!("ingress line is not valid utf-8"),
+                ))
             }
-        }
+        };
+        let (line_hash, raw_line, err) = match parse_result {
+            Ok(_) => unreachable!("successful parse path continues early"),
+            Err(parts) => parts,
+        };
+        quarantined_total += 1;
+        push_tail_limited(
+            &mut quarantined,
+            IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash,
+                raw_line,
+                error: err.to_string(),
+                quarantined_at_unix_ms: now_ms(),
+            },
+            INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
+        );
     }
     if !quarantined.is_empty() {
         if let Err(err) = append_quarantine_records(&path, &quarantined) {
