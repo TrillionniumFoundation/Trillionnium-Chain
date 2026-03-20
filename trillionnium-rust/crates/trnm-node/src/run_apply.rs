@@ -11,11 +11,9 @@ use crate::risk::is_rejected_by_emergency_pause;
 use crate::rollback::{
     balance_deltas_from_snapshot, capture_rollback_snapshot, rollback_tx_snapshot,
 };
-use crate::timeout::scan_and_apply_timeouts;
+use crate::timeout::{scan_and_apply_timeouts, TIMEOUT_SCAN_MAX_TASK_ID};
 use crate::txmeta::task_id_of;
 use crate::types::MockTx;
-
-const TIMEOUT_SCAN_MAX_TASK_ID: u64 = 9_000_000;
 
 #[derive(Debug, Clone, Default)]
 pub(crate) struct ApplyRuntimeTelemetry {

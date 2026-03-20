@@ -7,6 +7,8 @@ use trnm_types::TaskStatus;
 use crate::accounting::balance_deltas_for_transition;
 use crate::events::{emit_timeout_event, status_name};
 
+pub(crate) const TIMEOUT_SCAN_MAX_TASK_ID: u64 = 9_000_000;
+
 fn is_timeout_eligible_status(status: &TaskStatus) -> bool {
     matches!(
         status,
@@ -20,7 +22,11 @@ fn should_scan_timeout(status: &TaskStatus, emergency_paused: bool) -> bool {
 }
 
 pub(crate) fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
-    let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
+    let mut task_ids: Vec<u64> = known_task_ids
+        .iter()
+        .copied()
+        .filter(|task_id| *task_id <= TIMEOUT_SCAN_MAX_TASK_ID)
+        .collect();
     task_ids.sort_unstable();
     task_ids
 }
@@ -105,7 +111,11 @@ pub(crate) fn scan_and_apply_timeouts(
 
 #[cfg(test)]
 mod tests {
-    use super::{should_scan_timeout, timeout_bond_disposition, timeout_event_tx_id};
+    use super::{
+        should_scan_timeout, sorted_timeout_candidate_ids, timeout_bond_disposition,
+        timeout_event_tx_id, TIMEOUT_SCAN_MAX_TASK_ID,
+    };
+    use std::collections::HashSet;
     use trnm_types::TaskStatus;
 
     #[test]
@@ -143,5 +153,14 @@ mod tests {
         assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
         assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
         assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
+    }
+
+    #[test]
+    fn sorted_timeout_candidate_ids_filters_synthetic_ids_above_scan_cap() {
+        let known: HashSet<u64> = [7_003u64, TIMEOUT_SCAN_MAX_TASK_ID + 1, 7_001, 7_002]
+            .into_iter()
+            .collect();
+
+        assert_eq!(sorted_timeout_candidate_ids(&known), vec![7_001, 7_002, 7_003]);
     }
 }

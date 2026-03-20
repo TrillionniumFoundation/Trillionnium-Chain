@@ -5009,6 +5009,15 @@
     }
 
     #[test]
+    fn sorted_timeout_candidate_ids_filters_synthetic_ids_above_scan_cap() {
+        let known: HashSet<u64> = [7003u64, TIMEOUT_SCAN_MAX_TASK_ID + 1, 7001u64, 7002u64]
+            .into_iter()
+            .collect();
+
+        assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
     fn timeout_event_tx_id_starts_after_seed_and_preserves_scan_order_visibility() {
         assert_eq!(timeout_event_tx_id(9_000_000, 0), 9_000_001);
         assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
