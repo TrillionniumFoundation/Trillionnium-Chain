@@ -754,9 +754,11 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     let mut footprint = 0usize;
     for tx in txs {
-        footprint = footprint
-            .saturating_add(tx.read_set.len())
-            .saturating_add(tx.write_set.len());
+        // Keep the sizing hint aligned with the executor's object-scoped
+        // conflict domains instead of raw read/write list length. Duplicate and
+        // version-heavy callers from trnm-state can otherwise inflate the map
+        // footprint well beyond the effective scheduler key set.
+        footprint = footprint.saturating_add(tx_access_domain_keys(tx).len());
     }
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
@@ -1768,6 +1770,27 @@ mod tests {
 
         assert_eq!(keys, vec![7, 9, 30, 40, 50]);
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn access_map_capacity_hint_uses_object_scoped_domains_not_raw_versions() {
+        let txs = vec![
+            tx(
+                1,
+                vec![ov(11, 1), ov(11, 2), ov(22, 1), ov(22, 9)],
+                vec![ov(11, 7), ov(33, 3), ov(33, 4)],
+            ),
+            tx(
+                2,
+                vec![ov(33, 8), ov(44, 1), ov(44, 2)],
+                vec![ov(44, 9), ov(55, 1), ov(55, 2), ov(55, 3)],
+            ),
+        ];
+
+        // The scheduler maps track object-scoped domains, so the sizing hint
+        // should follow the same deduped footprint instead of raw version count.
+        // Effective keys are [11, 33, 22] and [44, 55, 33].
+        assert_eq!(access_map_capacity_hint(&txs), 64);
     }
 
     #[test]
