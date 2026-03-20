@@ -730,13 +730,21 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     }
 
     pub fn mark_acked(&mut self, session_id: &str, ack_id: &str) -> bool {
+        self.mark_acked_at(session_id, ack_id, current_unix_ms())
+    }
+
+    fn mark_acked_at(&mut self, session_id: &str, ack_id: &str, now_unix_ms: u128) -> bool {
         let Some(mut session) = self.store.get_session(session_id) else {
             return false;
         };
         let removed = session.pending.remove(ack_id).is_some();
         if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
             self.store.remove_session(session_id);
-        } else if self.store.try_upsert_session_with_ts(session, 0).is_err() {
+        } else if self
+            .store
+            .try_upsert_session_with_ts(session, now_unix_ms)
+            .is_err()
+        {
             return false;
         }
         removed
@@ -931,6 +939,13 @@ fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
     let factor = 1u64 << shift;
     base.saturating_mul(factor).min(max)
+}
+
+fn current_unix_ms() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -2335,7 +2350,7 @@ mod tests {
         );
 
         let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
-        assert!(engine.mark_acked("s1", &ack.ack_id));
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_000));
 
         // Empty session should still exist before its empty-session ttl elapses.
         let due = engine.collect_due_retries(1_100);
@@ -2362,7 +2377,7 @@ mod tests {
         );
 
         let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
-        assert!(engine.mark_acked("s1", &ack.ack_id));
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_000));
 
         // Trigger cleanup at/after TTL so retained empty sessions do not linger
         // and consume quota under prolonged idle periods.
@@ -2371,6 +2386,34 @@ mod tests {
 
         let store = engine.into_store();
         assert!(store.get_session("s1").is_none());
+    }
+
+    #[test]
+    fn empty_session_cleanup_ttl_starts_at_ack_time_not_original_ingress_time() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 10_000,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_500));
+
+        let due_before_ttl = engine.collect_due_retries(1_699);
+        assert!(due_before_ttl.is_empty());
+        assert!(engine.store.get_session("s1").is_some());
+
+        let due_after_ttl = engine.collect_due_retries(1_700);
+        assert!(due_after_ttl.is_empty());
+        assert!(engine.store.get_session("s1").is_none());
     }
 
     #[test]
