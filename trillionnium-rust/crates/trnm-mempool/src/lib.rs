@@ -69,16 +69,24 @@ impl LaneAdmissionGate {
         self.seen_global.clear();
     }
 
-    fn rebuild_seen_from_queues(&mut self) {
+    fn rebuild_lane_seen_from_queues(&mut self) {
         self.normal.seen.clear();
         self.normal.seen.extend(self.normal.queue.iter().copied());
         self.critical.seen.clear();
         self.critical
             .seen
             .extend(self.critical.queue.iter().copied());
+    }
+
+    fn rebuild_global_seen_from_queues(&mut self) {
         self.seen_global.clear();
         self.seen_global.extend(self.normal.queue.iter().copied());
         self.seen_global.extend(self.critical.queue.iter().copied());
+    }
+
+    fn rebuild_seen_from_queues(&mut self) {
+        self.rebuild_lane_seen_from_queues();
+        self.rebuild_global_seen_from_queues();
     }
 
     fn maybe_warm_normal_fairness(&mut self, normal_was_empty: bool, out: AdmitOutcome) {
@@ -165,9 +173,7 @@ impl LaneAdmissionGate {
             } else if self.seen_global.len() != lane_total {
                 // Defensive self-heal for transient restored-state skew: lane-local queues
                 // remain source of truth for saturation, and rebuild lane-wide id set.
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_global_seen_from_queues();
             }
         }
 
@@ -209,15 +215,7 @@ impl LaneAdmissionGate {
                     // cardinality while lane-local caches drift via ghost ids. Queue
                     // membership remains authoritative for duplicate classification, so
                     // rebuild both lane-local and lane-wide caches before deciding.
-                    self.normal.seen.clear();
-                    self.normal.seen.extend(self.normal.queue.iter().copied());
-                    self.critical.seen.clear();
-                    self.critical
-                        .seen
-                        .extend(self.critical.queue.iter().copied());
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_seen_from_queues();
                     is_duplicate = self.seen_global.contains(&tx_id);
                 }
             }
@@ -243,15 +241,7 @@ impl LaneAdmissionGate {
                     is_duplicate = true;
                     self.seen_global.insert(tx_id);
                 } else {
-                    self.normal.seen.clear();
-                    self.normal.seen.extend(self.normal.queue.iter().copied());
-                    self.critical.seen.clear();
-                    self.critical
-                        .seen
-                        .extend(self.critical.queue.iter().copied());
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_seen_from_queues();
                     is_duplicate = self.seen_global.contains(&tx_id);
                 }
             } else {
@@ -423,9 +413,7 @@ impl LaneAdmissionGate {
                 // queued survivors exist after dequeue.
                 self.seen_global.clear();
             } else {
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_global_seen_from_queues();
             }
         } else {
             let lane_total = self
@@ -440,9 +428,7 @@ impl LaneAdmissionGate {
                     // Hot idle path after full drain: clear stale cache entries.
                     self.seen_global.clear();
                 } else {
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_global_seen_from_queues();
                 }
             }
         }
