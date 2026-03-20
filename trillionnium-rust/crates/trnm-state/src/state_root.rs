@@ -3,6 +3,15 @@ use sha2::{Digest, Sha256};
 use crate::{ObjectValue, StateStore};
 use trnm_types::Hash32;
 
+fn hash_bytes_with_len(hasher: &mut Sha256, bytes: &[u8]) {
+    hasher.update((bytes.len() as u64).to_le_bytes());
+    hasher.update(bytes);
+}
+
+fn hash_str_with_len(hasher: &mut Sha256, value: &str) {
+    hash_bytes_with_len(hasher, value.as_bytes());
+}
+
 impl StateStore {
     pub fn state_root(&self) -> Hash32 {
         if let Some(cached) = self
@@ -131,8 +140,8 @@ impl StateStore {
                 ObjectValue::GovProposal(p) => {
                     hasher.update(b"gov_proposal");
                     hasher.update(p.proposal_id.to_le_bytes());
-                    hasher.update(p.title.as_bytes());
-                    hasher.update(p.proposer.as_bytes());
+                    hash_str_with_len(&mut hasher, &p.title);
+                    hash_str_with_len(&mut hasher, &p.proposer);
                     hasher.update((p.status as u8).to_le_bytes());
                     hasher.update(p.version.to_le_bytes());
                 }
