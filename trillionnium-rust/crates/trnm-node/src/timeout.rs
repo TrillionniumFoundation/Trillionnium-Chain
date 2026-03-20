@@ -142,5 +142,6 @@ mod tests {
         assert_eq!(timeout_event_tx_id(9_000_000, 0), 9_000_001);
         assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
         assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
+        assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
     }
 }
