@@ -76,6 +76,11 @@ fn access_key(obj: &ObjectRef) -> u64 {
 
 #[inline]
 fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
     // Small-set fast path avoids HashSet allocation for common tiny access lists.
     if objs.len() <= 8 {
         let mut out: Vec<u64> = Vec::with_capacity(objs.len());
@@ -97,6 +102,22 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
         }
     }
     out
+}
+
+fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
+    if objs.len() <= 1 {
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
+    for obj in objs {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
 }
 
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
@@ -1535,6 +1556,25 @@ mod tests {
 
         assert!(detect_conflict(&small_write, &tx(2, read_hit, vec![])));
         assert!(!detect_conflict(&small_write, &tx(3, read_miss, vec![])));
+    }
+
+    #[test]
+    fn access_domain_versions_are_consistent_for_duplicate_same_version_refs() {
+        assert!(access_domain_versions_are_consistent(&[
+            o(42),
+            o(42),
+            ObjectRef { id: 42, version: 1 },
+            o(99),
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_are_inconsistent_for_mixed_version_refs() {
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef { id: 42, version: 2 },
+            o(99),
+        ]));
     }
 
     #[test]
