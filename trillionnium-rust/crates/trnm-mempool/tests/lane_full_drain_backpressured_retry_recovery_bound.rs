@@ -79,3 +79,26 @@ fn repeated_idle_polls_after_full_drain_do_not_resurrect_backpressured_retry_met
     assert_eq!(gate.queued_counts(), (0, 1, 1));
     assert_eq!(gate.pop_ready(), Some(30));
 }
+
+#[test]
+fn repeated_same_id_saturated_retries_stay_backpressured_until_one_slot_reopens() {
+    let mut gate = LaneAdmissionGate::new(2, 1);
+
+    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (1, 1, 2));
+
+    for class in [
+        IngressClass::Critical,
+        IngressClass::Normal,
+        IngressClass::Critical,
+        IngressClass::Normal,
+    ] {
+        assert_eq!(gate.admit(30, class), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (1, 1, 2));
+    }
+
+    assert!(matches!(gate.pop_ready(), Some(10) | Some(20)));
+    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+}

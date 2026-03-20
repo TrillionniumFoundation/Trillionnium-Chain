@@ -181,16 +181,29 @@ impl LaneAdmissionGate {
         }
     }
 
-    fn classify_saturated_probe(&self, is_duplicate: bool) -> AdmitOutcome {
-        // Saturated retry probes are hot under ingress bursts. Return the final
-        // duplicate-vs-backpressure classification directly so callers avoid
-        // drifting into lane-specific admit paths that would only re-check the
-        // same capacity guards.
+    fn classify_duplicate_probe(&self, is_duplicate: bool) -> AdmitOutcome {
         if is_duplicate {
             AdmitOutcome::Duplicate
         } else {
             AdmitOutcome::Backpressured
         }
+    }
+
+    fn classify_hard_stop_probe(&self, tx_id: u64) -> AdmitOutcome {
+        // Hard-stop mode preserves restored duplicate knowledge while keeping
+        // fresh retry bursts backpressured without touching lane admit paths.
+        let is_duplicate = self.seen_global.contains(&tx_id)
+            || self.normal.seen.contains(&tx_id)
+            || self.critical.seen.contains(&tx_id);
+        self.classify_duplicate_probe(is_duplicate)
+    }
+
+    fn classify_saturated_probe(&self, is_duplicate: bool) -> AdmitOutcome {
+        // Saturated retry probes are hot under ingress bursts. Return the final
+        // duplicate-vs-backpressure classification directly so callers avoid
+        // drifting into lane-specific admit paths that would only re-check the
+        // same capacity guards.
+        self.classify_duplicate_probe(is_duplicate)
     }
 
     fn classify_pre_admission_probe(
@@ -238,14 +251,7 @@ impl LaneAdmissionGate {
         if self.total_capacity == 0 {
             // Hard-stop mode: preserve duplicate semantics for restored-state backlog
             // while still backpressuring fresh ingress.
-            let is_duplicate = self.seen_global.contains(&tx_id)
-                || self.normal.seen.contains(&tx_id)
-                || self.critical.seen.contains(&tx_id);
-            return if is_duplicate {
-                AdmitOutcome::Duplicate
-            } else {
-                AdmitOutcome::Backpressured
-            };
+            return self.classify_hard_stop_probe(tx_id);
         }
 
         // Fast-path saturation check from the lane-wide idempotency set: this tracks
