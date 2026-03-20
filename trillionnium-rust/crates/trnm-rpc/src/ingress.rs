@@ -52,10 +52,10 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
-    let existing = existing_quarantine_fingerprints(&quarantine_path);
+    let mut seen = existing_quarantine_fingerprints(&quarantine_path);
     let pending = entries
         .iter()
-        .filter(|entry| !existing.contains(&(entry.line_number, entry.line_hash)))
+        .filter(|entry| seen.insert((entry.line_number, entry.line_hash)))
         .collect::<Vec<_>>();
     if pending.is_empty() {
         return Ok(0);

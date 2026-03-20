@@ -1723,24 +1723,48 @@ fn stable_line_hash(raw: &str) -> u64 {
     hasher.finish()
 }
 
-fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
+fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeSet::new();
+    };
+    raw.lines()
+        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+        .filter_map(|value| {
+            Some((
+                value.get("line_number")?.as_u64()? as usize,
+                value.get("line_hash")?.as_u64()?,
+            ))
+        })
+        .collect()
+}
+
+fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<usize> {
     if entries.is_empty() {
-        return Ok(());
+        return Ok(0);
     }
     let quarantine_path = ingress_quarantine_file_for(path);
     let _lock = acquire_market_file_lock(&quarantine_path)?;
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
+    let mut seen = existing_quarantine_fingerprints(&quarantine_path);
+    let pending = entries
+        .iter()
+        .filter(|entry| seen.insert((entry.line_number, entry.line_hash)))
+        .collect::<Vec<_>>();
+    if pending.is_empty() {
+        return Ok(0);
+    }
+    let appended = pending.len();
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(&quarantine_path)?;
-    for entry in entries {
+    for entry in pending {
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
-    Ok(())
+    Ok(appended)
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -1767,20 +1791,24 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
     }
     if !quarantined.is_empty() {
-        if let Err(err) = append_quarantine_records(&path, &quarantined) {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
-                path.display(),
-                quarantined.len(),
-                err
-            );
-        } else {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
-                path.display(),
-                quarantined.len(),
-                ingress_quarantine_file_for(&path).display()
-            );
+        match append_quarantine_records(&path, &quarantined) {
+            Err(err) => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                    path.display(),
+                    quarantined.len(),
+                    err
+                );
+            }
+            Ok(appended) if appended > 0 => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                    path.display(),
+                    appended,
+                    ingress_quarantine_file_for(&path).display()
+                );
+            }
+            Ok(_) => {}
         }
     }
     records
@@ -7521,6 +7549,51 @@ line2
         }));
 
         let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn append_quarantine_records_deduplicates_same_batch_entries() {
+        let path = unique_tmp_path("ingress-quarantine-batch", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+
+        let appended = append_quarantine_records(
+            &path,
+            &[
+                IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: 2,
+                    line_hash: 7,
+                    raw_line: "not-json".to_string(),
+                    error: "expected value".to_string(),
+                    quarantined_at_unix_ms: 1,
+                },
+                IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: 2,
+                    line_hash: 7,
+                    raw_line: "not-json".to_string(),
+                    error: "expected value".to_string(),
+                    quarantined_at_unix_ms: 1,
+                },
+            ],
+        )
+        .expect("append duplicated batch");
+        assert!(
+            appended == 1,
+            "duplicate malformed rows in the same batch must not inflate quarantine accounting: {appended}"
+        );
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(entries.len(), 1, "batch dedup should persist exactly one entry");
+
+        let _ = fs::remove_file(&quarantine);
     }
 
     #[test]

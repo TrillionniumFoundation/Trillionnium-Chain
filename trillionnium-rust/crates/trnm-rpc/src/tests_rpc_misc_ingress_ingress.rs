@@ -31,6 +31,7 @@ fn append_quarantine_records_reports_only_new_entries() {
     let _ = fs::remove_file(&quarantine);
 }
 
+
 #[test]
 fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _guard = lock_env();
