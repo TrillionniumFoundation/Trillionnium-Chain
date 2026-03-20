@@ -7,6 +7,18 @@ use trnm_types::TaskStatus;
 use crate::accounting::balance_deltas_for_transition;
 use crate::events::{emit_timeout_event, status_name};
 
+fn is_timeout_eligible_status(status: &TaskStatus) -> bool {
+    matches!(
+        status,
+        TaskStatus::Assigned | TaskStatus::Committed | TaskStatus::Revealed | TaskStatus::Challenged
+    )
+}
+
+fn should_scan_timeout(status: &TaskStatus, emergency_paused: bool) -> bool {
+    is_timeout_eligible_status(status)
+        && !(emergency_paused && matches!(status, TaskStatus::Challenged))
+}
+
 pub(crate) fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
     let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
     task_ids.sort_unstable();
@@ -24,16 +36,7 @@ pub(crate) fn scan_and_apply_timeouts(
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
-        if !matches!(
-            task.status,
-            TaskStatus::Assigned
-                | TaskStatus::Committed
-                | TaskStatus::Revealed
-                | TaskStatus::Challenged
-        ) {
-            continue;
-        }
-        if st.is_emergency_paused() && matches!(task.status, TaskStatus::Challenged) {
+        if !should_scan_timeout(&task.status, st.is_emergency_paused()) {
             // Governance boundary hardening: the node-level timeout scanner must not even
             // enter challenged settlement while emergency pause is active. The lower-level
             // timeout path is already fail-closed, but skipping here keeps pause semantics
@@ -81,4 +84,31 @@ pub(crate) fn scan_and_apply_timeouts(
         }
     }
     migrated
+}
+
+#[cfg(test)]
+mod tests {
+    use super::should_scan_timeout;
+    use trnm_types::TaskStatus;
+
+    #[test]
+    fn timeout_scan_status_gate_keeps_timeout_surface_explicit() {
+        assert!(should_scan_timeout(&TaskStatus::Assigned, false));
+        assert!(should_scan_timeout(&TaskStatus::Committed, false));
+        assert!(should_scan_timeout(&TaskStatus::Revealed, false));
+        assert!(should_scan_timeout(&TaskStatus::Challenged, false));
+
+        assert!(!should_scan_timeout(&TaskStatus::Created, false));
+        assert!(!should_scan_timeout(&TaskStatus::Completed, false));
+        assert!(!should_scan_timeout(&TaskStatus::Resolved, false));
+        assert!(!should_scan_timeout(&TaskStatus::Slashed, false));
+    }
+
+    #[test]
+    fn timeout_scan_pause_gate_only_suppresses_challenged_recovery_edge() {
+        assert!(should_scan_timeout(&TaskStatus::Assigned, true));
+        assert!(should_scan_timeout(&TaskStatus::Committed, true));
+        assert!(should_scan_timeout(&TaskStatus::Revealed, true));
+        assert!(!should_scan_timeout(&TaskStatus::Challenged, true));
+    }
 }
