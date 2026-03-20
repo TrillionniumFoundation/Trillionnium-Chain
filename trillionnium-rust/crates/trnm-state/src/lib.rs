@@ -1824,6 +1824,19 @@ fn is_canonical_hex_digest(value: &str) -> bool {
     value.len() == 64 && value.as_bytes().iter().all(|byte| byte.is_ascii_hexdigit())
 }
 
+pub fn checkpoint_evidence_surface_is_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    is_canonical_hex_digest(&checkpoint.state_root_hex)
+        && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
+        && is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && wal_entry
+            .prev_hash_hex
+            .as_deref()
+            .is_none_or(is_canonical_hex_digest)
+}
+
 pub fn verify_wal_and_find_checkpoint(
     checkpoints: &[CheckpointMeta],
     wal_entries: &[WalMeta],

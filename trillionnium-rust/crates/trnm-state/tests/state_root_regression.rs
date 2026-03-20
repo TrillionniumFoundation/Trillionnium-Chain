@@ -3947,6 +3947,42 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
 }
 
 #[test]
+fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: "cd".repeat(32),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "canonical checkpoint/WAL evidence surfaces should be recognized as audit-ready"
+    );
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex = "not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &wal),
+        "checkpoint state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut bad_wal = wal.clone();
+    bad_wal.state_root_hex = "still-not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &bad_wal),
+        "WAL state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+}
+
+#[test]
 fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
 ) {
     let mut original = StateStore::new();
