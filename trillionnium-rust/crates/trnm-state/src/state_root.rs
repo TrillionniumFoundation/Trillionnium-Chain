@@ -147,8 +147,8 @@ impl StateStore {
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
-                    hasher.update(p.key.as_bytes());
-                    hasher.update(p.value.as_bytes());
+                    hash_str_with_len(&mut hasher, &p.key);
+                    hash_str_with_len(&mut hasher, &p.value);
                     hasher.update(p.version.to_le_bytes());
                 }
             }
@@ -160,9 +160,9 @@ impl StateStore {
         }
         for (key, pending) in &self.pending_gov_updates {
             hasher.update(b"gov_pending");
-            hasher.update(key.as_bytes());
+            hash_str_with_len(&mut hasher, key);
             hasher.update(pending.key_id.to_le_bytes());
-            hasher.update(pending.value.as_bytes());
+            hash_str_with_len(&mut hasher, &pending.value);
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
