@@ -27,7 +27,7 @@ fn new_tasks_canonicalize_embedded_version_for_state_root() {
                 provenance_index: Some("prov-task-8001".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -99,7 +99,8 @@ fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
 }
 
 #[test]
-fn governance_proposal_status_transition_should_affect_state_root_and_match_equivalent_update_path() {
+fn governance_proposal_status_transition_should_affect_state_root_and_match_equivalent_update_path()
+{
     let proposal = GovProposalObject {
         proposal_id: 9_002,
         title: "Raise challenge success bounty".into(),
@@ -501,7 +502,8 @@ fn restore_pending_gov_update_none_rewinds_state_root_after_removal() {
 }
 
 #[test]
-fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_removing_target_entry() {
+fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_removing_target_entry()
+{
     let mut state = StateStore::new();
 
     state.restore_pending_gov_update(
@@ -563,7 +565,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
             input_hash: None,
             model: None,
             provenance: None,
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -662,7 +664,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
                 version: None,
             }),
             provenance: None,
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -870,7 +872,7 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
                 provenance_index: Some("prov-privacy-1".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -889,8 +891,14 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
     };
 
     let mut changed_task = base_task.clone();
-    changed_task.metadata.as_mut().unwrap().provenance.as_mut().unwrap().privacy_tier =
-        Some(PrivacyTier::Restricted);
+    changed_task
+        .metadata
+        .as_mut()
+        .unwrap()
+        .provenance
+        .as_mut()
+        .unwrap()
+        .privacy_tier = Some(PrivacyTier::Restricted);
 
     st1.put_task_new(base_task).unwrap();
     st2.put_task_new(changed_task).unwrap();
@@ -1013,11 +1021,9 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
     let mut st_a = StateStore::new();
     let mut st_b = StateStore::new();
 
-    st_a
-        .stage_or_confirm_resolve_approval(9_101, 1, true, "ab", "ab,c")
+    st_a.stage_or_confirm_resolve_approval(9_101, 1, true, "ab", "ab,c")
         .expect("first pending resolve snapshot should be valid");
-    st_b
-        .stage_or_confirm_resolve_approval(9_101, 1, true, "a", "a,bc")
+    st_b.stage_or_confirm_resolve_approval(9_101, 1, true, "a", "a,bc")
         .expect("second pending resolve snapshot should be valid");
 
     assert_ne!(
@@ -1060,7 +1066,8 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
             task_version: 3,
         }),
     );
-    state_b.restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    state_b
+        .restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
     state_b.restore_pending_resolve_approval(4_202, None);
 
     assert_eq!(
@@ -1087,7 +1094,8 @@ fn treasury_balance_address_boundaries_should_affect_state_root() {
 }
 
 #[test]
-fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_treasury_and_monetary_fields_match() {
+fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_treasury_and_monetary_fields_match(
+) {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
@@ -1146,7 +1154,8 @@ fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_trea
 }
 
 #[test]
-fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state() {
+fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state(
+) {
     let mut missing = StateStore::new();
     let mut explicit_zero = StateStore::new();
 
@@ -1267,25 +1276,56 @@ fn insertion_order_of_balances_pending_and_monetary_snapshots_keeps_state_root_d
 }
 
 #[test]
-fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
+fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches()
+{
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
 
     for st in [&mut st1, &mut st2] {
-        st.set_gov_param(0, 1, "monetary_policy_tick_interval_blocks".to_string(), "10".to_string())
-            .unwrap();
-        st.set_gov_param(0, 2, "monetary_policy_tick_cooldown_blocks".to_string(), "1".to_string())
-            .unwrap();
+        st.set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+        st.set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
     }
 
-    st1.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
-        .unwrap();
-    st1.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
-        .unwrap();
-    st2.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "9".to_string())
-        .unwrap();
-    st2.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "7".to_string())
-        .unwrap();
+    st1.set_gov_param(
+        0,
+        3,
+        "monetary_base_issuance_per_tick".to_string(),
+        "7".to_string(),
+    )
+    .unwrap();
+    st1.set_gov_param(
+        0,
+        4,
+        "monetary_base_burn_per_tick".to_string(),
+        "5".to_string(),
+    )
+    .unwrap();
+    st2.set_gov_param(
+        0,
+        3,
+        "monetary_base_issuance_per_tick".to_string(),
+        "9".to_string(),
+    )
+    .unwrap();
+    st2.set_gov_param(
+        0,
+        4,
+        "monetary_base_burn_per_tick".to_string(),
+        "7".to_string(),
+    )
+    .unwrap();
 
     let e1 = st1.policy_tick(10).unwrap();
     let e2 = st2.policy_tick(10).unwrap();
@@ -1329,10 +1369,20 @@ fn restoring_pending_and_monetary_state_rewinds_state_root_symmetrically() {
         )
         .unwrap();
     baseline
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     baseline
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     baseline.policy_tick(10).unwrap();
     baseline.set_balance("treasury.challenge_forfeits", 11);
@@ -1432,6 +1482,68 @@ fn explicit_restore_apis_rewind_state_root_after_task_balance_and_pending_resolv
 }
 
 #[test]
+fn update_task_version_change_scrubs_staged_pending_resolve_and_changes_state_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 1, "resolve_authority".into(), "resolver-a,resolver-b".into())
+        .expect("resolve authority should be configurable for staged restore-boundary checks");
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(10, challenged_ref.version, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("staging a first resolve approval should succeed");
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    let mut reopened = state.get_task(10).unwrap();
+    reopened.status = TaskStatus::Open;
+    reopened.challenger = None;
+    reopened.challenge_bond = None;
+    state
+        .update_task(challenged_ref, reopened)
+        .expect("version-advancing task update should succeed");
+
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "task version/status updates must scrub stale staged resolve approvals so restore re-entry cannot inherit an orphan snapshot"
+    );
+}
+
+#[test]
 fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
     let mut state = StateStore::new();
     let task = TaskObject {
@@ -1476,10 +1588,20 @@ fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     state.policy_tick(10).unwrap();
 
@@ -1587,7 +1709,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
                 provenance_index: Some("prov-task-10101".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -1605,7 +1727,9 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
         version: 3,
     };
 
-    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let task_ref = state
+        .put_task_new(task)
+        .expect("task insert should succeed");
     let task_id = task_ref.id;
     let task_snapshot = state.get_task(task_id);
     let baseline_root = state.state_root();
@@ -1740,7 +1864,7 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
                 provenance_index: Some("prov-task-10202".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x21; 32]),
@@ -1758,9 +1882,13 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
         version: 3,
     };
 
-    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let task_ref = state
+        .put_task_new(task)
+        .expect("task insert should succeed");
     let canonical_root = state.state_root();
-    let snapshot = state.get_task(task_ref.id).expect("canonical task snapshot should exist");
+    let snapshot = state
+        .get_task(task_ref.id)
+        .expect("canonical task snapshot should exist");
 
     state.restore_task(task_ref.id + 1, Some(snapshot.clone()));
     assert!(
@@ -2042,7 +2170,8 @@ fn pending_resolve_first_approver_must_affect_state_root() {
 }
 
 #[test]
-fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root() {
+fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root(
+) {
     let mut state = StateStore::new();
     state
         .stage_or_confirm_resolve_approval(5150, 7, true, "resolver-a", "resolver-a,resolver-b")
@@ -2050,7 +2179,10 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 
     let baseline_root = state.state_root();
     let baseline_snapshot = state.pending_resolve_approval_snapshot(5150);
-    assert!(baseline_snapshot.is_some(), "sanity: snapshot should capture staged approval");
+    assert!(
+        baseline_snapshot.is_some(),
+        "sanity: snapshot should capture staged approval"
+    );
 
     state.restore_pending_resolve_approval(
         5150,
@@ -2264,7 +2396,8 @@ fn insertion_order_of_multiple_pending_resolve_entries_keeps_state_root_determin
 }
 
 #[test]
-fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root() {
+fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root(
+) {
     let mut state = StateStore::new();
     state
         .stage_or_confirm_resolve_approval(5_151, 7, true, "resolver-a", "resolver-a,resolver-b")
@@ -2272,7 +2405,10 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
 
     let baseline_root = state.state_root();
     let baseline_snapshot = state.pending_resolve_approval_snapshot(5_151);
-    assert!(baseline_snapshot.is_some(), "sanity: snapshot should capture staged approval");
+    assert!(
+        baseline_snapshot.is_some(),
+        "sanity: snapshot should capture staged approval"
+    );
 
     state.restore_pending_resolve_approval(
         5_151,
@@ -3007,17 +3143,30 @@ fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
 
     let baseline_root = state.state_root();
     let monetary_snapshot = state.monetary_state_snapshot();
 
     let event = state.policy_tick(10).unwrap();
-    assert_eq!(event.net_delta, 0, "sanity: tick should have zero net issuance");
+    assert_eq!(
+        event.net_delta, 0,
+        "sanity: tick should have zero net issuance"
+    );
     assert_eq!(
         state.monetary_state().net_issuance,
         monetary_snapshot.net_issuance,
@@ -3064,14 +3213,29 @@ fn blocked_policy_tick_keeps_monetary_snapshot_and_state_root_stable() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "3".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "3".to_string(),
+        )
         .unwrap();
 
-    let first_event = state.policy_tick(10).expect("initial tick should fire at the configured interval");
-    assert_eq!(first_event.tick_count, 1, "sanity: first successful tick should advance tick_count");
+    let first_event = state
+        .policy_tick(10)
+        .expect("initial tick should fire at the configured interval");
+    assert_eq!(
+        first_event.tick_count, 1,
+        "sanity: first successful tick should advance tick_count"
+    );
 
     let baseline_snapshot = state.monetary_state_snapshot();
     let baseline_root = state.state_root();
@@ -3172,10 +3336,20 @@ fn restore_combined_pending_and_monetary_none_roundtrip_rewinds_state_root() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
 
     let baseline_root = state.state_root();
@@ -3353,7 +3527,9 @@ fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_ent
 
     let root_with_both = state.state_root();
     assert!(state.pending_gov_update("challenge_min_bond").is_some());
-    assert!(state.pending_gov_update("challenge_success_bounty").is_some());
+    assert!(state
+        .pending_gov_update("challenge_success_bounty")
+        .is_some());
 
     state.restore_pending_gov_update("challenge_min_bond", None);
 
@@ -3362,7 +3538,9 @@ fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_ent
         "slot-scoped restore should remove the targeted pending key"
     );
     assert!(
-        state.pending_gov_update("challenge_success_bounty").is_some(),
+        state
+            .pending_gov_update("challenge_success_bounty")
+            .is_some(),
         "slot-scoped restore must preserve unrelated pending keys"
     );
     assert_ne!(
@@ -3388,7 +3566,10 @@ fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_s
             "6000".to_string(),
         )
         .expect("sensitive governance update should stage successfully");
-    assert!(matches!(challenge_outcome, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(matches!(
+        challenge_outcome,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
 
     let challenge_snapshot = state
         .pending_gov_update("challenge_min_bond")
@@ -3594,10 +3775,7 @@ fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserve
     );
 
     let mut expected = StateStore::new();
-    expected.restore_pending_gov_update(
-        "challenge_min_bond",
-        Some(canonical_other_snapshot),
-    );
+    expected.restore_pending_gov_update("challenge_min_bond", Some(canonical_other_snapshot));
 
     assert_ne!(
         state.state_root(),
@@ -3892,7 +4070,8 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
 }
 
 #[test]
-fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index() {
+fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
+) {
     let mut original = StateStore::new();
     original
         .set_gov_param(0, 7_901, "max_block_ms".into(), "500".into())

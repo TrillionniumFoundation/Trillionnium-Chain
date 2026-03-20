@@ -682,9 +682,10 @@ impl StateStore {
             })
     }
 
-    fn canonical_pending_resolve_approval_snapshot(
+    fn canonical_pending_resolve_approval_snapshot_for_task(
         &self,
         task_id: u64,
+        task: &TaskObject,
         snapshot: &PendingResolveApprovalSnapshot,
     ) -> Option<(String, String)> {
         if task_id == 0 || snapshot.task_version == 0 {
@@ -710,14 +711,23 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &authority_canonical) {
             return None;
         }
-        let Some(task) = self.get_task(task_id) else {
-            return None;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+        if task.task_id != task_id
+            || task.status != TaskStatus::Challenged
+            || task.version != snapshot.task_version
+        {
             return None;
         }
 
         Some((first_approver_canonical, authority_canonical))
+    }
+
+    fn canonical_pending_resolve_approval_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> Option<(String, String)> {
+        let task = self.get_task(task_id)?;
+        self.canonical_pending_resolve_approval_snapshot_for_task(task_id, &task, snapshot)
     }
 
     fn should_restore_pending_resolve_approval(
@@ -954,6 +964,24 @@ impl StateStore {
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
+        if let Some(pending) = self.pending_resolve_approvals.get(&expected.id) {
+            let should_keep_pending = self
+                .canonical_pending_resolve_approval_snapshot_for_task(
+                    expected.id,
+                    &task,
+                    &PendingResolveApprovalSnapshot {
+                        slash_worker: pending.slash_worker,
+                        confirmations: pending.confirmations,
+                        first_approver: pending.first_approver.clone(),
+                        authority_set: pending.authority_set.clone(),
+                        task_version: pending.task_version,
+                    },
+                )
+                .is_some();
+            if !should_keep_pending {
+                self.pending_resolve_approvals.remove(&expected.id);
+            }
+        }
         self.objects.insert(
             expected.id,
             VersionedObject {
