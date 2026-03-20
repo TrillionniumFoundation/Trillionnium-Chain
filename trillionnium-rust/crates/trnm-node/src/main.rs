@@ -1949,6 +1949,14 @@ fn emit_event(
     }
 }
 
+fn timeout_outcome_fields(to_status: &str) -> (&'static str, &'static str) {
+    if to_status == "Slashed" {
+        ("true", "slashed")
+    } else {
+        ("false", "completed")
+    }
+}
+
 fn emit_timeout_event(
     st: &StateStore,
     task_id: u64,
@@ -1968,14 +1976,10 @@ fn emit_timeout_event(
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let metering_suffix = task_metering_event_suffix(st, task_id);
-    let resolution_code = if to_status == "Slashed" {
-        "slashed"
-    } else {
-        "completed"
-    };
+    let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
         task_id,
         from_status,
         to_status,
@@ -1985,6 +1989,7 @@ fn emit_timeout_event(
         block_height,
         state_root,
         ts_unix_ms,
+        slash_worker,
         resolution_code,
         treasury_delta_str,
         challenger_delta_str,
@@ -7898,6 +7903,17 @@ mod tests {
             before_worker_slash
         );
         assert_eq!(st.balance_of("challenger7006"), before_challenger);
+    }
+
+    #[test]
+    fn timeout_outcome_fields_marks_slashed_terminal_status() {
+        assert_eq!(timeout_outcome_fields("Slashed"), ("true", "slashed"));
+    }
+
+    #[test]
+    fn timeout_outcome_fields_marks_non_slashed_terminal_status_completed() {
+        assert_eq!(timeout_outcome_fields("Completed"), ("false", "completed"));
+        assert_eq!(timeout_outcome_fields("Resolved"), ("false", "completed"));
     }
 
     #[test]
