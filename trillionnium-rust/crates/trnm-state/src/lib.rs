@@ -1330,8 +1330,12 @@ impl StateStore {
         match snapshot {
             Some(snapshot) => {
                 if snapshot.key != key
-                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
-                    || validate_gov_param_key_id_policy(&snapshot.key, snapshot.key_id).is_err()
+                    || validate_gov_param_registry_binding(
+                        &self.gov_param_key_index,
+                        &snapshot.key,
+                        snapshot.key_id,
+                    )
+                    .is_err()
                 {
                     self.pending_gov_updates.remove(key);
                     return;
@@ -3242,6 +3246,47 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "rejected pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_index_mismatched_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_313,
+            Some(GovParamObject {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("resolve_authority")
+                .map(|(id, _)| id),
+            Some(7_313),
+            "sanity: canonical registry binding should exist before exercising mismatched pending restore"
+        );
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 9_001,
+                key: "resolve_authority".into(),
+                value: "authority-c,authority-d".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "pending restore must fail closed when snapshot key_id diverges from the shared registry binding"
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("resolve_authority")
+                .map(|(id, _)| id),
+            Some(7_313),
+            "rejected pending restore must preserve the canonical configured governance registry binding"
         );
     }
 
