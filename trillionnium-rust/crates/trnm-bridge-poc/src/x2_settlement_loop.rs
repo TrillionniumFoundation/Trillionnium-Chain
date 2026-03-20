@@ -40,10 +40,6 @@ pub enum SettlementStep {
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
 fn validate_heartbeat_outcome(heartbeat: &HeartbeatOutcome) -> Result<(), SettlementError> {
-    if heartbeat.degraded {
-        return Ok(());
-    }
-
     let Some(metrics) = heartbeat.heartbeat else {
         return Ok(());
     };
