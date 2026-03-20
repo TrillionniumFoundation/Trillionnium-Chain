@@ -491,7 +491,7 @@ fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
 fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let last_checkpoint =
+    let mut last_checkpoint =
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
@@ -597,6 +597,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
                 persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
                 truncated = true;
             }
+            last_checkpoint = valid_checkpoints.last().cloned();
         }
     }
 
@@ -10386,6 +10387,78 @@ locked_block_hash = "stale-replay-lock"
         assert_eq!(wal.next_height, 3);
         assert_eq!(wal.last_round, 0);
         assert_eq!(wal.locked_block_hash.as_deref(), Some("h2"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_duplicate_height_tail_refreshes_last_checkpoint_after_pruning_stale_checkpoint() {
+        let wal_dir = temp_wal_dir("recover-duplicate-height-tail-refreshes-last-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "h2-replay".into(),
+            committed: true,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2-replay".into(),
+                    wal_entry_hash_hex: "stale-replayed-h2".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        let retained_checkpoint = recovered
+            .last_checkpoint
+            .as_ref()
+            .expect("retained checkpoint should remain after truncating duplicate tail");
+        assert_eq!(retained_checkpoint.height, 2);
+        assert_eq!(retained_checkpoint.state_root_hex, "r2");
+        assert_eq!(retained_checkpoint.wal_entry_hash_hex, h2);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "r2");
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
