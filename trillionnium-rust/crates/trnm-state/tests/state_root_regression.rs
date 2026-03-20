@@ -2017,7 +2017,47 @@ fn pending_resolve_first_approver_must_affect_state_root() {
 fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root() {
     let mut state = StateStore::new();
     state
-        .stage_or_confirm_resolve_approval(5150, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .set_gov_param(
+            98_300,
+            7_310,
+            "resolve_authority".into(),
+            "resolver-a,resolver-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    state
+        .set_gov_param(
+            98_320,
+            7_310,
+            "resolve_authority".into(),
+            "resolver-a,resolver-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    state
+        .put_task_new(TaskObject {
+            task_id: 5_150,
+            creator: "alice".into(),
+            bounty: 42,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(42),
+            challenge_bond: Some(17),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should exist before restore rewind");
+    state
+        .stage_or_confirm_resolve_approval(5150, 1, true, "resolver-a", "resolver-a,resolver-b")
         .expect("initial staged resolve approval should succeed");
 
     let baseline_root = state.state_root();
