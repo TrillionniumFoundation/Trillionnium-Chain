@@ -87,6 +87,8 @@ pub fn verify_wal_and_find_checkpoint(
             if e.height <= last_height {
                 return Ok(best_checkpoint);
             }
+        } else if e.prev_hash_hex.is_none() && e.height > 1 {
+            return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
