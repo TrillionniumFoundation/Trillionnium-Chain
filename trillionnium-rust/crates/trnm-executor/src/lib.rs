@@ -1147,12 +1147,7 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .map(|o| o.id)
         .unwrap_or(0);
     let key_b = if tx.write_set.is_empty() {
-        tx.read_set
-            .iter()
-            .skip(1)
-            .map(|o| o.id)
-            .find(|&id| id != key_a)
-            .unwrap_or(0)
+        tx.read_set.iter().skip(1).map(|o| o.id).find(|&id| id != key_a)
     } else {
         tx.write_set
             .iter()
@@ -1160,16 +1155,15 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
             .chain(tx.read_set.iter())
             .map(|o| o.id)
             .find(|&id| id != key_a)
-            .unwrap_or(0)
     };
     // Canonicalize the two-key access-domain signal so equivalent mixed
     // read/write domains hash identically even if read/write roles flip.
     // Keep singleton/keyless behavior unchanged by only reordering when a
-    // distinct secondary key exists.
-    let (key_a, key_b) = if key_b != 0 && key_b < key_a {
-        (key_b, key_a)
-    } else {
-        (key_a, key_b)
+    // distinct secondary key exists, including when that real key is object id 0.
+    let (key_a, key_b) = match key_b {
+        Some(key_b) if key_b < key_a => (key_b, key_a),
+        Some(key_b) => (key_a, key_b),
+        None => (key_a, 0),
     };
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
@@ -1930,6 +1924,25 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&write_then_read, buckets_n),
             hot_bucket_hint(&read_then_write, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
+        let buckets_n = 97usize;
+        let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(0)]);
+
+        // Object id 0 is a valid domain member, not an internal sentinel.
+        // Equivalent mixed domains touching {0,5} should remain bucket-stable even
+        // when the read/write roles flip.
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
