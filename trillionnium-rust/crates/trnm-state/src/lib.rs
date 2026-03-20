@@ -221,12 +221,12 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
 const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
-    "challenge_window_blocks",
     "min_worker_stake",
     "challenge_min_bond",
-    "challenge_success_bounty",
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
     "llm_meter_prompt_token_weight",
     "llm_meter_generated_token_weight",
     "llm_meter_decode_step_weight",
@@ -357,6 +357,19 @@ fn validate_governance_registry_shape_lists(
         format_governance_registry_membership_drift(&allowed_unique, &validator_unique)
     {
         return Err(err);
+    }
+
+    for (index, (allowed_key, validator_key)) in allowed_keys
+        .iter()
+        .zip(explicit_validator_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != validator_key {
+            return Err(format!(
+                "governance explicit-validator registry order drifted at index {}: allowed_key={}, validator_key={}",
+                index, allowed_key, validator_key
+            ));
+        }
     }
 
     for key in &allowed_unique {
@@ -2965,6 +2978,24 @@ mod tests {
         );
         assert!(err.contains("max_parallel_workers"), "{err}");
         assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit-validator registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("validator_key=max_parallel_workers"), "{err}");
     }
 
     #[test]
