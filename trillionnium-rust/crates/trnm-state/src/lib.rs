@@ -568,7 +568,6 @@ fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
         && task.resolve_deadline_height.is_some()
         && task.challenge_bond.is_some()
         && task.challenger.is_some()
-        && task.challenge_bond_forfeited.is_some()
 }
 
 impl StateStore {
