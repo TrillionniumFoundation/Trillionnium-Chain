@@ -749,6 +749,13 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
+                if matches!(
+                    self.objects.get(&id).map(|existing| &existing.value),
+                    Some(value) if !matches!(value, ObjectValue::Task(_))
+                ) {
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
                 if self
                     .pending_resolve_approvals
                     .get(&id)
@@ -4766,6 +4773,51 @@ mod tests {
             key_index_collision.get_param(501).unwrap().key,
             "max_block_ms",
             "overlapping governance param object must remain restorable after task cleanup"
+        );
+
+        let mut restore_collision = StateStore::new();
+        restore_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param before colliding task restore");
+        restore_collision.restore_pending_resolve_approval(501, snapshot.clone());
+        restore_collision.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            }),
+        );
+        assert_eq!(
+            restore_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "task restore must fail closed instead of corrupting an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            restore_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "task restore must not overwrite an unrelated governance snapshot when ids overlap"
+        );
+        assert!(
+            restore_collision.pending_resolve_approval_snapshot(501).is_none(),
+            "failed task restore must scrub stale pending resolve snapshots when the object slot belongs to another snapshot domain"
         );
 
         let mut wrong_version = StateStore::new();
