@@ -4008,6 +4008,15 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         !checkpoint_evidence_surface_is_canonical(&mismatched_height_checkpoint, &wal),
         "checkpoint height must bind to the exact WAL height so audit evidence surfaces cannot replay canonical hashes across different checkpoint slots"
     );
+
+    let mut blank_proposal_hash_wal = wal.clone();
+    blank_proposal_hash_wal.proposal_hash = "".into();
+    let mut blank_proposal_hash_checkpoint = checkpoint.clone();
+    blank_proposal_hash_checkpoint.wal_entry_hash_hex = blank_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&blank_proposal_hash_checkpoint, &blank_proposal_hash_wal),
+        "WAL proposal_hash must be a non-empty canonical token so checkpoint evidence surfaces cannot claim audit-ready provenance with blank proposal identity"
+    );
 }
 
 #[test]
