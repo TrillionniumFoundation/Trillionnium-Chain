@@ -227,6 +227,21 @@ fn validate_gov_param_registry_binding(
     Ok(())
 }
 
+fn validate_gov_param_snapshot_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    requested_key: &str,
+    snapshot_key: &str,
+    snapshot_key_id: u64,
+) -> Result<(), String> {
+    if snapshot_key != requested_key {
+        return Err(format!(
+            "governance key mismatch: requested_key={}, snapshot_key={}",
+            requested_key, snapshot_key
+        ));
+    }
+    validate_gov_param_registry_binding(gov_param_key_index, snapshot_key, snapshot_key_id)
+}
+
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -820,8 +835,9 @@ impl StateStore {
         match snapshot {
             Some(snapshot) => {
                 if snapshot.key_id != key_id
-                    || validate_gov_param_registry_binding(
+                    || validate_gov_param_snapshot_binding(
                         &self.gov_param_key_index,
+                        &snapshot.key,
                         &snapshot.key,
                         snapshot.key_id,
                     )
@@ -1333,9 +1349,13 @@ impl StateStore {
 
     fn canonical_pending_gov_update_for_key(&self, key: &str) -> Option<&PendingGovParamUpdate> {
         let pending = self.pending_gov_updates.get(key)?;
-        if pending.key != key
-            || validate_gov_param_registry_binding(&self.gov_param_key_index, key, pending.key_id)
-                .is_err()
+        if validate_gov_param_snapshot_binding(
+            &self.gov_param_key_index,
+            key,
+            &pending.key,
+            pending.key_id,
+        )
+        .is_err()
         {
             return None;
         }
@@ -1354,13 +1374,13 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key
-                    || validate_gov_param_registry_binding(
-                        &self.gov_param_key_index,
-                        &snapshot.key,
-                        snapshot.key_id,
-                    )
-                    .is_err()
+                if validate_gov_param_snapshot_binding(
+                    &self.gov_param_key_index,
+                    key,
+                    &snapshot.key,
+                    snapshot.key_id,
+                )
+                .is_err()
                 {
                     self.pending_gov_updates.remove(key);
                     return;
@@ -3399,6 +3419,33 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_key_name_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_888,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "pending restore must fail closed when the snapshot key name diverges from the requested registry key"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "mismatched pending restore must not materialize a foreign pinned governance key under its own name"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejected mismatched pending restore must not alter effective emergency pause state"
         );
     }
 
