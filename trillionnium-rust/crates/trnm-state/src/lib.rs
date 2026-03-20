@@ -706,13 +706,11 @@ impl StateStore {
             scrub_pending(self, task_id);
             return;
         }
-        let first_approver_audit = snapshot.first_approver.trim().to_string();
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             scrub_pending(self, task_id);
             return;
         };
-        let authority_audit = snapshot.authority_set.clone();
         let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
         else {
             scrub_pending(self, task_id);
@@ -748,8 +746,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_audit,
-                authority_set: authority_audit,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -3187,15 +3185,15 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("Authority-A".to_string()),
-            "restore should preserve the original approver spelling for auditability"
+            Some("authority-a".to_string()),
+            "restore should canonicalize approver identity before storing pending resolve state"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-b,authority-a".to_string()),
-            "restore should preserve the original authority-set spelling for auditability"
+            Some("authority-a,authority-b".to_string()),
+            "restore should canonicalize authority-set identity before storing pending resolve state"
         );
         assert_eq!(
             restored.state_root(),

@@ -2056,6 +2056,54 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
+fn restore_pending_resolve_snapshot_canonicalizes_equivalent_authority_metadata_for_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Resolver-A".into(),
+            authority_set: "resolver-b,Resolver-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_a.pending_resolve_approval_snapshot(5_152),
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        })
+    );
+    assert_eq!(
+        state_b.pending_resolve_approval_snapshot(5_152),
+        state_a.pending_resolve_approval_snapshot(5_152),
+        "restore should canonicalize logically equivalent pending resolve snapshot metadata"
+    );
+    assert_eq!(
+        state_b.state_root(),
+        state_a.state_root(),
+        "state_root should match for logically equivalent pending resolve snapshots after restore canonicalization"
+    );
+}
+
+#[test]
 fn pending_resolve_task_slot_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
