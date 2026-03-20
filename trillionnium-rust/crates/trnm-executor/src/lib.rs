@@ -296,6 +296,8 @@ fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut total = 0usize;
 
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
+
         let mut keys = dedup_access_keys(&tx.read_set);
         for key in dedup_access_keys(&tx.write_set) {
             if !keys.contains(&key) {
@@ -2202,6 +2204,20 @@ mod tests {
         );
 
         let _ = hot_bucket_hint(&t, 8);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_object_share_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        let _ = hot_object_share(&txs);
     }
 
     #[test]
