@@ -39,6 +39,10 @@ fn timeout_bond_disposition(
     })
 }
 
+fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
+    tx_id_seed.saturating_add(migrated_before_emit.saturating_add(1))
+}
+
 pub(crate) fn scan_and_apply_timeouts(
     st: &mut StateStore,
     known_task_ids: &HashSet<u64>,
@@ -66,6 +70,7 @@ pub(crate) fn scan_and_apply_timeouts(
         };
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
+            let event_tx_id = timeout_event_tx_id(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -79,7 +84,7 @@ pub(crate) fn scan_and_apply_timeouts(
             emit_timeout_event(
                 st,
                 task_id,
-                tx_id_seed.saturating_add(migrated),
+                event_tx_id,
                 current_height,
                 &from_status,
                 &to_status,
@@ -90,8 +95,8 @@ pub(crate) fn scan_and_apply_timeouts(
                 bond_disposition,
             );
             println!(
-                "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, from_status, to_status
+                "[timeout] height={} task_id={} tx_id={} from_status={} to_status={} source=auto_scan",
+                current_height, task_id, event_tx_id, from_status, to_status
             );
         }
     }
@@ -100,7 +105,7 @@ pub(crate) fn scan_and_apply_timeouts(
 
 #[cfg(test)]
 mod tests {
-    use super::{should_scan_timeout, timeout_bond_disposition};
+    use super::{should_scan_timeout, timeout_bond_disposition, timeout_event_tx_id};
     use trnm_types::TaskStatus;
 
     #[test]
@@ -130,5 +135,12 @@ mod tests {
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
         assert_eq!(timeout_bond_disposition(true, Some(true)), Some("forfeited"));
         assert_eq!(timeout_bond_disposition(true, None), Some("unknown"));
+    }
+
+    #[test]
+    fn timeout_event_tx_id_starts_after_seed_and_preserves_scan_order_visibility() {
+        assert_eq!(timeout_event_tx_id(9_000_000, 0), 9_000_001);
+        assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
+        assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
     }
 }
