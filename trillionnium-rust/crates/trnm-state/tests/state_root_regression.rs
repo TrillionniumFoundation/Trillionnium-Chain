@@ -1915,6 +1915,34 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    for state in [&mut state_a, &mut state_b] {
+        state.restore_task(
+            5_150,
+            Some(TaskObject {
+                task_id: 5_150,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+    }
+
     state_a.restore_pending_resolve_approval(
         5_150,
         Some(PendingResolveApprovalSnapshot {

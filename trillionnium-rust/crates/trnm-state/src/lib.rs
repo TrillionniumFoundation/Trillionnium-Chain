@@ -682,6 +682,41 @@ impl StateStore {
             })
     }
 
+    fn should_restore_pending_resolve_approval(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> bool {
+        if task_id == 0 || snapshot.task_version == 0 {
+            return false;
+        }
+        if snapshot.confirmations != 1 {
+            return false;
+        }
+        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        else {
+            return false;
+        };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return false;
+        };
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return false;
+        }
+        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
+            return false;
+        }
+        let Some(task) = self.get_task(task_id) else {
+            return false;
+        };
+
+        task.status == TaskStatus::Challenged && task.version == snapshot.task_version
+    }
+
     pub fn restore_pending_resolve_approval(
         &mut self,
         task_id: u64,
@@ -693,33 +728,7 @@ impl StateStore {
         let Some(snapshot) = snapshot else {
             return;
         };
-        if task_id == 0 || snapshot.task_version == 0 {
-            return;
-        }
-        if snapshot.confirmations != 1 {
-            return;
-        }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
-        else {
-            return;
-        };
-        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
-        else {
-            return;
-        };
-        if !authority_canonical
-            .split(',')
-            .any(|member| member == first_approver_canonical)
-        {
-            return;
-        }
-        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
-            return;
-        }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+        if !self.should_restore_pending_resolve_approval(task_id, &snapshot) {
             return;
         }
 
