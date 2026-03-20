@@ -4036,6 +4036,18 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         !checkpoint_evidence_surface_is_canonical(&blank_proposal_hash_checkpoint, &blank_proposal_hash_wal),
         "WAL proposal_hash must be a non-empty canonical token so checkpoint evidence surfaces cannot claim audit-ready provenance with blank proposal identity"
     );
+
+    let mut forged_genesis_prev_hash_wal = wal.clone();
+    forged_genesis_prev_hash_wal.prev_hash_hex = Some("01".repeat(32));
+    let mut forged_genesis_prev_hash_checkpoint = checkpoint.clone();
+    forged_genesis_prev_hash_checkpoint.wal_entry_hash_hex = forged_genesis_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &forged_genesis_prev_hash_checkpoint,
+            &forged_genesis_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject genesis WAL metadata with a forged prev_hash_hex so audit-ready state-root proofs cannot smuggle a fake predecessor link into height-1 checkpoints"
+    );
 }
 
 #[test]

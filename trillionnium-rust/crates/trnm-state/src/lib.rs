@@ -1834,6 +1834,16 @@ fn is_canonical_wal_proposal_hash(value: &str) -> bool {
         && !value.chars().any(|c| c.is_whitespace() || c.is_control())
 }
 
+fn wal_prev_hash_surface_is_canonical(height: u64, prev_hash_hex: Option<&str>) -> bool {
+    match (height, prev_hash_hex) {
+        (1, None) => true,
+        (1, Some(_)) => false,
+        (2.., Some(prev_hash_hex)) => is_canonical_hex_digest(prev_hash_hex),
+        (2.., None) => false,
+        _ => false,
+    }
+}
+
 pub fn checkpoint_evidence_surface_is_canonical(
     checkpoint: &CheckpointMeta,
     wal_entry: &WalMeta,
@@ -1845,10 +1855,10 @@ pub fn checkpoint_evidence_surface_is_canonical(
         && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
         && is_canonical_hex_digest(&wal_entry.state_root_hex)
         && is_canonical_wal_proposal_hash(&wal_entry.proposal_hash)
-        && wal_entry
-            .prev_hash_hex
-            .as_deref()
-            .is_none_or(is_canonical_hex_digest)
+        && wal_prev_hash_surface_is_canonical(
+            wal_entry.height,
+            wal_entry.prev_hash_hex.as_deref(),
+        )
         && checkpoint.state_root_hex == wal_entry.state_root_hex
         && checkpoint.wal_entry_hash_hex == wal_entry.content_hash_hex()
 }
