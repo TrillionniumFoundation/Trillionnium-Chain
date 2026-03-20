@@ -234,3 +234,68 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
         "replayed quarantine rows should preserve the deterministic dedupe key"
     );
 }
+
+#[test]
+fn submit_message_rewrites_preexisting_duplicate_quarantine_rows() {
+    let ingress = unique_fixture_path("submit_message_quarantine_dedupe_existing", "jsonl");
+    let quarantine = ingress.with_file_name(format!(
+        "{}.quarantine.jsonl",
+        ingress
+            .file_name()
+            .and_then(|v| v.to_str())
+            .expect("ingress file name")
+    ));
+    let _ = fs::remove_file(&ingress);
+    let _ = fs::remove_file(&quarantine);
+
+    let valid = r#"{"request_id":"r-1","task_id":10001,"channel":"telegram","user_id":"u-1","session_id":"s-1","text":"hello","idempotency_key":"k-1","status":"Open","created_at_unix_ms":1}"#;
+    fs::write(&ingress, format!("{}\nnot-json\n", valid)).expect("seed ingress");
+
+    let duplicate_quarantine = serde_json::json!({
+        "source_path": ingress.display().to_string(),
+        "line_number": 2,
+        "line_hash": expected_stable_line_hash("not-json"),
+        "raw_line": "not-json",
+        "error": "expected value at line 1 column 1",
+        "quarantined_at_unix_ms": 1
+    });
+    let duplicate_line = serde_json::to_string(&duplicate_quarantine).expect("serialize quarantine");
+    fs::write(&quarantine, format!("{}\n{}\n", duplicate_line, duplicate_line))
+        .expect("seed duplicate quarantine");
+
+    let output = Command::new("cargo")
+        .args(["run", "-p", "trnm-rpc", "--"])
+        .args([
+            "submit-message",
+            "--channel",
+            "telegram",
+            "--user-id",
+            "u-3",
+            "--session-id",
+            "s-3",
+            "--text",
+            "next",
+            "--idempotency-key",
+            "k-3",
+        ])
+        .env("TRNM_RPC_INGRESS_FILE", &ingress)
+        .output()
+        .expect("run submit-message");
+
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read deduped quarantine file");
+    let quarantine_lines: Vec<&str> = quarantine_raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    assert_eq!(
+        quarantine_lines.len(),
+        1,
+        "replay should compact preexisting duplicate quarantine rows even without adding a new unique row"
+    );
+}

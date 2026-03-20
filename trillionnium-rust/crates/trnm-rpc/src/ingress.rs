@@ -47,8 +47,10 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 
     let mut seen = std::collections::HashSet::new();
     let mut retained = Vec::new();
+    let mut existing_total = 0usize;
     if let Ok(existing_raw) = fs::read_to_string(&quarantine_path) {
         for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
+            existing_total += 1;
             let Ok(existing) = serde_json::from_str::<IngressQuarantineRecord>(line) else {
                 continue;
             };
@@ -63,7 +65,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         }
     }
 
-    let mut changed = false;
+    let mut changed = existing_total != retained.len();
     for entry in entries {
         let key = (
             entry.source_path.clone(),
