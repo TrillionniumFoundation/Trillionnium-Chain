@@ -1250,9 +1250,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
         }
         GroupingStrategy::WriteFirst => {
             txs.sort_by_key(|tx| {
+                let write_keys = dedup_access_keys(&tx.write_set);
+                let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
                 (
-                    std::cmp::Reverse(tx.write_set.len()),
-                    std::cmp::Reverse(tx.read_set.len()),
+                    std::cmp::Reverse(write_keys.len()),
+                    std::cmp::Reverse(read_keys.len()),
                     tx.id,
                 )
             });
@@ -3977,6 +3979,24 @@ mod tests {
         assert_eq!(profile.group_count, 1);
         assert_eq!(profile.max_group_size, txs.len());
         assert_eq!(profile.min_group_size, txs.len());
+    }
+
+    #[test]
+    fn write_first_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
+                vec![ov(77, 5), ov(77, 6)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
+
+        // WriteFirst should rank by deduped object-scoped write/read domains so
+        // duplicate/version-heavy footprints do not outrank genuinely wider work.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
     }
 
     #[test]
