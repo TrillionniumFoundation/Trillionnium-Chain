@@ -2084,6 +2084,70 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
+fn restore_pending_resolve_snapshot_canonicalizes_semantically_equivalent_authority_metadata() {
+    let canonical_snapshot = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "resolver-a".into(),
+        authority_set: "resolver-a,resolver-b".into(),
+        task_version: 7,
+    };
+
+    let mut canonical_state = StateStore::new();
+    let mut replayed_state = StateStore::new();
+    for state in [&mut canonical_state, &mut replayed_state] {
+        state.restore_task(
+            5_151,
+            Some(TaskObject {
+                task_id: 5_151,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+    }
+
+    canonical_state.restore_pending_resolve_approval(5_151, Some(canonical_snapshot.clone()));
+    replayed_state.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "ReSoLvEr-A".into(),
+            authority_set: "resolver-B,ReSoLvEr-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        replayed_state.pending_resolve_approval_snapshot(5_151),
+        Some(canonical_snapshot),
+        "restore should canonicalize first approver and authority set before materializing staged pending resolve state"
+    );
+    assert_eq!(
+        replayed_state.state_root(),
+        canonical_state.state_root(),
+        "semantically equivalent pending resolve restore snapshots must re-enter with the same deterministic state_root"
+    );
+}
+
+#[test]
 fn pending_resolve_task_slot_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();

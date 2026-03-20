@@ -682,39 +682,51 @@ impl StateStore {
             })
     }
 
-    fn should_restore_pending_resolve_approval(
+    fn canonical_pending_resolve_approval_snapshot(
         &self,
         task_id: u64,
         snapshot: &PendingResolveApprovalSnapshot,
-    ) -> bool {
+    ) -> Option<(String, String)> {
         if task_id == 0 || snapshot.task_version == 0 {
-            return false;
+            return None;
         }
         if snapshot.confirmations != 1 {
-            return false;
+            return None;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
-            return false;
+            return None;
         };
         let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
         else {
-            return false;
+            return None;
         };
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
         {
-            return false;
+            return None;
         }
-        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
-            return false;
+        if !is_effective_resolve_authority_match(self, &authority_canonical) {
+            return None;
         }
         let Some(task) = self.get_task(task_id) else {
-            return false;
+            return None;
         };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return None;
+        }
 
-        task.status == TaskStatus::Challenged && task.version == snapshot.task_version
+        Some((first_approver_canonical, authority_canonical))
+    }
+
+    fn should_restore_pending_resolve_approval(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> bool {
+        self.canonical_pending_resolve_approval_snapshot(task_id, snapshot)
+            .is_some()
     }
 
     pub fn restore_pending_resolve_approval(
@@ -728,17 +740,19 @@ impl StateStore {
         let Some(snapshot) = snapshot else {
             return;
         };
-        if !self.should_restore_pending_resolve_approval(task_id, &snapshot) {
+        let Some((first_approver, authority_set)) =
+            self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
+        else {
             return;
-        }
+        };
 
         self.pending_resolve_approvals.insert(
             task_id,
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver,
+                authority_set,
                 task_version: snapshot.task_version,
             },
         );
