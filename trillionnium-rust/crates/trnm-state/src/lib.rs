@@ -317,6 +317,12 @@ fn validate_governance_registry_key_canonical(
             registry_name, key
         ));
     }
+    if key.chars().any(|ch| ch.is_whitespace() || ch.is_control()) {
+        return Err(format!(
+            "governance {} contains non-canonical whitespace or control character in key: {}",
+            registry_name, key
+        ));
+    }
     Ok(())
 }
 
@@ -2990,6 +2996,23 @@ mod tests {
         assert!(
             err.contains("explicit-validator registry contains non-canonical uppercase key")
                 || err.contains("allowed-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_internal_whitespace_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max parallel workers"],
+            &[],
+            &["max_block_ms", "max parallel workers"],
+            &[],
+        )
+        .expect_err("registry keys with internal whitespace must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical whitespace or control character in key")
+                || err.contains("allowed-key registry contains non-canonical whitespace or control character in key"),
             "{err}"
         );
     }
