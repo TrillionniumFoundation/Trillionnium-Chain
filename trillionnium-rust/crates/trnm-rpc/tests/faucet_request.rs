@@ -103,3 +103,35 @@ fn faucet_request_invalid_address() {
     assert_eq!(v["granted_amount"], 0);
     assert!(v["balance"].is_null());
 }
+
+#[test]
+fn faucet_request_allows_exact_window_boundary_retry() {
+    let temp = TempDir::new().unwrap();
+    write_accounts(&temp.path().join("accounts.json"));
+    let addr = format!("trnm1{}", "c".repeat(40));
+
+    let (ok1, out1, err1) = run_rpc(
+        &temp,
+        &["faucet-request", "--address", &addr, "--amount", "25"],
+        7_000,
+    );
+    assert!(ok1, "first faucet-request failed: {err1}");
+    let v1: Value = serde_json::from_str(&out1).unwrap();
+    assert_eq!(v1["ok"], true);
+    assert_eq!(v1["next_allowed_unix_ms"], 67_000);
+
+    let (ok2, out2, err2) = run_rpc(
+        &temp,
+        &["faucet-request", "--address", &addr, "--amount", "25"],
+        67_000,
+    );
+    assert!(ok2, "boundary faucet-request failed: {err2}");
+    let v2: Value = serde_json::from_str(&out2).unwrap();
+
+    assert_eq!(v2["ok"], true);
+    assert_eq!(v2["code"], "OK");
+    assert_eq!(v2["requested_amount"], 25);
+    assert_eq!(v2["granted_amount"], 25);
+    assert_eq!(v2["balance"], 50);
+    assert_eq!(v2["next_allowed_unix_ms"], 127_000);
+}
