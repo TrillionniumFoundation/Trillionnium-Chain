@@ -814,10 +814,29 @@ impl StateStore {
             || self.should_preserve_pending_resolve_on_task_restore(id, task)
     }
 
+    fn should_scrub_pending_resolve_on_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
+        if self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id) {
+            return false;
+        }
+        let Some(current) = self.get_task(id) else {
+            return false;
+        };
+        current == *task
+            && self.pending_resolve_approvals.get(&id).is_some()
+            && !self.should_preserve_pending_resolve_on_task_restore(id, task)
+    }
+
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         if let Some(task) = snapshot.as_ref() {
-            if task.task_id == id && self.should_noop_task_restore_reentry(id, task) {
-                return;
+            if task.task_id == id {
+                if self.should_noop_task_restore_reentry(id, task) {
+                    return;
+                }
+                if self.should_scrub_pending_resolve_on_task_restore_reentry(id, task) {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
             }
         }
 
