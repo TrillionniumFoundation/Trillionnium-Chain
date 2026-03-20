@@ -705,12 +705,7 @@ impl StateStore {
         if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
             return;
         }
-        if task.challenged_at_height.is_none()
-            || task.resolve_deadline_height.is_none()
-            || task.challenge_bond.is_none()
-            || task.challenger.as_deref().map(str::trim).filter(|s| !s.is_empty()).is_none()
-            || task.challenge_bond_forfeited.is_none()
-        {
+        if !challenged_task_snapshot_complete_for_pending_resolve(&task) {
             return;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
@@ -778,7 +773,9 @@ impl StateStore {
                     .pending_resolve_approvals
                     .get(&id)
                     .map(|pending| {
-                        task.status != TaskStatus::Challenged || pending.task_version != task.version
+                        task.status != TaskStatus::Challenged
+                            || pending.task_version != task.version
+                            || !challenged_task_snapshot_complete_for_pending_resolve(&task)
                     })
                     .unwrap_or(false)
                 {
@@ -1878,6 +1875,19 @@ impl StateStore {
         *cache_guard = Some(root.clone());
         root
     }
+}
+
+fn challenged_task_snapshot_complete_for_pending_resolve(task: &TaskObject) -> bool {
+    task.challenged_at_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_bond.is_some()
+        && task
+            .challenger
+            .as_deref()
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .is_some()
+        && task.challenge_bond_forfeited.is_some()
 }
 
 pub fn verify_wal_and_find_checkpoint(
@@ -4901,6 +4911,70 @@ mod tests {
         assert!(
             restore_collision.pending_resolve_approval_snapshot(501).is_none(),
             "failed task restore must scrub stale pending resolve snapshots when the object slot belongs to another snapshot domain"
+        );
+
+        let mut incomplete_replay = StateStore::new();
+        incomplete_replay
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        incomplete_replay.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            incomplete_replay
+                .pending_resolve_approval_snapshot(501)
+                .is_some(),
+            "setup must restore a matching challenged pending resolve snapshot before replaying an incomplete task snapshot"
+        );
+        incomplete_replay.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: None,
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            }),
+        );
+        assert!(
+            incomplete_replay
+                .pending_resolve_approval_snapshot(501)
+                .is_none(),
+            "task restore must scrub pending resolve snapshots when replayed challenged task state becomes incomplete"
         );
 
         let mut wrong_version = StateStore::new();
