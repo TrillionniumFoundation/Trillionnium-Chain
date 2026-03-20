@@ -629,8 +629,8 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver.trim().to_string(),
-                    authority_set: authority_set.to_string(),
+                    first_approver: approver_canonical.to_string(),
+                    authority_set: authority_canonical.clone(),
                     task_version,
                 });
         if entry.slash_worker != slash_worker {
@@ -2480,6 +2480,70 @@ mod tests {
         assert_eq!(
             st.pending_resolve_first_approver(8_181).as_deref(),
             Some("authority-a")
+        );
+    }
+
+    #[test]
+    fn resolve_approval_stage_canonicalizes_authority_metadata_for_restore_roundtrip() {
+        let mut staged = StateStore::new();
+        staged.restore_task(
+            8_182,
+            Some(TaskObject {
+                task_id: 8_182,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+        let mut restored = staged.clone();
+
+        staged
+            .stage_or_confirm_resolve_approval(
+                8_182,
+                7,
+                true,
+                "Authority-A",
+                "authority-b,Authority-A",
+            )
+            .expect("mixed-case stage should canonicalize into a valid pending resolve snapshot");
+        let staged_root = staged.state_root();
+        let staged_snapshot = staged
+            .pending_resolve_approval_snapshot(8_182)
+            .expect("staged snapshot should exist");
+
+        assert_eq!(
+            staged_snapshot.first_approver,
+            "authority-a",
+            "stage path should store the canonical first approver so restore re-entry sees the same logical snapshot"
+        );
+        assert_eq!(
+            staged_snapshot.authority_set,
+            "authority-a,authority-b",
+            "stage path should store the canonical authority set ordering so restore re-entry sees the same logical snapshot"
+        );
+
+        restored.restore_pending_resolve_approval(8_182, Some(staged_snapshot));
+
+        assert_eq!(
+            restored.state_root(),
+            staged_root,
+            "restoring a staged pending resolve snapshot should preserve the deterministic state root when re-entry canonicalization is semantically identical"
         );
     }
 
