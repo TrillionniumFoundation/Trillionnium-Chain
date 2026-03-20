@@ -612,6 +612,12 @@ impl StateStore {
                 }
                 return Err("resolve approval task version changed".into());
             }
+            if !task_supports_pending_resolve_restore(&task) {
+                if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                    self.invalidate_state_root_cache();
+                }
+                return Err("resolve approval task boundary metadata incomplete".into());
+            }
         }
         ensure_effective_resolve_authority_match(self, authority_set)?;
 
