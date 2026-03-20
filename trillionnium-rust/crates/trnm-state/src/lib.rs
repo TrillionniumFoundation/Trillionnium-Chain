@@ -505,6 +505,7 @@ fn validate_governance_key_registration_lists(
     key_id: u64,
     allowed_keys: &[&str],
     explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
     pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
     for allowed_key in allowed_keys {
@@ -558,12 +559,50 @@ fn validate_governance_key_registration_lists(
         }
     }
 
+    for explicit_value_rule_key in explicit_value_rule_keys {
+        validate_governance_registry_key_canonical(
+            "explicit-value-rule registry",
+            explicit_value_rule_key,
+        )?;
+    }
+    let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
+        explicit_value_rule_keys.iter().copied().collect();
+    if explicit_value_rule_unique.len() != explicit_value_rule_keys.len() {
+        return Err("governance explicit-value-rule registry contains duplicate entries".into());
+    }
+    if let Some(err) =
+        format_governance_registry_membership_drift(&allowed_unique, &explicit_value_rule_unique)
+    {
+        return Err(err.replace(
+            "explicit-validator registry",
+            "explicit-value-rule registry",
+        ));
+    }
+    for (index, (allowed_key, explicit_value_rule_key)) in allowed_keys
+        .iter()
+        .zip(explicit_value_rule_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != explicit_value_rule_key {
+            return Err(format!(
+                "governance explicit-value-rule registry order drifted at index {}: allowed_key={}, explicit_value_rule_key={}",
+                index, allowed_key, explicit_value_rule_key
+            ));
+        }
+    }
+
     if !allowed_keys.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
     }
     if !explicit_validator_keys.contains(&key) {
         return Err(format!(
             "governance validator coverage missing for allowed key: {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_keys.contains(&key) {
+        return Err(format!(
+            "governance validator missing explicit value rule for allowed key: {}",
             key
         ));
     }
@@ -601,6 +640,7 @@ fn validate_governance_key_registration(
         key_id,
         GOV_ALLOWED_KEYS,
         GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
         GOV_PINNED_KEY_IDS,
     )
 }
@@ -3104,6 +3144,7 @@ mod tests {
             7_002,
             &["max_block_ms", "max_parallel_workers"],
             &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
             &[],
         )
         .expect_err("registration must fail closed when explicit validator coverage drifts");
@@ -3127,6 +3168,7 @@ mod tests {
                 "max_parallel_workers",
                 "max_parallel_workers",
             ],
+            &["max_block_ms", "max_parallel_workers"],
             &[],
         )
         .expect_err("registration helper must fail closed on duplicate explicit-validator entries");
@@ -3145,6 +3187,7 @@ mod tests {
             7_001,
             &["max_block_ms", "max_parallel_workers"],
             &["max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
             &[],
         )
         .expect_err("registration helper must fail closed on validator order drift");
