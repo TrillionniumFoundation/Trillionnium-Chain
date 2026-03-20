@@ -472,9 +472,11 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
 }
 
 fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
-    if retry.base_backoff_ms == 0 {
-        retry.base_backoff_ms = 1;
-    }
+    // Keep free-ingress retry pacing on a strictly positive floor so malformed
+    // configs cannot collapse backoff/circuit timing into immediate hot loops.
+    let min_backoff_floor = 1;
+    retry.base_backoff_ms = retry.base_backoff_ms.max(min_backoff_floor);
+
     if retry.max_backoff_ms == 0 {
         retry.max_backoff_ms = retry.base_backoff_ms;
     }
@@ -2789,6 +2791,25 @@ mod tests {
         assert_eq!(engine.retry.max_attempts, 1);
         assert_eq!(engine.retry.circuit_breaker_threshold, 1);
         assert_eq!(engine.retry.circuit_open_ms, 10);
+    }
+
+    #[test]
+    fn retry_config_sanitizes_zero_base_backoff_to_positive_floor() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                max_attempts: 1,
+                circuit_breaker_threshold: 1,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 1);
+        assert_eq!(engine.retry.max_backoff_ms, 1);
+        assert_eq!(engine.retry.circuit_open_ms, 1);
     }
 
     #[test]
