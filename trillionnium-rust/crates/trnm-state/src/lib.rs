@@ -1395,16 +1395,26 @@ impl StateStore {
         snapshot: Option<PendingGovParamUpdate>,
     ) {
         self.invalidate_state_root_cache();
+        let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
                 if snapshot.key != key {
                     self.pending_gov_updates.remove(key);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
+                    }
                     return;
                 }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
             None => {
                 self.pending_gov_updates.remove(key);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
         }
     }

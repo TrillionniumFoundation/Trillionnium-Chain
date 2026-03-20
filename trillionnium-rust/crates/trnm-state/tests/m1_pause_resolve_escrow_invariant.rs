@@ -4896,3 +4896,56 @@ fn first_resolve_approval_rejects_non_challenged_task_boundary() {
     assert_eq!(st.pending_resolve_first_approver(9_941), None);
     assert_eq!(st.pending_resolve_approval_snapshot(9_941), None);
 }
+
+#[test]
+fn restore_pending_resolve_authority_update_scrubs_staged_resolve_quorum() {
+    // REF11 restore-boundary hardening: re-entering a pending resolve_authority snapshot must
+    // scrub staged resolve quorum immediately, just like live schedule/apply/cancel paths do.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(
+        98_360,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_380,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_995, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first authority approval should stage successfully");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_995), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    st.restore_pending_gov_update(
+        "resolve_authority",
+        Some(trnm_state::PendingGovParamUpdate {
+            key_id: 7_310,
+            key: "resolve_authority".into(),
+            value: "authority-c,authority-d".into(),
+            activate_at_height: 98_401,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_995), None);
+    assert_eq!(st.pending_resolve_first_approver(9_995), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_995), None);
+    assert_ne!(
+        st.state_root(),
+        root_with_pending,
+        "restoring a pending resolve_authority update must invalidate stale staged quorum in the state root"
+    );
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("restored resolve_authority timelock should remain present");
+    assert_eq!(pending.value, "authority-c,authority-d");
+    assert_eq!(pending.activate_at_height, 98_401);
+}
