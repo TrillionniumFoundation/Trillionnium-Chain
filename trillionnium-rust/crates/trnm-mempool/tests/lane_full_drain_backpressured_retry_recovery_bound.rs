@@ -34,3 +34,26 @@ fn full_drain_after_saturated_backpressure_keeps_fresh_cross_class_retry_admissi
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.pop_ready(), Some(30));
 }
+
+#[test]
+fn saturated_retry_burst_keeps_queue_counts_stable_until_headroom_reopens() {
+    let mut gate = LaneAdmissionGate::new(2, 1);
+
+    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (1, 1, 2));
+
+    for class in [
+        IngressClass::Critical,
+        IngressClass::Normal,
+        IngressClass::Critical,
+        IngressClass::Normal,
+    ] {
+        assert_eq!(gate.admit(99, class), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (1, 1, 2));
+    }
+
+    assert!(matches!(gate.pop_ready(), Some(1) | Some(2)));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (1, 1, 2));
+}

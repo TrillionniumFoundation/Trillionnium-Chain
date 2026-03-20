@@ -154,6 +154,37 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_pre_admission_probe(
+        &self,
+        lane_total: usize,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        if lane_total >= self.total_capacity {
+            // Saturated retry probes are hot under ingress bursts. Return the final
+            // duplicate-vs-backpressure classification directly so callers avoid
+            // drifting into lane-specific admit paths that would only re-check the
+            // same capacity guards.
+            return Some(if is_duplicate {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            });
+        }
+
+        if is_duplicate {
+            Some(AdmitOutcome::Duplicate)
+        } else {
+            None
+        }
+    }
+
+    fn finish_admission(&mut self, tx_id: u64, out: AdmitOutcome) -> AdmitOutcome {
+        if matches!(out, AdmitOutcome::Accepted) {
+            self.seen_global.insert(tx_id);
+        }
+        out
+    }
+
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -291,18 +322,10 @@ impl LaneAdmissionGate {
             }
         }
 
-        if lane_total >= self.total_capacity {
-            // Saturated hot path: avoid insert-then-remove churn for fresh ids while
-            // preserving duplicate-vs-backpressure semantics under full queues.
-            return if is_duplicate {
-                AdmitOutcome::Duplicate
-            } else {
-                AdmitOutcome::Backpressured
-            };
-        }
-
-        if is_duplicate {
-            return AdmitOutcome::Duplicate;
+        if let Some(out) = self.classify_pre_admission_probe(lane_total, is_duplicate) {
+            // Exit before lane-specific admission attempts once duplicate/backpressure
+            // classification is already known.
+            return out;
         }
 
         let out = match class {
@@ -348,10 +371,7 @@ impl LaneAdmissionGate {
                 out
             }
         };
-        if matches!(out, AdmitOutcome::Accepted) {
-            self.seen_global.insert(tx_id);
-        }
-        out
+        self.finish_admission(tx_id, out)
     }
     pub fn queued_counts(&self) -> (usize, usize, usize) {
         let normal = self.normal.queue.len();
