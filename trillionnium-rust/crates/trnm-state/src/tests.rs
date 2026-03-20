@@ -1,6 +1,6 @@
 use super::governance::{
-    is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_KEYS_WITH_EXPLICIT_VALIDATORS,
-    GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
+    is_sensitive_gov_param, validate_gov_param_value, GOV_ALLOWED_KEYS,
+    GOV_KEYS_WITH_EXPLICIT_VALIDATORS, GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
 };
 use super::*;
 use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
@@ -2201,6 +2201,17 @@ fn governance_allowed_keys_have_single_explicit_validator_registry() {
     assert_eq!(
         allowed_unique, validator_unique,
         "allowed governance keys and explicit validator registry must stay identical"
+    );
+}
+
+#[test]
+fn governance_validator_registry_drift_fails_closed_at_runtime_boundary() {
+    let err = validate_gov_param_value("not_whitelisted", "1")
+        .expect_err("unknown governance keys must fail closed at the validator boundary");
+    assert!(
+        err.contains("missing explicit validator registration")
+            || err.contains("no explicit validator registered"),
+        "unexpected runtime validator drift error: {err}"
     );
 }
 

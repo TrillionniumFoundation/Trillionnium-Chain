@@ -200,7 +200,39 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     Ok(())
 }
 
+fn validate_governance_validator_registry_shape() -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.iter().copied().collect();
+
+    if allowed_unique.len() != GOV_ALLOWED_KEYS.len() {
+        return Err("governance allowed-key registry contains duplicate entries".into());
+    }
+    if validator_unique.len() != GOV_KEYS_WITH_EXPLICIT_VALIDATORS.len() {
+        return Err("governance explicit-validator registry contains duplicate entries".into());
+    }
+    if allowed_unique != validator_unique {
+        let missing_allowed_keys: Vec<&str> = allowed_unique
+            .difference(&validator_unique)
+            .copied()
+            .collect();
+        let rogue_validator_keys: Vec<&str> = validator_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance explicit-validator registry drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+            missing_allowed_keys.join(", "),
+            rogue_validator_keys.join(", "),
+        ));
+    }
+
+    Ok(())
+}
+
 fn ensure_allowed_key_has_explicit_validator(key: &str) -> Result<(), String> {
+    validate_governance_validator_registry_shape()?;
     if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
         return Err(format!(
             "governance key {} is allowed but missing explicit validator registration",
