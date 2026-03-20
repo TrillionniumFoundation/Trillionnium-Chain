@@ -120,7 +120,10 @@ fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
     true
 }
 
-fn combined_access_domain_versions_are_consistent(reads: &[ObjectRef], writes: &[ObjectRef]) -> bool {
+fn combined_access_domain_versions_are_consistent(
+    reads: &[ObjectRef],
+    writes: &[ObjectRef],
+) -> bool {
     if reads.len() + writes.len() <= 1 {
         return true;
     }
@@ -137,8 +140,8 @@ fn combined_access_domain_versions_are_consistent(reads: &[ObjectRef], writes: &
 }
 
 #[inline]
-fn debug_assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
-    debug_assert!(
+fn assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
+    assert!(
         combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
         "mixed access domain contains the same object id with multiple versions"
     );
@@ -409,7 +412,7 @@ pub fn build_parallel_groups_profile_with_strategy(
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
-        debug_assert_tx_access_domain_versions_are_consistent(&tx);
+        assert_tx_access_domain_versions_are_consistent(&tx);
 
         // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
         let read_keys = dedup_access_keys(&tx.read_set);
@@ -501,7 +504,7 @@ fn build_parallel_groups_aggressive_profile(
         let mut conflict_hits = 0usize;
 
         for tx in ordered {
-            debug_assert_tx_access_domain_versions_are_consistent(&tx);
+            assert_tx_access_domain_versions_are_consistent(&tx);
             let read_keys = dedup_access_keys(&tx.read_set);
             let write_keys = dedup_access_keys(&tx.write_set);
 
@@ -599,7 +602,7 @@ fn build_parallel_groups_aggressive_profile(
     for tx in ordered {
         let mut tx_slot = Some(tx);
         let tx_ref = tx_slot.as_ref().expect("tx must exist");
-        debug_assert_tx_access_domain_versions_are_consistent(tx_ref);
+        assert_tx_access_domain_versions_are_consistent(tx_ref);
         let read_keys = dedup_access_keys(&tx_ref.read_set);
         let write_keys = dedup_access_keys(&tx_ref.write_set);
         let read_empty = read_keys.is_empty();
@@ -842,9 +845,9 @@ fn parse_grouped_env_usize(name: &str) -> Option<usize> {
             let rest: Vec<&str> = parts.collect();
             let comma_is_grouping = !first.is_empty()
                 && first.chars().all(|ch| ch.is_ascii_digit())
-                && rest
-                    .iter()
-                    .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+                && rest.iter().all(|segment| {
+                    segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit())
+                });
             if !comma_is_grouping {
                 return None;
             }
@@ -902,17 +905,22 @@ fn parse_env_f64(name: &str) -> Option<f64> {
             if comma_count == 1 {
                 let (whole, frac) = numeric.split_once(',').unwrap_or((numeric, ""));
                 let whole_is_optional_sign = whole.is_empty() || whole == "+" || whole == "-";
-                if whole_is_optional_sign && !frac.is_empty() && frac.chars().all(|ch| ch.is_ascii_digit()) {
+                if whole_is_optional_sign
+                    && !frac.is_empty()
+                    && frac.chars().all(|ch| ch.is_ascii_digit())
+                {
                     let sign = if whole == "-" { "-" } else { "" };
                     format!("{sign}0.{frac}")
                 } else if !whole.is_empty()
                     && !frac.is_empty()
-                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && whole
+                        .chars()
+                        .all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
                     && frac.chars().all(|ch| ch.is_ascii_digit())
                 {
                     let whole_digits = whole.trim_start_matches(['+', '-']);
-                    let whole_is_zero = !whole_digits.is_empty()
-                        && whole_digits.chars().all(|ch| ch == '0');
+                    let whole_is_zero =
+                        !whole_digits.is_empty() && whole_digits.chars().all(|ch| ch == '0');
                     let comma_is_grouping = frac.len() == 3
                         && whole.chars().any(|ch| ch.is_ascii_digit())
                         && !whole_is_zero;
@@ -929,11 +937,13 @@ fn parse_env_f64(name: &str) -> Option<f64> {
                 let whole = parts.next().unwrap_or("");
                 let frac_or_groups: Vec<&str> = parts.collect();
                 let comma_is_grouping = !whole.is_empty()
-                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && whole
+                        .chars()
+                        .all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
                     && whole.chars().any(|ch| ch.is_ascii_digit())
-                    && frac_or_groups
-                        .iter()
-                        .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+                    && frac_or_groups.iter().all(|segment| {
+                        segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit())
+                    });
                 if !comma_is_grouping {
                     return None;
                 }
@@ -1734,11 +1744,26 @@ mod tests {
 
         assert_eq!(aggressive_ids, original_ids);
         assert_eq!(aggressive_profile.group_count, original_profile.group_count);
-        assert_eq!(aggressive_profile.grouped_count, original_profile.grouped_count);
-        assert_eq!(aggressive_profile.max_group_size, original_profile.max_group_size);
-        assert_eq!(aggressive_profile.min_group_size, original_profile.min_group_size);
-        assert_eq!(aggressive_profile.conflict_checks, original_profile.conflict_checks);
-        assert_eq!(aggressive_profile.conflict_hits, original_profile.conflict_hits);
+        assert_eq!(
+            aggressive_profile.grouped_count,
+            original_profile.grouped_count
+        );
+        assert_eq!(
+            aggressive_profile.max_group_size,
+            original_profile.max_group_size
+        );
+        assert_eq!(
+            aggressive_profile.min_group_size,
+            original_profile.min_group_size
+        );
+        assert_eq!(
+            aggressive_profile.conflict_checks,
+            original_profile.conflict_checks
+        );
+        assert_eq!(
+            aggressive_profile.conflict_hits,
+            original_profile.conflict_hits
+        );
         assert_eq!(aggressive_profile.candidate_groups_scanned, 0);
         assert_eq!(aggressive_profile.stage_ww_checks, 0);
         assert_eq!(aggressive_profile.stage_wr_checks, 0);
@@ -1782,7 +1807,10 @@ mod tests {
         let write_first = tx(500, vec![o(2)], vec![o(9), o(1)]);
         let reordered = tx(501, vec![o(9)], vec![o(2), o(1)]);
 
-        assert_eq!(hot_bucket_hint(&write_first, 8), hot_bucket_hint(&reordered, 8));
+        assert_eq!(
+            hot_bucket_hint(&write_first, 8),
+            hot_bucket_hint(&reordered, 8)
+        );
     }
 
     #[test]
@@ -2000,7 +2028,10 @@ mod tests {
         // A single-write + read tx should hash over the mixed access domain rather
         // than ignoring the first read key and collapsing onto the write-only bucket.
         assert_ne!(baseline_bucket, mixed_bucket);
-        assert_eq!(mixed_bucket, ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize);
+        assert_eq!(
+            mixed_bucket,
+            ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
     }
 
     #[test]
@@ -2054,7 +2085,10 @@ mod tests {
 
         // Equivalent three-key access domains should not drift buckets just because
         // the first distinct secondary key appeared in a different read-set order.
-        assert_eq!(hot_bucket_hint(&baseline, buckets_n), hot_bucket_hint(&permuted, buckets_n));
+        assert_eq!(
+            hot_bucket_hint(&baseline, buckets_n),
+            hot_bucket_hint(&permuted, buckets_n)
+        );
         assert_eq!(
             hot_bucket_hint(&baseline, buckets_n),
             ((7u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
@@ -2139,7 +2173,9 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
     fn hot_bucket_hint_rejects_cross_domain_version_skew_for_same_object_id() {
         let t = tx(
             1,
@@ -2148,6 +2184,20 @@ mod tests {
         );
 
         let _ = hot_bucket_hint(&t, 8);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn build_parallel_groups_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
     }
 
     #[test]
@@ -2610,7 +2660,8 @@ mod tests {
     }
 
     #[test]
-    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_comma_decimal_percent_values() {
+    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_comma_decimal_percent_values()
+    {
         let _env = env_lock();
 
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+25,5%' ");
@@ -2935,7 +2986,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, 64);
-        assert!(d.use_hot_bucket, "env-tuned min batch should allow small-batch hotspot detection");
+        assert!(
+            d.use_hot_bucket,
+            "env-tuned min batch should allow small-batch hotspot detection"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3008,7 +3062,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, 64);
-        assert!(d.use_hot_bucket, "exact boundary match should still enable hot-bucket strategy");
+        assert!(
+            d.use_hot_bucket,
+            "exact boundary match should still enable hot-bucket strategy"
+        );
         assert_eq!(d.reason, "hotspot_detected");
         assert!(d.streak_ratio >= d.streak_threshold + d.min_margin);
         assert!(d.hot_key_share >= d.min_hot_key_share);
@@ -3037,7 +3094,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
-        assert!(d.use_hot_bucket, "default min-batch boundary should still run adaptive hotspot detection");
+        assert!(
+            d.use_hot_bucket,
+            "default min-batch boundary should still run adaptive hotspot detection"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3172,7 +3232,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
-        assert!(d.use_hot_bucket, "direct-scan path should see tail hotspot runs");
+        assert!(
+            d.use_hot_bucket,
+            "direct-scan path should see tail hotspot runs"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3361,7 +3424,10 @@ mod tests {
         txs.push(tx(9_999, vec![o(777)], vec![]));
 
         let d = auto_adaptive_decision(&txs);
-        assert!(d.use_hot_bucket, "read-only tail hotspot should be counted in sample");
+        assert!(
+            d.use_hot_bucket,
+            "read-only tail hotspot should be counted in sample"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3475,7 +3541,10 @@ mod tests {
         }
 
         let baseline = auto_adaptive_decision(&txs);
-        assert!(baseline.use_hot_bucket, "baseline hotspot should clear permissive adaptive gates");
+        assert!(
+            baseline.use_hot_bucket,
+            "baseline hotspot should clear permissive adaptive gates"
+        );
 
         let gain = baseline.expected_gain_score.to_string();
         let hot_key_share = baseline.hot_key_share.to_string();
@@ -3486,7 +3555,10 @@ mod tests {
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", &gain);
 
         let d = auto_adaptive_decision(&txs);
-        assert!(d.use_hot_bucket, "expected-gain threshold should stay inclusive at exact equality");
+        assert!(
+            d.use_hot_bucket,
+            "expected-gain threshold should stay inclusive at exact equality"
+        );
         assert_eq!(d.reason, "hotspot_detected");
         assert!(d.expected_gain_score >= d.min_expected_gain_score);
         assert!(d.hot_key_share >= d.min_hot_key_share);
