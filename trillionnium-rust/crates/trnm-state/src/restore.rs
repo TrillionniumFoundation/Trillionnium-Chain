@@ -122,17 +122,18 @@ pub fn verify_wal_and_find_checkpoint(
         if matching_height.iter().any(|cp| !has_complete_checkpoint_meta(cp)) {
             return Ok(best_checkpoint);
         }
-        if matching_height.len() > 1 {
-            let canonical_matches = matching_height
-                .iter()
-                .filter(|cp| {
-                    cp.state_root_hex == e.state_root_hex
-                        && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-                })
-                .count();
-            if canonical_matches != 1 {
-                return Ok(best_checkpoint);
-            }
+        let canonical_matches = matching_height
+            .iter()
+            .filter(|cp| {
+                cp.state_root_hex == e.state_root_hex
+                    && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+            })
+            .count();
+        if matching_height.len() > 1 && canonical_matches != 1 {
+            return Ok(best_checkpoint);
+        }
+        if !matching_height.is_empty() && canonical_matches == 0 {
+            return Ok(best_checkpoint);
         }
 
         for cp in matching_height {

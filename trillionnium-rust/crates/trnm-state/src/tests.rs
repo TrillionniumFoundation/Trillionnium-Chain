@@ -2849,6 +2849,60 @@ fn wal_checkpoint_verification_fails_closed_on_incomplete_checkpoint_metadata_at
 }
 
 #[test]
+fn wal_checkpoint_verification_fails_closed_when_checkpoint_metadata_exists_but_does_not_match_committed_wal_entry() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+    let h2 = e2.content_hash_hex();
+    let e3 = WalMeta {
+        height: 3,
+        round: 0,
+        proposal_hash: "p3".into(),
+        committed: true,
+        state_root_hex: "r3".into(),
+        prev_hash_hex: Some(h2),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "tampered-root".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+        CheckpointMeta {
+            height: 3,
+            state_root_hex: "r3".into(),
+            wal_entry_hash_hex: e3.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, e3])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
 fn wal_content_hash_length_frames_variable_metadata_fields() {
     let a = WalMeta {
         height: 7,
