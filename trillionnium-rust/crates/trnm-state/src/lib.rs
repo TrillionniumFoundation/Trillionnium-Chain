@@ -387,6 +387,9 @@ fn validated_restorable_pending_resolve_snapshot(
     if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
         return None;
     }
+    if task.challenger.is_none() {
+        return None;
+    }
     if snapshot.slash_worker && task.worker.is_none() {
         return None;
     }
