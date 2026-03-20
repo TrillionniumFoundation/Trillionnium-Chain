@@ -1984,6 +1984,18 @@ pub fn verify_wal_and_find_checkpoint(
             return Ok(best_checkpoint);
         }
 
+        if let Some(first) = matching_height_checkpoints.first() {
+            if matching_height_checkpoints.iter().any(|cp| {
+                cp.state_root_hex != first.state_root_hex
+                    || cp.wal_entry_hash_hex != first.wal_entry_hash_hex
+            }) {
+                // Fail closed on ambiguous same-height checkpoint claims. A recoverable height must
+                // resolve to one auditable (state root, WAL hash) tuple; extra stale/forked tuples
+                // are not snapshot-complete proof material.
+                return Ok(best_checkpoint);
+            }
+        }
+
         if matching_height_checkpoints.iter().any(|cp| {
             (cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
                 && cp.state_root_hex != e.state_root_hex)
@@ -5164,11 +5176,12 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "replayed same-height checkpoint tuples must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -5261,10 +5274,12 @@ mod tests {
         ];
 
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+            .unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "uncommitted replay checkpoint tuples must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -5310,7 +5325,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
+    fn wal_checkpoint_verification_rejects_stale_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -5348,12 +5363,12 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
-        assert_eq!(got.wal_entry_hash_hex, h2);
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "stale duplicate checkpoint tuples at the same height must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -5628,11 +5643,12 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "same-height stale checkpoint tuples must fail closed back to the last unambiguous checkpoint even when future checkpoints are ignored"
+        );
     }
 
     #[test]
