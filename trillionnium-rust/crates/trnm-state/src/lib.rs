@@ -239,6 +239,18 @@ fn resolve_actor_has_forbidden_separator(token: &str) -> bool {
         || token.contains('、')
 }
 
+fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
+    task.metadata
+        .as_ref()
+        .and_then(|metadata| metadata.metering.as_ref())
+        .map(|metering| {
+            !metering.workload_class.trim().is_empty()
+                && !metering.metering_schema.trim().is_empty()
+                && !metering.receipt_hash.trim().is_empty()
+        })
+        .unwrap_or(true)
+}
+
 fn resolve_actor_is_reserved(token: &str) -> bool {
     token.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
         || token.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
@@ -781,7 +793,7 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
-                if task.task_id != id {
+                if task.task_id != id || !task_snapshot_metadata_is_complete(&task) {
                     self.objects.remove(&id);
                     return;
                 }

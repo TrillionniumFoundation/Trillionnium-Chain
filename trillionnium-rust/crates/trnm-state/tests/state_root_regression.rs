@@ -1748,6 +1748,86 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
 }
 
 #[test]
+fn restore_task_incomplete_metering_metadata_fails_closed_and_rewinds_to_baseline_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_task(
+        10_303,
+        Some(TaskObject {
+            task_id: 10_303,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("audit-proof snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:30:00Z".into()),
+                    provenance_index: Some("prov-task-10303".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "   ".into(),
+                    prompt_tokens: 10,
+                    generated_tokens: 20,
+                    decode_steps: 30,
+                    kv_bytes_moved: 40,
+                    normalized_work_units: 50,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 2,
+                    decode_step_weight: 3,
+                    kv_byte_weight: 4,
+                    min_accept_work_units: 5,
+                    challenge_success_bounty_base: 6,
+                    challenge_success_bounty_per_work_unit_num: 7,
+                    challenge_success_bounty_per_work_unit_den: 8,
+                    worker_completion_bonus_per_work_unit_num: 9,
+                    worker_completion_bonus_per_work_unit_den: 10,
+                    worker_slash_rebate_per_work_unit_num: 11,
+                    worker_slash_rebate_per_work_unit_den: 12,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x21; 32]),
+            result_hash: Some([0x34; 32]),
+            reveal_salt: Some([0x55; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(52),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(10_303).is_none(),
+        "restore_task should fail closed when metering proof metadata is incomplete"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting incomplete metering proof metadata must preserve the canonical baseline state root"
+    );
+}
+
+#[test]
 fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entry() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
