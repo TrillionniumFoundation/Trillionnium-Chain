@@ -547,6 +547,48 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
+fn restore_pending_gov_update_zero_key_id_rewinds_state_root_by_removing_target_entry() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+    let queued_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    let empty_root = StateStore::new().state_root();
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "restore_pending_gov_update should fail closed by removing the requested queue entry when the supplied snapshot key_id is zero"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "zero-key-id restore snapshot should clear the requested pending governance entry"
+    );
+    assert_ne!(
+        queued_root,
+        state.state_root(),
+        "state_root should account for fail-closed removal when a pending governance restore snapshot carries a zero key_id"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
