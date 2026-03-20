@@ -84,3 +84,40 @@ not-json
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
 }
+
+#[test]
+fn load_ingress_records_bounds_quarantine_journal_growth() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let fixture = (0..300)
+        .map(|idx| format!("not-json-{idx}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&path, format!("{fixture}\n")).expect("write oversized ingress quarantine fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "all malformed rows should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read bounded quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries.len(),
+        256,
+        "quarantine journal should stay capped under malformed ingress bursts"
+    );
+    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("not-json-44"));
+    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("not-json-299"));
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}

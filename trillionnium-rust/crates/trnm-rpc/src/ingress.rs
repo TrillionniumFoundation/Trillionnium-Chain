@@ -1,6 +1,5 @@
 use std::{
-    fs::{self, OpenOptions},
-    io::Write,
+    fs,
     path::{Path, PathBuf},
 };
 
@@ -34,6 +33,8 @@ fn stable_line_hash(raw: &str) -> u64 {
     hash
 }
 
+const MAX_INGRESS_QUARANTINE_RECORDS: usize = 256;
+
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     if entries.is_empty() {
         return Ok(());
@@ -45,37 +46,50 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     }
 
     let mut seen = std::collections::HashSet::new();
+    let mut retained = Vec::new();
     if let Ok(existing_raw) = fs::read_to_string(&quarantine_path) {
         for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
-            if let Ok(existing) = serde_json::from_str::<IngressQuarantineRecord>(line) {
-                seen.insert((existing.source_path, existing.line_hash, existing.raw_line));
+            let Ok(existing) = serde_json::from_str::<IngressQuarantineRecord>(line) else {
+                continue;
+            };
+            let key = (
+                existing.source_path.clone(),
+                existing.line_hash,
+                existing.raw_line.clone(),
+            );
+            if seen.insert(key) {
+                retained.push(existing);
             }
         }
     }
 
-    let fresh: Vec<&IngressQuarantineRecord> = entries
-        .iter()
-        .filter(|entry| {
-            seen.insert((
-                entry.source_path.clone(),
-                entry.line_hash,
-                entry.raw_line.clone(),
-            ))
-        })
-        .collect();
-    if fresh.is_empty() {
+    let mut changed = false;
+    for entry in entries {
+        let key = (
+            entry.source_path.clone(),
+            entry.line_hash,
+            entry.raw_line.clone(),
+        );
+        if seen.insert(key) {
+            retained.push(entry.clone());
+            changed = true;
+        }
+    }
+    if retained.len() > MAX_INGRESS_QUARANTINE_RECORDS {
+        let drop_count = retained.len() - MAX_INGRESS_QUARANTINE_RECORDS;
+        retained.drain(0..drop_count);
+        changed = true;
+    }
+    if !changed {
         return Ok(());
     }
 
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&quarantine_path)?;
-    for entry in fresh {
-        writeln!(file, "{}", serde_json::to_string(entry)?)?;
+    let mut out = String::new();
+    for entry in retained {
+        out.push_str(&serde_json::to_string(&entry)?);
+        out.push('\n');
     }
-    file.sync_all()?;
-    Ok(())
+    atomic_write_text_file(&quarantine_path, &out)
 }
 
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
