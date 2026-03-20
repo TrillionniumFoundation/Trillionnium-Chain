@@ -775,20 +775,50 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
     GOV_EXPLICIT_VALIDATOR_KEYS.contains(&key)
 }
 
-fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
-    if !GOV_ALLOWED_KEYS.contains(&key) {
+fn validate_governance_validator_coverage_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> Result<(), String> {
+    if !allowed_keys.contains(&key) {
         return Err(format!(
             "no explicit validator registered for governance key: {}",
             key
         ));
     }
-    if !has_explicit_gov_param_validator(key) {
+    if !explicit_validator_keys.contains(&key) {
         return Err(format!(
             "governance validator coverage missing for allowed key: {}",
             key
         ));
     }
+    if !explicit_value_rule_keys.contains(&key) {
+        return Err(format!(
+            "governance validator missing explicit value rule for allowed key: {}",
+            key
+        ));
+    }
+    if !has_explicit_gov_param_value_match_coverage_from_lists(
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    ) {
+        return Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        ));
+    }
     Ok(())
+}
+
+fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
+    validate_governance_validator_coverage_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
 }
 
 fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
@@ -835,18 +865,6 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     validate_requested_governance_key_canonical(key)?;
     validate_governance_validator_coverage(key)?;
     validate_governance_sensitive_key_coverage(key)?;
-    if !has_explicit_gov_param_value_rule(key) {
-        return Err(format!(
-            "governance validator missing explicit value rule for allowed key: {}",
-            key
-        ));
-    }
-    if !has_explicit_gov_param_value_match_coverage(key) {
-        return Err(format!(
-            "governance validator missing explicit match coverage for allowed key: {}",
-            key
-        ));
-    }
 
     match key {
         "max_block_ms" => {
@@ -5253,8 +5271,9 @@ mod tests {
                 "allowed governance key missing explicit validator: {}",
                 key
             );
-            validate_governance_validator_coverage(key)
-                .expect("allowed governance key must remain covered by an explicit validator");
+            validate_governance_validator_coverage(key).expect(
+                "allowed governance key must remain covered by explicit validator+value-rule coverage",
+            );
         }
 
         let err = validate_governance_validator_coverage("not_whitelisted")
@@ -5262,6 +5281,38 @@ mod tests {
         assert!(
             err.contains("no explicit validator registered for governance key: not_whitelisted"),
             "unexpected validator coverage error for non-whitelisted key: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_value_rule_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit value-rule coverage");
+
+        assert!(
+            err.contains("governance validator missing explicit value rule for allowed key: max_parallel_workers"),
+            "unexpected validator coverage error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_validator_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit validator coverage");
+
+        assert!(
+            err.contains("governance validator coverage missing for allowed key: max_parallel_workers"),
+            "unexpected validator coverage error: {err}"
         );
     }
 
