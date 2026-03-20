@@ -7,6 +7,21 @@ use trnm_types::TaskStatus;
 use crate::accounting::balance_deltas_for_transition;
 use crate::events::{emit_timeout_event, status_name};
 
+pub(crate) fn timeout_bond_disposition(
+    st: &StateStore,
+    task_id: u64,
+    from_status: TaskStatus,
+) -> Option<&'static str> {
+    if matches!(from_status, TaskStatus::Challenged) {
+        st.get_task(task_id).and_then(|t| {
+            t.challenge_bond_forfeited
+                .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+        })
+    } else {
+        None
+    }
+}
+
 pub(crate) fn ordered_known_task_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
     let mut ordered: Vec<u64> = known_task_ids.iter().copied().collect();
     ordered.sort_unstable();
@@ -41,7 +56,8 @@ pub(crate) fn scan_and_apply_timeouts(
             // challenged settlement path at all.
             continue;
         }
-        let from_status = format!("{:?}", task.status);
+        let from_status = task.status.clone();
+        let from_status_name = format!("{:?}", from_status);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
@@ -53,20 +69,13 @@ pub(crate) fn scan_and_apply_timeouts(
             let root = hex::encode(st.state_root());
             let (treasury_delta, challenger_delta) =
                 balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = if from_status == "Challenged" {
-                st.get_task(task_id).and_then(|t| {
-                    t.challenge_bond_forfeited
-                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
-                })
-            } else {
-                None
-            };
+            let bond_disposition = timeout_bond_disposition(st, task_id, from_status);
             emit_timeout_event(
                 st,
                 task_id,
                 tx_id_seed.saturating_add(migrated),
                 current_height,
-                &from_status,
+                &from_status_name,
                 &to_status,
                 &root,
                 &treasury_delta,
@@ -76,7 +85,7 @@ pub(crate) fn scan_and_apply_timeouts(
             );
             println!(
                 "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, from_status, to_status
+                current_height, task_id, from_status_name, to_status
             );
         }
     }

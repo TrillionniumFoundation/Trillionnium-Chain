@@ -5025,6 +5025,57 @@
     }
 
     #[test]
+    fn timeout_bond_disposition_only_applies_to_challenged_transitions() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 1_000_000);
+        st.set_balance("worker7000", 1_000);
+
+        let r1 = apply_create_task(&mut st, 7000, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(7000, &result_hash, &reveal_salt, "worker7000");
+        let r2 = apply_accept_task(&mut st, r1, "worker7000".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7000".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let challenged = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .and_then(|revealed| {
+            trnm_pouw::apply_challenge_at_height(
+                &mut st,
+                revealed,
+                "challenger".into(),
+                10,
+                "challenger".into(),
+                120,
+            )
+        })
+        .unwrap();
+
+        let _ = apply_timeout(&mut st, challenged, 1_000).unwrap();
+
+        assert_eq!(
+            timeout_bond_disposition(&st, 7000, TaskStatus::Challenged),
+            Some("refunded")
+        );
+        assert_eq!(
+            timeout_bond_disposition(&st, 7000, TaskStatus::Revealed),
+            None
+        );
+    }
+
+    #[test]
     fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
