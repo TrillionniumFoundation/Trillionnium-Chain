@@ -2596,6 +2596,30 @@ fn wal_checkpoint_verification_falls_back_on_chain_break() {
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_metadata_only_chain_starting_above_genesis() {
+    let e10 = WalMeta {
+        height: 10,
+        round: 0,
+        proposal_hash: "p10".into(),
+        committed: true,
+        state_root_hex: "r10".into(),
+        prev_hash_hex: None,
+    };
+
+    let checkpoints = vec![CheckpointMeta {
+        height: 10,
+        state_root_hex: "r10".into(),
+        wal_entry_hash_hex: e10.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e10]).unwrap();
+    assert!(
+        got.is_none(),
+        "restart recovery must fail closed for metadata-only WAL chains that start above genesis height"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
     let e1 = WalMeta {
         height: 10,
