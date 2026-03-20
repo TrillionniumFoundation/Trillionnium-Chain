@@ -136,6 +136,14 @@ fn combined_access_domain_versions_are_consistent(reads: &[ObjectRef], writes: &
     true
 }
 
+#[inline]
+fn debug_assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
+    debug_assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+}
+
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
@@ -401,6 +409,8 @@ pub fn build_parallel_groups_profile_with_strategy(
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
+        debug_assert_tx_access_domain_versions_are_consistent(&tx);
+
         // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
         let read_keys = dedup_access_keys(&tx.read_set);
         let write_keys = dedup_access_keys(&tx.write_set);
@@ -491,6 +501,7 @@ fn build_parallel_groups_aggressive_profile(
         let mut conflict_hits = 0usize;
 
         for tx in ordered {
+            debug_assert_tx_access_domain_versions_are_consistent(&tx);
             let read_keys = dedup_access_keys(&tx.read_set);
             let write_keys = dedup_access_keys(&tx.write_set);
 
@@ -587,8 +598,10 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let read_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").read_set);
-        let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
+        let tx_ref = tx_slot.as_ref().expect("tx must exist");
+        debug_assert_tx_access_domain_versions_are_consistent(tx_ref);
+        let read_keys = dedup_access_keys(&tx_ref.read_set);
+        let write_keys = dedup_access_keys(&tx_ref.write_set);
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
@@ -1592,6 +1605,22 @@ mod tests {
             ObjectRef { id: 42, version: 2 },
             o(99),
         ]));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_consistent_across_read_write_split() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 42, version: 1 }, o(99)],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_across_read_write_split() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 42, version: 2 }],
+        ));
     }
 
     #[test]
