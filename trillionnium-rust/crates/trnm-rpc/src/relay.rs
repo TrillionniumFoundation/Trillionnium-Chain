@@ -601,7 +601,7 @@ impl RelaySessionState {
 
     fn advance_poll_start_idx(&mut self) {
         while let Some(env) = self.queue.get(self.poll_start_idx) {
-            if self.acked_ids.contains(&env.envelope_id) {
+            if self.acked_ids.remove(&env.envelope_id) {
                 self.poll_start_idx += 1;
             } else {
                 break;
@@ -811,7 +811,7 @@ impl RelayService {
             ));
         };
 
-        let before = state.acked_ids.len();
+        let mut acked = 0usize;
 
         // Backward-compatible id ack path: only accept ids that exist in this session queue.
         // Avoid rebuilding the known-id set when clients use the newer upto_seq-only path,
@@ -819,8 +819,8 @@ impl RelayService {
         if !req.envelope_ids.is_empty() {
             let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
             for id in req.envelope_ids {
-                if known_ids.contains(&id) {
-                    state.acked_ids.insert(id);
+                if known_ids.contains(&id) && state.acked_ids.insert(id) {
+                    acked += 1;
                 }
             }
         }
@@ -835,7 +835,9 @@ impl RelayService {
                 if env.sequence > upto_seq {
                     break;
                 }
-                state.acked_ids.insert(env.envelope_id);
+                if state.acked_ids.insert(env.envelope_id) {
+                    acked += 1;
+                }
             }
         }
 
@@ -843,7 +845,7 @@ impl RelayService {
 
         Ok(RelayAckResponse {
             session_id: req.session_id,
-            acked: state.acked_ids.len().saturating_sub(before),
+            acked,
         })
     }
 
@@ -1304,6 +1306,7 @@ mod tests {
             let g = relay.sessions.lock().unwrap();
             let state = g.get("s2-cursor").unwrap();
             assert_eq!(state.poll_start_idx, 2);
+            assert!(state.acked_ids.is_empty());
         }
 
         let pending = relay
