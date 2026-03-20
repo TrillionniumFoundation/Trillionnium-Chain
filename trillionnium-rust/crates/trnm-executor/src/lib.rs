@@ -48,6 +48,9 @@ pub struct AutoAdaptiveDecision {
 }
 
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    assert_tx_access_domain_versions_are_consistent(a);
+    assert_tx_access_domain_versions_are_consistent(b);
+
     // Read-only pairs can never conflict; skip three intersection probes in
     // the common telemetry/transfer path where writes are absent.
     if a.write_set.is_empty() && b.write_set.is_empty() {
@@ -1471,6 +1474,21 @@ mod tests {
             &tx(1, vec![o(1)], vec![]),
             &tx(2, vec![o(2)], vec![])
         ));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn detect_conflict_rejects_cross_domain_version_skew_for_same_object_id() {
+        let skewed = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+        let other = tx(2, vec![], vec![o(9)]);
+
+        let _ = detect_conflict(&skewed, &other);
     }
 
     #[test]
