@@ -1926,6 +1926,15 @@ pub fn verify_wal_and_find_checkpoint(
             checkpoints.iter().filter(|cp| cp.height == e.height).collect();
 
         if matching_height_checkpoints.iter().any(|cp| {
+            cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty()
+        }) {
+            // Fail closed on incomplete checkpoint proof metadata. Recovery checkpoints must carry
+            // both the claimed state root and the corresponding WAL entry hash; blank fields are
+            // not auditable proof material and must not be treated as recoverable state.
+            return Ok(best_checkpoint);
+        }
+
+        if matching_height_checkpoints.iter().any(|cp| {
             (cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
                 && cp.state_root_hex != e.state_root_hex)
                 || (cp.state_root_hex == e.state_root_hex
@@ -5619,6 +5628,47 @@ mod tests {
             got.map(|cp| cp.height),
             Some(1),
             "conflicting checkpoint metadata for the same height/state root must fail closed back to the last unambiguous checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: " ".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "blank checkpoint proof metadata must fail closed back to the last complete checkpoint"
         );
     }
 
