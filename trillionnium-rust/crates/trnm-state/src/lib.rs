@@ -634,7 +634,7 @@ impl StateStore {
                     slash_worker,
                     confirmations: 0,
                     first_approver: approver.trim().to_string(),
-                    authority_set: authority_set.to_string(),
+                    authority_set: authority_canonical.clone(),
                     task_version,
                 });
         if entry.slash_worker != slash_worker {
@@ -4680,6 +4680,47 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_ignores_case_and_order_only_drift_in_live_pending_resolve_authority_set() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
+
+        assert_eq!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "live pending resolve approvals should hash the effective authority-set membership, not case/order-only surface drift"
+        );
+        assert_eq!(
+            st_b.pending_resolve_approval_snapshot(501)
+                .expect("staged approval snapshot")
+                .authority_set,
+            "authority-a,authority-b",
+            "live staged authority-set evidence should normalize to the canonical membership surface"
+        );
+        assert_eq!(
+            st_b.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-a"),
+            "canonicalizing authority membership must not erase first-approver audit spelling"
         );
     }
 
