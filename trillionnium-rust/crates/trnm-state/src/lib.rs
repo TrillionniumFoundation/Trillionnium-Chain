@@ -1905,6 +1905,39 @@ mod tests {
     use trnm_types::TaskStatus;
 
     #[test]
+    fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: "ab".repeat(32),
+            wal_entry_hash_hex: "cd".repeat(32),
+        };
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal".into(),
+            committed: true,
+            state_root_hex: "ef".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+
+        assert!(checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry));
+
+        let mut noncanonical_checkpoint = checkpoint.clone();
+        noncanonical_checkpoint.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&noncanonical_checkpoint, &wal_entry),
+            "checkpoint state-root evidence must be canonical hex"
+        );
+
+        let mut noncanonical_wal = wal_entry.clone();
+        noncanonical_wal.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &noncanonical_wal),
+            "wal state-root evidence must be canonical hex"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
