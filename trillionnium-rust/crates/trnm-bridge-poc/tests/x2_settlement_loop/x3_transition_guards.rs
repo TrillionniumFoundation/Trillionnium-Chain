@@ -1,4 +1,5 @@
 use super::*;
+use trnm_bridge_poc::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
 
 #[test]
 fn x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert() {
@@ -145,6 +146,37 @@ fn x3_prep_confirm_equal_to_observed_target_height_is_rejected_without_state_cha
     assert_eq!(
         err,
         trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 699 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_with_non_monotonic_heartbeat_payload_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 701 }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }

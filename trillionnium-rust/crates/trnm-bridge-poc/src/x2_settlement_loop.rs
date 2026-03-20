@@ -45,6 +45,13 @@ fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Op
         .unwrap_or((None, None, None))
 }
 
+fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
+    heartbeat
+        .heartbeat
+        .map(|h| h.source_height == 0 || h.target_height == 0 || h.target_height > h.source_height)
+        .unwrap_or(false)
+}
+
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
     token: &CapabilityToken,
@@ -80,6 +87,10 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if has_invalid_heartbeat_bounds(heartbeat) {
+                return Err(SettlementError::InvalidHeight { height });
+            }
+
             if let Some(observed) = heartbeat.heartbeat {
                 let max_confirm_height = observed.source_height.saturating_add(1);
                 if height <= observed.target_height || height > max_confirm_height {
