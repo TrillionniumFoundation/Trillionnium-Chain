@@ -245,6 +245,7 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "monetary_base_issuance_per_tick",
     "monetary_base_burn_per_tick",
 ];
+const GOV_EXPLICIT_VALUE_RULE_KEYS: &[&str] = GOV_EXPLICIT_VALIDATOR_KEYS;
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
@@ -330,6 +331,7 @@ fn validate_governance_registry_shape_lists(
     allowed_keys: &[&str],
     sensitive_keys: &[&str],
     explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
     pinned_key_ids: &[(&str, u64)],
 ) -> Result<(), String> {
     for key in allowed_keys {
@@ -396,6 +398,55 @@ fn validate_governance_registry_shape_lists(
         }
     }
 
+    for key in explicit_value_rule_keys {
+        validate_governance_registry_key_canonical("explicit-value-rule registry", key)?;
+    }
+    let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
+        explicit_value_rule_keys.iter().copied().collect();
+    if explicit_value_rule_unique.len() != explicit_value_rule_keys.len() {
+        return Err("governance explicit-value-rule registry contains duplicate entries".into());
+    }
+
+    if let Some(err) =
+        format_governance_registry_membership_drift(&allowed_unique, &explicit_value_rule_unique)
+    {
+        return Err(err.replace(
+            "explicit-validator registry",
+            "explicit-value-rule registry",
+        ));
+    }
+
+    for (index, (allowed_key, explicit_value_rule_key)) in allowed_keys
+        .iter()
+        .zip(explicit_value_rule_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != explicit_value_rule_key {
+            return Err(format!(
+                "governance explicit-value-rule registry order drifted at index {}: allowed_key={}, explicit_value_rule_key={}",
+                index, allowed_key, explicit_value_rule_key
+            ));
+        }
+    }
+
+    for key in &allowed_unique {
+        if !explicit_value_rule_unique.contains(key) {
+            return Err(format!(
+                "governance explicit value-rule coverage missing for allowed key: {}",
+                key
+            ));
+        }
+    }
+
+    for key in &explicit_value_rule_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance explicit-value-rule registry contains non-whitelisted key: {}",
+                key
+            ));
+        }
+    }
+
     for key in &sensitive_unique {
         if !allowed_unique.contains(key) {
             return Err(format!(
@@ -443,6 +494,7 @@ fn validate_governance_registry_shape() -> Result<(), String> {
         GOV_ALLOWED_KEYS,
         GOV_SENSITIVE_KEYS,
         GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
         GOV_PINNED_KEY_IDS,
     )
 }
@@ -675,34 +727,7 @@ fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
 }
 
 fn has_explicit_gov_param_value_rule(key: &str) -> bool {
-    matches!(
-        key,
-        "max_block_ms"
-            | "max_parallel_workers"
-            | "min_worker_stake"
-            | "challenge_min_bond"
-            | "challenge_min_bond_bounty_bps"
-            | "challenge_min_bond_worker_stake_bps"
-            | "challenge_window_blocks"
-            | "challenge_success_bounty"
-            | "llm_meter_prompt_token_weight"
-            | "llm_meter_generated_token_weight"
-            | "llm_meter_decode_step_weight"
-            | "llm_meter_kv_byte_weight"
-            | "llm_meter_min_accept_work_units"
-            | "llm_meter_challenge_success_bounty_per_work_unit_num"
-            | "llm_meter_challenge_success_bounty_per_work_unit_den"
-            | "llm_meter_worker_completion_bonus_per_work_unit_num"
-            | "llm_meter_worker_completion_bonus_per_work_unit_den"
-            | "llm_meter_worker_slash_rebate_per_work_unit_num"
-            | "llm_meter_worker_slash_rebate_per_work_unit_den"
-            | "resolve_authority"
-            | "emergency_pause"
-            | "monetary_policy_tick_interval_blocks"
-            | "monetary_policy_tick_cooldown_blocks"
-            | "monetary_base_issuance_per_tick"
-            | "monetary_base_burn_per_tick"
-    )
+    GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
 }
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
@@ -2962,6 +2987,7 @@ mod tests {
             &["max_block_ms", "max_parallel_workers"],
             &[],
             &["max_block_ms", "max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
             &[],
         )
         .expect_err("duplicate explicit-validator registry entries must fail closed");
@@ -2973,14 +2999,57 @@ mod tests {
     }
 
     #[test]
-    fn governance_validator_registry_keys_all_have_explicit_value_rules() {
-        for key in GOV_EXPLICIT_VALIDATOR_KEYS {
+    fn governance_explicit_value_rule_registry_merge_gate_is_explicit() {
+        let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALUE_RULE_KEYS.iter().copied().collect();
+        assert_eq!(
+            explicit_value_rule_unique.len(),
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            "explicit value-rule registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit value-rule registry drifted from allowed governance-key registry"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            "explicit value-rule registry drifted from explicit validator-key registry"
+        );
+
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                explicit_value_rule_unique.contains(key),
+                "allowed governance key missing from explicit value-rule registry: {}",
+                key
+            );
             assert!(
                 has_explicit_gov_param_value_rule(key),
-                "explicit validator key missing value rule: {key}"
+                "allowed governance key missing explicit value rule: {}",
+                key
             );
         }
         assert!(!has_explicit_gov_param_value_rule("forbidden_key"));
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_value_rule_key"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_value_rule_key"), "{err}");
     }
 
     #[test]
@@ -2988,6 +3057,7 @@ mod tests {
         let err = validate_governance_registry_shape_lists(
             &["max_block_ms", "MAX_PARALLEL_WORKERS"],
             &[],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
             &["max_block_ms", "MAX_PARALLEL_WORKERS"],
             &[],
         )
@@ -3006,6 +3076,7 @@ mod tests {
             &["max_block_ms", "max parallel workers"],
             &[],
             &["max_block_ms", "max parallel workers"],
+            &["max_block_ms", "max parallel workers"],
             &[],
         )
         .expect_err("registry keys with internal whitespace must fail closed");
@@ -3023,6 +3094,7 @@ mod tests {
             &["max_block_ms", "emergency_pause"],
             &[],
             &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
             &[(" emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
         )
         .expect_err("whitespace-padded pinned governance keys must fail closed");
@@ -3039,6 +3111,7 @@ mod tests {
             &["max_block_ms", "max_parallel_workers"],
             &[],
             &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
             &[],
         )
         .expect_err("explicit-validator registry membership drift must fail closed");
@@ -3057,6 +3130,7 @@ mod tests {
             &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
             &[],
             &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
             &[],
         )
         .expect_err("explicit-validator registry ordering drift must fail closed");
@@ -3075,6 +3149,7 @@ mod tests {
             &["max_block_ms", "emergency_pause"],
             &[],
             &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
             &[("ghost_pinned_key", EMERGENCY_PAUSE_KEY_ID)],
         )
         .expect_err("pinned governance keys must stay inside the allowed registry");
@@ -3090,6 +3165,7 @@ mod tests {
         let err = validate_governance_registry_shape_lists(
             &["max_block_ms", "emergency_pause", "resolve_authority"],
             &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
             &["max_block_ms", "emergency_pause", "resolve_authority"],
             &[
                 ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
