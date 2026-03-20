@@ -1149,7 +1149,13 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     let key_b = tx
         .write_set
         .get(1)
-        .or_else(|| tx.read_set.get(1))
+        .or_else(|| {
+            if tx.write_set.is_empty() {
+                tx.read_set.get(1)
+            } else {
+                tx.read_set.first()
+            }
+        })
         .map(|o| o.id)
         .unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
@@ -1854,6 +1860,21 @@ mod tests {
             high_bucket,
             ((1 + (1u64 << 40)) % buckets_n as u64) as usize
         );
+    }
+
+    #[test]
+    fn hot_bucket_hint_uses_first_read_key_as_secondary_mixed_domain_signal() {
+        let buckets_n = 97usize;
+        let baseline = tx(1, vec![], vec![o(5)]);
+        let mixed = tx(2, vec![o(7)], vec![o(5)]);
+
+        let baseline_bucket = hot_bucket_hint(&baseline, buckets_n);
+        let mixed_bucket = hot_bucket_hint(&mixed, buckets_n);
+
+        // A single-write + read tx should hash over the mixed access domain rather
+        // than ignoring the first read key and collapsing onto the write-only bucket.
+        assert_ne!(baseline_bucket, mixed_bucket);
+        assert_eq!(mixed_bucket, ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize);
     }
 
     #[test]
