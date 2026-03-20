@@ -1314,8 +1314,19 @@ impl StateStore {
         Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
     }
 
+    fn canonical_pending_gov_update_for_key(&self, key: &str) -> Option<&PendingGovParamUpdate> {
+        let pending = self.pending_gov_updates.get(key)?;
+        if pending.key != key
+            || validate_gov_param_registry_binding(&self.gov_param_key_index, key, pending.key_id)
+                .is_err()
+        {
+            return None;
+        }
+        Some(pending)
+    }
+
     pub fn pending_gov_update(&self, key: &str) -> Option<PendingGovParamUpdate> {
-        self.pending_gov_updates.get(key).cloned()
+        self.canonical_pending_gov_update_for_key(key).cloned()
     }
 
     pub fn restore_pending_gov_update(
@@ -3371,6 +3382,25 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn pending_governance_accessor_fails_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "algorand_governance_key_id".into(),
+            PendingGovParamUpdate {
+                key_id: 9_200,
+                key: "algorand_governance_key_id".into(),
+                value: "key-42".into(),
+                activate_at_height: 77_777,
+            },
+        );
+
+        assert!(
+            st.pending_gov_update("algorand_governance_key_id").is_none(),
+            "pending accessor must fail closed for a non-allowlisted governance registry entry"
         );
     }
 
