@@ -22,6 +22,17 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
+    if session_id.trim() != session_id
+        || session_id
+            .as_bytes()
+            .iter()
+            .any(|b| b.is_ascii_control())
+    {
+        return Err(bad_request(
+            "invalid_session",
+            format!("{field} must be canonical"),
+        ));
+    }
     Ok(())
 }
 
@@ -1629,6 +1640,17 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/empty_session"));
+    }
+
+    #[test]
+    fn relay_open_rejects_non_canonical_session_id() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .open(RelayOpenRequest {
+                session_id: " s1\n".into(),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
     }
 
     #[test]
