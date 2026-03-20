@@ -1348,9 +1348,18 @@ impl StateStore {
 
     fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
         let id = self.gov_param_key_index.get(key).copied()?;
+        if validate_gov_param_key_id_policy(key, id).is_err() {
+            return None;
+        }
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
+            ObjectValue::GovParam(p)
+                if p.key == key
+                    && p.key_id == id
+                    && validate_gov_param_key_id_policy(&p.key, p.key_id).is_ok() =>
+            {
+                Some((id, p))
+            }
             _ => None,
         }
     }
@@ -3616,6 +3625,37 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn emergency_pause_accessors_fail_closed_when_registry_and_object_share_same_wrong_key_id() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 8_000,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+
+        assert!(
+            st.gov_param_value("emergency_pause").is_none(),
+            "string accessor must fail closed when a pinned governance key is routed through a non-canonical key id"
+        );
+        assert!(
+            st.gov_param_string("emergency_pause").is_none(),
+            "public string accessor must fail closed when registry and object agree on the same wrong pinned key id"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "emergency pause must remain disabled when accessor routing observes a non-canonical pinned key id"
+        );
     }
 
     #[test]
