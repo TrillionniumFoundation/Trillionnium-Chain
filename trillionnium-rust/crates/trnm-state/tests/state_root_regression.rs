@@ -4001,6 +4001,13 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal),
         "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
     );
+
+    let mut mismatched_height_checkpoint = checkpoint.clone();
+    mismatched_height_checkpoint.height = wal.height + 1;
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_height_checkpoint, &wal),
+        "checkpoint height must bind to the exact WAL height so audit evidence surfaces cannot replay canonical hashes across different checkpoint slots"
+    );
 }
 
 #[test]
