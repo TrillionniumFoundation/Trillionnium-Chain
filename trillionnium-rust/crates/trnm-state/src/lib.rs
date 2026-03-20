@@ -1356,7 +1356,13 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key {
+                if snapshot.key != key
+                    || snapshot.key_id == 0
+                    || snapshot.activate_at_height == 0
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || !is_sensitive_gov_param(&snapshot.key)
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                {
                     self.pending_gov_updates.remove(key);
                     return;
                 }

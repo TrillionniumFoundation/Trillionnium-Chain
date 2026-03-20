@@ -3429,6 +3429,37 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
+fn restore_pending_gov_update_invalid_sensitive_snapshot_fails_closed_without_materializing_queue_entry() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "challenge_min_bond".to_string(),
+            value: "0".to_string(),
+            activate_at_height: 0,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the snapshot is not a valid staged sensitive update"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "invalid pending governance snapshots must not perturb the deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after rejecting an invalid pending governance snapshot should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
