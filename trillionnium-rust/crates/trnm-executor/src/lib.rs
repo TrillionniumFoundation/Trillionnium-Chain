@@ -1162,37 +1162,33 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
 
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
-    let key_a = tx
-        .write_set
-        .first()
-        .or_else(|| tx.read_set.first())
-        .map(|o| o.id)
-        .unwrap_or(0);
-    let key_b = if tx.write_set.is_empty() {
-        tx.read_set
-            .iter()
-            .skip(1)
-            .map(|o| o.id)
-            .filter(|&id| id != key_a)
-            .min()
-    } else {
-        tx.write_set
-            .iter()
-            .skip(1)
-            .chain(tx.read_set.iter())
-            .map(|o| o.id)
-            .filter(|&id| id != key_a)
-            .min()
-    };
+    // Select the two smallest distinct access keys across the combined
+    // read/write domain so equivalent access sets hash identically even when
+    // intra-domain ordering differs.
+    let mut key_a = None;
+    let mut key_b = None;
+    for id in tx.write_set.iter().chain(tx.read_set.iter()).map(|o| o.id) {
+        match key_a {
+            None => key_a = Some(id),
+            Some(a) if id == a => {}
+            Some(a) if id < a => {
+                key_b = Some(a);
+                key_a = Some(id);
+            }
+            Some(_) => match key_b {
+                None => key_b = Some(id),
+                Some(b) if id == b => {}
+                Some(b) if id < b => key_b = Some(id),
+                Some(_) => {}
+            },
+        }
+    }
     // Canonicalize the two-key access-domain signal so equivalent mixed
-    // read/write domains hash identically even if read/write roles flip.
-    // Keep singleton/keyless behavior unchanged by only reordering when a
-    // distinct secondary key exists, including when that real key is object id 0.
-    let (key_a, key_b) = match key_b {
-        Some(key_b) if key_b < key_a => (key_b, key_a),
-        Some(key_b) => (key_a, key_b),
-        None => (key_a, 0),
-    };
+    // read/write domains hash identically even if read/write roles flip or
+    // duplicate-heavy access lists arrive in a different order. Keep
+    // singleton/keyless behavior unchanged, including when the real key is 0.
+    let key_a = key_a.unwrap_or(0);
+    let key_b = key_b.unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
@@ -1726,6 +1722,14 @@ mod tests {
         assert!(groups.len() >= 2);
         assert!(groups[0].len() >= 2);
         assert!(groups[1].len() >= 2);
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_across_equivalent_access_domain_orderings() {
+        let write_first = tx(500, vec![o(2)], vec![o(9), o(1)]);
+        let reordered = tx(501, vec![o(9)], vec![o(2), o(1)]);
+
+        assert_eq!(hot_bucket_hint(&write_first, 8), hot_bucket_hint(&reordered, 8));
     }
 
     #[test]
