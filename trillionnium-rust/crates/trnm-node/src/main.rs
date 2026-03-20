@@ -484,6 +484,10 @@ fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
     Ok(())
 }
 
+fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
+    wal_meta_file(wal_dir).exists() || checkpoint_file(wal_dir).exists()
+}
+
 fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
@@ -491,7 +495,10 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
-    if entries.is_empty() && checkpoints.is_empty() && wal_file(wal_dir).exists() {
+    if entries.is_empty()
+        && checkpoints.is_empty()
+        && (wal_file(wal_dir).exists() || has_empty_metadata_scaffold(wal_dir))
+    {
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
@@ -8437,6 +8444,32 @@ mod tests {
         assert!(entries.is_empty());
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert!(checkpoints.is_empty());
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_normalizes_empty_metadata_scaffold_without_preexisting_consensus_wal() {
+        let wal_dir = temp_wal_dir("recover-empty-metadata-scaffold-without-wal");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(&wal_dir, &[]).unwrap();
+        persist_checkpoint_meta(&wal_dir, &[]).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
         let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
         let wal: ConsensusWal = toml::from_str(&wal).unwrap();
         assert_eq!(wal.next_height, 1);

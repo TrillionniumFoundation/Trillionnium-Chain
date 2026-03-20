@@ -1,11 +1,15 @@
 use crate::types::{ConsensusWal, RecoveredWalState};
 use crate::wal::{
-    load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta, persist_consensus_wal,
-    persist_wal_meta_entries, wal_file,
+    checkpoint_file, load_checkpoint_meta, load_wal_meta_entries, persist_checkpoint_meta,
+    persist_consensus_wal, persist_wal_meta_entries, wal_file, wal_meta_file,
 };
 use anyhow::Result;
 use std::{collections::HashSet, path::Path};
 use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta};
+
+fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
+    wal_meta_file(wal_dir).exists() || checkpoint_file(wal_dir).exists()
+}
 
 pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
@@ -14,7 +18,10 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
-    if entries.is_empty() && checkpoints.is_empty() && wal_file(wal_dir).exists() {
+    if entries.is_empty()
+        && checkpoints.is_empty()
+        && (wal_file(wal_dir).exists() || has_empty_metadata_scaffold(wal_dir))
+    {
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
