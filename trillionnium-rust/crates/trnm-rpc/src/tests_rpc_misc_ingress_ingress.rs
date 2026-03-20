@@ -53,6 +53,33 @@ not-json
         "reintroduced malformed row should not amplify quarantine noise"
     );
 
+    fs::write(
+        &path,
+        r#"not-json
+{"request_id":"req-2","task_id":10002,"channel":"telegram","user_id":"u2","session_id":"s2","text":"ok-2","idempotency_key":"k2","status":"open","created_at_unix_ms":2,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
+not-json
+"#,
+    )
+    .expect("rewrite ingress fixture with shifted malformed row");
+    let records_third = load_ingress_records();
+    assert_eq!(
+        records_third.len(),
+        1,
+        "salvage should keep valid rows even when malformed replay shifts lines"
+    );
+
+    let quarantine_raw_third = fs::read_to_string(&quarantine).expect("read quarantine file third time");
+    let entries_third: Vec<serde_json::Value> = quarantine_raw_third
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries_third.len(),
+        1,
+        "identical malformed row should stay deduped even if its line number shifts after rewrite"
+    );
+
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);

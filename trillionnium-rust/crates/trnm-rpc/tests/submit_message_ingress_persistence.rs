@@ -129,6 +129,18 @@ fn submit_message_duplicate_lookup_prefers_latest_record() {
     );
 }
 
+fn expected_stable_line_hash(raw: &str) -> u64 {
+    const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+    const FNV_PRIME: u64 = 0x00000100000001B3;
+
+    let mut hash = FNV_OFFSET_BASIS;
+    for byte in raw.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    hash
+}
+
 #[test]
 fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
     let ingress = unique_fixture_path("submit_message_quarantine_rewrite", "jsonl");
@@ -188,6 +200,14 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
         .collect();
     assert_eq!(quarantine_lines.len(), 1, "first replay should quarantine exactly once");
 
+    let quarantined: Value = serde_json::from_str(quarantine_lines[0]).expect("quarantine row json");
+    assert_eq!(quarantined["raw_line"].as_str(), Some("not-json"));
+    assert_eq!(
+        quarantined["line_hash"].as_u64(),
+        Some(expected_stable_line_hash("not-json")),
+        "quarantine line hash should remain deterministic for bounded replay dedupe"
+    );
+
     let second = run_submit("k-3");
     assert!(
         second.status.success(),
@@ -204,5 +224,13 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
         quarantine_lines_second.len(),
         1,
         "quarantine noise should stay bounded across repeated idempotent replays"
+    );
+
+    let quarantined_second: Value =
+        serde_json::from_str(quarantine_lines_second[0]).expect("quarantine row json again");
+    assert_eq!(
+        quarantined_second["line_hash"].as_u64(),
+        Some(expected_stable_line_hash("not-json")),
+        "replayed quarantine rows should preserve the deterministic dedupe key"
     );
 }

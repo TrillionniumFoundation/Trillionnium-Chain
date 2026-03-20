@@ -7,7 +7,6 @@ use std::io::{Seek, SeekFrom};
 use std::{
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
-    hash::{Hash, Hasher},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
@@ -1699,7 +1698,7 @@ fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     Ok(())
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct IngressQuarantineRecord {
     source_path: String,
     line_number: usize,
@@ -1718,9 +1717,17 @@ fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
 }
 
 fn stable_line_hash(raw: &str) -> u64 {
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    raw.hash(&mut hasher);
-    hasher.finish()
+    // Keep this deterministic across process restarts and toolchain/runtime changes
+    // so quarantine dedupe remains stable for identical bad ingress rows.
+    const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+    const FNV_PRIME: u64 = 0x00000100000001B3;
+
+    let mut hash = FNV_OFFSET_BASIS;
+    for byte in raw.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    hash
 }
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
@@ -1732,11 +1739,35 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
+
+    let mut seen = std::collections::HashSet::new();
+    if let Ok(existing_raw) = fs::read_to_string(&quarantine_path) {
+        for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
+            if let Ok(existing) = serde_json::from_str::<IngressQuarantineRecord>(line) {
+                seen.insert((existing.source_path, existing.line_hash, existing.raw_line));
+            }
+        }
+    }
+
+    let fresh: Vec<&IngressQuarantineRecord> = entries
+        .iter()
+        .filter(|entry| {
+            seen.insert((
+                entry.source_path.clone(),
+                entry.line_hash,
+                entry.raw_line.clone(),
+            ))
+        })
+        .collect();
+    if fresh.is_empty() {
+        return Ok(());
+    }
+
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(&quarantine_path)?;
-    for entry in entries {
+    for entry in fresh {
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
@@ -1781,6 +1812,15 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 quarantined.len(),
                 ingress_quarantine_file_for(&path).display()
             );
+
+            if let Err(err) = save_ingress_records(&records) {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_REWRITE] path={} retained={} err={}",
+                    path.display(),
+                    records.len(),
+                    err
+                );
+            }
         }
     }
     records
