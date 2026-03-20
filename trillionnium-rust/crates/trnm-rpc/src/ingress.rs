@@ -42,6 +42,7 @@ fn stable_line_hash(raw: &str) -> u64 {
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     const INGRESS_QUARANTINE_FILE_MAX_RECORDS: usize = 1024;
+    const INGRESS_QUARANTINE_READ_MAX_BYTES: u64 = 1_048_576;
 
     if entries.is_empty() {
         return Ok(());
@@ -52,19 +53,22 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         fs::create_dir_all(parent)?;
     }
 
-    let mut retained_lines: Vec<String> = fs::read_to_string(&quarantine_path)
-        .ok()
-        .map(|raw| {
-            raw.lines()
-                .filter(|line| !line.trim().is_empty())
-                .filter_map(|line| {
-                    serde_json::from_str::<IngressQuarantineRecord>(line)
-                        .ok()
-                        .map(|_| line.to_string())
-                })
-                .collect()
-        })
-        .unwrap_or_default();
+    let mut retained_lines: Vec<String> = match fs::metadata(&quarantine_path) {
+        Ok(meta) if meta.len() > INGRESS_QUARANTINE_READ_MAX_BYTES => Vec::new(),
+        _ => fs::read_to_string(&quarantine_path)
+            .ok()
+            .map(|raw| {
+                raw.lines()
+                    .filter(|line| !line.trim().is_empty())
+                    .filter_map(|line| {
+                        serde_json::from_str::<IngressQuarantineRecord>(line)
+                            .ok()
+                            .map(|_| line.to_string())
+                    })
+                    .collect()
+            })
+            .unwrap_or_default(),
+    };
     for entry in entries {
         retained_lines.push(serde_json::to_string(entry)?);
     }
