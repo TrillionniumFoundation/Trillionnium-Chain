@@ -1,6 +1,14 @@
 use crate::bridge_status::{BridgeStatus, CapabilityToken, SettlementError, SettlementRequest};
 use crate::relay_heartbeat::HeartbeatOutcome;
 
+fn expected_terminal_state(confirm: &SettlementConfirm, heartbeat: &HeartbeatOutcome) -> &'static str {
+    if heartbeat.degraded || matches!(confirm, SettlementConfirm::Failed { .. }) {
+        "reverted"
+    } else {
+        "finalized"
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SettlementConfirm {
     Confirmed { height: u64 },
@@ -73,6 +81,23 @@ pub fn drive_minimal_settlement(
     heartbeat: &HeartbeatOutcome,
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
+    let expected_to = expected_terminal_state(&confirm, heartbeat);
+    match current_status(request) {
+        BridgeStatus::Pending => {}
+        BridgeStatus::Finalized(_) => {
+            return Err(SettlementError::InvalidTransition {
+                from: "finalized",
+                to: expected_to,
+            });
+        }
+        BridgeStatus::Reverted(_) => {
+            return Err(SettlementError::InvalidTransition {
+                from: "reverted",
+                to: expected_to,
+            });
+        }
+    }
+
     validate_heartbeat_outcome(heartbeat)?;
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
