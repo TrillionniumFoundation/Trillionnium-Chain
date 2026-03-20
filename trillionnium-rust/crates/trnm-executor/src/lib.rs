@@ -2125,6 +2125,20 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_dedups_same_version_cross_domain_echoes_before_mixing() {
+        let buckets_n = 97usize;
+        let duplicate_echoes = tx(1, vec![o(7), o(7)], vec![o(5), o(5), o(7)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Same-version read/write echoes for the same object id are valid access
+        // domains and should hash identically to their deduplicated equivalent.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_echoes, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
     #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
     fn hot_bucket_hint_rejects_cross_domain_version_skew_for_same_object_id() {
         let t = tx(
