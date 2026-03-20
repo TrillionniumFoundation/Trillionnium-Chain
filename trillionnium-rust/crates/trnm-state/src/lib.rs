@@ -1322,7 +1322,10 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key {
+                if snapshot.key != key
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || validate_gov_param_key_id_policy(&snapshot.key, snapshot.key_id).is_err()
+                {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
@@ -3200,6 +3203,29 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_non_canonical_emergency_pause_key_id() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pending restore must fail closed for non-canonical emergency_pause key_id"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejected pending restore must not alter effective emergency pause state"
         );
     }
 
