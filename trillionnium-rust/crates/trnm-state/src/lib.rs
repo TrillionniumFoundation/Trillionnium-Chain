@@ -1911,6 +1911,16 @@ fn checkpoint_has_complete_proof_metadata(cp: &CheckpointMeta) -> bool {
     !cp.state_root_hex.trim().is_empty() && !cp.wal_entry_hash_hex.trim().is_empty()
 }
 
+fn wal_entry_has_complete_proof_metadata(entry: &WalMeta) -> bool {
+    !entry.proposal_hash.trim().is_empty()
+        && !entry.state_root_hex.trim().is_empty()
+        && entry
+            .prev_hash_hex
+            .as_ref()
+            .map(|prev| !prev.trim().is_empty())
+            .unwrap_or(true)
+}
+
 pub fn verify_wal_and_find_checkpoint(
     checkpoints: &[CheckpointMeta],
     wal_entries: &[WalMeta],
@@ -1931,6 +1941,11 @@ pub fn verify_wal_and_find_checkpoint(
             // Until StateStore snapshot restore/replay exists, a checkpointed WAL chain
             // that starts above genesis height is metadata-only and must not be used to
             // claim safe application-state recovery.
+            return Ok(best_checkpoint);
+        }
+        if !wal_entry_has_complete_proof_metadata(e) {
+            // Fail closed on incomplete WAL proof metadata. Blank proposal/state-root/prev-hash
+            // fields are not auditable recovery evidence and must not advance checkpoint selection.
             return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
@@ -5701,6 +5716,62 @@ mod tests {
                 got.map(|cp| cp.height),
                 Some(1),
                 "blank checkpoint proof metadata must fail closed back to the last complete checkpoint"
+            );
+        }
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_wal_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let valid_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        for incomplete_e2 in [
+            WalMeta {
+                proposal_hash: " ".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                state_root_hex: "\t".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                prev_hash_hex: Some(" ".into()),
+                ..valid_e2.clone()
+            },
+        ] {
+            let checkpoints = vec![
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: incomplete_e2.state_root_hex.clone(),
+                    wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+                },
+            ];
+
+            let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), incomplete_e2]).unwrap();
+            assert_eq!(
+                got.map(|cp| cp.height),
+                Some(1),
+                "blank WAL proof metadata must fail closed back to the last complete checkpoint"
             );
         }
     }
