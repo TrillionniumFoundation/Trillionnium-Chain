@@ -69,6 +69,30 @@ impl LaneAdmissionGate {
         self.seen_global.clear();
     }
 
+    fn lane_total(&self) -> usize {
+        self.normal
+            .queue
+            .len()
+            .saturating_add(self.critical.queue.len())
+    }
+
+    fn lane_is_idle(&self) -> bool {
+        self.lane_total() == 0
+    }
+
+    fn reset_idle_state(&mut self, preserve_zero_capacity_seen: bool) {
+        if !(preserve_zero_capacity_seen && self.total_capacity == 0)
+            && !(self.normal.seen.is_empty()
+                && self.critical.seen.is_empty()
+                && self.seen_global.is_empty())
+        {
+            self.clear_seen_caches();
+        }
+        if self.critical_served_streak != 0 {
+            self.critical_served_streak = 0;
+        }
+    }
+
     fn rebuild_lane_seen_from_queues(&mut self) {
         self.normal.seen.clear();
         self.normal.seen.extend(self.normal.queue.iter().copied());
@@ -102,12 +126,7 @@ impl LaneAdmissionGate {
         }
     }
 
-    fn queues_contain_tx(
-        &self,
-        tx_id: u64,
-        in_normal_seen: bool,
-        in_critical_seen: bool,
-    ) -> bool {
+    fn queues_contain_tx(&self, tx_id: u64, in_normal_seen: bool, in_critical_seen: bool) -> bool {
         if in_normal_seen && in_critical_seen {
             self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
         } else if in_normal_seen {
@@ -154,28 +173,16 @@ impl LaneAdmissionGate {
         // Fast-path saturation check from the lane-wide idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
         // ingress probe while the cache is in sync.
-        let lane_total = self
-            .normal
-            .queue
-            .len()
-            .saturating_add(self.critical.queue.len());
-        let lane_was_empty = lane_total == 0;
+        let lane_total = self.lane_total();
+        let lane_was_empty = self.lane_is_idle();
 
         if lane_was_empty {
             // Defensive restored-state self-heal: with no queued work, lane-local and
             // lane-wide idempotency sets must be empty. Clear only when needed so
             // repeated empty-lane admits avoid redundant HashSet clear work.
-            if !(self.normal.seen.is_empty()
-                && self.critical.seen.is_empty()
-                && self.seen_global.is_empty())
-            {
-                self.clear_seen_caches();
-            }
             // Fully idle lane state must also reset fairness streak; otherwise a
             // restored stale streak can spuriously preempt fresh critical work.
-            if self.critical_served_streak != 0 {
-                self.critical_served_streak = 0;
-            }
+            self.reset_idle_state(false);
         } else {
             let lane_local_seen_total = self
                 .normal
@@ -344,11 +351,11 @@ impl LaneAdmissionGate {
     pub fn queued_counts(&self) -> (usize, usize, usize) {
         let normal = self.normal.queue.len();
         let critical = self.critical.queue.len();
-        (normal, critical, normal + critical)
+        (normal, critical, self.lane_total())
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
-        if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
+        if self.lane_is_idle() {
             // Idle dequeue polls are common in long-lived schedulers. Treat them as a
             // self-heal boundary too so restored-state ghost caches/fairness state do
             // not survive indefinitely when no fresh admit() arrives to reset them.
@@ -356,16 +363,7 @@ impl LaneAdmissionGate {
             // Exception: zero-capacity hard-stop mode intentionally preserves restored
             // duplicate knowledge even though no queue slots exist, so repeated idle
             // polls must not erase that recovery metadata.
-            if self.total_capacity > 0
-                && !(self.normal.seen.is_empty()
-                    && self.critical.seen.is_empty()
-                    && self.seen_global.is_empty())
-            {
-                self.clear_seen_caches();
-            }
-            if self.critical_served_streak != 0 {
-                self.critical_served_streak = 0;
-            }
+            self.reset_idle_state(true);
             return None;
         }
 
@@ -752,6 +750,22 @@ mod tests {
 
         // First fresh ingress must self-heal stale caches and admit cleanly.
         assert_eq!(g.admit(123, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn idle_pop_clears_nonzero_capacity_ghost_seen_before_next_fresh_retry() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Simulate restored idle state with stale duplicate metadata plus fairness.
+        g.normal.seen.insert(123);
+        g.critical.seen.insert(456);
+        g.seen_global.insert(789);
+        g.critical_served_streak = 1;
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.admit(789, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
     }
 
     #[test]
