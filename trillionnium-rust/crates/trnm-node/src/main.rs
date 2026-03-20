@@ -2303,7 +2303,11 @@ fn timeout_bond_disposition(
     if !was_challenged {
         return None;
     }
-    challenge_bond_forfeited.map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+    Some(match challenge_bond_forfeited {
+        Some(true) => "forfeited",
+        Some(false) => "refunded",
+        None => "unknown",
+    })
 }
 
 fn scan_and_apply_timeouts(
@@ -7634,7 +7638,7 @@ mod tests {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
         assert_eq!(timeout_bond_disposition(true, Some(true)), Some("forfeited"));
-        assert_eq!(timeout_bond_disposition(true, None), None);
+        assert_eq!(timeout_bond_disposition(true, None), Some("unknown"));
     }
 
     #[test]
