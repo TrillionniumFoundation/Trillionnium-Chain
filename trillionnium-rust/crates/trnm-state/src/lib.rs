@@ -771,8 +771,20 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+fn has_explicit_gov_param_validator_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
 fn has_explicit_gov_param_validator(key: &str) -> bool {
-    GOV_EXPLICIT_VALIDATOR_KEYS.contains(&key)
+    has_explicit_gov_param_validator_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
 }
 
 fn validate_governance_validator_coverage_from_lists(
@@ -3381,6 +3393,31 @@ mod tests {
                 "max_block_ms"
             ),
             "value-match coverage must fail closed without explicit value-rule coverage"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_validator_helper_requires_value_rule_coverage_fail_closed() {
+        assert!(has_explicit_gov_param_validator_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit value-rule coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit validator coverage"
         );
     }
 
