@@ -1877,6 +1877,12 @@ pub fn verify_wal_and_find_checkpoint(
             // claim safe application-state recovery.
             return Ok(best_checkpoint);
         }
+        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
+            // Recovery metadata must remain complete: blank proposal/state-root values
+            // indicate a truncated or forged WAL entry and must not advance checkpoint
+            // selection during restart recovery.
+            return Ok(best_checkpoint);
+        }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
         }
@@ -5904,6 +5910,50 @@ mod tests {
         assert!(
             got.is_none(),
             "an uncommitted genesis WAL entry must not be accepted as a recoverable checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_recovery_metadata() {
+        let blank_proposal = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let blank_state_root = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "   ".into(),
+            prev_hash_hex: None,
+        };
+
+        let blank_proposal_checkpoint = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: blank_proposal.content_hash_hex(),
+        }];
+        let blank_state_root_checkpoint = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "   ".into(),
+            wal_entry_hash_hex: blank_state_root.content_hash_hex(),
+        }];
+
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_proposal_checkpoint, &[blank_proposal])
+                .unwrap()
+                .is_none(),
+            "blank proposal metadata must fail closed during checkpoint recovery"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_state_root_checkpoint, &[blank_state_root])
+                .unwrap()
+                .is_none(),
+            "blank state-root metadata must fail closed during checkpoint recovery"
         );
     }
 
