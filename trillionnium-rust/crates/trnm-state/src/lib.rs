@@ -1821,7 +1821,10 @@ impl StateStore {
 }
 
 fn is_canonical_hex_digest(value: &str) -> bool {
-    value.len() == 64 && value.as_bytes().iter().all(|byte| byte.is_ascii_hexdigit())
+    value.len() == 64
+        && value.as_bytes().iter().all(|byte| {
+            byte.is_ascii_digit() || (byte.is_ascii_hexdigit() && byte.is_ascii_lowercase())
+        })
 }
 
 pub fn checkpoint_evidence_surface_is_canonical(

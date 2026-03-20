@@ -3980,6 +3980,13 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         !checkpoint_evidence_surface_is_canonical(&checkpoint, &bad_wal),
         "WAL state_root_hex must be canonical hex for audit evidence surfaces"
     );
+
+    let mut uppercase_checkpoint = checkpoint.clone();
+    uppercase_checkpoint.state_root_hex = uppercase_checkpoint.state_root_hex.to_uppercase();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal),
+        "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
+    );
 }
 
 #[test]
