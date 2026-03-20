@@ -2233,17 +2233,17 @@ fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root(
 
     state.restore_pending_resolve_approval(5_201, Some(snapshot.clone()));
     assert!(
-        state.pending_resolve_approval_snapshot(5_201).is_some(),
-        "restoring a pending resolve snapshot through another task slot should materialize a distinct staged entry for that slot"
+        state.pending_resolve_approval_snapshot(5_201).is_none(),
+        "restoring a pending resolve snapshot through another task slot without a matching challenged task must fail closed"
     );
     assert!(
         state.pending_resolve_approval_snapshot(5_200).is_some(),
         "mismatched-slot restore must preserve the canonical pending task slot"
     );
-    assert_ne!(
+    assert_eq!(
         state.state_root(),
         canonical_pending_root,
-        "adding the same pending resolve snapshot under a second task slot must perturb the root because the task_id slot is part of state identity"
+        "rejecting an orphaned mismatched-slot restore must preserve the canonical pending root"
     );
 
     state.restore_pending_resolve_approval(5_201, None);
