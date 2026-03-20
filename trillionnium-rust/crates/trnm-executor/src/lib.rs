@@ -1146,13 +1146,22 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .or_else(|| tx.read_set.first())
         .map(|o| o.id)
         .unwrap_or(0);
-    let key_b = tx
-        .write_set
-        .iter()
-        .chain(tx.read_set.iter())
-        .map(|o| o.id)
-        .find(|&id| id != key_a)
-        .unwrap_or(0);
+    let key_b = if tx.write_set.is_empty() {
+        tx.read_set
+            .iter()
+            .skip(1)
+            .map(|o| o.id)
+            .find(|&id| id != key_a)
+            .unwrap_or(0)
+    } else {
+        tx.write_set
+            .iter()
+            .skip(1)
+            .chain(tx.read_set.iter())
+            .map(|o| o.id)
+            .find(|&id| id != key_a)
+            .unwrap_or(0)
+    };
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
@@ -1883,6 +1892,20 @@ mod tests {
         // the mixed-domain bucket hint.
         assert_eq!(
             hot_bucket_hint(&duplicate_primary, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_skips_duplicate_primary_echoes_before_using_read_domain_key() {
+        let buckets_n = 97usize;
+        let duplicate_echoes = tx(1, vec![o(5), o(7)], vec![o(5), o(5)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Duplicate primary echoes inside the write domain should not shadow the
+        // first distinct read-domain key when deriving the mixed bucket hint.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_echoes, buckets_n),
             hot_bucket_hint(&deduped_domain, buckets_n)
         );
     }
