@@ -802,19 +802,16 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key_id != key_id {
+                if snapshot.key_id != key_id
+                    || validate_gov_param_registry_binding(
+                        &self.gov_param_key_index,
+                        &snapshot.key,
+                        snapshot.key_id,
+                    )
+                    .is_err()
+                {
                     self.objects.remove(&key_id);
                     return;
-                }
-                if validate_gov_param_key_id_policy(&snapshot.key, key_id).is_err() {
-                    self.objects.remove(&key_id);
-                    return;
-                }
-                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
-                    if existing_id != key_id {
-                        self.objects.remove(&key_id);
-                        return;
-                    }
                 }
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
@@ -3315,6 +3312,36 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("emergency_pause").is_none(),
             "restore must not leave a resolvable ref for a non-canonical emergency_pause slot"
+        );
+    }
+
+    #[test]
+    fn governance_restore_rejects_non_allowlisted_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            9_200,
+            Some(GovParamObject {
+                key_id: 9_200,
+                key: "algorand_governance_key_id".into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "restore must not expose non-allowlisted governance keys"
+        );
+        assert!(
+            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            "restore must fail closed instead of leaving a resolvable ref for a non-allowlisted governance key"
+        );
+        assert!(
+            st.gov_param_key_index
+                .get("algorand_governance_key_id")
+                .is_none(),
+            "restore must not register non-allowlisted governance keys in the shared registry"
         );
     }
 
