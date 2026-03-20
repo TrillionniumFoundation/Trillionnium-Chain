@@ -3,8 +3,7 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
-    TaskStatus,
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject, TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -248,12 +247,10 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
     if trimmed.is_empty() {
         return Err("resolve approval approver must be non-empty".into());
     }
-    if trimmed != raw
-        || trimmed
-            .chars()
-            .any(|c| c.is_whitespace() || c.is_control())
-    {
-        return Err("resolve approval approver must not contain whitespace or control characters".into());
+    if trimmed != raw || trimmed.chars().any(|c| c.is_whitespace() || c.is_control()) {
+        return Err(
+            "resolve approval approver must not contain whitespace or control characters".into(),
+        );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
         return Err(format!(
@@ -274,8 +271,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     let trimmed = raw.trim();
     if trimmed.is_empty() || trimmed != raw {
         return Err(
-            "resolve approval authority set must be a canonical comma-delimited actor list"
-                .into(),
+            "resolve approval authority set must be a canonical comma-delimited actor list".into(),
         );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
@@ -304,8 +300,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
             || resolve_actor_is_reserved(member_trimmed)
         {
             return Err(
-                "resolve approval authority set contains non-canonical or forbidden member"
-                    .into(),
+                "resolve approval authority set contains non-canonical or forbidden member".into(),
             );
         }
         if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
@@ -322,18 +317,24 @@ fn ensure_effective_resolve_authority_match(
 ) -> Result<(), String> {
     let provided = canonicalize_resolve_authority_set(authority_set)?;
     if let Some(pending) = st.pending_gov_update("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&pending.value)
-            .map_err(|_| "resolve approval authority set must match pending governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
+            "resolve approval authority set must match pending governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match pending governance authority".into());
+            return Err(
+                "resolve approval authority set must match pending governance authority".into(),
+            );
         }
         return Ok(());
     }
     if let Some(current) = st.gov_param_string("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&current)
-            .map_err(|_| "resolve approval authority set must match configured governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
+            "resolve approval authority set must match configured governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match configured governance authority".into());
+            return Err(
+                "resolve approval authority set must match configured governance authority".into(),
+            );
         }
     }
     Ok(())
@@ -606,10 +607,13 @@ impl StateStore {
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.confirmations >= 2 {
-                return Err("resolve approval already finalized; clear pending approval first".into());
+                return Err(
+                    "resolve approval already finalized; clear pending approval first".into(),
+                );
             }
-            let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
-                .map_err(|_| "resolve approval authority set changed".to_string())?;
+            let entry_authority_canonical =
+                canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
             if entry_authority_canonical != authority_canonical {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
@@ -640,8 +644,9 @@ impl StateStore {
             return Err("resolve approval already finalized; clear pending approval first".into());
         }
         if entry.confirmations > 0 {
-            let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
-                .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+            let first_approver_canonical =
+                validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
             if first_approver_canonical == approver_canonical {
                 return Err("resolve approval requires distinct approver".into());
             }
@@ -699,7 +704,8 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
         };
@@ -836,7 +842,8 @@ impl StateStore {
     }
 
     fn remove_gov_param_key_index_for_id(&mut self, id: u64) {
-        self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
+        self.gov_param_key_index
+            .retain(|_, mapped_id| *mapped_id != id);
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
@@ -884,7 +891,10 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, mut proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(
+        &mut self,
+        mut proposal: GovProposalObject,
+    ) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
@@ -1321,7 +1331,8 @@ impl StateStore {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
-                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                self.pending_gov_updates
+                    .insert(snapshot.key.clone(), snapshot);
             }
             None => {
                 self.pending_gov_updates.remove(key);
@@ -1639,9 +1650,15 @@ impl StateStore {
                                         Some(privacy_tier) => {
                                             hasher.update([1]);
                                             hasher.update(match privacy_tier {
-                                                trnm_types::PrivacyTier::Public => b"public".as_slice(),
-                                                trnm_types::PrivacyTier::Internal => b"internal".as_slice(),
-                                                trnm_types::PrivacyTier::Restricted => b"restricted".as_slice(),
+                                                trnm_types::PrivacyTier::Public => {
+                                                    b"public".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Internal => {
+                                                    b"internal".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Restricted => {
+                                                    b"restricted".as_slice()
+                                                }
                                             });
                                         }
                                         None => hasher.update([0]),
@@ -1803,6 +1820,10 @@ impl StateStore {
     }
 }
 
+fn is_canonical_hex_digest(value: &str) -> bool {
+    value.len() == 64 && value.as_bytes().iter().all(|byte| byte.is_ascii_hexdigit())
+}
+
 pub fn verify_wal_and_find_checkpoint(
     checkpoints: &[CheckpointMeta],
     wal_entries: &[WalMeta],
@@ -1812,6 +1833,14 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
+        if !is_canonical_hex_digest(&e.content_hash_hex())
+            || e.prev_hash_hex
+                .as_deref()
+                .is_some_and(|prev| !is_canonical_hex_digest(prev))
+        {
+            return Ok(best_checkpoint);
+        }
+
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
@@ -1837,6 +1866,9 @@ pub fn verify_wal_and_find_checkpoint(
         prev_height = Some(e.height);
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+            if !is_canonical_hex_digest(&cp.wal_entry_hash_hex) {
+                continue;
+            }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -1962,7 +1994,10 @@ mod tests {
         .expect("verifier should fail closed instead of accepting uncommitted tail metadata");
 
         assert_eq!(best.as_ref().map(|cp| cp.height), Some(1));
-        assert_eq!(best.as_ref().map(|cp| cp.state_root_hex.as_str()), Some("r1"));
+        assert_eq!(
+            best.as_ref().map(|cp| cp.state_root_hex.as_str()),
+            Some("r1")
+        );
     }
 
     #[test]
@@ -5077,6 +5112,30 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 2);
         assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_non_hex_checkpoint_hash_surface() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "not-hex".into(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint recovery must fail closed when checkpoint wal-entry evidence is not a canonical hex digest"
+        );
     }
 
     #[test]
