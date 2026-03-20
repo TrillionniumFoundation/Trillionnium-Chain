@@ -2156,6 +2156,59 @@ fn paused_restore_pending_resolve_authority_rejects_live_key_id_collision_and_sc
 }
 
 #[test]
+fn paused_restore_pending_resolve_authority_rejects_noncanonical_requested_key_without_aliasing_pending_slot() {
+    // REF03 explicit-validator guard: restore must fail closed before any aliasing if the
+    // requested governance key spelling is non-canonical, even when the snapshot payload itself
+    // looks otherwise valid.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 8_080);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 808);
+
+    st.set_gov_param(98_210, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_912, 1, false, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_912), Some((false, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.restore_pending_gov_update(
+        " resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_310,
+            key: " resolve_authority".into(),
+            value: "authority-a,authority-b".into(),
+            activate_at_height: 98_230,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_gov_update("resolve_authority"),
+        None,
+        "restore path must reject non-canonical requested key spellings instead of staging an aliased pending authority set"
+    );
+    assert_eq!(
+        st.pending_gov_update(" resolve_authority"),
+        None,
+        "restore path must not create a non-canonical pending key alias"
+    );
+    assert_eq!(
+        st.pending_resolve_approval(9_912),
+        Some((false, 1)),
+        "non-canonical restore keys must not scrub unrelated live quorum state because the canonical resolve_authority lane was not targeted"
+    );
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn pause_toggle_rejects_non_boolean_value_without_releasing_escrow_or_centralizing_resolve_flow() {
     // M1 merge-gate invariant: emergency_pause is a strict boolean safety boundary.
     // Invalid values must fail closed while preserving custody balances and any staged

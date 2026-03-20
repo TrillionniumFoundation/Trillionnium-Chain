@@ -1045,6 +1045,54 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     }
 }
 
+fn validate_pending_gov_update_restore_snapshot(
+    gov_param_key_index: &std::collections::BTreeMap<String, u64>,
+    pending_gov_updates: &std::collections::BTreeMap<String, PendingGovParamUpdate>,
+    objects: &std::collections::BTreeMap<u64, VersionedObject>,
+    key: &str,
+    snapshot: &PendingGovParamUpdate,
+) -> Result<(), String> {
+    validate_requested_governance_key_canonical(key)?;
+    if snapshot.key != key {
+        return Err(format!(
+            "pending governance snapshot key mismatch: requested_key={}, snapshot_key={}",
+            key, snapshot.key
+        ));
+    }
+    if !is_sensitive_gov_param(key) {
+        return Err(format!(
+            "pending governance restore only supports sensitive keys: {}",
+            key
+        ));
+    }
+    validate_governance_key_registration(gov_param_key_index, key, snapshot.key_id)?;
+    validate_gov_param_value(key, &snapshot.value)?;
+
+    if pending_gov_updates
+        .iter()
+        .any(|(existing_key, existing_pending)| {
+            existing_key != key && existing_pending.key_id == snapshot.key_id
+        })
+    {
+        return Err(format!(
+            "pending governance key id collision for {}: key_id {} already staged elsewhere",
+            key, snapshot.key_id
+        ));
+    }
+
+    if objects
+        .get(&snapshot.key_id)
+        .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
+    {
+        return Err(format!(
+            "pending governance key_id collision: object {} exists and is not GovParam",
+            snapshot.key_id
+        ));
+    }
+
+    Ok(())
+}
+
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
@@ -1790,27 +1838,14 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                let pending_key_id_collision = self
-                    .pending_gov_updates
-                    .iter()
-                    .any(|(existing_key, existing_pending)| {
-                        existing_key != key && existing_pending.key_id == snapshot.key_id
-                    });
-                let non_gov_param_key_id_collision = self
-                    .objects
-                    .get(&snapshot.key_id)
-                    .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)));
-                if snapshot.key != key
-                    || !is_sensitive_gov_param(key)
-                    || validate_governance_key_registration(
-                        &self.gov_param_key_index,
-                        key,
-                        snapshot.key_id,
-                    )
-                    .is_err()
-                    || pending_key_id_collision
-                    || non_gov_param_key_id_collision
-                    || validate_gov_param_value(key, &snapshot.value).is_err()
+                if validate_pending_gov_update_restore_snapshot(
+                    &self.gov_param_key_index,
+                    &self.pending_gov_updates,
+                    &self.objects,
+                    key,
+                    &snapshot,
+                )
+                .is_err()
                 {
                     self.pending_gov_updates.remove(key);
                     if scrubs_resolve_quorum {
