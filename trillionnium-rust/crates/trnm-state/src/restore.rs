@@ -64,11 +64,11 @@ impl StateStore {
     pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
         self.invalidate_state_root_cache();
         match snapshot {
+            Some(0) | None => {
+                self.balances.remove(address);
+            }
             Some(amount) => {
                 self.balances.insert(address.to_string(), amount);
-            }
-            None => {
-                self.balances.remove(address);
             }
         }
     }
