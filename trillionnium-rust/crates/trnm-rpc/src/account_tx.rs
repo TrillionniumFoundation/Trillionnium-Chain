@@ -33,7 +33,7 @@ fn faucet_window_rolled_over(
 }
 
 fn faucet_next_allowed_unix_ms(window_start_unix_ms: u128, window_ms: u128) -> u128 {
-    window_start_unix_ms + window_ms
+    window_start_unix_ms.saturating_add(window_ms)
 }
 
 pub(crate) fn handle_query_balance(address: &str) -> Result<()> {

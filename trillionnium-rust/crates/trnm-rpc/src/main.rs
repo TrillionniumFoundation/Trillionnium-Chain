@@ -3650,7 +3650,7 @@ fn main() -> Result<()> {
                 if entry.count_in_window >= max_requests_in_window {
                     allowed = false;
                 }
-                next_allowed_unix_ms = entry.window_start_unix_ms + window_ms;
+                next_allowed_unix_ms = entry.window_start_unix_ms.saturating_add(window_ms);
             }
 
             let account_path = account_state_file();
