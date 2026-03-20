@@ -729,6 +729,35 @@ impl StateStore {
             .is_some()
     }
 
+    fn should_preserve_pending_resolve_on_task_restore(
+        &self,
+        task_id: u64,
+        task: &TaskObject,
+    ) -> bool {
+        let Some(current) = self.get_task(task_id) else {
+            return false;
+        };
+        if current != *task || task.status != TaskStatus::Challenged {
+            return false;
+        }
+        let Some(pending) = self.pending_resolve_approvals.get(&task_id) else {
+            return false;
+        };
+        if pending.task_version != task.version {
+            return false;
+        }
+        self.should_restore_pending_resolve_approval(
+            task_id,
+            &PendingResolveApprovalSnapshot {
+                slash_worker: pending.slash_worker,
+                confirmations: pending.confirmations,
+                first_approver: pending.first_approver.clone(),
+                authority_set: pending.authority_set.clone(),
+                task_version: pending.task_version,
+            },
+        )
+    }
+
     pub fn restore_pending_resolve_approval(
         &mut self,
         task_id: u64,
@@ -768,28 +797,8 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
-                let existing_task = self.get_task(id);
-                let keep_pending_resolve = self
-                    .pending_resolve_approvals
-                    .get(&id)
-                    .map(|pending| {
-                        existing_task.as_ref().is_some_and(|current| {
-                            current == &task
-                                && self.should_restore_pending_resolve_approval(
-                                    id,
-                                    &PendingResolveApprovalSnapshot {
-                                        slash_worker: pending.slash_worker,
-                                        confirmations: pending.confirmations,
-                                        first_approver: pending.first_approver.clone(),
-                                        authority_set: pending.authority_set.clone(),
-                                        task_version: pending.task_version,
-                                    },
-                                )
-                                && task.status == TaskStatus::Challenged
-                                && pending.task_version == task.version
-                        })
-                    })
-                    .unwrap_or(false);
+                let keep_pending_resolve =
+                    self.should_preserve_pending_resolve_on_task_restore(id, &task);
                 if !keep_pending_resolve {
                     self.pending_resolve_approvals.remove(&id);
                 }
@@ -2627,6 +2636,60 @@ mod tests {
 
         assert_eq!(st.pending_resolve_approval(9_003), None);
         assert_eq!(st.pending_resolve_first_approver(9_003), None);
+    }
+
+    #[test]
+    fn restore_task_preserves_pending_resolve_across_identical_snapshot_reentry_with_authority_case_drift() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_005,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "Authority-A,Authority-B".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        st.set_gov_param_unchecked(
+            7001,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority case-normalization update should apply");
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_005), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_005).as_deref(),
+            Some("authority-a")
+        );
     }
 
     #[test]
