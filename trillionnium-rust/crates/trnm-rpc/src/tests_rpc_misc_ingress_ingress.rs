@@ -316,3 +316,55 @@ fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
 }
+
+#[test]
+fn load_ingress_records_bounds_total_quarantine_file_growth() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-retention-bounds", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    for batch in 0..9 {
+        let mut fixture = String::new();
+        for idx in 0..128 {
+            fixture.push_str(&format!("{{\"broken\":{}\n", batch * 128 + idx));
+        }
+        fs::write(&path, fixture).expect("write ingress fixture");
+        let records = load_ingress_records();
+        assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+    }
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries.len(),
+        1024,
+        "total quarantine retention should stay bounded across repeated malformed scans"
+    );
+    assert_eq!(entries.first().expect("first entry")["line_number"], 1);
+    assert_eq!(entries.last().expect("last entry")["line_number"], 128);
+    assert!(
+        entries.first().expect("first entry")["raw_line"]
+            .as_str()
+            .expect("raw_line string")
+            .contains("128"),
+        "oldest retained entry should come from the retained tail after earlier batches roll off"
+    );
+    assert!(
+        entries.last().expect("last entry")["raw_line"]
+            .as_str()
+            .expect("raw_line string")
+            .contains("1151"),
+        "newest retained entry should come from the most recent malformed batch"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
