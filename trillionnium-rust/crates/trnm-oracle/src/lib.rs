@@ -376,7 +376,8 @@ pub fn validate_snapshot_observed(
             observation.stale_reject_total = 1;
             Some("stale".to_string())
         }
-        Err(OracleError::InsufficientSources { .. }) => {
+        Err(OracleError::InsufficientSources { .. })
+        | Err(OracleError::InconsistentSampleCount { .. }) => {
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
@@ -729,6 +730,34 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 1);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_maps_inconsistent_sample_count_to_quorum_error_label() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink"), source("pyth")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("quorum"));
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
