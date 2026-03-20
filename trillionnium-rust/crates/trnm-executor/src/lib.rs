@@ -1244,7 +1244,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
         GroupingStrategy::Original => {}
         GroupingStrategy::FootprintDesc => {
             txs.sort_by_key(|tx| {
-                let footprint = tx.read_set.len() + tx.write_set.len();
+                let footprint = tx_access_domain_keys(tx).len();
                 (std::cmp::Reverse(footprint), tx.id)
             });
         }
@@ -1791,6 +1791,24 @@ mod tests {
         // should follow the same deduped footprint instead of raw version count.
         // Effective keys are [11, 33, 22] and [44, 55, 33].
         assert_eq!(access_map_capacity_hint(&txs), 64);
+    }
+
+    #[test]
+    fn footprint_desc_reorder_uses_object_scoped_domains_not_raw_versions() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
+                vec![ov(77, 5), ov(77, 6)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
+
+        // Footprint ordering should follow the same deduped object-scoped access
+        // domains as grouping/telemetry, not raw version-heavy list lengths.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
     }
 
     #[test]
