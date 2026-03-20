@@ -528,6 +528,7 @@ fn validate_governance_key_registration_lists(
         explicit_value_rule_keys,
         pinned_key_ids,
     )?;
+    validate_requested_governance_key_canonical(key)?;
 
     if !allowed_keys.contains(&key) {
         return Err(format!("governance key not allowed: {}", key));
@@ -788,6 +789,15 @@ fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
     Ok(())
 }
 
+fn validate_requested_governance_key_canonical(key: &str) -> Result<(), String> {
+    validate_governance_registry_key_canonical("requested governance key", key).map_err(|_| {
+        format!(
+            "governance key request must use canonical key spelling: {}",
+            key
+        )
+    })
+}
+
 fn has_explicit_gov_param_value_rule(key: &str) -> bool {
     GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
 }
@@ -810,6 +820,7 @@ fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     validate_governance_registry_shape()?;
+    validate_requested_governance_key_canonical(key)?;
     validate_governance_validator_coverage(key)?;
     validate_governance_sensitive_key_coverage(key)?;
     if !has_explicit_gov_param_value_rule(key) {
@@ -3066,6 +3077,21 @@ mod tests {
             .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
         assert!(err.contains("not allowed"));
+    }
+
+    #[test]
+    fn governance_key_requests_reject_noncanonical_spellings_fail_closed() {
+        let mut st = StateStore::new();
+
+        for noncanonical_key in [" max_block_ms", "max_block_ms ", "MAX_BLOCK_MS"] {
+            let err = st
+                .set_gov_param_unchecked(7001, noncanonical_key.into(), "10".into())
+                .expect_err("non-canonical governance key spelling must fail closed");
+            assert!(
+                err.contains("governance key request must use canonical key spelling"),
+                "{err}"
+            );
+        }
     }
 
     #[test]
