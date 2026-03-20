@@ -1624,6 +1624,22 @@ mod tests {
     }
 
     #[test]
+    fn build_parallel_groups_treat_object_versions_as_one_conflict_domain() {
+        let groups = build_parallel_groups(&[
+            tx(1, vec![ov(11, 1)], vec![ov(11, 2)]),
+            tx(2, vec![ov(22, 1)], vec![ov(22, 2)]),
+            tx(3, vec![ov(11, 9)], vec![ov(33, 1)]),
+        ]);
+
+        // Different versions of the same logical object must serialize through
+        // separate groups so executor scheduling stays aligned with trnm-state's
+        // object-scoped access domains.
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 2]);
+        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3]);
+    }
+
+    #[test]
     fn read_domain_only_keys_single_write_domain_preserves_read_order_after_filtering() {
         let write_keys = vec![44];
 
