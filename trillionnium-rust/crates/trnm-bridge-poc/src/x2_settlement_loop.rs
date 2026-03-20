@@ -98,13 +98,13 @@ pub fn drive_minimal_settlement(
         }
     }
 
-    validate_heartbeat_outcome(heartbeat)?;
-    let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
-
     if heartbeat.should_retry && !heartbeat.degraded {
         let reason = normalize_compensation_reason(&heartbeat.message, "heartbeat retry pending");
         return Err(SettlementError::HeartbeatRetryPending { reason });
     }
+
+    validate_heartbeat_outcome(heartbeat)?;
+    let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
         let degraded_reason =

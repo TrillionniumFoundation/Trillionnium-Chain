@@ -270,6 +270,39 @@ fn x3_prep_retry_pending_heartbeat_blocks_settlement_without_state_change() {
 }
 
 #[test]
+fn x3_prep_retry_pending_heartbeat_with_malformed_embedded_metrics_stays_retry_bounded() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-malformed-metrics".to_string());
+    let token = operator_token();
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 701,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
+            reason: "target relay timeout #1".to_string(),
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_reorder_confirm_with_older_height_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xreorder-confirm-height".to_string());
     let token = operator_token();
