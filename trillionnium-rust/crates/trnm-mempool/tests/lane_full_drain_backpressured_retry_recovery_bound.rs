@@ -102,3 +102,22 @@ fn repeated_same_id_saturated_retries_stay_backpressured_until_one_slot_reopens(
     assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
 }
+
+#[test]
+fn critical_retry_bursts_stay_backpressured_once_normal_headroom_is_exhausted() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    for retry in [90_u64, 91_u64, 90_u64, 91_u64] {
+        assert_eq!(gate.admit(retry, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (2, 1, 3));
+    }
+
+    assert!(matches!(gate.pop_ready(), Some(1) | Some(2) | Some(3)));
+    assert_eq!(gate.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+}

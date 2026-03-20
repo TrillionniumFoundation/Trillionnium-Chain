@@ -169,6 +169,13 @@ impl LaneAdmissionGate {
         critical_free > 1 || (critical_idle && critical_free > 0)
     }
 
+    fn critical_can_borrow_normal_headroom(&self) -> bool {
+        // Critical spillover is bounded to already-free normal slots only. This
+        // keeps saturated retry bursts from bypassing backpressure once normal
+        // dedicated capacity is fully occupied.
+        self.normal.queue.len() < self.normal.capacity
+    }
+
     fn queues_contain_tx(&self, tx_id: u64, in_normal_seen: bool, in_critical_seen: bool) -> bool {
         if in_normal_seen && in_critical_seen {
             self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
@@ -394,7 +401,7 @@ impl LaneAdmissionGate {
                 let normal_was_empty = self.normal.queue.is_empty();
                 let primary = self.critical.admit(tx_id);
                 let out = if matches!(primary, AdmitOutcome::Backpressured)
-                    && self.normal.queue.len() < self.normal.capacity
+                    && self.critical_can_borrow_normal_headroom()
                 {
                     // Keep free-ingress throughput high under critical bursts by
                     // allowing bounded spillover into normal capacity.
