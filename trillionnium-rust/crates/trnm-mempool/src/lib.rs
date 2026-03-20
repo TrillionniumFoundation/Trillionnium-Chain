@@ -113,6 +113,33 @@ impl LaneAdmissionGate {
         self.rebuild_global_seen_from_queues();
     }
 
+    fn repair_global_seen_after_pop(&mut self, drained_id: u64) {
+        if !self.seen_global.remove(&drained_id) {
+            // Defensive self-heal: restored-state skew can leave lane-wide cache
+            // stale while lane-local queues remain authoritative.
+            if self.lane_is_idle() {
+                // Hot full-drain skew path: avoid redundant iterator setup when no
+                // queued survivors exist after dequeue.
+                self.seen_global.clear();
+            } else {
+                self.rebuild_global_seen_from_queues();
+            }
+            return;
+        }
+
+        let lane_total = self.lane_total();
+        if self.seen_global.len() != lane_total {
+            // Keep idempotency cache in sync even when a stale ghost id survives
+            // removal of the drained tx id.
+            if lane_total == 0 {
+                // Hot idle path after full drain: clear stale cache entries.
+                self.seen_global.clear();
+            } else {
+                self.rebuild_global_seen_from_queues();
+            }
+        }
+    }
+
     fn maybe_warm_normal_fairness(&mut self, normal_was_empty: bool, out: AdmitOutcome) {
         if self.normal_has_dedicated_capacity
             && matches!(out, AdmitOutcome::Accepted)
@@ -439,33 +466,7 @@ impl LaneAdmissionGate {
             self.critical_served_streak = 0;
         }
 
-        if !self.seen_global.remove(&id) {
-            // Defensive self-heal: restored-state skew can leave lane-wide cache
-            // stale while lane-local queues remain authoritative.
-            if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
-                // Hot full-drain skew path: avoid redundant iterator setup when no
-                // queued survivors exist after dequeue.
-                self.seen_global.clear();
-            } else {
-                self.rebuild_global_seen_from_queues();
-            }
-        } else {
-            let lane_total = self
-                .normal
-                .queue
-                .len()
-                .saturating_add(self.critical.queue.len());
-            if self.seen_global.len() != lane_total {
-                // Keep idempotency cache in sync even when a stale ghost id
-                // survives removal of the drained tx id.
-                if lane_total == 0 {
-                    // Hot idle path after full drain: clear stale cache entries.
-                    self.seen_global.clear();
-                } else {
-                    self.rebuild_global_seen_from_queues();
-                }
-            }
-        }
+        self.repair_global_seen_after_pop(id);
 
         if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
             // Full-drain boundary: reuse the centralized idle reset so lane-local,

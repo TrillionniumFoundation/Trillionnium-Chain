@@ -57,3 +57,25 @@ fn saturated_retry_burst_keeps_queue_counts_stable_until_headroom_reopens() {
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (1, 1, 2));
 }
+
+#[test]
+fn repeated_idle_polls_after_full_drain_do_not_resurrect_backpressured_retry_metadata() {
+    let mut gate = LaneAdmissionGate::new(2, 1);
+
+    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    assert!(matches!(gate.pop_ready(), Some(10) | Some(20)));
+    assert!(matches!(gate.pop_ready(), Some(10) | Some(20)));
+    assert_eq!(gate.queued_counts(), (0, 0, 0));
+
+    assert_eq!(gate.pop_ready(), None);
+    assert_eq!(gate.pop_ready(), None);
+    assert_eq!(gate.pop_ready(), None);
+
+    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (0, 1, 1));
+    assert_eq!(gate.pop_ready(), Some(30));
+}
