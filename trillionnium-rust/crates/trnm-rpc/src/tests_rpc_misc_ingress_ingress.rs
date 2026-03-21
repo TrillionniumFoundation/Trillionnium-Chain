@@ -143,6 +143,47 @@ fn load_ingress_records_truncates_oversized_quarantine_raw_lines() {
 }
 
 #[test]
+fn load_ingress_records_dedupes_duplicate_noise_before_quarantine_cap() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-dedup-noise-bound", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let unique_prefix = (0..255)
+        .map(|idx| format!("uniq-bad-{idx}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let duplicate_storm = std::iter::repeat_n("storm-dup".to_string(), 100).collect::<Vec<_>>().join("\n");
+    let fixture = format!("{unique_prefix}\n{duplicate_storm}\nuniq-tail\n");
+    fs::write(&path, fixture).expect("write duplicate-noise ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "all malformed rows should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read deduped quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 256, "duplicate malformed noise should not crowd out distinct quarantine evidence");
+    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-0"));
+    assert_eq!(entries.get(254).and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-254"));
+    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("uniq-tail"));
+    assert_eq!(
+        entries.iter().filter(|v| v["raw_line"].as_str() == Some("storm-dup")).count(),
+        1,
+        "duplicate malformed rows should collapse to one quarantine record per salvage cycle"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_bounds_quarantine_journal_growth() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");

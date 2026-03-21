@@ -114,6 +114,8 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
+    let source_path = path.display().to_string();
+    let mut seen_quarantine_keys = std::collections::HashSet::new();
     for (idx, line) in raw.lines().enumerate() {
         if line.trim().is_empty() {
             continue;
@@ -121,14 +123,20 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         match serde_json::from_str::<MessageIngressRecord>(line) {
             Ok(record) => records.push(record),
             Err(err) => {
+                let line_hash = stable_line_hash(line);
+                let raw_line = truncate_quarantine_raw_line(line);
+                let quarantine_key = (source_path.clone(), line_hash, raw_line.clone());
+                if !seen_quarantine_keys.insert(quarantine_key) {
+                    continue;
+                }
                 if quarantined.len() >= MAX_INGRESS_QUARANTINE_RECORDS {
                     quarantined.drain(0..(quarantined.len() + 1 - MAX_INGRESS_QUARANTINE_RECORDS));
                 }
                 quarantined.push(IngressQuarantineRecord {
-                    source_path: path.display().to_string(),
+                    source_path: source_path.clone(),
                     line_number: idx + 1,
-                    line_hash: stable_line_hash(line),
-                    raw_line: truncate_quarantine_raw_line(line),
+                    line_hash,
+                    raw_line,
                     error: err.to_string(),
                     quarantined_at_unix_ms: now_ms(),
                 });
