@@ -1543,6 +1543,18 @@ mod tests {
     }
 
     #[test]
+    fn detect_conflict_is_symmetric_for_read_write_fast_paths() {
+        let read_only = tx(1, vec![o(42), o(42), o(9)], vec![]);
+        let write_only_hit = tx(2, vec![], vec![o(42)]);
+        let write_only_miss = tx(3, vec![], vec![o(99)]);
+
+        assert!(detect_conflict(&read_only, &write_only_hit));
+        assert!(detect_conflict(&write_only_hit, &read_only));
+        assert!(!detect_conflict(&read_only, &write_only_miss));
+        assert!(!detect_conflict(&write_only_miss, &read_only));
+    }
+
+    #[test]
     fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
         let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
         let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
