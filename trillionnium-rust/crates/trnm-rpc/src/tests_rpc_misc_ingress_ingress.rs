@@ -174,6 +174,33 @@ fn load_ingress_records_bounds_quarantine_journal_growth() {
     assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("not-json-44"));
     assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("not-json-299"));
 
+    let second_fixture = (300..310)
+        .map(|idx| format!("not-json-{idx}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&path, format!("{second_fixture}\n")).expect("write second malformed ingress burst");
+
+    let records_second = load_ingress_records();
+    assert!(
+        records_second.is_empty(),
+        "follow-up malformed burst should also quarantine cleanly"
+    );
+
+    let quarantine_raw_second =
+        fs::read_to_string(&quarantine).expect("read bounded quarantine file after replay");
+    let entries_second: Vec<serde_json::Value> = quarantine_raw_second
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries_second.len(),
+        256,
+        "quarantine journal should remain capped across repeated malformed bursts"
+    );
+    assert_eq!(entries_second.first().and_then(|v| v["raw_line"].as_str()), Some("not-json-54"));
+    assert_eq!(entries_second.last().and_then(|v| v["raw_line"].as_str()), Some("not-json-309"));
+
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);

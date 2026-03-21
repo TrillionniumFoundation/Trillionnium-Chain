@@ -120,14 +120,19 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
         match serde_json::from_str::<MessageIngressRecord>(line) {
             Ok(record) => records.push(record),
-            Err(err) => quarantined.push(IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: idx + 1,
-                line_hash: stable_line_hash(line),
-                raw_line: truncate_quarantine_raw_line(line),
-                error: err.to_string(),
-                quarantined_at_unix_ms: now_ms(),
-            }),
+            Err(err) => {
+                if quarantined.len() >= MAX_INGRESS_QUARANTINE_RECORDS {
+                    quarantined.drain(0..(quarantined.len() + 1 - MAX_INGRESS_QUARANTINE_RECORDS));
+                }
+                quarantined.push(IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: idx + 1,
+                    line_hash: stable_line_hash(line),
+                    raw_line: truncate_quarantine_raw_line(line),
+                    error: err.to_string(),
+                    quarantined_at_unix_ms: now_ms(),
+                });
+            }
         }
     }
     if !quarantined.is_empty() {
