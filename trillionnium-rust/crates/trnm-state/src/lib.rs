@@ -805,24 +805,24 @@ impl StateStore {
             && !self.should_preserve_pending_resolve_on_task_restore(id, task)
     }
 
-    fn should_noop_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
+    fn matches_task_restore_reentry_boundary(&self, id: u64, task: &TaskObject) -> bool {
         if self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id) {
             return false;
         }
         let Some(current) = self.get_task(id) else {
             return false;
         };
-        current == *task && !self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
+        current == *task
+    }
+
+    fn should_noop_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
+        self.matches_task_restore_reentry_boundary(id, task)
+            && !self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
     }
 
     fn should_scrub_pending_resolve_on_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
-        if self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id) {
-            return false;
-        }
-        let Some(current) = self.get_task(id) else {
-            return false;
-        };
-        current == *task && self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
+        self.matches_task_restore_reentry_boundary(id, task)
+            && self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
     }
 
     fn scrub_pending_resolve_on_task_restore_reentry(&mut self, id: u64) {
@@ -2916,6 +2916,63 @@ mod tests {
 
         assert_eq!(st.pending_resolve_approval(9_002), None);
         assert_eq!(st.pending_resolve_first_approver(9_002), None);
+    }
+
+    #[test]
+    fn restore_task_scrubs_pending_resolve_on_identical_non_challenged_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_009,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_stale_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_stale_pending,
+            "identical restore re-entry must scrub stale pending resolve residue once the task is no longer challenged"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing stale pending resolve residue on a non-challenged task should converge to the clean restored snapshot"
+        );
     }
 
     #[test]
