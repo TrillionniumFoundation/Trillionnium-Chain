@@ -371,6 +371,20 @@ fn hash_len_prefixed_str(hasher: &mut Sha256, value: &str) {
     hash_len_prefixed_bytes(hasher, value.as_bytes());
 }
 
+fn hash_pending_resolve_approval(
+    hasher: &mut Sha256,
+    task_id: u64,
+    pending: &PendingResolveApproval,
+) {
+    hasher.update(b"resolve_pending");
+    hasher.update(task_id.to_le_bytes());
+    hasher.update([pending.slash_worker as u8]);
+    hasher.update([pending.confirmations]);
+    hash_len_prefixed_str(hasher, &pending.first_approver);
+    hash_len_prefixed_str(hasher, &pending.authority_set);
+    hasher.update(pending.task_version.to_le_bytes());
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -1802,13 +1816,7 @@ impl StateStore {
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
-            hasher.update(b"resolve_pending");
-            hasher.update(task_id.to_le_bytes());
-            hasher.update([pending.slash_worker as u8]);
-            hasher.update([pending.confirmations]);
-            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
-            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
-            hasher.update(pending.task_version.to_le_bytes());
+            hash_pending_resolve_approval(&mut hasher, *task_id, pending);
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());

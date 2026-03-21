@@ -1235,6 +1235,47 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
 }
 
 #[test]
+fn pending_resolve_task_version_must_affect_state_root_even_when_other_snapshot_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 4,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    assert_ne!(
+        root_a,
+        state_b.state_root(),
+        "state_root must include the pending resolve task version so identical approval payloads for different task snapshots cannot hash identically"
+    );
+
+    state_b.restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the same pending resolve task version must rewind state_root exactly"
+    );
+}
+
+#[test]
 fn treasury_balance_address_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
