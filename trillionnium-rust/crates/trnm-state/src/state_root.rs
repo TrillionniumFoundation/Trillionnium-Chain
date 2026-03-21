@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
 
 use crate::{ObjectValue, StateStore};
-use trnm_types::Hash32;
+use trnm_types::{Hash32, PrivacyTier, TaskMetadata, TaskMeteringSnapshot, TaskModelMetadata, TaskProvenanceMetadata};
 
 fn hash_bytes_with_len(hasher: &mut Sha256, bytes: &[u8]) {
     hasher.update((bytes.len() as u64).to_le_bytes());
@@ -10,6 +10,95 @@ fn hash_bytes_with_len(hasher: &mut Sha256, bytes: &[u8]) {
 
 fn hash_str_with_len(hasher: &mut Sha256, value: &str) {
     hash_bytes_with_len(hasher, value.as_bytes());
+}
+
+fn hash_optional_str(hasher: &mut Sha256, value: Option<&str>) {
+    match value {
+        Some(value) => {
+            hasher.update([1]);
+            hash_str_with_len(hasher, value);
+        }
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_task_model_metadata(hasher: &mut Sha256, model: Option<&TaskModelMetadata>) {
+    match model {
+        Some(model) => {
+            hasher.update([1]);
+            hash_optional_str(hasher, model.model_id.as_deref());
+            hash_optional_str(hasher, model.model_digest.as_deref());
+            hash_optional_str(hasher, model.version.as_deref());
+        }
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_privacy_tier(hasher: &mut Sha256, tier: Option<&PrivacyTier>) {
+    match tier {
+        Some(PrivacyTier::Public) => hasher.update([1, 0]),
+        Some(PrivacyTier::Internal) => hasher.update([1, 1]),
+        Some(PrivacyTier::Restricted) => hasher.update([1, 2]),
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_task_provenance_metadata(hasher: &mut Sha256, provenance: Option<&TaskProvenanceMetadata>) {
+    match provenance {
+        Some(provenance) => {
+            hasher.update([1]);
+            hash_optional_str(hasher, provenance.producer_did.as_deref());
+            hash_optional_str(hasher, provenance.produced_at.as_deref());
+            hash_optional_str(hasher, provenance.provenance_index.as_deref());
+            hash_privacy_tier(hasher, provenance.privacy_tier.as_ref());
+        }
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: Option<&TaskMeteringSnapshot>) {
+    match metering {
+        Some(metering) => {
+            hasher.update([1]);
+            hash_str_with_len(hasher, &metering.workload_class);
+            hash_str_with_len(hasher, &metering.metering_schema);
+            hasher.update([metering.policy_snapshot_version]);
+            hash_str_with_len(hasher, &metering.receipt_hash);
+            hasher.update(metering.prompt_tokens.to_le_bytes());
+            hasher.update(metering.generated_tokens.to_le_bytes());
+            hasher.update(metering.decode_steps.to_le_bytes());
+            hasher.update(metering.kv_bytes_moved.to_le_bytes());
+            hasher.update(metering.normalized_work_units.to_le_bytes());
+            hasher.update(metering.prompt_token_weight.to_le_bytes());
+            hasher.update(metering.generated_token_weight.to_le_bytes());
+            hasher.update(metering.decode_step_weight.to_le_bytes());
+            hasher.update(metering.kv_byte_weight.to_le_bytes());
+            hasher.update(metering.min_accept_work_units.to_le_bytes());
+            hasher.update(metering.challenge_success_bounty_base.to_le_bytes());
+            hasher.update(metering.challenge_success_bounty_per_work_unit_num.to_le_bytes());
+            hasher.update(metering.challenge_success_bounty_per_work_unit_den.to_le_bytes());
+            hasher.update(metering.worker_completion_bonus_per_work_unit_num.to_le_bytes());
+            hasher.update(metering.worker_completion_bonus_per_work_unit_den.to_le_bytes());
+            hasher.update(metering.worker_slash_rebate_per_work_unit_num.to_le_bytes());
+            hasher.update(metering.worker_slash_rebate_per_work_unit_den.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_task_metadata(hasher: &mut Sha256, metadata: Option<&TaskMetadata>) {
+    match metadata {
+        Some(metadata) => {
+            hasher.update([1]);
+            hash_optional_str(hasher, metadata.note.as_deref());
+            hash_optional_str(hasher, metadata.task_type.as_deref());
+            hash_optional_str(hasher, metadata.input_hash.as_deref());
+            hash_task_model_metadata(hasher, metadata.model.as_ref());
+            hash_task_provenance_metadata(hasher, metadata.provenance.as_ref());
+            hash_task_metering_snapshot(hasher, metadata.metering.as_ref());
+        }
+        None => hasher.update([0]),
+    }
 }
 
 impl StateStore {
@@ -42,6 +131,8 @@ impl StateStore {
                     hasher.update(t.creator.as_bytes());
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
+                    hasher.update((t.proof_type as u8).to_le_bytes());
+                    hash_task_metadata(&mut hasher, t.metadata.as_ref());
 
                     match &t.worker {
                         Some(worker) => {
