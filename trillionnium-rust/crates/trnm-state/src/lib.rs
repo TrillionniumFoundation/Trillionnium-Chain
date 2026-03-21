@@ -171,6 +171,24 @@ const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
+fn governance_expected_pinned_binding(key: &str, key_id: u64) -> (Option<u64>, Option<&'static str>) {
+    let mut expected_key_id = None;
+    let mut expected_key = None;
+    for (pinned_key, pinned_key_id) in GOV_PINNED_KEY_IDS.iter().copied() {
+        if pinned_key == key {
+            expected_key_id = Some(pinned_key_id);
+        }
+        if pinned_key_id == key_id {
+            expected_key = Some(pinned_key);
+        }
+        if expected_key_id.is_some() && expected_key.is_some() {
+            break;
+        }
+    }
+    (expected_key_id, expected_key)
+}
+
+#[cfg(test)]
 fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
     GOV_PINNED_KEY_IDS
         .iter()
@@ -178,6 +196,7 @@ fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
         .find(|(pinned_key, _)| *pinned_key == key)
 }
 
+#[cfg(test)]
 fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> {
     GOV_PINNED_KEY_IDS
         .iter()
@@ -185,17 +204,17 @@ fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> 
         .find(|(_, pinned_key_id)| *pinned_key_id == key_id)
 }
 
+#[cfg(test)]
 fn governance_expected_key_id(key: &str) -> Option<u64> {
-    governance_pinned_binding_for_key(key).map(|(_, key_id)| key_id)
+    governance_expected_pinned_binding(key, 0).0
 }
 
 fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
-    governance_pinned_binding_for_id(key_id).map(|(key, _)| key)
+    governance_expected_pinned_binding("", key_id).1
 }
 
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
-    let expected_key_id = governance_expected_key_id(key);
-    let expected_key = governance_expected_key_for_id(key_id);
+    let (expected_key_id, expected_key) = governance_expected_pinned_binding(key, key_id);
     if let Some(expected_key_id) = expected_key_id {
         if key_id != expected_key_id {
             return Err(format!(
@@ -3461,6 +3480,28 @@ mod tests {
     }
 
     const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
+
+    #[test]
+    fn governance_expected_pinned_binding_is_single_source_for_reserved_key_and_id() {
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+            (Some(EMERGENCY_PAUSE_KEY_ID), Some("emergency_pause")),
+            "reserved governance key and reserved key id must resolve from the same single-source pinned registry"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding(
+                NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+                EMERGENCY_PAUSE_KEY_ID
+            ),
+            (None, Some("emergency_pause")),
+            "foreign governance keys must still resolve the reserved id side fail-closed"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", 9_200),
+            (Some(EMERGENCY_PAUSE_KEY_ID), None),
+            "reserved governance keys must still resolve the reserved key side fail-closed"
+        );
+    }
 
     #[test]
     fn governance_restore_rejects_non_allowlisted_key_fail_closed() {
