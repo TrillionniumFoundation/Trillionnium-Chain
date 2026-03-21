@@ -258,11 +258,19 @@ impl LaneAdmissionGate {
         }
     }
 
-    fn classify_lane_backpressure_guard(&self, class: IngressClass) -> Option<AdmitOutcome> {
-        if self.class_has_admission_headroom(class) {
-            None
+    fn lane_backpressure_guard_blocks(&self, class: IngressClass) -> bool {
+        !self.class_has_admission_headroom(class)
+    }
+
+    fn classify_lane_backpressure_guard(
+        &self,
+        class: IngressClass,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        if self.lane_backpressure_guard_blocks(class) {
+            Some(self.classify_duplicate_probe(is_duplicate))
         } else {
-            Some(AdmitOutcome::Backpressured)
+            None
         }
     }
 
@@ -409,9 +417,9 @@ impl LaneAdmissionGate {
             return out;
         }
 
-        if let Some(out) = self.classify_lane_backpressure_guard(class) {
+        if let Some(out) = self.classify_lane_backpressure_guard(class, is_duplicate) {
             // When reserve policy blocks this ingress class despite aggregate spare
-            // capacity, bound retry churn by returning the final backpressure result
+            // capacity, return the final duplicate-vs-backpressure classification
             // before touching either lane-local admit path.
             return out;
         }
