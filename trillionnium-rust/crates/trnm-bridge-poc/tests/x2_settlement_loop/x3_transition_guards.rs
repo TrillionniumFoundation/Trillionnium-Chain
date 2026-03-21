@@ -77,6 +77,48 @@ fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
 }
 
 #[test]
+fn x3_prep_degraded_heartbeat_blank_reason_falls_back_to_stable_contract_message() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-blank-reason".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "\u{200B}\n\t\u{202E}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 411 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: unknown heartbeat failure".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: unknown heartbeat failure".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
+    );
+}
+
+#[test]
 fn x3_prep_stale_invalid_heartbeat_after_finalize_prefers_replay_guard_over_metric_validation() {
     let mut request = SettlementRequest::new(1, "0xstale-invalid-after-finalize".to_string());
     let token = operator_token();
