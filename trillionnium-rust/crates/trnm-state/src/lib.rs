@@ -785,7 +785,21 @@ impl StateStore {
 
         match snapshot {
             Some(task) => {
-                if task.task_id != id || task.version == 0 {
+                if task.version == 0 {
+                    let removed_task = matches!(
+                        self.objects.get(&id),
+                        Some(VersionedObject {
+                            value: ObjectValue::Task(_),
+                            ..
+                        })
+                    ) && self.objects.remove(&id).is_some();
+                    let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
+                    if removed_task || removed_pending {
+                        self.invalidate_state_root_cache();
+                    }
+                    return;
+                }
+                if task.task_id != id {
                     if self.pending_resolve_approvals.remove(&id).is_some() {
                         self.invalidate_state_root_cache();
                     }
