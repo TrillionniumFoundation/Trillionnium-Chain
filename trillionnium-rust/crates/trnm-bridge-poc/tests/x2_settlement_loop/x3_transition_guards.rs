@@ -931,3 +931,78 @@ fn x3_prep_retry_pending_with_malformed_metrics_after_revert_prefers_replay_guar
         )
     );
 }
+
+#[test]
+fn x3_prep_degraded_heartbeat_after_revert_prefers_replay_guard_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-after-revert".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(648, 647, 27);
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target chain receipt timeout".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target chain receipt timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(648),
+                heartbeat_target_height: Some(647),
+                heartbeat_latency_ms: Some(27),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target chain receipt timeout".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target chain receipt timeout".to_string()
+        )
+    );
+
+    let degraded_replay = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 648,
+            target_height: 647,
+            latency_ms: 27,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "late degraded heartbeat replay".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded_replay,
+        SettlementConfirm::Confirmed { height: 649 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "reverted",
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target chain receipt timeout".to_string()
+        )
+    );
+}
