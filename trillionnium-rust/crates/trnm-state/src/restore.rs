@@ -44,7 +44,12 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.task_id != id {
-                    self.objects.remove(&id);
+                    if matches!(
+                        self.objects.get(&id).map(|object| &object.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
+                    }
                     return;
                 }
                 self.objects.insert(
@@ -56,7 +61,12 @@ impl StateStore {
                 );
             }
             None => {
-                self.objects.remove(&id);
+                if matches!(
+                    self.objects.get(&id).map(|object| &object.value),
+                    Some(ObjectValue::Task(_))
+                ) {
+                    self.objects.remove(&id);
+                }
             }
         }
     }

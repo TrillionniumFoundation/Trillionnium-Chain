@@ -1838,6 +1838,62 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_task_mismatched_slot_does_not_scrub_foreign_object_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 10_203, "max_block_ms".into(), "500".into())
+        .expect("foreign governance object should exist before mismatched task restore");
+
+    let foreign_root = state.state_root();
+    let task_snapshot = TaskObject {
+        task_id: 10_202,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    state.restore_task(10_203, Some(task_snapshot));
+
+    assert!(
+        state.get_task(10_203).is_none(),
+        "mismatched task restore must not materialize a task through a foreign object slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "mismatched task restore must preserve the foreign governance object and index"
+    );
+    assert_eq!(
+        state.state_root(),
+        foreign_root,
+        "mismatched task restore must not perturb state_root when the targeted slot belongs to a foreign object kind"
+    );
+
+    state.restore_task(10_203, None);
+    assert_eq!(
+        state.state_root(),
+        foreign_root,
+        "restore_task(None) must also stay task-scoped and preserve foreign object slots"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
