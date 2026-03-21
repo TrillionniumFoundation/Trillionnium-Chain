@@ -1284,6 +1284,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
+            // Validate mixed read/write domains up front so fail-closed skew guards still
+            // fire even when micro-batch and degenerate-bucket short-circuits return early.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             if txs.len() <= 1 {
                 return;
             }
@@ -1998,6 +2003,24 @@ mod tests {
             txs.iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![61, 62, 63, 64]
         );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_interleave_rejects_cross_domain_version_skew_before_micro_batch_short_circuit() {
+        let mut txs = vec![
+            tx(
+                1,
+                vec![ObjectRef { id: 7, version: 2 }],
+                vec![ObjectRef { id: 7, version: 1 }],
+            ),
+            tx(2, vec![], vec![o(9)]),
+            tx(3, vec![o(10)], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
     }
 
     #[test]
