@@ -1467,21 +1467,8 @@ impl StateStore {
         if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
         }
-        let object = self.objects.get(&id)?;
-        match &object.value {
-            ObjectValue::GovParam(p)
-                if validate_gov_param_snapshot_binding(
-                    &self.gov_param_key_index,
-                    key,
-                    &p.key,
-                    p.key_id,
-                )
-                .is_ok() =>
-            {
-                Some((id, p))
-            }
-            _ => None,
-        }
+        let param = self.validated_gov_param_object_at_id(id)?;
+        (param.key == key).then_some((id, param))
     }
 
     fn gov_param_value(&self, key: &str) -> Option<&str> {
@@ -3665,6 +3652,10 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry key and object key diverge"
+        );
+        assert!(
+            st.get_param(7316).is_none(),
+            "direct id accessor must fail closed when registry key and object key diverge"
         );
     }
 
