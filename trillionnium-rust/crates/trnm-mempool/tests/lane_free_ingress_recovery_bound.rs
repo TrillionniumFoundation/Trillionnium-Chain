@@ -70,6 +70,23 @@ fn borrowed_last_critical_slot_keeps_fresh_critical_retry_backpressured_until_dr
 }
 
 #[test]
+fn borrowed_last_critical_slot_keeps_duplicate_probe_duplicate_while_guarded() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    // Borrow the last reserved critical slot while the critical lane is idle.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+
+    // The borrowed tx is already queued in the lane, so a critical retry of the
+    // same id must preserve Duplicate classification even though the class-local
+    // reserve guard would backpressure a fresh critical id here.
+    assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+}
+
+#[test]
 fn active_critical_backlog_blocks_normal_from_borrowing_last_reserved_slot() {
     let mut g = LaneAdmissionGate::new(4, 2);
 

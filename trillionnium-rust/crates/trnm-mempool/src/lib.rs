@@ -253,6 +253,22 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_headroom_probe(
+        &self,
+        lane_total: usize,
+        class: IngressClass,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        if let Some(out) = self.classify_pre_admission_probe(lane_total, is_duplicate) {
+            return Some(out);
+        }
+
+        // When aggregate capacity remains but reserve policy blocks this ingress
+        // class, preserve the same duplicate-vs-backpressure contract that the
+        // saturated path already guarantees.
+        self.classify_lane_backpressure_guard(class, is_duplicate)
+    }
+
     fn normal_has_admission_headroom(&self) -> bool {
         self.normal.queue.len() < self.normal.capacity || self.normal_can_borrow_critical_headroom()
     }
@@ -421,16 +437,10 @@ impl LaneAdmissionGate {
             }
         }
 
-        if let Some(out) = self.classify_pre_admission_probe(lane_total, is_duplicate) {
-            // Exit before lane-specific admission attempts once duplicate/backpressure
-            // classification is already known.
-            return out;
-        }
-
-        if let Some(out) = self.classify_lane_backpressure_guard(class, is_duplicate) {
-            // When reserve policy blocks this ingress class despite aggregate spare
-            // capacity, return the final duplicate-vs-backpressure classification
-            // before touching either lane-local admit path.
+        if let Some(out) = self.classify_headroom_probe(lane_total, class, is_duplicate) {
+            // Exit before lane-specific admission attempts once aggregate headroom
+            // and class-specific reserve guards have already determined the final
+            // duplicate-vs-backpressure outcome.
             return out;
         }
 
