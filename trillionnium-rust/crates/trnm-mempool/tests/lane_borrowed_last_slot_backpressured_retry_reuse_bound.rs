@@ -158,3 +158,28 @@ fn guarded_last_critical_slot_keeps_small_cross_class_retry_burst_stable_until_r
     assert_eq!(gate.pop_ready(), Some(20));
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn guarded_last_critical_slot_retry_burst_keeps_fresh_and_duplicate_outcomes_partitioned() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    for (tx_id, class, expected) in [
+        (20, IngressClass::Normal, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+        (20, IngressClass::Normal, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+        (20, IngressClass::Critical, AdmitOutcome::Duplicate),
+    ] {
+        assert_eq!(gate.admit(tx_id, class), expected);
+        assert_eq!(gate.queued_counts(), (3, 1, 4));
+    }
+
+    assert_eq!(gate.pop_ready(), Some(20));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+}

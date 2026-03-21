@@ -266,6 +266,10 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_guarded_retry_probe(&self, is_duplicate: bool) -> AdmitOutcome {
+        self.classify_duplicate_probe(is_duplicate)
+    }
+
     fn classify_reserved_slot_guard_probe(
         &self,
         class: IngressClass,
@@ -275,7 +279,11 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        self.classify_lane_backpressure_guard(class, is_duplicate)
+        if self.lane_backpressure_guard_blocks(class) {
+            Some(self.classify_guarded_retry_probe(is_duplicate))
+        } else {
+            None
+        }
     }
 
     fn classify_headroom_probe(
@@ -316,18 +324,6 @@ impl LaneAdmissionGate {
 
     fn lane_backpressure_guard_blocks(&self, class: IngressClass) -> bool {
         !self.class_has_admission_headroom(class)
-    }
-
-    fn classify_lane_backpressure_guard(
-        &self,
-        class: IngressClass,
-        is_duplicate: bool,
-    ) -> Option<AdmitOutcome> {
-        if self.lane_backpressure_guard_blocks(class) {
-            Some(self.classify_duplicate_probe(is_duplicate))
-        } else {
-            None
-        }
     }
 
     fn finish_admission(&mut self, tx_id: u64, out: AdmitOutcome) -> AdmitOutcome {
