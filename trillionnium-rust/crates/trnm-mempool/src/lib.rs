@@ -76,6 +76,15 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn reset_idle_scheduler_state(&mut self, clear_seen_global: bool) {
+        self.normal.seen.clear();
+        self.critical.seen.clear();
+        if clear_seen_global {
+            self.seen_global.clear();
+        }
+        self.critical_served_streak = 0;
+    }
+
     fn rebuild_lane_seen_from_queues(&mut self) {
         self.normal.seen.clear();
         self.normal.seen.extend(self.normal.queue.iter().copied());
@@ -140,20 +149,14 @@ impl LaneAdmissionGate {
 
         if lane_was_empty {
             // Defensive restored-state self-heal: with no queued work, lane-local and
-            // lane-wide idempotency sets must be empty. Clear only when needed so
-            // repeated empty-lane admits avoid redundant HashSet clear work.
+            // lane-wide idempotency sets must be empty. Reset only when needed so
+            // repeated empty-lane admits avoid redundant clear work.
             if !(self.normal.seen.is_empty()
                 && self.critical.seen.is_empty()
-                && self.seen_global.is_empty())
+                && self.seen_global.is_empty()
+                && self.critical_served_streak == 0)
             {
-                self.normal.seen.clear();
-                self.critical.seen.clear();
-                self.seen_global.clear();
-            }
-            // Fully idle lane state must also reset fairness streak; otherwise a
-            // restored stale streak can spuriously preempt fresh critical work.
-            if self.critical_served_streak != 0 {
-                self.critical_served_streak = 0;
+                self.reset_idle_scheduler_state(true);
             }
         } else {
             let lane_local_seen_total = self
@@ -347,16 +350,17 @@ impl LaneAdmissionGate {
             // Exception: zero-capacity hard-stop mode intentionally preserves restored
             // duplicate knowledge even though no queue slots exist, so repeated idle
             // polls must not erase that recovery metadata.
-            if self.total_capacity > 0
-                && !(self.normal.seen.is_empty()
+            if self.total_capacity > 0 {
+                if !(self.normal.seen.is_empty()
                     && self.critical.seen.is_empty()
-                    && self.seen_global.is_empty())
-            {
-                self.normal.seen.clear();
-                self.critical.seen.clear();
-                self.seen_global.clear();
-            }
-            if self.critical_served_streak != 0 {
+                    && self.seen_global.is_empty()
+                    && self.critical_served_streak == 0)
+                {
+                    self.reset_idle_scheduler_state(true);
+                }
+            } else if self.critical_served_streak != 0 {
+                // Zero-capacity hard-stop mode must preserve restored duplicate
+                // metadata across idle polls while still cold-resetting fairness.
                 self.critical_served_streak = 0;
             }
             return None;
@@ -434,13 +438,9 @@ impl LaneAdmissionGate {
         }
 
         if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
-            // Full-drain boundary: aggressively clear lane-local id caches so
-            // restored-state ghost markers cannot survive until the next admit().
-            self.normal.seen.clear();
-            self.critical.seen.clear();
-            // Also cold-reset fairness bookkeeping immediately on idle so no stale
-            // streak survives between dequeue loops in long-lived schedulers.
-            self.critical_served_streak = 0;
+            // Full-drain boundary: aggressively cold-reset lane-local caches and
+            // fairness bookkeeping so no stale state survives into the next batch.
+            self.reset_idle_scheduler_state(false);
         }
 
         Some(id)

@@ -20,6 +20,7 @@ fn repeated_empty_pop_after_full_drain_does_not_poison_next_batch_fairness_or_re
     // survive into the next mixed batch.
     assert_eq!(gate.pop_ready(), None);
     assert_eq!(gate.pop_ready(), None);
+    assert_eq!(gate.queued_counts(), (0, 0, 0));
 
     // The drained id should be immediately reusable across classes.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
