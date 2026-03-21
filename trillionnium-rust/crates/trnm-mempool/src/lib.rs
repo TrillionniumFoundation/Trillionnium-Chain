@@ -272,20 +272,30 @@ impl LaneAdmissionGate {
         self.classify_bounded_retry_probe(is_duplicate)
     }
 
+    fn classify_retry_probe_when(
+        &self,
+        predicate: bool,
+        is_duplicate: bool,
+        classify: impl FnOnce(&Self, bool) -> AdmitOutcome,
+    ) -> Option<AdmitOutcome> {
+        if predicate {
+            Some(classify(self, is_duplicate))
+        } else {
+            None
+        }
+    }
+
     fn classify_pre_admission_probe(
         &self,
         lane_total: usize,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        if self.lane_is_globally_saturated(lane_total) {
-            return Some(self.classify_capacity_probe(is_duplicate));
-        }
-
-        if is_duplicate {
-            Some(AdmitOutcome::Duplicate)
-        } else {
-            None
-        }
+        self.classify_retry_probe_when(
+            self.lane_is_globally_saturated(lane_total),
+            is_duplicate,
+            Self::classify_capacity_probe,
+        )
+        .or_else(|| is_duplicate.then_some(AdmitOutcome::Duplicate))
     }
 
     fn classify_guard_probe(
@@ -293,11 +303,11 @@ impl LaneAdmissionGate {
         guard_blocks: bool,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        if guard_blocks {
-            Some(self.classify_bounded_retry_probe(is_duplicate))
-        } else {
-            None
-        }
+        self.classify_retry_probe_when(
+            guard_blocks,
+            is_duplicate,
+            Self::classify_bounded_retry_probe,
+        )
     }
 
     fn classify_guarded_retry_probe(

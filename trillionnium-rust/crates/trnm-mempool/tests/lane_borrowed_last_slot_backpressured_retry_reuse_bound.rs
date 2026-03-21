@@ -69,6 +69,28 @@ fn borrowed_last_idle_critical_slot_preserves_duplicate_before_guard_reopens() {
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_keeps_cross_class_duplicate_ahead_of_guarded_fresh_retries() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // A fresh critical retry remains backpressured while the borrowed last slot
+    // keeps the reserve guard shut.
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // Cross-class retries of the already queued borrowed id must still resolve as
+    // Duplicate rather than inheriting the fresh retry's Backpressured outcome.
+    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    assert_eq!(gate.pop_ready(), Some(12));
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn borrowed_idle_tail_slot_flips_from_borrowable_to_guarded_once_critical_backlog_appears() {
     let mut gate = LaneAdmissionGate::new(5, 2);
 
