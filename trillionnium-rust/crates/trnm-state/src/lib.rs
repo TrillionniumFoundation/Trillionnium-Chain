@@ -40,6 +40,13 @@ struct PendingResolveApproval {
     task_version: u64,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TaskRestoreReentryBoundaryAction {
+    Noop,
+    ScrubPendingResolve,
+    Reapply,
+}
+
 impl Default for StateStore {
     fn default() -> Self {
         Self {
@@ -810,14 +817,18 @@ impl StateStore {
         current == *task
     }
 
-    fn should_noop_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
-        self.matches_task_restore_reentry_boundary(id, task)
-            && !self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
-    }
-
-    fn should_scrub_pending_resolve_on_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
-        self.matches_task_restore_reentry_boundary(id, task)
-            && self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
+    fn task_restore_reentry_boundary_action(
+        &self,
+        id: u64,
+        task: &TaskObject,
+    ) -> TaskRestoreReentryBoundaryAction {
+        if !self.matches_task_restore_reentry_boundary(id, task) {
+            return TaskRestoreReentryBoundaryAction::Reapply;
+        }
+        if self.has_pending_resolve_restore_reentry_boundary_hazard(id, task) {
+            return TaskRestoreReentryBoundaryAction::ScrubPendingResolve;
+        }
+        TaskRestoreReentryBoundaryAction::Noop
     }
 
     fn scrub_pending_resolve_on_task_restore_reentry(&mut self, id: u64) {
@@ -828,12 +839,13 @@ impl StateStore {
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         if let Some(task) = snapshot.as_ref() {
             if task.task_id == id {
-                if self.should_noop_task_restore_reentry(id, task) {
-                    return;
-                }
-                if self.should_scrub_pending_resolve_on_task_restore_reentry(id, task) {
-                    self.scrub_pending_resolve_on_task_restore_reentry(id);
-                    return;
+                match self.task_restore_reentry_boundary_action(id, task) {
+                    TaskRestoreReentryBoundaryAction::Noop => return,
+                    TaskRestoreReentryBoundaryAction::ScrubPendingResolve => {
+                        self.scrub_pending_resolve_on_task_restore_reentry(id);
+                        return;
+                    }
+                    TaskRestoreReentryBoundaryAction::Reapply => {}
                 }
             }
         }
