@@ -85,12 +85,6 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
-    if heartbeat.should_retry {
-        return Err(SettlementError::RetryPending {
-            phase: "relay_heartbeat",
-        });
-    }
-
     if has_invalid_heartbeat_bounds(heartbeat) {
         let height = match &confirm {
             SettlementConfirm::Confirmed { height } => *height,
@@ -100,6 +94,12 @@ pub fn drive_minimal_settlement(
                 .unwrap_or(0),
         };
         return Err(SettlementError::InvalidHeight { height });
+    }
+
+    if heartbeat.should_retry {
+        return Err(SettlementError::RetryPending {
+            phase: "relay_heartbeat",
+        });
     }
 
     match confirm {

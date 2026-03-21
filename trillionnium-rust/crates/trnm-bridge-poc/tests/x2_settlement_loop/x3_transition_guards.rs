@@ -180,6 +180,37 @@ fn x3_prep_failed_confirm_during_heartbeat_retry_window_is_rejected_without_stat
 }
 
 #[test]
+fn x3_prep_retry_window_with_invalid_heartbeat_bounds_is_rejected_before_retry_state_change() {
+    let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 701 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_zero_height_confirm_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xconfirm-zero-height".to_string());
     let token = operator_token();
