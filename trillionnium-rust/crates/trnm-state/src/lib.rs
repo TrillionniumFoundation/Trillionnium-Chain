@@ -813,7 +813,15 @@ impl StateStore {
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
-                if task.task_id != id || !task_snapshot_metadata_is_complete(&task) {
+                if task.task_id != id
+                    || (task.status == TaskStatus::Challenged
+                        && task
+                            .metadata
+                            .as_ref()
+                            .and_then(|metadata| metadata.metering.as_ref())
+                            .is_none())
+                    || !task_snapshot_metadata_is_complete(&task)
+                {
                     self.objects.remove(&id);
                     return;
                 }

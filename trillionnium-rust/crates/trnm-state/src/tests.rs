@@ -315,6 +315,42 @@ fn resolve_approval_rejects_system_or_treasury_approver_without_mutation() {
 }
 
 #[test]
+fn restore_task_rejects_missing_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        9_929,
+        Some(TaskObject {
+            task_id: 9_929,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(9_929).is_none(),
+        "restore_task must fail closed when a challenged snapshot omits audit/proof metadata"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_snapshot_rejects_missing_task_metadata_for_challenged_task() {
     let mut st = StateStore::new();
     st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
