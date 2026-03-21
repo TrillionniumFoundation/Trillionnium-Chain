@@ -16,9 +16,18 @@ fn is_timeout_eligible_status(status: &TaskStatus) -> bool {
     )
 }
 
+fn timeout_skip_reason(status: &TaskStatus, emergency_paused: bool) -> Option<&'static str> {
+    if !is_timeout_eligible_status(status) {
+        return Some("status_not_timeout_eligible");
+    }
+    if emergency_paused && matches!(status, TaskStatus::Challenged) {
+        return Some("emergency_pause_challenged");
+    }
+    None
+}
+
 fn should_scan_timeout(status: &TaskStatus, emergency_paused: bool) -> bool {
-    is_timeout_eligible_status(status)
-        && !(emergency_paused && matches!(status, TaskStatus::Challenged))
+    timeout_skip_reason(status, emergency_paused).is_none()
 }
 
 pub(crate) fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
@@ -73,12 +82,18 @@ pub(crate) fn scan_and_apply_timeouts(
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
-        if !should_scan_timeout(&task.status, st.is_emergency_paused()) {
+        if let Some(reason) = timeout_skip_reason(&task.status, st.is_emergency_paused()) {
             // Governance boundary hardening: the node-level timeout scanner must not even
             // enter challenged settlement while emergency pause is active. The lower-level
             // timeout path is already fail-closed, but skipping here keeps pause semantics
             // explicit and preserves staged resolve approvals/escrow without touching the
             // challenged settlement path at all.
+            if reason == "emergency_pause_challenged" {
+                println!(
+                    "[timeout-skip] height={} task_id={} status={:?} reason={}",
+                    current_height, task_id, task.status, reason
+                );
+            }
             continue;
         }
         let from_status = format!("{:?}", task.status);
@@ -137,7 +152,7 @@ mod tests {
     use super::{
         should_scan_timeout, sorted_timeout_candidate_ids, timeout_bond_disposition,
         timeout_event_tx_id, timeout_event_tx_metadata, timeout_event_tx_overflowed,
-        TIMEOUT_SCAN_MAX_TASK_ID,
+        timeout_skip_reason, TIMEOUT_SCAN_MAX_TASK_ID,
     };
     use std::collections::HashSet;
     use trnm_types::TaskStatus;
@@ -161,6 +176,23 @@ mod tests {
         assert!(should_scan_timeout(&TaskStatus::Committed, true));
         assert!(should_scan_timeout(&TaskStatus::Revealed, true));
         assert!(!should_scan_timeout(&TaskStatus::Challenged, true));
+    }
+
+    #[test]
+    fn timeout_skip_reason_surfaces_pause_visibility_without_blurring_other_edges() {
+        assert_eq!(
+            timeout_skip_reason(&TaskStatus::Challenged, true),
+            Some("emergency_pause_challenged")
+        );
+        assert_eq!(
+            timeout_skip_reason(&TaskStatus::Assigned, true),
+            None,
+            "pause should not hide normal assignment timeout edges"
+        );
+        assert_eq!(
+            timeout_skip_reason(&TaskStatus::Created, false),
+            Some("status_not_timeout_eligible")
+        );
     }
 
     #[test]
