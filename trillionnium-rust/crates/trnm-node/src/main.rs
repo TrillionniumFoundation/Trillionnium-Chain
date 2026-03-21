@@ -7809,6 +7809,15 @@ mod tests {
     }
 
     #[test]
+    fn timeout_event_surface_metadata_keeps_exact_u64_max_boundary_visible_without_fake_overflow() {
+        assert_eq!(
+            timeout_event_surface_metadata(0, u64::MAX - 1),
+            (u64::MAX, u64::MAX, false, false),
+            "landing exactly on the u64 ceiling should stay visible without claiming saturation overflow"
+        );
+    }
+
+    #[test]
     fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
