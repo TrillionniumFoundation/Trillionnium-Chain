@@ -246,3 +246,66 @@ fn load_ingress_records_bounds_quarantine_journal_growth() {
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
 }
+
+#[test]
+fn load_ingress_records_rewrites_preexisting_oversized_quarantine_rows_to_bound_noise() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-existing-oversized-row", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let oversized = format!("{}{}", "前".repeat(260), "tail");
+    fs::write(&path, format!("{oversized}\n")).expect("write malformed ingress fixture");
+
+    let seeded = serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 1,
+        "line_hash": expected_stable_line_hash(&oversized),
+        "raw_line": oversized,
+        "error": "seeded from older oversized journal",
+        "quarantined_at_unix_ms": 1
+    });
+    fs::write(
+        &quarantine,
+        format!("{}\n", serde_json::to_string(&seeded).expect("serialize seeded quarantine row")),
+    )
+    .expect("seed oversized quarantine row");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed ingress row should still be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read normalized quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "replay should compact the seeded oversized duplicate");
+
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("normalized quarantine raw line");
+    assert!(
+        raw_line.len() <= 512,
+        "preexisting quarantine rows should be rewritten back under the raw-line byte ceiling"
+    );
+    assert!(
+        oversized.starts_with(raw_line),
+        "normalized quarantine row should preserve the original prefix"
+    );
+    assert!(
+        raw_line.is_char_boundary(raw_line.len()),
+        "normalized quarantine row must preserve utf-8 boundaries"
+    );
+    assert_eq!(
+        entries[0]["line_hash"].as_u64(),
+        Some(expected_stable_line_hash(&oversized)),
+        "normalization must keep the deterministic dedupe hash stable"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
