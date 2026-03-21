@@ -2342,14 +2342,21 @@ fn timeout_bond_disposition(
     })
 }
 
-fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
+fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
+    let ordinal_saturated = migrated_before_emit == u64::MAX;
     let ordinal = migrated_before_emit.saturating_add(1);
-    tx_id_seed.checked_add(ordinal).unwrap_or(u64::MAX)
+    match tx_id_seed.checked_add(ordinal) {
+        Some(tx_id) => (tx_id, ordinal_saturated),
+        None => (u64::MAX, true),
+    }
+}
+
+fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
+    timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).0
 }
 
 fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
-    let ordinal = migrated_before_emit.saturating_add(1);
-    migrated_before_emit == u64::MAX || tx_id_seed.checked_add(ordinal).is_none()
+    timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).1
 }
 
 fn scan_and_apply_timeouts(

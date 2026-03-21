@@ -5026,6 +5026,14 @@
     }
 
     #[test]
+    fn timeout_event_tx_metadata_keeps_tx_id_and_overflow_flag_consistent_at_boundary() {
+        assert_eq!(timeout_event_tx_metadata(9_000_000, 0), (9_000_001, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 0), (u64::MAX, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 1), (u64::MAX, true));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
+    }
+
+    #[test]
     fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
