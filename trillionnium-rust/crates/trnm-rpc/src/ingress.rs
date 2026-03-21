@@ -66,9 +66,8 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                         line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES
                     })
                     .filter_map(|line| {
-                        let value = serde_json::from_str::<serde_json::Value>(line).ok()?;
-                        let raw_line = value.get("raw_line")?.as_str()?;
-                        if raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+                        let entry = serde_json::from_str::<IngressQuarantineRecord>(line).ok()?;
+                        if entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
                             return None;
                         }
                         Some(line.to_string())
