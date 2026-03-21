@@ -46,8 +46,24 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
     const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
 
-    fn contains_forbidden_control_chars(raw: &str) -> bool {
-        raw.chars().any(|ch| ch.is_control())
+    fn contains_forbidden_quarantine_chars(raw: &str) -> bool {
+        raw.chars().any(|ch| {
+            ch.is_control()
+                || matches!(
+                    ch,
+                    '\u{2028}'
+                        | '\u{2029}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
     }
 
     if entry.line_number == 0
@@ -59,9 +75,9 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
         || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
         || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
         || entry.error.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
-        || contains_forbidden_control_chars(&entry.source_path)
-        || contains_forbidden_control_chars(&entry.raw_line)
-        || contains_forbidden_control_chars(&entry.error)
+        || contains_forbidden_quarantine_chars(&entry.source_path)
+        || contains_forbidden_quarantine_chars(&entry.raw_line)
+        || contains_forbidden_quarantine_chars(&entry.error)
     {
         return false;
     }

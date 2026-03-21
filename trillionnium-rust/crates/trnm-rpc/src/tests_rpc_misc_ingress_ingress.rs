@@ -62,11 +62,29 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let control_char_raw_line = IngressQuarantineRecord {
         raw_line: "{\"broken\":\u0000}".to_string(),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&control_char_raw_line),
         "control characters in quarantined payload echoes should fail closed"
+    );
+
+    let bidi_override_error = IngressQuarantineRecord {
+        error: "parse failed \u{202e}json".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&bidi_override_error),
+        "bidi override characters should be rejected to keep quarantine logs unambiguous"
+    );
+
+    let line_separator_source_path = IngressQuarantineRecord {
+        source_path: "/tmp/ingress\u{2028}jsonl".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&line_separator_source_path),
+        "unicode line separators should be rejected from quarantine metadata"
     );
 }
 
