@@ -752,6 +752,13 @@ impl StateStore {
         self.canonical_pending_resolve_approval_snapshot_for_task(task_id, &task, snapshot)
     }
 
+    fn pending_resolve_matches_task_version(&self, task_id: u64, task_version: u64) -> bool {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|pending| pending.task_version == task_version)
+            .unwrap_or(false)
+    }
+
     fn should_preserve_pending_resolve_on_task_restore(
         &self,
         task_id: u64,
@@ -763,12 +770,12 @@ impl StateStore {
         if current != *task || task.status != TaskStatus::Challenged {
             return false;
         }
+        if !self.pending_resolve_matches_task_version(task_id, task.version) {
+            return false;
+        }
         let Some(pending) = self.pending_resolve_approvals.get(&task_id) else {
             return false;
         };
-        if pending.task_version != task.version {
-            return false;
-        }
         if pending.confirmations != 1 {
             return false;
         }
@@ -2874,6 +2881,63 @@ mod tests {
             st.state_root(),
             baseline.state_root(),
             "scrubbing corrupt pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_version_mismatched_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_010,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 2,
+            },
+        );
+        let root_with_version_mismatch = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_version_mismatch,
+            "identical restore re-entry must invalidate the cached state root when a stale task-version pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing task-version-mismatched pending resolve residue should converge to the clean restored task snapshot"
         );
     }
 
