@@ -59,10 +59,12 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 
     let mut retained_lines: Vec<String> = match fs::metadata(&quarantine_path) {
         Ok(meta) if meta.len() > INGRESS_QUARANTINE_READ_MAX_BYTES => Vec::new(),
-        _ => fs::read_to_string(&quarantine_path)
+        _ => fs::read(&quarantine_path)
             .ok()
             .map(|raw| {
-                raw.lines()
+                raw.split(|byte| *byte == b'\n')
+                    .filter_map(|line_bytes| std::str::from_utf8(line_bytes).ok())
+                    .map(|line| line.trim_end_matches('\r'))
                     .filter(|line| !line.trim().is_empty())
                     .filter(|line| {
                         line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES

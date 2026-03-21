@@ -356,6 +356,55 @@ fn load_ingress_records_deduplicates_repeated_quarantine_noise_per_scan() {
 }
 
 #[test]
+fn load_ingress_records_skips_invalid_utf8_preexisting_quarantine_noise_without_dropping_valid_rows() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-invalid-utf8-retained-noise", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let retained = serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 7,
+        "line_hash": 77,
+        "raw_line": "{\"broken\":77",
+        "error": "EOF while parsing a value at line 1 column 13",
+        "quarantined_at_unix_ms": 123,
+    });
+    let mut quarantine_fixture = serde_json::to_vec(&retained).expect("serialize retained quarantine entry");
+    quarantine_fixture.extend_from_slice(b"\n");
+    quarantine_fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
+    quarantine_fixture.extend_from_slice(b"\n");
+    fs::write(&quarantine, quarantine_fixture).expect("write invalid utf-8 quarantine noise");
+    fs::write(&path, "{\"broken\":99\n").expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 2, "invalid utf-8 retained noise should be skipped, not wipe valid retained entries");
+    assert_eq!(entries[0]["line_hash"], 77);
+    assert_eq!(entries[1]["line_number"], 1);
+    assert!(
+        entries[1]["error"]
+            .as_str()
+            .expect("error string")
+            .contains("EOF while parsing"),
+        "new malformed ingress record should still be quarantined after skipping invalid utf-8 retained noise"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_drops_preexisting_malformed_quarantine_noise() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-corrupt-retention", "jsonl");
