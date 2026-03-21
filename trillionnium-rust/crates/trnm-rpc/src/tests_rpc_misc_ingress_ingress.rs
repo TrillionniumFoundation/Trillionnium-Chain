@@ -1,6 +1,58 @@
 use super::*;
 
 #[test]
+fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
+    let valid = IngressQuarantineRecord {
+        source_path: "/tmp/ingress.jsonl".to_string(),
+        line_number: 1,
+        line_hash: 7,
+        raw_line: "{\"broken\":1".to_string(),
+        error: "EOF while parsing a value at line 1 column 12".to_string(),
+        quarantined_at_unix_ms: 1,
+    };
+    assert!(
+        quarantine_record_within_bounds(&valid),
+        "well-formed quarantine entries should be retained"
+    );
+
+    let blank_error = IngressQuarantineRecord {
+        error: "   ".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&blank_error),
+        "blank parse context should be rejected fail-closed"
+    );
+
+    let oversized_raw_line = IngressQuarantineRecord {
+        raw_line: "x".repeat(4097),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&oversized_raw_line),
+        "raw ingress payload echoes should stay noise-bounded"
+    );
+
+    let oversized_source_path = IngressQuarantineRecord {
+        source_path: "x".repeat(4097),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&oversized_source_path),
+        "source path metadata should stay field-bounded"
+    );
+
+    let oversized_error = IngressQuarantineRecord {
+        error: "x".repeat(4097),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&oversized_error),
+        "error payloads should stay field-bounded"
+    );
+}
+
+#[test]
 fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");

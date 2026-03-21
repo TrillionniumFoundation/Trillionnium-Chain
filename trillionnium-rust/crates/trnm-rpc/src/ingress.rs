@@ -41,12 +41,32 @@ fn stable_line_hash(raw: &str) -> u64 {
     stable_bounded_bytes_hash(raw.as_bytes())
 }
 
+pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -> bool {
+    const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
+    const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
+    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+
+    if entry.line_number == 0
+        || entry.source_path.trim().is_empty()
+        || entry.raw_line.trim().is_empty()
+        || entry.error.trim().is_empty()
+        || entry.quarantined_at_unix_ms == 0
+        || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
+        || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
+        || entry.error.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
+    {
+        return false;
+    }
+
+    serde_json::to_string(entry)
+        .map(|line| line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES)
+        .unwrap_or(false)
+}
+
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     const INGRESS_QUARANTINE_FILE_MAX_RECORDS: usize = 1024;
     const INGRESS_QUARANTINE_READ_MAX_BYTES: u64 = 1_048_576;
     const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
-    const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
-    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
 
     if entries.is_empty() {
         return Ok(());
@@ -71,25 +91,16 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                     })
                     .filter_map(|line| {
                         let entry = serde_json::from_str::<IngressQuarantineRecord>(line).ok()?;
-                        if entry.line_number == 0
-                            || entry.source_path.trim().is_empty()
-                            || entry.raw_line.trim().is_empty()
-                            || entry.error.trim().is_empty()
-                            || entry.quarantined_at_unix_ms == 0
-                            || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
-                            || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
-                            || entry.error.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
-                        {
-                            return None;
-                        }
-                        Some(line.to_string())
+                        quarantine_record_within_bounds(&entry).then(|| line.to_string())
                     })
                     .collect()
             })
             .unwrap_or_default(),
     };
     for entry in entries {
-        retained_lines.push(serde_json::to_string(entry)?);
+        if quarantine_record_within_bounds(entry) {
+            retained_lines.push(serde_json::to_string(entry)?);
+        }
     }
     if retained_lines.len() > INGRESS_QUARANTINE_FILE_MAX_RECORDS {
         retained_lines.drain(..retained_lines.len() - INGRESS_QUARANTINE_FILE_MAX_RECORDS);
