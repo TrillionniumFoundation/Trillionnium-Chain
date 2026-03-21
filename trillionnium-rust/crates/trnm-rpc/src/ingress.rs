@@ -100,7 +100,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             Err(err) => quarantined.push(IngressQuarantineRecord {
                 source_path: path.display().to_string(),
                 line_number: idx + 1,
-                line_hash: stable_line_hash(line),
+                line_hash: stable_line_hash(trimmed),
                 raw_line: line.to_string(),
                 error: err.to_string(),
                 quarantined_at_unix_ms: now_ms(),
