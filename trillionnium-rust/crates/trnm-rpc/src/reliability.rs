@@ -520,11 +520,15 @@ fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig 
         retention.cleanup_interval_ms = MIN_RETENTION_FLOOR_MS;
     }
 
-    let max_safe_cleanup_interval_ms = retention.dedup_ttl_ms.min(retention.pending_ttl_ms);
+    let max_safe_cleanup_interval_ms = retention
+        .dedup_ttl_ms
+        .min(retention.pending_ttl_ms)
+        .max(MIN_RETENTION_FLOOR_MS);
     if retention.cleanup_interval_ms > max_safe_cleanup_interval_ms {
         // Keep cleanup cadence inside both retention windows so stale dedup/pending
         // state cannot outlive its configured sponsor/free-ingress accounting bounds
-        // by an entire oversized cleanup interval.
+        // by an entire oversized cleanup interval. Preserve the shared positive floor
+        // even if future retention sanitization order changes.
         retention.cleanup_interval_ms = max_safe_cleanup_interval_ms;
     }
 
@@ -1820,20 +1824,20 @@ mod tests {
     }
 
     #[test]
-    fn reliability_engine_clamps_cleanup_interval_to_retention_boundaries() {
+    fn reliability_engine_preserves_positive_cleanup_floor_when_one_retention_window_is_zero() {
         let engine = ReliabilityEngine::new_with_retention(
             InMemoryReliabilityStore::default(),
             RetryConfig::default(),
             RetentionConfig {
                 dedup_ttl_ms: 25,
-                pending_ttl_ms: 10,
+                pending_ttl_ms: 0,
                 cleanup_interval_ms: 250,
             },
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, 25);
-        assert_eq!(engine.retention.pending_ttl_ms, 10);
-        assert_eq!(engine.retention.cleanup_interval_ms, 10);
+        assert_eq!(engine.retention.pending_ttl_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.cleanup_interval_ms, MIN_RETENTION_FLOOR_MS);
     }
 
     #[test]
