@@ -266,6 +266,19 @@ fn validate_gov_param_snapshot_binding(
     validate_gov_param_registry_binding(gov_param_key_index, snapshot_key, snapshot_key_id)
 }
 
+fn validate_pending_gov_param_snapshot_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    requested_key: &str,
+    snapshot: &PendingGovParamUpdate,
+) -> Result<(), String> {
+    validate_gov_param_snapshot_binding(
+        gov_param_key_index,
+        requested_key,
+        &snapshot.key,
+        snapshot.key_id,
+    )
+}
+
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -1397,13 +1410,8 @@ impl StateStore {
 
     fn canonical_pending_gov_update_for_key(&self, key: &str) -> Option<&PendingGovParamUpdate> {
         let pending = self.pending_gov_updates.get(key)?;
-        if validate_gov_param_snapshot_binding(
-            &self.gov_param_key_index,
-            key,
-            &pending.key,
-            pending.key_id,
-        )
-        .is_err()
+        if validate_pending_gov_param_snapshot_binding(&self.gov_param_key_index, key, pending)
+            .is_err()
         {
             return None;
         }
@@ -1422,11 +1430,10 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if validate_gov_param_snapshot_binding(
+                if validate_pending_gov_param_snapshot_binding(
                     &self.gov_param_key_index,
                     key,
-                    &snapshot.key,
-                    snapshot.key_id,
+                    &snapshot,
                 )
                 .is_err()
                 {
@@ -3542,6 +3549,32 @@ mod tests {
             st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "pending accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_non_allowlisted_algorand_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            Some(PendingGovParamUpdate {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "pending restore must fail closed for a non-allowlisted governance key"
+        );
+        assert!(
+            st.pending_gov_updates
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
         );
     }
 
