@@ -179,6 +179,13 @@ fn combined_access_domain_versions_are_consistent(
         return true;
     }
 
+    // Mixed singleton path is common on Sui-like read/write echoes. Keep it
+    // branch-only so the fail-closed skew guard avoids even the tiny vector
+    // allocation used by the broader small-domain fast path.
+    if reads.len() == 1 && writes.len() == 1 {
+        return reads[0].id != writes[0].id || reads[0].version == writes[0].version;
+    }
+
     // Keep tiny mixed domains allocation-light on the common Sui-like single-object
     // read/write echo path while preserving the same fail-closed skew guard.
     if total_len <= 8 {
@@ -1761,6 +1768,14 @@ mod tests {
         assert!(combined_access_domain_versions_are_consistent(
             &[ObjectRef { id: 42, version: 1 }],
             &[ObjectRef { id: 42, version: 1 }, o(99)],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_consistent_for_mixed_singleton_distinct_ids() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 7, version: 9 }],
         ));
     }
 
