@@ -1930,17 +1930,22 @@ impl StateStore {
     }
 }
 
+fn has_canonical_proof_metadata_field(value: &str) -> bool {
+    !value.is_empty() && value.trim() == value
+}
+
 fn checkpoint_has_complete_proof_metadata(cp: &CheckpointMeta) -> bool {
-    !cp.state_root_hex.trim().is_empty() && !cp.wal_entry_hash_hex.trim().is_empty()
+    has_canonical_proof_metadata_field(&cp.state_root_hex)
+        && has_canonical_proof_metadata_field(&cp.wal_entry_hash_hex)
 }
 
 fn wal_entry_has_complete_proof_metadata(entry: &WalMeta) -> bool {
-    !entry.proposal_hash.trim().is_empty()
-        && !entry.state_root_hex.trim().is_empty()
+    has_canonical_proof_metadata_field(&entry.proposal_hash)
+        && has_canonical_proof_metadata_field(&entry.state_root_hex)
         && entry
             .prev_hash_hex
             .as_ref()
-            .map(|prev| !prev.trim().is_empty())
+            .map(|prev| has_canonical_proof_metadata_field(prev))
             .unwrap_or(true)
 }
 
@@ -5443,6 +5448,48 @@ mod tests {
             got.map(|cp| cp.height),
             Some(1),
             "stale duplicate checkpoint tuples at the same height must fail closed back to the last unambiguous checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_padded_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: " r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "whitespace-padded checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
         );
     }
 
