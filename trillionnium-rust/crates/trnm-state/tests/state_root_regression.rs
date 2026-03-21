@@ -2120,6 +2120,62 @@ fn pending_resolve_slash_worker_flag_must_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+    let mut baseline = StateStore::new();
+    let mut replayed = StateStore::new();
+
+    baseline.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    replayed.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 0,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    let baseline_root = baseline.state_root();
+    let empty_root = StateStore::new().state_root();
+    assert_eq!(
+        replayed.pending_resolve_approval(5_149),
+        None,
+        "zero-confirmation restore snapshots must scrub instead of materializing a pending resolve entry that was never staged"
+    );
+    assert_eq!(
+        replayed.state_root(),
+        empty_root,
+        "zero-confirmation restore snapshots must fail closed back to the canonical empty pending-resolve root"
+    );
+    replayed.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        replayed.state_root(),
+        baseline_root,
+        "restoring the canonical staged snapshot after a zero-confirmation scrub must rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
