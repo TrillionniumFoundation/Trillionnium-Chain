@@ -615,6 +615,53 @@ fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and
 }
 
 #[test]
+fn restore_pending_gov_update_rejects_snapshot_key_id_shadowing_live_governance_metadata() {
+    let mut state = StateStore::new();
+
+    let bootstrap = state
+        .set_gov_param(
+            150,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("bootstrap challenge_min_bond write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = state
+        .set_gov_param(
+            170,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("challenge_min_bond write should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "challenge_min_bond".into(),
+            value: "121".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert_eq!(
+        state.pending_gov_update("challenge_min_bond"),
+        None,
+        "restore must fail closed when pending governance proof material rebinds a live key onto a shadow key id"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting shadow key-id restore metadata must preserve the live governance state root"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

@@ -1376,6 +1376,12 @@ impl StateStore {
         match snapshot {
             Some(snapshot) => {
                 let canonical_key = snapshot.key.trim();
+                let key_id_mismatch = (snapshot.key == "emergency_pause"
+                    && snapshot.key_id != EMERGENCY_PAUSE_KEY_ID)
+                    || self
+                        .gov_param_key_index
+                        .get(&snapshot.key)
+                        .is_some_and(|existing_id| *existing_id != snapshot.key_id);
                 if snapshot.key != key
                     || key.trim() != key
                     || key.is_empty()
@@ -1383,6 +1389,7 @@ impl StateStore {
                     || canonical_key != snapshot.key
                     || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
                     || !is_sensitive_gov_param(&snapshot.key)
+                    || key_id_mismatch
                     || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
                 {
                     self.pending_gov_updates.remove(key);
