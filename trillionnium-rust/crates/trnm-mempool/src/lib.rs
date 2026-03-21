@@ -76,10 +76,24 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn rebuild_lane_seen_from_queues(&mut self) {
+        self.normal.seen.clear();
+        self.normal.seen.extend(self.normal.queue.iter().copied());
+        self.critical.seen.clear();
+        self.critical
+            .seen
+            .extend(self.critical.queue.iter().copied());
+    }
+
     fn rebuild_seen_global_from_queues(&mut self) {
         self.seen_global.clear();
         self.seen_global.extend(self.normal.queue.iter().copied());
         self.seen_global.extend(self.critical.queue.iter().copied());
+    }
+
+    fn rebuild_membership_caches_from_queues(&mut self) {
+        self.rebuild_lane_seen_from_queues();
+        self.rebuild_seen_global_from_queues();
     }
 
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
@@ -151,15 +165,7 @@ impl LaneAdmissionGate {
                 // Lane-local seen sets are stale (typically from restored-state skew).
                 // Rebuild from authoritative queue contents so duplicate probes stay
                 // correct without scanning queues on the steady-state hot path.
-                self.normal.seen.clear();
-                self.normal.seen.extend(self.normal.queue.iter().copied());
-                self.critical.seen.clear();
-                self.critical
-                    .seen
-                    .extend(self.critical.queue.iter().copied());
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_membership_caches_from_queues();
             } else if self.seen_global.len() != lane_total {
                 // Defensive self-heal for transient restored-state skew: lane-local queues
                 // remain source of truth for saturation, and rebuild lane-wide id set.
@@ -189,15 +195,7 @@ impl LaneAdmissionGate {
             // id is absent, rebuild from authoritative queue state immediately instead
             // of probing both queues first.
             if !in_normal_seen && !in_critical_seen {
-                self.normal.seen.clear();
-                self.normal.seen.extend(self.normal.queue.iter().copied());
-                self.critical.seen.clear();
-                self.critical
-                    .seen
-                    .extend(self.critical.queue.iter().copied());
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_membership_caches_from_queues();
                 is_duplicate = self.seen_global.contains(&tx_id);
             } else {
                 // Duplicate probes are hot under replay pressure. Narrow queue probes to
