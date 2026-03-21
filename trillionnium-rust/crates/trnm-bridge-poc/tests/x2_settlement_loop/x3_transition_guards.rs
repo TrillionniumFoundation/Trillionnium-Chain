@@ -301,6 +301,71 @@ fn x3_prep_retry_pending_heartbeat_blocks_settlement_without_state_change() {
 }
 
 #[test]
+fn x3_prep_retry_pending_heartbeat_after_finalize_prefers_replay_guard_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-after-finalize".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Finalized {
+            height: 701,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: Some(701),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(701));
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 701,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "late retry heartbeat".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Confirmed { height: 702 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "finalized",
+            to: "finalized",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(701));
+}
+
+#[test]
 fn x3_prep_retry_pending_heartbeat_with_malformed_embedded_metrics_stays_retry_bounded() {
     let mut request = SettlementRequest::new(1, "0xretry-pending-malformed-metrics".to_string());
     let token = operator_token();
