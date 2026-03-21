@@ -840,7 +840,8 @@ impl StateStore {
                 match self.pending_resolve_approvals.get(&id) {
                     Some(pending)
                         if pending.task_version != task.version
-                            || !task_supports_pending_resolve_snapshot_restore(&task) =>
+                            || !task_supports_pending_resolve_snapshot_restore(&task)
+                            || task.challenge_bond_forfeited != Some(!pending.slash_worker) =>
                     {
                         self.pending_resolve_approvals.remove(&id);
                     }
@@ -4624,6 +4625,56 @@ mod tests {
         assert!(
             st.get_task(901).is_none(),
             "paused restore must fail closed when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_stale_pending_resolve_metadata_on_forfeit_decision_mismatch() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must scrub stale pending resolve metadata when challenged task forfeit decision disagrees with staged slash decision"
+        );
+        assert!(
+            st.get_task(901).is_some(),
+            "task restore should still succeed while stale pending resolve metadata is dropped"
         );
     }
 
