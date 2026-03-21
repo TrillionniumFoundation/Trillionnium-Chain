@@ -1894,6 +1894,83 @@ fn restore_task_mismatched_slot_does_not_scrub_foreign_object_root() {
 }
 
 #[test]
+fn restore_task_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10_204,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insert should succeed");
+    let task_root = state.state_root();
+    assert_ne!(
+        task_root, baseline_root,
+        "sanity: materializing a task must perturb state_root"
+    );
+
+    state.restore_task(
+        task_ref.id,
+        Some(TaskObject {
+            task_id: task_ref.id,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_task(task_ref.id).is_none(),
+        "zero-version restore snapshots must fail closed by scrubbing the targeted task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "zero-version restore snapshots must rewind state_root exactly by removing the stale task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-version restore rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();

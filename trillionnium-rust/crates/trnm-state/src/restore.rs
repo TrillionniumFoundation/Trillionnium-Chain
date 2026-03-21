@@ -43,7 +43,7 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
-                if task.task_id != id {
+                if task.task_id != id || task.version == 0 {
                     if matches!(
                         self.objects.get(&id).map(|object| &object.value),
                         Some(ObjectValue::Task(_))
