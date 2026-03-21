@@ -7618,6 +7618,42 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_checkpoint_only_metadata_scaffold_clears_retained_checkpoint_surface() {
+        let wal_dir = temp_wal_dir("recover-checkpoint-only-metadata-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 7,
+                state_root_hex: "stale-root".into(),
+                wal_entry_hash_hex: "stale-hash".into(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert_eq!(recovered.checkpoint_height_retained, None);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert!(!recovered.metadata_only_recovery);
+        assert!(recovered.truncated);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_committed_tail_beyond_checkpoint_is_metadata_only_recovery() {
         let wal_dir = temp_wal_dir("recover-committed-tail-beyond-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();

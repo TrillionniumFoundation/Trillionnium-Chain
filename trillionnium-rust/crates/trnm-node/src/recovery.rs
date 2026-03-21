@@ -34,6 +34,7 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     }
     if entries.is_empty() && !checkpoints.is_empty() {
         persist_checkpoint_meta(wal_dir, &[])?;
+        last_checkpoint = None;
         truncated = true;
     }
     if !entries.is_empty() && last_checkpoint.is_none() {
