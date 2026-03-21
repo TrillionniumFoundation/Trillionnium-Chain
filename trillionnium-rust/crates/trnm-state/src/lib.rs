@@ -1954,6 +1954,12 @@ pub fn verify_wal_and_find_checkpoint(
         prev_height = Some(e.height);
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+            if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
+                // Checkpoint metadata must be complete before it can participate in
+                // replay/restore recovery. Blank state-root or WAL-hash fields are
+                // treated as incomplete snapshots and ignored fail-closed.
+                continue;
+            }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -6244,6 +6250,14 @@ mod tests {
             state_root_hex: "   ".into(),
             prev_hash_hex: None,
         };
+        let valid_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
 
         let blank_proposal_checkpoint = vec![CheckpointMeta {
             height: 1,
@@ -6254,6 +6268,16 @@ mod tests {
             height: 1,
             state_root_hex: "   ".into(),
             wal_entry_hash_hex: blank_state_root.content_hash_hex(),
+        }];
+        let blank_checkpoint_state_root = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "   ".into(),
+            wal_entry_hash_hex: valid_entry.content_hash_hex(),
+        }];
+        let blank_checkpoint_wal_hash = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "   ".into(),
         }];
 
         assert!(
@@ -6267,6 +6291,18 @@ mod tests {
                 .unwrap()
                 .is_none(),
             "blank state-root metadata must fail closed during checkpoint recovery"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_checkpoint_state_root, &[valid_entry.clone()])
+                .unwrap()
+                .is_none(),
+            "blank checkpoint state-root metadata must not be accepted as a recoverable snapshot"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_checkpoint_wal_hash, &[valid_entry])
+                .unwrap()
+                .is_none(),
+            "blank checkpoint WAL-hash metadata must not be accepted as a recoverable snapshot"
         );
     }
 
