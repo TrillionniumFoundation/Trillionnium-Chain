@@ -1490,7 +1490,8 @@ impl StateStore {
     fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
         let id = self.validated_gov_param_registry_id_for_key(key)?;
         let param = self.validated_gov_param_object_at_id(id)?;
-        (param.key == key).then_some((id, param))
+        let canonical_key = governance_expected_key_for_id(id).unwrap_or(key);
+        (param.key == key && canonical_key == key).then_some((id, param))
     }
 
     fn gov_param_value(&self, key: &str) -> Option<&str> {
@@ -3642,6 +3643,10 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
             "ref accessor must fail closed when a foreign governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "canonical key lookup must also fail closed when a foreign algorand key occupies the reserved emergency_pause key id"
         );
         assert!(
             st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
