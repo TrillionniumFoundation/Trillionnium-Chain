@@ -801,6 +801,7 @@ impl StateStore {
         };
         if task.version != snapshot.task_version
             || !task_supports_pending_resolve_snapshot_restore(&task)
+            || task.challenge_bond_forfeited != Some(!snapshot.slash_worker)
         {
             return;
         }
@@ -4770,6 +4771,50 @@ mod tests {
         assert!(
             st.pending_resolve_approval(903).is_none(),
             "paused restore replay must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_forfeit_decision_metadata_mismatch() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 904,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 7,
+        })
+        .expect("challenged task should insert for metadata mismatch coverage");
+
+        st.restore_pending_resolve_approval(
+            904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(904).is_none(),
+            "restore must fail closed when challenge forfeit metadata disagrees with staged slash decision"
         );
     }
 
