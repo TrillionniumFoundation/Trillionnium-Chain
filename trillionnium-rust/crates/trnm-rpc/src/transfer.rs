@@ -174,8 +174,12 @@ fn checked_total_charge(amount: u128, fee: u128) -> Option<u128> {
     amount.checked_add(fee)
 }
 
-fn ingress_accounting_total(tx: &TransferTx) -> Option<u128> {
+fn checked_ingress_fee_boundary_charge(tx: &TransferTx) -> Option<u128> {
     checked_total_charge(tx.amount, tx.fee)
+}
+
+fn ingress_accounting_total(tx: &TransferTx) -> Option<u128> {
+    checked_ingress_fee_boundary_charge(tx)
 }
 
 fn has_ingress_accounting_overflow(tx: &TransferTx) -> bool {
@@ -568,6 +572,22 @@ mod tests {
 
         assert_eq!(out.status, TxStatus::Pending);
         assert_eq!(txs.len(), 1);
+    }
+
+    #[test]
+    fn submit_tx_rejects_fee_max_boundary_when_amount_is_nonzero() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut txs = BTreeMap::new();
+        let out = submit_tx(
+            &mut txs,
+            transfer_tx(&alice, &bob, 1, u128::MAX, 0, ALICE_SK_HEX),
+            100,
+        );
+
+        assert_eq!(out.status, TxStatus::Fail);
+        assert!(txs.is_empty());
     }
 
     #[test]
