@@ -36,20 +36,27 @@ fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u6
     )
 }
 
+fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
+    let trimmed = line.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let value = serde_json::from_str::<serde_json::Value>(trimmed).ok()?;
+    Some((
+        value.get("source_path")?.as_str()?.to_string(),
+        usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
+        value.get("line_hash")?.as_u64()?,
+    ))
+}
+
 fn load_existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(String, usize, u64)> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeSet::new();
     };
 
     raw.lines()
-        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-        .filter_map(|value| {
-            Some((
-                value.get("source_path")?.as_str()?.to_string(),
-                usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
-                value.get("line_hash")?.as_u64()?,
-            ))
-        })
+        .filter_map(parse_quarantine_fingerprint_line)
         .collect()
 }
 
