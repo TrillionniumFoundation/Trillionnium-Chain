@@ -1312,6 +1312,17 @@ impl StateStore {
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
         self.invalidate_state_root_cache();
+        if let Some(snapshot) = snapshot.as_ref() {
+            if let Some(existing) = self.objects.get(&key_id) {
+                match &existing.value {
+                    ObjectValue::GovParam(existing_param) if existing_param.key != snapshot.key => {
+                        return;
+                    }
+                    ObjectValue::GovParam(_) => {}
+                    _ => return,
+                }
+            }
+        }
         self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
@@ -5746,6 +5757,31 @@ mod tests {
         assert_eq!(st.get_task(8_125), Some(task));
         assert!(st.get_param(8_125).is_none());
         assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_live_other_gov_param_on_key_id_alias() {
+        let mut st = StateStore::new();
+        st.set_gov_param(100, 7_001, "max_block_ms".into(), "1000".into())
+            .expect("baseline governance param should apply");
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                version: 9,
+            }),
+        );
+
+        let param = st
+            .get_param(7_001)
+            .expect("live governance param must remain bound to its original key");
+        assert_eq!(param.key, "max_block_ms");
+        assert_eq!(param.value, "1000");
+        assert_eq!(st.gov_param_u64("max_block_ms"), Some(1000));
+        assert!(st.gov_param_u64("challenge_min_bond").is_none());
     }
 
     #[test]
