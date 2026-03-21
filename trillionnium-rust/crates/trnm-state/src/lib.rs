@@ -1355,6 +1355,20 @@ impl StateStore {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
+                if !GOV_ALLOWED_KEYS.contains(&key) || !is_sensitive_gov_param(key) {
+                    self.pending_gov_updates.remove(key);
+                    return;
+                }
+                if let Some(existing_key_id) = self.gov_param_key_index.get(key).copied() {
+                    if existing_key_id != snapshot.key_id {
+                        self.pending_gov_updates.remove(key);
+                        return;
+                    }
+                }
+                if validate_gov_param_value(key, &snapshot.value).is_err() {
+                    self.pending_gov_updates.remove(key);
+                    return;
+                }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
             }
             None => {
@@ -3790,6 +3804,27 @@ mod tests {
             st.pending_gov_update("emergency_pause").is_none(),
             "stale pending entry must be removed for non-sensitive emergency_pause"
         );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(!st.is_emergency_paused());
     }
 
     #[test]
