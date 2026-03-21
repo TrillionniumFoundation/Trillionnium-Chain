@@ -730,15 +730,6 @@ impl StateStore {
         self.canonical_pending_resolve_approval_snapshot_for_task(task_id, &task, snapshot)
     }
 
-    fn should_restore_pending_resolve_approval(
-        &self,
-        task_id: u64,
-        snapshot: &PendingResolveApprovalSnapshot,
-    ) -> bool {
-        self.canonical_pending_resolve_approval_snapshot(task_id, snapshot)
-            .is_some()
-    }
-
     fn should_preserve_pending_resolve_on_task_restore(
         &self,
         task_id: u64,
@@ -759,16 +750,21 @@ impl StateStore {
         if pending.confirmations != 1 {
             return false;
         }
-        self.should_restore_pending_resolve_approval(
-            task_id,
-            &PendingResolveApprovalSnapshot {
-                slash_worker: pending.slash_worker,
-                confirmations: pending.confirmations,
-                first_approver: pending.first_approver.clone(),
-                authority_set: pending.authority_set.clone(),
-                task_version: pending.task_version,
-            },
-        )
+        let snapshot = PendingResolveApprovalSnapshot {
+            slash_worker: pending.slash_worker,
+            confirmations: pending.confirmations,
+            first_approver: pending.first_approver.clone(),
+            authority_set: pending.authority_set.clone(),
+            task_version: pending.task_version,
+        };
+        let Some((first_approver_canonical, authority_set_canonical)) =
+            self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
+        else {
+            return false;
+        };
+
+        pending.first_approver == first_approver_canonical
+            && pending.authority_set == authority_set_canonical
     }
 
     pub fn restore_pending_resolve_approval(
@@ -2772,6 +2768,63 @@ mod tests {
             st.state_root(),
             baseline.state_root(),
             "scrubbing corrupt pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_noncanonical_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_008,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_noncanonical_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_noncanonical_pending,
+            "identical restore re-entry must invalidate the cached state root when semantically valid but noncanonical pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing noncanonical pending resolve residue should converge to the same state root as the clean restored task snapshot"
         );
     }
 
