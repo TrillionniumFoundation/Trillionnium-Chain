@@ -253,6 +253,18 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_reserved_slot_guard_probe(
+        &self,
+        class: IngressClass,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        // When aggregate capacity remains but reserve policy blocks this ingress
+        // class, preserve the same duplicate-vs-backpressure contract that the
+        // saturated path already guarantees so bounded retries do not drift into
+        // lane-specific admit paths.
+        self.classify_lane_backpressure_guard(class, is_duplicate)
+    }
+
     fn classify_headroom_probe(
         &self,
         lane_total: usize,
@@ -263,10 +275,7 @@ impl LaneAdmissionGate {
             return Some(out);
         }
 
-        // When aggregate capacity remains but reserve policy blocks this ingress
-        // class, preserve the same duplicate-vs-backpressure contract that the
-        // saturated path already guarantees.
-        self.classify_lane_backpressure_guard(class, is_duplicate)
+        self.classify_reserved_slot_guard_probe(class, is_duplicate)
     }
 
     fn normal_has_admission_headroom(&self) -> bool {

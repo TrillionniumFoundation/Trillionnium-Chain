@@ -89,4 +89,10 @@ fn guarded_last_critical_slot_preserves_cross_class_duplicate_before_reopen() {
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
     assert_eq!(gate.pop_ready(), Some(20));
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Once the previously backpressured id is admitted into the reopened reserved
+    // slot, the guard may block fresh normal spillover again, but the recovered id
+    // must immediately classify as Duplicate rather than falling back to
+    // Backpressured.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
 }
