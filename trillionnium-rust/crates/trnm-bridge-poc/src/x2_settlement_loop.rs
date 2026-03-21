@@ -129,6 +129,9 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if height == 0 {
+                return Err(SettlementError::InvalidHeight { height });
+            }
             if let Some(target_height) = hb_tgt {
                 if height < target_height {
                     return Err(SettlementError::InvalidHeight { height });

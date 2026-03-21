@@ -211,6 +211,33 @@ fn x3_prep_rejects_confirm_height_behind_heartbeat_target_height() {
 }
 
 #[test]
+fn x3_prep_rejects_zero_confirm_height_before_finality_transition() {
+    let mut request = SettlementRequest::new(1, "0xzero-confirm-height".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 0 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_rejects_non_degraded_invalid_heartbeat_progression_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xinvalid-heartbeat-progression".to_string());
     let token = operator_token();
