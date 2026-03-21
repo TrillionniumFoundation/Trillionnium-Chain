@@ -138,6 +138,67 @@ fn x3_prep_stale_invalid_heartbeat_after_finalize_prefers_replay_guard_over_metr
 }
 
 #[test]
+fn x3_prep_zero_source_heartbeat_replay_after_finalize_prefers_replay_guard_over_metric_validation() {
+    let mut request = SettlementRequest::new(1, "0xzero-source-replay-after-finalize".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(310, 309, 25);
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 311 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Finalized {
+            height: 311,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(310),
+                heartbeat_target_height: Some(309),
+                heartbeat_latency_ms: Some(25),
+                confirm_height: Some(311),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+
+    let malformed_replay = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 0,
+            target_height: 309,
+            latency_ms: 25,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "stale zero-source replay".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &malformed_replay,
+        SettlementConfirm::Confirmed { height: 312 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "finalized",
+            to: "finalized",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+}
+
+#[test]
 fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdup00f".to_string());
     let token = operator_token();
