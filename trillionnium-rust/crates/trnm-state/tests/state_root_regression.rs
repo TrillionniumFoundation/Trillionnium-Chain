@@ -1032,6 +1032,34 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    let restore_task = |task_id| TaskObject {
+        task_id,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Challenged,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 3,
+    };
+
+    for state in [&mut state_a, &mut state_b] {
+        state.restore_task(4_201, Some(restore_task(4_201)));
+        state.restore_task(4_202, Some(restore_task(4_202)));
+    }
+
     let snapshot = PendingResolveApprovalSnapshot {
         slash_worker: true,
         confirmations: 1,
