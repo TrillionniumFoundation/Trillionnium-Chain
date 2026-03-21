@@ -78,7 +78,10 @@ pub mod bridge_status {
     }
 
     fn is_non_canonical_subject(value: &str) -> bool {
-        value.trim() != value || value.chars().any(has_disallowed_subject_char)
+        value.trim() != value
+            || value
+                .chars()
+                .any(|ch| ch.is_whitespace() || has_disallowed_subject_char(ch))
     }
 
     fn normalize_revert_reason(reason: &str) -> Option<String> {

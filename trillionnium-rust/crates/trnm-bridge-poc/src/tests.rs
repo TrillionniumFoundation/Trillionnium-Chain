@@ -157,3 +157,21 @@ fn settlement_request_rejects_boundary_whitespace_in_tx_hash_and_subject() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn settlement_request_rejects_internal_ascii_whitespace_in_subject() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
