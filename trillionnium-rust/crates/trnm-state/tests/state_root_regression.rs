@@ -1130,26 +1130,24 @@ fn pending_resolve_canonical_actor_forms_should_keep_state_root_stable() {
     let mut staged = StateStore::new();
     let mut restored = StateStore::new();
 
-    staged
-        .restore_pending_gov_update(
-            "resolve_authority",
-            Some(PendingGovParamUpdate {
-                key_id: 7_501,
-                key: "resolve_authority".into(),
-                value: "authority.alpha,authority.beta".into(),
-                activate_at_height: 10,
-            }),
-        );
-    restored
-        .restore_pending_gov_update(
-            "resolve_authority",
-            Some(PendingGovParamUpdate {
-                key_id: 7_501,
-                key: "resolve_authority".into(),
-                value: "authority.alpha,authority.beta".into(),
-                activate_at_height: 10,
-            }),
-        );
+    staged.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
+    restored.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
 
     staged
         .stage_or_confirm_resolve_approval(
@@ -1177,7 +1175,8 @@ fn pending_resolve_canonical_actor_forms_should_keep_state_root_stable() {
         "staged pending resolve approvals should store canonical approver ids"
     );
     assert_eq!(
-        staged.pending_resolve_approval_snapshot(9_102)
+        staged
+            .pending_resolve_approval_snapshot(9_102)
             .expect("staged snapshot should exist")
             .authority_set,
         "authority.alpha,authority.beta",
@@ -1267,7 +1266,8 @@ fn pending_resolve_task_version_must_affect_state_root_even_when_other_snapshot_
         "state_root must include the pending resolve task version so identical approval payloads for different task snapshots cannot hash identically"
     );
 
-    state_b.restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    state_b
+        .restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
     assert_eq!(
         state_b.state_root(),
         root_a,
@@ -2482,6 +2482,33 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
         state.state_root(),
         baseline_root,
         "repeated reads after restoring pending resolve task_version should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_resolve_approval(
+        5_199,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a,resolver-b".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_199).is_none(),
+        "restore_pending_resolve_approval should fail closed instead of materializing a malformed checkpoint snapshot"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "malformed pending resolve checkpoint evidence must not perturb the canonical empty root"
     );
 }
 
@@ -4207,7 +4234,8 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     let mut forged_genesis_prev_hash_wal = wal.clone();
     forged_genesis_prev_hash_wal.prev_hash_hex = Some("01".repeat(32));
     let mut forged_genesis_prev_hash_checkpoint = checkpoint.clone();
-    forged_genesis_prev_hash_checkpoint.wal_entry_hash_hex = forged_genesis_prev_hash_wal.content_hash_hex();
+    forged_genesis_prev_hash_checkpoint.wal_entry_hash_hex =
+        forged_genesis_prev_hash_wal.content_hash_hex();
     assert!(
         !checkpoint_evidence_surface_is_canonical(
             &forged_genesis_prev_hash_checkpoint,
