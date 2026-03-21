@@ -46,9 +46,10 @@ fn timeout_bond_disposition(
 }
 
 fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
+    let ordinal_saturated = migrated_before_emit == u64::MAX;
     let ordinal = migrated_before_emit.saturating_add(1);
     match tx_id_seed.checked_add(ordinal) {
-        Some(tx_id) => (tx_id, false),
+        Some(tx_id) => (tx_id, ordinal_saturated),
         None => (u64::MAX, true),
     }
 }
@@ -193,6 +194,11 @@ mod tests {
         assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 0), (u64::MAX, false));
         assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 1), (u64::MAX, true));
         assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
+    }
+
+    #[test]
+    fn timeout_event_tx_metadata_marks_saturated_ordinal_as_overflow_for_visibility() {
+        assert_eq!(timeout_event_tx_metadata(0, u64::MAX), (u64::MAX, true));
     }
 
     #[test]
