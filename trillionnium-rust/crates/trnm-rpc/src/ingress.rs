@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::Write,
@@ -133,6 +134,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
+    let mut quarantined_seen = HashSet::new();
     let mut quarantined_total = 0usize;
     for (idx, line_bytes) in raw.split(|byte| *byte == b'\n').enumerate() {
         let line_bytes = match line_bytes.strip_suffix(b"\r") {
@@ -177,18 +179,21 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             Err(parts) => parts,
         };
         quarantined_total += 1;
-        push_tail_limited(
-            &mut quarantined,
-            IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: idx + 1,
-                line_hash,
-                raw_line,
-                error: err.to_string(),
-                quarantined_at_unix_ms: now_ms(),
-            },
-            INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
-        );
+        let error = err.to_string();
+        if quarantined_seen.insert((line_hash, error.clone())) {
+            push_tail_limited(
+                &mut quarantined,
+                IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: idx + 1,
+                    line_hash,
+                    raw_line,
+                    error,
+                    quarantined_at_unix_ms: now_ms(),
+                },
+                INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
+            );
+        }
     }
     if !quarantined.is_empty() {
         if let Err(err) = append_quarantine_records(&path, &quarantined) {

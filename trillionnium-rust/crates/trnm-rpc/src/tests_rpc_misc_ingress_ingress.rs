@@ -283,7 +283,7 @@ fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_row
 }
 
 #[test]
-fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
+fn load_ingress_records_deduplicates_repeated_quarantine_noise_per_scan() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
@@ -293,8 +293,8 @@ fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
 
     let mut fixture = String::new();
     fixture.push_str("{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n");
-    for idx in 0..130 {
-        fixture.push_str(&format!("{{\"broken\":{idx}\n"));
+    for _ in 0..130 {
+        fixture.push_str("{\"broken\":1\n");
     }
     fs::write(&path, fixture).expect("write ingress fixture");
 
@@ -309,19 +309,16 @@ fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
         .collect();
     assert_eq!(
         entries.len(),
-        128,
-        "quarantine append should be bounded per load to limit repeated malformed-ingress noise"
+        1,
+        "quarantine append should deduplicate repeated malformed-ingress noise within a scan"
     );
-    assert_eq!(entries.first().expect("first entry")["line_number"], 4);
-    assert_eq!(entries.last().expect("last entry")["line_number"], 131);
+    assert_eq!(entries[0]["line_number"], 2);
     assert!(
-        entries.iter().all(|entry| {
-            entry["error"]
-                .as_str()
-                .expect("error string")
-                .contains("EOF while parsing")
-        }),
-        "all malformed rows should stay fail-closed in quarantine"
+        entries[0]["error"]
+            .as_str()
+            .expect("error string")
+            .contains("EOF while parsing"),
+        "repeated malformed rows should stay fail-closed in quarantine"
     );
 
     let salvaged_raw = fs::read_to_string(&path).expect("read salvaged ingress file");
@@ -349,7 +346,7 @@ fn load_ingress_records_bounds_quarantine_append_noise_per_scan() {
         .collect();
     assert_eq!(
         entries_second.len(),
-        128,
+        1,
         "subsequent scans should not append duplicate quarantine noise once salvage rewrites ingress"
     );
 
