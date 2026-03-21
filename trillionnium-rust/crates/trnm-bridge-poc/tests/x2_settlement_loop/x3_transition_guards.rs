@@ -180,6 +180,33 @@ fn x3_prep_failed_confirm_during_heartbeat_retry_window_is_rejected_without_stat
 }
 
 #[test]
+fn x3_prep_zero_height_confirm_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-zero-height".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Confirmed { height: 0 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_confirm_equal_to_observed_target_height_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xconfirm-equal-target-height".to_string());
     let token = operator_token();

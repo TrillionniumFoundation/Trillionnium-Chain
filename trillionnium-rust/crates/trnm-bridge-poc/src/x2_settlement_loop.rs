@@ -104,6 +104,9 @@ pub fn drive_minimal_settlement(
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if height == 0 {
+                return Err(SettlementError::InvalidHeight { height });
+            }
 
             if let Some(observed) = heartbeat.heartbeat {
                 let max_confirm_height = observed.source_height.saturating_add(1);
