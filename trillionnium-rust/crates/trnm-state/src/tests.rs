@@ -315,6 +315,56 @@ fn resolve_approval_rejects_system_or_treasury_approver_without_mutation() {
 }
 
 #[test]
+fn restore_pending_resolve_snapshot_rejects_missing_task_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_930), None);
+    assert_eq!(st.pending_resolve_first_approver(9_930), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_930), None);
+}
+
+#[test]
 fn resolve_approval_rejects_noncanonical_authority_set_without_mutation() {
     let mut st = StateStore::new();
 

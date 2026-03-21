@@ -410,6 +410,9 @@ fn validated_restorable_pending_resolve_snapshot(
     if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
         return None;
     }
+    if task.metadata.as_ref().and_then(|metadata| metadata.metering.as_ref()).is_none() {
+        return None;
+    }
     if !task_snapshot_metadata_is_complete(&task) {
         return None;
     }
