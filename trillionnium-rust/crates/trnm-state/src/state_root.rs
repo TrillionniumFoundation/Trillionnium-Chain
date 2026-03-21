@@ -128,7 +128,7 @@ impl StateStore {
                 ObjectValue::Task(t) => {
                     hasher.update(b"task");
                     hasher.update(t.task_id.to_le_bytes());
-                    hasher.update(t.creator.as_bytes());
+                    hash_str_with_len(&mut hasher, &t.creator);
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
                     hasher.update((t.proof_type as u8).to_le_bytes());
@@ -137,7 +137,7 @@ impl StateStore {
                     match &t.worker {
                         Some(worker) => {
                             hasher.update([1]);
-                            hasher.update(worker.as_bytes());
+                            hash_str_with_len(&mut hasher, worker);
                         }
                         None => hasher.update([0]),
                     }
@@ -215,7 +215,7 @@ impl StateStore {
                     match &t.challenger {
                         Some(challenger) => {
                             hasher.update([1]);
-                            hasher.update(challenger.as_bytes());
+                            hash_str_with_len(&mut hasher, challenger);
                         }
                         None => hasher.update([0]),
                     }
@@ -246,7 +246,7 @@ impl StateStore {
         }
         for (addr, bal) in &self.balances {
             hasher.update(b"balance");
-            hasher.update(addr.as_bytes());
+            hash_str_with_len(&mut hasher, addr);
             hasher.update(bal.to_le_bytes());
         }
         for (key, pending) in &self.pending_gov_updates {

@@ -177,6 +177,67 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
 }
 
 #[test]
+fn task_creator_and_worker_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "ab".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("c".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+    state_b
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "a".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("bc".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame task creator and worker so adjacent string boundaries cannot hash identically"
+    );
+}
+
+#[test]
 fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_update() {
     let proposal = GovProposalObject {
         proposal_id: 9_004,
