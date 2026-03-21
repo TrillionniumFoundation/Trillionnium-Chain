@@ -284,12 +284,20 @@ impl LaneAdmissionGate {
         self.classify_reserved_slot_guard_probe(class, is_duplicate)
     }
 
+    fn normal_queue_has_headroom(&self) -> bool {
+        self.normal.queue.len() < self.normal.capacity
+    }
+
+    fn critical_queue_has_headroom(&self) -> bool {
+        self.critical.queue.len() < self.critical.capacity
+    }
+
     fn normal_has_admission_headroom(&self) -> bool {
-        self.normal.queue.len() < self.normal.capacity || self.normal_can_borrow_critical_headroom()
+        self.normal_queue_has_headroom() || self.normal_can_borrow_critical_headroom()
     }
 
     fn critical_has_admission_headroom(&self) -> bool {
-        self.critical.queue.len() < self.critical.capacity || self.critical_can_borrow_normal_headroom()
+        self.critical_queue_has_headroom() || self.critical_can_borrow_normal_headroom()
     }
 
     fn class_has_admission_headroom(&self, class: IngressClass) -> bool {
