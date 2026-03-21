@@ -857,6 +857,7 @@ impl StateStore {
             Some(snapshot) => {
                 let existing_param = self.get_param(key_id);
                 if snapshot.version == 0 {
+                    scrub_target_slot(self);
                     return;
                 }
                 if snapshot.key_id != key_id {

@@ -2655,6 +2655,51 @@ fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
 }
 
 #[test]
+fn restore_gov_param_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .set_gov_param(0, 7_203, "max_block_ms".to_string(), "500".to_string())
+        .expect("applied governance param should succeed");
+    let applied_root = state.state_root();
+    assert_ne!(
+        applied_root, baseline_root,
+        "sanity: materializing an applied governance param must perturb state_root"
+    );
+
+    state.restore_gov_param(
+        7_203,
+        Some(GovParamObject {
+            key_id: 7_203,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_param(7_203).is_none(),
+        "zero-version restore snapshots must fail closed by scrubbing the targeted applied governance slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms"),
+        None,
+        "zero-version restore snapshots must also clear the targeted governance key index entry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "zero-version restore snapshots must rewind state_root exactly by removing the stale applied governance slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-version restore rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();
