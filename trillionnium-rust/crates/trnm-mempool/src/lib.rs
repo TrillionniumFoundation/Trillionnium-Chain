@@ -356,15 +356,19 @@ impl LaneAdmissionGate {
         self.critical_queue_has_headroom() || self.critical_can_borrow_normal_headroom()
     }
 
-    fn class_has_admission_headroom(&self, class: IngressClass) -> bool {
-        match class {
-            IngressClass::Normal => self.normal_has_admission_headroom(),
-            IngressClass::Critical => self.critical_has_admission_headroom(),
-        }
+    fn normal_backpressure_guard_blocks(&self) -> bool {
+        !self.normal_has_admission_headroom()
+    }
+
+    fn critical_backpressure_guard_blocks(&self) -> bool {
+        !self.critical_has_admission_headroom()
     }
 
     fn lane_backpressure_guard_blocks(&self, class: IngressClass) -> bool {
-        !self.class_has_admission_headroom(class)
+        match class {
+            IngressClass::Normal => self.normal_backpressure_guard_blocks(),
+            IngressClass::Critical => self.critical_backpressure_guard_blocks(),
+        }
     }
 
     fn finish_admission(&mut self, tx_id: u64, out: AdmitOutcome) -> AdmitOutcome {
