@@ -1731,6 +1731,20 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }, o(9)],
+        )];
+
+        let _ = access_map_capacity_hint(&txs);
+    }
+
+    #[test]
     fn extend_unique_access_keys_dedups_cross_domain_echoes_without_reordering_existing_keys() {
         let mut keys = dedup_access_keys(&[o(100), o(200), o(100), o(300), o(400)]);
 
