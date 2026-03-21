@@ -652,8 +652,9 @@ impl StateStore {
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
-        self.invalidate_state_root_cache();
-        self.pending_resolve_approvals.remove(&task_id);
+        if self.pending_resolve_approvals.remove(&task_id).is_some() {
+            self.invalidate_state_root_cache();
+        }
     }
 
     pub fn pending_resolve_approval(&self, task_id: u64) -> Option<(bool, u8)> {
@@ -2898,6 +2899,25 @@ mod tests {
 
         st.clear_pending_resolve_approval(42);
         assert!(st.pending_resolve_approval(42).is_none());
+    }
+
+    #[test]
+    fn clear_pending_resolve_approval_noop_preserves_state_root() {
+        let mut st = StateStore::new();
+        let root_before = st.state_root();
+
+        st.clear_pending_resolve_approval(42);
+
+        assert_eq!(
+            st.pending_resolve_approval(42),
+            None,
+            "clearing a missing pending resolve approval must remain a no-op"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "clearing a missing pending resolve approval must preserve state_root"
+        );
     }
 
     #[test]
