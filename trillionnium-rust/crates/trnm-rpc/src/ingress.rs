@@ -39,10 +39,17 @@ fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
     raw.lines()
         .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
         .filter_map(|value| {
-            Some((
-                value.get("line_number")?.as_u64()? as usize,
-                value.get("line_hash")?.as_u64()?,
-            ))
+            let line_number = value.get("line_number")?.as_u64()? as usize;
+            let line_hash = value
+                .get("line_hash")
+                .and_then(|hash| hash.as_u64())
+                .or_else(|| {
+                    value
+                        .get("raw_line")
+                        .and_then(|raw| raw.as_str())
+                        .map(stable_line_hash)
+                })?;
+            Some((line_number, line_hash))
         })
         .collect()
 }
