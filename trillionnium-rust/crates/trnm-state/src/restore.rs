@@ -26,22 +26,23 @@ fn hash_len_framed_str(hasher: &mut Sha256, value: &str) {
     hasher.update(value.as_bytes());
 }
 
-fn has_non_blank_metadata(value: &str) -> bool {
-    !value.trim().is_empty()
+fn has_canonical_metadata(value: &str) -> bool {
+    let trimmed = value.trim();
+    !trimmed.is_empty() && trimmed == value
 }
 
 fn has_complete_checkpoint_meta(checkpoint: &CheckpointMeta) -> bool {
-    has_non_blank_metadata(&checkpoint.state_root_hex)
-        && has_non_blank_metadata(&checkpoint.wal_entry_hash_hex)
+    has_canonical_metadata(&checkpoint.state_root_hex)
+        && has_canonical_metadata(&checkpoint.wal_entry_hash_hex)
 }
 
 fn has_complete_wal_meta(entry: &WalMeta) -> bool {
-    has_non_blank_metadata(&entry.proposal_hash)
-        && has_non_blank_metadata(&entry.state_root_hex)
+    has_canonical_metadata(&entry.proposal_hash)
+        && has_canonical_metadata(&entry.state_root_hex)
         && entry
             .prev_hash_hex
             .as_ref()
-            .map(|prev| has_non_blank_metadata(prev))
+            .map(|prev| has_canonical_metadata(prev))
             .unwrap_or(true)
 }
 
