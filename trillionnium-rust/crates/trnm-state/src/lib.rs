@@ -919,14 +919,27 @@ impl StateStore {
         })
     }
 
+    fn canonical_gov_param_registry_key_for_id(&self, id: u64) -> Option<&str> {
+        let object = self.objects.get(&id)?;
+        let param = match &object.value {
+            ObjectValue::GovParam(p) if p.key_id == id => p,
+            _ => return None,
+        };
+        if self.gov_param_key_index.get(&param.key).copied() != Some(id) {
+            return None;
+        }
+        if validate_gov_param_registry_binding(&self.gov_param_key_index, &param.key, param.key_id)
+            .is_err()
+        {
+            return None;
+        }
+        Some(param.key.as_str())
+    }
+
     fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p)
-                if p.key_id == id
-                    && validate_gov_param_registry_binding(&self.gov_param_key_index, &p.key, p.key_id)
-                        .is_ok() =>
-            {
+            ObjectValue::GovParam(p) if self.canonical_gov_param_registry_key_for_id(id) == Some(p.key.as_str()) => {
                 Some(p)
             }
             _ => None,
@@ -3587,6 +3600,10 @@ mod tests {
             st.pending_gov_update("resolve_authority"),
             None,
             "pending accessor must fail closed when registry aliasing breaks the single-source key_id binding"
+        );
+        assert!(
+            st.get_param(7_316).is_none(),
+            "direct id accessor must fail closed when registry aliasing breaks the single-source key_id binding"
         );
     }
 
