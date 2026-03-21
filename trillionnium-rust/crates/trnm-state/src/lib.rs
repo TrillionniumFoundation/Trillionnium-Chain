@@ -1083,14 +1083,24 @@ fn validate_pending_gov_update_restore_snapshot(
         ));
     }
 
-    if objects
-        .get(&snapshot.key_id)
-        .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
-    {
-        return Err(format!(
-            "pending governance key_id collision: object {} exists and is not GovParam",
-            snapshot.key_id
-        ));
+    if let Some(existing) = objects.get(&snapshot.key_id) {
+        match &existing.value {
+            ObjectValue::GovParam(existing_param) => {
+                validate_requested_governance_key_canonical(&existing_param.key)?;
+                if existing_param.key != key {
+                    return Err(format!(
+                        "pending governance key_id collision for {}: object {} already stores governance key {}",
+                        key, snapshot.key_id, existing_param.key
+                    ));
+                }
+            }
+            _ => {
+                return Err(format!(
+                    "pending governance key_id collision: object {} exists and is not GovParam",
+                    snapshot.key_id
+                ));
+            }
+        }
     }
 
     Ok(())
@@ -3724,6 +3734,40 @@ mod tests {
             st.pending_gov_update("monetary_base_issuance_per_tick"),
             None,
             "restore path must reject cross-key pending key-id reuse fail-closed"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_live_gov_param_object_key_alias_on_shared_key_id() {
+        let mut st = StateStore::new();
+
+        st.objects.insert(
+            7_201,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_201,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 7_201,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                activate_at_height: 1_020,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("challenge_min_bond"),
+            None,
+            "restore must fail closed when a live GovParam object already binds the key_id to another governance key"
         );
     }
 
