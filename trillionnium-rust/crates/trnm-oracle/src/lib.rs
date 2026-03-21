@@ -196,7 +196,14 @@ impl OraclePolicy {
 
         snapshot.validate_hash()?;
 
-        if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
+        if snapshot.snapshot_ts_ms > now_ts_ms {
+            return Err(OracleError::FutureSnapshot {
+                snapshot_ts_ms: snapshot.snapshot_ts_ms,
+                now_ts_ms,
+            });
+        }
+
+        if now_ts_ms - snapshot.snapshot_ts_ms > self.max_staleness_ms {
             return Err(OracleError::StaleSnapshot {
                 snapshot_ts_ms: snapshot.snapshot_ts_ms,
                 now_ts_ms,
@@ -440,6 +447,11 @@ pub enum OracleError {
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
+    #[error("future snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}")]
+    FutureSnapshot {
+        snapshot_ts_ms: u64,
+        now_ts_ms: u64,
+    },
     #[error(
         "stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}"
     )]
@@ -683,6 +695,23 @@ mod tests {
 
         assert_eq!(s1.snapshot_hash, s2.snapshot_hash);
         assert!(s1.validate_hash().is_ok());
+    }
+
+    #[test]
+    fn rejects_future_snapshot_timestamp() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_001);
+
+        let err = p
+            .validate_snapshot(&snap, 10_000)
+            .expect_err("future-dated snapshot should fail oracle guardrail");
+        assert!(matches!(
+            err,
+            OracleError::FutureSnapshot {
+                snapshot_ts_ms: 10_001,
+                now_ts_ms: 10_000,
+            }
+        ));
     }
 
     #[test]
