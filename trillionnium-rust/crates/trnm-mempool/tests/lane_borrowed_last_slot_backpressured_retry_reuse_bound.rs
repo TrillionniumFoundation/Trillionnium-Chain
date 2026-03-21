@@ -69,6 +69,34 @@ fn borrowed_last_idle_critical_slot_preserves_duplicate_before_guard_reopens() {
 }
 
 #[test]
+fn borrowed_idle_tail_slot_flips_from_borrowable_to_guarded_once_critical_backlog_appears() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    // Fill normal dedicated capacity, then borrow exactly one idle critical slot.
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(13, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // With one reserved critical slot left, fresh normal spillover must already be
+    // guard-blocked, while the borrowed tx remains duplicate across classes.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(13, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+    // Critical still owns the last reserved slot; once it fills that backlog, the
+    // previously backpressured normal id must remain fresh until headroom reopens.
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    assert_eq!(gate.pop_ready(), Some(13));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.pop_ready(), Some(20));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn borrowed_last_idle_critical_slot_small_retry_burst_keeps_guard_outcomes_stable() {
     let mut gate = LaneAdmissionGate::new(3, 1);
 
