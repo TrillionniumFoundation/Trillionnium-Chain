@@ -99,7 +99,6 @@ pub fn drive_minimal_settlement(
         return Err(SettlementError::HeartbeatRetryPending { reason });
     }
 
-    validate_heartbeat_outcome(heartbeat)?;
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
@@ -126,6 +125,8 @@ pub fn drive_minimal_settlement(
         );
         return Ok(SettlementStep::Compensated { reason, event });
     }
+
+    validate_heartbeat_outcome(heartbeat)?;
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {

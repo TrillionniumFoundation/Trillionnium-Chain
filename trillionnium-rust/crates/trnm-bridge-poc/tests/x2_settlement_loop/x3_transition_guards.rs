@@ -159,6 +159,54 @@ fn x3_prep_degraded_heartbeat_blank_reason_falls_back_to_stable_contract_message
 }
 
 #[test]
+fn x3_prep_degraded_invalid_heartbeat_metrics_still_compensates_without_emitting_bad_heights() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-invalid-metrics".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 310,
+            target_height: 999,
+            latency_ms: 25,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "target relay timeout after malformed sample".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 411 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: target relay timeout after malformed sample".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: target relay timeout after malformed sample".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: target relay timeout after malformed sample".to_string()
+        )
+    );
+}
+
+#[test]
 fn x3_prep_failed_confirm_blank_reason_falls_back_to_stable_contract_message() {
     let mut request = SettlementRequest::new(1, "0xfailed-confirm-blank-reason".to_string());
     let token = operator_token();
