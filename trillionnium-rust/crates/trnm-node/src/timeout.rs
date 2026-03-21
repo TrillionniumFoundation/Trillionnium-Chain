@@ -54,18 +54,19 @@ fn timeout_bond_disposition(
     })
 }
 
-fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, u64, bool) {
-    let ordinal_saturated = migrated_before_emit == u64::MAX;
+fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, u64, bool, bool) {
+    let tx_ordinal_overflowed = migrated_before_emit == u64::MAX;
     let tx_ordinal = migrated_before_emit.saturating_add(1);
     let (tx_id, tx_id_overflowed) = match tx_id_seed.checked_add(tx_ordinal) {
-        Some(tx_id) => (tx_id, ordinal_saturated),
+        Some(tx_id) => (tx_id, tx_ordinal_overflowed),
         None => (u64::MAX, true),
     };
-    (tx_id, tx_ordinal, tx_id_overflowed)
+    (tx_id, tx_ordinal, tx_id_overflowed, tx_ordinal_overflowed)
 }
 
 fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
-    let (tx_id, _, tx_id_overflowed) = timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
+    let (tx_id, _, tx_id_overflowed, _) =
+        timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
     (tx_id, tx_id_overflowed)
 }
 
@@ -110,8 +111,12 @@ pub(crate) fn scan_and_apply_timeouts(
         };
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
-            let (event_tx_id, event_tx_ordinal, event_tx_overflowed) =
-                timeout_event_surface_metadata(tx_id_seed, migrated);
+            let (
+                event_tx_id,
+                event_tx_ordinal,
+                event_tx_overflowed,
+                event_tx_ordinal_overflowed,
+            ) = timeout_event_surface_metadata(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -128,6 +133,7 @@ pub(crate) fn scan_and_apply_timeouts(
                 event_tx_id,
                 event_tx_ordinal,
                 event_tx_overflowed,
+                event_tx_ordinal_overflowed,
                 current_height,
                 &from_status,
                 &to_status,
@@ -138,12 +144,13 @@ pub(crate) fn scan_and_apply_timeouts(
                 bond_disposition,
             );
             println!(
-                "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} from_status={} to_status={} source=auto_scan",
+                "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} tx_ordinal_overflow={} from_status={} to_status={} source=auto_scan",
                 current_height,
                 task_id,
                 event_tx_id,
                 event_tx_ordinal,
                 event_tx_overflowed,
+                event_tx_ordinal_overflowed,
                 from_status,
                 to_status
             );
@@ -240,13 +247,39 @@ mod tests {
 
     #[test]
     fn timeout_event_surface_metadata_keeps_tx_id_ordinal_and_overflow_in_lockstep() {
-        assert_eq!(timeout_event_surface_metadata(9_000_000, 0), (9_000_001, 1, false));
-        assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 0), (u64::MAX, 1, false));
-        assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 1), (u64::MAX, 2, true));
-        assert_eq!(timeout_event_surface_metadata(0, u64::MAX), (u64::MAX, u64::MAX, true));
+        assert_eq!(
+            timeout_event_surface_metadata(9_000_000, 0),
+            (9_000_001, 1, false, false)
+        );
+        assert_eq!(
+            timeout_event_surface_metadata(u64::MAX - 1, 0),
+            (u64::MAX, 1, false, false)
+        );
+        assert_eq!(
+            timeout_event_surface_metadata(u64::MAX - 1, 1),
+            (u64::MAX, 2, true, false)
+        );
+        assert_eq!(
+            timeout_event_surface_metadata(0, u64::MAX),
+            (u64::MAX, u64::MAX, true, true)
+        );
         assert_eq!(
             timeout_event_surface_metadata(u64::MAX, u64::MAX),
-            (u64::MAX, u64::MAX, true)
+            (u64::MAX, u64::MAX, true, true)
+        );
+    }
+
+    #[test]
+    fn timeout_event_surface_metadata_marks_ordinal_saturation_separately_from_tx_id_overflow() {
+        assert_eq!(
+            timeout_event_surface_metadata(u64::MAX - 1, 1),
+            (u64::MAX, 2, true, false),
+            "seed+ordinal overflow should not pretend the ordinal itself saturated"
+        );
+        assert_eq!(
+            timeout_event_surface_metadata(9_000_000, u64::MAX),
+            (u64::MAX, u64::MAX, true, true),
+            "saturated ordinal should stay explicitly visible even when tx_id also sticks"
         );
     }
 
