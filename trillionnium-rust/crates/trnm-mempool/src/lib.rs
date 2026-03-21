@@ -184,6 +184,10 @@ impl LaneAdmissionGate {
             && self.critical_free_slots() == 1
     }
 
+    fn normal_has_surplus_critical_headroom(&self) -> bool {
+        self.critical_free_slots() > 1
+    }
+
     fn normal_can_borrow_critical_headroom(&self) -> bool {
         if self.normal_uses_reserve_only_mode() {
             // Reserve-only mode keeps free-ingress throughput live by borrowing any
@@ -197,7 +201,9 @@ impl LaneAdmissionGate {
             return true;
         }
 
-        self.critical_free_slots() > 1
+        // Once critical backlog appears, keep the final reserved slot protected and
+        // only permit normal spillover against genuinely surplus critical headroom.
+        self.normal_has_surplus_critical_headroom()
     }
 
     fn critical_can_borrow_normal_headroom(&self) -> bool {
