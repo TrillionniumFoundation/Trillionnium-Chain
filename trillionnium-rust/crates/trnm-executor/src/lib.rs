@@ -1168,12 +1168,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        assert_tx_access_domain_versions_are_consistent(tx);
-        let key = tx
-            .write_set
-            .first()
-            .or_else(|| tx.read_set.first())
-            .map(|o| o.id);
+        let key = primary_access_domain_key(tx);
         if let Some(k) = key {
             observed += 1;
             *key_hist.entry(k).or_insert(0) += 1;
@@ -1236,6 +1231,32 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         expected_gain_score,
         min_expected_gain_score,
     }
+}
+
+fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+
+    // Canonicalize the adaptive hotspot signal within the preferred access
+    // domain. Writes remain the stronger scheduling signal, but equivalent
+    // write-domain or read-domain permutations should hash to the same key.
+    let domain = if tx.write_set.is_empty() {
+        &tx.read_set
+    } else {
+        &tx.write_set
+    };
+
+    let mut primary = None;
+    for id in domain.iter().map(|o| o.id) {
+        match primary {
+            None => primary = Some(id),
+            Some(current) if id < current => primary = Some(id),
+            Some(_) => {}
+        }
+    }
+    primary
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
@@ -3950,6 +3971,52 @@ mod tests {
         assert!(!d.use_hot_bucket);
         assert_eq!(d.reason, "insufficient_sample");
         assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_canonicalizes_primary_access_key_across_equivalent_domain_orderings() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut baseline = Vec::with_capacity(64);
+        let mut permuted = Vec::with_capacity(64);
+        for i in 0..32u64 {
+            baseline.push(tx(140_000 + i, vec![o(99)], vec![o(50_000 + i), o(7)]));
+            permuted.push(tx(150_000 + i, vec![o(99)], vec![o(7), o(50_000 + i)]));
+        }
+        for i in 0..32u64 {
+            baseline.push(tx(
+                140_100 + i,
+                vec![o(99)],
+                vec![o(60_000 + i), o(70_000 + i)],
+            ));
+            permuted.push(tx(
+                150_100 + i,
+                vec![o(99)],
+                vec![o(70_000 + i), o(60_000 + i)],
+            ));
+        }
+
+        let baseline_decision = auto_adaptive_decision(&baseline);
+        let permuted_decision = auto_adaptive_decision(&permuted);
+
+        assert_eq!(baseline_decision.sample_len, 64);
+        assert_eq!(permuted_decision.sample_len, 64);
+        assert_eq!(baseline_decision.use_hot_bucket, permuted_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, permuted_decision.reason);
+        assert_eq!(baseline_decision.streak_ratio, permuted_decision.streak_ratio);
+        assert_eq!(baseline_decision.hot_key_share, permuted_decision.hot_key_share);
+        assert_eq!(
+            baseline_decision.expected_gain_score,
+            permuted_decision.expected_gain_score
+        );
+        assert!(baseline_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, "hotspot_detected");
     }
 
     #[test]
