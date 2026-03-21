@@ -5445,6 +5445,66 @@ fn paused_first_resolve_approval_rejects_incomplete_challenged_task_boundary() {
 }
 
 #[test]
+fn paused_first_resolve_approval_rejects_missing_forfeit_metadata() {
+    // REF14 metadata completeness: paused live resolve-approval staging must also fail closed
+    // when challenge_bond_forfeited is absent, because the challenged-task custody boundary is
+    // incomplete and replay must not infer that state later.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_423, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_443, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_444, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_946_1,
+        Some(TaskObject {
+            task_id: 9_946_1,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_946_1,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect_err("missing forfeit metadata must reject paused resolve approval staging");
+
+    assert!(
+        err.contains("task missing") || err.contains("boundary metadata incomplete"),
+        "unexpected error: {err}"
+    );
+    assert_eq!(st.pending_resolve_approval(9_946_1), None);
+    assert_eq!(st.pending_resolve_first_approver(9_946_1), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_946_1), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
 fn first_resolve_approval_rejects_non_challenged_task_boundary() {
     // L03 boundary hardening: the first resolve approval must stay bound to challenged-state
     // semantics and reject open tasks before any quorum state is staged.

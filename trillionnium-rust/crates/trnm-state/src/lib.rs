@@ -602,25 +602,80 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
-        if let Some(task) = self.get_task(task_id) {
-            if task.status != TaskStatus::Challenged {
+        let Some(task) = self.get_task(task_id) else {
+            if self.is_emergency_paused() {
                 if self.pending_resolve_approvals.remove(&task_id).is_some() {
                     self.invalidate_state_root_cache();
                 }
-                return Err("resolve approval task no longer challenged".into());
+                return Err("resolve approval task missing".into());
             }
-            if task.version != task_version {
-                if self.pending_resolve_approvals.remove(&task_id).is_some() {
-                    self.invalidate_state_root_cache();
+            ensure_effective_resolve_authority_match(self, authority_set)?;
+
+            if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
+                if entry.confirmations >= 2 {
+                    return Err("resolve approval already finalized; clear pending approval first".into());
                 }
-                return Err("resolve approval task version changed".into());
-            }
-            if !task_supports_pending_resolve_restore(&task) {
-                if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
+                if entry_authority_canonical != authority_canonical {
                     self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval authority set changed".into());
                 }
-                return Err("resolve approval task boundary metadata incomplete".into());
+                if entry.task_version != task_version {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval task version changed".into());
+                }
             }
+
+            self.invalidate_state_root_cache();
+            let entry =
+                self.pending_resolve_approvals
+                    .entry(task_id)
+                    .or_insert(PendingResolveApproval {
+                        slash_worker,
+                        confirmations: 0,
+                        first_approver: approver.trim().to_string(),
+                        authority_set: authority_set.to_string(),
+                        task_version,
+                    });
+            if entry.slash_worker != slash_worker {
+                return Err("resolve approval decision mismatch".into());
+            }
+            if entry.confirmations >= 2 {
+                return Err("resolve approval already finalized; clear pending approval first".into());
+            }
+            if entry.confirmations > 0 {
+                let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+                if first_approver_canonical == approver_canonical {
+                    return Err("resolve approval requires distinct approver".into());
+                }
+            }
+            entry.confirmations = entry.confirmations.saturating_add(1);
+            return Ok(entry.confirmations >= 2);
+        };
+        if task.status != TaskStatus::Challenged {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task no longer challenged".into());
+        }
+        if task.version != task_version {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task version changed".into());
+        }
+        if !task_supports_pending_resolve_restore(&task)
+            || (self.is_emergency_paused()
+                && !task_supports_pending_resolve_snapshot_restore(&task))
+        {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task boundary metadata incomplete".into());
         }
         ensure_effective_resolve_authority_match(self, authority_set)?;
 
