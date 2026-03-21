@@ -101,28 +101,41 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         fs::create_dir_all(parent)?;
     }
 
-    let mut retained_lines: Vec<String> = match fs::metadata(&quarantine_path) {
-        Ok(meta) if meta.len() > INGRESS_QUARANTINE_READ_MAX_BYTES => Vec::new(),
-        _ => fs::read(&quarantine_path)
-            .ok()
-            .map(|raw| {
-                raw.split(|byte| *byte == b'\n')
+    let mut retained_lines = Vec::new();
+    let mut retained_identities = HashSet::new();
+    match fs::metadata(&quarantine_path) {
+        Ok(meta) if meta.len() > INGRESS_QUARANTINE_READ_MAX_BYTES => {}
+        _ => {
+            if let Some(raw) = fs::read(&quarantine_path).ok() {
+                for line in raw
+                    .split(|byte| *byte == b'\n')
                     .filter_map(|line_bytes| std::str::from_utf8(line_bytes).ok())
                     .map(|line| line.trim_end_matches('\r'))
                     .filter(|line| !line.trim().is_empty())
-                    .filter(|line| {
-                        line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES
-                    })
-                    .filter_map(|line| {
-                        let entry = serde_json::from_str::<IngressQuarantineRecord>(line).ok()?;
-                        quarantine_record_within_bounds(&entry).then(|| line.to_string())
-                    })
-                    .collect()
-            })
-            .unwrap_or_default(),
-    };
+                    .filter(|line| line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES)
+                {
+                    let Some(entry) = serde_json::from_str::<IngressQuarantineRecord>(line).ok()
+                    else {
+                        continue;
+                    };
+                    if quarantine_record_within_bounds(&entry)
+                        && retained_identities
+                            .insert((entry.source_path.clone(), entry.line_hash, entry.error.clone()))
+                    {
+                        retained_lines.push(line.to_string());
+                    }
+                }
+            }
+        }
+    }
     for entry in entries {
-        if quarantine_record_within_bounds(entry) {
+        if quarantine_record_within_bounds(entry)
+            && retained_identities.insert((
+                entry.source_path.clone(),
+                entry.line_hash,
+                entry.error.clone(),
+            ))
+        {
             retained_lines.push(serde_json::to_string(entry)?);
         }
     }
