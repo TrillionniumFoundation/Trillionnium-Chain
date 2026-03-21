@@ -5412,6 +5412,46 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_state_root_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed when state root identity is missing"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_does_not_accept_future_checkpoint_without_matching_wal_height() {
         let e1 = WalMeta {
             height: 1,
