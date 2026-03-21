@@ -143,6 +143,37 @@
     }
 
     #[test]
+    fn da_ordering_decouple_keeps_dependency_order_for_stateful_conflicts() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4_006,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 4_006,
+                worker: "worker4006".into(),
+            },
+            MockTx::Commit {
+                task_id: 4_006,
+                worker: "worker4006".into(),
+                committed_hash: [4u8; 32],
+            },
+        ];
+
+        let legacy = decide_order_for_commit(&state, &picked, 3, false, 10);
+        let decoupled = decide_order_for_commit(&state, &picked, 3, true, 10);
+
+        assert_eq!(legacy.ordered_ids, vec![1, 2, 3]);
+        assert_eq!(decoupled.ordered_ids, legacy.ordered_ids);
+        assert_eq!(legacy.rejected, 0);
+        assert_eq!(decoupled.rejected, 0);
+        assert_eq!(decoupled.group_count, legacy.group_count);
+        assert_eq!(decoupled.critical_wait_blocks, legacy.critical_wait_blocks);
+    }
+
+    #[test]
     fn preexec_parallel_workers_match_single_worker_results() {
         let state = StateStore::new();
         let picked = vec![

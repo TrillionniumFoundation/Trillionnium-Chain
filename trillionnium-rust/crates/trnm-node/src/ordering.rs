@@ -1,5 +1,5 @@
 use std::{
-    collections::VecDeque,
+    collections::{HashSet, VecDeque},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::Instant,
@@ -54,8 +54,19 @@ impl OrderingEngine for PreexecOrderingEngine {
             .enumerate()
             .map(|(i, tx)| read_write_decl(snapshot, tx, (i as u64) + 1))
             .collect();
-        let groups = build_parallel_groups(&plan);
-        let group_count = groups.len();
+        let da_ids: HashSet<u64> = da_batch.tx_ids.iter().copied().collect();
+        let ordered_groups: Vec<Vec<u64>> = build_parallel_groups(&plan)
+            .into_iter()
+            .map(|group| {
+                group
+                    .into_iter()
+                    .map(|tx| tx.id)
+                    .filter(|id| da_ids.contains(id))
+                    .collect::<Vec<_>>()
+            })
+            .filter(|group_ids| !group_ids.is_empty())
+            .collect();
+        let group_count = ordered_groups.len();
         let critical_wait_blocks = group_count.saturating_sub(1) as u64;
 
         let pool = PreExecPool::new(
@@ -65,7 +76,13 @@ impl OrderingEngine for PreexecOrderingEngine {
             candidate_height,
         );
         let preexec_started = Instant::now();
-        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
+        let mut ordered_ids = Vec::new();
+        let mut rejected = 0u64;
+        for group_ids in ordered_groups {
+            let (accepted_ids, group_rejected) = pre_execute_group_parallel(&pool, group_ids);
+            ordered_ids.extend(accepted_ids);
+            rejected = rejected.saturating_add(group_rejected);
+        }
         OrderingDecision {
             ordered_ids,
             rejected,
