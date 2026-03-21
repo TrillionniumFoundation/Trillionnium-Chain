@@ -793,6 +793,8 @@ fn validate_governance_validator_coverage_from_lists(
     explicit_value_rule_keys: &[&str],
     key: &str,
 ) -> Result<(), String> {
+    validate_requested_governance_key_canonical(key)?;
+
     if !allowed_keys.contains(&key) {
         return Err(format!(
             "no explicit validator registered for governance key: {}",
@@ -5400,6 +5402,22 @@ mod tests {
         assert!(
             err.contains("governance validator coverage missing for allowed key: max_parallel_workers"),
             "unexpected validator coverage error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_noncanonical_key_spelling_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            " Max_Block_Ms ",
+        )
+        .expect_err("validator coverage helper must reject non-canonical governance key spelling");
+
+        assert!(
+            err.contains("governance key request must use canonical key spelling:  Max_Block_Ms "),
+            "unexpected validator coverage canonicalization error: {err}"
         );
     }
 
