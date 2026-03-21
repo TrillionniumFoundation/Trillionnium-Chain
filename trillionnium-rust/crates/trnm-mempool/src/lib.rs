@@ -282,6 +282,18 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_guard_probe(
+        &self,
+        guard_blocks: bool,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        if guard_blocks {
+            Some(self.classify_bounded_retry_probe(is_duplicate))
+        } else {
+            None
+        }
+    }
+
     fn classify_reserved_slot_guard_probe(
         &self,
         class: IngressClass,
@@ -291,11 +303,7 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        if self.lane_backpressure_guard_blocks(class) {
-            Some(self.classify_bounded_retry_probe(is_duplicate))
-        } else {
-            None
-        }
+        self.classify_guard_probe(self.lane_backpressure_guard_blocks(class), is_duplicate)
     }
 
     fn classify_headroom_probe(
@@ -304,11 +312,8 @@ impl LaneAdmissionGate {
         class: IngressClass,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        if let Some(out) = self.classify_pre_admission_probe(lane_total, is_duplicate) {
-            return Some(out);
-        }
-
-        self.classify_reserved_slot_guard_probe(class, is_duplicate)
+        self.classify_pre_admission_probe(lane_total, is_duplicate)
+            .or_else(|| self.classify_reserved_slot_guard_probe(class, is_duplicate))
     }
 
     fn normal_queue_has_headroom(&self) -> bool {
