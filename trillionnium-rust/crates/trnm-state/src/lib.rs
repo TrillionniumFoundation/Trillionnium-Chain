@@ -195,7 +195,6 @@ fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> 
     governance_pinned_binding(None, Some(key_id))
 }
 
-#[cfg(test)]
 fn governance_expected_key_id(key: &str) -> Option<u64> {
     governance_pinned_binding(Some(key), None).map(|(_, pinned_key_id)| pinned_key_id)
 }
@@ -1474,8 +1473,7 @@ impl StateStore {
     }
 
     fn validated_gov_param_registry_id_for_key(&self, key: &str) -> Option<u64> {
-        let id = governance_pinned_binding(Some(key), None)
-            .map(|(_, pinned_key_id)| pinned_key_id)
+        let id = governance_expected_key_id(key)
             .or_else(|| self.gov_param_key_index.get(key).copied())?;
         if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
@@ -3381,6 +3379,34 @@ mod tests {
         assert!(
             st.get_param(7315).is_none(),
             "id accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_emergency_pause_accessor_fail_closed_on_reserved_id_alias() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "reserved id aliasing must fail closed instead of toggling emergency pause"
+        );
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "reserved-key string accessor must reject aliased objects even when they occupy the pinned id slot"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "id accessor must reject aliased objects at the reserved emergency_pause slot"
         );
     }
 
