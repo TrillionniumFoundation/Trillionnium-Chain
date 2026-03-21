@@ -1127,6 +1127,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
+        assert_tx_access_domain_versions_are_consistent(tx);
         let key = tx
             .write_set
             .first()
@@ -3710,6 +3711,24 @@ mod tests {
         assert_eq!(d.hot_key_share, 0.0);
         assert_eq!(d.streak_ratio, 0.0);
         assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn auto_adaptive_decision_rejects_cross_domain_version_skew_for_same_object_id() {
+        let mut txs = Vec::with_capacity(512);
+        txs.push(tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        ));
+        for i in 1..512u64 {
+            txs.push(tx(1_000 + i, vec![], vec![o(10_000 + i)]));
+        }
+
+        let _ = auto_adaptive_decision(&txs);
     }
 
     #[test]
