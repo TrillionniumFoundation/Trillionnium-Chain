@@ -1033,6 +1033,7 @@ fn validate_pending_gov_update_restore_snapshot(
     snapshot: &PendingGovParamUpdate,
 ) -> Result<(), String> {
     validate_requested_governance_key_canonical(key)?;
+    validate_requested_governance_key_canonical(&snapshot.key)?;
     if snapshot.key != key {
         return Err(format!(
             "pending governance snapshot key mismatch: requested_key={}, snapshot_key={}",

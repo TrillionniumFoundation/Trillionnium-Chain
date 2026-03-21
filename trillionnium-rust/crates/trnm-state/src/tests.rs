@@ -2919,6 +2919,36 @@ fn restore_pending_gov_update_non_sensitive_key_fails_closed_without_aliasing_im
 }
 
 #[test]
+fn restore_pending_gov_update_noncanonical_snapshot_key_fails_closed_without_aliasing_pending_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_310,
+            key: " resolve_authority".into(),
+            value: "authority-a,authority-b".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "restore_pending_gov_update must fail closed when the snapshot key spelling is non-canonical"
+    );
+    assert!(
+        state.pending_gov_update(" resolve_authority").is_none(),
+        "non-canonical snapshot keys must not materialize an aliased pending governance slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-canonical snapshot keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
     let mut state = StateStore::new();
     state
