@@ -1731,20 +1731,36 @@ fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u6
     )
 }
 
+fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
+    let trimmed = line.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let value = serde_json::from_str::<serde_json::Value>(trimmed).ok()?;
+    let line_hash = value
+        .get("line_hash")
+        .and_then(|hash| hash.as_u64())
+        .or_else(|| {
+            value
+                .get("raw_line")
+                .and_then(|raw| raw.as_str())
+                .map(stable_line_hash)
+        })?;
+    Some((
+        value.get("source_path")?.as_str()?.to_string(),
+        usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
+        line_hash,
+    ))
+}
+
 fn load_existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(String, usize, u64)> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeSet::new();
     };
 
     raw.lines()
-        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-        .filter_map(|value| {
-            Some((
-                value.get("source_path")?.as_str()?.to_string(),
-                usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
-                value.get("line_hash")?.as_u64()?,
-            ))
-        })
+        .filter_map(parse_quarantine_fingerprint_line)
         .collect()
 }
 
@@ -7674,6 +7690,50 @@ not-json
             "whitespace-only malformed replays should not duplicate quarantine accounting"
         );
         assert_eq!(entries[0]["line_number"], 1);
+        assert_eq!(entries[0]["raw_line"], "not-json");
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_reuses_legacy_quarantine_fingerprints_without_line_hash() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-legacy-dedupe", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        fs::write(
+            &quarantine,
+            format!(
+                "{{\"source_path\":\"{}\",\"line_number\":1,\"raw_line\":\"not-json\",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                path.display()
+            ),
+        )
+        .expect("seed legacy quarantine fixture");
+
+        let records = load_ingress_records();
+        assert!(records.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "legacy quarantine rows without line_hash should still suppress duplicate accounting"
+        );
+        assert!(
+            entries[0].get("line_hash").is_none(),
+            "fixture should remain legacy-shaped"
+        );
         assert_eq!(entries[0]["raw_line"], "not-json");
 
         std::env::remove_var("TRNM_RPC_INGRESS_FILE");
