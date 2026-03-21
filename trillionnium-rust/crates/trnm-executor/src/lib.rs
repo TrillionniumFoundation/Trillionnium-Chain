@@ -1217,9 +1217,18 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     // Reuse the same write-first, read-domain-filtered object scope as grouping
     // and telemetry so hotspot bucketing cannot drift from executor conflict
     // semantics on duplicate/shared-object footprints.
-    let keys = tx_access_domain_keys(tx);
-    let key_a = keys.first().copied().unwrap_or(0);
-    let key_b = keys.get(1).copied().unwrap_or(0);
+    let write_keys = dedup_access_keys(&tx.write_set);
+    if write_keys.len() >= 2 {
+        return (write_keys[0], write_keys[1]);
+    }
+    if let Some(&key_a) = write_keys.first() {
+        let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
+        return (key_a, read_keys.first().copied().unwrap_or(0));
+    }
+
+    let read_keys = dedup_access_keys(&tx.read_set);
+    let key_a = read_keys.first().copied().unwrap_or(0);
+    let key_b = read_keys.get(1).copied().unwrap_or(0);
     (key_a, key_b)
 }
 
@@ -2261,6 +2270,16 @@ mod tests {
 
         let read_fallback = tx(2, vec![o(7), o(7), o(8)], vec![]);
         assert_eq!(hot_bucket_keys(&read_fallback), (7, 8));
+    }
+
+    #[test]
+    fn hot_bucket_keys_single_write_domain_uses_first_filtered_read_key() {
+        let t = tx(3, vec![o(42), o(42), o(77), o(88), o(77)], vec![o(42), o(42)]);
+
+        // Singleton shared-object writes should keep write priority while the
+        // second hot key comes from the filtered read-only domain.
+        assert_eq!(hot_bucket_keys(&t), (42, 77));
+        assert_eq!(tx_access_domain_keys(&t), vec![42, 77, 88]);
     }
 
     #[test]
