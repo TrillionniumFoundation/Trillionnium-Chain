@@ -213,12 +213,16 @@ impl LaneAdmissionGate {
         self.classify_duplicate_probe(is_duplicate)
     }
 
+    fn lane_has_global_headroom(&self, lane_total: usize) -> bool {
+        lane_total < self.total_capacity
+    }
+
     fn classify_pre_admission_probe(
         &self,
         lane_total: usize,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        if lane_total >= self.total_capacity {
+        if !self.lane_has_global_headroom(lane_total) {
             return Some(self.classify_saturated_probe(is_duplicate));
         }
 
@@ -237,13 +241,15 @@ impl LaneAdmissionGate {
         self.critical.queue.len() < self.critical.capacity || self.critical_can_borrow_normal_headroom()
     }
 
-    fn classify_lane_backpressure_guard(&self, class: IngressClass) -> Option<AdmitOutcome> {
-        let has_headroom = match class {
+    fn class_has_admission_headroom(&self, class: IngressClass) -> bool {
+        match class {
             IngressClass::Normal => self.normal_has_admission_headroom(),
             IngressClass::Critical => self.critical_has_admission_headroom(),
-        };
+        }
+    }
 
-        if has_headroom {
+    fn classify_lane_backpressure_guard(&self, class: IngressClass) -> Option<AdmitOutcome> {
+        if self.class_has_admission_headroom(class) {
             None
         } else {
             Some(AdmitOutcome::Backpressured)
@@ -978,6 +984,37 @@ mod tests {
         assert_eq!(g.critical_served_streak, 0);
         assert_eq!(g.pop_ready(), Some(11));
         assert_eq!(g.critical_served_streak, 0);
+    }
+
+    #[test]
+    fn reserve_guarded_normal_retry_burst_keeps_queue_counts_flat_until_critical_slot_reopens() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // One aggregate slot remains free, but it is the final reserved critical slot.
+        // Repeated same-class normal retries must stay backpressured and must not
+        // perturb queue accounting until the critical backlog drains enough to
+        // reopen borrowable headroom.
+        for _ in 0..3 {
+            assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+            assert_eq!(g.queued_counts(), (3, 1, 4));
+        }
+
+        assert_eq!(g.admit(5, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+
+        assert!(matches!(g.pop_ready(), Some(4) | Some(5)));
+        assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        assert!(matches!(g.pop_ready(), Some(4) | Some(5)));
+        assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
     }
 
     #[test]
