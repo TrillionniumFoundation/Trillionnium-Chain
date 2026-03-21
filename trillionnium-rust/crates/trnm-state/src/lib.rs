@@ -727,6 +727,11 @@ impl StateStore {
         else {
             return;
         };
+        if snapshot.first_approver != first_approver_canonical
+            || snapshot.authority_set != authority_canonical
+        {
+            return;
+        }
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
@@ -4478,6 +4483,50 @@ mod tests {
 
         let err = st.credit_balance("treasury", 2).unwrap_err();
         assert!(err.contains("balance overflow on credit"));
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_noncanonical_snapshot_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 901,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should be restorable");
+
+        st.restore_pending_resolve_approval(
+            901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must fail closed for noncanonical pending resolve snapshot metadata"
+        );
     }
 
     #[test]
