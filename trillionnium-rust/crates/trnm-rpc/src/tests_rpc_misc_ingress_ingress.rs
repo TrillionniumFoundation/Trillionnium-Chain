@@ -1,5 +1,17 @@
 use super::*;
 
+fn expected_stable_line_hash(raw: &str) -> u64 {
+    const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+    const FNV_PRIME: u64 = 0x00000100000001B3;
+
+    let mut hash = FNV_OFFSET_BASIS;
+    for byte in raw.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    hash
+}
+
 #[test]
 fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
     let _guard = lock_env();
@@ -79,6 +91,51 @@ not-json
         1,
         "identical malformed row should stay deduped even if its line number shifts after rewrite"
     );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
+fn load_ingress_records_truncates_oversized_quarantine_raw_lines() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-raw-line-bound", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let oversized = "é".repeat(400);
+    fs::write(&path, format!("{oversized}\n")).expect("write oversized malformed ingress line");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "oversized malformed row should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "single malformed row should produce one quarantine entry");
+
+    let stored_raw = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw line string");
+    assert!(
+        stored_raw.len() <= 512,
+        "quarantine raw line should be truncated to the configured byte ceiling"
+    );
+    assert!(
+        oversized.starts_with(stored_raw),
+        "quarantine raw line should preserve the original prefix after truncation"
+    );
+    assert!(
+        std::str::from_utf8(stored_raw.as_bytes()).is_ok(),
+        "quarantine truncation must preserve utf-8 boundaries"
+    );
+    assert_eq!(entries[0]["line_hash"].as_u64(), Some(expected_stable_line_hash(&oversized)));
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);

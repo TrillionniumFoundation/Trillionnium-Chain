@@ -34,6 +34,19 @@ fn stable_line_hash(raw: &str) -> u64 {
 }
 
 const MAX_INGRESS_QUARANTINE_RECORDS: usize = 256;
+const MAX_INGRESS_QUARANTINE_RAW_LINE_BYTES: usize = 512;
+
+fn truncate_quarantine_raw_line(raw: &str) -> String {
+    if raw.len() <= MAX_INGRESS_QUARANTINE_RAW_LINE_BYTES {
+        return raw.to_string();
+    }
+
+    let mut end = MAX_INGRESS_QUARANTINE_RAW_LINE_BYTES;
+    while end > 0 && !raw.is_char_boundary(end) {
+        end -= 1;
+    }
+    raw[..end].to_string()
+}
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     if entries.is_empty() {
@@ -111,7 +124,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 source_path: path.display().to_string(),
                 line_number: idx + 1,
                 line_hash: stable_line_hash(line),
-                raw_line: line.to_string(),
+                raw_line: truncate_quarantine_raw_line(line),
                 error: err.to_string(),
                 quarantined_at_unix_ms: now_ms(),
             }),
