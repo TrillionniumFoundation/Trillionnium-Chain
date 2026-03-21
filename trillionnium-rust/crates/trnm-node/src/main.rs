@@ -7767,6 +7767,14 @@ mod tests {
     }
 
     #[test]
+    fn timeout_event_surface_metadata_keeps_tx_id_ordinal_and_overflow_in_lockstep() {
+        assert_eq!(timeout_event_surface_metadata(9_000_000, 0), (9_000_001, 1, false));
+        assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 0), (u64::MAX, 1, false));
+        assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 1), (u64::MAX, 2, true));
+        assert_eq!(timeout_event_surface_metadata(0, u64::MAX), (u64::MAX, u64::MAX, true));
+    }
+
+    #[test]
     fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
