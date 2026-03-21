@@ -1,6 +1,8 @@
 use sha2::{Digest, Sha256};
 
-use crate::{ObjectValue, StateStore};
+use crate::{
+    canonicalize_resolve_authority_set, validate_resolve_approver_token, ObjectValue, StateStore,
+};
 use trnm_types::Hash32;
 
 impl StateStore {
@@ -161,8 +163,14 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hasher.update(pending.first_approver.as_bytes());
-            hasher.update(pending.authority_set.as_bytes());
+
+            let hashed_first_approver = validate_resolve_approver_token(&pending.first_approver)
+                .unwrap_or_else(|_| pending.first_approver.clone());
+            let hashed_authority_set = canonicalize_resolve_authority_set(&pending.authority_set)
+                .unwrap_or_else(|_| pending.authority_set.clone());
+
+            hasher.update(hashed_first_approver.as_bytes());
+            hasher.update(hashed_authority_set.as_bytes());
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
