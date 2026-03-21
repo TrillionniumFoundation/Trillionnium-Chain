@@ -1069,6 +1069,21 @@ fn validate_pending_gov_update_restore_snapshot(
     validate_gov_param_value(key, &snapshot.value)?;
 
     if pending_gov_updates
+        .get(key)
+        .is_some_and(|existing_pending| existing_pending.key_id != snapshot.key_id)
+    {
+        return Err(format!(
+            "pending governance key id mismatch for {}: existing_key_id={}, snapshot_key_id={}",
+            key,
+            pending_gov_updates
+                .get(key)
+                .map(|existing_pending| existing_pending.key_id)
+                .unwrap_or_default(),
+            snapshot.key_id
+        ));
+    }
+
+    if pending_gov_updates
         .iter()
         .any(|(existing_key, existing_pending)| {
             existing_key != key && existing_pending.key_id == snapshot.key_id

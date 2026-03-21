@@ -2930,3 +2930,45 @@ fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
         "foreign key-id collision must leave the deterministic root unchanged"
     );
 }
+
+#[test]
+fn restore_pending_gov_update_same_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+    let root_with_canonical_pending = state.state_root();
+    assert!(state.pending_gov_update("challenge_min_bond").is_some());
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the same pending governance key reappears under a different key_id"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_canonical_pending,
+        "same-key key_id drift must scrub the staged pending entry instead of silently rebinding it to a new slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        StateStore::new().state_root(),
+        "same-key key_id drift should return to the empty baseline root after fail-closed scrubbing"
+    );
+}
