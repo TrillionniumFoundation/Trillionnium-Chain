@@ -2046,7 +2046,7 @@ fn paused_state_rejects_second_resolve_approval_when_live_task_leaves_challenged
             resolve_deadline_height: Some(40),
             challenge_bond: Some(5),
             challenger: Some("challenger-a".into()),
-            challenge_bond_forfeited: None,
+            challenge_bond_forfeited: Some(false),
             version: 1,
         }),
     );
@@ -2084,10 +2084,13 @@ fn paused_state_rejects_second_resolve_approval_when_live_task_leaves_challenged
             resolve_deadline_height: Some(40),
             challenge_bond: Some(5),
             challenger: Some("challenger-a".into()),
-            challenge_bond_forfeited: None,
+            challenge_bond_forfeited: Some(false),
             version: 1,
         }),
     );
+
+    assert_eq!(st.pending_resolve_approval(9_901_4), None);
+    assert_eq!(st.pending_resolve_first_approver(9_901_4), None);
 
     let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
