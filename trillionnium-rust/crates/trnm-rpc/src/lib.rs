@@ -308,11 +308,12 @@ pub fn query_account_state(
     accounts: &BTreeMap<String, AccountState>,
     address: &str,
 ) -> Result<AccountState, AccountQueryError> {
-    validate_trnm_address(address)?;
+    let normalized_address = address.trim();
+    validate_trnm_address(normalized_address)?;
     accounts
-        .get(address)
+        .get(normalized_address)
         .cloned()
-        .ok_or_else(|| AccountQueryError::AccountNotFound(address.to_string()))
+        .ok_or_else(|| AccountQueryError::AccountNotFound(normalized_address.to_string()))
 }
 
 #[cfg(test)]
@@ -881,6 +882,24 @@ mod tests {
         let accounts = BTreeMap::new();
         let err = query_account_state(&accounts, "not-an-address").unwrap_err();
         assert_eq!(err.code(), "INVALID_ADDRESS");
+    }
+
+    #[test]
+    fn query_account_state_accepts_whitespace_drift() {
+        let address = format!("trnm1{}", "1".repeat(40));
+        let mut accounts = BTreeMap::new();
+        accounts.insert(
+            address.clone(),
+            AccountState {
+                address: address.clone(),
+                balance: 42,
+                nonce: 7,
+            },
+        );
+
+        let got = query_account_state(&accounts, &format!("  {}\n", address)).unwrap();
+        assert_eq!(got.balance, 42);
+        assert_eq!(got.nonce, 7);
     }
 
     #[test]
