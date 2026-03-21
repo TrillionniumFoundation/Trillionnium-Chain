@@ -955,18 +955,15 @@ impl StateStore {
         Some(param)
     }
 
-    fn canonical_gov_param_registry_key_for_id(&self, id: u64) -> Option<&str> {
+    fn canonical_gov_param_binding_at_id(&self, id: u64) -> Option<(&str, &GovParamObject)> {
         let param = self.validated_gov_param_object_at_id(id)?;
-        if let Some(expected_key) = governance_expected_key_for_id(id) {
-            return (param.key == expected_key).then_some(expected_key);
-        }
-        Some(param.key.as_str())
+        let canonical_key = governance_expected_key_for_id(id).unwrap_or(param.key.as_str());
+        (param.key == canonical_key).then_some((canonical_key, param))
     }
 
     fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
-        let param = self.validated_gov_param_object_at_id(id)?;
-        (self.canonical_gov_param_registry_key_for_id(id) == Some(param.key.as_str()))
-            .then_some(param)
+        self.canonical_gov_param_binding_at_id(id)
+            .map(|(_, param)| param)
     }
 
     pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
@@ -3528,6 +3525,12 @@ mod tests {
             st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert_eq!(
+            st.get_param(9_200)
+                .map(|param| (param.key_id, param.key, param.value)),
+            None,
+            "id accessor must fail closed for a non-allowlisted governance registry entry"
         );
     }
 
