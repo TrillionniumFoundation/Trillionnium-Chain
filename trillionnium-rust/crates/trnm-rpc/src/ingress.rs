@@ -43,6 +43,7 @@ fn stable_line_hash(raw: &str) -> u64 {
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     const INGRESS_QUARANTINE_FILE_MAX_RECORDS: usize = 1024;
     const INGRESS_QUARANTINE_READ_MAX_BYTES: u64 = 1_048_576;
+    const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
 
     if entries.is_empty() {
@@ -61,6 +62,9 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
             .map(|raw| {
                 raw.lines()
                     .filter(|line| !line.trim().is_empty())
+                    .filter(|line| {
+                        line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES
+                    })
                     .filter_map(|line| {
                         let value = serde_json::from_str::<serde_json::Value>(line).ok()?;
                         let raw_line = value.get("raw_line")?.as_str()?;

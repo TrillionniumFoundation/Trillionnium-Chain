@@ -488,6 +488,62 @@ fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_raw_
 }
 
 #[test]
+fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_serialized_line() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-oversized-serialized-line-retention", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let oversized_retained_entry = serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 99,
+        "line_hash": 123_u64,
+        "raw_line": "seed",
+        "error": "x".repeat(20_000),
+        "quarantined_at_unix_ms": 1_u128,
+    });
+    fs::write(
+        &quarantine,
+        format!("{}\n", serde_json::to_string(&oversized_retained_entry).expect("serialize seed entry")),
+    )
+    .expect("seed oversized serialized quarantine entry");
+    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let lines: Vec<&str> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(
+        lines.len(),
+        1,
+        "preexisting quarantine entries beyond serialized line bounds should be discarded"
+    );
+    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
+    assert_eq!(entry["line_number"], 1);
+    assert!(
+        lines[0].as_bytes().len() < 16_384,
+        "new quarantined ingress row should replace oversized retained serialized noise"
+    );
+    assert!(
+        entry["error"]
+            .as_str()
+            .expect("error string")
+            .contains("EOF while parsing"),
+        "new malformed ingress record should still be quarantined after dropping oversized retained serialized noise"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_bounds_total_quarantine_file_growth() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-retention-bounds", "jsonl");
