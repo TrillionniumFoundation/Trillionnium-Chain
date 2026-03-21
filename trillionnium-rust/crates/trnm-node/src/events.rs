@@ -178,6 +178,8 @@ pub(crate) fn emit_timeout_event(
     st: &StateStore,
     task_id: u64,
     tx_id: u64,
+    tx_ordinal: u64,
+    tx_id_overflow: bool,
     block_height: u64,
     from_status: &str,
     to_status: &str,
@@ -196,13 +198,15 @@ pub(crate) fn emit_timeout_event(
     let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} tx_ordinal={} tx_id_overflow={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
         task_id,
         from_status,
         to_status,
         challenger.unwrap_or("-"),
         tx_hash,
         tx_id,
+        tx_ordinal,
+        tx_id_overflow,
         block_height,
         state_root,
         ts_unix_ms,

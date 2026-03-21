@@ -46,7 +46,13 @@ fn timeout_bond_disposition(
 }
 
 fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
-    tx_id_seed.saturating_add(migrated_before_emit.saturating_add(1))
+    let ordinal = migrated_before_emit.saturating_add(1);
+    tx_id_seed.checked_add(ordinal).unwrap_or(u64::MAX)
+}
+
+fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
+    let ordinal = migrated_before_emit.saturating_add(1);
+    tx_id_seed.checked_add(ordinal).is_none()
 }
 
 pub(crate) fn scan_and_apply_timeouts(
@@ -76,7 +82,9 @@ pub(crate) fn scan_and_apply_timeouts(
         };
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
+            let event_tx_ordinal = migrated.saturating_add(1);
             let event_tx_id = timeout_event_tx_id(tx_id_seed, migrated);
+            let event_tx_overflowed = timeout_event_tx_overflowed(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -91,6 +99,8 @@ pub(crate) fn scan_and_apply_timeouts(
                 st,
                 task_id,
                 event_tx_id,
+                event_tx_ordinal,
+                event_tx_overflowed,
                 current_height,
                 &from_status,
                 &to_status,
@@ -101,8 +111,14 @@ pub(crate) fn scan_and_apply_timeouts(
                 bond_disposition,
             );
             println!(
-                "[timeout] height={} task_id={} tx_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, event_tx_id, from_status, to_status
+                "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} from_status={} to_status={} source=auto_scan",
+                current_height,
+                task_id,
+                event_tx_id,
+                event_tx_ordinal,
+                event_tx_overflowed,
+                from_status,
+                to_status
             );
         }
     }
@@ -113,7 +129,7 @@ pub(crate) fn scan_and_apply_timeouts(
 mod tests {
     use super::{
         should_scan_timeout, sorted_timeout_candidate_ids, timeout_bond_disposition,
-        timeout_event_tx_id, TIMEOUT_SCAN_MAX_TASK_ID,
+        timeout_event_tx_id, timeout_event_tx_overflowed, TIMEOUT_SCAN_MAX_TASK_ID,
     };
     use std::collections::HashSet;
     use trnm_types::TaskStatus;
@@ -153,6 +169,15 @@ mod tests {
         assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
         assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
         assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
+    }
+
+    #[test]
+    fn timeout_event_tx_overflowed_only_marks_saturated_visibility_edges() {
+        assert!(!timeout_event_tx_overflowed(9_000_000, 0));
+        assert!(!timeout_event_tx_overflowed(9_000_000, 1));
+        assert!(timeout_event_tx_overflowed(u64::MAX, 0));
+        assert!(timeout_event_tx_overflowed(9_000_000, u64::MAX));
+        assert!(timeout_event_tx_overflowed(u64::MAX - 1, 1));
     }
 
     #[test]

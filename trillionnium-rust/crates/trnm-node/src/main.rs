@@ -1962,6 +1962,8 @@ fn emit_timeout_event(
     st: &StateStore,
     task_id: u64,
     tx_id: u64,
+    tx_ordinal: u64,
+    tx_id_overflow: bool,
     block_height: u64,
     from_status: &str,
     to_status: &str,
@@ -1980,13 +1982,15 @@ fn emit_timeout_event(
     let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} tx_ordinal={} tx_id_overflow={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
         task_id,
         from_status,
         to_status,
         challenger.unwrap_or("-"),
         tx_hash,
         tx_id,
+        tx_ordinal,
+        tx_id_overflow,
         block_height,
         state_root,
         ts_unix_ms,
@@ -2333,7 +2337,13 @@ fn timeout_bond_disposition(
 }
 
 fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
-    tx_id_seed.saturating_add(migrated_before_emit.saturating_add(1))
+    let ordinal = migrated_before_emit.saturating_add(1);
+    tx_id_seed.checked_add(ordinal).unwrap_or(u64::MAX)
+}
+
+fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
+    let ordinal = migrated_before_emit.saturating_add(1);
+    tx_id_seed.checked_add(ordinal).is_none()
 }
 
 fn scan_and_apply_timeouts(
@@ -2369,7 +2379,9 @@ fn scan_and_apply_timeouts(
         };
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
+            let event_tx_ordinal = migrated.saturating_add(1);
             let event_tx_id = timeout_event_tx_id(tx_id_seed, migrated);
+            let event_tx_overflowed = timeout_event_tx_overflowed(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -2384,6 +2396,8 @@ fn scan_and_apply_timeouts(
                 st,
                 task_id,
                 event_tx_id,
+                event_tx_ordinal,
+                event_tx_overflowed,
                 current_height,
                 &from_status,
                 &to_status,
@@ -2394,8 +2408,14 @@ fn scan_and_apply_timeouts(
                 bond_disposition,
             );
             println!(
-                "[timeout] height={} task_id={} tx_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, event_tx_id, from_status, to_status
+                "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} from_status={} to_status={} source=auto_scan",
+                current_height,
+                task_id,
+                event_tx_id,
+                event_tx_ordinal,
+                event_tx_overflowed,
+                from_status,
+                to_status
             );
         }
     }
@@ -7692,6 +7712,23 @@ mod tests {
         let known: HashSet<u64> = [7003u64, 7001u64, 7002u64].into_iter().collect();
 
         assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
+    fn timeout_event_tx_id_starts_after_seed_and_preserves_scan_order_visibility() {
+        assert_eq!(timeout_event_tx_id(9_000_000, 0), 9_000_001);
+        assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
+        assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
+        assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
+    }
+
+    #[test]
+    fn timeout_event_tx_overflowed_only_marks_saturated_visibility_edges() {
+        assert!(!timeout_event_tx_overflowed(9_000_000, 0));
+        assert!(!timeout_event_tx_overflowed(9_000_000, 1));
+        assert!(timeout_event_tx_overflowed(u64::MAX, 0));
+        assert!(timeout_event_tx_overflowed(9_000_000, u64::MAX));
+        assert!(timeout_event_tx_overflowed(u64::MAX - 1, 1));
     }
 
     #[test]
