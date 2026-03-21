@@ -2636,12 +2636,18 @@ impl PreExecPool {
         if group_ids.is_empty() {
             return (vec![], 0);
         }
-        let workers = self.width.min(group_ids.len());
+
+        let mut seen_ids = HashSet::with_capacity(group_ids.len());
+        let unique_group_ids: Vec<u64> = group_ids
+            .into_iter()
+            .filter(|id| seen_ids.insert(*id))
+            .collect();
+        let workers = self.width.min(unique_group_ids.len());
         let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
         {
             let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
             for w in 0..workers {
-                let ids: Vec<u64> = group_ids
+                let ids: Vec<u64> = unique_group_ids
                     .iter()
                     .copied()
                     .enumerate()
@@ -2659,19 +2665,22 @@ impl PreExecPool {
         self.state.cv.notify_all();
         drop(tx);
 
-        let mut ok_ids = Vec::new();
+        let mut ok_ids = HashSet::with_capacity(unique_group_ids.len());
         let mut rejected = 0u64;
         for (id, ok, err) in rx {
             if ok {
-                ok_ids.push(id);
+                ok_ids.insert(id);
             } else {
                 rejected += 1;
                 println!("[preexec] tx_id={} rejected err={}", id, err);
             }
         }
 
-        ok_ids.sort_unstable();
-        (ok_ids, rejected)
+        let ordered_ok_ids = unique_group_ids
+            .into_iter()
+            .filter(|id| ok_ids.contains(id))
+            .collect();
+        (ordered_ok_ids, rejected)
     }
 }
 
@@ -2888,6 +2897,29 @@ mod tests {
 
         assert_eq!(single, (vec![1, 2], 1));
         assert_eq!(parallel, single);
+    }
+
+    #[test]
+    fn preexec_preserves_first_seen_group_order_and_dedupes_duplicates() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4_262,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4_263,
+                creator: "bob".into(),
+                bounty: 11,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 1, 2, 1]);
+
+        assert_eq!(ordered_ids, vec![2, 1]);
+        assert_eq!(rejected, 0);
     }
 
     #[test]
