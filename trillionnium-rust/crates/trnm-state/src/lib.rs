@@ -1470,9 +1470,13 @@ impl StateStore {
         let object = self.objects.get(&id)?;
         match &object.value {
             ObjectValue::GovParam(p)
-                if p.key == key
-                    && p.key_id == id
-                    && validate_gov_param_key_id_policy(&p.key, p.key_id).is_ok() =>
+                if validate_gov_param_snapshot_binding(
+                    &self.gov_param_key_index,
+                    key,
+                    &p.key,
+                    p.key_id,
+                )
+                .is_ok() =>
             {
                 Some((id, p))
             }
@@ -4125,6 +4129,38 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "emergency pause must remain disabled when accessor routing observes a non-canonical pinned key id"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_accessors_fail_closed_when_registry_id_is_canonical_but_object_key_id_is_not() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            7_999,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 8_000,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 7_999);
+
+        assert!(
+            st.gov_param_value("emergency_pause").is_none(),
+            "string accessor must fail closed when a pinned governance object embeds a non-canonical key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "ref accessor must fail closed when registry id is canonical but snapshot key id is not"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "emergency pause must remain disabled when the embedded pinned key id diverges from the registry"
         );
     }
 
