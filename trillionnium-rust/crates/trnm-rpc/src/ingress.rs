@@ -188,23 +188,23 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             skipped_whitespace_noise = true;
             continue;
         }
-        let parse_result = if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
-            Err((
-                stable_bounded_bytes_hash(line_bytes),
-                truncate_bytes_for_quarantine(line_bytes),
-                anyhow!(
-                    "ingress line exceeds {} bytes parse bound (got {})",
-                    INGRESS_LINE_PARSE_MAX_BYTES,
-                    line_bytes.len()
-                ),
-            ))
-        } else {
-            match std::str::from_utf8(line_bytes) {
-                Ok(line) => {
-                    if line.trim().is_empty() {
-                        skipped_whitespace_noise = true;
-                        continue;
-                    }
+        let parse_result = match std::str::from_utf8(line_bytes) {
+            Ok(line) => {
+                if line.trim().is_empty() {
+                    skipped_whitespace_noise = true;
+                    continue;
+                }
+                if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                    Err((
+                        stable_line_hash(line),
+                        truncate_for_quarantine(line),
+                        anyhow!(
+                            "ingress line exceeds {} bytes parse bound (got {})",
+                            INGRESS_LINE_PARSE_MAX_BYTES,
+                            line_bytes.len()
+                        ),
+                    ))
+                } else {
                     match serde_json::from_str::<MessageIngressRecord>(line) {
                         Ok(record) => {
                             records.push(record);
@@ -217,11 +217,25 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                         )),
                     }
                 }
-                Err(_) => Err((
-                    stable_bounded_bytes_hash(line_bytes),
-                    truncate_bytes_for_quarantine(line_bytes),
-                    anyhow!("ingress line is not valid utf-8"),
-                )),
+            }
+            Err(_) => {
+                if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                    Err((
+                        stable_bounded_bytes_hash(line_bytes),
+                        truncate_bytes_for_quarantine(line_bytes),
+                        anyhow!(
+                            "ingress line exceeds {} bytes parse bound (got {})",
+                            INGRESS_LINE_PARSE_MAX_BYTES,
+                            line_bytes.len()
+                        ),
+                    ))
+                } else {
+                    Err((
+                        stable_bounded_bytes_hash(line_bytes),
+                        truncate_bytes_for_quarantine(line_bytes),
+                        anyhow!("ingress line is not valid utf-8"),
+                    ))
+                }
             }
         };
         let (line_hash, raw_line, err) = match parse_result {

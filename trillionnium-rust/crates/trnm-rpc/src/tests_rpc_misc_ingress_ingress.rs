@@ -413,6 +413,55 @@ fn load_ingress_records_compacts_unicode_whitespace_only_noise_without_quarantin
 }
 
 #[test]
+fn load_ingress_records_compacts_oversized_unicode_whitespace_only_noise_without_quarantine() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-oversized-unicode-whitespace-noise-compact", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let unicode_whitespace_noise = format!("{}\n", "\u{3000}".repeat(30_000));
+    fs::write(
+        &path,
+        format!(
+            concat!(
+                "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+                "{}"
+            ),
+            unicode_whitespace_noise
+        ),
+    )
+    .expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "valid ingress rows should survive oversized unicode-whitespace compaction");
+    assert!(
+        !quarantine.exists(),
+        "oversized unicode whitespace-only ingress noise should be compacted instead of quarantined"
+    );
+
+    let salvaged_raw = fs::read_to_string(&path).expect("read compacted ingress file");
+    let salvaged_lines: Vec<&str> = salvaged_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(
+        salvaged_lines.len(),
+        1,
+        "compaction should drop oversized unicode-whitespace noise lines"
+    );
+    assert!(
+        salvaged_lines[0].contains("\"request_id\":\"req-1\""),
+        "compaction should retain the valid ingress record after oversized unicode noise"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_rows() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-invalid-utf8", "jsonl");
