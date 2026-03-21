@@ -89,6 +89,42 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 }
 
 #[test]
+fn load_ingress_records_quarantines_control_char_utf8_lines_with_sanitized_raw_line() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-control-char", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    fs::write(&path, b"{\"broken\":\x00}\n").expect("write control-char ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "control-char malformed ingress rows should remain quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "control-char malformed ingress row should be quarantined");
+    assert_eq!(entries[0]["error"], "control character (\\u0000-\\u001F) found while parsing a value at line 1 column 11");
+    let raw_line = entries[0]["raw_line"]
+        .as_str()
+        .expect("quarantine raw_line should be a string");
+    assert_eq!(raw_line, "{\"broken\":�}");
+    assert!(
+        !raw_line.chars().any(|ch| ch.is_control()),
+        "quarantine raw_line should sanitize control characters before retention"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");

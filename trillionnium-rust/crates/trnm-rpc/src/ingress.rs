@@ -160,15 +160,43 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_APPEND_MAX_RECORDS: usize = 128;
 
+    fn sanitize_for_quarantine(raw: &str) -> String {
+        raw.chars()
+            .map(|ch| {
+                if ch.is_control()
+                    || matches!(
+                        ch,
+                        '\u{2028}'
+                            | '\u{2029}'
+                            | '\u{202A}'
+                            | '\u{202B}'
+                            | '\u{202C}'
+                            | '\u{202D}'
+                            | '\u{202E}'
+                            | '\u{2066}'
+                            | '\u{2067}'
+                            | '\u{2068}'
+                            | '\u{2069}'
+                    )
+                {
+                    '�'
+                } else {
+                    ch
+                }
+            })
+            .collect()
+    }
+
     fn truncate_for_quarantine(raw: &str) -> String {
-        if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
-            return raw.to_string();
+        let sanitized = sanitize_for_quarantine(raw);
+        if sanitized.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+            return sanitized;
         }
         let mut end = INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES;
-        while end > 0 && !raw.is_char_boundary(end) {
+        while end > 0 && !sanitized.is_char_boundary(end) {
             end -= 1;
         }
-        raw[..end].to_string()
+        sanitized[..end].to_string()
     }
 
     fn truncate_bytes_for_quarantine(raw: &[u8]) -> String {
