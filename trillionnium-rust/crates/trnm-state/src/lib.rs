@@ -281,27 +281,84 @@ fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
 }
 
 fn format_governance_registry_membership_drift(
+    registry_name: &str,
     allowed_unique: &std::collections::BTreeSet<&str>,
-    validator_unique: &std::collections::BTreeSet<&str>,
+    registry_unique: &std::collections::BTreeSet<&str>,
 ) -> Option<String> {
     let missing_allowed_keys: Vec<&str> = allowed_unique
-        .difference(validator_unique)
+        .difference(registry_unique)
         .copied()
         .collect();
-    let rogue_validator_keys: Vec<&str> = validator_unique
+    let rogue_registry_keys: Vec<&str> = registry_unique
         .difference(allowed_unique)
         .copied()
         .collect();
 
-    if missing_allowed_keys.is_empty() && rogue_validator_keys.is_empty() {
+    if missing_allowed_keys.is_empty() && rogue_registry_keys.is_empty() {
         return None;
     }
 
     Some(format!(
-        "governance explicit-validator registry drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        registry_name,
         missing_allowed_keys.join(", "),
-        rogue_validator_keys.join(", "),
+        rogue_registry_keys.join(", "),
     ))
+}
+
+fn validate_governance_explicit_registry_alignment<'a>(
+    allowed_keys: &[&'a str],
+    allowed_unique: &std::collections::BTreeSet<&'a str>,
+    registry_name: &str,
+    entry_name: &str,
+    registry_keys: &[&'a str],
+) -> Result<std::collections::BTreeSet<&'a str>, String> {
+    for key in registry_keys {
+        validate_governance_registry_key_canonical(registry_name, key)?;
+    }
+    let registry_unique: std::collections::BTreeSet<&str> = registry_keys.iter().copied().collect();
+    if registry_unique.len() != registry_keys.len() {
+        return Err(format!("governance {} contains duplicate entries", registry_name));
+    }
+
+    if let Some(err) =
+        format_governance_registry_membership_drift(registry_name, allowed_unique, &registry_unique)
+    {
+        return Err(err);
+    }
+
+    for (index, (allowed_key, registry_key)) in allowed_keys
+        .iter()
+        .zip(registry_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != registry_key {
+            return Err(format!(
+                "governance {} order drifted at index {}: allowed_key={}, {}={}",
+                registry_name, index, allowed_key, entry_name, registry_key
+            ));
+        }
+    }
+
+    for key in allowed_unique {
+        if !registry_unique.contains(key) {
+            return Err(format!(
+                "governance {} coverage missing for allowed key: {}",
+                entry_name, key
+            ));
+        }
+    }
+
+    for key in &registry_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance {} contains non-whitelisted key: {}",
+                registry_name, key
+            ));
+        }
+    }
+
+    Ok(registry_unique)
 }
 
 fn validate_governance_registry_key_canonical(
@@ -366,100 +423,21 @@ fn validate_governance_registry_shape_lists(
         return Err("governance sensitive-key registry contains duplicate entries".into());
     }
 
-    for key in explicit_validator_keys {
-        validate_governance_registry_key_canonical("explicit-validator registry", key)?;
-    }
-    let validator_unique: std::collections::BTreeSet<&str> =
-        explicit_validator_keys.iter().copied().collect();
-    if validator_unique.len() != explicit_validator_keys.len() {
-        return Err("governance explicit-validator registry contains duplicate entries".into());
-    }
+    let validator_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-validator registry",
+        "validator_key",
+        explicit_validator_keys,
+    )?;
 
-    if let Some(err) =
-        format_governance_registry_membership_drift(&allowed_unique, &validator_unique)
-    {
-        return Err(err);
-    }
-
-    for (index, (allowed_key, validator_key)) in allowed_keys
-        .iter()
-        .zip(explicit_validator_keys.iter())
-        .enumerate()
-    {
-        if allowed_key != validator_key {
-            return Err(format!(
-                "governance explicit-validator registry order drifted at index {}: allowed_key={}, validator_key={}",
-                index, allowed_key, validator_key
-            ));
-        }
-    }
-
-    for key in &allowed_unique {
-        if !validator_unique.contains(key) {
-            return Err(format!(
-                "governance validator coverage missing for allowed key: {}",
-                key
-            ));
-        }
-    }
-
-    for key in &validator_unique {
-        if !allowed_unique.contains(key) {
-            return Err(format!(
-                "governance explicit-validator registry contains non-whitelisted key: {}",
-                key
-            ));
-        }
-    }
-
-    for key in explicit_value_rule_keys {
-        validate_governance_registry_key_canonical("explicit-value-rule registry", key)?;
-    }
-    let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
-        explicit_value_rule_keys.iter().copied().collect();
-    if explicit_value_rule_unique.len() != explicit_value_rule_keys.len() {
-        return Err("governance explicit-value-rule registry contains duplicate entries".into());
-    }
-
-    if let Some(err) =
-        format_governance_registry_membership_drift(&allowed_unique, &explicit_value_rule_unique)
-    {
-        return Err(err.replace(
-            "explicit-validator registry",
-            "explicit-value-rule registry",
-        ));
-    }
-
-    for (index, (allowed_key, explicit_value_rule_key)) in allowed_keys
-        .iter()
-        .zip(explicit_value_rule_keys.iter())
-        .enumerate()
-    {
-        if allowed_key != explicit_value_rule_key {
-            return Err(format!(
-                "governance explicit-value-rule registry order drifted at index {}: allowed_key={}, explicit_value_rule_key={}",
-                index, allowed_key, explicit_value_rule_key
-            ));
-        }
-    }
-
-    for key in &allowed_unique {
-        if !explicit_value_rule_unique.contains(key) {
-            return Err(format!(
-                "governance explicit value-rule coverage missing for allowed key: {}",
-                key
-            ));
-        }
-    }
-
-    for key in &explicit_value_rule_unique {
-        if !allowed_unique.contains(key) {
-            return Err(format!(
-                "governance explicit-value-rule registry contains non-whitelisted key: {}",
-                key
-            ));
-        }
-    }
+    let explicit_value_rule_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-value-rule registry",
+        "explicit_value_rule_key",
+        explicit_value_rule_keys,
+    )?;
 
     for key in &sensitive_unique {
         if !allowed_unique.contains(key) {
@@ -3500,6 +3478,25 @@ mod tests {
         );
         assert!(err.contains("max_parallel_workers"), "{err}");
         assert!(err.contains("ghost_value_rule_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("explicit_value_rule_key=max_parallel_workers"), "{err}");
     }
 
     #[test]
