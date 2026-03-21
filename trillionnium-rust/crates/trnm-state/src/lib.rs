@@ -244,10 +244,17 @@ fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
         .as_ref()
         .and_then(|metadata| metadata.metering.as_ref())
         .map(|metering| {
-            !metering.workload_class.trim().is_empty()
-                && !metering.metering_schema.trim().is_empty()
+            let workload_class = metering.workload_class.trim();
+            let metering_schema = metering.metering_schema.trim();
+            let receipt_hash = metering.receipt_hash.trim();
+
+            !workload_class.is_empty()
+                && workload_class == metering.workload_class
+                && !metering_schema.is_empty()
+                && metering_schema == metering.metering_schema
                 && metering.policy_snapshot_version != 0
-                && !metering.receipt_hash.trim().is_empty()
+                && !receipt_hash.is_empty()
+                && receipt_hash == metering.receipt_hash
                 && metering.challenge_success_bounty_per_work_unit_den != 0
                 && metering.worker_completion_bonus_per_work_unit_den != 0
                 && metering.worker_slash_rebate_per_work_unit_den != 0
@@ -2212,6 +2219,70 @@ mod tests {
         assert!(
             st.get_task(405).is_none(),
             "restore_task must fail closed when metering proof metadata omits a concrete policy snapshot version or uses zero denominators"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_non_canonical_metering_proof_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 406,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("restored task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: Some(trnm_types::TaskMeteringSnapshot {
+                    workload_class: " llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1 ".into(),
+                    policy_snapshot_version: 2,
+                    receipt_hash: format!("{}\n", "cd".repeat(32)),
+                    prompt_tokens: 144,
+                    generated_tokens: 55,
+                    decode_steps: 13,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 987,
+                    prompt_token_weight: 3,
+                    generated_token_weight: 5,
+                    decode_step_weight: 7,
+                    kv_byte_weight: 11,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 17,
+                    challenge_success_bounty_per_work_unit_num: 19,
+                    challenge_success_bounty_per_work_unit_den: 23,
+                    worker_completion_bonus_per_work_unit_num: 29,
+                    worker_completion_bonus_per_work_unit_den: 31,
+                    worker_slash_rebate_per_work_unit_num: 37,
+                    worker_slash_rebate_per_work_unit_den: 41,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(406, Some(task));
+
+        assert!(
+            st.get_task(406).is_none(),
+            "restore_task must fail closed when metering proof metadata uses whitespace-padded fields instead of canonical snapshot material"
         );
     }
 
