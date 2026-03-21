@@ -1873,9 +1873,11 @@ pub fn verify_wal_and_find_checkpoint(
 
     for e in wal_entries {
         // Fail closed on incomplete restore/replay metadata. Snapshot recovery must
-        // not trust checkpoint/WAL records that omit core identity fields.
+        // not trust checkpoint/WAL records that omit core identity fields, and it must
+        // not silently fall back to an older checkpoint once a newer WAL record is known
+        // to be truncated/corrupt.
         if e.proposal_hash.is_empty() || e.state_root_hex.is_empty() {
-            return Ok(best_checkpoint);
+            return Ok(None);
         }
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
@@ -5815,11 +5817,11 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 1);
-        assert_eq!(got.state_root_hex, "r1");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete WAL metadata must fail closed instead of falling back to an older checkpoint"
+        );
     }
 
     #[test]
