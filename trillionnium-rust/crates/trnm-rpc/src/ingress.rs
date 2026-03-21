@@ -44,6 +44,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
     const INGRESS_QUARANTINE_FILE_MAX_RECORDS: usize = 1024;
     const INGRESS_QUARANTINE_READ_MAX_BYTES: u64 = 1_048_576;
     const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
+    const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
 
     if entries.is_empty() {
@@ -67,7 +68,10 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                     })
                     .filter_map(|line| {
                         let entry = serde_json::from_str::<IngressQuarantineRecord>(line).ok()?;
-                        if entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+                        if entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
+                            || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
+                            || entry.error.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
+                        {
                             return None;
                         }
                         Some(line.to_string())
