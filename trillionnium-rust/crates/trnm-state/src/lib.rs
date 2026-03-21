@@ -1436,7 +1436,9 @@ impl StateStore {
                         return;
                     }
                 }
-                if validate_gov_param_value(key, &snapshot.value).is_err() {
+                if snapshot.activate_at_height == 0
+                    || validate_gov_param_value(key, &snapshot.value).is_err()
+                {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
@@ -3898,6 +3900,32 @@ mod tests {
             "restore must fail closed for immediate emergency_pause pending metadata"
         );
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_incomplete_zero_activation_height_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_313, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .expect("seed resolve_authority");
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "restore must fail closed when pending governance metadata omits a positive activation height"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
+        );
     }
 
     #[test]
