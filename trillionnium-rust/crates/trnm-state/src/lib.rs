@@ -3,8 +3,7 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
-    TaskStatus,
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject, TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -239,9 +238,12 @@ fn validate_gov_param_registry_binding(
             ));
         }
     }
-    if let Some((aliased_key, _)) = gov_param_key_index
-        .iter()
-        .find(|(indexed_key, indexed_key_id)| indexed_key.as_str() != key && **indexed_key_id == key_id)
+    if let Some((aliased_key, _)) =
+        gov_param_key_index
+            .iter()
+            .find(|(indexed_key, indexed_key_id)| {
+                indexed_key.as_str() != key && **indexed_key_id == key_id
+            })
     {
         return Err(format!(
             "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
@@ -357,12 +359,10 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
     if trimmed.is_empty() {
         return Err("resolve approval approver must be non-empty".into());
     }
-    if trimmed != raw
-        || trimmed
-            .chars()
-            .any(|c| c.is_whitespace() || c.is_control())
-    {
-        return Err("resolve approval approver must not contain whitespace or control characters".into());
+    if trimmed != raw || trimmed.chars().any(|c| c.is_whitespace() || c.is_control()) {
+        return Err(
+            "resolve approval approver must not contain whitespace or control characters".into(),
+        );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
         return Err(format!(
@@ -383,8 +383,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     let trimmed = raw.trim();
     if trimmed.is_empty() || trimmed != raw {
         return Err(
-            "resolve approval authority set must be a canonical comma-delimited actor list"
-                .into(),
+            "resolve approval authority set must be a canonical comma-delimited actor list".into(),
         );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
@@ -413,8 +412,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
             || resolve_actor_is_reserved(member_trimmed)
         {
             return Err(
-                "resolve approval authority set contains non-canonical or forbidden member"
-                    .into(),
+                "resolve approval authority set contains non-canonical or forbidden member".into(),
             );
         }
         if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
@@ -431,18 +429,24 @@ fn ensure_effective_resolve_authority_match(
 ) -> Result<(), String> {
     let provided = canonicalize_resolve_authority_set(authority_set)?;
     if let Some(pending) = st.pending_gov_update("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&pending.value)
-            .map_err(|_| "resolve approval authority set must match pending governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
+            "resolve approval authority set must match pending governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match pending governance authority".into());
+            return Err(
+                "resolve approval authority set must match pending governance authority".into(),
+            );
         }
         return Ok(());
     }
     if let Some(current) = st.gov_param_string("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&current)
-            .map_err(|_| "resolve approval authority set must match configured governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
+            "resolve approval authority set must match configured governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match configured governance authority".into());
+            return Err(
+                "resolve approval authority set must match configured governance authority".into(),
+            );
         }
     }
     Ok(())
@@ -715,10 +719,13 @@ impl StateStore {
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.confirmations >= 2 {
-                return Err("resolve approval already finalized; clear pending approval first".into());
+                return Err(
+                    "resolve approval already finalized; clear pending approval first".into(),
+                );
             }
-            let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
-                .map_err(|_| "resolve approval authority set changed".to_string())?;
+            let entry_authority_canonical =
+                canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
             if entry_authority_canonical != authority_canonical {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
@@ -749,8 +756,9 @@ impl StateStore {
             return Err("resolve approval already finalized; clear pending approval first".into());
         }
         if entry.confirmations > 0 {
-            let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
-                .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+            let first_approver_canonical =
+                validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
             if first_approver_canonical == approver_canonical {
                 return Err("resolve approval requires distinct approver".into());
             }
@@ -808,7 +816,8 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
         };
@@ -955,7 +964,8 @@ impl StateStore {
 
     fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
         let param = self.validated_gov_param_object_at_id(id)?;
-        (self.canonical_gov_param_registry_key_for_id(id) == Some(param.key.as_str())).then_some(param)
+        (self.canonical_gov_param_registry_key_for_id(id) == Some(param.key.as_str()))
+            .then_some(param)
     }
 
     pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
@@ -970,7 +980,8 @@ impl StateStore {
     }
 
     fn remove_gov_param_key_index_for_id(&mut self, id: u64) {
-        self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
+        self.gov_param_key_index
+            .retain(|_, mapped_id| *mapped_id != id);
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
@@ -1018,7 +1029,10 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, mut proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(
+        &mut self,
+        mut proposal: GovProposalObject,
+    ) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
@@ -1439,7 +1453,8 @@ impl StateStore {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
-                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                self.pending_gov_updates
+                    .insert(snapshot.key.clone(), snapshot);
             }
             None => {
                 self.pending_gov_updates.remove(key);
@@ -1766,9 +1781,15 @@ impl StateStore {
                                         Some(privacy_tier) => {
                                             hasher.update([1]);
                                             hasher.update(match privacy_tier {
-                                                trnm_types::PrivacyTier::Public => b"public".as_slice(),
-                                                trnm_types::PrivacyTier::Internal => b"internal".as_slice(),
-                                                trnm_types::PrivacyTier::Restricted => b"restricted".as_slice(),
+                                                trnm_types::PrivacyTier::Public => {
+                                                    b"public".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Internal => {
+                                                    b"internal".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Restricted => {
+                                                    b"restricted".as_slice()
+                                                }
                                             });
                                         }
                                         None => hasher.update([0]),
@@ -2089,7 +2110,10 @@ mod tests {
         .expect("verifier should fail closed instead of accepting uncommitted tail metadata");
 
         assert_eq!(best.as_ref().map(|cp| cp.height), Some(1));
-        assert_eq!(best.as_ref().map(|cp| cp.state_root_hex.as_str()), Some("r1"));
+        assert_eq!(
+            best.as_ref().map(|cp| cp.state_root_hex.as_str()),
+            Some("r1")
+        );
     }
 
     #[test]
@@ -2933,6 +2957,27 @@ mod tests {
     }
 
     #[test]
+    fn governance_readers_fail_closed_when_registry_points_at_noncanonical_param() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7403, "max_block_ms".into(), "20".into())
+            .unwrap();
+
+        let object = st
+            .objects
+            .get_mut(&7403)
+            .expect("canonical max_block_ms object must exist");
+        let ObjectValue::GovParam(param) = &mut object.value else {
+            panic!("expected governance param object");
+        };
+        param.key_id = 7_999;
+
+        assert_eq!(st.gov_param_u64("max_block_ms"), None);
+        assert_eq!(st.gov_param_u128("max_block_ms"), None);
+        assert_eq!(st.gov_param_string("max_block_ms"), None);
+        assert_eq!(st.gov_param_ref_for_key("max_block_ms"), None);
+    }
+
+    #[test]
     fn governance_sensitive_update_rejected_before_timelock_expiry() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7300, "challenge_min_bond".into(), "100".into())
@@ -3584,8 +3629,12 @@ mod tests {
     #[test]
     fn governance_accessors_fail_closed_on_key_name_registry_mismatch() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7316, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
-            .expect("initial resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7316,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
 
         let object = st
             .objects
@@ -3618,8 +3667,12 @@ mod tests {
     #[test]
     fn governance_accessors_fail_closed_on_key_id_alias_registry_injection() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7_316, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
-            .expect("initial resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7_316,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
         st.gov_param_key_index
             .insert("challenge_min_bond".into(), 7_316);
 
@@ -3975,7 +4028,8 @@ mod tests {
     }
 
     #[test]
-    fn governance_restore_rejects_reusing_canonical_emergency_pause_id_for_another_key_fail_closed() {
+    fn governance_restore_rejects_reusing_canonical_emergency_pause_id_for_another_key_fail_closed()
+    {
         let mut st = StateStore::new();
         st.restore_gov_param(
             EMERGENCY_PAUSE_KEY_ID,
@@ -4026,7 +4080,9 @@ mod tests {
     fn governance_registry_binding_merge_gate_rejects_non_canonical_emergency_pause_routing() {
         let empty_index = BTreeMap::new();
         let err = validate_gov_param_registry_binding(&empty_index, "emergency_pause", 8_000)
-            .expect_err("pinned governance key must reject non-canonical key ids at the shared registry gate");
+            .expect_err(
+            "pinned governance key must reject non-canonical key ids at the shared registry gate",
+        );
         assert!(err.contains("expected_id=7999"), "{err}");
 
         let err = validate_gov_param_registry_binding(&empty_index, "resolve_authority", 7_999)
@@ -4055,7 +4111,8 @@ mod tests {
                 }),
             },
         );
-        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
 
         assert!(
             st.gov_param_value("emergency_pause").is_none(),
