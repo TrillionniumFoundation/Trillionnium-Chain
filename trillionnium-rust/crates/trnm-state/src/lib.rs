@@ -919,11 +919,22 @@ impl StateStore {
         })
     }
 
-    pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
-        self.objects.get(&id).and_then(|v| match &v.value {
-            ObjectValue::GovParam(p) => Some(p.clone()),
+    fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
+        let object = self.objects.get(&id)?;
+        match &object.value {
+            ObjectValue::GovParam(p)
+                if p.key_id == id
+                    && validate_gov_param_registry_binding(&self.gov_param_key_index, &p.key, p.key_id)
+                        .is_ok() =>
+            {
+                Some(p)
+            }
             _ => None,
-        })
+        }
+    }
+
+    pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
+        self.canonical_gov_param_object_by_id(id).cloned()
     }
 
     fn invalidate_state_root_cache(&self) {
@@ -3447,6 +3458,30 @@ mod tests {
             st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_get_param_fails_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
+
+        assert!(
+            st.get_param(9_200).is_none(),
+            "direct governance object accessor must fail closed for a non-allowlisted registry entry"
         );
     }
 
