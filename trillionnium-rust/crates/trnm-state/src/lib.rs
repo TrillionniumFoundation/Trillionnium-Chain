@@ -771,6 +771,13 @@ fn validate_governance_validator_coverage_from_lists(
     explicit_value_rule_keys: &[&str],
     key: &str,
 ) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        &[],
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        &[],
+    )?;
     validate_requested_governance_key_canonical(key)?;
 
     if !allowed_keys.contains(&key) {
@@ -5382,9 +5389,10 @@ mod tests {
         .expect_err("validator coverage helper must fail closed without explicit value-rule coverage");
 
         assert!(
-            err.contains("governance validator missing explicit value rule for allowed key: max_parallel_workers"),
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
             "unexpected validator coverage error: {err}"
         );
+        assert!(err.contains("max_parallel_workers"), "{err}");
     }
 
     #[test]
@@ -5398,9 +5406,10 @@ mod tests {
         .expect_err("validator coverage helper must fail closed without explicit validator coverage");
 
         assert!(
-            err.contains("governance validator coverage missing for allowed key: max_parallel_workers"),
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
             "unexpected validator coverage error: {err}"
         );
+        assert!(err.contains("max_parallel_workers"), "{err}");
     }
 
     #[test]
@@ -5416,6 +5425,40 @@ mod tests {
         assert!(
             err.contains("governance key request must use canonical key spelling:  Max_Block_Ms "),
             "unexpected validator coverage canonicalization error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on registry membership drift");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "unexpected validator coverage registry-drift error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_block_ms"],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
+            "unexpected validator coverage duplicate-allowed-key error: {err}"
         );
     }
 
