@@ -190,9 +190,7 @@ impl OraclePolicy {
             });
         }
 
-        if canonical_source_cardinality(snapshot) != snapshot.sources.len() as u32 {
-            return Err(OracleError::DuplicateSources);
-        }
+        validate_snapshot_sources(snapshot)?;
 
         snapshot.validate_hash()?;
 
@@ -316,9 +314,30 @@ fn canonical_source_cardinality(snapshot: &OracleSnapshot) -> u32 {
     snapshot
         .sources
         .iter()
-        .map(|source| source.as_str())
+        .map(|source| source.as_str().trim().to_ascii_lowercase())
         .collect::<BTreeSet<_>>()
         .len() as u32
+}
+
+fn validate_snapshot_sources(snapshot: &OracleSnapshot) -> Result<(), OracleError> {
+    let mut canonical_sources = BTreeSet::new();
+    for source in &snapshot.sources {
+        let raw = source.as_str();
+        if raw.trim().is_empty() {
+            return Err(OracleError::EmptySourceId);
+        }
+        let canonical = raw.trim().to_ascii_lowercase();
+        if raw != canonical {
+            return Err(OracleError::NonCanonicalSourceId {
+                raw: raw.to_string(),
+                canonical,
+            });
+        }
+        if !canonical_sources.insert(canonical) {
+            return Err(OracleError::DuplicateSources);
+        }
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1089,6 +1108,35 @@ mod tests {
             OracleError::NonCanonicalFeedId {
                 raw: " BTC/USD ".to_string(),
                 canonical: "btc/usd".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn rejects_deserialized_non_canonical_source_id_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", " Chainlink "],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized non-canonical source id must fail guardrail");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSourceId {
+                raw: " Chainlink ".to_string(),
+                canonical: "chainlink".to_string(),
             }
         );
     }
