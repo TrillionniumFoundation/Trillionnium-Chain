@@ -2316,8 +2316,14 @@ fn should_scan_timeout(status: &TaskStatus, emergency_paused: bool) -> bool {
     timeout_skip_reason(status, emergency_paused).is_none()
 }
 
+const TIMEOUT_SCAN_MAX_TASK_ID: u64 = 9_000_000;
+
 fn sorted_timeout_candidate_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
-    let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
+    let mut task_ids: Vec<u64> = known_task_ids
+        .iter()
+        .copied()
+        .filter(|task_id| *task_id <= TIMEOUT_SCAN_MAX_TASK_ID)
+        .collect();
     task_ids.sort_unstable();
     task_ids
 }
@@ -7710,6 +7716,15 @@ mod tests {
     #[test]
     fn sorted_timeout_candidate_ids_stabilizes_event_scan_order() {
         let known: HashSet<u64> = [7003u64, 7001u64, 7002u64].into_iter().collect();
+
+        assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
+    fn sorted_timeout_candidate_ids_filters_synthetic_ids_above_scan_cap() {
+        let known: HashSet<u64> = [7003u64, TIMEOUT_SCAN_MAX_TASK_ID + 1, 7001u64, 7002u64]
+            .into_iter()
+            .collect();
 
         assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
     }
