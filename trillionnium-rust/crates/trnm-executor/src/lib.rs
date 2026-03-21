@@ -67,6 +67,13 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         return intersects(&a.write_set, &b.read_set);
     }
 
+    // Pure write/write pairs cannot produce read hazards; keep the hot Sui-like
+    // writer lane on a single probe while preserving conservative conflict
+    // semantics for mixed read/write domains below.
+    if a.read_set.is_empty() && b.read_set.is_empty() {
+        return intersects(&a.write_set, &b.write_set);
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
@@ -1555,6 +1562,16 @@ mod tests {
             &tx(1, vec![o(2)], vec![]),
             &tx(2, vec![], vec![o(2)])
         ));
+    }
+
+    #[test]
+    fn write_only_pairs_use_ww_semantics_for_hit_and_miss() {
+        let write_only_hit_a = tx(1, vec![], vec![o(7), o(7), o(11)]);
+        let write_only_hit_b = tx(2, vec![], vec![o(9), o(11)]);
+        let write_only_miss = tx(3, vec![], vec![o(99), o(100)]);
+
+        assert!(detect_conflict(&write_only_hit_a, &write_only_hit_b));
+        assert!(!detect_conflict(&write_only_hit_a, &write_only_miss));
     }
 
     #[test]
