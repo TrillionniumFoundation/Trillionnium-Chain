@@ -183,3 +183,27 @@ fn guarded_last_critical_slot_retry_burst_keeps_fresh_and_duplicate_outcomes_par
     assert_eq!(gate.pop_ready(), Some(20));
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn guarded_last_critical_slot_keeps_normal_retry_guard_stable_until_critical_fill_then_dedupes() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // Normal retries are guard-blocked while the final reserved critical slot is
+    // still available, but the same tx id remains fresh until critical claims it.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // Critical may still use the guarded slot, after which cross-class retries
+    // must immediately switch from fresh/backpressured to duplicate.
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Duplicate);
+}

@@ -238,11 +238,11 @@ impl LaneAdmissionGate {
         self.classify_seen_probe(tx_id)
     }
 
-    fn classify_saturated_probe(&self, is_duplicate: bool) -> AdmitOutcome {
-        // Saturated retry probes are hot under ingress bursts. Return the final
-        // duplicate-vs-backpressure classification directly so callers avoid
-        // drifting into lane-specific admit paths that would only re-check the
-        // same capacity guards.
+    fn classify_bounded_retry_probe(&self, is_duplicate: bool) -> AdmitOutcome {
+        // Saturated/global-stop/reserve-guard retry probes all share the same
+        // contract: queued ids stay Duplicate, fresh ids stay Backpressured, and
+        // callers never drift into lane-specific admit paths just to rediscover
+        // the same capacity guard.
         self.classify_duplicate_probe(is_duplicate)
     }
 
@@ -256,7 +256,7 @@ impl LaneAdmissionGate {
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
         if !self.lane_has_global_headroom(lane_total) {
-            return Some(self.classify_saturated_probe(is_duplicate));
+            return Some(self.classify_bounded_retry_probe(is_duplicate));
         }
 
         if is_duplicate {
@@ -264,10 +264,6 @@ impl LaneAdmissionGate {
         } else {
             None
         }
-    }
-
-    fn classify_guarded_retry_probe(&self, is_duplicate: bool) -> AdmitOutcome {
-        self.classify_duplicate_probe(is_duplicate)
     }
 
     fn classify_reserved_slot_guard_probe(
@@ -280,7 +276,7 @@ impl LaneAdmissionGate {
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
         if self.lane_backpressure_guard_blocks(class) {
-            Some(self.classify_guarded_retry_probe(is_duplicate))
+            Some(self.classify_bounded_retry_probe(is_duplicate))
         } else {
             None
         }
