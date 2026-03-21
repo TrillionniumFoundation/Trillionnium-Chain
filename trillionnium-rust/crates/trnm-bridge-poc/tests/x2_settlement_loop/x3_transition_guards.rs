@@ -464,6 +464,35 @@ fn x3_prep_retry_pending_heartbeat_blocks_settlement_without_state_change() {
 }
 
 #[test]
+fn x3_prep_retry_pending_blank_reason_falls_back_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-blank-reason".to_string());
+    let token = operator_token();
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: true,
+        degraded: false,
+        message: "\u{200B}\n\t\u{202E}".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
+            reason: "heartbeat retry pending".to_string(),
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_retry_pending_heartbeat_after_finalize_prefers_replay_guard_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xretry-pending-after-finalize".to_string());
     let token = operator_token();
