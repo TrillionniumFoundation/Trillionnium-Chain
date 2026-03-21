@@ -49,6 +49,15 @@ impl OrderingEngine for PreexecOrderingEngine {
         workers: usize,
         candidate_height: u64,
     ) -> OrderingDecision {
+        let plan: Vec<Tx> = picked
+            .iter()
+            .enumerate()
+            .map(|(i, tx)| read_write_decl(snapshot, tx, (i as u64) + 1))
+            .collect();
+        let groups = build_parallel_groups(&plan);
+        let group_count = groups.len();
+        let critical_wait_blocks = group_count.saturating_sub(1) as u64;
+
         let pool = PreExecPool::new(
             Arc::new(snapshot.clone()),
             Arc::new(picked.to_vec()),
@@ -61,8 +70,8 @@ impl OrderingEngine for PreexecOrderingEngine {
             ordered_ids,
             rejected,
             preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
-            group_count: usize::from(!da_batch.tx_ids.is_empty()),
-            critical_wait_blocks: 0,
+            group_count,
+            critical_wait_blocks,
         }
     }
 }
