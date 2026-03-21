@@ -1766,6 +1766,20 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut quarantined = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
         if line.trim().is_empty() {
+            if line.len() > INGRESS_PARSE_LINE_MAX_BYTES {
+                quarantined.push(IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: idx + 1,
+                    line_hash: stable_line_hash(line),
+                    raw_line: format!("[whitespace-only line omitted: {} bytes]", line.len()),
+                    error: format!(
+                        "ingress line exceeds {} bytes parse bound (got {})",
+                        INGRESS_PARSE_LINE_MAX_BYTES,
+                        line.len()
+                    ),
+                    quarantined_at_unix_ms: now_ms(),
+                });
+            }
             continue;
         }
         if line.len() > INGRESS_PARSE_LINE_MAX_BYTES {

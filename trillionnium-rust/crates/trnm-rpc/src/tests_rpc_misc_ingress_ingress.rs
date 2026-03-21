@@ -449,9 +449,9 @@ fn load_ingress_records_compacts_unicode_whitespace_only_noise_without_quarantin
 }
 
 #[test]
-fn load_ingress_records_compacts_oversized_unicode_whitespace_only_noise_without_quarantine() {
+fn load_ingress_records_quarantines_oversized_unicode_whitespace_only_noise() {
     let _guard = lock_env();
-    let path = unique_tmp_path("ingress-oversized-unicode-whitespace-noise-compact", "jsonl");
+    let path = unique_tmp_path("ingress-oversized-unicode-whitespace-noise-quarantine", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
@@ -471,25 +471,29 @@ fn load_ingress_records_compacts_oversized_unicode_whitespace_only_noise_without
     .expect("write ingress fixture");
 
     let records = load_ingress_records();
-    assert_eq!(records.len(), 1, "valid ingress rows should survive oversized unicode-whitespace compaction");
+    assert_eq!(records.len(), 1, "valid ingress rows should survive oversized unicode-whitespace quarantine");
     assert!(
-        !quarantine.exists(),
-        "oversized unicode whitespace-only ingress noise should be compacted instead of quarantined"
+        quarantine.exists(),
+        "oversized unicode whitespace-only ingress noise should be quarantined"
     );
 
-    let salvaged_raw = fs::read_to_string(&path).expect("read compacted ingress file");
-    let salvaged_lines: Vec<&str> = salvaged_raw
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let quarantine_lines: Vec<&str> = quarantine_raw
         .lines()
         .filter(|line| !line.trim().is_empty())
         .collect();
     assert_eq!(
-        salvaged_lines.len(),
+        quarantine_lines.len(),
         1,
-        "compaction should drop oversized unicode-whitespace noise lines"
+        "one oversized unicode-whitespace line should be quarantined"
     );
     assert!(
-        salvaged_lines[0].contains("\"request_id\":\"req-1\""),
-        "compaction should retain the valid ingress record after oversized unicode noise"
+        quarantine_lines[0].contains("whitespace-only line omitted"),
+        "quarantine entry should replace blank raw payload with an explicit marker"
+    );
+    assert!(
+        quarantine_lines[0].contains("exceeds 65536 bytes parse bound"),
+        "quarantine entry should preserve the parse-bound error"
     );
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
