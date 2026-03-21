@@ -615,7 +615,12 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        let restored_round = if metadata_only_recovery { 0 } else { last.round };
+        let restored_round = if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded
+        {
+            0
+        } else {
+            last.round
+        };
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
@@ -11618,7 +11623,7 @@ locked_block_hash = "stale-lock"
         let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
         let wal: ConsensusWal = toml::from_str(&wal).unwrap();
         assert_eq!(wal.next_height, 2);
-        assert_eq!(wal.last_round, 3);
+        assert_eq!(wal.last_round, 0);
         assert!(wal.locked_block_hash.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
