@@ -69,6 +69,44 @@ fn borrowed_last_idle_critical_slot_preserves_duplicate_before_guard_reopens() {
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_small_retry_burst_keeps_guard_outcomes_stable() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    for class in [
+        IngressClass::Critical,
+        IngressClass::Critical,
+        IngressClass::Normal,
+        IngressClass::Critical,
+    ] {
+        let outcome = gate.admit(
+            if matches!(class, IngressClass::Normal) {
+                12
+            } else {
+                99
+            },
+            class,
+        );
+        assert_eq!(
+            outcome,
+            if matches!(class, IngressClass::Normal) {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            }
+        );
+        assert_eq!(gate.queued_counts(), (2, 1, 3));
+    }
+
+    assert_eq!(gate.pop_ready(), Some(12));
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn guarded_last_critical_slot_preserves_cross_class_duplicate_before_reopen() {
     let mut gate = LaneAdmissionGate::new(5, 2);
 

@@ -108,6 +108,13 @@ impl LaneAdmissionGate {
         self.seen_global.extend(self.critical.queue.iter().copied());
     }
 
+    fn lane_local_seen_total(&self) -> usize {
+        self.normal
+            .seen
+            .len()
+            .saturating_add(self.critical.seen.len())
+    }
+
     fn rebuild_seen_from_queues(&mut self) {
         self.rebuild_lane_seen_from_queues();
         self.rebuild_global_seen_from_queues();
@@ -354,11 +361,7 @@ impl LaneAdmissionGate {
             // restored stale streak can spuriously preempt fresh critical work.
             self.reset_idle_state(false);
         } else {
-            let lane_local_seen_total = self
-                .normal
-                .seen
-                .len()
-                .saturating_add(self.critical.seen.len());
+            let lane_local_seen_total = self.lane_local_seen_total();
             if lane_local_seen_total != lane_total {
                 // Lane-local seen sets are stale (typically from restored-state skew).
                 // Rebuild from authoritative queue contents so duplicate probes stay
@@ -431,11 +434,7 @@ impl LaneAdmissionGate {
             } else {
                 // Defensive fallback for restored-state skew where queue membership can
                 // diverge from lane-local id sets after the initial sync window.
-                let lane_local_seen_total = self
-                    .normal
-                    .seen
-                    .len()
-                    .saturating_add(self.critical.seen.len());
+                let lane_local_seen_total = self.lane_local_seen_total();
                 if lane_local_seen_total != lane_total
                     && (self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id))
                 {
