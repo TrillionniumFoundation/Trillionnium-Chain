@@ -224,7 +224,7 @@ fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String
     Ok(())
 }
 
-fn validate_gov_param_registry_binding(
+pub(crate) fn validate_gov_param_registry_binding(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
     key_id: u64,
