@@ -3351,6 +3351,78 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_accepts_sparse_challenged_task_snapshot() {
+    // REF04 restore discipline: sparse challenged-task snapshots from WAL/checkpoint replay
+    // must still revive a staged single-approval quorum when the challenged boundary,
+    // task version, and effective authority set remain intact.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_930_1,
+        Some(TaskObject {
+            task_id: 9_930_1,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930_1,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_930_1), Some((true, 1)));
+    assert_eq!(st.pending_resolve_first_approver(9_930_1).as_deref(), Some("authority-a"));
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
 fn paused_state_pending_replacement_resolve_approval_accepts_case_and_order_equivalent_authority_set(
 ) {
     // L03 boundary hardening: while paused, live resolve approvals must accept authority sets

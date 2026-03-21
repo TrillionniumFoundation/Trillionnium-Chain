@@ -712,7 +712,8 @@ impl StateStore {
         if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
             return;
         }
-        if !challenged_task_snapshot_complete_for_pending_resolve(&task) {
+        let paused_restore = self.is_emergency_paused();
+        if !paused_restore && !challenged_task_snapshot_complete_for_pending_resolve(&task) {
             return;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
@@ -738,8 +739,16 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
+                first_approver: if paused_restore {
+                    snapshot.first_approver
+                } else {
+                    first_approver_canonical
+                },
+                authority_set: if paused_restore {
+                    snapshot.authority_set
+                } else {
+                    authority_canonical
+                },
                 task_version: snapshot.task_version,
             },
         );
