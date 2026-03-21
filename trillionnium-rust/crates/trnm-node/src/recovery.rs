@@ -63,12 +63,9 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             if idx + 1 < entries.len() {
                 let discarded_tail = &entries[idx + 1..];
                 metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
-                let retained_tip_hash = entries[idx].content_hash_hex();
-                committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
-                    e.committed
-                        && e.height > cp.height
-                        && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
-                });
+                committed_tail_beyond_checkpoint_discarded = discarded_tail
+                    .iter()
+                    .any(|e| e.committed && e.height > cp.height);
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
                 truncated = true;
