@@ -171,8 +171,12 @@ fn tx_status_at_ingress(txs: &BTreeMap<String, TxLifecycleRecord>, tx_hash: &str
     txs.get(tx_hash).map(|record| record.status.clone())
 }
 
+fn ingress_accounting_total(tx: &TransferTx) -> Option<u128> {
+    tx.amount.checked_add(tx.fee)
+}
+
 fn has_ingress_accounting_overflow(tx: &TransferTx) -> bool {
-    tx.amount.checked_add(tx.fee).is_none()
+    ingress_accounting_total(tx).is_none()
 }
 
 pub fn submit_tx(
@@ -545,6 +549,22 @@ mod tests {
 
         assert_eq!(out.status, TxStatus::Fail);
         assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn submit_tx_accepts_amount_max_boundary_when_fee_is_zero() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut txs = BTreeMap::new();
+        let out = submit_tx(
+            &mut txs,
+            transfer_tx(&alice, &bob, u128::MAX, 0, 0, ALICE_SK_HEX),
+            100,
+        );
+
+        assert_eq!(out.status, TxStatus::Pending);
+        assert_eq!(txs.len(), 1);
     }
 
     #[test]
