@@ -745,8 +745,8 @@ impl StateStore {
         let restored = PendingResolveApproval {
             slash_worker: snapshot.slash_worker,
             confirmations: snapshot.confirmations,
-            first_approver: snapshot.first_approver,
-            authority_set: snapshot.authority_set,
+            first_approver: first_approver_canonical.clone(),
+            authority_set: authority_canonical.clone(),
             task_version: snapshot.task_version,
         };
         if let Some(existing) = self.pending_resolve_approvals.get(&task_id) {
@@ -3200,15 +3200,15 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("Authority-A".to_string()),
-            "restore should preserve approver audit spelling while still normalizing state-root identity"
+            Some("authority-a".to_string()),
+            "restore should canonicalize approver identity so stored pending state matches deterministic state-root semantics"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-b,authority-a".to_string()),
-            "restore should preserve authority-set snapshot spelling while still normalizing state-root identity"
+            Some("authority-a,authority-b".to_string()),
+            "restore should canonicalize authority-set identity so stored pending state matches deterministic state-root semantics"
         );
         assert_eq!(
             restored.state_root(),
