@@ -433,6 +433,9 @@ fn validated_restorable_pending_resolve_snapshot(
             .as_deref()
             .is_some_and(has_canonical_actor)
     {
+        // Fail closed for audit-proof restore when the live slash target has drifted into a
+        // reserved/system or otherwise non-canonical actor id. Snapshot evidence must still bind
+        // to a real, live worker identity before a slash quorum can be revived.
         return None;
     }
 

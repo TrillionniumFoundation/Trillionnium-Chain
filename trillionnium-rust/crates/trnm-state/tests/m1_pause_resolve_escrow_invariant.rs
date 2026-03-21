@@ -3672,6 +3672,98 @@ fn paused_state_pending_replacement_resolve_approval_finalizes_with_case_and_ord
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_reserved_worker_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task keeps
+    // only a reserved/system worker alias, because snapshot evidence cannot authenticate a live
+    // slash target from treasury/system metadata.
+    let mut st = StateStore::new();
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                note: Some("paused restore reserved worker boundary".into()),
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "gpu-heavy".into(),
+                    meter_category: Some("inference".into()),
+                    work_units: 5,
+                    meter_version: 1,
+                    meter_name: Some("meter-v1".into()),
+                    metering_schema: "schema-v1".into(),
+                    receipt_hash: "receipt-reserved-worker".into(),
+                    policy_snapshot_version: 1,
+                    challenge_success_bounty_per_work_unit_num: 3,
+                    challenge_success_bounty_per_work_unit_den: 2,
+                    worker_completion_bonus_per_work_unit_num: 4,
+                    worker_completion_bonus_per_work_unit_den: 3,
+                    worker_slash_rebate_per_work_unit_num: 5,
+                    worker_slash_rebate_per_work_unit_den: 4,
+                }),
+                model: None,
+                provenance: None,
+            }),
+            worker: Some("treasury.challenge_forfeits".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_pending_replacement_authority(
 ) {
     // L03 boundary hardening: once a replacement resolve_authority set is already timelocked,
