@@ -45,14 +45,20 @@ fn timeout_bond_disposition(
     })
 }
 
-fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
+fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
     let ordinal = migrated_before_emit.saturating_add(1);
-    tx_id_seed.checked_add(ordinal).unwrap_or(u64::MAX)
+    match tx_id_seed.checked_add(ordinal) {
+        Some(tx_id) => (tx_id, false),
+        None => (u64::MAX, true),
+    }
+}
+
+fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
+    timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).0
 }
 
 fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
-    let ordinal = migrated_before_emit.saturating_add(1);
-    tx_id_seed.checked_add(ordinal).is_none()
+    timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).1
 }
 
 pub(crate) fn scan_and_apply_timeouts(
@@ -83,8 +89,8 @@ pub(crate) fn scan_and_apply_timeouts(
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
             let event_tx_ordinal = migrated.saturating_add(1);
-            let event_tx_id = timeout_event_tx_id(tx_id_seed, migrated);
-            let event_tx_overflowed = timeout_event_tx_overflowed(tx_id_seed, migrated);
+            let (event_tx_id, event_tx_overflowed) =
+                timeout_event_tx_metadata(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -129,7 +135,8 @@ pub(crate) fn scan_and_apply_timeouts(
 mod tests {
     use super::{
         should_scan_timeout, sorted_timeout_candidate_ids, timeout_bond_disposition,
-        timeout_event_tx_id, timeout_event_tx_overflowed, TIMEOUT_SCAN_MAX_TASK_ID,
+        timeout_event_tx_id, timeout_event_tx_metadata, timeout_event_tx_overflowed,
+        TIMEOUT_SCAN_MAX_TASK_ID,
     };
     use std::collections::HashSet;
     use trnm_types::TaskStatus;
@@ -178,6 +185,14 @@ mod tests {
         assert!(timeout_event_tx_overflowed(u64::MAX, 0));
         assert!(timeout_event_tx_overflowed(9_000_000, u64::MAX));
         assert!(timeout_event_tx_overflowed(u64::MAX - 1, 1));
+    }
+
+    #[test]
+    fn timeout_event_tx_metadata_keeps_tx_id_and_overflow_flag_consistent_at_boundary() {
+        assert_eq!(timeout_event_tx_metadata(9_000_000, 0), (9_000_001, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 0), (u64::MAX, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 1), (u64::MAX, true));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
     }
 
     #[test]
