@@ -800,6 +800,15 @@ impl StateStore {
         );
     }
 
+    fn has_pending_resolve_restore_reentry_boundary_hazard(
+        &self,
+        id: u64,
+        task: &TaskObject,
+    ) -> bool {
+        self.pending_resolve_approvals.get(&id).is_some()
+            && !self.should_preserve_pending_resolve_on_task_restore(id, task)
+    }
+
     fn should_noop_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
         if self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id) {
             return false;
@@ -807,11 +816,7 @@ impl StateStore {
         let Some(current) = self.get_task(id) else {
             return false;
         };
-        if current != *task {
-            return false;
-        }
-        self.pending_resolve_approvals.get(&id).is_none()
-            || self.should_preserve_pending_resolve_on_task_restore(id, task)
+        current == *task && !self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
     }
 
     fn should_scrub_pending_resolve_on_task_restore_reentry(&self, id: u64, task: &TaskObject) -> bool {
@@ -821,9 +826,7 @@ impl StateStore {
         let Some(current) = self.get_task(id) else {
             return false;
         };
-        current == *task
-            && self.pending_resolve_approvals.get(&id).is_some()
-            && !self.should_preserve_pending_resolve_on_task_restore(id, task)
+        current == *task && self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
@@ -2690,11 +2693,25 @@ mod tests {
             .expect("second approval should finalize quorum");
         assert!(finalized);
         assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 2)));
+        let root_with_finalized_pending = st.state_root();
 
-        st.restore_task(task.task_id, Some(task));
+        st.restore_task(task.task_id, Some(task.clone()));
 
         assert_eq!(st.pending_resolve_approval(9_006), None);
         assert_eq!(st.pending_resolve_first_approver(9_006), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_finalized_pending,
+            "identical restore re-entry must invalidate the cached state root when finalized pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing finalized pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
     }
 
     #[test]
