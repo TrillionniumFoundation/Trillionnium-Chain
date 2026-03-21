@@ -9055,6 +9055,8 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
+        assert!(err.contains("retained no committed WAL entries"));
+        assert!(!err.contains("through height 0"));
         assert!(err.contains("last retained checkpoint: none"));
 
         let _ = fs::remove_dir_all(&wal_dir);
