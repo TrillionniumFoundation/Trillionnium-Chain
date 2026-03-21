@@ -1459,11 +1459,16 @@ impl StateStore {
         }
     }
 
-    fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
+    fn validated_gov_param_registry_id_for_key(&self, key: &str) -> Option<u64> {
         let id = self.gov_param_key_index.get(key).copied()?;
         if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
         }
+        Some(id)
+    }
+
+    fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
+        let id = self.validated_gov_param_registry_id_for_key(key)?;
         let param = self.validated_gov_param_object_at_id(id)?;
         (param.key == key).then_some((id, param))
     }
@@ -3509,6 +3514,11 @@ mod tests {
             st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "string accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert_eq!(
+            st.gov_param_u64(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "typed accessor must fail closed for a non-allowlisted governance registry entry"
         );
         assert!(
             st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
