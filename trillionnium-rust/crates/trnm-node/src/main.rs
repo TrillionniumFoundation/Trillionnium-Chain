@@ -2343,7 +2343,7 @@ fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
 
 fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
     let ordinal = migrated_before_emit.saturating_add(1);
-    tx_id_seed.checked_add(ordinal).is_none()
+    migrated_before_emit == u64::MAX || tx_id_seed.checked_add(ordinal).is_none()
 }
 
 fn scan_and_apply_timeouts(
@@ -7720,6 +7720,14 @@ mod tests {
         assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
         assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
         assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
+    }
+
+    #[test]
+    fn timeout_event_tx_overflowed_marks_saturated_ordinal_even_when_tx_id_sticks_at_u64_max() {
+        assert!(timeout_event_tx_overflowed(0, u64::MAX));
+        assert!(timeout_event_tx_overflowed(9_000_000, u64::MAX));
+        assert!(timeout_event_tx_overflowed(u64::MAX, 0));
+        assert!(!timeout_event_tx_overflowed(u64::MAX - 1, 0));
     }
 
     #[test]
