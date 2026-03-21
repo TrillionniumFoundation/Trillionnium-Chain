@@ -759,15 +759,21 @@ impl StateStore {
             .unwrap_or(false)
     }
 
+    fn matches_task_restore_reentry_snapshot(&self, id: u64, task: &TaskObject) -> bool {
+        let Some(current) = self.get_task(id) else {
+            return false;
+        };
+        current == *task
+    }
+
     fn should_preserve_pending_resolve_on_task_restore(
         &self,
         task_id: u64,
         task: &TaskObject,
     ) -> bool {
-        let Some(current) = self.get_task(task_id) else {
-            return false;
-        };
-        if current != *task || task.status != TaskStatus::Challenged {
+        if !self.matches_task_restore_reentry_snapshot(task_id, task)
+            || task.status != TaskStatus::Challenged
+        {
             return false;
         }
         if !self.pending_resolve_matches_task_version(task_id, task.version) {
@@ -836,10 +842,7 @@ impl StateStore {
         {
             return false;
         }
-        let Some(current) = self.get_task(id) else {
-            return false;
-        };
-        current == *task
+        self.matches_task_restore_reentry_snapshot(id, task)
     }
 
     fn task_restore_reentry_boundary_action(

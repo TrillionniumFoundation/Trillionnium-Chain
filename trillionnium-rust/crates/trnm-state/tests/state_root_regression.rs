@@ -1553,6 +1553,94 @@ fn restore_task_same_snapshot_preserves_pending_resolve_when_authority_is_still_
 }
 
 #[test]
+fn restore_task_same_snapshot_scrubs_pending_resolve_after_proof_and_metadata_drift() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("baseline".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let challenged_snapshot = state.get_task(10);
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    let mut drifted_snapshot = challenged_snapshot.clone().expect("challenged snapshot should exist");
+    drifted_snapshot.proof_type = ProofType::Zk;
+    drifted_snapshot.metadata = Some(TaskMetadata {
+        note: Some("drifted".into()),
+        task_type: Some("verification".into()),
+        input_hash: Some("cd".repeat(32)),
+        model: None,
+        provenance: None,
+        metering: None,
+    });
+    state.restore_task(10, Some(drifted_snapshot));
+
+    assert_eq!(state.get_task(10).unwrap().version, challenged_ref.version);
+    assert_eq!(state.get_task(10).unwrap().status, TaskStatus::Challenged);
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "same-version task snapshot drift in proof/metadata must scrub pending resolve state so restore re-entry cannot reuse a stale object boundary"
+    );
+}
+
+#[test]
 fn restore_task_same_snapshot_scrubs_pending_resolve_after_authority_drift() {
     let mut state = StateStore::new();
     state.restore_gov_param(
