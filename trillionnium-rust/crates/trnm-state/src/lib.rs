@@ -1914,6 +1914,11 @@ pub fn verify_wal_and_find_checkpoint(
             if !is_canonical_hex_digest(&cp.wal_entry_hash_hex) {
                 continue;
             }
+            if is_canonical_hex_digest(&e.state_root_hex)
+                && !is_canonical_hex_digest(&cp.state_root_hex)
+            {
+                continue;
+            }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
