@@ -4707,6 +4707,56 @@ mod tests {
     }
 
     #[test]
+    fn restore_task_rejects_snapshot_task_id_mismatch_and_scrubs_pending_metadata() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            905,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            905,
+            Some(TaskObject {
+                task_id: 906,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(905).is_none(),
+            "restore must fail closed when task snapshot id disagrees with restore target"
+        );
+        assert!(
+            st.pending_resolve_approval(905).is_none(),
+            "restore must scrub stale pending resolve metadata when snapshot id mismatches target"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_rejects_noncanonical_snapshot_metadata() {
         let mut st = StateStore::new();
         st.put_task_new(TaskObject {
