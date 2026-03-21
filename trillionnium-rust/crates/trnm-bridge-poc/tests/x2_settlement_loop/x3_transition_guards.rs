@@ -317,6 +317,39 @@ fn x3_prep_failed_confirm_with_non_monotonic_heartbeat_payload_is_rejected_witho
 }
 
 #[test]
+fn x3_prep_confirm_equal_to_observed_source_height_finalizes_with_stable_event() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-equal-source-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 700 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 700,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(700),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(700));
+}
+
+#[test]
 fn x3_prep_confirm_above_observed_source_plus_one_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xconfirm-above-source-plus-one".to_string());
     let token = operator_token();
