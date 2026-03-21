@@ -171,29 +171,26 @@ const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
-fn governance_pinned_key_binding(key: &str, key_id: u64) -> (Option<u64>, Option<&'static str>) {
-    let mut expected_key_id = None;
-    let mut expected_key = None;
-    for (pinned_key, pinned_key_id) in GOV_PINNED_KEY_IDS {
-        if *pinned_key == key {
-            expected_key_id = Some(*pinned_key_id);
-        }
-        if *pinned_key_id == key_id {
-            expected_key = Some(*pinned_key);
-        }
-        if expected_key_id.is_some() && expected_key.is_some() {
-            break;
-        }
-    }
-    (expected_key_id, expected_key)
+fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
+    GOV_PINNED_KEY_IDS
+        .iter()
+        .copied()
+        .find(|(pinned_key, _)| *pinned_key == key)
+}
+
+fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> {
+    GOV_PINNED_KEY_IDS
+        .iter()
+        .copied()
+        .find(|(_, pinned_key_id)| *pinned_key_id == key_id)
 }
 
 fn governance_expected_key_id(key: &str) -> Option<u64> {
-    governance_pinned_key_binding(key, 0).0
+    governance_pinned_binding_for_key(key).map(|(_, key_id)| key_id)
 }
 
 fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
-    governance_pinned_key_binding("", key_id).1
+    governance_pinned_binding_for_id(key_id).map(|(key, _)| key)
 }
 
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
@@ -3521,6 +3518,43 @@ mod tests {
     }
 
     #[test]
+    fn governance_accessors_fail_closed_for_reserved_emergency_pause_id_alias_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "algorand_governance_key_id".into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("algorand_governance_key_id".into(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "string accessor must fail closed when a foreign governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            "ref accessor must fail closed when a foreign governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "id accessor must fail closed when the reserved emergency_pause key id is rebound to a foreign key"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "reserved-id alias injection must not surface as an active emergency pause"
+        );
+    }
+
+    #[test]
     fn governance_get_param_fails_closed_for_non_allowlisted_algorand_registry_injection() {
         let mut st = StateStore::new();
         st.objects.insert(
@@ -4058,17 +4092,15 @@ mod tests {
     #[test]
     fn governance_pinned_binding_is_single_source_for_key_and_reserved_id_lookups() {
         assert_eq!(
-            governance_pinned_key_binding("emergency_pause", 7_999),
-            (Some(7_999), Some("emergency_pause"))
+            governance_pinned_binding_for_key("emergency_pause"),
+            Some(("emergency_pause", 7_999))
         );
         assert_eq!(
-            governance_pinned_key_binding("emergency_pause", 8_000),
-            (Some(7_999), None)
+            governance_pinned_binding_for_id(7_999),
+            Some(("emergency_pause", 7_999))
         );
-        assert_eq!(
-            governance_pinned_key_binding("resolve_authority", 7_999),
-            (None, Some("emergency_pause"))
-        );
+        assert_eq!(governance_pinned_binding_for_key("resolve_authority"), None);
+        assert_eq!(governance_pinned_binding_for_id(8_000), None);
     }
 
     #[test]
