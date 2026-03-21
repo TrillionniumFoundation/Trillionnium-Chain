@@ -170,41 +170,34 @@ impl LaneAdmissionGate {
         !self.critical.queue.is_empty()
     }
 
-    fn critical_has_single_borrowable_slot(&self) -> bool {
-        self.critical_free_slots() == 1
-    }
-
     fn critical_has_borrowable_headroom(&self) -> bool {
         self.critical_free_slots() > 0
     }
 
-    fn normal_last_reserved_critical_slot_is_guarded(&self) -> bool {
-        self.normal.capacity > 0
-            && self.critical_backlog_active()
-            && self.critical_has_single_borrowable_slot()
+    fn normal_uses_reserve_only_mode(&self) -> bool {
+        self.normal.capacity == 0
     }
 
-    fn normal_idle_critical_tail_slot_is_borrowable(&self) -> bool {
-        self.normal.capacity > 0
+    fn normal_can_borrow_last_idle_critical_slot(&self) -> bool {
+        !self.normal_uses_reserve_only_mode()
             && !self.critical_backlog_active()
-            && self.critical_has_single_borrowable_slot()
+            && self.critical_free_slots() == 1
     }
 
     fn normal_can_borrow_critical_headroom(&self) -> bool {
-        if self.normal.capacity == 0 {
+        if self.normal_uses_reserve_only_mode() {
             // Reserve-only mode keeps free-ingress throughput live by borrowing any
             // idle critical headroom because there is no dedicated normal lane.
             return self.critical_has_borrowable_headroom();
         }
 
-        if self.normal_idle_critical_tail_slot_is_borrowable() {
+        if self.normal_can_borrow_last_idle_critical_slot() {
             // Preserve one-slot burst throughput when the critical lane is still
             // idle, but let the guard snap shut as soon as critical backlog appears.
             return true;
         }
 
-        self.critical_has_borrowable_headroom()
-            && !self.normal_last_reserved_critical_slot_is_guarded()
+        self.critical_free_slots() > 1
     }
 
     fn critical_can_borrow_normal_headroom(&self) -> bool {
