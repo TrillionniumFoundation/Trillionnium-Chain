@@ -1310,6 +1310,27 @@ fn governance_sensitive_pending_cancel_before_activation_removes_pending() {
 }
 
 #[test]
+fn governance_non_sensitive_cancel_path_still_enforces_validator_registry_guard() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param_with_action(
+            21_005,
+            7_999,
+            "emergency_pause".into(),
+            "not-a-bool".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("non-sensitive cancel path must still fail closed before mutation");
+    assert!(
+        err.contains("governance cancel not supported for non-sensitive key emergency_pause"),
+        "unexpected cancel-path error: {err}"
+    );
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
 fn governance_sensitive_apply_without_pending_is_unchanged() {
     let mut st = StateStore::new();
     st.set_gov_param_unchecked(7322, "challenge_min_bond".into(), "100".into())

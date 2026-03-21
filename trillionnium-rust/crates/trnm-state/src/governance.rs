@@ -530,6 +530,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
+        ensure_allowed_key_has_explicit_validator(&key)?;
         validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
@@ -603,6 +604,7 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
+        ensure_allowed_key_has_explicit_validator(&key)?;
         validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
