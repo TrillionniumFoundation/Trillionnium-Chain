@@ -410,6 +410,9 @@ fn validated_restorable_pending_resolve_snapshot(
     if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
         return None;
     }
+    if !task_snapshot_metadata_is_complete(&task) {
+        return None;
+    }
     // Audit-proof restore must fail closed unless the challenged-task anchor is still present as
     // a canonical, non-system actor id. Snapshot metadata cannot self-authenticate challenger
     // identity when the live task metadata has drifted into reserved or malformed forms.
