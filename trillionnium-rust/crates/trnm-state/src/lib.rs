@@ -831,6 +831,11 @@ impl StateStore {
             .map(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
             .unwrap_or(false);
         if existing_is_non_param {
+            let had_index = self.gov_param_key_index.values().any(|mapped_id| *mapped_id == key_id);
+            if had_index {
+                self.invalidate_state_root_cache();
+                self.remove_gov_param_key_index_for_id(key_id);
+            }
             return;
         }
 
@@ -2717,6 +2722,66 @@ mod tests {
             st.state_root(),
             root_before,
             "cross-type gov-param deletion must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_cross_type_collision_scrubs_stale_key_index_residue() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+        st.gov_param_key_index.insert("max_block_ms".into(), 77);
+        st.invalidate_state_root_cache();
+        let root_with_stale_index = st.state_root();
+
+        st.restore_gov_param(
+            77,
+            Some(GovParamObject {
+                key_id: 77,
+                key: "max_block_ms".into(),
+                value: "250".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.get_param(77).is_none(),
+            "cross-type gov-param restore must still fail closed without materializing a governance object"
+        );
+        assert_eq!(
+            st.get_task(77).map(|task| (task.task_id, task.creator, task.version)),
+            Some((77, "alice".into(), 1)),
+            "cross-type gov-param restore must preserve the existing task object"
+        );
+        assert!(
+            st.gov_param_key_index.is_empty(),
+            "cross-type gov-param restore rejection must scrub stale governance key-index residue"
+        );
+        assert_ne!(
+            st.state_root(),
+            root_with_stale_index,
+            "scrubbing stale governance key-index residue must perturb the state root"
         );
     }
 
