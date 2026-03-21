@@ -160,6 +160,12 @@ fn combined_access_domain_versions_are_consistent(
     reads: &[ObjectRef],
     writes: &[ObjectRef],
 ) -> bool {
+    if reads.is_empty() {
+        return access_domain_versions_are_consistent(writes);
+    }
+    if writes.is_empty() {
+        return access_domain_versions_are_consistent(reads);
+    }
     if reads.len() + writes.len() <= 1 {
         return true;
     }
@@ -1706,6 +1712,28 @@ mod tests {
         assert!(!combined_access_domain_versions_are_consistent(
             &[ObjectRef { id: 42, version: 1 }],
             &[ObjectRef { id: 42, version: 2 }],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_when_writes_are_empty() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
+            &[],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_when_reads_are_empty() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[],
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
         ));
     }
 
