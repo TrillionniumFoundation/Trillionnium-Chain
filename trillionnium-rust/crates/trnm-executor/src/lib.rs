@@ -4020,6 +4020,25 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_ignores_same_version_cross_domain_echoes() {
+        let echoed_write = tx(5, vec![o(7), o(5)], vec![o(5), o(11), o(7)]);
+        let echoed_read = tx(6, vec![o(11), o(11), o(7)], vec![o(5), o(7)]);
+        let deduped_write = tx(7, vec![o(7)], vec![o(5), o(11)]);
+        let deduped_read = tx(8, vec![o(7), o(11)], vec![o(5)]);
+
+        assert_eq!(primary_access_domain_key(&echoed_write), Some(5));
+        assert_eq!(
+            primary_access_domain_key(&echoed_write),
+            primary_access_domain_key(&deduped_write)
+        );
+        assert_eq!(primary_access_domain_key(&echoed_read), Some(5));
+        assert_eq!(
+            primary_access_domain_key(&echoed_read),
+            primary_access_domain_key(&deduped_read)
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
