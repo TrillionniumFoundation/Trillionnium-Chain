@@ -1397,12 +1397,17 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
+                let base_matches_snapshot = self
+                    .gov_param_ref_for_key(&snapshot.key)
+                    .map(|(id, param)| id == snapshot.key_id && param.key_id == snapshot.key_id)
+                    .unwrap_or(false);
                 if snapshot.key != key
                     || snapshot.key_id == 0
                     || snapshot.activate_at_height == 0
                     || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
                     || !is_sensitive_gov_param(&snapshot.key)
                     || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                    || !base_matches_snapshot
                 {
                     self.pending_gov_updates.remove(key);
                     return;
@@ -2914,6 +2919,35 @@ mod tests {
             .expect("failed checked apply must not scrub pending queue");
         assert_eq!(pending.key_id, 7_400);
         assert_eq!(pending.activate_at_height, 77_700);
+    }
+
+    #[test]
+    fn restore_pending_gov_update_requires_matching_base_gov_param_snapshot() {
+        let snapshot = Some(PendingGovParamUpdate {
+            key_id: 7401,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 42,
+        });
+
+        let mut missing_base = StateStore::new();
+        missing_base.restore_pending_gov_update("challenge_min_bond", snapshot.clone());
+        assert!(
+            missing_base.pending_gov_update("challenge_min_bond").is_none(),
+            "restore must fail closed when the referenced governance base snapshot is absent"
+        );
+
+        let mut matching_base = StateStore::new();
+        matching_base
+            .set_gov_param_unchecked(7401, "challenge_min_bond".into(), "100".into())
+            .expect("setup must insert matching governance param before restore");
+        matching_base.restore_pending_gov_update("challenge_min_bond", snapshot);
+        let restored = matching_base
+            .pending_gov_update("challenge_min_bond")
+            .expect("restore should accept a pending governance snapshot backed by a matching base object");
+        assert_eq!(restored.key_id, 7401);
+        assert_eq!(restored.activate_at_height, 42);
+        assert_eq!(restored.value, "120");
     }
 
     #[test]
