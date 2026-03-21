@@ -776,9 +776,15 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     let mut footprint = 0usize;
     for tx in txs {
-        footprint = footprint
-            .saturating_add(tx.read_set.len())
-            .saturating_add(tx.write_set.len());
+        assert_tx_access_domain_versions_are_consistent(tx);
+
+        // Size conflict-domain maps from the tx's unique access domain rather than
+        // raw read/write list lengths. This keeps same-version read/write echoes and
+        // duplicate keys from inflating hot-path map capacity under mixed Sui-like
+        // read/write workloads while preserving the same fail-closed skew guard.
+        let mut keys = dedup_access_keys(&tx.write_set);
+        extend_unique_access_keys(&mut keys, &tx.read_set);
+        footprint = footprint.saturating_add(keys.len());
     }
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
@@ -1707,6 +1713,21 @@ mod tests {
         ]);
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn access_map_capacity_hint_dedups_same_version_cross_domain_echoes() {
+        let txs = vec![
+            tx(
+                1,
+                vec![o(7), o(7), o(9)],
+                vec![ObjectRef { id: 7, version: 1 }, o(9), o(11)],
+            ),
+            tx(2, vec![o(21), o(21)], vec![o(22), o(22)]),
+        ];
+
+        // Unique access-domain footprint is {7,9,11} + {21,22} = 5.
+        assert_eq!(access_map_capacity_hint(&txs), 64);
     }
 
     #[test]
