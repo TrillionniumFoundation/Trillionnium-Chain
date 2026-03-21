@@ -179,3 +179,26 @@ fn reserved_critical_slot_accepts_one_critical_retry_then_rebounds_normal_retrie
         assert_eq!(gate.queued_counts(), (3, 2, 5));
     }
 }
+
+#[test]
+fn reserved_slot_reopens_normal_retry_once_critical_backlog_clears() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(5, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+
+    // While any critical backlog remains, a fresh normal retry still cannot borrow.
+    assert_eq!(gate.pop_ready(), Some(4));
+    assert_eq!(gate.admit(90, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // Once the critical backlog clears, the reopened reserved headroom becomes
+    // borrowable immediately for normal ingress without waiting for extra idle polls.
+    assert_eq!(gate.pop_ready(), Some(5));
+    assert_eq!(gate.admit(90, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+}
