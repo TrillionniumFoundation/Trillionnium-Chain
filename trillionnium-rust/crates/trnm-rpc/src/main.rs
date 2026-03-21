@@ -1746,9 +1746,6 @@ fn truncate_quarantine_raw_line(raw: &str) -> String {
 }
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
-    if entries.is_empty() {
-        return Ok(());
-    }
     let quarantine_path = ingress_quarantine_file_for(path);
     let _lock = acquire_market_file_lock(&quarantine_path)?;
     if let Some(parent) = quarantine_path.parent() {
@@ -1840,30 +1837,30 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
             }
         }
     }
-    if !quarantined.is_empty() {
-        if let Err(err) = append_quarantine_records(&path, &quarantined) {
+    if let Err(err) = append_quarantine_records(&path, &quarantined) {
+        if !quarantined.is_empty() {
             eprintln!(
                 "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
                 path.display(),
                 quarantined.len(),
                 err
             );
-        } else {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
-                path.display(),
-                quarantined.len(),
-                ingress_quarantine_file_for(&path).display()
-            );
+        }
+    } else if !quarantined.is_empty() {
+        eprintln!(
+            "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+            path.display(),
+            quarantined.len(),
+            ingress_quarantine_file_for(&path).display()
+        );
 
-            if let Err(err) = save_ingress_records(&records) {
-                eprintln!(
-                    "[trnm-rpc][warn][INGRESS_QUARANTINE_REWRITE] path={} retained={} err={}",
-                    path.display(),
-                    records.len(),
-                    err
-                );
-            }
+        if let Err(err) = save_ingress_records(&records) {
+            eprintln!(
+                "[trnm-rpc][warn][INGRESS_QUARANTINE_REWRITE] path={} retained={} err={}",
+                path.display(),
+                records.len(),
+                err
+            );
         }
     }
     records

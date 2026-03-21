@@ -248,6 +248,47 @@ fn load_ingress_records_bounds_quarantine_journal_growth() {
 }
 
 #[test]
+fn load_ingress_records_rewrites_preexisting_duplicate_quarantine_rows_even_when_replay_is_clean() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-existing-duplicate-clean-replay", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let valid = r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}"#;
+    fs::write(&path, format!("{valid}\n")).expect("write clean ingress fixture");
+
+    let duplicate = serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 9,
+        "line_hash": expected_stable_line_hash("stale-bad-row"),
+        "raw_line": "stale-bad-row",
+        "error": "seeded duplicate quarantine row",
+        "quarantined_at_unix_ms": 1
+    });
+    let duplicate_line = serde_json::to_string(&duplicate).expect("serialize duplicate quarantine row");
+    fs::write(&quarantine, format!("{duplicate_line}\n{duplicate_line}\n"))
+        .expect("seed duplicate quarantine rows");
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "clean ingress replay should preserve valid rows");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read normalized quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "clean replay should compact preexisting duplicate quarantine rows");
+    assert_eq!(entries[0]["raw_line"].as_str(), Some("stale-bad-row"));
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_rewrites_preexisting_oversized_quarantine_rows_to_bound_noise() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-existing-oversized-row", "jsonl");
