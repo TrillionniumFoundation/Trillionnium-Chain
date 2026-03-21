@@ -746,9 +746,10 @@ impl StateStore {
         let restored = PendingResolveApproval {
             slash_worker: snapshot.slash_worker,
             confirmations: snapshot.confirmations,
-            // Preserve original audit spelling while hashing/comparison stays canonicalized.
-            first_approver: snapshot.first_approver.clone(),
-            authority_set: snapshot.authority_set.clone(),
+            // Restore must canonicalize persisted pending-approval identity so replayed
+            // snapshots and state-root reads observe the same object/version semantics.
+            first_approver: first_approver_canonical.clone(),
+            authority_set: authority_canonical.clone(),
             task_version: snapshot.task_version,
         };
         if let Some(existing) = self.pending_resolve_approvals.get(&task_id) {
@@ -3328,7 +3329,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_preserves_audit_spelling_while_normalizing_state_root() {
+    fn restore_pending_resolve_approval_canonicalizes_snapshot_metadata_and_state_root() {
         let mut restored = StateStore::new();
         restored.restore_pending_resolve_approval(
             9_901,
@@ -3355,15 +3356,20 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("Authority-A".to_string()),
-            "restore should preserve approver audit spelling while deterministic state-root semantics stay canonical"
+            Some("authority-a".to_string()),
+            "restore should canonicalize stored approver identity for replay consistency"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-b,authority-a".to_string()),
-            "restore should preserve authority-set audit spelling while deterministic state-root semantics stay canonical"
+            Some("authority-a,authority-b".to_string()),
+            "restore should canonicalize stored authority metadata for replay consistency"
+        );
+        assert_eq!(
+            restored.pending_resolve_approval_snapshot(9_901),
+            canonical.pending_resolve_approval_snapshot(9_901),
+            "restore should canonicalize logically equivalent snapshots to one persisted pending-approval shape"
         );
         assert_eq!(
             restored.state_root(),
