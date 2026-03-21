@@ -227,8 +227,13 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return false;
     }
 
+    // Large duplicate-heavy probe vectors can show up when object-scoped read
+    // domains are widened before dedup reaches the aggressive stage checks.
+    // Collapse repeated keys once so scheduling guardrails stay bounded even on
+    // long duplicate bursts from shared-object access domains.
+    let mut seen: HashSet<u64> = HashSet::with_capacity(a.len().min(64));
     for k in a {
-        if b.contains(k) {
+        if seen.insert(*k) && b.contains(k) {
             return true;
         }
     }
@@ -1548,6 +1553,29 @@ mod tests {
             1, 1, 2, 2, 3, 3, 4, 4, 55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60,
         ];
 
+        assert!(vec_hashset_intersects(&hit, &domain));
+        assert!(!vec_hashset_intersects(&miss, &domain));
+    }
+
+    #[test]
+    fn vec_hashset_intersects_large_duplicate_probe_path_preserves_semantics() {
+        let domain: HashSet<u64> = [777u64, 888u64].into_iter().collect();
+
+        let mut hit = Vec::new();
+        for key in 1..=20u64 {
+            hit.push(key);
+            hit.push(key);
+        }
+        hit.extend([777, 777, 777, 21, 21, 22, 22]);
+
+        let mut miss = Vec::new();
+        for key in 1..=24u64 {
+            miss.push(10_000 + key);
+            miss.push(10_000 + key);
+        }
+
+        // Large duplicate-heavy probe vectors should keep the same hit/miss
+        // behavior while avoiding repeated lookups for the same object-domain key.
         assert!(vec_hashset_intersects(&hit, &domain));
         assert!(!vec_hashset_intersects(&miss, &domain));
     }
