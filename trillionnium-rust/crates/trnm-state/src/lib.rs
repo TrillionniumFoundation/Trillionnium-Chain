@@ -739,16 +739,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: if paused_restore {
-                    snapshot.first_approver
-                } else {
-                    first_approver_canonical
-                },
-                authority_set: if paused_restore {
-                    snapshot.authority_set
-                } else {
-                    authority_canonical
-                },
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -4807,6 +4799,74 @@ mod tests {
             staged.state_root(),
             restored.state_root(),
             "restore/stage paths must canonicalize semantically equivalent pending resolve snapshots identically"
+        );
+    }
+
+    #[test]
+    fn paused_restore_pending_resolve_snapshot_still_canonicalizes_state_root() {
+        let staged_task = TaskObject {
+            task_id: 502,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        };
+
+        let mut staged = StateStore::new();
+        staged
+            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        staged.put_task_new(staged_task.clone()).unwrap();
+        staged
+            .stage_or_confirm_resolve_approval(502, 1, true, "Authority-B", "Authority-B,authority-a")
+            .unwrap();
+
+        let mut restored = StateStore::new();
+        restored
+            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        restored.put_task_new(staged_task).unwrap();
+        restored.restore_pending_resolve_approval(
+            502,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,authority-a".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_first_approver(502).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(502)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            staged.state_root(),
+            restored.state_root(),
+            "paused restore must canonicalize pending resolve snapshots the same way as staged state"
         );
     }
 
