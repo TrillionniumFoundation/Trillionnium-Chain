@@ -1928,6 +1928,92 @@ fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_boundary_metadata
 }
 
 #[test]
+fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_forfeit_metadata_becomes_incomplete() {
+    // REF14 metadata completeness: restoring a challenged task snapshot with missing
+    // challenge_bond_forfeited must immediately scrub any staged paused quorum instead of
+    // carrying stale restore state across the custody-state boundary.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_225);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 905);
+    st.set_gov_param(98_119, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_901_6,
+        Some(TaskObject {
+            task_id: 9_901_6,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        }),
+    );
+
+    let first = st
+        .stage_or_confirm_resolve_approval(
+            9_901_6,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first paused approval stage should succeed on challenged task");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_901_6), Some((true, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_901_6,
+        Some(TaskObject {
+            task_id: 9_901_6,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.pending_resolve_approval(9_901_6), None);
+    assert_eq!(st.pending_resolve_first_approver(9_901_6), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
+
+#[test]
 fn paused_state_rejects_second_resolve_approval_when_live_task_leaves_challenged_boundary() {
     // L03 boundary hardening: once a live task object is no longer Challenged, a previously
     // staged resolve quorum must be scrubbed instead of allowing a second approval to reuse the
