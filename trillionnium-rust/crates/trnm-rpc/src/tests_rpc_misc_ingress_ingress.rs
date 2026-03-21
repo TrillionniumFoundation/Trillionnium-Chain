@@ -24,6 +24,15 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
         "blank parse context should be rejected fail-closed"
     );
 
+    let zero_line_hash = IngressQuarantineRecord {
+        line_hash: 0,
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&zero_line_hash),
+        "zero hash quarantine identities should be rejected fail-closed"
+    );
+
     let oversized_raw_line = IngressQuarantineRecord {
         raw_line: "x".repeat(4097),
         ..valid.clone()

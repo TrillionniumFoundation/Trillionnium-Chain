@@ -51,6 +51,7 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
     }
 
     if entry.line_number == 0
+        || entry.line_hash == 0
         || entry.source_path.trim().is_empty()
         || entry.raw_line.trim().is_empty()
         || entry.error.trim().is_empty()
