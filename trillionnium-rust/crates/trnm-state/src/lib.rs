@@ -829,6 +829,11 @@ impl StateStore {
         current == *task && self.has_pending_resolve_restore_reentry_boundary_hazard(id, task)
     }
 
+    fn scrub_pending_resolve_on_task_restore_reentry(&mut self, id: u64) {
+        self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&id);
+    }
+
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         if let Some(task) = snapshot.as_ref() {
             if task.task_id == id {
@@ -836,8 +841,7 @@ impl StateStore {
                     return;
                 }
                 if self.should_scrub_pending_resolve_on_task_restore_reentry(id, task) {
-                    self.invalidate_state_root_cache();
-                    self.pending_resolve_approvals.remove(&id);
+                    self.scrub_pending_resolve_on_task_restore_reentry(id);
                     return;
                 }
             }
@@ -2711,6 +2715,63 @@ mod tests {
             st.state_root(),
             baseline.state_root(),
             "scrubbing finalized pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_corrupt_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_007,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 0,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_corrupt_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_corrupt_pending,
+            "identical restore re-entry must invalidate the cached state root when corrupt pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing corrupt pending resolve residue should converge to the same state root as the clean restored task snapshot"
         );
     }
 
