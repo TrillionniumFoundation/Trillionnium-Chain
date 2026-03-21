@@ -125,6 +125,46 @@ fn load_ingress_records_quarantines_control_char_utf8_lines_with_sanitized_raw_l
 }
 
 #[test]
+fn load_ingress_records_sanitizes_quarantine_source_path_metadata() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-path-\u{202e}meta", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    fs::write(&path, b"{\"broken\":1\n").expect("write malformed ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "malformed ingress row should be quarantined");
+
+    let source_path = entries[0]["source_path"]
+        .as_str()
+        .expect("quarantine source_path should be a string");
+    assert!(
+        source_path.contains('�'),
+        "quarantine source_path should sanitize ambiguous bidi metadata"
+    );
+    assert!(
+        !source_path.contains('\u{202e}'),
+        "quarantine source_path should not retain bidi override characters"
+    );
+    assert_eq!(entries[0]["line_number"], 1);
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine", "jsonl");

@@ -162,6 +162,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     const INGRESS_LINE_PARSE_MAX_BYTES: usize = 65_536;
+    const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_APPEND_MAX_RECORDS: usize = 128;
 
@@ -192,16 +193,20 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             .collect()
     }
 
-    fn truncate_for_quarantine(raw: &str) -> String {
+    fn truncate_sanitized_for_quarantine(raw: &str, max_bytes: usize) -> String {
         let sanitized = sanitize_for_quarantine(raw);
-        if sanitized.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+        if sanitized.len() <= max_bytes {
             return sanitized;
         }
-        let mut end = INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES;
+        let mut end = max_bytes;
         while end > 0 && !sanitized.is_char_boundary(end) {
             end -= 1;
         }
         sanitized[..end].to_string()
+    }
+
+    fn truncate_for_quarantine(raw: &str) -> String {
+        truncate_sanitized_for_quarantine(raw, INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES)
     }
 
     fn truncate_bytes_for_quarantine(raw: &[u8]) -> String {
@@ -217,6 +222,8 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     }
 
     let path = ingress_file();
+    let source_path_for_quarantine =
+        truncate_sanitized_for_quarantine(&path.display().to_string(), INGRESS_QUARANTINE_FIELD_MAX_BYTES);
     let Ok(raw) = fs::read(&path) else {
         return vec![];
     };
@@ -294,7 +301,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             push_tail_limited(
                 &mut quarantined,
                 IngressQuarantineRecord {
-                    source_path: path.display().to_string(),
+                    source_path: source_path_for_quarantine.clone(),
                     line_number: idx + 1,
                     line_hash,
                     raw_line,
