@@ -745,8 +745,9 @@ impl StateStore {
         let restored = PendingResolveApproval {
             slash_worker: snapshot.slash_worker,
             confirmations: snapshot.confirmations,
-            first_approver: first_approver_canonical.clone(),
-            authority_set: authority_canonical.clone(),
+            // Preserve original audit spelling while hashing/comparison stays canonicalized.
+            first_approver: snapshot.first_approver.clone(),
+            authority_set: snapshot.authority_set.clone(),
             task_version: snapshot.task_version,
         };
         if let Some(existing) = self.pending_resolve_approvals.get(&task_id) {
@@ -3239,7 +3240,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_normalizes_canonical_identity_for_state_root() {
+    fn restore_pending_resolve_approval_preserves_audit_spelling_while_normalizing_state_root() {
         let mut restored = StateStore::new();
         restored.restore_pending_resolve_approval(
             9_901,
@@ -3266,15 +3267,15 @@ mod tests {
 
         assert_eq!(
             restored.pending_resolve_first_approver(9_901),
-            Some("authority-a".to_string()),
-            "restore should canonicalize approver identity so stored pending state matches deterministic state-root semantics"
+            Some("Authority-A".to_string()),
+            "restore should preserve approver audit spelling while deterministic state-root semantics stay canonical"
         );
         assert_eq!(
             restored
                 .pending_resolve_approval_snapshot(9_901)
                 .map(|snapshot| snapshot.authority_set),
-            Some("authority-a,authority-b".to_string()),
-            "restore should canonicalize authority-set identity so stored pending state matches deterministic state-root semantics"
+            Some("authority-b,authority-a".to_string()),
+            "restore should preserve authority-set audit spelling while deterministic state-root semantics stay canonical"
         );
         assert_eq!(
             restored.state_root(),
