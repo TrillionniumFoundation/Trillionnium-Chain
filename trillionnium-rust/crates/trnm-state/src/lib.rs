@@ -736,11 +736,21 @@ impl StateStore {
                 scrub_pending(self, task_id);
                 return;
             }
-            None if self.is_emergency_paused() => {
-                scrub_pending(self, task_id);
-                return;
+            None => {
+                if self
+                    .objects
+                    .get(&task_id)
+                    .map(|existing| !matches!(existing.value, ObjectValue::Task(_)))
+                    .unwrap_or(false)
+                {
+                    scrub_pending(self, task_id);
+                    return;
+                }
+                if self.is_emergency_paused() {
+                    scrub_pending(self, task_id);
+                    return;
+                }
             }
-            None => {}
         }
 
         let restored = PendingResolveApproval {
@@ -2207,7 +2217,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_cross_type_collision_scrubs_stale_pending_resolve_residue() {
+    fn restore_task_cross_type_collision_preserves_state_when_pending_resolve_never_materialized() {
         let mut st = StateStore::new();
         st.restore_gov_param(
             17,
@@ -2259,7 +2269,7 @@ mod tests {
         assert_eq!(
             st.pending_resolve_approval(17),
             None,
-            "cross-type task restore rejection must scrub stale pending resolve approval residue"
+            "cross-type ids must not retain staged pending resolve approval snapshots"
         );
         assert_eq!(
             st.get_param(17).map(|param| (param.key, param.value, param.version)),
@@ -2270,10 +2280,10 @@ mod tests {
             )),
             "cross-type task restore rejection must preserve the existing governance object"
         );
-        assert_ne!(
+        assert_eq!(
             st.state_root(),
             root_before,
-            "scrubbing stale pending resolve approval residue must perturb the state root"
+            "cross-type task restore rejection must leave state_root unchanged when no pending resolve snapshot could materialize"
         );
     }
 
@@ -3324,7 +3334,51 @@ mod tests {
         assert_ne!(
             st.state_root(),
             baseline,
-            "restore must materialize a canonical pending approval snapshot even without a backing challenged task object"
+            "restore must materialize a canonical pending approval snapshot when the task id is otherwise unused"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_snapshot_when_id_is_owned_by_non_task_object() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            9_901,
+            Some(GovParamObject {
+                key_id: 9_901,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), None);
+        assert_eq!(
+            st.get_param(9_901)
+                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            Some((
+                9_901,
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "pending resolve restore must not materialize on an id already owned by a non-task object"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "cross-type pending resolve restore rejection must leave state_root unchanged"
         );
     }
 
