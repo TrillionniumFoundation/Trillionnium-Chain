@@ -59,10 +59,9 @@ fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) ->
         Some(tx_ordinal) => (tx_ordinal, false),
         None => (u64::MAX, true),
     };
-    let (tx_id, tx_id_overflowed) = match tx_id_seed.checked_add(tx_ordinal) {
-        Some(tx_id) => (tx_id, tx_ordinal_overflowed),
-        None => (u64::MAX, true),
-    };
+    let tx_id_checked = tx_id_seed.checked_add(tx_ordinal);
+    let tx_id = tx_id_checked.unwrap_or(u64::MAX);
+    let tx_id_overflowed = tx_ordinal_overflowed || tx_id_checked.is_none();
     (tx_id, tx_ordinal, tx_id_overflowed, tx_ordinal_overflowed)
 }
 
@@ -239,6 +238,12 @@ mod tests {
         assert_eq!(timeout_event_tx_metadata(9_000_000, 0), (9_000_001, false));
         assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 0), (u64::MAX, false));
         assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 1), (u64::MAX, true));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
+    }
+
+    #[test]
+    fn timeout_event_tx_metadata_marks_seed_saturation_without_hiding_first_ordinal() {
+        assert_eq!(timeout_event_surface_metadata(u64::MAX, 0), (u64::MAX, 1, true, false));
         assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
     }
 
