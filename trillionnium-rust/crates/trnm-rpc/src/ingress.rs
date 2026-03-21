@@ -143,12 +143,14 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut quarantined = Vec::new();
     let mut quarantined_seen = HashSet::new();
     let mut quarantined_total = 0usize;
+    let mut skipped_whitespace_noise = false;
     for (idx, line_bytes) in raw.split(|byte| *byte == b'\n').enumerate() {
         let line_bytes = match line_bytes.strip_suffix(b"\r") {
             Some(trimmed) => trimmed,
             None => line_bytes,
         };
         if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
+            skipped_whitespace_noise = true;
             continue;
         }
         let parse_result = if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
@@ -227,6 +229,15 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                     err
                 );
             }
+        }
+    } else if skipped_whitespace_noise {
+        if let Err(err) = save_ingress_records(&records) {
+            eprintln!(
+                "[trnm-rpc][warn][INGRESS_NOISE_COMPACT_WRITE] path={} retained_records={} err={}",
+                path.display(),
+                records.len(),
+                err
+            );
         }
     }
     records

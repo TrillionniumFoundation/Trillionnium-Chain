@@ -235,6 +235,51 @@ fn load_ingress_records_bounds_invalid_utf8_quarantine_raw_line_after_lossy_deco
 }
 
 #[test]
+fn load_ingress_records_compacts_whitespace_only_noise_without_quarantine() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-whitespace-noise-compact", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let whitespace_noise = format!("{}\r\n", " ".repeat(70_000));
+    fs::write(
+        &path,
+        format!(
+            concat!(
+                "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+                "{}"
+            ),
+            whitespace_noise
+        ),
+    )
+    .expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "valid ingress rows should survive whitespace-noise compaction");
+    assert!(
+        !quarantine.exists(),
+        "whitespace-only ingress noise should be compacted instead of quarantined"
+    );
+
+    let salvaged_raw = fs::read_to_string(&path).expect("read compacted ingress file");
+    let salvaged_lines: Vec<&str> = salvaged_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(salvaged_lines.len(), 1, "compaction should drop whitespace-only noise lines");
+    assert!(
+        salvaged_lines[0].contains("\"request_id\":\"req-1\""),
+        "compaction should retain the valid ingress record"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_invalid_utf8_line_without_dropping_valid_rows() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-invalid-utf8", "jsonl");
