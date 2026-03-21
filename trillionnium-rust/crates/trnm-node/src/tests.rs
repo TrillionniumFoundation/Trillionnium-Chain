@@ -5034,6 +5034,11 @@
     }
 
     #[test]
+    fn timeout_event_tx_metadata_marks_saturated_ordinal_as_overflow_for_visibility() {
+        assert_eq!(timeout_event_tx_metadata(0, u64::MAX), (u64::MAX, true));
+    }
+
+    #[test]
     fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
