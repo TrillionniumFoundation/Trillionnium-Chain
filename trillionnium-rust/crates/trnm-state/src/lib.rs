@@ -1854,11 +1854,15 @@ fn wal_prev_hash_surface_is_canonical(height: u64, prev_hash_hex: Option<&str>) 
     }
 }
 
+fn checkpoint_height_surface_is_canonical(height: u64) -> bool {
+    height > 0
+}
+
 pub fn checkpoint_evidence_surface_is_canonical(
     checkpoint: &CheckpointMeta,
     wal_entry: &WalMeta,
 ) -> bool {
-    checkpoint.height > 0
+    checkpoint_height_surface_is_canonical(checkpoint.height)
         && checkpoint.height == wal_entry.height
         && wal_entry.committed
         && is_canonical_hex_digest(&checkpoint.state_root_hex)
