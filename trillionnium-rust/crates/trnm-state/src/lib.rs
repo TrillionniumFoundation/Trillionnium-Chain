@@ -1904,6 +1904,12 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
+        if !is_canonical_wal_proposal_hash(&e.proposal_hash)
+            || !wal_prev_hash_surface_is_canonical(e.height, e.prev_hash_hex.as_deref())
+        {
+            return Ok(best_checkpoint);
+        }
+
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
             if !is_canonical_hex_digest(&cp.wal_entry_hash_hex) {
                 continue;
