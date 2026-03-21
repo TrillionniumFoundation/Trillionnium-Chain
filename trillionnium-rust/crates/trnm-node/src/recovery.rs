@@ -135,11 +135,16 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
+        let restored_round = if metadata_only_recovery {
+            0
+        } else {
+            last.round
+        };
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
                 next_height: last.height + 1,
-                last_round: last.round,
+                last_round: restored_round,
                 locked_block_hash: restored_lock.clone(),
             },
         )?;
