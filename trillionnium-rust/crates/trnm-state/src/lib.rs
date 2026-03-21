@@ -1937,7 +1937,16 @@ pub fn verify_wal_and_find_checkpoint(
         // not trust checkpoint/WAL records that omit core identity fields, and it must
         // not silently fall back to an older checkpoint once a newer WAL record is known
         // to be truncated/corrupt.
-        if e.proposal_hash.is_empty() || e.state_root_hex.is_empty() {
+        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
+            return Ok(None);
+        }
+        if e.height > 1
+            && e
+                .prev_hash_hex
+                .as_ref()
+                .map(|prev| prev.trim().is_empty())
+                .unwrap_or(true)
+        {
             return Ok(None);
         }
         if let Some(last_height) = prev_height {
@@ -6218,6 +6227,45 @@ mod tests {
         assert!(
             got.is_none(),
             "checkpointed WAL that starts above genesis must not be treated as recoverable application state"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_missing_prev_hash_metadata_mid_chain() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let incomplete_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some("   ".into()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "missing prev-hash metadata mid-chain must fail closed instead of falling back to an older checkpoint"
         );
     }
 
