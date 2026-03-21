@@ -1,6 +1,34 @@
 use trnm_state::*;
 use trnm_types::*;
 
+fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
+    state.restore_task(
+        task_id,
+        Some(TaskObject {
+            task_id,
+            creator: "state-root-regression".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-root".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(9),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-root".into()),
+            challenge_bond_forfeited: Some(false),
+            version,
+        }),
+    );
+}
+
 #[test]
 fn new_tasks_canonicalize_embedded_version_for_state_root() {
     let mut state_a = StateStore::new();
@@ -2291,6 +2319,11 @@ fn pending_resolve_task_id_slot_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    install_pending_resolve_root_task(&mut state_a, 5_148, 7);
+    install_pending_resolve_root_task(&mut state_a, 5_149, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_148, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_149, 7);
+
     let snapshot = PendingResolveApprovalSnapshot {
         slash_worker: true,
         confirmations: 1,
@@ -2323,6 +2356,9 @@ fn pending_resolve_task_id_slot_must_affect_state_root() {
 fn pending_resolve_slash_worker_flag_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
+
+    install_pending_resolve_root_task(&mut state_a, 5_149, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_149, 7);
 
     state_a.restore_pending_resolve_approval(
         5_149,
