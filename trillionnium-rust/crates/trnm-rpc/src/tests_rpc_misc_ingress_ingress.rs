@@ -44,11 +44,20 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let oversized_error = IngressQuarantineRecord {
         error: "x".repeat(4097),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&oversized_error),
         "error payloads should stay field-bounded"
+    );
+
+    let control_char_raw_line = IngressQuarantineRecord {
+        raw_line: "{\"broken\":\u0000}".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&control_char_raw_line),
+        "control characters in quarantined payload echoes should fail closed"
     );
 }
 
