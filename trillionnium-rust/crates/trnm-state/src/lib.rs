@@ -995,7 +995,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key
                     ));
                 }
-                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
+                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+                    || member.eq_ignore_ascii_case("governance.emergency_pause")
+                    || member.eq_ignore_ascii_case("emergency_pause")
+                {
                     return Err(format!(
                         "invalid governance value for {}: reserved system authority is not allowed",
                         key
@@ -5755,6 +5758,10 @@ mod tests {
             RESERVED_SYSTEM_AUTHORITY,
             "System",
             "authority,system",
+            "governance.emergency_pause",
+            "Emergency_Pause",
+            "authority,governance.emergency_pause",
+            "authority,Emergency_Pause",
             CHALLENGE_ESCROW_ACCOUNT,
             "Treasury.Challenge_Escrow",
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
