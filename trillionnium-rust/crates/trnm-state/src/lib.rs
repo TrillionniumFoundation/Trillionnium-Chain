@@ -954,7 +954,10 @@ impl StateStore {
             ObjectValue::GovParam(p) if p.key_id == id => p,
             _ => return None,
         };
-        if self.gov_param_key_index.get(&param.key).copied() != Some(id) {
+        let registry_matches_object = self.gov_param_key_index.get(&param.key).copied() == Some(id);
+        let pinned_binding_matches_object = governance_expected_key_for_id(id)
+            .is_some_and(|expected_key| expected_key == param.key.as_str());
+        if !registry_matches_object && !pinned_binding_matches_object {
             return None;
         }
         if validate_gov_param_registry_binding(&self.gov_param_key_index, &param.key, param.key_id)
@@ -1471,7 +1474,9 @@ impl StateStore {
     }
 
     fn validated_gov_param_registry_id_for_key(&self, key: &str) -> Option<u64> {
-        let id = self.gov_param_key_index.get(key).copied()?;
+        let id = governance_pinned_binding(Some(key), None)
+            .map(|(_, pinned_key_id)| pinned_key_id)
+            .or_else(|| self.gov_param_key_index.get(key).copied())?;
         if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
         }
@@ -3582,13 +3587,11 @@ mod tests {
                 }),
             },
         );
-        st.gov_param_key_index
-            .insert("emergency_pause".into(), EMERGENCY_PAUSE_KEY_ID);
 
         assert_eq!(
             st.gov_param_string("emergency_pause"),
             Some("true".into()),
-            "string accessor must resolve the canonical reserved emergency_pause binding"
+            "string accessor must resolve the canonical reserved emergency_pause binding even if the mutable registry entry is absent"
         );
         assert_eq!(
             st.gov_param_ref_for_key("emergency_pause")
