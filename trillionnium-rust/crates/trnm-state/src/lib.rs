@@ -224,6 +224,15 @@ fn validate_gov_param_registry_binding(
             ));
         }
     }
+    if let Some((aliased_key, _)) = gov_param_key_index
+        .iter()
+        .find(|(indexed_key, indexed_key_id)| indexed_key.as_str() != key && **indexed_key_id == key_id)
+    {
+        return Err(format!(
+            "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
+            key_id, key, aliased_key
+        ));
+    }
     Ok(())
 }
 
@@ -3504,6 +3513,30 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry key and object key diverge"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_key_id_alias_registry_injection() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_316, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .expect("initial resolve_authority write should succeed");
+        st.gov_param_key_index
+            .insert("challenge_min_bond".into(), 7_316);
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when another governance key aliases the same key_id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "ref accessor must fail closed when another governance key aliases the same key_id"
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            None,
+            "pending accessor must fail closed when registry aliasing breaks the single-source key_id binding"
         );
     }
 
