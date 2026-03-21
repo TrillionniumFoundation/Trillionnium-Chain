@@ -594,27 +594,27 @@ fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_sour
 }
 
 #[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_empty_error() {
+fn load_ingress_records_drops_preexisting_quarantine_entries_with_blank_error() {
     let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-empty-error-retention", "jsonl");
+    let path = unique_tmp_path("ingress-quarantine-blank-error-retention", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
     std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-    let empty_error_retained_entry = serde_json::json!({
+    let blank_error_retained_entry = serde_json::json!({
         "source_path": path.display().to_string(),
         "line_number": 99,
         "line_hash": 123_u64,
         "raw_line": "seed",
-        "error": "",
+        "error": "   ",
         "quarantined_at_unix_ms": 1_u128,
     });
     fs::write(
         &quarantine,
-        format!("{}\n", serde_json::to_string(&empty_error_retained_entry).expect("serialize seed entry")),
+        format!("{}\n", serde_json::to_string(&blank_error_retained_entry).expect("serialize seed entry")),
     )
-    .expect("seed empty-error quarantine entry");
+    .expect("seed blank-error quarantine entry");
     fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
 
     let records = load_ingress_records();
@@ -628,12 +628,12 @@ fn load_ingress_records_drops_preexisting_quarantine_entries_with_empty_error() 
     assert_eq!(
         lines.len(),
         1,
-        "preexisting quarantine entries with empty error should be discarded"
+        "preexisting quarantine entries with blank error should be discarded"
     );
     let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
     assert_eq!(entry["line_number"], 1);
     assert!(
-        !entry["error"].as_str().expect("error string").is_empty(),
+        !entry["error"].as_str().expect("error string").trim().is_empty(),
         "new quarantined ingress row should replace retained entries missing parse context"
     );
     assert!(
@@ -641,7 +641,7 @@ fn load_ingress_records_drops_preexisting_quarantine_entries_with_empty_error() 
             .as_str()
             .expect("error string")
             .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after dropping empty-error retained noise"
+        "new malformed ingress record should still be quarantined after dropping blank-error retained noise"
     );
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");

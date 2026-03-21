@@ -70,9 +70,9 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                     .filter_map(|line| {
                         let entry = serde_json::from_str::<IngressQuarantineRecord>(line).ok()?;
                         if entry.line_number == 0
-                            || entry.source_path.is_empty()
-                            || entry.raw_line.is_empty()
-                            || entry.error.is_empty()
+                            || entry.source_path.trim().is_empty()
+                            || entry.raw_line.trim().is_empty()
+                            || entry.error.trim().is_empty()
                             || entry.quarantined_at_unix_ms == 0
                             || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
                             || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
