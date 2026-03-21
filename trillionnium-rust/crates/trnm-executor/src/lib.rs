@@ -166,11 +166,27 @@ fn combined_access_domain_versions_are_consistent(
     if writes.is_empty() {
         return access_domain_versions_are_consistent(reads);
     }
-    if reads.len() + writes.len() <= 1 {
+
+    let total_len = reads.len() + writes.len();
+    if total_len <= 1 {
         return true;
     }
 
-    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(reads.len() + writes.len());
+    // Keep tiny mixed domains allocation-light on the common Sui-like single-object
+    // read/write echo path while preserving the same fail-closed skew guard.
+    if total_len <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(total_len);
+        for obj in writes.iter().chain(reads.iter()) {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(total_len);
     for obj in writes.iter().chain(reads.iter()) {
         match versions_by_id.insert(obj.id, obj.version) {
             Some(version) if version != obj.version => return false,
@@ -1732,6 +1748,22 @@ mod tests {
     }
 
     #[test]
+    fn combined_access_domain_versions_are_consistent_for_small_duplicate_cross_domain_echoes() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 1 },
+                o(99),
+            ],
+            &[
+                o(99),
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 7, version: 1 },
+            ],
+        ));
+    }
+
+    #[test]
     fn combined_access_domain_versions_are_inconsistent_across_read_write_split() {
         assert!(!combined_access_domain_versions_are_consistent(
             &[ObjectRef { id: 42, version: 1 }],
@@ -1814,15 +1846,7 @@ mod tests {
 
         extend_unique_access_keys(
             &mut keys,
-            &[
-                o(300),
-                o(500),
-                o(200),
-                o(600),
-                o(500),
-                o(700),
-                o(700),
-            ],
+            &[o(300), o(500), o(200), o(600), o(500), o(700), o(700)],
         );
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
@@ -2448,7 +2472,9 @@ mod tests {
                 .or_else(|payload| payload.downcast::<&'static str>().map(|s| s.to_string()))
                 .expect("panic payload should be string-like");
             assert!(
-                msg.contains("mixed access domain contains the same object id with multiple versions"),
+                msg.contains(
+                    "mixed access domain contains the same object id with multiple versions"
+                ),
                 "unexpected panic for {strategy:?}: {msg}"
             );
         }
@@ -3979,8 +4005,14 @@ mod tests {
     #[test]
     fn primary_access_domain_key_preserves_keyless_singleton_and_duplicate_write_domains() {
         assert_eq!(primary_access_domain_key(&tx(1, vec![], vec![])), None);
-        assert_eq!(primary_access_domain_key(&tx(2, vec![o(7)], vec![])), Some(7));
-        assert_eq!(primary_access_domain_key(&tx(3, vec![o(99)], vec![o(11)])), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&tx(2, vec![o(7)], vec![])),
+            Some(7)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(3, vec![o(99)], vec![o(11)])),
+            Some(11)
+        );
         assert_eq!(
             primary_access_domain_key(&tx(4, vec![o(99)], vec![o(11), o(11), o(17)])),
             Some(11)
@@ -4035,10 +4067,19 @@ mod tests {
 
         assert_eq!(baseline_decision.sample_len, 64);
         assert_eq!(permuted_decision.sample_len, 64);
-        assert_eq!(baseline_decision.use_hot_bucket, permuted_decision.use_hot_bucket);
+        assert_eq!(
+            baseline_decision.use_hot_bucket,
+            permuted_decision.use_hot_bucket
+        );
         assert_eq!(baseline_decision.reason, permuted_decision.reason);
-        assert_eq!(baseline_decision.streak_ratio, permuted_decision.streak_ratio);
-        assert_eq!(baseline_decision.hot_key_share, permuted_decision.hot_key_share);
+        assert_eq!(
+            baseline_decision.streak_ratio,
+            permuted_decision.streak_ratio
+        );
+        assert_eq!(
+            baseline_decision.hot_key_share,
+            permuted_decision.hot_key_share
+        );
         assert_eq!(
             baseline_decision.expected_gain_score,
             permuted_decision.expected_gain_score
