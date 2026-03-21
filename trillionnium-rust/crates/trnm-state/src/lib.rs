@@ -787,6 +787,20 @@ impl StateStore {
         current == *task
     }
 
+    fn pending_resolve_restore_reentry_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<PendingResolveApprovalSnapshot> {
+        let pending = self.pending_resolve_approvals.get(&task_id)?;
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: pending.slash_worker,
+            confirmations: pending.confirmations,
+            first_approver: pending.first_approver.clone(),
+            authority_set: pending.authority_set.clone(),
+            task_version: pending.task_version,
+        })
+    }
+
     fn should_preserve_pending_resolve_on_task_restore(
         &self,
         task_id: u64,
@@ -800,19 +814,12 @@ impl StateStore {
         if !self.pending_resolve_matches_task_version(task_id, task.version) {
             return false;
         }
-        let Some(pending) = self.pending_resolve_approvals.get(&task_id) else {
+        let Some(snapshot) = self.pending_resolve_restore_reentry_snapshot(task_id) else {
             return false;
         };
-        if pending.confirmations != 1 {
+        if snapshot.confirmations != 1 {
             return false;
         }
-        let snapshot = PendingResolveApprovalSnapshot {
-            slash_worker: pending.slash_worker,
-            confirmations: pending.confirmations,
-            first_approver: pending.first_approver.clone(),
-            authority_set: pending.authority_set.clone(),
-            task_version: pending.task_version,
-        };
         self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
             .is_some()
     }
@@ -3281,6 +3288,63 @@ mod tests {
 
         assert_eq!(st.pending_resolve_approval(9_003), None);
         assert_eq!(st.pending_resolve_first_approver(9_003), None);
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_when_pending_authority_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_004,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        let scheduled = st
+            .set_gov_param(
+                10,
+                7001,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("pending resolve authority drift should schedule cleanly");
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_004), None);
+        assert_eq!(st.pending_resolve_first_approver(9_004), None);
     }
 
     #[test]
