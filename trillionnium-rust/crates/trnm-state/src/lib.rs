@@ -757,14 +757,8 @@ impl StateStore {
             authority_set: pending.authority_set.clone(),
             task_version: pending.task_version,
         };
-        let Some((first_approver_canonical, authority_set_canonical)) =
-            self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
-        else {
-            return false;
-        };
-
-        pending.first_approver == first_approver_canonical
-            && pending.authority_set == authority_set_canonical
+        self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
+            .is_some()
     }
 
     pub fn restore_pending_resolve_approval(
@@ -778,19 +772,20 @@ impl StateStore {
         let Some(snapshot) = snapshot else {
             return;
         };
-        let Some((first_approver, authority_set)) =
-            self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
-        else {
+        if self
+            .canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
+            .is_none()
+        {
             return;
-        };
+        }
 
         self.pending_resolve_approvals.insert(
             task_id,
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver,
-                authority_set,
+                first_approver: snapshot.first_approver,
+                authority_set: snapshot.authority_set,
                 task_version: snapshot.task_version,
             },
         );
@@ -2598,6 +2593,67 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_preserves_audit_spelling_for_equivalent_authority_snapshot() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            1,
+            Some(GovParamObject {
+                key_id: 1,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        st.restore_task(
+            9_000,
+            Some(TaskObject {
+                task_id: 9_000,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-a".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(55),
+                resolve_deadline_height: Some(66),
+                challenge_bond: Some(7),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+
+        st.restore_pending_resolve_approval(
+            9_000,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,Authority-A".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_000), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_000).as_deref(),
+            Some("Authority-B")
+        );
+        let snapshot = st
+            .pending_resolve_approval_snapshot(9_000)
+            .expect("equivalent snapshot should be restored");
+        assert_eq!(snapshot.first_approver, "Authority-B");
+        assert_eq!(snapshot.authority_set, "Authority-B,Authority-A");
+    }
+
+    #[test]
     fn restore_task_preserves_pending_resolve_across_identical_same_version_snapshot_reentry() {
         let mut st = StateStore::new();
         let task = TaskObject {
@@ -2772,7 +2828,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_scrubs_noncanonical_pending_resolve_on_identical_snapshot_reentry() {
+    fn restore_task_preserves_equivalent_pending_resolve_on_identical_snapshot_reentry() {
         let mut st = StateStore::new();
         let task = TaskObject {
             task_id: 9_008,
@@ -2811,20 +2867,21 @@ mod tests {
 
         st.restore_task(task.task_id, Some(task.clone()));
 
-        assert_eq!(st.pending_resolve_approval(task.task_id), None);
-        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
-        assert_ne!(
-            st.state_root(),
-            root_with_noncanonical_pending,
-            "identical restore re-entry must invalidate the cached state root when semantically valid but noncanonical pending resolve residue is scrubbed"
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(task.task_id).as_deref(),
+            Some("authority-a")
         );
-
-        let mut baseline = StateStore::new();
-        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id)
+                .expect("equivalent pending resolve snapshot should survive")
+                .authority_set,
+            "authority-b,authority-a"
+        );
         assert_eq!(
             st.state_root(),
-            baseline.state_root(),
-            "scrubbing noncanonical pending resolve residue should converge to the same state root as the clean restored task snapshot"
+            root_with_noncanonical_pending,
+            "identical restore re-entry should preserve semantically equivalent pending resolve audit spelling"
         );
     }
 
