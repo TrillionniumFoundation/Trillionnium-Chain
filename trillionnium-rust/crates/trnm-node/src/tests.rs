@@ -7288,6 +7288,48 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn load_checkpoint_meta_canonicalizes_same_height_order_for_recovery_surface() {
+        let wal_dir = temp_wal_dir("load-checkpoint-meta-canonical-same-height-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "r-z".into(),
+                    wal_entry_hash_hex: "h-z".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "r-a".into(),
+                    wal_entry_hash_hex: "h-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "r-b".into(),
+                    wal_entry_hash_hex: "h-a".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 3);
+        assert_eq!(checkpoints[0].height, 7);
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "h-a");
+        assert_eq!(checkpoints[0].state_root_hex, "r-a");
+        assert_eq!(checkpoints[1].height, 7);
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "h-a");
+        assert_eq!(checkpoints[1].state_root_hex, "r-b");
+        assert_eq!(checkpoints[2].height, 7);
+        assert_eq!(checkpoints[2].wal_entry_hash_hex, "h-z");
+        assert_eq!(checkpoints[2].state_root_hex, "r-z");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_canonicalizes_retained_checkpoint_order_without_truncating_clean_wal() {
         let wal_dir = temp_wal_dir("recover-canonicalize-checkpoints-clean-wal");
         fs::create_dir_all(&wal_dir).unwrap();
