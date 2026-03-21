@@ -100,7 +100,10 @@ impl RelayHeartbeatMonitor {
     }
 
     pub fn record_failure(&mut self, reason: &str) -> HeartbeatOutcome {
-        self.consecutive_failures = self.consecutive_failures.saturating_add(1);
+        self.consecutive_failures = self
+            .consecutive_failures
+            .saturating_add(1)
+            .min(self.config.max_retry);
         let degraded = self.consecutive_failures >= self.config.max_retry;
         let should_retry = !degraded;
         let normalized_reason = normalize_failure_reason(reason);
