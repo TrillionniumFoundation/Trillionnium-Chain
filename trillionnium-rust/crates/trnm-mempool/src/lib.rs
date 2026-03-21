@@ -153,11 +153,18 @@ impl LaneAdmissionGate {
         }
     }
 
-    fn normal_can_borrow_critical_headroom(&self) -> bool {
-        let critical_free = self
-            .critical
+    fn critical_free_slots(&self) -> usize {
+        self.critical
             .capacity
-            .saturating_sub(self.critical.queue.len());
+            .saturating_sub(self.critical.queue.len())
+    }
+
+    fn normal_last_reserved_critical_slot_is_guarded(&self) -> bool {
+        self.normal.capacity > 0 && !self.critical.queue.is_empty() && self.critical_free_slots() == 1
+    }
+
+    fn normal_can_borrow_critical_headroom(&self) -> bool {
+        let critical_free = self.critical_free_slots();
 
         if self.normal.capacity == 0 {
             // Reserve-only mode keeps free-ingress throughput live by borrowing any
@@ -165,8 +172,11 @@ impl LaneAdmissionGate {
             return critical_free > 0;
         }
 
-        let critical_idle = self.critical.queue.is_empty();
-        critical_free > 1 || (critical_idle && critical_free > 0)
+        if self.normal_last_reserved_critical_slot_is_guarded() {
+            return false;
+        }
+
+        critical_free > 0
     }
 
     fn critical_can_borrow_normal_headroom(&self) -> bool {

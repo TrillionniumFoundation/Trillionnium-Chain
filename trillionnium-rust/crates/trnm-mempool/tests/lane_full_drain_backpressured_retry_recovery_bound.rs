@@ -148,3 +148,34 @@ fn reserved_critical_slot_keeps_unsaturated_normal_retry_burst_backpressured_unt
     assert!(matches!(gate.pop_ready(), Some(4) | Some(5)));
     assert_eq!(gate.admit(70, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn reserved_critical_slot_accepts_one_critical_retry_then_rebounds_normal_retries() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    for tx_id in [80_u64, 81_u64] {
+        assert_eq!(gate.admit(tx_id, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (3, 1, 4));
+    }
+
+    // The last free slot is reserved for critical ingress while critical backlog is
+    // active, so a critical retry may consume it exactly once.
+    assert_eq!(gate.admit(80, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+
+    for (tx_id, class) in [
+        (81_u64, IngressClass::Normal),
+        (81_u64, IngressClass::Critical),
+        (82_u64, IngressClass::Normal),
+        (82_u64, IngressClass::Critical),
+    ] {
+        assert_eq!(gate.admit(tx_id, class), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (3, 2, 5));
+    }
+}
