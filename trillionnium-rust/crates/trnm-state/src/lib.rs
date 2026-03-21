@@ -633,7 +633,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver.trim().to_string(),
+                    first_approver: approver_canonical.clone(),
                     authority_set: authority_canonical.clone(),
                     task_version,
                 });
@@ -733,8 +733,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );

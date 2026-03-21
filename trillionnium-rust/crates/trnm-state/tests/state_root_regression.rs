@@ -1065,6 +1065,71 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_canonical_actor_forms_should_keep_state_root_stable() {
+    let mut staged = StateStore::new();
+    let mut restored = StateStore::new();
+
+    staged
+        .restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_501,
+                key: "resolve_authority".into(),
+                value: "authority.alpha,authority.beta".into(),
+                activate_at_height: 10,
+            }),
+        );
+    restored
+        .restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_501,
+                key: "resolve_authority".into(),
+                value: "authority.alpha,authority.beta".into(),
+                activate_at_height: 10,
+            }),
+        );
+
+    staged
+        .stage_or_confirm_resolve_approval(
+            9_102,
+            1,
+            true,
+            "AUTHORITY.ALPHA",
+            "AUTHORITY.BETA,AUTHORITY.ALPHA",
+        )
+        .expect("staging should canonicalize equivalent pending resolve authority metadata");
+    restored.restore_pending_resolve_approval(
+        9_102,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(
+        staged.pending_resolve_first_approver(9_102).as_deref(),
+        Some("authority.alpha"),
+        "staged pending resolve approvals should store canonical approver ids"
+    );
+    assert_eq!(
+        staged.pending_resolve_approval_snapshot(9_102)
+            .expect("staged snapshot should exist")
+            .authority_set,
+        "authority.alpha,authority.beta",
+        "staged pending resolve approvals should store canonical authority ordering"
+    );
+    assert_eq!(
+        restored.state_root(),
+        staged.state_root(),
+        "state_root should ignore case and ordering noise once pending resolve authority metadata is canonicalized"
+    );
+}
+
+#[test]
 fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_matches() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
