@@ -213,15 +213,7 @@ impl LaneAdmissionGate {
                     // cardinality while lane-local caches drift via ghost ids. Queue
                     // membership remains authoritative for duplicate classification, so
                     // rebuild both lane-local and lane-wide caches before deciding.
-                    self.normal.seen.clear();
-                    self.normal.seen.extend(self.normal.queue.iter().copied());
-                    self.critical.seen.clear();
-                    self.critical
-                        .seen
-                        .extend(self.critical.queue.iter().copied());
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_membership_caches_from_queues();
                     is_duplicate = self.seen_global.contains(&tx_id);
                 }
             }
@@ -247,15 +239,7 @@ impl LaneAdmissionGate {
                     is_duplicate = true;
                     self.seen_global.insert(tx_id);
                 } else {
-                    self.normal.seen.clear();
-                    self.normal.seen.extend(self.normal.queue.iter().copied());
-                    self.critical.seen.clear();
-                    self.critical
-                        .seen
-                        .extend(self.critical.queue.iter().copied());
-                    self.seen_global.clear();
-                    self.seen_global.extend(self.normal.queue.iter().copied());
-                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    self.rebuild_membership_caches_from_queues();
                     is_duplicate = self.seen_global.contains(&tx_id);
                 }
             } else {

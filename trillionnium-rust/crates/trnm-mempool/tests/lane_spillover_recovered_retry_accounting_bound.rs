@@ -27,3 +27,24 @@ fn spillover_recovered_id_re_dedupes_without_perturbing_queue_accounting() {
     assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Duplicate);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }
+
+#[test]
+fn spillover_recovered_id_keeps_cross_class_duplicate_contract_without_queue_count_drift() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert!(matches!(gate.pop_ready(), Some(100) | Some(1)));
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // Once recovered through spillover, duplicate protection must remain global
+    // across both ingress classes and must not perturb queue accounting.
+    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+}
