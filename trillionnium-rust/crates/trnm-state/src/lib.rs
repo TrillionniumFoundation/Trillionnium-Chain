@@ -805,24 +805,36 @@ impl StateStore {
                     }
                     return;
                 }
-                if self
+                let stale_pending_resolve = self
                     .pending_resolve_approvals
                     .get(&id)
                     .map(|pending| {
                         pending.task_version != task.version || task.status != TaskStatus::Challenged
                     })
-                    .unwrap_or(false)
-                {
+                    .unwrap_or(false);
+                let existing_task_matches = matches!(
+                    self.objects.get(&id),
+                    Some(VersionedObject {
+                        version,
+                        value: ObjectValue::Task(existing_task),
+                    }) if *version == task.version && existing_task == &task
+                );
+                if existing_task_matches && !stale_pending_resolve {
+                    return;
+                }
+                if stale_pending_resolve {
                     self.pending_resolve_approvals.remove(&id);
                 }
                 self.invalidate_state_root_cache();
-                self.objects.insert(
-                    id,
-                    VersionedObject {
-                        version: task.version,
-                        value: ObjectValue::Task(task),
-                    },
-                );
+                if !existing_task_matches {
+                    self.objects.insert(
+                        id,
+                        VersionedObject {
+                            version: task.version,
+                            value: ObjectValue::Task(task),
+                        },
+                    );
+                }
             }
             None => {
                 let removed_task = matches!(
@@ -2375,6 +2387,48 @@ mod tests {
             st.state_root(),
             root_before,
             "invalid restore snapshot must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_task_idempotent_snapshot_preserves_state_root_and_version() {
+        let mut st = StateStore::new();
+        let original = TaskObject {
+            task_id: 17,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(original.clone()).unwrap();
+        let root_before = st.state_root();
+
+        st.restore_task(17, Some(original));
+
+        assert_eq!(
+            st.get_ref(17),
+            Some(ObjectRef { id: 17, version: 1 }),
+            "idempotent restore must not churn the task object version"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "idempotent restore must leave state_root unchanged"
         );
     }
 
