@@ -1858,16 +1858,21 @@ fn checkpoint_height_surface_is_canonical(height: u64) -> bool {
     height > 0
 }
 
-pub fn checkpoint_evidence_surface_is_canonical(
+fn checkpoint_hash_surfaces_are_canonical(
     checkpoint: &CheckpointMeta,
     wal_entry: &WalMeta,
 ) -> bool {
-    checkpoint_height_surface_is_canonical(checkpoint.height)
-        && checkpoint.height == wal_entry.height
-        && wal_entry.committed
-        && is_canonical_hex_digest(&checkpoint.state_root_hex)
+    is_canonical_hex_digest(&checkpoint.state_root_hex)
         && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
         && is_canonical_hex_digest(&wal_entry.state_root_hex)
+}
+
+fn checkpoint_binds_to_canonical_wal_entry(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint.height == wal_entry.height
+        && wal_entry.committed
         && is_canonical_wal_proposal_hash(&wal_entry.proposal_hash)
         && wal_prev_hash_surface_is_canonical(
             wal_entry.height,
@@ -1875,6 +1880,15 @@ pub fn checkpoint_evidence_surface_is_canonical(
         )
         && checkpoint.state_root_hex == wal_entry.state_root_hex
         && checkpoint.wal_entry_hash_hex == wal_entry.content_hash_hex()
+}
+
+pub fn checkpoint_evidence_surface_is_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint_height_surface_is_canonical(checkpoint.height)
+        && checkpoint_hash_surfaces_are_canonical(checkpoint, wal_entry)
+        && checkpoint_binds_to_canonical_wal_entry(checkpoint, wal_entry)
 }
 
 pub fn verify_wal_and_find_checkpoint(

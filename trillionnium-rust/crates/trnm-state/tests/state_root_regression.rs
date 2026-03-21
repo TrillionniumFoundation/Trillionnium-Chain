@@ -4243,6 +4243,20 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         ),
         "checkpoint evidence surfaces must reject genesis WAL metadata with a forged prev_hash_hex so audit-ready state-root proofs cannot smuggle a fake predecessor link into height-1 checkpoints"
     );
+
+    let mut missing_prev_hash_wal = wal.clone();
+    missing_prev_hash_wal.height = 2;
+    missing_prev_hash_wal.prev_hash_hex = None;
+    let mut missing_prev_hash_checkpoint = checkpoint.clone();
+    missing_prev_hash_checkpoint.height = 2;
+    missing_prev_hash_checkpoint.wal_entry_hash_hex = missing_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &missing_prev_hash_checkpoint,
+            &missing_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject non-genesis WAL metadata without prev_hash_hex so audit-ready state-root proofs cannot omit the predecessor link for height-2+ checkpoints"
+    );
 }
 
 #[test]
