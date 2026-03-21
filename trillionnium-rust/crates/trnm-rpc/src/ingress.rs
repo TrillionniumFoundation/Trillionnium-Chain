@@ -119,8 +119,12 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                         continue;
                     };
                     if quarantine_record_within_bounds(&entry)
-                        && retained_identities
-                            .insert((entry.source_path.clone(), entry.line_hash, entry.error.clone()))
+                        && retained_identities.insert((
+                            entry.source_path.clone(),
+                            entry.line_hash,
+                            entry.raw_line.clone(),
+                            entry.error.clone(),
+                        ))
                     {
                         retained_lines.push(line.to_string());
                     }
@@ -133,6 +137,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
             && retained_identities.insert((
                 entry.source_path.clone(),
                 entry.line_hash,
+                entry.raw_line.clone(),
                 entry.error.clone(),
             ))
         {
@@ -285,7 +290,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         };
         quarantined_total += 1;
         let error = err.to_string();
-        if quarantined_seen.insert((line_hash, error.clone())) {
+        if quarantined_seen.insert((line_hash, raw_line.clone(), error.clone())) {
             push_tail_limited(
                 &mut quarantined,
                 IngressQuarantineRecord {

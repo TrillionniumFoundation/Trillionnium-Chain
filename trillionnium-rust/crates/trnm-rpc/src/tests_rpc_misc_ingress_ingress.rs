@@ -1165,3 +1165,52 @@ fn load_ingress_records_bounds_total_quarantine_file_growth() {
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
 }
+
+#[test]
+fn append_quarantine_records_keeps_same_hash_error_with_distinct_raw_lines() {
+    let path = unique_tmp_path("ingress-quarantine-dedupe-raw-line", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+
+    let shared_hash = 42;
+    let shared_error = "ingress line is not valid utf-8".to_string();
+    append_quarantine_records(
+        &path,
+        &[
+            IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: 1,
+                line_hash: shared_hash,
+                raw_line: "{\"broken\":\"prefix-a\"}".to_string(),
+                error: shared_error.clone(),
+                quarantined_at_unix_ms: 1,
+            },
+            IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: 2,
+                line_hash: shared_hash,
+                raw_line: "{\"broken\":\"prefix-b\"}".to_string(),
+                error: shared_error,
+                quarantined_at_unix_ms: 2,
+            },
+        ],
+    )
+    .expect("append quarantine records");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries.len(),
+        2,
+        "distinct bounded raw_line echoes should survive quarantine dedupe even when hash and error match"
+    );
+    assert_ne!(entries[0]["raw_line"], entries[1]["raw_line"]);
+
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
