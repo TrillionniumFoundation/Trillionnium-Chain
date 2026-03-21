@@ -101,7 +101,20 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+        let height_checkpoints: Vec<&CheckpointMeta> =
+            checkpoints.iter().filter(|cp| cp.height == e.height).collect();
+        if height_checkpoints.len() > 1 {
+            let first = height_checkpoints[0];
+            let has_conflict = height_checkpoints.iter().skip(1).any(|cp| {
+                cp.state_root_hex != first.state_root_hex
+                    || cp.wal_entry_hash_hex != first.wal_entry_hash_hex
+            });
+            if has_conflict {
+                return Ok(best_checkpoint);
+            }
+        }
+
+        for cp in height_checkpoints {
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
