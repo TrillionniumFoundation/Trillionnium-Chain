@@ -1062,6 +1062,12 @@ fn validate_pending_gov_update_restore_snapshot(
     }
     validate_governance_key_registration(gov_param_key_index, key, snapshot.key_id)?;
     validate_gov_param_value(key, &snapshot.value)?;
+    if snapshot.activate_at_height == 0 {
+        return Err(format!(
+            "pending governance restore requires explicit positive activate_at_height for {}",
+            key
+        ));
+    }
 
     if pending_gov_updates
         .get(key)
@@ -3817,6 +3823,27 @@ mod tests {
             st.pending_gov_update("challenge_min_bond"),
             None,
             "restore must fail closed when a live GovParam object already binds the key_id to another governance key"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_zero_activate_height_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_310,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            None,
+            "restore must fail closed when a pending governance snapshot omits a positive timelock boundary"
         );
     }
 
