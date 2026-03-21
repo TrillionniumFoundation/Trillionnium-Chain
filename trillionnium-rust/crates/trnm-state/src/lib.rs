@@ -759,6 +759,27 @@ impl StateStore {
             .unwrap_or(false)
     }
 
+    fn matches_pending_resolve_restore_reentry_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> bool {
+        let Some(existing) = self.pending_resolve_approvals.get(&task_id) else {
+            return false;
+        };
+        let Some((first_approver, authority_set)) = self
+            .canonical_pending_resolve_approval_snapshot(task_id, snapshot)
+        else {
+            return false;
+        };
+
+        existing.slash_worker == snapshot.slash_worker
+            && existing.confirmations == snapshot.confirmations
+            && existing.task_version == snapshot.task_version
+            && existing.first_approver == first_approver
+            && existing.authority_set == authority_set
+    }
+
     fn matches_task_restore_reentry_snapshot(&self, id: u64, task: &TaskObject) -> bool {
         let Some(current) = self.get_task(id) else {
             return false;
@@ -801,6 +822,12 @@ impl StateStore {
         task_id: u64,
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
+        if let Some(snapshot) = snapshot.as_ref() {
+            if self.matches_pending_resolve_restore_reentry_snapshot(task_id, snapshot) {
+                return;
+            }
+        }
+
         self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
 
@@ -3090,6 +3117,62 @@ mod tests {
 
         assert_eq!(st.pending_resolve_approval(9_002), None);
         assert_eq!(st.pending_resolve_first_approver(9_002), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_is_noop_for_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        let root_before = st.state_root();
+        let snapshot_before = st
+            .pending_resolve_approval_snapshot(task.task_id)
+            .expect("pending resolve snapshot should exist before identical restore re-entry");
+
+        st.restore_pending_resolve_approval(task.task_id, Some(snapshot_before.clone()));
+
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            Some(snapshot_before),
+            "identical restore re-entry should preserve the canonical pending resolve snapshot"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "identical restore re-entry should remain a state-root no-op for pending resolve snapshots"
+        );
     }
 
     #[test]
