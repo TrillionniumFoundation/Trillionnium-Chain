@@ -3481,6 +3481,19 @@ mod tests {
         );
         assert_eq!(st.pending_resolve_approval(9_903), None);
         assert_eq!(st.state_root(), baseline);
+
+        st.restore_pending_resolve_approval(
+            9_904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 0,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_904), None);
+        assert_eq!(st.state_root(), baseline);
     }
 
     #[test]
