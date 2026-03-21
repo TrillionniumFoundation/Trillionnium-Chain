@@ -526,6 +526,8 @@ fn validate_governance_registry_shape() -> Result<(), String> {
 
 fn validate_governance_schema_sample_registry_shape_from_lists(
     allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
     schema_invalid_samples: &[(&str, &str)],
 ) -> Result<(), String> {
     let allowed_unique: std::collections::BTreeSet<&str> =
@@ -556,12 +558,29 @@ fn validate_governance_schema_sample_registry_shape_from_lists(
         ));
     }
 
+    for key in &schema_unique {
+        validate_governance_explicitness_from_lists(
+            allowed_keys,
+            explicit_validator_keys,
+            explicit_value_rule_keys,
+            key,
+        )
+        .map_err(|err| {
+            format!(
+                "governance schema invalid-sample registry must remain explicit-validator complete for {}: {}",
+                key, err
+            )
+        })?;
+    }
+
     Ok(())
 }
 
 fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
     validate_governance_schema_sample_registry_shape_from_lists(
         GOV_ALLOWED_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
         GOV_SCHEMA_INVALID_SAMPLES,
     )
 }
@@ -5656,6 +5675,8 @@ mod tests {
     fn governance_schema_invalid_sample_registry_rejects_membership_drift_fail_closed() {
         let err = validate_governance_schema_sample_registry_shape_from_lists(
             &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
             &[("max_block_ms", "9"), ("ghost_schema_key", "0")],
         )
         .expect_err("schema invalid-sample registry membership drift must fail closed");
@@ -5666,6 +5687,23 @@ mod tests {
         );
         assert!(err.contains("max_parallel_workers"), "{err}");
         assert!(err.contains("ghost_schema_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_validator_coverage_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("explicit-validator complete for max_parallel_workers")
+                || err.contains("coverage missing for allowed key: max_parallel_workers"),
+            "{err}"
+        );
     }
 
     #[test]
