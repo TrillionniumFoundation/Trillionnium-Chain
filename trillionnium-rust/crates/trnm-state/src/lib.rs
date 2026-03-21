@@ -912,6 +912,14 @@ impl StateStore {
             }
         }
 
+        if self
+            .objects
+            .get(&id)
+            .is_some_and(|existing| !matches!(existing.value, ObjectValue::Task(_)))
+        {
+            return;
+        }
+
         self.invalidate_state_root_cache();
         self.remove_gov_param_key_index_for_id(id);
         match snapshot {

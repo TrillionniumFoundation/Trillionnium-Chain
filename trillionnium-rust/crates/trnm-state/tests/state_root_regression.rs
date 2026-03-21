@@ -2284,6 +2284,37 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_task_none_on_non_task_slot_fails_closed_and_preserves_canonical_applied_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(0, 10_303, "max_block_ms".to_string(), "500".to_string())
+        .expect("canonical applied governance param should succeed");
+    let canonical_snapshot = state
+        .get_param(10_303)
+        .expect("canonical applied governance snapshot should exist");
+    let canonical_root = state.state_root();
+
+    state.restore_task(10_303, None);
+
+    assert_eq!(
+        state.get_param(10_303),
+        Some(canonical_snapshot),
+        "restore_task(None) must fail closed when pointed at a non-task object slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "task restore must not scrub the applied governance key index when the slot is not a task"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "restore_task(None) on a non-task slot must preserve the canonical deterministic applied-param root"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
