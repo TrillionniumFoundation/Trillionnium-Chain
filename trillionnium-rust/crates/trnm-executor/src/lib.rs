@@ -1248,15 +1248,21 @@ fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
         &tx.write_set
     };
 
-    let mut primary = None;
-    for id in domain.iter().map(|o| o.id) {
-        match primary {
-            None => primary = Some(id),
-            Some(current) if id < current => primary = Some(id),
-            Some(_) => {}
+    // Keep the adaptive detector allocation-free on the common keyless and
+    // singleton-domain paths instead of scanning through the generic fold.
+    match domain.as_slice() {
+        [] => None,
+        [obj] => Some(obj.id),
+        _ => {
+            let mut primary = domain[0].id;
+            for id in domain.iter().skip(1).map(|o| o.id) {
+                if id < primary {
+                    primary = id;
+                }
+            }
+            Some(primary)
         }
     }
-    primary
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
@@ -3971,6 +3977,17 @@ mod tests {
         assert!(!d.use_hot_bucket);
         assert_eq!(d.reason, "insufficient_sample");
         assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn primary_access_domain_key_preserves_keyless_singleton_and_duplicate_write_domains() {
+        assert_eq!(primary_access_domain_key(&tx(1, vec![], vec![])), None);
+        assert_eq!(primary_access_domain_key(&tx(2, vec![o(7)], vec![])), Some(7));
+        assert_eq!(primary_access_domain_key(&tx(3, vec![o(99)], vec![o(11)])), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&tx(4, vec![o(99)], vec![o(11), o(11), o(17)])),
+            Some(11)
+        );
     }
 
     #[test]
