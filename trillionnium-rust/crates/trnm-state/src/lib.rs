@@ -515,25 +515,12 @@ fn validate_governance_key_registration_lists(
         pinned_key_ids,
     )?;
     validate_requested_governance_key_canonical(key)?;
-
-    if !allowed_keys.contains(&key) {
-        return Err(format!(
-            "no explicit validator registered for governance key: {}",
-            key
-        ));
-    }
-    if !explicit_validator_keys.contains(&key) {
-        return Err(format!(
-            "governance validator coverage missing for allowed key: {}",
-            key
-        ));
-    }
-    if !explicit_value_rule_keys.contains(&key) {
-        return Err(format!(
-            "governance validator missing explicit value rule for allowed key: {}",
-            key
-        ));
-    }
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )?;
     validate_governance_key_id_from_lists(pinned_key_ids, key, key_id)?;
     if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
         if existing_key_id != key_id {
@@ -749,6 +736,7 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+#[allow(dead_code)]
 fn has_explicit_gov_param_validator_from_lists(
     explicit_validator_keys: &[&str],
     explicit_value_rule_keys: &[&str],
@@ -757,6 +745,7 @@ fn has_explicit_gov_param_validator_from_lists(
     explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
 }
 
+#[allow(dead_code)]
 fn has_explicit_gov_param_validator(key: &str) -> bool {
     has_explicit_gov_param_validator_from_lists(
         GOV_EXPLICIT_VALIDATOR_KEYS,
@@ -765,21 +754,12 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
     )
 }
 
-fn validate_governance_validator_coverage_from_lists(
+fn validate_governance_explicitness_from_lists(
     allowed_keys: &[&str],
     explicit_validator_keys: &[&str],
     explicit_value_rule_keys: &[&str],
     key: &str,
 ) -> Result<(), String> {
-    validate_governance_registry_shape_lists(
-        allowed_keys,
-        &[],
-        explicit_validator_keys,
-        explicit_value_rule_keys,
-        &[],
-    )?;
-    validate_requested_governance_key_canonical(key)?;
-
     if !allowed_keys.contains(&key) {
         return Err(format!(
             "no explicit validator registered for governance key: {}",
@@ -811,6 +791,28 @@ fn validate_governance_validator_coverage_from_lists(
     Ok(())
 }
 
+fn validate_governance_validator_coverage_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        &[],
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        &[],
+    )?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )
+}
+
 fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
     validate_governance_validator_coverage_from_lists(
         GOV_ALLOWED_KEYS,
@@ -839,6 +841,7 @@ fn validate_requested_governance_key_canonical(key: &str) -> Result<(), String> 
     })
 }
 
+#[allow(dead_code)]
 fn has_explicit_gov_param_value_rule(key: &str) -> bool {
     GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
 }
@@ -851,6 +854,7 @@ fn has_explicit_gov_param_value_match_coverage_from_lists(
     explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
 }
 
+#[allow(dead_code)]
 fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
     has_explicit_gov_param_value_match_coverage_from_lists(
         GOV_EXPLICIT_VALIDATOR_KEYS,
@@ -3239,6 +3243,37 @@ mod tests {
             "{err}"
         );
         assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_and_registration_explicitness_guards_stay_aligned() {
+        let registration_err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+        )
+        .expect_err("registration boundary must fail closed when explicit value-rule coverage drifts");
+
+        let validator_err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            "max_parallel_workers",
+        )
+        .expect_err("validator boundary must fail closed when explicit value-rule coverage drifts");
+
+        for err in [&registration_err, &validator_err] {
+            assert!(
+                err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+                "{err}"
+            );
+            assert!(err.contains("max_parallel_workers"), "{err}");
+        }
     }
 
     #[test]
