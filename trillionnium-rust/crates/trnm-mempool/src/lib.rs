@@ -300,6 +300,14 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn classify_guarded_retry_probe(
+        &self,
+        class: IngressClass,
+        is_duplicate: bool,
+    ) -> Option<AdmitOutcome> {
+        self.classify_guard_probe(self.lane_backpressure_guard_blocks(class), is_duplicate)
+    }
+
     fn classify_reserved_slot_guard_probe(
         &self,
         class: IngressClass,
@@ -309,7 +317,7 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        self.classify_guard_probe(self.lane_backpressure_guard_blocks(class), is_duplicate)
+        self.classify_guarded_retry_probe(class, is_duplicate)
     }
 
     fn classify_headroom_probe(
