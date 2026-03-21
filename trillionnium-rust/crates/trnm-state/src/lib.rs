@@ -246,6 +246,33 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "monetary_base_burn_per_tick",
 ];
 const GOV_EXPLICIT_VALUE_RULE_KEYS: &[&str] = GOV_EXPLICIT_VALIDATOR_KEYS;
+const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
+    ("max_block_ms", "9"),
+    ("max_parallel_workers", "0"),
+    ("min_worker_stake", "0"),
+    ("challenge_min_bond", "0"),
+    ("challenge_min_bond_bounty_bps", "100001"),
+    ("challenge_min_bond_worker_stake_bps", "100001"),
+    ("challenge_window_blocks", "99"),
+    ("challenge_success_bounty", "-1"),
+    ("llm_meter_prompt_token_weight", "-1"),
+    ("llm_meter_generated_token_weight", "-1"),
+    ("llm_meter_decode_step_weight", "-1"),
+    ("llm_meter_kv_byte_weight", "-1"),
+    ("llm_meter_min_accept_work_units", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
+    ("resolve_authority", "authority-a"),
+    ("emergency_pause", "TRUE"),
+    ("monetary_policy_tick_interval_blocks", "0"),
+    ("monetary_policy_tick_cooldown_blocks", "0"),
+    ("monetary_base_issuance_per_tick", "1000000000001"),
+    ("monetary_base_burn_per_tick", "1000000000001"),
+];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
@@ -494,6 +521,48 @@ fn validate_governance_registry_shape() -> Result<(), String> {
         GOV_EXPLICIT_VALIDATOR_KEYS,
         GOV_EXPLICIT_VALUE_RULE_KEYS,
         GOV_PINNED_KEY_IDS,
+    )
+}
+
+fn validate_governance_schema_sample_registry_shape_from_lists(
+    allowed_keys: &[&str],
+    schema_invalid_samples: &[(&str, &str)],
+) -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        allowed_keys.iter().copied().collect();
+    let schema_sample_keys: Vec<&str> = schema_invalid_samples
+        .iter()
+        .map(|(key, _)| *key)
+        .collect();
+    let schema_unique: std::collections::BTreeSet<&str> =
+        schema_sample_keys.iter().copied().collect();
+
+    if schema_unique.len() != schema_sample_keys.len() {
+        return Err("governance schema invalid-sample registry contains duplicate entries".into());
+    }
+    if allowed_unique != schema_unique {
+        let missing_schema_keys: Vec<&str> = allowed_unique
+            .difference(&schema_unique)
+            .copied()
+            .collect();
+        let rogue_schema_keys: Vec<&str> = schema_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance schema invalid-sample registry drifted from allowed-key registry: missing_schema_keys=[{}], rogue_schema_keys=[{}]",
+            missing_schema_keys.join(", "),
+            rogue_schema_keys.join(", "),
+        ));
+    }
+
+    Ok(())
+}
+
+fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
+    validate_governance_schema_sample_registry_shape_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SCHEMA_INVALID_SAMPLES,
     )
 }
 
@@ -865,6 +934,7 @@ fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     validate_governance_registry_shape()?;
+    validate_governance_schema_sample_registry_shape()?;
     validate_requested_governance_key_canonical(key)?;
     validate_governance_validator_coverage(key)?;
     validate_governance_sensitive_key_coverage(key)?;
@@ -5580,6 +5650,46 @@ mod tests {
             err.contains("allowed-key registry contains duplicate entries"),
             "unexpected validator coverage duplicate-allowed-key error: {err}"
         );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[("max_block_ms", "9"), ("ghost_schema_key", "0")],
+        )
+        .expect_err("schema invalid-sample registry membership drift must fail closed");
+
+        assert!(
+            err.contains("governance schema invalid-sample registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_schema_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_allowed_keys_schema_invalid_samples_merge_gate_is_explicit() {
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        let sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+            .iter()
+            .map(|(key, _)| *key)
+            .collect();
+        let sample_unique: std::collections::BTreeSet<&str> =
+            sample_keys.iter().copied().collect();
+
+        assert_eq!(sample_unique.len(), sample_keys.len());
+        assert_eq!(allowed_unique, sample_unique);
+
+        for (key, invalid_sample) in GOV_SCHEMA_INVALID_SAMPLES {
+            let err = validate_gov_param_value(key, invalid_sample)
+                .expect_err("invalid governance samples must fail closed");
+            assert!(
+                !err.contains("no explicit validator registered for governance key"),
+                "schema invalid sample fell through explicit validator coverage for {key}: {err}"
+            );
+        }
     }
 
     #[test]
