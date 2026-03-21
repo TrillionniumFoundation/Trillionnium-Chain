@@ -410,6 +410,39 @@ fn x3_prep_accepts_confirm_height_at_source_plus_one_finality_boundary() {
 }
 
 #[test]
+fn x3_prep_accepts_confirm_height_at_heartbeat_target_lower_boundary() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-lower-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 699 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 699,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(699),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(699));
+}
+
+#[test]
 fn x3_prep_rejects_confirm_height_behind_heartbeat_target_height() {
     let mut request = SettlementRequest::new(1, "0xstale-confirm-height".to_string());
     let token = operator_token();
