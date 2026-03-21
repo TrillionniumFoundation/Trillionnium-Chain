@@ -1862,6 +1862,17 @@ fn wal_content_hash_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     is_canonical_hex_digest(&wal_entry.content_hash_hex())
 }
 
+fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    let state_root_hex = wal_entry.state_root_hex.as_str();
+    let looks_like_digest_surface = state_root_hex.len() == 64
+        && state_root_hex
+            .as_bytes()
+            .iter()
+            .all(|byte| byte.is_ascii_hexdigit());
+
+    !looks_like_digest_surface || is_canonical_hex_digest(state_root_hex)
+}
+
 fn checkpoint_hash_surfaces_are_canonical(
     checkpoint: &CheckpointMeta,
     wal_entry: &WalMeta,
@@ -1957,6 +1968,7 @@ pub fn verify_wal_and_find_checkpoint(
 
         if !is_canonical_wal_proposal_hash(&e.proposal_hash)
             || !wal_prev_hash_surface_is_canonical(e.height, e.prev_hash_hex.as_deref())
+            || !wal_state_root_surface_is_canonical(e)
         {
             return Ok(best_checkpoint);
         }

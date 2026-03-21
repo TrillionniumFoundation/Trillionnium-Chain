@@ -4360,6 +4360,30 @@ fn wal_checkpoint_verification_rejects_noncanonical_wal_prev_hash_surface() {
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_when_checkpoint_matches(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "AB".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
 fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
 ) {
     let mut original = StateStore::new();
