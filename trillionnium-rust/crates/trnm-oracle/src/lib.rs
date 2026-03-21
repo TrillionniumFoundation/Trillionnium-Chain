@@ -56,9 +56,16 @@ impl OracleSnapshot {
         window_end_ms: u64,
         snapshot_ts_ms: u64,
     ) -> Result<Self, OracleError> {
-        let feed_id = feed_id.into().trim().to_ascii_lowercase();
+        let raw_feed_id = feed_id.into();
+        let feed_id = raw_feed_id.trim().to_ascii_lowercase();
         if feed_id.is_empty() {
             return Err(OracleError::EmptyFeedId);
+        }
+        if raw_feed_id != feed_id {
+            return Err(OracleError::NonCanonicalFeedId {
+                raw: raw_feed_id,
+                canonical: feed_id,
+            });
         }
         if window_end_ms < window_start_ms {
             return Err(OracleError::InvalidWindow {
@@ -543,6 +550,30 @@ mod tests {
     }
 
     #[test]
+    fn rejects_non_canonical_feed_id_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            " BTC/USD ",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot build should reject non-canonical feed id");
+
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalFeedId {
+                raw: " BTC/USD ".to_string(),
+                canonical: "btc/usd".to_string(),
+            }
+        );
+    }
+
+    #[test]
     fn rejects_stale_snapshot() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_000);
@@ -702,7 +733,7 @@ mod tests {
         .expect("snapshot 1");
 
         let s2 = OracleSnapshot::new(
-            "BTC/USD",
+            "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink")],
             2,
