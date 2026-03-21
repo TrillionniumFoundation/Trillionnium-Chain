@@ -318,31 +318,40 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
-fn ensure_effective_resolve_authority_match(
-    st: &StateStore,
-    authority_set: &str,
-) -> Result<(), String> {
-    let provided = canonicalize_resolve_authority_set(authority_set)?;
+fn effective_resolve_authority_canonical(st: &StateStore) -> Result<Option<String>, String> {
     if let Some(pending) = st.pending_gov_update("resolve_authority") {
         let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
             "resolve approval authority set must match pending governance authority".to_string()
         })?;
-        if expected != provided {
-            return Err(
-                "resolve approval authority set must match pending governance authority".into(),
-            );
-        }
-        return Ok(());
+        return Ok(Some(expected));
     }
     if let Some(current) = st.gov_param_string("resolve_authority") {
         let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
             "resolve approval authority set must match configured governance authority".to_string()
         })?;
-        if expected != provided {
-            return Err(
-                "resolve approval authority set must match configured governance authority".into(),
-            );
-        }
+        return Ok(Some(expected));
+    }
+    Ok(None)
+}
+
+fn ensure_effective_resolve_authority_match(
+    st: &StateStore,
+    authority_set: &str,
+) -> Result<(), String> {
+    let provided = canonicalize_resolve_authority_set(authority_set)?;
+    let Some(expected) = effective_resolve_authority_canonical(st)? else {
+        return Ok(());
+    };
+    if expected != provided {
+        let authority_kind = if st.pending_gov_update("resolve_authority").is_some() {
+            "pending governance authority"
+        } else {
+            "configured governance authority"
+        };
+        return Err(format!(
+            "resolve approval authority set must match {}",
+            authority_kind
+        ));
     }
     Ok(())
 }
