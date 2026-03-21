@@ -2300,6 +2300,21 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
     Ok(())
 }
 
+fn timeout_bond_disposition(
+    st: &StateStore,
+    task_id: u64,
+    from_status: TaskStatus,
+) -> Option<&'static str> {
+    if matches!(from_status, TaskStatus::Challenged) {
+        st.get_task(task_id).and_then(|t| {
+            t.challenge_bond_forfeited
+                .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+        })
+    } else {
+        None
+    }
+}
+
 fn ordered_known_task_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
     let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
     task_ids.sort_unstable();
@@ -2334,7 +2349,8 @@ fn scan_and_apply_timeouts(
             // challenged settlement path at all.
             continue;
         }
-        let from_status = format!("{:?}", task.status);
+        let from_status = task.status.clone();
+        let from_status_name = format!("{:?}", from_status);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
@@ -2346,20 +2362,13 @@ fn scan_and_apply_timeouts(
             let root = hex::encode(st.state_root());
             let (treasury_delta, challenger_delta) =
                 balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = if from_status == "Challenged" {
-                st.get_task(task_id).and_then(|t| {
-                    t.challenge_bond_forfeited
-                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
-                })
-            } else {
-                None
-            };
+            let bond_disposition = timeout_bond_disposition(st, task_id, from_status);
             emit_timeout_event(
                 st,
                 task_id,
                 tx_id_seed.saturating_add(migrated),
                 current_height,
-                &from_status,
+                &from_status_name,
                 &to_status,
                 &root,
                 &treasury_delta,
@@ -2369,7 +2378,7 @@ fn scan_and_apply_timeouts(
             );
             println!(
                 "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, from_status, to_status
+                current_height, task_id, from_status_name, to_status
             );
         }
     }
@@ -7663,6 +7672,54 @@ mod tests {
 
         assert_eq!(ordered_known_task_ids(&ascending), vec![7001, 7002, 7003]);
         assert_eq!(ordered_known_task_ids(&descending), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
+    fn timeout_bond_disposition_only_applies_to_challenged_transitions() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 1_000_000);
+        st.set_balance("worker7000", 1_000);
+
+        let r1 = apply_create_task(&mut st, 7000, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(7000, &result_hash, &reveal_salt, "worker7000");
+        let r2 = apply_accept_task(&mut st, r1, "worker7000".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7000".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let challenged = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .and_then(|revealed| {
+            trnm_pouw::apply_challenge_at_height(
+                &mut st,
+                revealed,
+                "challenger".into(),
+                10,
+                "challenger".into(),
+                120,
+            )
+        })
+        .unwrap();
+
+        let _ = apply_timeout(&mut st, challenged, 1_000).unwrap();
+
+        assert_eq!(
+            timeout_bond_disposition(&st, 7000, TaskStatus::Challenged),
+            Some("refunded")
+        );
+        assert_eq!(timeout_bond_disposition(&st, 7000, TaskStatus::Revealed), None);
     }
 
     #[test]
