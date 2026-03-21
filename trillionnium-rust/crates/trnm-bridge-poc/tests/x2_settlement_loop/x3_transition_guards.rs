@@ -643,6 +643,41 @@ fn x3_prep_retry_pending_blank_reason_falls_back_without_state_change() {
 }
 
 #[test]
+fn x3_prep_retry_pending_heartbeat_takes_precedence_over_confirm_failure_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-confirm-failure".to_string());
+    let token = operator_token();
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 699,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
+            reason: "target relay timeout #1".to_string(),
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_retry_pending_heartbeat_after_finalize_prefers_replay_guard_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xretry-pending-after-finalize".to_string());
     let token = operator_token();
