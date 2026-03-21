@@ -2498,6 +2498,44 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_hot_bucket_path_keeps_mixed_access_domain_skew_guardrails() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "4");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "4");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(5)]),
+            tx(2, vec![], vec![o(5)]),
+            tx(
+                3,
+                vec![ObjectRef { id: 5, version: 2 }],
+                vec![ObjectRef { id: 5, version: 1 }],
+            ),
+            tx(4, vec![], vec![o(5)]),
+        ];
+
+        let panic = std::panic::catch_unwind(|| {
+            let _ =
+                build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+        });
+
+        let msg = panic
+            .expect_err("auto-adaptive hot-bucket path must reject cross-domain version skew")
+            .downcast::<String>()
+            .map(|s| *s)
+            .or_else(|payload| payload.downcast::<&'static str>().map(|s| s.to_string()))
+            .expect("panic payload should be string-like");
+        assert!(
+            msg.contains("mixed access domain contains the same object id with multiple versions"),
+            "unexpected panic: {msg}"
+        );
+    }
+
+    #[test]
     fn aggressive_round_robin_seed_rotates_initial_probe_start() {
         let _env = env_lock();
         let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
