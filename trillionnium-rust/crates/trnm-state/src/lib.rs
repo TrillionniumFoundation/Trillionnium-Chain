@@ -794,20 +794,19 @@ impl StateStore {
         let Some(snapshot) = snapshot else {
             return;
         };
-        if self
+        let Some((first_approver, authority_set)) = self
             .canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
-            .is_none()
-        {
+        else {
             return;
-        }
+        };
 
         self.pending_resolve_approvals.insert(
             task_id,
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver,
+                authority_set,
                 task_version: snapshot.task_version,
             },
         );
@@ -2695,13 +2694,13 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(9_000), Some((true, 1)));
         assert_eq!(
             st.pending_resolve_first_approver(9_000).as_deref(),
-            Some("Authority-B")
+            Some("authority-b")
         );
         let snapshot = st
             .pending_resolve_approval_snapshot(9_000)
             .expect("equivalent snapshot should be restored");
-        assert_eq!(snapshot.first_approver, "Authority-B");
-        assert_eq!(snapshot.authority_set, "Authority-B,Authority-A");
+        assert_eq!(snapshot.first_approver, "authority-b");
+        assert_eq!(snapshot.authority_set, "authority-a,authority-b");
     }
 
     #[test]
