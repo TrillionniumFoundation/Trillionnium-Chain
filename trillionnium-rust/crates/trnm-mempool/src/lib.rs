@@ -222,13 +222,20 @@ impl LaneAdmissionGate {
         }
     }
 
+    fn seen_caches_contain_tx(&self, tx_id: u64) -> bool {
+        self.seen_global.contains(&tx_id)
+            || self.normal.seen.contains(&tx_id)
+            || self.critical.seen.contains(&tx_id)
+    }
+
+    fn classify_seen_probe(&self, tx_id: u64) -> AdmitOutcome {
+        self.classify_duplicate_probe(self.seen_caches_contain_tx(tx_id))
+    }
+
     fn classify_hard_stop_probe(&self, tx_id: u64) -> AdmitOutcome {
         // Hard-stop mode preserves restored duplicate knowledge while keeping
         // fresh retry bursts backpressured without touching lane admit paths.
-        let is_duplicate = self.seen_global.contains(&tx_id)
-            || self.normal.seen.contains(&tx_id)
-            || self.critical.seen.contains(&tx_id);
-        self.classify_duplicate_probe(is_duplicate)
+        self.classify_seen_probe(tx_id)
     }
 
     fn classify_saturated_probe(&self, is_duplicate: bool) -> AdmitOutcome {
@@ -1782,6 +1789,24 @@ mod tests {
             g.admit(99, IngressClass::Critical),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn hard_stop_fresh_retry_burst_keeps_backpressure_guard_flat_across_classes() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        for class in [
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+            IngressClass::Critical,
+        ] {
+            assert_eq!(g.admit(88, class), AdmitOutcome::Backpressured);
+            assert!(g.seen_global.is_empty());
+            assert!(g.normal.seen.is_empty());
+            assert!(g.critical.seen.is_empty());
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+        }
     }
 
     #[test]
