@@ -3363,6 +3363,8 @@ mod tests {
         );
     }
 
+    const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
+
     #[test]
     fn governance_restore_rejects_non_allowlisted_key_fail_closed() {
         let mut st = StateStore::new();
@@ -3370,24 +3372,25 @@ mod tests {
             9_200,
             Some(GovParamObject {
                 key_id: 9_200,
-                key: "algorand_governance_key_id".into(),
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
                 value: "key-42".into(),
                 version: 1,
             }),
         );
 
         assert_eq!(
-            st.gov_param_string("algorand_governance_key_id"),
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "restore must not expose non-allowlisted governance keys"
         );
         assert!(
-            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
             "restore must fail closed instead of leaving a resolvable ref for a non-allowlisted governance key"
         );
         assert!(
             st.gov_param_key_index
-                .get("algorand_governance_key_id")
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "restore must not register non-allowlisted governance keys in the shared registry"
         );
@@ -3402,22 +3405,23 @@ mod tests {
                 version: 1,
                 value: ObjectValue::GovParam(GovParamObject {
                     key_id: 9_200,
-                    key: "algorand_governance_key_id".into(),
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
                     value: "key-42".into(),
                     version: 1,
                 }),
             },
         );
         st.gov_param_key_index
-            .insert("algorand_governance_key_id".into(), 9_200);
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
 
         assert_eq!(
-            st.gov_param_string("algorand_governance_key_id"),
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "string accessor must fail closed for a non-allowlisted governance registry entry"
         );
         assert!(
-            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
         );
     }
@@ -3453,17 +3457,18 @@ mod tests {
     fn pending_governance_accessor_fails_closed_for_non_allowlisted_algorand_registry_injection() {
         let mut st = StateStore::new();
         st.pending_gov_updates.insert(
-            "algorand_governance_key_id".into(),
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
             PendingGovParamUpdate {
                 key_id: 9_200,
-                key: "algorand_governance_key_id".into(),
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
                 value: "key-42".into(),
                 activate_at_height: 77_777,
             },
         );
 
         assert!(
-            st.pending_gov_update("algorand_governance_key_id").is_none(),
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
             "pending accessor must fail closed for a non-allowlisted governance registry entry"
         );
     }
