@@ -153,8 +153,11 @@ impl OracleValidateSnapshotResponse {
             }
             Some(_) => false,
         };
-        let source_cardinality_consistent = self.metrics.sample_count == 0
-            || self.metrics.oracle_source_cardinality > 0;
+        let source_cardinality_consistent = if self.metrics.sample_count == 0 {
+            self.metrics.oracle_source_cardinality == 0
+        } else {
+            self.metrics.oracle_source_cardinality > 0
+        };
 
         self.observation_matches_metrics()
             && self.classified_outcome_conserves_sample_count()
@@ -1187,6 +1190,35 @@ mod tests {
         assert_eq!(out.observation_classified_outcome_total(), 1);
         assert!(out.classified_outcome_conserves_sample_count());
         assert!(!out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_zero_sample_positive_source_cardinality() {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 795,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 0,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
         assert!(!out.bridge_contract_consistent());
     }
 
