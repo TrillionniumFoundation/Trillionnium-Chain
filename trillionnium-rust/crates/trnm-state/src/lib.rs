@@ -932,7 +932,7 @@ impl StateStore {
         })
     }
 
-    fn canonical_gov_param_registry_key_for_id(&self, id: u64) -> Option<&str> {
+    fn validated_gov_param_object_at_id(&self, id: u64) -> Option<&GovParamObject> {
         let object = self.objects.get(&id)?;
         let param = match &object.value {
             ObjectValue::GovParam(p) if p.key_id == id => p,
@@ -946,17 +946,16 @@ impl StateStore {
         {
             return None;
         }
-        Some(param.key.as_str())
+        Some(param)
+    }
+
+    fn canonical_gov_param_registry_key_for_id(&self, id: u64) -> Option<&str> {
+        Some(self.validated_gov_param_object_at_id(id)?.key.as_str())
     }
 
     fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
-        let object = self.objects.get(&id)?;
-        match &object.value {
-            ObjectValue::GovParam(p) if self.canonical_gov_param_registry_key_for_id(id) == Some(p.key.as_str()) => {
-                Some(p)
-            }
-            _ => None,
-        }
+        let param = self.validated_gov_param_object_at_id(id)?;
+        (self.canonical_gov_param_registry_key_for_id(id) == Some(param.key.as_str())).then_some(param)
     }
 
     pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
@@ -3323,6 +3322,10 @@ mod tests {
         assert!(
             st.gov_param_ref_for_key("resolve_authority").is_none(),
             "object ref accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert!(
+            st.get_param(7315).is_none(),
+            "id accessor must fail closed when registry id and object key_id diverge"
         );
     }
 
