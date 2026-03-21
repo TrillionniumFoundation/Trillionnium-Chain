@@ -231,9 +231,10 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline) as u128 * 10_000;
+    let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    (numerator / denominator) as u32
+    let scaled = numerator / denominator;
+    scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -769,6 +770,35 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn observed_report_caps_extreme_drift_boundary_to_guardrail_ceiling() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(i128::MAX, Some(1), 10_000);
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("extreme drift should fail closed at the capped guardrail");
+        assert!(matches!(
+            err,
+            OracleError::DeviationExceeded {
+                deviation_bps: MAX_DEVIATION_BPS_CAP,
+                max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            }
+        ));
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
         assert!(report.classified_outcome_conserves_sample_count());
     }
 
