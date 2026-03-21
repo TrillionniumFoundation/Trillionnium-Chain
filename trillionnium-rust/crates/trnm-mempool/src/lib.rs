@@ -159,8 +159,18 @@ impl LaneAdmissionGate {
             .saturating_sub(self.critical.queue.len())
     }
 
+    fn critical_backlog_active(&self) -> bool {
+        !self.critical.queue.is_empty()
+    }
+
+    fn critical_has_single_borrowable_slot(&self) -> bool {
+        self.critical_free_slots() == 1
+    }
+
     fn normal_last_reserved_critical_slot_is_guarded(&self) -> bool {
-        self.normal.capacity > 0 && !self.critical.queue.is_empty() && self.critical_free_slots() == 1
+        self.normal.capacity > 0
+            && self.critical_backlog_active()
+            && self.critical_has_single_borrowable_slot()
     }
 
     fn normal_can_borrow_critical_headroom(&self) -> bool {

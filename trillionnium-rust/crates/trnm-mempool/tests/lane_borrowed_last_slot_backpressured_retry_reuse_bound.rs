@@ -67,3 +67,26 @@ fn borrowed_last_idle_critical_slot_preserves_duplicate_before_guard_reopens() {
     assert_eq!(gate.pop_ready(), Some(12));
     assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn guarded_last_critical_slot_preserves_cross_class_duplicate_before_reopen() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    // Fill dedicated normal capacity while leaving exactly one reserved critical
+    // slot free and a live critical backlog.
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // The final reserved critical slot is guarded against fresh normal spillover,
+    // but an already queued critical id must still classify as Duplicate even when
+    // retried through the blocked normal path.
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+    // A fresh normal retry remains backpressured until the reserve reopens.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.pop_ready(), Some(20));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+}
