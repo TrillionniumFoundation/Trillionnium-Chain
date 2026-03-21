@@ -1896,6 +1896,24 @@ pub fn checkpoint_evidence_surface_is_canonical(
         && checkpoint_binds_to_canonical_wal_entry(checkpoint, wal_entry)
 }
 
+fn checkpoint_matches_wal_entry_for_recovery(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+    wal_entry_hash_hex: &str,
+) -> bool {
+    if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
+        return false;
+    }
+    if is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && !is_canonical_hex_digest(&checkpoint.state_root_hex)
+    {
+        return false;
+    }
+
+    checkpoint.state_root_hex == wal_entry.state_root_hex
+        && wal_entry_hash_hex == checkpoint.wal_entry_hash_hex.as_str()
+}
+
 pub fn verify_wal_and_find_checkpoint(
     checkpoints: &[CheckpointMeta],
     wal_entries: &[WalMeta],
@@ -1944,17 +1962,7 @@ pub fn verify_wal_and_find_checkpoint(
         }
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
-            if !is_canonical_hex_digest(&cp.wal_entry_hash_hex) {
-                continue;
-            }
-            if is_canonical_hex_digest(&e.state_root_hex)
-                && !is_canonical_hex_digest(&cp.state_root_hex)
-            {
-                continue;
-            }
-            if cp.state_root_hex == e.state_root_hex
-                && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-            {
+            if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
                 let should_replace = best_checkpoint
                     .as_ref()
                     .map(|best| cp.height >= best.height)
