@@ -123,13 +123,15 @@ impl WalMeta {
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        hash_len_prefixed_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
-        if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
-        } else {
-            hasher.update(b"genesis");
+        hash_len_prefixed_str(&mut hasher, &self.state_root_hex);
+        match &self.prev_hash_hex {
+            Some(prev) => {
+                hasher.update([1]);
+                hash_len_prefixed_str(&mut hasher, prev);
+            }
+            None => hasher.update([0]),
         }
         hex::encode(hasher.finalize())
     }
@@ -1985,6 +1987,36 @@ mod tests {
         assert!(
             !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
             "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
+        );
+    }
+
+    #[test]
+    fn wal_content_hash_length_frames_variable_width_evidence_surfaces() {
+        let base_state_root = format!("{}{}", "c", "d".repeat(63));
+        let boundary_shifted_state_root = format!("{}{}", "d", "d".repeat(63));
+        let prev_hash = "01".repeat(32);
+
+        let wal_a = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: base_state_root,
+            prev_hash_hex: Some(prev_hash.clone()),
+        };
+        let wal_b = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "abc".into(),
+            committed: true,
+            state_root_hex: boundary_shifted_state_root,
+            prev_hash_hex: Some(prev_hash),
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence hashing must length-frame proposal_hash and state_root_hex so adjacent audit surfaces cannot collide by shifting string boundaries"
         );
     }
 
