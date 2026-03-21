@@ -440,6 +440,70 @@ impl RiskQuotaState {
 const RISK_SOURCE_MAX_CHARS: usize = 64;
 const RISK_ERROR_KEY_MAX_CHARS: usize = 96;
 
+fn is_disallowed_risk_source_char(ch: char) -> bool {
+    ch.is_control()
+        || matches!(
+            ch,
+            '\u{00A0}'
+                | '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{115F}'
+                | '\u{1160}'
+                | '\u{1680}'
+                | '\u{180E}'
+                | '\u{3164}'
+                | '\u{2000}'
+                | '\u{2001}'
+                | '\u{2002}'
+                | '\u{2003}'
+                | '\u{2004}'
+                | '\u{2005}'
+                | '\u{2006}'
+                | '\u{2007}'
+                | '\u{2008}'
+                | '\u{2009}'
+                | '\u{200A}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{202F}'
+                | '\u{205F}'
+                | '\u{3000}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
+                | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
+        )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+}
+
 fn elide_risk_error_key(key: &str) -> String {
     let mut out = String::with_capacity(key.len().min(RISK_ERROR_KEY_MAX_CHARS));
     for ch in key.chars().take(RISK_ERROR_KEY_MAX_CHARS) {
@@ -458,25 +522,26 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
     }
 
     // Hot-path shortcut: most ingress already carries stable lowercase aliases
-    // without whitespace. Reuse the trimmed string directly to avoid per-char
-    // writes/allocation churn on quota accounting.
+    // without whitespace or invisible controls. Reuse the trimmed string directly
+    // to avoid per-char writes/allocation churn on quota accounting.
     if source.len() <= RISK_SOURCE_MAX_CHARS
         && source
             .chars()
-            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase())
+            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase() && !is_disallowed_risk_source_char(ch))
     {
         return source.to_string();
     }
 
-    // Collapse internal whitespace so cosmetic attribution variants don't explode
-    // quota key-space (e.g. "bot  worker" vs "bot worker").
+    // Collapse internal whitespace/invisible separators so cosmetic or adversarial
+    // attribution variants don't explode quota key-space (e.g. "bot  worker",
+    // "bot\u{2060}worker", and "bot\u{200B}worker" should share a bucket).
     // Keep this allocation-light: avoid split+collect+join on the hot ingress path.
     let mut out = String::with_capacity(source.len().min(RISK_SOURCE_MAX_CHARS));
     let mut emitted = 0usize;
     let mut pending_space = false;
 
     for ch in source.chars() {
-        if ch.is_whitespace() {
+        if ch.is_whitespace() || is_disallowed_risk_source_char(ch) {
             if emitted > 0 {
                 pending_space = true;
             }
@@ -2266,6 +2331,11 @@ mod tests {
         // Non-ASCII whitespace must still collapse even on the lowercase fast path.
         let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
         assert_eq!(canonical_nbsp, "bot worker");
+
+        // Invisible bidi/format markers must also collapse so sponsor/free-ingress
+        // quota accounting can't be split across visually identical aliases.
+        let canonical_bidi = canonicalize_risk_source(Some("relay\u{2060}\u{200d}source"));
+        assert_eq!(canonical_bidi, "relay source");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
         assert_eq!(
