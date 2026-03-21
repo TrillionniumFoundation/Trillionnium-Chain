@@ -107,6 +107,39 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
     out
 }
 
+#[inline]
+fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
+    if objs.is_empty() {
+        return;
+    }
+
+    // Tiny mixed domains are common in executor telemetry. Keep the merge path
+    // allocation-free there while still deduplicating same-version read/write echoes.
+    if dst.len() + objs.len() <= 8 {
+        for obj in objs {
+            let key = access_key(obj);
+            if !dst.contains(&key) {
+                dst.push(key);
+            }
+        }
+        return;
+    }
+
+    let mut seen: HashSet<u64> = HashSet::with_capacity(dst.len() + objs.len());
+    seen.extend(dst.iter().copied());
+    for obj in objs {
+        let key = access_key(obj);
+        if seen.insert(key) {
+            dst.push(key);
+        }
+    }
+}
+
 fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
     if objs.len() <= 1 {
         return true;
@@ -299,11 +332,7 @@ fn hot_object_share(txs: &[Tx]) -> f64 {
         assert_tx_access_domain_versions_are_consistent(tx);
 
         let mut keys = dedup_access_keys(&tx.read_set);
-        for key in dedup_access_keys(&tx.write_set) {
-            if !keys.contains(&key) {
-                keys.push(key);
-            }
-        }
+        extend_unique_access_keys(&mut keys, &tx.write_set);
         total += keys.len();
         for key in keys {
             *counts.entry(key).or_insert(0) += 1;
@@ -1678,6 +1707,42 @@ mod tests {
         ]);
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn extend_unique_access_keys_dedups_cross_domain_echoes_without_reordering_existing_keys() {
+        let mut keys = dedup_access_keys(&[o(100), o(200), o(100), o(300), o(400)]);
+
+        extend_unique_access_keys(
+            &mut keys,
+            &[
+                o(300),
+                o(500),
+                o(200),
+                o(600),
+                o(500),
+                o(700),
+                o(700),
+            ],
+        );
+
+        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn hot_object_share_dedups_same_version_cross_domain_echoes() {
+        let deduped = vec![
+            tx(1, vec![o(7)], vec![o(8)]),
+            tx(2, vec![o(7)], vec![o(9)]),
+            tx(3, vec![o(10)], vec![o(11)]),
+        ];
+        let echoed = vec![
+            tx(1, vec![o(7), o(8)], vec![o(8), o(7)]),
+            tx(2, vec![o(7), o(9)], vec![o(9), o(7)]),
+            tx(3, vec![o(10), o(11)], vec![o(11), o(10)]),
+        ];
+
+        assert_eq!(hot_object_share(&echoed), hot_object_share(&deduped));
     }
 
     #[test]
