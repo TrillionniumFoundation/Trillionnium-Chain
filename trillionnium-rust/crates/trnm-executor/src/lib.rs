@@ -1234,10 +1234,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
-    assert!(
-        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
-        "mixed access domain contains the same object id with multiple versions"
-    );
+    assert_tx_access_domain_versions_are_consistent(tx);
 
     // Canonicalize the adaptive hotspot signal within the preferred access
     // domain. Writes remain the stronger scheduling signal, but equivalent
@@ -3988,6 +3985,20 @@ mod tests {
             primary_access_domain_key(&tx(4, vec![o(99)], vec![o(11), o(11), o(17)])),
             Some(11)
         );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_cross_domain_version_skew_for_same_object_id() {
+        let t = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = primary_access_domain_key(&t);
     }
 
     #[test]
