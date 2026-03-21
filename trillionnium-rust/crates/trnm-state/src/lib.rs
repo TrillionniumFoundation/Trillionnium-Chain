@@ -536,6 +536,9 @@ fn validate_governance_schema_sample_registry_shape_from_lists(
         .iter()
         .map(|(key, _)| *key)
         .collect();
+    for key in &schema_sample_keys {
+        validate_governance_registry_key_canonical("schema invalid-sample registry", key)?;
+    }
     let schema_unique: std::collections::BTreeSet<&str> =
         schema_sample_keys.iter().copied().collect();
 
@@ -3405,6 +3408,22 @@ mod tests {
 
         assert!(
             err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_noncanonical_keys_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[(" max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed on non-canonical keys");
+
+        assert!(
+            err.contains("schema invalid-sample registry contains non-canonical key with surrounding whitespace"),
             "{err}"
         );
     }
