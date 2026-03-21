@@ -98,6 +98,9 @@ fn repeated_same_id_saturated_retries_stay_backpressured_until_one_slot_reopens(
         assert_eq!(gate.queued_counts(), (1, 1, 2));
     }
 
+    // Saturation should preserve bounded-retry semantics for fresh ids until one
+    // real slot reopens, at which point the same id becomes admissible and then
+    // immediately dedupes across classes.
     assert!(matches!(gate.pop_ready(), Some(10) | Some(20)));
     assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);

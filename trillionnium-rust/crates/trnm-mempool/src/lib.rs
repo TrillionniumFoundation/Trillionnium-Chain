@@ -255,13 +255,24 @@ impl LaneAdmissionGate {
         lane_total < self.total_capacity
     }
 
+    fn lane_is_globally_saturated(&self, lane_total: usize) -> bool {
+        !self.lane_has_global_headroom(lane_total)
+    }
+
+    fn classify_capacity_probe(&self, is_duplicate: bool) -> AdmitOutcome {
+        // Preserve the lane-wide saturated duplicate-vs-backpressure contract in
+        // one place so all pre-admission callers share the same bounded-retry
+        // semantics.
+        self.classify_bounded_retry_probe(is_duplicate)
+    }
+
     fn classify_pre_admission_probe(
         &self,
         lane_total: usize,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        if !self.lane_has_global_headroom(lane_total) {
-            return Some(self.classify_bounded_retry_probe(is_duplicate));
+        if self.lane_is_globally_saturated(lane_total) {
+            return Some(self.classify_capacity_probe(is_duplicate));
         }
 
         if is_duplicate {
