@@ -80,11 +80,20 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let line_separator_source_path = IngressQuarantineRecord {
         source_path: "/tmp/ingress\u{2028}jsonl".to_string(),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&line_separator_source_path),
         "unicode line separators should be rejected from quarantine metadata"
+    );
+
+    let zero_width_error = IngressQuarantineRecord {
+        error: "parse failed\u{200b}json".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&zero_width_error),
+        "zero-width quarantine characters should be rejected to keep retained logs unambiguous"
     );
 }
 

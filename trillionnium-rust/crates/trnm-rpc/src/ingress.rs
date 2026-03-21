@@ -51,7 +51,10 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
             ch.is_control()
                 || matches!(
                     ch,
-                    '\u{2028}'
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2028}'
                         | '\u{2029}'
                         | '\u{202A}'
                         | '\u{202B}'
@@ -62,6 +65,7 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
                         | '\u{2067}'
                         | '\u{2068}'
                         | '\u{2069}'
+                        | '\u{FEFF}'
                 )
         })
     }
@@ -172,7 +176,10 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 if ch.is_control()
                     || matches!(
                         ch,
-                        '\u{2028}'
+                        '\u{200B}'
+                            | '\u{200C}'
+                            | '\u{200D}'
+                            | '\u{2028}'
                             | '\u{2029}'
                             | '\u{202A}'
                             | '\u{202B}'
@@ -183,6 +190,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                             | '\u{2067}'
                             | '\u{2068}'
                             | '\u{2069}'
+                            | '\u{FEFF}'
                     )
                 {
                     '�'
