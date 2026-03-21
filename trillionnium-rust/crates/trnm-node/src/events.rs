@@ -169,7 +169,6 @@ fn timeout_outcome_fields(to_status: &str) -> (&'static str, &'static str) {
     match to_status {
         "Slashed" => ("true", "slashed"),
         "Completed" => ("false", "completed"),
-        "Resolved" => ("false", "resolved"),
         _ => ("false", "unknown"),
     }
 }
@@ -229,13 +228,14 @@ mod tests {
     }
 
     #[test]
-    fn timeout_outcome_fields_distinguishes_completed_from_resolved_terminal_statuses() {
+    fn timeout_outcome_fields_only_marks_actual_terminal_statuses() {
         assert_eq!(timeout_outcome_fields("Completed"), ("false", "completed"));
-        assert_eq!(timeout_outcome_fields("Resolved"), ("false", "resolved"));
+        assert_eq!(timeout_outcome_fields("Slashed"), ("true", "slashed"));
     }
 
     #[test]
-    fn timeout_outcome_fields_marks_unexpected_status_unknown_for_visibility() {
+    fn timeout_outcome_fields_marks_stale_or_unexpected_statuses_unknown_for_visibility() {
+        assert_eq!(timeout_outcome_fields("Resolved"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields("Challenged"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields("Assigned"), ("false", "unknown"));
     }
