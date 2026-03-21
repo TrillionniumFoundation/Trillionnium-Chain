@@ -152,6 +152,13 @@ fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
         return true;
     }
 
+    // Hot singleton/echo domains dominate executor read/write probes. Keep the
+    // two-entry path allocation-free so duplicate same-version echoes or exact
+    // two-version skew checks stay on a branch-only fail-closed guard.
+    if objs.len() == 2 {
+        return objs[0].id != objs[1].id || objs[0].version == objs[1].version;
+    }
+
     let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
     for obj in objs {
         match versions_by_id.insert(obj.id, obj.version) {
@@ -1760,6 +1767,22 @@ mod tests {
             ObjectRef { id: 42, version: 1 },
             ObjectRef { id: 42, version: 2 },
             o(99),
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_two_entry_fast_path_preserves_echo_and_skew_semantics() {
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 42, version: 7 },
+        ]));
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+        ]));
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 42, version: 8 },
         ]));
     }
 
