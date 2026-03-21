@@ -772,6 +772,13 @@ impl StateStore {
                     self.objects.remove(&id);
                     return;
                 }
+                if task.status == TaskStatus::Challenged
+                    && !task_supports_pending_resolve_restore(&task)
+                {
+                    self.pending_resolve_approvals.remove(&id);
+                    self.objects.remove(&id);
+                    return;
+                }
                 match self.pending_resolve_approvals.get(&id) {
                     Some(pending)
                         if pending.task_version != task.version
@@ -4483,6 +4490,42 @@ mod tests {
 
         let err = st.credit_balance("treasury", 2).unwrap_err();
         assert!(err.contains("balance overflow on credit"));
+    }
+
+    #[test]
+    fn restore_task_rejects_incomplete_challenged_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_task(
+            900,
+            Some(TaskObject {
+                task_id: 900,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(900).is_none(),
+            "restore must fail closed when challenged task snapshot metadata is incomplete"
+        );
     }
 
     #[test]
