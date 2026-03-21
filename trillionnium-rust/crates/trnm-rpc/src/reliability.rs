@@ -924,7 +924,10 @@ fn is_canonical_identifier(value: &str) -> bool {
         return false;
     }
 
-    !value.as_bytes().iter().any(|b| b.is_ascii_control())
+    !value
+        .as_bytes()
+        .iter()
+        .any(|b| b.is_ascii_control() || *b == 0x7f)
 }
 
 fn is_canonical_msg_type(msg_type: &str) -> bool {
@@ -1625,6 +1628,26 @@ mod tests {
 
         let msg = ReliableMessage {
             from: "alice\n".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: Some(1),
+            nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
+            payload: "hello".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_identifier_with_ascii_del() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice\u{7f}".to_string(),
             chain_id: "trnm-mainnet".to_string(),
             session_id: "s1".to_string(),
             seq: Some(1),
