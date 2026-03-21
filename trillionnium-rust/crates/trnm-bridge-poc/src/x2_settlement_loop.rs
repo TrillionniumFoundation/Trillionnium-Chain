@@ -369,6 +369,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_alm_and_zwnj_for_replay_stability() {
+        let raw = "target\u{061C} relay\u{200C} timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_compensation_reason_collapses_medium_math_and_ideographic_spaces() {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
