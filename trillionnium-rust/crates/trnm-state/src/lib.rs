@@ -956,7 +956,11 @@ impl StateStore {
     }
 
     fn canonical_gov_param_registry_key_for_id(&self, id: u64) -> Option<&str> {
-        Some(self.validated_gov_param_object_at_id(id)?.key.as_str())
+        let param = self.validated_gov_param_object_at_id(id)?;
+        if let Some(expected_key) = governance_expected_key_for_id(id) {
+            return (param.key == expected_key).then_some(expected_key);
+        }
+        Some(param.key.as_str())
     }
 
     fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
@@ -3524,6 +3528,47 @@ mod tests {
             st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_resolve_canonical_reserved_emergency_pause_id_via_single_source_mapping() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            Some("true".into()),
+            "string accessor must resolve the canonical reserved emergency_pause binding"
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("emergency_pause")
+                .map(|(id, param)| (id, param.key.as_str(), param.value.as_str())),
+            Some((EMERGENCY_PAUSE_KEY_ID, "emergency_pause", "true")),
+            "ref accessor must resolve the canonical reserved emergency_pause binding"
+        );
+        assert_eq!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID)
+                .map(|param| (param.key_id, param.key, param.value)),
+            Some((EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())),
+            "id accessor must resolve the canonical reserved emergency_pause binding"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "canonical reserved-id binding must surface as an active emergency pause"
         );
     }
 
