@@ -244,6 +244,10 @@ mod tests {
         assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 0), (u64::MAX, 1, false));
         assert_eq!(timeout_event_surface_metadata(u64::MAX - 1, 1), (u64::MAX, 2, true));
         assert_eq!(timeout_event_surface_metadata(0, u64::MAX), (u64::MAX, u64::MAX, true));
+        assert_eq!(
+            timeout_event_surface_metadata(u64::MAX, u64::MAX),
+            (u64::MAX, u64::MAX, true)
+        );
     }
 
     #[test]
