@@ -408,6 +408,56 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
 }
 
 #[test]
+fn x3_prep_stale_confirm_height_replay_after_finalize_prefers_replay_guard_over_finality_validation() {
+    let mut request = SettlementRequest::new(1, "0xstale-confirm-replay-after-finalize".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(310, 309, 25);
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 311 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Finalized {
+            height: 311,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(310),
+                heartbeat_target_height: Some(309),
+                heartbeat_latency_ms: Some(25),
+                confirm_height: Some(311),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 308 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "finalized",
+            to: "finalized",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+}
+
+#[test]
 fn x3_prep_accepts_confirm_height_at_source_plus_one_finality_boundary() {
     let mut request = SettlementRequest::new(1, "0xconfirm-upper-boundary".to_string());
     let token = operator_token();
