@@ -147,6 +147,32 @@
     }
 
     #[test]
+    fn preexec_preserves_requested_group_order_for_successful_ids() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4061,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4062,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_998,
+                worker: "worker4063".into(),
+            },
+        ];
+
+        let pool = PreExecPool::new(Arc::new(state), Arc::new(picked), 3, 1);
+        let result = pre_execute_group_parallel(&pool, vec![2, 1, 3]);
+
+        assert_eq!(result, (vec![2, 1], 1));
+    }
+
+    #[test]
     fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
         let mut state = StateStore::new();
         state.set_balance("worker4100", 1_000);

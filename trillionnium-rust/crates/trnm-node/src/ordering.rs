@@ -178,18 +178,21 @@ impl PreExecPool {
         self.state.cv.notify_all();
         drop(tx);
 
-        let mut ok_ids = Vec::new();
+        let mut succeeded = std::collections::HashSet::new();
         let mut rejected = 0u64;
         for (id, ok, err) in rx {
             if ok {
-                ok_ids.push(id);
+                succeeded.insert(id);
             } else {
                 rejected += 1;
                 println!("[preexec] tx_id={} rejected err={}", id, err);
             }
         }
 
-        ok_ids.sort_unstable();
+        let ok_ids: Vec<u64> = group_ids
+            .into_iter()
+            .filter(|id| succeeded.contains(id))
+            .collect();
         (ok_ids, rejected)
     }
 }
