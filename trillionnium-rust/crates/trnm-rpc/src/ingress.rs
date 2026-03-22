@@ -55,9 +55,12 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
             ch.is_control()
                 || matches!(
                     ch,
-                    '\u{200B}'
+                    '\u{061C}'
+                        | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
                         | '\u{2028}'
                         | '\u{2029}'
                         | '\u{202A}'
@@ -181,9 +184,12 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 if ch.is_control()
                     || matches!(
                         ch,
-                        '\u{200B}'
+                        '\u{061C}'
+                            | '\u{200B}'
                             | '\u{200C}'
                             | '\u{200D}'
+                            | '\u{200E}'
+                            | '\u{200F}'
                             | '\u{2028}'
                             | '\u{2029}'
                             | '\u{202A}'

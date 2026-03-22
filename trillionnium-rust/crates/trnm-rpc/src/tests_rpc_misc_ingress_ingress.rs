@@ -99,11 +99,38 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let zero_width_error = IngressQuarantineRecord {
         error: "parse failed\u{200b}json".to_string(),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&zero_width_error),
         "zero-width quarantine characters should be rejected to keep retained logs unambiguous"
+    );
+
+    let left_to_right_mark_error = IngressQuarantineRecord {
+        error: "parse failed\u{200e}json".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&left_to_right_mark_error),
+        "invisible bidi marks should be rejected to keep retained logs unambiguous"
+    );
+
+    let right_to_left_mark_source_path = IngressQuarantineRecord {
+        source_path: "/tmp/ingress\u{200f}jsonl".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&right_to_left_mark_source_path),
+        "rtl marks should be rejected from quarantine metadata"
+    );
+
+    let arabic_letter_mark_raw_line = IngressQuarantineRecord {
+        raw_line: "{\"broken\":\"\u{061c}tail\"}".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&arabic_letter_mark_raw_line),
+        "arabic letter mark should be rejected to keep quarantine payload echoes unambiguous"
     );
 }
 
