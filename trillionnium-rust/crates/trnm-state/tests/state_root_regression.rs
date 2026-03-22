@@ -2890,6 +2890,51 @@ fn restore_gov_param_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_r
 }
 
 #[test]
+fn restore_gov_param_invalid_snapshot_preserves_existing_state_root_and_rejects_unallowed_key() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 7_204, "max_block_ms".to_string(), "500".to_string())
+        .expect("baseline governance param should succeed");
+    let baseline_root = state.state_root();
+
+    state.restore_gov_param(
+        7_204,
+        Some(GovParamObject {
+            key_id: 7_204,
+            key: "totally_unknown_param".to_string(),
+            value: "999".to_string(),
+            version: 2,
+        }),
+    );
+
+    assert_eq!(
+        state.get_param(7_204),
+        Some(GovParamObject {
+            key_id: 7_204,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            version: 1,
+        }),
+        "restore_gov_param should preserve the canonical applied governance object when given an unallowed replacement key"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "restore_gov_param should preserve the canonical key index when rejecting an unallowed replacement key"
+    );
+    assert_eq!(
+        state.gov_param_string("totally_unknown_param"),
+        None,
+        "restore_gov_param must not materialize an unallowed governance key through restore"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting an unallowed governance restore snapshot must preserve the canonical deterministic root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();

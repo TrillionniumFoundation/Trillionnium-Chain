@@ -919,6 +919,15 @@ impl StateStore {
                     }
                     return;
                 }
+                if !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || (snapshot.key == "emergency_pause" && snapshot.key_id != EMERGENCY_PAUSE_KEY_ID)
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                {
+                    if existing_param.is_none() {
+                        scrub_target_slot(self);
+                    }
+                    return;
+                }
                 if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
                     if existing_id != key_id {
                         scrub_target_slot(self);
