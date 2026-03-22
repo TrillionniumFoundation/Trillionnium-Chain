@@ -464,8 +464,11 @@ impl LaneAdmissionGate {
                 if lane_local_seen_total != lane_total
                     && (self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id))
                 {
-                    is_duplicate = true;
-                    self.seen_global.insert(tx_id);
+                    // Self-heal both lane-local and lane-wide caches immediately when
+                    // authoritative queue membership contradicts stale seen sets so
+                    // repeated retry bursts do not keep limping on partial repairs.
+                    self.rebuild_seen_from_queues();
+                    is_duplicate = self.seen_global.contains(&tx_id);
                 }
             }
         }
@@ -1705,6 +1708,28 @@ mod tests {
 
         // Fresh ingress should remain admissible while global capacity has headroom.
         assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn missing_lane_local_membership_rebuilds_seen_caches_before_repeated_duplicate_probe() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: tx 1 remains queued, but lane-local and
+        // lane-wide seen caches both drop it while preserving non-empty backlog.
+        g.critical.seen.remove(&1);
+        g.seen_global.remove(&1);
+        assert_eq!(g.queued_counts(), (1, 1, 2));
+
+        // The first duplicate probe should rebuild all seen caches from queue truth.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert!(g.critical.seen.contains(&1));
+        assert!(g.seen_global.contains(&1));
+
+        // Repeated duplicate probes should stay on the healed fast path.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
     }
 
     #[test]
