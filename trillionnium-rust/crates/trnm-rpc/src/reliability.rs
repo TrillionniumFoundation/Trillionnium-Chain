@@ -503,7 +503,7 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     retry
 }
 
-fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig {
+fn sanitize_retention_config(mut retention: RetentionConfig, retry: &RetryConfig) -> RetentionConfig {
     // Zero dedup ttl disables idempotency memory and allows immediate duplicate
     // replays under concurrent ingress. Keep a shared 1ms floor so dedup remains active.
     if retention.dedup_ttl_ms == 0 {
@@ -513,6 +513,12 @@ fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig 
     // reliability guarantees under short backoff loops.
     if retention.pending_ttl_ms == 0 {
         retention.pending_ttl_ms = MIN_RETENTION_FLOOR_MS;
+    }
+    // Keep pending retry state alive for at least the longest sanitized retry
+    // ceiling, otherwise sponsor/free-ingress items can age out before their next
+    // scheduled retry becomes eligible for collection.
+    if retention.pending_ttl_ms < retry.max_backoff_ms {
+        retention.pending_ttl_ms = retry.max_backoff_ms;
     }
     // Zero cleanup interval causes cleanup to run on every receive(), which can
     // become a self-inflicted backpressure hotspot under sustained ingress.
@@ -541,10 +547,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     }
 
     pub fn new_with_retention(store: S, retry: RetryConfig, retention: RetentionConfig) -> Self {
+        let retry = sanitize_retry_config(retry);
+        let retention = sanitize_retention_config(retention, &retry);
+
         Self {
             store,
-            retry: sanitize_retry_config(retry),
-            retention: sanitize_retention_config(retention),
+            retry,
+            retention,
             last_cleanup_at_unix_ms: None,
             circuit_state: CircuitState::Closed,
             consecutive_retry_exhausted: 0,
@@ -1802,7 +1811,7 @@ mod tests {
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, MIN_RETENTION_FLOOR_MS);
-        assert_eq!(engine.retention.pending_ttl_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
         assert_eq!(engine.retention.cleanup_interval_ms, MIN_RETENTION_FLOOR_MS);
     }
 
@@ -1819,8 +1828,30 @@ mod tests {
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, 25);
-        assert_eq!(engine.retention.pending_ttl_ms, 10);
-        assert_eq!(engine.retention.cleanup_interval_ms, 10);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 25);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_pending_ttl_to_retry_ceiling() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 25,
+                max_backoff_ms: 250,
+                max_attempts: 3,
+                circuit_breaker_threshold: 2,
+                circuit_open_ms: 250,
+            },
+            RetentionConfig {
+                dedup_ttl_ms: 1_000,
+                pending_ttl_ms: 10,
+                cleanup_interval_ms: 500,
+            },
+        );
+
+        assert_eq!(engine.retention.pending_ttl_ms, 250);
+        assert_eq!(engine.retention.cleanup_interval_ms, 250);
     }
 
     #[test]
@@ -1836,8 +1867,8 @@ mod tests {
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, 25);
-        assert_eq!(engine.retention.pending_ttl_ms, MIN_RETENTION_FLOOR_MS);
-        assert_eq!(engine.retention.cleanup_interval_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 25);
     }
 
     #[test]
