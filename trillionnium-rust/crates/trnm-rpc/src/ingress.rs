@@ -65,6 +65,7 @@ fn is_forbidden_quarantine_char(ch: char) -> bool {
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
+                | '\u{2060}'
                 | '\u{FEFF}'
                 | '\u{E0001}'
                 | '\u{E0020}'..='\u{E007F}'

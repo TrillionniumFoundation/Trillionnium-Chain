@@ -133,6 +133,15 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
         "arabic letter mark should be rejected to keep quarantine payload echoes unambiguous"
     );
 
+    let word_joiner_error = IngressQuarantineRecord {
+        error: "parse failed\u{2060}json".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&word_joiner_error),
+        "word joiner characters should be rejected to keep quarantine logs unambiguous"
+    );
+
     let tag_character_error = IngressQuarantineRecord {
         error: "parse failed\u{E0001}json".to_string(),
         ..valid.clone()
