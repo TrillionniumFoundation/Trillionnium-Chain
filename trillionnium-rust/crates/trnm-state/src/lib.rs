@@ -1226,6 +1226,12 @@ fn validate_pending_gov_update_restore_snapshot(
                         key, snapshot.key_id, existing_param.key
                     ));
                 }
+                if existing_param.key_id != snapshot.key_id {
+                    return Err(format!(
+                        "pending governance key_id collision for {}: object {} embeds mismatched governance key_id {}",
+                        key, snapshot.key_id, existing_param.key_id
+                    ));
+                }
             }
             _ => {
                 return Err(format!(

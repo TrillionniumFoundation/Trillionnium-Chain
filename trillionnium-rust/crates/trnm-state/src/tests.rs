@@ -3016,6 +3016,49 @@ fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
 }
 
 #[test]
+fn restore_pending_gov_update_live_object_embedded_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+    let applied = state
+        .set_gov_param_unchecked(7_201, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let canonical = state
+        .get_param(applied.id)
+        .expect("canonical challenge_min_bond object should exist");
+
+    state.objects.insert(
+        applied.id,
+        VersionedObject {
+            version: applied.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: applied.id + 1,
+                ..canonical
+            }),
+        },
+    );
+    let root_with_corrupt_live_object = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the live GovParam object embeds a drifted key_id"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_corrupt_live_object,
+        "failed restore must not mutate state beyond preserving the existing corrupt live-object snapshot"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_same_key_id_drift_fails_closed() {
     let mut state = StateStore::new();
 
