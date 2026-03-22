@@ -478,6 +478,7 @@ fn is_disallowed_risk_source_char(ch: char) -> bool {
                 | '\u{202E}'
                 | '\u{202F}'
                 | '\u{205F}'
+                | '\u{2800}'
                 | '\u{3000}'
                 | '\u{2060}'
                 | '\u{2061}'
@@ -2331,6 +2332,10 @@ mod tests {
         // Non-ASCII whitespace must still collapse even on the lowercase fast path.
         let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
         assert_eq!(canonical_nbsp, "bot worker");
+
+        // Braille pattern blank is visually empty and must not split source buckets.
+        let canonical_braille_blank = canonicalize_risk_source(Some("bot\u{2800}worker"));
+        assert_eq!(canonical_braille_blank, "bot worker");
 
         // Invisible bidi/format markers must also collapse so sponsor/free-ingress
         // quota accounting can't be split across visually identical aliases.
