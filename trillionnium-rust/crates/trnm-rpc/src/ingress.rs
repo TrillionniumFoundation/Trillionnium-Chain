@@ -63,6 +63,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
             existing_total += 1;
             let Ok(mut existing) = serde_json::from_str::<IngressQuarantineRecord>(line) else {
+                changed = true;
                 continue;
             };
             let original_raw_line = existing.raw_line.clone();
