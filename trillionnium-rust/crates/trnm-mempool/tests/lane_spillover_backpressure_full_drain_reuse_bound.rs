@@ -59,6 +59,32 @@ fn repeated_spillover_backpressure_retries_stay_flat_across_a_small_burst() {
 }
 
 #[test]
+fn spillover_backpressure_small_burst_keeps_duplicates_and_fresh_retries_bounded() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    for class in [
+        IngressClass::Normal,
+        IngressClass::Critical,
+        IngressClass::Normal,
+        IngressClass::Critical,
+    ] {
+        assert_eq!(gate.admit(101, class), AdmitOutcome::Duplicate);
+        assert_eq!(gate.admit(999, class), AdmitOutcome::Backpressured);
+        assert_eq!(gate.queued_counts(), (2, 1, 3));
+    }
+
+    let first = gate.pop_ready();
+    assert!(matches!(first, Some(1) | Some(100)));
+    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn spillover_backpressured_id_recovers_then_becomes_reusable_after_full_drain() {
     let mut gate = LaneAdmissionGate::new(3, 1);
 
