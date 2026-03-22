@@ -4230,6 +4230,27 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_prefers_write_domain_over_lower_shared_read_keys() {
+        let baseline = tx(9, vec![o(3), o(3), o(42)], vec![o(11), o(17), o(11)]);
+        let echoed = tx(10, vec![o(3), o(11), o(42), o(17)], vec![o(17), o(11), o(11)]);
+        let permuted = tx(11, vec![o(42), o(3)], vec![o(17), o(11)]);
+
+        // Adaptive hotspot detection intentionally keys on the preferred write domain
+        // when writes are present. Shared read-only dependencies with lower ids must
+        // not pull the key away from the write-domain minimum, and same-version
+        // cross-domain echoes should not perturb that write-first signal.
+        assert_eq!(primary_access_domain_key(&baseline), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&echoed)
+        );
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&permuted)
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
