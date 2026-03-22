@@ -1944,7 +1944,31 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+        let height_checkpoints: Vec<&CheckpointMeta> =
+            checkpoints.iter().filter(|cp| cp.height == e.height).collect();
+        if let Some(first_complete) = height_checkpoints
+            .iter()
+            .copied()
+            .find(|cp| {
+                !cp.state_root_hex.trim().is_empty() && !cp.wal_entry_hash_hex.trim().is_empty()
+            })
+        {
+            let has_conflict = height_checkpoints.iter().copied().any(|cp| {
+                !cp.state_root_hex.trim().is_empty()
+                    && !cp.wal_entry_hash_hex.trim().is_empty()
+                    && (cp.state_root_hex != first_complete.state_root_hex
+                        || cp.wal_entry_hash_hex != first_complete.wal_entry_hash_hex)
+            });
+            if has_conflict {
+                // Snapshot metadata at a given height must be unique once complete.
+                // Conflicting checkpoint records indicate ambiguous restore state and
+                // must not be papered over by selecting the entry that happens to match
+                // the current WAL replay.
+                return Ok(best_checkpoint);
+            }
+        }
+
+        for cp in height_checkpoints {
             if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
                 // Checkpoint metadata must be complete before it can participate in
                 // replay/restore recovery. Blank state-root or WAL-hash fields are
@@ -5710,8 +5734,8 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
@@ -5806,8 +5830,8 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
@@ -5908,7 +5932,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
+    fn wal_checkpoint_verification_rejects_conflicting_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -5924,7 +5948,7 @@ mod tests {
             proposal_hash: "p2".into(),
             committed: true,
             state_root_hex: "r2".into(),
-            prev_hash_hex: Some(h1),
+            prev_hash_hex: Some(h1.clone()),
         };
         let h2 = e2.content_hash_hex();
 
@@ -5949,9 +5973,9 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
-        assert_eq!(got.wal_entry_hash_hex, h2);
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+        assert_eq!(got.wal_entry_hash_hex, h1);
     }
 
     #[test]
@@ -6137,7 +6161,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_unsorted_stale_and_future_checkpoints() {
+    fn wal_checkpoint_verification_rejects_unsorted_conflicting_checkpoint_even_with_future_noise() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -6183,8 +6207,8 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
