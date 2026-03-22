@@ -180,8 +180,8 @@ fn governance_pinned_binding(key: Option<&str>, key_id: Option<u64>) -> Option<(
 
 fn governance_expected_pinned_binding(key: &str, key_id: u64) -> (Option<u64>, Option<&'static str>) {
     (
-        governance_pinned_binding(Some(key), None).map(|(_, pinned_key_id)| pinned_key_id),
-        governance_pinned_binding(None, Some(key_id)).map(|(pinned_key, _)| pinned_key),
+        governance_expected_key_id(key),
+        governance_expected_key_for_id(key_id),
     )
 }
 
@@ -3593,6 +3593,24 @@ mod tests {
             governance_expected_key_for_id(9_200),
             None,
             "unreserved key ids must remain unmapped through the shared helper path"
+        );
+    }
+
+    #[test]
+    fn governance_registry_binding_rejects_non_allowlisted_algorand_key_at_reserved_id_fail_closed() {
+        let err = validate_gov_param_registry_binding(
+            &BTreeMap::new(),
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            EMERGENCY_PAUSE_KEY_ID,
+        )
+        .expect_err("foreign algorand governance key must fail closed at reserved id gate");
+
+        assert_eq!(
+            err,
+            format!(
+                "governance key not allowed: {}",
+                NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID
+            )
         );
     }
 
