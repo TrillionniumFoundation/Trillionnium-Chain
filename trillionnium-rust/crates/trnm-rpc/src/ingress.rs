@@ -90,6 +90,9 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
         || entry.source_path.trim().is_empty()
         || entry.raw_line.trim().is_empty()
         || entry.error.trim().is_empty()
+        || entry.source_path != entry.source_path.trim()
+        || entry.raw_line != entry.raw_line.trim()
+        || entry.error != entry.error.trim()
         || entry.quarantined_at_unix_ms == 0
         || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
         || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES

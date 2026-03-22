@@ -25,6 +25,15 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
         "blank parse context should be rejected fail-closed"
     );
 
+    let padded_error = IngressQuarantineRecord {
+        error: " parse failed ".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&padded_error),
+        "padded quarantine fields should be rejected so retention stays canonical and dedupe-friendly"
+    );
+
     let zero_line_hash = IngressQuarantineRecord {
         line_hash: 0,
         ..valid.clone()
