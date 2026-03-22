@@ -138,7 +138,15 @@ fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
     }
 
     let mut seen: HashSet<u64> = HashSet::with_capacity(dst.len() + objs.len());
-    seen.extend(dst.iter().copied());
+    let mut unique_len = 0usize;
+    for idx in 0..dst.len() {
+        let key = dst[idx];
+        if seen.insert(key) {
+            dst[unique_len] = key;
+            unique_len += 1;
+        }
+    }
+    dst.truncate(unique_len);
     for obj in objs {
         let key = access_key(obj);
         if seen.insert(key) {
@@ -1898,6 +1906,18 @@ mod tests {
     #[test]
     fn extend_unique_access_keys_dedups_cross_domain_echoes_without_reordering_existing_keys() {
         let mut keys = dedup_access_keys(&[o(100), o(200), o(100), o(300), o(400)]);
+
+        extend_unique_access_keys(
+            &mut keys,
+            &[o(300), o(500), o(200), o(600), o(500), o(700), o(700)],
+        );
+
+        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn extend_unique_access_keys_normalizes_duplicate_dst_before_appending_new_keys() {
+        let mut keys = vec![100, 200, 100, 300, 200, 400];
 
         extend_unique_access_keys(
             &mut keys,
