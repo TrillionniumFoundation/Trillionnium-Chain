@@ -122,7 +122,11 @@ pub(crate) fn handle_dispatch_open(
             n += 1;
         }
     }
-    save_ingress_records(&records)?;
+
+    if !assigned.is_empty() {
+        save_ingress_records(&records)?;
+    }
+
     println!("{}", serde_json::to_string_pretty(&assigned)?);
     Ok(())
 }
