@@ -25,6 +25,7 @@ pub(crate) fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
 fn stable_bounded_bytes_hash(bytes: &[u8]) -> u64 {
     const INGRESS_LINE_HASH_FULL_MAX_BYTES: usize = 8_192;
     const INGRESS_LINE_HASH_EDGE_BYTES: usize = 4_096;
+    const INGRESS_LINE_HASH_MIDDLE_BYTES: usize = 2_048;
 
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
     bytes.len().hash(&mut hasher);
@@ -32,6 +33,8 @@ fn stable_bounded_bytes_hash(bytes: &[u8]) -> u64 {
         bytes.hash(&mut hasher);
     } else {
         bytes[..INGRESS_LINE_HASH_EDGE_BYTES].hash(&mut hasher);
+        let middle_start = (bytes.len() - INGRESS_LINE_HASH_MIDDLE_BYTES) / 2;
+        bytes[middle_start..middle_start + INGRESS_LINE_HASH_MIDDLE_BYTES].hash(&mut hasher);
         bytes[bytes.len() - INGRESS_LINE_HASH_EDGE_BYTES..].hash(&mut hasher);
     }
     hasher.finish()

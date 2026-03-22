@@ -283,6 +283,47 @@ fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_tails(
 }
 
 #[test]
+fn load_ingress_records_oversized_quarantine_hash_distinguishes_different_middles() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-hash-middle-bounds", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let prefix = format!("{{\"broken\":\"{}", "x".repeat(35_000));
+    let suffix = format!("{}\"", "z".repeat(35_000));
+    let malformed_a = format!("{}MID-A{}", prefix, suffix);
+    let malformed_b = format!("{}MID-B{}", prefix, suffix);
+    fs::write(&path, format!("{}\n{}\n", malformed_a, malformed_b)).expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed oversized rows should stay quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 2, "bounded hashing should not dedupe oversized malformed rows that differ only mid-body");
+    assert_eq!(
+        entries[0]["raw_line"].as_str(),
+        entries[1]["raw_line"].as_str(),
+        "quarantine raw_line truncation may match when only distant middles differ"
+    );
+    assert_ne!(
+        entries[0]["line_hash"],
+        entries[1]["line_hash"],
+        "bounded line hashing should sample the oversized middle to distinguish same-edge malformed rows"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_oversized_invalid_utf8_quarantines_with_parse_bound_error() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-oversized-invalid-utf8", "jsonl");
