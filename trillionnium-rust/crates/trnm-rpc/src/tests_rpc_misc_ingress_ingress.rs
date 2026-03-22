@@ -310,6 +310,51 @@ fn load_ingress_records_rewrites_preexisting_malformed_quarantine_rows_even_when
 }
 
 #[test]
+fn load_ingress_records_refreshes_preexisting_duplicate_quarantine_metadata_on_replay() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-refresh-duplicate-metadata", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    fs::write(&path, "stale-bad-row\nstale-bad-row\n").expect("write replayed duplicate malformed rows");
+
+    let seeded = serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 1,
+        "line_hash": expected_stable_line_hash("stale-bad-row"),
+        "raw_line": "stale-bad-row",
+        "error": "seeded duplicate quarantine row",
+        "quarantined_at_unix_ms": 1
+    });
+    fs::write(
+        &quarantine,
+        format!("{}\n", serde_json::to_string(&seeded).expect("serialize seeded quarantine row")),
+    )
+    .expect("seed stale quarantine row");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed replay should still quarantine all rows");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read refreshed quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "replayed duplicate should still collapse to one quarantine row");
+    assert_eq!(entries[0]["raw_line"].as_str(), Some("stale-bad-row"));
+    assert_eq!(entries[0]["line_number"].as_u64(), Some(2), "replay should refresh duplicate metadata to the latest observed line");
+    assert_ne!(entries[0]["error"].as_str(), Some("seeded duplicate quarantine row"), "replay should replace stale seeded error metadata");
+    assert!(entries[0]["quarantined_at_unix_ms"].as_u64().unwrap_or_default() > 1, "replay should refresh duplicate quarantine timestamp");
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_rewrites_preexisting_duplicate_quarantine_rows_even_when_replay_is_clean() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-existing-duplicate-clean-replay", "jsonl");

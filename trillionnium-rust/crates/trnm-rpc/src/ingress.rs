@@ -55,7 +55,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         fs::create_dir_all(parent)?;
     }
 
-    let mut seen = std::collections::HashSet::new();
+    let mut seen = std::collections::HashMap::new();
     let mut retained = Vec::new();
     let mut existing_total = 0usize;
     let mut changed = false;
@@ -76,7 +76,8 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                 existing.line_hash,
                 existing.raw_line.clone(),
             );
-            if seen.insert(key) {
+            if let std::collections::hash_map::Entry::Vacant(slot) = seen.entry(key) {
+                slot.insert(retained.len());
                 retained.push(existing);
             }
         }
@@ -89,9 +90,22 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
             entry.line_hash,
             entry.raw_line.clone(),
         );
-        if seen.insert(key) {
-            retained.push(entry.clone());
-            changed = true;
+        match seen.entry(key) {
+            std::collections::hash_map::Entry::Vacant(slot) => {
+                slot.insert(retained.len());
+                retained.push(entry.clone());
+                changed = true;
+            }
+            std::collections::hash_map::Entry::Occupied(slot) => {
+                let idx = *slot.get();
+                if retained[idx].line_number != entry.line_number
+                    || retained[idx].error != entry.error
+                    || retained[idx].quarantined_at_unix_ms != entry.quarantined_at_unix_ms
+                {
+                    retained[idx] = entry.clone();
+                    changed = true;
+                }
+            }
         }
     }
     if retained.len() > MAX_INGRESS_QUARANTINE_RECORDS {
