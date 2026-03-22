@@ -240,6 +240,12 @@ fn resolve_actor_has_forbidden_separator(token: &str) -> bool {
 }
 
 fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
+    let has_embedded_space_or_control = |value: &str| {
+        value
+            .chars()
+            .any(|c| c.is_whitespace() || c.is_control())
+    };
+
     task.metadata
         .as_ref()
         .and_then(|metadata| metadata.metering.as_ref())
@@ -250,11 +256,14 @@ fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
 
             !workload_class.is_empty()
                 && workload_class == metering.workload_class
+                && !has_embedded_space_or_control(&metering.workload_class)
                 && !metering_schema.is_empty()
                 && metering_schema == metering.metering_schema
+                && !has_embedded_space_or_control(&metering.metering_schema)
                 && metering.policy_snapshot_version != 0
                 && !receipt_hash.is_empty()
                 && receipt_hash == metering.receipt_hash
+                && !has_embedded_space_or_control(&metering.receipt_hash)
                 && metering.challenge_success_bounty_per_work_unit_den != 0
                 && metering.worker_completion_bonus_per_work_unit_den != 0
                 && metering.worker_slash_rebate_per_work_unit_den != 0
