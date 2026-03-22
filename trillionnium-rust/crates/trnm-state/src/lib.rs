@@ -425,6 +425,26 @@ fn validate_governance_registry_key_canonical(
     Ok(())
 }
 
+fn validate_pinned_governance_key_explicit_coverage(
+    key: &str,
+    validator_unique: &std::collections::BTreeSet<&str>,
+    explicit_value_rule_unique: &std::collections::BTreeSet<&str>,
+) -> Result<(), String> {
+    if !validator_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-validator coverage for {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-value-rule coverage for {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn validate_governance_registry_shape_lists(
     allowed_keys: &[&str],
     sensitive_keys: &[&str],
@@ -497,18 +517,11 @@ fn validate_governance_registry_shape_lists(
                 key
             ));
         }
-        if !validator_unique.contains(key) {
-            return Err(format!(
-                "governance pinned-key registry missing explicit-validator coverage for {}",
-                key
-            ));
-        }
-        if !explicit_value_rule_unique.contains(key) {
-            return Err(format!(
-                "governance pinned-key registry missing explicit-value-rule coverage for {}",
-                key
-            ));
-        }
+        validate_pinned_governance_key_explicit_coverage(
+            key,
+            &validator_unique,
+            &explicit_value_rule_unique,
+        )?;
     }
 
     Ok(())
@@ -3789,21 +3802,31 @@ mod tests {
     }
 
     #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_validator_coverage_fail_closed() {
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms"]),
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+        )
+        .expect_err("pinned governance keys must keep explicit validator coverage");
+
+        assert!(
+            err.contains("pinned-key registry missing explicit-validator coverage for emergency_pause"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_pinned_key_registry_rejects_missing_explicit_value_rule_coverage_fail_closed() {
-        let err = validate_governance_registry_shape_lists(
-            &["max_block_ms", "emergency_pause"],
-            &[],
-            &["max_block_ms", "emergency_pause"],
-            &["max_block_ms"],
-            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+            &std::collections::BTreeSet::from(["max_block_ms"]),
         )
         .expect_err("pinned governance keys must keep explicit value-rule coverage");
 
         assert!(
-            err.contains("explicit-value-rule registry drifted from allowed-key registry")
-                || err.contains(
-                    "pinned-key registry missing explicit-value-rule coverage for emergency_pause"
-                ),
+            err.contains("pinned-key registry missing explicit-value-rule coverage for emergency_pause"),
             "{err}"
         );
     }
