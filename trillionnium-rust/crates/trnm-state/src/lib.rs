@@ -4632,6 +4632,16 @@ mod tests {
         st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
             .expect("pause toggle must apply immediately");
         assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
 
         st.restore_task(
             901,
@@ -4662,6 +4672,10 @@ mod tests {
         assert!(
             st.get_task(901).is_none(),
             "paused restore must fail closed when challenged task snapshot omits forfeit metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
         );
     }
 
