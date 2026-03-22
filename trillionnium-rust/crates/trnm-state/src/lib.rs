@@ -1922,7 +1922,13 @@ fn checkpoint_matches_wal_entry_for_recovery(
     wal_entry: &WalMeta,
     wal_entry_hash_hex: &str,
 ) -> bool {
+    if !checkpoint_height_surface_is_canonical(checkpoint.height) {
+        return false;
+    }
     if checkpoint.height != wal_entry.height {
+        return false;
+    }
+    if !wal_entry.committed {
         return false;
     }
     if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
@@ -2245,6 +2251,29 @@ mod tests {
         assert!(
             !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
             "checkpoint recovery binding must fail closed on noncanonical 64-hex state-root digest surfaces even if the checkpoint metadata otherwise aligns"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_uncommitted_wal_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: false,
+            state_root_hex: "r7".into(),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on uncommitted WAL metadata even if hash and height surfaces otherwise align"
         );
     }
 
