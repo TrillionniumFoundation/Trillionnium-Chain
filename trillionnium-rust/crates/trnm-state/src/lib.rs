@@ -1445,6 +1445,19 @@ impl StateStore {
         self.canonical_pending_gov_update_for_key(key).cloned()
     }
 
+    fn clear_pending_gov_update_bindings(
+        &mut self,
+        requested_key: &str,
+        snapshot_key: Option<&str>,
+    ) {
+        self.pending_gov_updates.remove(requested_key);
+        if let Some(snapshot_key) = snapshot_key {
+            if snapshot_key != requested_key {
+                self.pending_gov_updates.remove(snapshot_key);
+            }
+        }
+    }
+
     pub fn restore_pending_gov_update(
         &mut self,
         key: &str,
@@ -1460,14 +1473,14 @@ impl StateStore {
                 )
                 .is_err()
                 {
-                    self.pending_gov_updates.remove(key);
+                    self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
                     return;
                 }
                 self.pending_gov_updates
                     .insert(snapshot.key.clone(), snapshot);
             }
             None => {
-                self.pending_gov_updates.remove(key);
+                self.clear_pending_gov_update_bindings(key, None);
             }
         }
     }
@@ -3726,6 +3739,44 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "rejected mismatched pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_scrubs_stale_alias_binding_on_rejected_key_mismatch() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_887,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_888,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "rejected restore must not materialize a foreign algorand governance key"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "rejected restore must scrub stale reserved-key pending aliases instead of preserving ambiguous pending state"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "scrubbed stale pending alias must not affect effective emergency pause state"
         );
     }
 
