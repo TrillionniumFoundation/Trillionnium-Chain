@@ -1745,7 +1745,7 @@ fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)>
             value
                 .get("raw_line")
                 .and_then(|raw| raw.as_str())
-                .map(stable_line_hash)
+                .map(|raw| stable_line_hash(raw.trim()))
         })?;
     Some((
         value.get("source_path")?.as_str()?.to_string(),
@@ -7710,7 +7710,7 @@ not-json
         fs::write(
             &quarantine,
             format!(
-                "{{\"source_path\":\"{}\",\"line_number\":1,\"raw_line\":\"not-json\",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                "{{\"source_path\":\"{}\",\"line_number\":1,\"raw_line\":\"  not-json  \",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
                 path.display()
             ),
         )
@@ -7734,7 +7734,7 @@ not-json
             entries[0].get("line_hash").is_none(),
             "fixture should remain legacy-shaped"
         );
-        assert_eq!(entries[0]["raw_line"], "not-json");
+        assert_eq!(entries[0]["raw_line"], "  not-json  ");
 
         std::env::remove_var("TRNM_RPC_INGRESS_FILE");
         let _ = fs::remove_file(&path);

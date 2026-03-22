@@ -36,6 +36,14 @@ fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u6
     )
 }
 
+fn quarantine_line_hash_from_value(value: &serde_json::Value) -> Option<u64> {
+    if let Some(raw_line) = value.get("raw_line").and_then(|raw| raw.as_str()) {
+        return Some(stable_line_hash(raw_line.trim()));
+    }
+
+    value.get("line_hash")?.as_u64()
+}
+
 fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
     let trimmed = line.trim();
     if trimmed.is_empty() {
@@ -46,7 +54,7 @@ fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)>
     Some((
         value.get("source_path")?.as_str()?.to_string(),
         usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
-        value.get("line_hash")?.as_u64()?,
+        quarantine_line_hash_from_value(&value)?,
     ))
 }
 
