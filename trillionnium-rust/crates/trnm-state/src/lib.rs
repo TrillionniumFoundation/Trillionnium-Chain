@@ -1925,6 +1925,9 @@ fn checkpoint_matches_wal_entry_for_recovery(
     if checkpoint.height != wal_entry.height {
         return false;
     }
+    if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
+        return false;
+    }
     if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
         return false;
     }
