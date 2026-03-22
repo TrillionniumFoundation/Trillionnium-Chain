@@ -116,3 +116,44 @@ fn x3_prep_duplicate_or_reordered_failed_confirm_after_finalize_is_rejected_with
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(1003));
 }
+
+#[test]
+fn x3_prep_accepts_confirm_height_at_u64_max_source_finality_boundary() {
+    let mut request = SettlementRequest::new(15, "0xconfirm-u64-max-boundary".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: u64::MAX,
+            target_height: u64::MAX - 1,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let finalized = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: u64::MAX },
+    )
+    .unwrap();
+
+    assert_eq!(
+        finalized,
+        SettlementStep::Finalized {
+            height: u64::MAX,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(u64::MAX),
+                heartbeat_target_height: Some(u64::MAX - 1),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(u64::MAX),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(u64::MAX));
+}
