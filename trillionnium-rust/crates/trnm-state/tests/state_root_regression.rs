@@ -1831,6 +1831,83 @@ fn restore_task_same_snapshot_scrubs_pending_resolve_after_pending_authority_dri
 }
 
 #[test]
+fn restore_pending_gov_update_identical_resolve_authority_snapshot_is_reentry_noop() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+
+    let snapshot = PendingGovParamUpdate {
+        key_id: 1,
+        key: "resolve_authority".into(),
+        value: "resolver-c,resolver-d".into(),
+        activate_at_height: 42,
+    };
+    state.restore_pending_gov_update("resolve_authority", Some(snapshot.clone()));
+    assert_eq!(state.pending_resolve_approval(10), None);
+
+    state
+        .stage_or_confirm_resolve_approval(10, challenged_ref.version, true, "resolver-c", "resolver-c,resolver-d")
+        .expect("staging resolve approval after boundary scrub should succeed");
+    let root_with_pending = state.state_root();
+    let pending_snapshot = state.pending_resolve_approval_snapshot(10);
+
+    state.restore_pending_gov_update("resolve_authority", Some(snapshot));
+
+    assert_eq!(state.pending_resolve_approval_snapshot(10), pending_snapshot);
+    assert_eq!(state.state_root(), root_with_pending);
+}
+
+#[test]
 fn update_task_version_change_scrubs_staged_pending_resolve_and_changes_state_root() {
     let mut state = StateStore::new();
     state
