@@ -45,6 +45,7 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
     const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
     const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+    const INGRESS_QUARANTINE_LINE_NUMBER_MAX: usize = 1_048_576;
 
     fn contains_forbidden_quarantine_chars(raw: &str) -> bool {
         raw.chars().any(|ch| {
@@ -71,6 +72,7 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
     }
 
     if entry.line_number == 0
+        || entry.line_number > INGRESS_QUARANTINE_LINE_NUMBER_MAX
         || entry.line_hash == 0
         || entry.source_path.trim().is_empty()
         || entry.raw_line.trim().is_empty()

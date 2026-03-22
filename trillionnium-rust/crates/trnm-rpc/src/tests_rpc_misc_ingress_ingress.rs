@@ -33,6 +33,15 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
         "zero hash quarantine identities should be rejected fail-closed"
     );
 
+    let oversized_line_number = IngressQuarantineRecord {
+        line_number: 1_048_577,
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&oversized_line_number),
+        "implausibly large retained line numbers should be rejected fail-closed"
+    );
+
     let oversized_raw_line = IngressQuarantineRecord {
         raw_line: "x".repeat(4097),
         ..valid.clone()
