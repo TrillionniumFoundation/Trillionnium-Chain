@@ -206,8 +206,22 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         sanitized[..end].to_string()
     }
 
+    fn canonicalize_quarantine_raw_line(raw: String) -> String {
+        let trimmed = raw.trim();
+        if trimmed.is_empty() {
+            "whitespace-only line omitted".to_string()
+        } else if trimmed.len() == raw.len() {
+            raw
+        } else {
+            trimmed.to_string()
+        }
+    }
+
     fn truncate_for_quarantine(raw: &str) -> String {
-        truncate_sanitized_for_quarantine(raw, INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES)
+        canonicalize_quarantine_raw_line(truncate_sanitized_for_quarantine(
+            raw,
+            INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES,
+        ))
     }
 
     fn truncate_bytes_for_quarantine(raw: &[u8]) -> String {
