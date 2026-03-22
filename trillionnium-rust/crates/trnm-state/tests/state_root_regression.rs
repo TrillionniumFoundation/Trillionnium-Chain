@@ -768,6 +768,83 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn task_metering_snapshot_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_503,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "gpu.inference".into(),
+                metering_schema: "llm/v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 30,
+                kv_bytes_moved: 40,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 6,
+                challenge_success_bounty_per_work_unit_num: 7,
+                challenge_success_bounty_per_work_unit_den: 8,
+                worker_completion_bonus_per_work_unit_num: 9,
+                worker_completion_bonus_per_work_unit_den: 10,
+                worker_slash_rebate_per_work_unit_num: 11,
+                worker_slash_rebate_per_work_unit_den: 12,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .expect("task metadata should exist")
+        .metering
+        .as_mut()
+        .expect("task metering snapshot should exist")
+        .normalized_work_units = 51;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root must include task metering snapshot evidence so checkpoint audit surfaces cannot ignore metering-only task metadata changes"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

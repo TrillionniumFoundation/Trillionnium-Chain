@@ -385,6 +385,33 @@ fn hash_pending_resolve_approval(
     hasher.update(pending.task_version.to_le_bytes());
 }
 
+fn hash_task_metering_snapshot(
+    hasher: &mut Sha256,
+    metering: &trnm_types::TaskMeteringSnapshot,
+) {
+    hash_len_prefixed_str(hasher, &metering.workload_class);
+    hash_len_prefixed_str(hasher, &metering.metering_schema);
+    hasher.update([metering.policy_snapshot_version]);
+    hash_len_prefixed_str(hasher, &metering.receipt_hash);
+    hasher.update(metering.prompt_tokens.to_le_bytes());
+    hasher.update(metering.generated_tokens.to_le_bytes());
+    hasher.update(metering.decode_steps.to_le_bytes());
+    hasher.update(metering.kv_bytes_moved.to_le_bytes());
+    hasher.update(metering.normalized_work_units.to_le_bytes());
+    hasher.update(metering.prompt_token_weight.to_le_bytes());
+    hasher.update(metering.generated_token_weight.to_le_bytes());
+    hasher.update(metering.decode_step_weight.to_le_bytes());
+    hasher.update(metering.kv_byte_weight.to_le_bytes());
+    hasher.update(metering.min_accept_work_units.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_base.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_den.to_le_bytes());
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -1679,6 +1706,13 @@ impl StateStore {
                                         }
                                         None => hasher.update([0]),
                                     }
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.metering {
+                                Some(metering) => {
+                                    hasher.update([1]);
+                                    hash_task_metering_snapshot(&mut hasher, metering);
                                 }
                                 None => hasher.update([0]),
                             }
