@@ -510,9 +510,11 @@ fn sanitize_retention_config(mut retention: RetentionConfig, retry: &RetryConfig
         retention.dedup_ttl_ms = MIN_RETENTION_FLOOR_MS;
     }
     // Zero pending ttl drops retry state instantly and can starve in-flight
-    // reliability guarantees under short backoff loops.
+    // reliability guarantees under short backoff loops. Keep pending state alive
+    // for at least one positive retry window so sponsor/free-ingress accounting
+    // cannot evaporate before the next eligible retry boundary.
     if retention.pending_ttl_ms == 0 {
-        retention.pending_ttl_ms = MIN_RETENTION_FLOOR_MS;
+        retention.pending_ttl_ms = retry.max_backoff_ms.max(MIN_RETENTION_FLOOR_MS);
     }
     // Keep pending retry state alive for at least the longest sanitized retry
     // ceiling, otherwise sponsor/free-ingress items can age out before their next
@@ -3008,7 +3010,8 @@ mod tests {
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, 1);
-        assert_eq!(engine.retention.pending_ttl_ms, 1);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 1);
     }
 
     #[test]
