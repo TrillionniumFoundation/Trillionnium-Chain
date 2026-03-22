@@ -240,8 +240,16 @@ fn governance_registry_lookup_key_for_id<'a>(
     gov_param_key_index: &'a BTreeMap<String, u64>,
     key_id: u64,
 ) -> Option<&'a str> {
-    governance_expected_key_for_id(key_id)
-        .or_else(|| governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id).ok().flatten())
+    let dynamic_key = match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
+        Ok(dynamic_key) => dynamic_key,
+        Err(_) => return None,
+    };
+
+    match (governance_expected_key_for_id(key_id), dynamic_key) {
+        (Some(expected_key), Some(indexed_key)) if indexed_key != expected_key => None,
+        (Some(expected_key), _) => Some(expected_key),
+        (None, dynamic_key) => dynamic_key,
+    }
 }
 
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
@@ -4631,6 +4639,18 @@ mod tests {
             governance_registry_lookup_key_for_id(&indexed, 9_200),
             None,
             "reverse lookup must ignore non-allowlisted dynamic governance keys instead of surfacing a foreign alias"
+        );
+    }
+
+    #[test]
+    fn governance_reverse_lookup_fails_closed_when_dynamic_registry_reuses_reserved_key_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, EMERGENCY_PAUSE_KEY_ID),
+            None,
+            "reverse lookup must fail closed when a mutable registry entry reuses the reserved emergency_pause key id"
         );
     }
 
