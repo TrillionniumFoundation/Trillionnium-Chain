@@ -75,7 +75,7 @@ fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
 }
 
 fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
-    timeout_event_surface_metadata(tx_id_seed, migrated_before_emit).2
+    timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).1
 }
 
 pub(crate) fn scan_and_apply_timeouts(
@@ -308,6 +308,16 @@ mod tests {
             (u64::MAX, 2, true, false),
             "a saturated tx_id seed must not collapse the independently visible ordinal"
         );
+    }
+
+    #[test]
+    fn timeout_event_surface_metadata_keeps_exact_u64_max_boundary_visible_without_fake_overflow() {
+        assert_eq!(
+            timeout_event_surface_metadata(0, u64::MAX - 1),
+            (u64::MAX, u64::MAX, false, false),
+            "landing exactly on u64::MAX should stay visible without reporting saturation"
+        );
+        assert!(!timeout_event_tx_overflowed(0, u64::MAX - 1));
     }
 
     #[test]
