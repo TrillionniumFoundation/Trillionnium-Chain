@@ -1452,9 +1452,6 @@ impl StateStore {
                 if snapshot.key_id != key_id {
                     return;
                 }
-                if !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str()) {
-                    return;
-                }
                 if validate_governance_key_registration(
                     &self.gov_param_key_index,
                     &snapshot.key,
