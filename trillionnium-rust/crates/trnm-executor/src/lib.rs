@@ -1363,32 +1363,46 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Keep hash mixing deterministic across targets (32/64-bit) by using a
-    // fixed-width integer domain before reducing to bucket count.
-    // Select the two smallest distinct access keys across the combined
-    // read/write domain so equivalent access sets hash identically even when
-    // intra-domain ordering differs.
-    let mut keys = dedup_access_keys(&tx.write_set);
-    extend_unique_access_keys(&mut keys, &tx.read_set);
+    // Keep the common singleton/equal-key mixed-domain path allocation-free.
+    // Equivalent write-only, read-only, or echoed read/write domains should map
+    // to the same bucket before the broader dedup/mix path below.
+    let singleton_or_echo = match (tx.write_set.as_slice(), tx.read_set.as_slice()) {
+        ([], []) => Some((0u64, 0u64)),
+        ([obj], []) | ([], [obj]) => Some((obj.id, 0u64)),
+        ([a], [b]) if a.id == b.id => Some((a.id, 0u64)),
+        _ => None,
+    };
 
-    let mut key_a = u64::MAX;
-    let mut key_b = u64::MAX;
-    for id in keys {
-        if id < key_a {
-            key_b = key_a;
-            key_a = id;
-        } else if id != key_a && id < key_b {
-            key_b = id;
+    let mixed = if let Some((key_a, key_b)) = singleton_or_echo {
+        key_a ^ key_b.rotate_left(7)
+    } else {
+        // Keep hash mixing deterministic across targets (32/64-bit) by using a
+        // fixed-width integer domain before reducing to bucket count.
+        // Select the two smallest distinct access keys across the combined
+        // read/write domain so equivalent access sets hash identically even when
+        // intra-domain ordering differs.
+        let mut keys = dedup_access_keys(&tx.write_set);
+        extend_unique_access_keys(&mut keys, &tx.read_set);
+
+        let mut key_a = u64::MAX;
+        let mut key_b = u64::MAX;
+        for id in keys {
+            if id < key_a {
+                key_b = key_a;
+                key_a = id;
+            } else if id != key_a && id < key_b {
+                key_b = id;
+            }
         }
-    }
 
-    // Canonicalize the two-key access-domain signal so equivalent mixed
-    // read/write domains hash identically even if read/write roles flip or
-    // duplicate-heavy access lists arrive in a different order. Keep
-    // singleton/keyless behavior unchanged, including when the real key is 0.
-    let key_a = if key_a == u64::MAX { 0 } else { key_a };
-    let key_b = if key_b == u64::MAX { 0 } else { key_b };
-    let mixed = key_a ^ key_b.rotate_left(7);
+        // Canonicalize the two-key access-domain signal so equivalent mixed
+        // read/write domains hash identically even if read/write roles flip or
+        // duplicate-heavy access lists arrive in a different order. Keep
+        // singleton/keyless behavior unchanged, including when the real key is 0.
+        let key_a = if key_a == u64::MAX { 0 } else { key_a };
+        let key_b = if key_b == u64::MAX { 0 } else { key_b };
+        key_a ^ key_b.rotate_left(7)
+    };
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
         // bucket layout while keeping deterministic bucket mapping.
@@ -2411,6 +2425,21 @@ mod tests {
             mixed_bucket,
             ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
         );
+    }
+
+    #[test]
+    fn hot_bucket_hint_keeps_singleton_bucket_for_same_version_cross_domain_echoes() {
+        let buckets_n = 97usize;
+        let write_only = tx(1, vec![], vec![o(5)]);
+        let echoed = tx(2, vec![o(5)], vec![o(5)]);
+
+        // Same-version read/write echoes should stay on the singleton domain
+        // bucket rather than manufacturing a synthetic two-key mix.
+        assert_eq!(
+            hot_bucket_hint(&write_only, buckets_n),
+            hot_bucket_hint(&echoed, buckets_n)
+        );
+        assert_eq!(hot_bucket_hint(&echoed, buckets_n), (5u64 % buckets_n as u64) as usize);
     }
 
     #[test]
