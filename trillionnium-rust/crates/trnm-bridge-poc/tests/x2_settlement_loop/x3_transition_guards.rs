@@ -859,6 +859,67 @@ fn x3_prep_retry_pending_zero_source_metrics_stays_retry_bounded() {
 }
 
 #[test]
+fn x3_prep_stale_retry_pending_after_finalize_prefers_replay_guard_over_retry_bounded_failure() {
+    let mut request = SettlementRequest::new(1, "0xstale-retry-after-finalize".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 311 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Finalized {
+            height: 311,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: Some(311),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+
+    let stale_retry_pending = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &stale_retry_pending,
+        SettlementConfirm::Confirmed { height: 312 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "finalized",
+            to: "finalized",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+}
+
+#[test]
 fn x3_prep_retry_pending_zero_target_metrics_stays_retry_bounded() {
     let mut request = SettlementRequest::new(1, "0xretry-pending-zero-target".to_string());
     let token = operator_token();
