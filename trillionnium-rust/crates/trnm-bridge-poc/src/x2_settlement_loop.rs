@@ -405,6 +405,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_compensation_reason_strips_inhibit_symmetric_swapping_for_replay_stability() {
         let raw = "target\u{2065} relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
