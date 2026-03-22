@@ -201,6 +201,13 @@ fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
     governance_pinned_binding_for_id(key_id).map(|(pinned_key, _)| pinned_key)
 }
 
+fn governance_registry_lookup_id_for_key(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+) -> Option<u64> {
+    governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
+}
+
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
     let (expected_key_id, expected_key) = governance_expected_pinned_binding(key, key_id);
     if let Some(expected_key_id) = expected_key_id {
@@ -1493,8 +1500,7 @@ impl StateStore {
     }
 
     fn validated_gov_param_registry_id_for_key(&self, key: &str) -> Option<u64> {
-        let id = governance_expected_key_id(key)
-            .or_else(|| self.gov_param_key_index.get(key).copied())?;
+        let id = governance_registry_lookup_id_for_key(&self.gov_param_key_index, key)?;
         if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
             return None;
         }
@@ -4355,6 +4361,24 @@ mod tests {
         );
         assert_eq!(governance_pinned_binding_for_key("resolve_authority"), None);
         assert_eq!(governance_pinned_binding_for_id(8_000), None);
+    }
+
+    #[test]
+    fn governance_registry_lookup_id_for_key_prefers_single_source_pinned_binding() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("emergency_pause".to_string(), 8_000);
+        indexed.insert("resolve_authority".to_string(), 7_313);
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "reserved governance keys must resolve from the shared pinned registry even when the mutable index drifts"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
+            Some(7_313),
+            "non-pinned governance keys should still resolve through the mutable registry"
+        );
     }
 
     #[test]
