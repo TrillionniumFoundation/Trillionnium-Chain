@@ -1149,11 +1149,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = tx
-            .write_set
-            .first()
-            .or_else(|| tx.read_set.first())
-            .map(|o| o.id);
+        let key = (!tx.write_set.is_empty() || !tx.read_set.is_empty())
+            .then(|| hot_bucket_mix_key(tx));
         if let Some(k) = key {
             observed += 1;
             *key_hist.entry(k).or_insert(0) += 1;
@@ -1237,6 +1234,17 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     (key_a, key_b)
 }
 
+#[inline]
+fn hot_bucket_mix_key(tx: &Tx) -> u64 {
+    // Keep the adaptive hotspot probe on the same deterministic object-domain
+    // signal as hot-bucket scheduling. Using the mixed two-key hint avoids
+    // false hotspot detection when many txs share a leading config/governance
+    // object but differ on the adjacent owned object that actually determines
+    // executor conflict clustering.
+    let (key_a, key_b) = hot_bucket_keys(tx);
+    key_a ^ key_b.rotate_left(7)
+}
+
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     // Defensive guard: keep helper total for misconfigured callers and tests.
     // Production reorder path always uses buckets_n>=1, but this preserves
@@ -1247,8 +1255,7 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
 
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
-    let (key_a, key_b) = hot_bucket_keys(tx);
-    let mixed = key_a ^ key_b.rotate_left(7);
+    let mixed = hot_bucket_mix_key(tx);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
         // high-bit object ids cannot truncate on 32-bit targets before bucket
@@ -3895,6 +3902,35 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_mixed_hot_key_probe_avoids_false_hotspots_from_shared_leading_writes() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Executor conflict grouping stays object-scoped and write-first, but a
+        // shared leading write object can coexist with a unique adjacent owned
+        // object. Adaptive hotspot detection should follow the same mixed
+        // two-key hint as hot-bucket scheduling instead of collapsing the batch
+        // into a false hotspot on the shared leading key alone.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42), o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
         assert!(!d.use_hot_bucket);
         assert_eq!(d.reason, "low_hot_key_share");
         assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
