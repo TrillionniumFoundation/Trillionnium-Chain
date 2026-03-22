@@ -12,13 +12,13 @@ use std::{
 };
 use trnm_executor::build_parallel_groups;
 use trnm_mempool::{IngressClass, LaneAdmissionGate};
-use trnm_pouw::{
-    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
-    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
-};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
+};
+use trnm_pouw::{
+    apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
+    apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{
     verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
@@ -2300,7 +2300,10 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
 fn is_timeout_eligible_status(status: &TaskStatus) -> bool {
     matches!(
         status,
-        TaskStatus::Assigned | TaskStatus::Committed | TaskStatus::Revealed | TaskStatus::Challenged
+        TaskStatus::Assigned
+            | TaskStatus::Committed
+            | TaskStatus::Revealed
+            | TaskStatus::Challenged
     )
 }
 
@@ -2344,13 +2347,18 @@ fn timeout_bond_disposition(
     })
 }
 
-fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, u64, bool, bool) {
+fn timeout_event_surface_metadata(
+    tx_id_seed: u64,
+    migrated_before_emit: u64,
+) -> (u64, u64, bool, bool) {
     let tx_ordinal_overflowed = migrated_before_emit == u64::MAX;
     let tx_ordinal = migrated_before_emit.saturating_add(1);
-    let (tx_id, tx_id_overflowed) = match tx_id_seed.checked_add(tx_ordinal) {
-        Some(tx_id) => (tx_id, tx_ordinal_overflowed),
-        None => (u64::MAX, true),
-    };
+    let tx_id_add = tx_id_seed.checked_add(tx_ordinal);
+    let tx_id = tx_id_add.unwrap_or(u64::MAX);
+    let tx_id_add_overflowed = tx_id_add.is_none();
+    let tx_id_stuck_at_max_due_to_ordinal_saturation = tx_ordinal_overflowed && tx_id == u64::MAX;
+    let tx_id_overflowed = tx_id_add_overflowed || tx_id_stuck_at_max_due_to_ordinal_saturation;
+
     (tx_id, tx_ordinal, tx_id_overflowed, tx_ordinal_overflowed)
 }
 
@@ -2401,12 +2409,8 @@ fn scan_and_apply_timeouts(
         };
         let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
-            let (
-                event_tx_id,
-                event_tx_ordinal,
-                event_tx_overflowed,
-                event_tx_ordinal_overflowed,
-            ) = timeout_event_surface_metadata(tx_id_seed, migrated);
+            let (event_tx_id, event_tx_ordinal, event_tx_overflowed, event_tx_ordinal_overflowed) =
+                timeout_event_surface_metadata(tx_id_seed, migrated);
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
@@ -3389,9 +3393,9 @@ mod tests {
             ratio_ppm_u64(hot_object_active_heights, finality_sample_count);
         let hot_object_active_observed_height_rate_ppm =
             ratio_ppm_u64(hot_object_active_heights, 6u64);
-        let hot_object_active_height_share_ppm =
-            (hot_object_active_top_label_share_total_ppm + hot_object_active_tail_share_total_ppm)
-                / hot_object_active_heights as u128;
+        let hot_object_active_height_share_ppm = (hot_object_active_top_label_share_total_ppm
+            + hot_object_active_tail_share_total_ppm)
+            / hot_object_active_heights as u128;
 
         assert_eq!(hot_object_top_label_share_avg_ppm, 300_000);
         assert_eq!(hot_object_tail_share_avg_ppm, 200_000);
@@ -3418,7 +3422,10 @@ mod tests {
             active_height_rate_field_name,
             active_observed_height_rate_field_name
         );
-        assert_ne!(active_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(
+            active_height_rate_field_name,
+            active_height_share_field_name
+        );
         assert_ne!(
             active_observed_height_rate_field_name,
             active_height_share_field_name
@@ -3629,7 +3636,9 @@ mod tests {
         assert_eq!(preexec_reject_active_height_rate_ppm, 666_666);
         assert_eq!(preexec_reject_active_observed_height_rate_ppm, 400_000);
         assert_eq!(preexec_reject_active_height_share_ppm, 17_500);
-        assert!(preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm);
+        assert!(
+            preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm
+        );
         assert_eq!(ratio_milli_u64(0, bft_committed_heights), 0);
         assert_eq!(ratio_milli_u64(preexec_reject_total, 0), 0);
     }
@@ -3648,9 +3657,18 @@ mod tests {
         assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
-        assert_ne!(active_height_count_field_name, active_height_rate_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
-        assert_ne!(active_observed_height_rate_field_name, active_height_share_field_name);
+        assert_ne!(
+            active_height_count_field_name,
+            active_height_rate_field_name
+        );
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            active_height_share_field_name
+        );
         assert_ne!(active_height_share_field_name, density_avg_milli_field_name);
     }
 
@@ -3713,7 +3731,10 @@ mod tests {
         assert_ne!(peak_field_name, reject_share_field_name);
         assert_ne!(peak_field_name, conflict_miss_share_field_name);
         assert_ne!(reject_density_avg_milli_field_name, reject_share_field_name);
-        assert_ne!(reject_density_avg_milli_field_name, conflict_miss_share_field_name);
+        assert_ne!(
+            reject_density_avg_milli_field_name,
+            conflict_miss_share_field_name
+        );
         assert_ne!(reject_share_field_name, conflict_miss_share_field_name);
     }
 
@@ -3811,8 +3832,14 @@ mod tests {
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(peak_field_name, active_height_rate_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
-        assert_ne!(active_observed_height_rate_field_name, density_avg_milli_field_name);
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            density_avg_milli_field_name
+        );
         assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
     }
 
@@ -3895,8 +3922,12 @@ mod tests {
 
         assert_eq!(observed_coverage_fields.len(), 7);
         assert_eq!(active_budget_share_fields.len(), 7);
-        assert!(observed_coverage_fields.iter().all(|field| field.ends_with("_rate_ppm")));
-        assert!(active_budget_share_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        assert!(observed_coverage_fields
+            .iter()
+            .all(|field| field.ends_with("_rate_ppm")));
+        assert!(active_budget_share_fields
+            .iter()
+            .all(|field| field.ends_with("_share_ppm")));
         for observed_field in observed_coverage_fields {
             assert!(
                 !active_budget_share_fields.contains(&observed_field),
@@ -3914,14 +3945,17 @@ mod tests {
         ];
 
         assert_eq!(backoff_fields.len(), 3);
-        assert!(backoff_fields.iter().all(|field| field.ends_with("_share_ppm")));
+        assert!(backoff_fields
+            .iter()
+            .all(|field| field.ends_with("_share_ppm")));
         assert_ne!(backoff_fields[0], backoff_fields[1]);
         assert_ne!(backoff_fields[0], backoff_fields[2]);
         assert_ne!(backoff_fields[1], backoff_fields[2]);
     }
 
     #[test]
-    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views() {
+    fn consensus_summary_bursty_review_bundles_keep_active_height_counts_next_to_coverage_and_budget_views(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "critical_wait_active_heights",
@@ -3992,7 +4026,8 @@ mod tests {
     }
 
     #[test]
-    fn hot_object_review_bundle_keeps_commit_skip_denominator_context_next_to_shape_and_budget_pressure() {
+    fn hot_object_review_bundle_keeps_commit_skip_denominator_context_next_to_shape_and_budget_pressure(
+    ) {
         let hotspot_review_fields = [
             "hot_object_active_heights",
             "hot_object_active_height_rate_ppm",
@@ -4009,12 +4044,27 @@ mod tests {
         assert!(hotspot_review_fields[0].ends_with("_active_heights"));
         assert!(hotspot_review_fields[1].ends_with("_active_height_rate_ppm"));
         assert!(hotspot_review_fields[2].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(hotspot_review_fields[3], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            hotspot_review_fields[3],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(hotspot_review_fields[4], "bft_skipped_height_total");
-        assert_eq!(hotspot_review_fields[5], "bft_skipped_observed_height_rate_ppm");
-        assert_eq!(hotspot_review_fields[6], "hot_object_active_top_label_share_avg_ppm");
-        assert_eq!(hotspot_review_fields[7], "hot_object_active_tail_share_avg_ppm");
-        assert_eq!(hotspot_review_fields[8], "hot_object_active_height_share_ppm");
+        assert_eq!(
+            hotspot_review_fields[5],
+            "bft_skipped_observed_height_rate_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[6],
+            "hot_object_active_top_label_share_avg_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[7],
+            "hot_object_active_tail_share_avg_ppm"
+        );
+        assert_eq!(
+            hotspot_review_fields[8],
+            "hot_object_active_height_share_ppm"
+        );
         assert_ne!(hotspot_review_fields[1], hotspot_review_fields[2]);
         assert_ne!(hotspot_review_fields[3], hotspot_review_fields[5]);
         assert_ne!(hotspot_review_fields[6], hotspot_review_fields[8]);
@@ -4066,9 +4116,15 @@ mod tests {
         assert!(jitter_review_fields[0].ends_with("_active_heights"));
         assert!(jitter_review_fields[1].ends_with("_active_height_rate_ppm"));
         assert!(jitter_review_fields[2].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(jitter_review_fields[3], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[3],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(jitter_review_fields[4], "bft_skipped_height_total");
-        assert_eq!(jitter_review_fields[5], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[5],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(jitter_review_fields[6].ends_with("_avg_milli"));
         assert!(jitter_review_fields[7].ends_with("_share_ppm"));
         assert!(jitter_review_fields[8].ends_with("_share_ppm"));
@@ -4095,13 +4151,28 @@ mod tests {
 
         assert_eq!(jitter_review_fields.len(), 8);
         assert!(jitter_review_fields[0].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(jitter_review_fields[1], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[1],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(jitter_review_fields[2], "bft_skipped_height_total");
-        assert_eq!(jitter_review_fields[3], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            jitter_review_fields[3],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(jitter_review_fields[4].ends_with("_avg_milli"));
-        assert_eq!(jitter_review_fields[5], "bft_round_change_backoff_active_height_share_ppm");
-        assert_eq!(jitter_review_fields[6], "bft_round_change_backoff_wall_share_ppm");
-        assert_eq!(jitter_review_fields[7], "bft_round_change_backoff_share_ppm");
+        assert_eq!(
+            jitter_review_fields[5],
+            "bft_round_change_backoff_active_height_share_ppm"
+        );
+        assert_eq!(
+            jitter_review_fields[6],
+            "bft_round_change_backoff_wall_share_ppm"
+        );
+        assert_eq!(
+            jitter_review_fields[7],
+            "bft_round_change_backoff_share_ppm"
+        );
         assert_ne!(jitter_review_fields[5], jitter_review_fields[6]);
         assert_ne!(jitter_review_fields[5], jitter_review_fields[7]);
         assert_ne!(jitter_review_fields[6], jitter_review_fields[7]);
@@ -4174,12 +4245,19 @@ mod tests {
             assert!(bundle[7].ends_with("_active_height_share_ppm"));
             assert!(bundle.last().unwrap().ends_with("_share_bps"));
         }
-        assert_eq!(review_bundles[0].last().copied(), Some("preexec_conflict_miss_share_bps"));
-        assert_eq!(review_bundles[1].last().copied(), Some("apply_error_rollback_share_bps"));
+        assert_eq!(
+            review_bundles[0].last().copied(),
+            Some("preexec_conflict_miss_share_bps")
+        );
+        assert_eq!(
+            review_bundles[1].last().copied(),
+            Some("apply_error_rollback_share_bps")
+        );
     }
 
     #[test]
-    fn leader_missed_review_bundle_keeps_commit_vs_skipped_coverage_context_near_fairness_pressure() {
+    fn leader_missed_review_bundle_keeps_commit_vs_skipped_coverage_context_near_fairness_pressure()
+    {
         let fairness_review_fields = [
             "bft_leader_missed_top_share_ppm",
             "bft_leader_missed_active_validators",
@@ -4200,8 +4278,14 @@ mod tests {
         assert!(fairness_review_fields[3].ends_with("_active_heights"));
         assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
         assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(fairness_review_fields[6], "bft_commit_observed_height_rate_ppm");
-        assert_eq!(fairness_review_fields[7], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[6],
+            "bft_commit_observed_height_rate_ppm"
+        );
+        assert_eq!(
+            fairness_review_fields[7],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(fairness_review_fields[8].ends_with("_avg_milli"));
         assert!(fairness_review_fields[9].ends_with("_active_height_share_ppm"));
         assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
@@ -4209,7 +4293,8 @@ mod tests {
     }
 
     #[test]
-    fn leader_missed_review_bundle_keeps_absolute_skipped_width_next_to_fairness_spread_and_budget_pressure() {
+    fn leader_missed_review_bundle_keeps_absolute_skipped_width_next_to_fairness_spread_and_budget_pressure(
+    ) {
         let fairness_review_fields = [
             "bft_leader_missed_top_share_ppm",
             "bft_leader_missed_active_validators",
@@ -4231,9 +4316,15 @@ mod tests {
         assert!(fairness_review_fields[3].ends_with("_active_heights"));
         assert!(fairness_review_fields[4].ends_with("_active_height_rate_ppm"));
         assert!(fairness_review_fields[5].ends_with("_active_observed_height_rate_ppm"));
-        assert_eq!(fairness_review_fields[6], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[6],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(fairness_review_fields[7], "bft_skipped_height_total");
-        assert_eq!(fairness_review_fields[8], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            fairness_review_fields[8],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert!(fairness_review_fields[9].ends_with("_avg_milli"));
         assert!(fairness_review_fields[10].ends_with("_active_height_share_ppm"));
         assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
@@ -4285,7 +4376,8 @@ mod tests {
     }
 
     #[test]
-    fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates() {
+    fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "hot_object_active_heights",
@@ -4335,7 +4427,8 @@ mod tests {
     }
 
     #[test]
-    fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates() {
+    fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates(
+    ) {
         let review_bundles: &[&[&str]] = &[
             &[
                 "critical_wait_active_height_rate_ppm",
@@ -4472,7 +4565,10 @@ mod tests {
                 .expect("skipped observed rate must stay present in review bundle");
 
             assert_eq!(skipped_rate_idx, skipped_total_idx + 1);
-            assert_eq!(bundle[skipped_total_idx - 1], "bft_commit_observed_height_rate_ppm");
+            assert_eq!(
+                bundle[skipped_total_idx - 1],
+                "bft_commit_observed_height_rate_ppm"
+            );
             assert!(bundle[0].ends_with("_active_height_rate_ppm"));
             assert!(bundle[1].ends_with("_active_observed_height_rate_ppm"));
             assert_ne!(bundle[0], bundle[1]);
@@ -4505,7 +4601,10 @@ mod tests {
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(wall_share_field_name, compatibility_alias_field_name);
         assert_ne!(wall_share_field_name, active_height_share_field_name);
-        assert_ne!(compatibility_alias_field_name, active_height_share_field_name);
+        assert_ne!(
+            compatibility_alias_field_name,
+            active_height_share_field_name
+        );
     }
 
     #[test]
@@ -5173,8 +5272,14 @@ mod tests {
         assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
         assert!(active_height_share_field_name.ends_with("_share_ppm"));
         assert_ne!(active_validators_field_name, active_heights_field_name);
-        assert_ne!(active_validator_share_field_name, active_height_share_field_name);
-        assert_ne!(active_height_rate_field_name, active_observed_height_rate_field_name);
+        assert_ne!(
+            active_validator_share_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(
+            active_height_rate_field_name,
+            active_observed_height_rate_field_name
+        );
         assert_ne!(density_avg_milli_field_name, active_height_share_field_name);
     }
 
@@ -5329,7 +5434,8 @@ mod tests {
         let bft_observed_heights = 5u64;
         let finality_avg = 8u128;
 
-        let wall_share_ppm = ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
         let compatibility_alias_ppm = wall_share_ppm;
         let active_observed_height_rate_ppm = ratio_ppm_u64(
             bft_round_change_backoff_active_heights,
@@ -5359,17 +5465,24 @@ mod tests {
         let bft_observed_heights = 5u64;
         let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
 
-        let bft_round_change_backoff_active_height_rate_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
-        let bft_round_change_backoff_active_observed_height_rate_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+        let bft_round_change_backoff_active_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_committed_heights,
+        );
+        let bft_round_change_backoff_active_observed_height_rate_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_active_heights,
+            bft_observed_heights,
+        );
         let bft_commit_observed_height_rate_ppm =
             ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
         let bft_skipped_observed_height_rate_ppm =
             ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
 
         assert_eq!(bft_round_change_backoff_active_height_rate_ppm, 1_000_000);
-        assert_eq!(bft_round_change_backoff_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(
+            bft_round_change_backoff_active_observed_height_rate_ppm,
+            400_000
+        );
         assert_eq!(bft_commit_observed_height_rate_ppm, 400_000);
         assert_eq!(bft_skipped_observed_height_rate_ppm, 600_000);
         assert_eq!(
@@ -5415,7 +5528,8 @@ mod tests {
     }
 
     #[test]
-    fn round_change_backoff_metric_names_keep_observed_coverage_distinct_from_wall_and_budget_views() {
+    fn round_change_backoff_metric_names_keep_observed_coverage_distinct_from_wall_and_budget_views(
+    ) {
         let active_observed_height_rate_field_name =
             "bft_round_change_backoff_active_observed_height_rate_ppm";
         let active_height_share_field_name = "bft_round_change_backoff_active_height_share_ppm";
@@ -5430,7 +5544,10 @@ mod tests {
             active_observed_height_rate_field_name,
             active_height_share_field_name
         );
-        assert_ne!(active_observed_height_rate_field_name, wall_share_field_name);
+        assert_ne!(
+            active_observed_height_rate_field_name,
+            wall_share_field_name
+        );
         assert_ne!(
             active_observed_height_rate_field_name,
             compatibility_alias_field_name
@@ -6813,7 +6930,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_109);
         let before_task = st.get_task(8_109).unwrap();
@@ -6884,7 +7004,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_115);
         st.set_gov_param(98_305, 7_999, "emergency_pause".into(), "true".into())
@@ -6917,7 +7040,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_115).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
         assert_eq!(
@@ -6977,7 +7103,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_116);
 
@@ -7011,7 +7140,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_116).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_116), None);
         assert_eq!(st.pending_resolve_first_approver(8_116), None);
@@ -7059,7 +7191,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_117);
 
@@ -7093,7 +7228,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_117).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_117), None);
         assert_eq!(st.pending_resolve_first_approver(8_117), None);
@@ -7140,7 +7278,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let _ = challenged_task_fixture(&mut st, 8_114);
 
@@ -7174,7 +7315,10 @@ mod tests {
 
         assert_eq!(st.get_task(8_114).unwrap(), before_task);
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeits);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeits
+        );
         assert_eq!(st.balance_of("treasury.worker_slashes"), before_slashes);
         assert_eq!(st.pending_resolve_approval(8_114), None);
         assert_eq!(st.pending_resolve_first_approver(8_114), None);
@@ -7816,13 +7960,26 @@ mod tests {
             (u64::MAX, u64::MAX, false, false),
             "landing exactly on the u64 ceiling should stay visible without claiming saturation overflow"
         );
+        assert_eq!(
+            timeout_event_surface_metadata(u64::MAX - 1, 0),
+            (u64::MAX, 1, false, false),
+            "an exact seed+ordinal hit on the u64 ceiling must stay visible without fake overflow"
+        );
+        assert!(!timeout_event_tx_overflowed(0, u64::MAX - 1));
+        assert!(!timeout_event_tx_overflowed(u64::MAX - 1, 0));
     }
 
     #[test]
     fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
-        assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
-        assert_eq!(timeout_bond_disposition(true, Some(true)), Some("forfeited"));
+        assert_eq!(
+            timeout_bond_disposition(true, Some(false)),
+            Some("refunded")
+        );
+        assert_eq!(
+            timeout_bond_disposition(true, Some(true)),
+            Some("forfeited")
+        );
         assert_eq!(timeout_bond_disposition(true, None), Some("unknown"));
     }
 
@@ -12721,10 +12878,14 @@ fn main() -> Result<()> {
     } else {
         bft_round_change_backoff_total_ms / bft_round_change_total
     };
-    let bft_round_change_backoff_active_height_rate_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
-    let bft_round_change_backoff_active_observed_height_rate_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+    let bft_round_change_backoff_active_height_rate_ppm = ratio_ppm_u64(
+        bft_round_change_backoff_active_heights,
+        bft_committed_heights,
+    );
+    let bft_round_change_backoff_active_observed_height_rate_ppm = ratio_ppm_u64(
+        bft_round_change_backoff_active_heights,
+        bft_observed_heights,
+    );
     let bft_round_change_backoff_density_avg_ms = if bft_round_change_backoff_active_heights == 0 {
         0
     } else {
@@ -12736,8 +12897,11 @@ fn main() -> Result<()> {
     );
     let bft_round_change_backoff_active_height_share_ppm =
         finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
-    let bft_round_change_backoff_wall_share_ppm =
-        wall_time_share_ppm(bft_round_change_backoff_total_ms, bft_committed_heights, finality_avg);
+    let bft_round_change_backoff_wall_share_ppm = wall_time_share_ppm(
+        bft_round_change_backoff_total_ms,
+        bft_committed_heights,
+        finality_avg,
+    );
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
     let bft_commit_observed_height_rate_ppm =
         ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
