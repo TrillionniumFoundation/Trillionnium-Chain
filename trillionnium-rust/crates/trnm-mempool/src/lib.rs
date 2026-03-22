@@ -265,24 +265,12 @@ impl LaneAdmissionGate {
         !self.lane_has_global_headroom(lane_total)
     }
 
-    fn classify_capacity_probe(&self, is_duplicate: bool) -> AdmitOutcome {
-        // Preserve the lane-wide saturated duplicate-vs-backpressure contract in
-        // one place so all pre-admission callers share the same bounded-retry
-        // semantics.
-        self.classify_bounded_retry_probe(is_duplicate)
-    }
-
-    fn classify_retry_probe_when(
+    fn classify_retry_probe_when_blocked(
         &self,
-        predicate: bool,
+        blocked: bool,
         is_duplicate: bool,
-        classify: impl FnOnce(&Self, bool) -> AdmitOutcome,
     ) -> Option<AdmitOutcome> {
-        if predicate {
-            Some(classify(self, is_duplicate))
-        } else {
-            None
-        }
+        blocked.then(|| self.classify_bounded_retry_probe(is_duplicate))
     }
 
     fn classify_pre_admission_probe(
@@ -290,32 +278,11 @@ impl LaneAdmissionGate {
         lane_total: usize,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        self.classify_retry_probe_when(
+        self.classify_retry_probe_when_blocked(
             self.lane_is_globally_saturated(lane_total),
             is_duplicate,
-            Self::classify_capacity_probe,
         )
         .or_else(|| is_duplicate.then_some(AdmitOutcome::Duplicate))
-    }
-
-    fn classify_guard_probe(
-        &self,
-        guard_blocks: bool,
-        is_duplicate: bool,
-    ) -> Option<AdmitOutcome> {
-        self.classify_retry_probe_when(
-            guard_blocks,
-            is_duplicate,
-            Self::classify_bounded_retry_probe,
-        )
-    }
-
-    fn classify_guarded_retry_probe(
-        &self,
-        class: IngressClass,
-        is_duplicate: bool,
-    ) -> Option<AdmitOutcome> {
-        self.classify_guard_probe(self.lane_backpressure_guard_blocks(class), is_duplicate)
     }
 
     fn classify_reserved_slot_guard_probe(
@@ -327,7 +294,10 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        self.classify_guarded_retry_probe(class, is_duplicate)
+        self.classify_retry_probe_when_blocked(
+            self.lane_backpressure_guard_blocks(class),
+            is_duplicate,
+        )
     }
 
     fn classify_headroom_probe(

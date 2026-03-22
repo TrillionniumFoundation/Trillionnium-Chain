@@ -157,6 +157,31 @@ fn borrowed_last_idle_critical_slot_small_retry_burst_keeps_guard_outcomes_stabl
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_repeated_guard_probes_do_not_flip_fresh_retry_duplicate() {
+    let mut gate = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    for (tx_id, class, expected) in [
+        (99, IngressClass::Critical, AdmitOutcome::Backpressured),
+        (12, IngressClass::Critical, AdmitOutcome::Duplicate),
+        (99, IngressClass::Critical, AdmitOutcome::Backpressured),
+        (12, IngressClass::Normal, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+    ] {
+        assert_eq!(gate.admit(tx_id, class), expected);
+        assert_eq!(gate.queued_counts(), (2, 1, 3));
+    }
+
+    assert_eq!(gate.pop_ready(), Some(12));
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn borrowed_last_idle_critical_slot_mixed_retry_burst_keeps_fresh_and_duplicate_outcomes_partitioned() {
     let mut gate = LaneAdmissionGate::new(3, 1);
 
