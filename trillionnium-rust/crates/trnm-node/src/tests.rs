@@ -9209,11 +9209,35 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
-        assert!(err.contains("retained 2 committed WAL entries through height 2"));
+        assert!(err.contains("retained 2 WAL entries through height 2"));
         assert!(err.contains("last retained checkpoint: 1"));
         assert!(err.contains(
             "does not yet restore application StateStore snapshots or replay committed blocks"
         ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_does_not_overstate_uncommitted_tail_as_committed() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-uncommitted-tail");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: None,
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 1 WAL entry through height 1"));
+        assert!(!err.contains("retained 1 committed WAL entry through height 1"));
+        assert!(err.contains("last retained checkpoint: none"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
