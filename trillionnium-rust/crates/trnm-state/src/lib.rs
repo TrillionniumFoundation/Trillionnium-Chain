@@ -1472,6 +1472,12 @@ impl StateStore {
         }
     }
 
+    fn clear_pending_gov_update_key_id_aliases(&mut self, key_id: u64, preserved_key: &str) {
+        self.pending_gov_updates.retain(|other_key, other_pending| {
+            other_key.as_str() == preserved_key || other_pending.key_id != key_id
+        });
+    }
+
     pub fn restore_pending_gov_update(
         &mut self,
         key: &str,
@@ -1488,6 +1494,11 @@ impl StateStore {
                 .is_err()
                 {
                     self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
+                    return;
+                }
+                if self.pending_gov_update_has_key_id_alias(key, snapshot.key_id) {
+                    self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
+                    self.clear_pending_gov_update_key_id_aliases(snapshot.key_id, key);
                     return;
                 }
                 self.pending_gov_updates
@@ -3877,6 +3888,50 @@ mod tests {
             st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "foreign pending governance alias must also remain inaccessible"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_scrubs_existing_key_id_aliases_fail_closed() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 41,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 42,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed instead of accepting a pending entry while a key-id alias exists"
+        );
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "restore rejection must scrub stale key-id aliases instead of preserving ambiguous pending state"
+        );
+        assert!(
+            st.pending_gov_updates.get("emergency_pause").is_none(),
+            "rejected restore must not retain the requested canonical pending entry"
+        );
+        assert!(
+            st.pending_gov_updates
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "rejected restore must remove the conflicting raw alias entry"
         );
     }
 
