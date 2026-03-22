@@ -262,6 +262,13 @@ fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
         .unwrap_or(true)
 }
 
+fn challenged_task_snapshot_anchor_is_complete(task: &TaskObject) -> bool {
+    task.challenged_at_height.is_some()
+        && task.challenge_deadline_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_window_blocks_snapshot.is_some_and(|window| window != 0)
+}
+
 fn resolve_actor_is_reserved(token: &str) -> bool {
     token.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
         || token.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
@@ -414,6 +421,9 @@ fn validated_restorable_pending_resolve_snapshot(
         return None;
     }
     if !task_snapshot_metadata_is_complete(&task) {
+        return None;
+    }
+    if !challenged_task_snapshot_anchor_is_complete(&task) {
         return None;
     }
     // Audit-proof restore must fail closed unless the challenged-task anchor is still present as
