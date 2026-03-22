@@ -3735,6 +3735,74 @@ fn paused_state_restore_pending_resolve_reentry_preserves_semantically_equivalen
 }
 
 #[test]
+fn paused_restore_pending_resolve_keeps_semantically_equivalent_finalized_snapshot_at_same_task_version_boundary(
+) {
+    // Finalized quorum replay should also be idempotent under canonical case/order equivalence
+    // when the challenged object/version boundary is unchanged; otherwise restore re-entry can
+    // scrub or rewrite a live finalized snapshot on presentation-only drift.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(98_214, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let task = TaskObject {
+        task_id: 9_921_2,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    st.restore_task(9_921_2, Some(task));
+    st.stage_or_confirm_resolve_approval(9_921_2, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval stage should succeed");
+    let finalized = st
+        .stage_or_confirm_resolve_approval(9_921_2, 1, true, "authority-b", "authority-a,authority-b")
+        .expect("second distinct approval should finalize quorum");
+    assert!(finalized);
+
+    let snapshot_before = st
+        .pending_resolve_approval_snapshot(9_921_2)
+        .expect("finalized pending snapshot should exist before restore replay");
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(
+        9_921_2,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 2,
+            first_approver: "Authority-A".into(),
+            authority_set: "Authority-B,Authority-A".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(st.state_root(), root_before);
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_921_2),
+        Some(snapshot_before),
+        "semantically equivalent finalized restore replay must preserve the live pending snapshot"
+    );
+    assert_eq!(st.pending_resolve_approval(9_921_2), Some((true, 2)));
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority_without_state_root_drift(
 ) {
     // L03 state-root hardening: paused restore may preserve operator-visible audit spelling, but

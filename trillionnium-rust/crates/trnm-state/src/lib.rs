@@ -756,6 +756,46 @@ impl StateStore {
         self.canonical_pending_resolve_approval_snapshot_for_task(task_id, &task, snapshot)
     }
 
+    fn canonical_pending_resolve_reentry_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> Option<(String, String)> {
+        if task_id == 0 || !matches!(snapshot.confirmations, 1 | 2) || snapshot.task_version == 0 {
+            return None;
+        }
+        let task = self.get_task(task_id)?;
+        let current_ref = self.get_ref(task_id)?;
+        if task.task_id != task_id
+            || task.status != TaskStatus::Challenged
+            || task.version != snapshot.task_version
+            || current_ref.version != snapshot.task_version
+        {
+            return None;
+        }
+
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
+        else {
+            return None;
+        };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return None;
+        };
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return None;
+        }
+        if !is_effective_resolve_authority_match(self, &authority_canonical) {
+            return None;
+        }
+
+        Some((first_approver_canonical, authority_canonical))
+    }
+
     fn pending_resolve_matches_task_version(&self, task_id: u64, task_version: u64) -> bool {
         self.pending_resolve_approvals
             .get(&task_id)
@@ -781,7 +821,7 @@ impl StateStore {
         }
 
         let Some((snapshot_first_approver, snapshot_authority_set)) = self
-            .canonical_pending_resolve_approval_snapshot(task_id, snapshot)
+            .canonical_pending_resolve_reentry_snapshot(task_id, snapshot)
         else {
             return false;
         };
