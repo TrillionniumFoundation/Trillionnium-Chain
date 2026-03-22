@@ -797,15 +797,18 @@ impl StateStore {
         match snapshot {
             Some(task) => {
                 if task.version == 0 {
-                    let removed_task = matches!(
+                    let has_existing_task = matches!(
                         self.objects.get(&id),
                         Some(VersionedObject {
                             value: ObjectValue::Task(_),
                             ..
                         })
-                    ) && self.objects.remove(&id).is_some();
+                    );
+                    if has_existing_task {
+                        return;
+                    }
                     let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
-                    if removed_task || removed_pending {
+                    if removed_pending {
                         self.invalidate_state_root_cache();
                     }
                     return;
@@ -2127,6 +2130,78 @@ mod tests {
         assert!(
             st.get_ref(7).is_none(),
             "restore must not create an object ref for zero-version tasks"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_version_replacement_without_clobbering_existing_object() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 7,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+        let root_before = st.state_root();
+
+        st.restore_task(
+            7,
+            Some(TaskObject {
+                task_id: 7,
+                creator: "mallory".into(),
+                bounty: 99,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 0,
+            }),
+        );
+
+        assert_eq!(
+            st.get_task(7)
+                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
+            Some((7, "alice".into(), 10, TaskStatus::Open, 1)),
+            "zero-version restore must not clobber the existing task object"
+        );
+        assert_eq!(
+            st.get_ref(7),
+            Some(ObjectRef { id: 7, version: 1 }),
+            "zero-version restore must preserve the existing object version"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejected zero-version replacement must leave state_root unchanged"
         );
     }
 
