@@ -219,11 +219,10 @@ fn governance_registry_unique_dynamic_key_for_id<'a>(
     gov_param_key_index: &'a BTreeMap<String, u64>,
     key_id: u64,
 ) -> Result<Option<&'a str>, Vec<&'a str>> {
-    let mut matches = gov_param_key_index
-        .iter()
-        .filter_map(|(indexed_key, indexed_key_id)| {
-            (*indexed_key_id == key_id).then_some(indexed_key.as_str())
-        });
+    let mut matches = gov_param_key_index.iter().filter_map(|(indexed_key, indexed_key_id)| {
+        (*indexed_key_id == key_id && GOV_ALLOWED_KEYS.contains(&indexed_key.as_str()))
+            .then_some(indexed_key.as_str())
+    });
     let first = matches.next();
     let second = matches.next();
     match (first, second) {
@@ -4620,6 +4619,18 @@ mod tests {
             governance_registry_lookup_key_for_id(&indexed, 7_313),
             None,
             "reverse lookup should fail closed instead of picking an arbitrary alias"
+        );
+    }
+
+    #[test]
+    fn governance_reverse_lookup_ignores_non_allowlisted_dynamic_registry_keys_fail_closed() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(), 9_200);
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 9_200),
+            None,
+            "reverse lookup must ignore non-allowlisted dynamic governance keys instead of surfacing a foreign alias"
         );
     }
 
