@@ -109,6 +109,14 @@ impl AdmissionGate {
                     break;
                 }
             }
+            if self.backpressured_fifo.len() > self.backpressured_ids.len() {
+                // Restored-state repair can deterministically trim retry ids while stale
+                // FIFO markers survive. Rebuild markers immediately so bounded retry
+                // bookkeeping stays aligned without waiting for a later compaction pass.
+                let mut rebuilt: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                rebuilt.sort_unstable();
+                self.backpressured_fifo = rebuilt.into_iter().collect();
+            }
             true
         } else {
             false
@@ -1119,6 +1127,22 @@ mod tests {
         assert!(!gate.backpressured_fifo.is_empty());
         assert!(gate.backpressured_fifo.len() <= gate.backpressured_ids.len());
         assert!(gate.backpressured_ids.contains(&99));
+    }
+
+    #[test]
+    fn restored_retry_trim_rebuilds_fifo_after_stale_marker_eviction_fallback() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Corrupted restore: retry ids and stale markers disagree, so eviction falls
+        // back to deterministic set trimming while old FIFO markers survive.
+        gate.backpressured_ids.extend([41, 42, 43]);
+        gate.backpressured_fifo.extend([7, 8]);
+
+        assert!(gate.remember_backpressured(99));
+
+        assert_eq!(gate.backpressured_ids.len(), 2);
+        assert_eq!(gate.backpressured_fifo.len(), gate.backpressured_ids.len());
+        assert_eq!(gate.backpressured_fifo.iter().copied().collect::<Vec<_>>(), vec![43, 99]);
     }
 
     #[test]
