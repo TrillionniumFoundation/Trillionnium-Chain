@@ -2075,6 +2075,7 @@ fn has_canonical_proof_metadata_field(value: &str) -> bool {
     }
 
     !value.is_empty()
+        && value.is_ascii()
         && value.trim() == value
         && value.chars().all(|ch| !is_disallowed_proof_metadata_char(ch))
 }
@@ -5741,6 +5742,47 @@ mod tests {
             got.map(|cp| cp.height),
             Some(1),
             "internally whitespace-split checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_non_ascii_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: format!("{}é", e2.content_hash_hex()),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "non-ASCII checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
         );
     }
 
