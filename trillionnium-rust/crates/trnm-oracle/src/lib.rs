@@ -264,9 +264,10 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline) as u128 * 10_000;
+    let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    (numerator / denominator) as u32
+    let deviation = numerator / denominator;
+    deviation.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -695,6 +696,12 @@ mod tests {
             .validate_snapshot(&drifted, 10_100)
             .expect_err("zero-deviation policy should reject any non-zero drift");
         assert!(matches!(err, OracleError::DeviationExceeded { .. }));
+    }
+
+    #[test]
+    fn deviation_bps_saturates_at_cap_for_extreme_values() {
+        assert_eq!(deviation_bps(i128::MAX, 1), MAX_DEVIATION_BPS_CAP);
+        assert_eq!(deviation_bps(i128::MIN, -1), MAX_DEVIATION_BPS_CAP);
     }
 
     #[test]
