@@ -179,10 +179,14 @@ fn governance_pinned_binding(key: Option<&str>, key_id: Option<u64>) -> Option<(
 }
 
 fn governance_expected_pinned_binding(key: &str, key_id: u64) -> (Option<u64>, Option<&'static str>) {
-    (
-        governance_expected_key_id(key),
-        governance_expected_key_for_id(key_id),
-    )
+    match governance_pinned_binding(Some(key), Some(key_id)) {
+        Some((pinned_key, pinned_key_id)) => {
+            let expected_key_id = (pinned_key == key).then_some(pinned_key_id);
+            let expected_key = (pinned_key_id == key_id).then_some(pinned_key);
+            (expected_key_id, expected_key)
+        }
+        None => (None, None),
+    }
 }
 
 fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
@@ -4479,6 +4483,25 @@ mod tests {
             governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
             Some(7_313),
             "non-pinned governance keys should still resolve through the mutable registry"
+        );
+    }
+
+    #[test]
+    fn governance_expected_pinned_binding_routes_both_directions_from_single_source() {
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", 8_000),
+            (Some(EMERGENCY_PAUSE_KEY_ID), None),
+            "pinned key lookups should surface the canonical reserved id even when the attempted id drifts"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            (None, Some("emergency_pause")),
+            "reserved id lookups should surface the canonical pinned key even when another key attempts to reuse it"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+            (Some(EMERGENCY_PAUSE_KEY_ID), Some("emergency_pause")),
+            "canonical pinned key/id pair should resolve both expectations from the shared single source"
         );
     }
 
