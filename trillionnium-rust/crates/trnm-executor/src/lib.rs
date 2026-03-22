@@ -64,6 +64,13 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         return intersects(&a.write_set, &b.read_set);
     }
 
+    // Pure write-only pairs only need the write/write probe. Keep the object-
+    // scoped conflict path narrow so deterministic grouping does not pay for two
+    // guaranteed-empty read-side checks under hot owned-object traffic.
+    if a.read_set.is_empty() && b.read_set.is_empty() {
+        return intersects(&a.write_set, &b.write_set);
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
@@ -1493,6 +1500,18 @@ mod tests {
         assert!(detect_conflict(
             &tx(1, vec![], vec![o(1)]),
             &tx(2, vec![], vec![o(1)])
+        ));
+    }
+
+    #[test]
+    fn ww_conflict_treats_object_versions_as_one_write_domain() {
+        assert!(detect_conflict(
+            &tx(1, vec![], vec![ov(7, 1)]),
+            &tx(2, vec![], vec![ov(7, 9)])
+        ));
+        assert!(!detect_conflict(
+            &tx(1, vec![], vec![ov(7, 1)]),
+            &tx(2, vec![], vec![ov(8, 9)])
         ));
     }
 
