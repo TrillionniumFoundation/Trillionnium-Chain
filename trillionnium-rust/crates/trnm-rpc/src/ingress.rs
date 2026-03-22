@@ -204,6 +204,8 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                             | '\u{2068}'
                             | '\u{2069}'
                             | '\u{FEFF}'
+                            | '\u{E0001}'
+                            | '\u{E0020}'..='\u{E007F}'
                     )
                 {
                     '�'
