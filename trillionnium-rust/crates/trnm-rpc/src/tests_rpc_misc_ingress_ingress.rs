@@ -1,4 +1,5 @@
 use super::*;
+use std::os::unix::fs::MetadataExt;
 
 #[test]
 fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
@@ -451,6 +452,41 @@ fn load_ingress_records_bounds_invalid_utf8_quarantine_raw_line_after_lossy_deco
         raw_line.as_bytes().len() <= 4096,
         "quarantine raw_line should stay byte-bounded after lossy utf-8 decoding"
     );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
+fn load_ingress_records_keeps_clean_trailing_newline_files_stable() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-clean-trailing-newline-stable", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let valid = concat!(
+        "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n"
+    );
+    fs::write(&path, valid).expect("write clean ingress fixture");
+    let before_ino = fs::metadata(&path).expect("metadata before load").ino();
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "clean ingress row should load normally");
+    assert!(
+        !quarantine.exists(),
+        "clean ingress rows with a trailing newline should not create quarantine noise"
+    );
+
+    let after_ino = fs::metadata(&path).expect("metadata after load").ino();
+    assert_eq!(
+        after_ino, before_ino,
+        "clean ingress files ending with a newline should not be atomically rewritten just for a phantom trailing empty line"
+    );
+    let raw = fs::read_to_string(&path).expect("read clean ingress fixture");
+    assert_eq!(raw, valid, "clean trailing-newline ingress content should remain untouched");
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);

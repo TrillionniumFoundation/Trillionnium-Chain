@@ -245,7 +245,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut quarantined_seen = HashSet::new();
     let mut quarantined_total = 0usize;
     let mut skipped_whitespace_noise = false;
-    for (idx, line_bytes) in raw.split(|byte| *byte == b'\n').enumerate() {
+    for (idx, line_bytes) in raw.split_terminator(|byte| *byte == b'\n').enumerate() {
         let line_bytes = match line_bytes.strip_suffix(b"\r") {
             Some(trimmed) => trimmed,
             None => line_bytes,
