@@ -185,22 +185,20 @@ fn governance_expected_pinned_binding(key: &str, key_id: u64) -> (Option<u64>, O
     )
 }
 
-#[cfg(test)]
 fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
     governance_pinned_binding(Some(key), None)
 }
 
-#[cfg(test)]
 fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> {
     governance_pinned_binding(None, Some(key_id))
 }
 
 fn governance_expected_key_id(key: &str) -> Option<u64> {
-    governance_pinned_binding(Some(key), None).map(|(_, pinned_key_id)| pinned_key_id)
+    governance_pinned_binding_for_key(key).map(|(_, pinned_key_id)| pinned_key_id)
 }
 
 fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
-    governance_pinned_binding(None, Some(key_id)).map(|(pinned_key, _)| pinned_key)
+    governance_pinned_binding_for_id(key_id).map(|(pinned_key, _)| pinned_key)
 }
 
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
@@ -3536,6 +3534,40 @@ mod tests {
             governance_expected_pinned_binding("emergency_pause", 9_200),
             (Some(EMERGENCY_PAUSE_KEY_ID), None),
             "reserved governance keys must still resolve the reserved key side fail-closed"
+        );
+    }
+
+    #[test]
+    fn governance_expected_key_helpers_share_single_source_for_reserved_emergency_pause() {
+        assert_eq!(
+            governance_pinned_binding_for_key("emergency_pause"),
+            Some(("emergency_pause", EMERGENCY_PAUSE_KEY_ID)),
+            "forward reserved-key lookup must reuse the shared single-source pinned registry"
+        );
+        assert_eq!(
+            governance_pinned_binding_for_id(EMERGENCY_PAUSE_KEY_ID),
+            Some(("emergency_pause", EMERGENCY_PAUSE_KEY_ID)),
+            "reverse reserved-id lookup must reuse the shared single-source pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_id("emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "accessor-facing key->id helper must stay aligned with the shared pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_for_id(EMERGENCY_PAUSE_KEY_ID),
+            Some("emergency_pause"),
+            "accessor-facing id->key helper must stay aligned with the shared pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_id(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign governance keys must not acquire a reserved key id through helper drift"
+        );
+        assert_eq!(
+            governance_expected_key_for_id(9_200),
+            None,
+            "unreserved key ids must remain unmapped through the shared helper path"
         );
     }
 
