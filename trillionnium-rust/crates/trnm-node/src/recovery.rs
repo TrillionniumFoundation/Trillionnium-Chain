@@ -135,7 +135,8 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        let restored_round = if metadata_only_recovery {
+        let restored_round = if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded
+        {
             0
         } else {
             last.round
