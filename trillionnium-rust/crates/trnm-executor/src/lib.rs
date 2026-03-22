@@ -180,6 +180,22 @@ fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
         return objs[0].id != objs[1].id || objs[0].version == objs[1].version;
     }
 
+    // Tiny single-domain access lists are common on Sui-like object probes.
+    // Mirror the mixed-domain helper's small-set guard so same-version echoes
+    // and version skew checks stay allocation-light before the larger HashMap
+    // path kicks in for broader footprints.
+    if objs.len() <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
     let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
     for obj in objs {
         match versions_by_id.insert(obj.id, obj.version) {
@@ -1805,6 +1821,22 @@ mod tests {
         assert!(!access_domain_versions_are_consistent(&[
             ObjectRef { id: 42, version: 7 },
             ObjectRef { id: 42, version: 8 },
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_small_domain_fast_path_preserves_echo_and_skew_semantics() {
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 7, version: 3 },
+        ]));
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+            ObjectRef { id: 42, version: 8 },
+            ObjectRef { id: 7, version: 3 },
         ]));
     }
 
