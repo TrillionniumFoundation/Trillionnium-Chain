@@ -219,6 +219,19 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
     }
 
+    fn quarantine_whitespace_raw_line(line_bytes: &[u8]) -> String {
+        let raw_line = if line_bytes.is_empty() {
+            "whitespace-only line omitted".to_string()
+        } else {
+            truncate_bytes_for_quarantine(line_bytes)
+        };
+        if raw_line.trim().is_empty() {
+            "whitespace-only line omitted".to_string()
+        } else {
+            raw_line
+        }
+    }
+
     let path = ingress_file();
     let source_path_for_quarantine =
         truncate_sanitized_for_quarantine(&path.display().to_string(), INGRESS_QUARANTINE_FIELD_MAX_BYTES);
@@ -238,16 +251,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         };
         if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
             if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                let raw_line = if line_bytes.is_empty() {
-                    "whitespace-only line omitted".to_string()
-                } else {
-                    truncate_bytes_for_quarantine(line_bytes)
-                };
-                let raw_line = if raw_line.trim().is_empty() {
-                    "whitespace-only line omitted".to_string()
-                } else {
-                    raw_line
-                };
+                let raw_line = quarantine_whitespace_raw_line(line_bytes);
                 let parse_result = Err((
                     stable_bounded_bytes_hash(line_bytes),
                     raw_line,
@@ -286,14 +290,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             Ok(line) => {
                 if line.trim().is_empty() {
                     if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                        let raw_line = {
-                            let bounded = truncate_for_quarantine(line);
-                            if bounded.trim().is_empty() {
-                                "whitespace-only line omitted".to_string()
-                            } else {
-                                bounded
-                            }
-                        };
+                        let raw_line = quarantine_whitespace_raw_line(line_bytes);
                         Err((
                             stable_line_hash(line),
                             raw_line,
