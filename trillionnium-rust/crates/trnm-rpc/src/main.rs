@@ -1723,9 +1723,13 @@ fn stable_line_hash(raw: &str) -> u64 {
     hasher.finish()
 }
 
+fn canonical_quarantine_source_path(path: &str) -> String {
+    path.trim().to_string()
+}
+
 fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u64) {
     (
-        entry.source_path.clone(),
+        canonical_quarantine_source_path(&entry.source_path),
         entry.line_number,
         entry.line_hash,
     )
@@ -1748,7 +1752,7 @@ fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)>
                 .map(|raw| stable_line_hash(raw.trim()))
         })?;
     Some((
-        value.get("source_path")?.as_str()?.to_string(),
+        canonical_quarantine_source_path(value.get("source_path")?.as_str()?),
         usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
         line_hash,
     ))
@@ -7735,6 +7739,50 @@ not-json
             "fixture should remain legacy-shaped"
         );
         assert_eq!(entries[0]["raw_line"], "  not-json  ");
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_reuses_legacy_quarantine_fingerprints_with_padded_source_path() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-legacy-source-path-padding", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        fs::write(
+            &quarantine,
+            format!(
+                "{{\"source_path\":\"  {}  \",\"line_number\":1,\"raw_line\":\"not-json\",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                path.display()
+            ),
+        )
+        .expect("seed padded legacy quarantine fixture");
+
+        let records = load_ingress_records();
+        assert!(records.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "legacy padded source_path should still suppress duplicate quarantine accounting"
+        );
+        assert_eq!(entries[0]["raw_line"], "not-json");
+        assert!(
+            entries[0].get("line_hash").is_none(),
+            "fixture should remain legacy-shaped"
+        );
 
         std::env::remove_var("TRNM_RPC_INGRESS_FILE");
         let _ = fs::remove_file(&path);
