@@ -1837,8 +1837,14 @@ fn is_canonical_hex_digest(value: &str) -> bool {
         })
 }
 
+const WAL_PROPOSAL_HASH_MAX_LEN: usize = 256;
+
+fn wal_proposal_hash_length_is_canonical(value: &str) -> bool {
+    !value.is_empty() && value.len() <= WAL_PROPOSAL_HASH_MAX_LEN
+}
+
 fn is_canonical_wal_proposal_hash(value: &str) -> bool {
-    !value.is_empty()
+    wal_proposal_hash_length_is_canonical(value)
         && value.trim() == value
         && value.is_ascii()
         && !value.chars().any(|c| c.is_whitespace() || c.is_control())
