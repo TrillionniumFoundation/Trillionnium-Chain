@@ -1894,6 +1894,63 @@ fn restore_task_mismatched_slot_does_not_scrub_foreign_object_root() {
 }
 
 #[test]
+fn update_task_rejects_mismatched_embedded_task_id_and_preserves_state_root() {
+    let mut state = StateStore::new();
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10_203,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insert should succeed");
+    let canonical_snapshot = state.get_task(task_ref.id).expect("canonical task should exist");
+    let canonical_root = state.state_root();
+
+    let mut mismatched = canonical_snapshot.clone();
+    mismatched.task_id += 1;
+    mismatched.status = TaskStatus::Challenged;
+    mismatched.challenger = Some("bob".into());
+    mismatched.challenge_bond = Some(17);
+
+    let err = state
+        .update_task(task_ref.clone(), mismatched)
+        .expect_err("update_task should reject a payload whose embedded task_id disagrees with the object slot");
+
+    assert_eq!(err, "object id mismatch");
+    assert_eq!(
+        state.get_task(task_ref.id),
+        Some(canonical_snapshot),
+        "rejecting a mismatched embedded task_id must preserve the canonical task payload in its original slot"
+    );
+    assert!(
+        state.get_task(task_ref.id + 1).is_none(),
+        "rejecting a mismatched embedded task_id must not alias the task payload into a different slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "rejecting a mismatched embedded task_id must preserve the canonical deterministic root"
+    );
+}
+
+#[test]
 fn restore_task_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();

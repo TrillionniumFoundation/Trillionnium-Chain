@@ -1032,6 +1032,9 @@ impl StateStore {
         if current.version != expected.version {
             return Err("version conflict".into());
         }
+        if task.task_id != expected.id {
+            return Err("object id mismatch".into());
+        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
