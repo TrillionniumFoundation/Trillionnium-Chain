@@ -1220,9 +1220,7 @@ impl StateStore {
                 self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(existing_ref);
@@ -4558,6 +4556,27 @@ mod tests {
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_unchecked_idempotent_replay_uses_single_source_lookup_without_registry_entry() {
+        let mut st = StateStore::new();
+        let first = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "false".into())
+            .expect("canonical emergency_pause write should succeed");
+        st.gov_param_key_index.remove("emergency_pause");
+
+        let replay = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "false".into())
+            .expect("idempotent replay should recover pinned emergency_pause through the single-source helper");
+
+        assert_eq!(replay, first);
+        assert_eq!(
+            st.get_param(7_999)
+                .map(|param| (param.version, param.key_id, param.key, param.value)),
+            Some((1, 7_999, "emergency_pause".into(), "false".into())),
+            "idempotent replay must not churn version/state when the pinned key is recoverable from the shared single-source binding"
+        );
     }
 
     #[test]
