@@ -761,6 +761,117 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
+fn validate_resolve_authority_governance_value(key: &str, value: &str) -> Result<(), String> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(format!(
+            "invalid governance value for {}: must be non-empty",
+            key
+        ));
+    }
+    if trimmed != value {
+        return Err(format!(
+            "invalid governance value for {}: must not contain surrounding whitespace",
+            key
+        ));
+    }
+    if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
+        return Err(format!(
+            "invalid governance value for {}: exceeds max length {}",
+            key, RESOLVE_ACTOR_ID_MAX_LEN
+        ));
+    }
+    if trimmed.chars().any(|c| c.is_whitespace()) {
+        return Err(format!(
+            "invalid governance value for {}: must not contain whitespace",
+            key
+        ));
+    }
+    if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
+        return Err(format!(
+            "invalid governance value for {}: only ASCII ',' is allowed as member separator",
+            key
+        ));
+    }
+
+    let members: Vec<&str> = trimmed.split(',').collect();
+    if members.len() < 2 {
+        return Err(format!(
+            "invalid governance value for {}: resolve authority set must include at least two members",
+            key
+        ));
+    }
+
+    let mut seen_lower = std::collections::BTreeSet::new();
+    for member in members {
+        if member.is_empty() {
+            return Err(format!(
+                "invalid governance value for {}: empty authority member is not allowed",
+                key
+            ));
+        }
+        let member_lower = member.to_ascii_lowercase();
+        if !seen_lower.insert(member_lower.clone()) {
+            return Err(format!(
+                "invalid governance value for {}: duplicate authority member '{}' is not allowed",
+                key, member
+            ));
+        }
+        if member.contains(';') || member.contains('|') {
+            return Err(format!(
+                "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
+                key
+            ));
+        }
+        if member.chars().any(|c| c.is_control()) {
+            return Err(format!(
+                "invalid governance value for {}: control characters are not allowed",
+                key
+            ));
+        }
+        if !member.is_ascii() {
+            return Err(format!(
+                "invalid governance value for {}: must contain ASCII-only account ids",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
+            return Err(format!(
+                "invalid governance value for {}: placeholder authority is not allowed",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || member.eq_ignore_ascii_case("governance.emergency_pause")
+            || member.eq_ignore_ascii_case("emergency_pause")
+        {
+            return Err(format!(
+                "invalid governance value for {}: reserved system authority is not allowed",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || member.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        {
+            return Err(format!(
+                "invalid governance value for {}: treasury custody accounts are not allowed",
+                key
+            ));
+        }
+    }
+
+    let canonical = canonicalize_resolve_authority_set(trimmed)
+        .map_err(|err| format!("invalid governance value for {}: {}", key, err))?;
+    if canonical != trimmed {
+        return Err(format!(
+            "invalid governance value for {}: resolve authority set must use canonical lowercase sorted ordering",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn ensure_effective_resolve_authority_match(
     st: &StateStore,
     authority_set: &str,
@@ -1024,107 +1135,7 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 100_000)?;
             Ok(())
         }
-        "resolve_authority" => {
-            let trimmed = value.trim();
-            if trimmed.is_empty() {
-                return Err(format!(
-                    "invalid governance value for {}: must be non-empty",
-                    key
-                ));
-            }
-            if trimmed != value {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain surrounding whitespace",
-                    key
-                ));
-            }
-            if trimmed.len() > 128 {
-                return Err(format!(
-                    "invalid governance value for {}: exceeds max length 128",
-                    key
-                ));
-            }
-            if trimmed.chars().any(|c| c.is_whitespace()) {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain whitespace",
-                    key
-                ));
-            }
-            if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
-                return Err(format!(
-                    "invalid governance value for {}: only ASCII ',' is allowed as member separator",
-                    key
-                ));
-            }
-
-            let members: Vec<&str> = trimmed.split(',').collect();
-            if members.len() < 2 {
-                return Err(format!(
-                    "invalid governance value for {}: resolve authority set must include at least two members",
-                    key
-                ));
-            }
-
-            let mut seen_lower = std::collections::BTreeSet::new();
-            for member in members {
-                if member.is_empty() {
-                    return Err(format!(
-                        "invalid governance value for {}: empty authority member is not allowed",
-                        key
-                    ));
-                }
-                let member_lower = member.to_ascii_lowercase();
-                if !seen_lower.insert(member_lower.clone()) {
-                    return Err(format!(
-                        "invalid governance value for {}: duplicate authority member '{}' is not allowed",
-                        key, member
-                    ));
-                }
-                if member.contains(';') || member.contains('|') {
-                    return Err(format!(
-                        "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
-                        key
-                    ));
-                }
-                if member.chars().any(|c| c.is_control()) {
-                    return Err(format!(
-                        "invalid governance value for {}: control characters are not allowed",
-                        key
-                    ));
-                }
-                if !member.is_ascii() {
-                    return Err(format!(
-                        "invalid governance value for {}: must contain ASCII-only account ids",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
-                    return Err(format!(
-                        "invalid governance value for {}: placeholder authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                    || member.eq_ignore_ascii_case("governance.emergency_pause")
-                    || member.eq_ignore_ascii_case("emergency_pause")
-                {
-                    return Err(format!(
-                        "invalid governance value for {}: reserved system authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                    || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                    || member.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-                {
-                    return Err(format!(
-                        "invalid governance value for {}: treasury custody accounts are not allowed",
-                        key
-                    ));
-                }
-            }
-            Ok(())
-        }
+        "resolve_authority" => validate_resolve_authority_governance_value(key, value),
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())

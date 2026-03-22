@@ -193,6 +193,46 @@ fn paused_unpause_rejects_whitespace_bool_literal_without_mutating_custody_or_qu
 }
 
 #[test]
+fn paused_resolve_authority_update_rejects_noncanonical_member_order_and_case_and_preserves_quorum() {
+    // REF03 explicit-validator guard: live governance scheduling must reuse the same canonical
+    // resolve-authority validator as restore/quorum paths. Mixed-case or unsorted authority sets
+    // must fail closed instead of staging a value that later canonicalizes differently.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 6_060);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 606);
+
+    st.set_gov_param(98_190, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_910, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_910), Some((true, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .set_gov_param(
+            98_191,
+            7_310,
+            "resolve_authority".into(),
+            "Authority-B,authority-a".into(),
+        )
+        .expect_err("non-canonical resolve_authority ordering/case must fail closed");
+    assert!(err.contains("canonical lowercase sorted ordering"), "{err}");
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.pending_resolve_approval(9_910), Some((true, 1)));
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_restore_pending_resolve_authority_rejects_noncanonical_snapshot_and_scrubs_quorum() {
     // REF03 explicit-validator guard: restore paths for resolve_authority must reuse the same
     // canonical membership validator as live governance scheduling. A malformed snapshot must
