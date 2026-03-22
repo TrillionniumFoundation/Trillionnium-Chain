@@ -172,9 +172,7 @@ impl LaneAdmissionGate {
             } else if self.seen_global.len() != lane_total {
                 // Defensive self-heal for transient restored-state skew: lane-local queues
                 // remain source of truth for saturation, and rebuild lane-wide id set.
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.queue.iter().copied());
-                self.seen_global.extend(self.critical.queue.iter().copied());
+                self.rebuild_seen_global_from_queues();
             }
         }
 
