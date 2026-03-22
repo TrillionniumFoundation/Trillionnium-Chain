@@ -1291,10 +1291,11 @@ fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
     };
 
     // Keep the adaptive detector allocation-free on the common keyless and
-    // singleton-domain paths instead of scanning through the generic fold.
+    // tiny-domain paths instead of scanning through the generic fold.
     match domain.as_slice() {
         [] => None,
         [obj] => Some(obj.id),
+        [a, b] => Some(a.id.min(b.id)),
         _ => {
             let mut primary = domain[0].id;
             for id in domain.iter().skip(1).map(|o| o.id) {
@@ -4129,6 +4130,22 @@ mod tests {
         assert_eq!(
             primary_access_domain_key(&tx(4, vec![o(99)], vec![o(11), o(11), o(17)])),
             Some(11)
+        );
+    }
+
+    #[test]
+    fn primary_access_domain_key_two_entry_fast_path_canonicalizes_write_and_read_domains() {
+        assert_eq!(
+            primary_access_domain_key(&tx(10, vec![], vec![o(17), o(11)])),
+            Some(11)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(11, vec![o(23), o(19)], vec![])),
+            Some(19)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(12, vec![o(99)], vec![o(13), o(13)])),
+            Some(13)
         );
     }
 
