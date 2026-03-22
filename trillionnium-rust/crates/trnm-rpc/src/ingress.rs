@@ -96,13 +96,21 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
                 retained.push(entry.clone());
                 changed = true;
             }
-            std::collections::hash_map::Entry::Occupied(slot) => {
+            std::collections::hash_map::Entry::Occupied(mut slot) => {
                 let idx = *slot.get();
                 if retained[idx].line_number != entry.line_number
                     || retained[idx].error != entry.error
                     || retained[idx].quarantined_at_unix_ms != entry.quarantined_at_unix_ms
                 {
-                    retained[idx] = entry.clone();
+                    retained.remove(idx);
+                    for seen_idx in seen.values_mut() {
+                        if *seen_idx > idx {
+                            *seen_idx -= 1;
+                        }
+                    }
+                    let new_idx = retained.len();
+                    retained.push(entry.clone());
+                    *slot.get_mut() = new_idx;
                     changed = true;
                 }
             }

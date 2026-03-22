@@ -396,6 +396,67 @@ fn load_ingress_records_rewrites_preexisting_duplicate_quarantine_rows_even_when
 }
 
 #[test]
+fn load_ingress_records_prefers_latest_replayed_duplicate_when_existing_journal_is_at_cap() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-existing-cap-latest-duplicate", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let fixture = (0..10)
+        .map(|idx| format!("fresh-bad-{idx}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&path, format!("{fixture}\nreplayed-bad\n")).expect("write malformed replay fixture");
+
+    let mut seeded = (0..255)
+        .map(|idx| {
+            serde_json::json!({
+                "source_path": path.display().to_string(),
+                "line_number": idx + 1,
+                "line_hash": expected_stable_line_hash(&format!("seeded-bad-{idx}")),
+                "raw_line": format!("seeded-bad-{idx}"),
+                "error": "seeded quarantine row",
+                "quarantined_at_unix_ms": 1
+            })
+        })
+        .collect::<Vec<_>>();
+    seeded.push(serde_json::json!({
+        "source_path": path.display().to_string(),
+        "line_number": 1,
+        "line_hash": expected_stable_line_hash("replayed-bad"),
+        "raw_line": "replayed-bad",
+        "error": "stale replay metadata",
+        "quarantined_at_unix_ms": 1
+    }));
+    let seeded_raw = seeded
+        .into_iter()
+        .map(|entry| serde_json::to_string(&entry).expect("serialize seeded quarantine row"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&quarantine, format!("{seeded_raw}\n")).expect("seed capped quarantine journal");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "all malformed rows should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read bounded quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 256, "quarantine journal should stay capped");
+    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("replayed-bad"));
+    assert_eq!(entries.last().and_then(|v| v["line_number"].as_u64()), Some(11));
+    assert_ne!(entries.last().and_then(|v| v["error"].as_str()), Some("stale replay metadata"));
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_rewrites_preexisting_oversized_quarantine_rows_to_bound_noise() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-existing-oversized-row", "jsonl");
