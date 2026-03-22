@@ -1624,7 +1624,9 @@ mod tests {
         let write_only_miss = tx(3, vec![], vec![o(99), o(100)]);
 
         assert!(detect_conflict(&write_only_hit_a, &write_only_hit_b));
+        assert!(detect_conflict(&write_only_hit_b, &write_only_hit_a));
         assert!(!detect_conflict(&write_only_hit_a, &write_only_miss));
+        assert!(!detect_conflict(&write_only_miss, &write_only_hit_a));
     }
 
     #[test]
