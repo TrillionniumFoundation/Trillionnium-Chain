@@ -8882,6 +8882,7 @@ locked_block_hash = "stale-lock"
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
         assert!(err.contains("retained 1 committed WAL entry through height 1"));
         assert!(err.contains("last retained checkpoint: 1"));
+        assert_eq!(crate::recovery::metadata_only_recovery_error(&wal_dir, &recovered), err);
 
         let would_require_snapshot_restore = recovered
             .checkpoint_height_retained
