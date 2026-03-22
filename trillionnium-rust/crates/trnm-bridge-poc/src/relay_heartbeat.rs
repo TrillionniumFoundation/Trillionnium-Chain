@@ -132,6 +132,9 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{115F}'
             | '\u{1160}'
             | '\u{1680}'
+            | '\u{180B}'
+            | '\u{180C}'
+            | '\u{180D}'
             | '\u{180E}'
             | '\u{180F}'
             | '\u{2800}'
@@ -244,6 +247,13 @@ mod tests {
         let raw = "target\u{00AD}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_mongolian_variation_selectors_for_replay_stability() {
+        let raw = "target\u{180B}relay\u{180C}timeout\u{180D}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
     }
 
     #[test]
