@@ -178,6 +178,11 @@ fn checked_ingress_fee_boundary_charge(tx: &TransferTx) -> Option<u128> {
     checked_total_charge(tx.amount, tx.fee)
 }
 
+#[cfg(test)]
+fn is_exact_ingress_fee_boundary_charge(tx: &TransferTx) -> bool {
+    checked_ingress_fee_boundary_charge(tx) == Some(u128::MAX)
+}
+
 fn has_ingress_accounting_overflow(tx: &TransferTx) -> bool {
     checked_ingress_fee_boundary_charge(tx).is_none()
 }
@@ -639,6 +644,16 @@ mod tests {
             0,
             ALICE_SK_HEX,
         )));
+    }
+
+    #[test]
+    fn ingress_fee_boundary_marks_exact_u128_charge_without_flagging_overflow() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+        let exact_boundary = transfer_tx(&alice, &bob, u128::MAX - 1, 1, 0, ALICE_SK_HEX);
+
+        assert!(is_exact_ingress_fee_boundary_charge(&exact_boundary));
+        assert!(!has_ingress_accounting_overflow(&exact_boundary));
     }
 
     #[test]
