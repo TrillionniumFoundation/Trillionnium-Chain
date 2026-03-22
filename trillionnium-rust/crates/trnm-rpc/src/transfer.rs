@@ -178,13 +178,17 @@ fn checked_ingress_fee_boundary_charge(tx: &TransferTx) -> Option<u128> {
     checked_total_charge(tx.amount, tx.fee)
 }
 
+fn ingress_fee_boundary_allows(tx: &TransferTx) -> bool {
+    checked_ingress_fee_boundary_charge(tx).is_some()
+}
+
 #[cfg(test)]
 fn is_exact_ingress_fee_boundary_charge(tx: &TransferTx) -> bool {
     checked_ingress_fee_boundary_charge(tx) == Some(u128::MAX)
 }
 
 fn has_ingress_accounting_overflow(tx: &TransferTx) -> bool {
-    checked_ingress_fee_boundary_charge(tx).is_none()
+    !ingress_fee_boundary_allows(tx)
 }
 
 pub fn submit_tx(
@@ -589,6 +593,16 @@ mod tests {
 
         assert_eq!(out.status, TxStatus::Fail);
         assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn ingress_fee_boundary_allows_fee_max_boundary_when_amount_is_zero() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+        let zero_amount_boundary_fee = transfer_tx(&alice, &bob, 0, u128::MAX, 0, ALICE_SK_HEX);
+
+        assert!(ingress_fee_boundary_allows(&zero_amount_boundary_fee));
+        assert!(!has_ingress_accounting_overflow(&zero_amount_boundary_fee));
     }
 
     #[test]
