@@ -107,53 +107,65 @@ pub(crate) fn scan_and_apply_timeouts(
         let was_challenged = matches!(task.status, TaskStatus::Challenged);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
+            println!(
+                "[timeout-skip] height={} task_id={} status={:?} reason=missing_task_ref",
+                current_height, task_id, task.status
+            );
             continue;
         };
         let before = st.clone();
-        if apply_timeout(st, task_ref, current_height).is_ok() {
-            let (
-                event_tx_id,
-                event_tx_ordinal,
-                event_tx_overflowed,
-                event_tx_ordinal_overflowed,
-            ) = timeout_event_surface_metadata(tx_id_seed, migrated);
-            migrated += 1;
-            let to_status = status_name(st, task_id);
-            let root = hex::encode(st.state_root());
-            let (treasury_delta, challenger_delta) =
-                balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = timeout_bond_disposition(
-                was_challenged,
-                st.get_task(task_id)
-                    .and_then(|t| t.challenge_bond_forfeited),
-            );
-            emit_timeout_event(
-                st,
-                task_id,
-                event_tx_id,
-                event_tx_ordinal,
-                event_tx_overflowed,
-                event_tx_ordinal_overflowed,
-                current_height,
-                &from_status,
-                &to_status,
-                &root,
-                &treasury_delta,
-                challenger_delta.as_ref(),
-                challenger.as_deref(),
-                bond_disposition,
-            );
-            println!(
-                "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} tx_ordinal_overflow={} from_status={} to_status={} source=auto_scan",
-                current_height,
-                task_id,
-                event_tx_id,
-                event_tx_ordinal,
-                event_tx_overflowed,
-                event_tx_ordinal_overflowed,
-                from_status,
-                to_status
-            );
+        match apply_timeout(st, task_ref, current_height) {
+            Ok(()) => {
+                let (
+                    event_tx_id,
+                    event_tx_ordinal,
+                    event_tx_overflowed,
+                    event_tx_ordinal_overflowed,
+                ) = timeout_event_surface_metadata(tx_id_seed, migrated);
+                migrated += 1;
+                let to_status = status_name(st, task_id);
+                let root = hex::encode(st.state_root());
+                let (treasury_delta, challenger_delta) =
+                    balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
+                let bond_disposition = timeout_bond_disposition(
+                    was_challenged,
+                    st.get_task(task_id)
+                        .and_then(|t| t.challenge_bond_forfeited),
+                );
+                emit_timeout_event(
+                    st,
+                    task_id,
+                    event_tx_id,
+                    event_tx_ordinal,
+                    event_tx_overflowed,
+                    event_tx_ordinal_overflowed,
+                    current_height,
+                    &from_status,
+                    &to_status,
+                    &root,
+                    &treasury_delta,
+                    challenger_delta.as_ref(),
+                    challenger.as_deref(),
+                    bond_disposition,
+                );
+                println!(
+                    "[timeout] height={} task_id={} tx_id={} tx_ordinal={} tx_id_overflow={} tx_ordinal_overflow={} from_status={} to_status={} source=auto_scan",
+                    current_height,
+                    task_id,
+                    event_tx_id,
+                    event_tx_ordinal,
+                    event_tx_overflowed,
+                    event_tx_ordinal_overflowed,
+                    from_status,
+                    to_status
+                );
+            }
+            Err(err) => {
+                println!(
+                    "[timeout-skip] height={} task_id={} status={:?} reason=apply_timeout_failed error={}",
+                    current_height, task_id, task.status, err
+                );
+            }
         }
     }
     migrated
