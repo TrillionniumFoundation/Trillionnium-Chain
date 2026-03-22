@@ -1843,11 +1843,13 @@ fn wal_proposal_hash_length_is_canonical(value: &str) -> bool {
     !value.is_empty() && value.len() <= WAL_PROPOSAL_HASH_MAX_LEN
 }
 
+fn wal_proposal_hash_surface_has_forbidden_layout(value: &str) -> bool {
+    value.trim() != value || !value.is_ascii() || value.chars().any(|c| c.is_whitespace() || c.is_control())
+}
+
 fn is_canonical_wal_proposal_hash(value: &str) -> bool {
     wal_proposal_hash_length_is_canonical(value)
-        && value.trim() == value
-        && value.is_ascii()
-        && !value.chars().any(|c| c.is_whitespace() || c.is_control())
+        && !wal_proposal_hash_surface_has_forbidden_layout(value)
 }
 
 fn wal_prev_hash_surface_is_canonical(height: u64, prev_hash_hex: Option<&str>) -> bool {
