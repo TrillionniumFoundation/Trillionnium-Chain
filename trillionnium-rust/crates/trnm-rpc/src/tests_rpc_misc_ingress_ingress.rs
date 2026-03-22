@@ -135,11 +135,20 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let tag_character_error = IngressQuarantineRecord {
         error: "parse failed\u{E0001}json".to_string(),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&tag_character_error),
         "invisible unicode tag characters should be rejected to keep quarantine logs unambiguous"
+    );
+
+    let unicode_noncharacter_error = IngressQuarantineRecord {
+        error: "parse failed\u{FDD0}json".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&unicode_noncharacter_error),
+        "unicode noncharacters should be rejected to keep retained quarantine logs unambiguous"
     );
 }
 

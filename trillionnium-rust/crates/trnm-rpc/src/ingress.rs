@@ -44,6 +44,35 @@ fn stable_line_hash(raw: &str) -> u64 {
     stable_bounded_bytes_hash(raw.as_bytes())
 }
 
+fn is_forbidden_quarantine_char(ch: char) -> bool {
+    ch.is_control()
+        || matches!(
+            ch,
+            '\u{061C}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{FEFF}'
+                | '\u{E0001}'
+                | '\u{E0020}'..='\u{E007F}'
+        )
+        || ('\u{FDD0}'..='\u{FDEF}').contains(&ch)
+        || (ch as u32 & 0xFFFE == 0xFFFE && (ch as u32) <= 0x10FFFF)
+}
+
 pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -> bool {
     const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
     const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
@@ -51,32 +80,7 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
     const INGRESS_QUARANTINE_LINE_NUMBER_MAX: usize = 1_048_576;
 
     fn contains_forbidden_quarantine_chars(raw: &str) -> bool {
-        raw.chars().any(|ch| {
-            ch.is_control()
-                || matches!(
-                    ch,
-                    '\u{061C}'
-                        | '\u{200B}'
-                        | '\u{200C}'
-                        | '\u{200D}'
-                        | '\u{200E}'
-                        | '\u{200F}'
-                        | '\u{2028}'
-                        | '\u{2029}'
-                        | '\u{202A}'
-                        | '\u{202B}'
-                        | '\u{202C}'
-                        | '\u{202D}'
-                        | '\u{202E}'
-                        | '\u{2066}'
-                        | '\u{2067}'
-                        | '\u{2068}'
-                        | '\u{2069}'
-                        | '\u{FEFF}'
-                        | '\u{E0001}'
-                        | '\u{E0020}'..='\u{E007F}'
-                )
-        })
+        raw.chars().any(is_forbidden_quarantine_char)
     }
 
     if entry.line_number == 0
@@ -182,37 +186,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
 
     fn sanitize_for_quarantine(raw: &str) -> String {
         raw.chars()
-            .map(|ch| {
-                if ch.is_control()
-                    || matches!(
-                        ch,
-                        '\u{061C}'
-                            | '\u{200B}'
-                            | '\u{200C}'
-                            | '\u{200D}'
-                            | '\u{200E}'
-                            | '\u{200F}'
-                            | '\u{2028}'
-                            | '\u{2029}'
-                            | '\u{202A}'
-                            | '\u{202B}'
-                            | '\u{202C}'
-                            | '\u{202D}'
-                            | '\u{202E}'
-                            | '\u{2066}'
-                            | '\u{2067}'
-                            | '\u{2068}'
-                            | '\u{2069}'
-                            | '\u{FEFF}'
-                            | '\u{E0001}'
-                            | '\u{E0020}'..='\u{E007F}'
-                    )
-                {
-                    '�'
-                } else {
-                    ch
-                }
-            })
+            .map(|ch| if is_forbidden_quarantine_char(ch) { '�' } else { ch })
             .collect()
     }
 
