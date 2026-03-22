@@ -55,13 +55,12 @@ fn timeout_bond_disposition(
 }
 
 fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, u64, bool, bool) {
-    let (tx_ordinal, tx_ordinal_overflowed) = match migrated_before_emit.checked_add(1) {
-        Some(tx_ordinal) => (tx_ordinal, false),
+    let tx_ordinal_overflowed = migrated_before_emit == u64::MAX;
+    let tx_ordinal = migrated_before_emit.saturating_add(1);
+    let (tx_id, tx_id_overflowed) = match tx_id_seed.checked_add(tx_ordinal) {
+        Some(tx_id) => (tx_id, tx_ordinal_overflowed),
         None => (u64::MAX, true),
     };
-    let tx_id_checked = tx_id_seed.checked_add(tx_ordinal);
-    let tx_id = tx_id_checked.unwrap_or(u64::MAX);
-    let tx_id_overflowed = tx_id_checked.is_none();
     (tx_id, tx_ordinal, tx_id_overflowed, tx_ordinal_overflowed)
 }
 
