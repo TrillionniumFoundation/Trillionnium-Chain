@@ -186,7 +186,10 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 };
-                if task.version != snapshot.task_version || task.status != TaskStatus::Challenged {
+                if task.version != snapshot.task_version
+                    || task.status != TaskStatus::Challenged
+                    || !challenged_task_snapshot_complete_for_pending_resolve(task)
+                {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }

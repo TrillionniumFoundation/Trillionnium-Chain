@@ -1889,7 +1889,7 @@ impl StateStore {
     }
 }
 
-fn challenged_task_snapshot_complete_for_pending_resolve(task: &TaskObject) -> bool {
+pub(crate) fn challenged_task_snapshot_complete_for_pending_resolve(task: &TaskObject) -> bool {
     task.challenged_at_height.is_some()
         && task.resolve_deadline_height.is_some()
         && task.challenge_bond.is_some()
