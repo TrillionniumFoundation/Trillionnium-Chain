@@ -31,6 +31,77 @@ fn has_canonical_metadata(value: &str) -> bool {
     !trimmed.is_empty() && trimmed == value
 }
 
+fn has_complete_task_metering_snapshot(metering: &trnm_types::TaskMeteringSnapshot) -> bool {
+    has_canonical_metadata(&metering.workload_class)
+        && has_canonical_metadata(&metering.metering_schema)
+        && has_canonical_metadata(&metering.receipt_hash)
+}
+
+fn has_complete_task_metadata(metadata: &trnm_types::TaskMetadata) -> bool {
+    metadata
+        .note
+        .as_deref()
+        .map(has_canonical_metadata)
+        .unwrap_or(true)
+        && metadata
+            .task_type
+            .as_deref()
+            .map(has_canonical_metadata)
+            .unwrap_or(true)
+        && metadata
+            .input_hash
+            .as_deref()
+            .map(has_canonical_metadata)
+            .unwrap_or(true)
+        && metadata
+            .model
+            .as_ref()
+            .map(|model| {
+                model
+                    .model_id
+                    .as_deref()
+                    .map(has_canonical_metadata)
+                    .unwrap_or(true)
+                    && model
+                        .model_digest
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+                    && model
+                        .version
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+            })
+            .unwrap_or(true)
+        && metadata
+            .provenance
+            .as_ref()
+            .map(|provenance| {
+                provenance
+                    .producer_did
+                    .as_deref()
+                    .map(has_canonical_metadata)
+                    .unwrap_or(true)
+                    && provenance
+                        .produced_at
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+                    && provenance
+                        .provenance_index
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+            })
+            .unwrap_or(true)
+        && metadata
+            .metering
+            .as_ref()
+            .map(has_complete_task_metering_snapshot)
+            .unwrap_or(true)
+}
+
 fn has_complete_checkpoint_meta(checkpoint: &CheckpointMeta) -> bool {
     has_canonical_metadata(&checkpoint.state_root_hex)
         && has_canonical_metadata(&checkpoint.wal_entry_hash_hex)
@@ -68,7 +139,14 @@ impl StateStore {
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
         match snapshot {
-            Some(task) if task.task_id == id => {
+            Some(task)
+                if task.task_id == id
+                    && task
+                        .metadata
+                        .as_ref()
+                        .map(has_complete_task_metadata)
+                        .unwrap_or(true) =>
+            {
                 self.objects.insert(
                     id,
                     VersionedObject {
