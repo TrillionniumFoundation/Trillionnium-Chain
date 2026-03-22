@@ -4631,6 +4631,59 @@ mod tests {
     }
 
     #[test]
+    fn restore_task_rejects_paused_challenged_metadata_missing_challenge_bond() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits challenge bond metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits challenge bond metadata"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_paused_challenged_metadata_missing_forfeit_flag() {
         let mut st = StateStore::new();
         st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
