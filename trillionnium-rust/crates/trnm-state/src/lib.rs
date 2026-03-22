@@ -567,7 +567,11 @@ fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
         && matches!(task.challenged_at_height, Some(height) if height > 0)
         && matches!(task.resolve_deadline_height, Some(height) if height > 0)
         && matches!(task.challenge_bond, Some(bond) if bond > 0)
-        && task.challenger.is_some()
+        && task
+            .challenger
+            .as_deref()
+            .map(str::trim)
+            .is_some_and(|challenger| !challenger.is_empty())
 }
 
 fn task_supports_pending_resolve_snapshot_restore(task: &TaskObject) -> bool {
