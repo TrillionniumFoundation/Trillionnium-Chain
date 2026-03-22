@@ -38,6 +38,22 @@ fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
 }
 
 #[test]
+fn settlement_request_collapses_braille_blank_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{2800}relay timeout".to_string(),
+        )
+        .expect("braille blank should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}
+
+#[test]
 fn settlement_request_rejects_non_canonical_subject_with_word_joiner() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     let token = CapabilityToken {
