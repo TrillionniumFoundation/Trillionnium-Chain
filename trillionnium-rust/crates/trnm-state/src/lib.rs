@@ -733,9 +733,13 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &authority_canonical) {
             return None;
         }
+        let Some(current_ref) = self.get_ref(task_id) else {
+            return None;
+        };
         if task.task_id != task_id
             || task.status != TaskStatus::Challenged
             || task.version != snapshot.task_version
+            || current_ref.version != snapshot.task_version
         {
             return None;
         }
@@ -3044,6 +3048,63 @@ mod tests {
         assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
         assert_eq!(st.get_ref(task.task_id).map(|r| r.version), Some(task.version));
         assert_eq!(st.get_task(task.task_id), Some(task));
+    }
+
+    #[test]
+    fn restore_pending_resolve_rejects_snapshot_when_outer_task_version_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_012,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.objects
+            .get_mut(&task.task_id)
+            .expect("task object should exist")
+            .version = 99;
+        let root_before_restore = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_eq!(
+            st.get_ref(task.task_id).map(|r| r.version),
+            Some(99),
+            "rejecting the pending restore must not silently rewrite the drifted outer object version"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before_restore,
+            "rejecting a pending restore snapshot across an outer object/version drift should remain a state-root no-op"
+        );
     }
 
     #[test]
