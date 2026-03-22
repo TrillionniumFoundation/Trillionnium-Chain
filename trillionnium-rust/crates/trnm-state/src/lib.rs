@@ -1438,33 +1438,21 @@ impl StateStore {
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
         self.invalidate_state_root_cache();
-        if let Some(snapshot) = snapshot.as_ref() {
-            if let Some(existing) = self.objects.get(&key_id) {
-                match &existing.value {
-                    ObjectValue::GovParam(existing_param) if existing_param.key != snapshot.key => {
-                        return;
-                    }
-                    ObjectValue::GovParam(_) => {}
-                    _ => return,
-                }
-            }
-        }
-        self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
-                if self
-                    .objects
-                    .get(&key_id)
-                    .is_some_and(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
-                {
-                    return;
+                if let Some(existing) = self.objects.get(&key_id) {
+                    match &existing.value {
+                        ObjectValue::GovParam(existing_param) if existing_param.key != snapshot.key => {
+                            return;
+                        }
+                        ObjectValue::GovParam(_) => {}
+                        _ => return,
+                    }
                 }
                 if snapshot.key_id != key_id {
-                    self.objects.remove(&key_id);
                     return;
                 }
                 if !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str()) {
-                    self.objects.remove(&key_id);
                     return;
                 }
                 if validate_governance_key_registration(
@@ -1474,13 +1462,12 @@ impl StateStore {
                 )
                 .is_err()
                 {
-                    self.objects.remove(&key_id);
                     return;
                 }
                 if validate_gov_param_value(&snapshot.key, &snapshot.value).is_err() {
-                    self.objects.remove(&key_id);
                     return;
                 }
+                self.remove_gov_param_key_index_for_id(key_id);
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
                 self.objects.insert(
@@ -1492,6 +1479,7 @@ impl StateStore {
                 );
             }
             None => {
+                self.remove_gov_param_key_index_for_id(key_id);
                 self.objects.remove(&key_id);
             }
         }

@@ -2670,6 +2670,44 @@ fn restore_gov_param_rejects_noncanonical_emergency_pause_key_id_without_aliasin
 }
 
 #[test]
+fn restore_gov_param_rejects_noncanonical_snapshot_without_deleting_live_canonical_param() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_200, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let live_snapshot = state
+        .get_param(7_999)
+        .expect("live canonical emergency_pause object must exist");
+    let root_before = state.state_root();
+
+    state.restore_gov_param(
+        7_999,
+        Some(GovParamObject {
+            key_id: 7_999,
+            key: " emergency_pause".to_string(),
+            value: "false".to_string(),
+            version: live_snapshot.version + 1,
+        }),
+    );
+
+    let after = state
+        .get_param(7_999)
+        .expect("invalid restore must not delete the live canonical governance object");
+    assert_eq!(after.key, live_snapshot.key);
+    assert_eq!(after.value, live_snapshot.value);
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "invalid restore must preserve the canonical governance registry binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "invalid restore must preserve the prior deterministic root instead of deleting the live canonical governance slot"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();
