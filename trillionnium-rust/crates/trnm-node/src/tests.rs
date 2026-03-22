@@ -342,6 +342,29 @@
     }
 
     #[test]
+    fn preexec_dedups_duplicate_tx_ids_to_keep_ordering_surface_stable() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4_262,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4_263,
+                creator: "bob".into(),
+                bounty: 11,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 1, 2, 1]);
+
+        assert_eq!(ordered_ids, vec![2, 1]);
+        assert_eq!(rejected, 0);
+    }
+
+    #[test]
     fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
         let baseline = vec![1, 2, 3, 4];
         let advisor = ShadowOnlyRlAdvisor { topk: 2 };

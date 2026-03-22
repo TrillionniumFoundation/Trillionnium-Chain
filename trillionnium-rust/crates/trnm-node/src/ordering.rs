@@ -188,7 +188,58 @@ impl PreExecPool {
         if group_ids.is_empty() {
             return (vec![], 0);
         }
-        let workers = self.width.min(group_ids.len());
+
+        let mut unique_group_ids = Vec::with_capacity(group_ids.len());
+        let mut seen_ids = HashSet::with_capacity(group_ids.len());
+        for id in group_ids {
+            if seen_ids.insert(id) {
+                unique_group_ids.push(id);
+            }
+        }
+
+        let workers = self.width.min(unique_group_ids.len());
+        if workers == 0 {
+            return (vec![], 0);
+        }
+        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for w in 0..workers {
+                let ids: Vec<u64> = unique_group_ids
+                    .iter()
+                    .copied()
+                    .enumerate()
+                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                    .collect();
+                if ids.is_empty() {
+                    continue;
+                }
+                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
+                    ids,
+                    result_tx: tx.clone(),
+                }));
+            }
+        }
+        self.state.cv.notify_all();
+        drop(tx);
+
+        let mut ok_ids = HashSet::with_capacity(unique_group_ids.len());
+        let mut rejected = 0u64;
+        for (id, ok, err) in rx {
+            if ok {
+                ok_ids.insert(id);
+            } else {
+                rejected += 1;
+                println!("[preexec] tx_id={} rejected err={}", id, err);
+            }
+        }
+
+        let ordered_ok_ids = unique_group_ids
+            .into_iter()
+            .filter(|id| ok_ids.contains(id))
+            .collect();
+        (ordered_ok_ids, rejected)
+    }
         let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
         {
             let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
