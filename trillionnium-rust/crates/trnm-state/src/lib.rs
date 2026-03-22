@@ -2016,7 +2016,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
             _ => None,
         }
     }
@@ -2041,7 +2041,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key).copied()?;
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
     }
@@ -6032,6 +6032,39 @@ mod tests {
         assert_eq!(param.value, "1000");
         assert_eq!(st.gov_param_u64("max_block_ms"), Some(1000));
         assert!(st.gov_param_u64("challenge_min_bond").is_none());
+    }
+
+    #[test]
+    fn gov_param_reads_fail_closed_on_embedded_key_id_drift() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            7_001,
+            VersionedObject {
+                version: 3,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_999,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 3,
+                }),
+            },
+        );
+        st.gov_param_key_index.insert("max_block_ms".into(), 7_001);
+
+        assert!(
+            st.gov_param_string("max_block_ms").is_none(),
+            "reads must fail closed when the indexed slot and embedded governance key id diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("max_block_ms").is_none(),
+            "ref lookup must fail closed on the same embedded key-id drift"
+        );
+        assert_eq!(
+            st.get_param(7_001)
+                .expect("raw object lookup should still expose the corrupted fixture")
+                .key_id,
+            7_999
+        );
     }
 
     #[test]
