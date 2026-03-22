@@ -209,6 +209,9 @@ fn governance_registry_lookup_id_for_key(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
 ) -> Option<u64> {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return None;
+    }
     governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
 }
 
@@ -4518,6 +4521,10 @@ mod tests {
         let mut indexed = BTreeMap::new();
         indexed.insert("emergency_pause".to_string(), 8_000);
         indexed.insert("resolve_authority".to_string(), 7_313);
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            9_200,
+        );
 
         assert_eq!(
             governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
@@ -4528,6 +4535,11 @@ mod tests {
             governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
             Some(7_313),
             "non-pinned governance keys should still resolve through the mutable registry"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign governance keys must fail closed instead of resolving through mutable registry drift"
         );
     }
 
