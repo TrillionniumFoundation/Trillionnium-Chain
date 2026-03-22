@@ -1520,9 +1520,8 @@ impl StateStore {
 
     fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
         let id = self.validated_gov_param_registry_id_for_key(key)?;
-        let param = self.validated_gov_param_object_at_id(id)?;
-        let canonical_key = governance_expected_key_for_id(id).unwrap_or(key);
-        (param.key == key && canonical_key == key).then_some((id, param))
+        let (canonical_key, param) = self.canonical_gov_param_binding_at_id(id)?;
+        (canonical_key == key).then_some((id, param))
     }
 
     fn gov_param_value(&self, key: &str) -> Option<&str> {
@@ -3705,6 +3704,35 @@ mod tests {
         assert!(
             st.is_emergency_paused(),
             "canonical reserved-id binding must surface as an active emergency pause"
+        );
+    }
+
+    #[test]
+    fn governance_reserved_key_accessor_stays_aligned_with_id_accessor_single_source() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let by_key = st
+            .gov_param_ref_for_key("emergency_pause")
+            .map(|(id, param)| (id, param.key.clone(), param.value.clone()));
+        let by_id = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .map(|param| (param.key_id, param.key, param.value));
+
+        assert_eq!(
+            by_key, by_id,
+            "reserved-key accessor must reuse the same canonical single-source binding surfaced by the id accessor"
         );
     }
 
