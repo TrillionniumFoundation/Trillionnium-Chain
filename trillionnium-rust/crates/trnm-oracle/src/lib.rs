@@ -391,6 +391,15 @@ impl OracleValidationReport {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_explicit_unclassified_failure_accounting(&self) -> bool {
+        !self.ok
+            && self.error.is_some()
+            && self.metrics.accepted_total == 0
+            && self.classified_reject_total() == 0
+            && self.observation_classified_reject_total() == 0
+            && self.metrics.sample_count > 0
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
         let non_empty_sample = self.metrics.sample_count > 0;
         let result_label_consistent = if self.ok {
@@ -398,12 +407,14 @@ impl OracleValidationReport {
         } else {
             self.error.is_some() && self.metrics.accepted_total == 0
         };
+        let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count();
 
         non_empty_sample
             && self.observation_matches_metrics()
-            && self.classified_outcome_conserves_sample_count()
-            && self.observation_classified_outcome_conserves_sample_count()
             && result_label_consistent
+            && (outcome_accounting_consistent
+                || self.has_explicit_unclassified_failure_accounting())
     }
 }
 
@@ -911,6 +922,7 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
