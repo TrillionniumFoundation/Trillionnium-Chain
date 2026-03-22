@@ -246,16 +246,77 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             None => line_bytes,
         };
         if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
+            if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                let raw_line = if line_bytes.is_empty() {
+                    "whitespace-only line omitted".to_string()
+                } else {
+                    truncate_bytes_for_quarantine(line_bytes)
+                };
+                let raw_line = if raw_line.trim().is_empty() {
+                    "whitespace-only line omitted".to_string()
+                } else {
+                    raw_line
+                };
+                let parse_result = Err((
+                    stable_bounded_bytes_hash(line_bytes),
+                    raw_line,
+                    anyhow!(
+                        "ingress line exceeds {} bytes parse bound (got {})",
+                        INGRESS_LINE_PARSE_MAX_BYTES,
+                        line_bytes.len()
+                    ),
+                ));
+                let (line_hash, raw_line, err) = match parse_result {
+                    Ok(_) => unreachable!("successful parse path continues early"),
+                    Err(parts) => parts,
+                };
+                quarantined_total += 1;
+                let error = err.to_string();
+                if quarantined_seen.insert((line_hash, raw_line.clone(), error.clone())) {
+                    push_tail_limited(
+                        &mut quarantined,
+                        IngressQuarantineRecord {
+                            source_path: source_path_for_quarantine.clone(),
+                            line_number: idx + 1,
+                            line_hash,
+                            raw_line,
+                            error,
+                            quarantined_at_unix_ms: now_ms(),
+                        },
+                        INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
+                    );
+                }
+                continue;
+            }
             skipped_whitespace_noise = true;
             continue;
         }
         let parse_result = match std::str::from_utf8(line_bytes) {
             Ok(line) => {
                 if line.trim().is_empty() {
-                    skipped_whitespace_noise = true;
-                    continue;
-                }
-                if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                    if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                        let raw_line = {
+                            let bounded = truncate_for_quarantine(line);
+                            if bounded.trim().is_empty() {
+                                "whitespace-only line omitted".to_string()
+                            } else {
+                                bounded
+                            }
+                        };
+                        Err((
+                            stable_line_hash(line),
+                            raw_line,
+                            anyhow!(
+                                "ingress line exceeds {} bytes parse bound (got {})",
+                                INGRESS_LINE_PARSE_MAX_BYTES,
+                                line_bytes.len()
+                            ),
+                        ))
+                    } else {
+                        skipped_whitespace_noise = true;
+                        continue;
+                    }
+                } else if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
                     Err((
                         stable_line_hash(line),
                         truncate_for_quarantine(line),

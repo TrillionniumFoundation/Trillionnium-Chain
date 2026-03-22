@@ -498,6 +498,59 @@ fn load_ingress_records_compacts_unicode_whitespace_only_noise_without_quarantin
 }
 
 #[test]
+fn load_ingress_records_quarantines_oversized_ascii_whitespace_only_noise() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-oversized-ascii-whitespace-noise-quarantine", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let ascii_whitespace_noise = format!("{}\n", " ".repeat(70_000));
+    fs::write(
+        &path,
+        format!(
+            concat!(
+                "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+                "{}"
+            ),
+            ascii_whitespace_noise
+        ),
+    )
+    .expect("write ingress fixture");
+
+    let records = load_ingress_records();
+    assert_eq!(records.len(), 1, "valid ingress rows should survive oversized ascii-whitespace quarantine");
+    assert!(
+        quarantine.exists(),
+        "oversized ascii whitespace-only ingress noise should be quarantined"
+    );
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let quarantine_lines: Vec<&str> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    assert_eq!(
+        quarantine_lines.len(),
+        1,
+        "one oversized ascii-whitespace line should be quarantined"
+    );
+    assert!(
+        quarantine_lines[0].contains("whitespace-only line omitted"),
+        "quarantine entry should replace blank raw payload with an explicit marker"
+    );
+    assert!(
+        quarantine_lines[0].contains("exceeds 65536 bytes parse bound (got 70000)"),
+        "quarantine entry should preserve the parse-bound error"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_oversized_unicode_whitespace_only_noise() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-oversized-unicode-whitespace-noise-quarantine", "jsonl");
