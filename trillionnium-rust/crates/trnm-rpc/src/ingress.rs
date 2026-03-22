@@ -41,7 +41,12 @@ fn quarantine_line_hash_from_value(value: &serde_json::Value) -> Option<u64> {
         return Some(stable_line_hash(raw_line.trim()));
     }
 
-    value.get("line_hash")?.as_u64()
+    let line_hash = value.get("line_hash")?;
+    if let Some(line_hash) = line_hash.as_u64() {
+        return Some(line_hash);
+    }
+
+    line_hash.as_str()?.trim().parse::<u64>().ok()
 }
 
 fn quarantine_line_number_from_value(value: &serde_json::Value) -> Option<usize> {
