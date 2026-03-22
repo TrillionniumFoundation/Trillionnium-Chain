@@ -44,6 +44,19 @@ fn quarantine_line_hash_from_value(value: &serde_json::Value) -> Option<u64> {
     value.get("line_hash")?.as_u64()
 }
 
+fn quarantine_line_number_from_value(value: &serde_json::Value) -> Option<usize> {
+    let line_number = value.get("line_number")?;
+    if let Some(line_number) = line_number.as_u64() {
+        return usize::try_from(line_number).ok();
+    }
+
+    line_number
+        .as_str()?
+        .trim()
+        .parse::<usize>()
+        .ok()
+}
+
 fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
     let trimmed = line.trim();
     if trimmed.is_empty() {
@@ -53,7 +66,7 @@ fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)>
     let value = serde_json::from_str::<serde_json::Value>(trimmed).ok()?;
     Some((
         value.get("source_path")?.as_str()?.to_string(),
-        usize::try_from(value.get("line_number")?.as_u64()?).ok()?,
+        quarantine_line_number_from_value(&value)?,
         quarantine_line_hash_from_value(&value)?,
     ))
 }
