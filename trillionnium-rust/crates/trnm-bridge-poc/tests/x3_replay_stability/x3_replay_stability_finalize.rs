@@ -157,3 +157,38 @@ fn x3_prep_accepts_confirm_height_at_u64_max_source_finality_boundary() {
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(u64::MAX));
 }
+
+#[test]
+fn x3_prep_rejects_confirm_height_below_u64_max_target_boundary() {
+    let mut request = SettlementRequest::new(16, "0xconfirm-u64-max-lower-boundary".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: u64::MAX,
+            target_height: u64::MAX - 1,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed {
+            height: u64::MAX - 2,
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight {
+            height: u64::MAX - 2,
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
