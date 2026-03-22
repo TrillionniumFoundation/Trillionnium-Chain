@@ -122,6 +122,19 @@ fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
     );
 
     if objs.is_empty() {
+        if dst.len() <= 1 {
+            return;
+        }
+
+        let mut unique_len = 1usize;
+        for idx in 1..dst.len() {
+            let key = dst[idx];
+            if !dst[..unique_len].contains(&key) {
+                dst[unique_len] = key;
+                unique_len += 1;
+            }
+        }
+        dst.truncate(unique_len);
         return;
     }
 
@@ -1926,6 +1939,15 @@ mod tests {
         );
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn extend_unique_access_keys_normalizes_duplicate_dst_even_when_extension_is_empty() {
+        let mut keys = vec![100, 200, 100, 300, 200, 400];
+
+        extend_unique_access_keys(&mut keys, &[]);
+
+        assert_eq!(keys, vec![100, 200, 300, 400]);
     }
 
     #[test]
