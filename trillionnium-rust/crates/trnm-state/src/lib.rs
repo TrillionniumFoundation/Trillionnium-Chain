@@ -1429,11 +1429,20 @@ impl StateStore {
         Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
     }
 
+    fn pending_gov_update_has_key_id_alias(&self, key: &str, key_id: u64) -> bool {
+        self.pending_gov_updates.iter().any(|(other_key, other_pending)| {
+            other_key.as_str() != key && other_pending.key_id == key_id
+        })
+    }
+
     fn canonical_pending_gov_update_for_key(&self, key: &str) -> Option<&PendingGovParamUpdate> {
         let pending = self.pending_gov_updates.get(key)?;
         if validate_pending_gov_param_snapshot_binding(&self.gov_param_key_index, key, pending)
             .is_err()
         {
+            return None;
+        }
+        if self.pending_gov_update_has_key_id_alias(key, pending.key_id) {
             return None;
         }
         Some(pending)
@@ -3829,6 +3838,39 @@ mod tests {
             st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "pending accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn pending_governance_accessor_fails_closed_for_reserved_emergency_pause_key_id_alias() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 42,
+            },
+        );
+        st.pending_gov_updates.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 42,
+            },
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pending accessor must fail closed when another pending governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "foreign pending governance alias must also remain inaccessible"
         );
     }
 
