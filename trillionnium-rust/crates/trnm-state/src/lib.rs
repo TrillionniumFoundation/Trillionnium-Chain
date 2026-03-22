@@ -1928,6 +1928,9 @@ fn checkpoint_matches_wal_entry_for_recovery(
     if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
         return false;
     }
+    if !wal_state_root_surface_is_canonical(wal_entry) {
+        return false;
+    }
     if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
         return false;
     }
@@ -2219,6 +2222,29 @@ mod tests {
                 &wal_entry_hash,
             ),
             "checkpoint recovery binding must reject mismatched checkpoint/WAL heights even if hash surfaces happen to align"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_noncanonical_digest_surface_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "AB".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on noncanonical 64-hex state-root digest surfaces even if the checkpoint metadata otherwise aligns"
         );
     }
 
