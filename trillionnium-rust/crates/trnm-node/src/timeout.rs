@@ -321,6 +321,18 @@ mod tests {
     }
 
     #[test]
+    fn sorted_timeout_candidate_ids_keeps_exact_scan_cap_visible_in_order() {
+        let known: HashSet<u64> = [TIMEOUT_SCAN_MAX_TASK_ID, 7_002u64, 7_001u64]
+            .into_iter()
+            .collect();
+
+        assert_eq!(
+            sorted_timeout_candidate_ids(&known),
+            vec![7_001, 7_002, TIMEOUT_SCAN_MAX_TASK_ID]
+        );
+    }
+
+    #[test]
     fn sorted_timeout_candidate_ids_filters_synthetic_ids_above_scan_cap() {
         let known: HashSet<u64> = [7_003u64, TIMEOUT_SCAN_MAX_TASK_ID + 1, 7_001, 7_002]
             .into_iter()
