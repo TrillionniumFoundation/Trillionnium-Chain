@@ -141,6 +141,18 @@ fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
     // Tiny mixed domains are common in executor telemetry. Keep the merge path
     // allocation-free there while still deduplicating same-version read/write echoes.
     if dst.len() + objs.len() <= 8 {
+        if dst.len() > 1 {
+            let mut unique_len = 1usize;
+            for idx in 1..dst.len() {
+                let key = dst[idx];
+                if !dst[..unique_len].contains(&key) {
+                    dst[unique_len] = key;
+                    unique_len += 1;
+                }
+            }
+            dst.truncate(unique_len);
+        }
+
         for obj in objs {
             let key = access_key(obj);
             if !dst.contains(&key) {
@@ -1974,6 +1986,15 @@ mod tests {
         );
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn extend_unique_access_keys_small_domain_path_normalizes_duplicate_dst_before_appending() {
+        let mut keys = vec![100, 200, 100, 300];
+
+        extend_unique_access_keys(&mut keys, &[o(300), o(400), o(200), o(500)]);
+
+        assert_eq!(keys, vec![100, 200, 300, 400, 500]);
     }
 
     #[test]
