@@ -285,6 +285,10 @@ impl LaneAdmissionGate {
         .or_else(|| is_duplicate.then_some(AdmitOutcome::Duplicate))
     }
 
+    fn reserve_slot_guard_blocks(&self, class: IngressClass) -> bool {
+        self.lane_backpressure_guard_blocks(class) && self.lane_has_global_headroom(self.lane_total())
+    }
+
     fn classify_reserved_slot_guard_probe(
         &self,
         class: IngressClass,
@@ -294,10 +298,7 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        self.classify_retry_probe_when_blocked(
-            self.lane_backpressure_guard_blocks(class),
-            is_duplicate,
-        )
+        self.classify_retry_probe_when_blocked(self.reserve_slot_guard_blocks(class), is_duplicate)
     }
 
     fn classify_headroom_probe(
@@ -1087,6 +1088,27 @@ mod tests {
         assert_eq!(g.queued_counts(), (3, 1, 4));
 
         assert!(matches!(g.pop_ready(), Some(4) | Some(5)));
+        assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+    }
+
+    #[test]
+    fn reserve_guarded_normal_duplicate_probe_stays_duplicate_until_critical_copy_drains() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // Aggregate headroom remains, but the final free slot is reserved for critical
+        // traffic. A retry of the already-queued critical tx id from the normal class
+        // must stay Duplicate rather than drifting to Backpressured.
+        assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        assert_eq!(g.pop_ready(), Some(70));
         assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (3, 1, 4));
     }
