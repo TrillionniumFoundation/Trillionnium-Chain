@@ -897,16 +897,18 @@ fn validate_governance_explicitness_from_lists(
 
 fn validate_governance_validator_coverage_from_lists(
     allowed_keys: &[&str],
+    sensitive_keys: &[&str],
     explicit_validator_keys: &[&str],
     explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
     key: &str,
 ) -> Result<(), String> {
     validate_governance_registry_shape_lists(
         allowed_keys,
-        &[],
+        sensitive_keys,
         explicit_validator_keys,
         explicit_value_rule_keys,
-        &[],
+        pinned_key_ids,
     )?;
     validate_requested_governance_key_canonical(key)?;
     validate_governance_explicitness_from_lists(
@@ -920,8 +922,10 @@ fn validate_governance_validator_coverage_from_lists(
 fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
     validate_governance_validator_coverage_from_lists(
         GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
         GOV_EXPLICIT_VALIDATOR_KEYS,
         GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
         key,
     )
 }
@@ -3386,8 +3390,10 @@ mod tests {
 
         let validator_err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms", "max_parallel_workers"],
             &["max_block_ms"],
+            &[],
             "max_parallel_workers",
         )
         .expect_err("validator boundary must fail closed when explicit value-rule coverage drifts");
@@ -5633,8 +5639,10 @@ mod tests {
     fn governance_validator_coverage_helper_rejects_missing_explicit_value_rule_fail_closed() {
         let err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms", "max_parallel_workers"],
             &["max_block_ms"],
+            &[],
             "max_parallel_workers",
         )
         .expect_err("validator coverage helper must fail closed without explicit value-rule coverage");
@@ -5650,8 +5658,10 @@ mod tests {
     fn governance_validator_coverage_helper_rejects_missing_explicit_validator_fail_closed() {
         let err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms"],
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             "max_parallel_workers",
         )
         .expect_err("validator coverage helper must fail closed without explicit validator coverage");
@@ -5667,8 +5677,10 @@ mod tests {
     fn governance_validator_coverage_helper_rejects_noncanonical_key_spelling_fail_closed() {
         let err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms"],
+            &[],
             &["max_block_ms"],
             &["max_block_ms"],
+            &[],
             " Max_Block_Ms ",
         )
         .expect_err("validator coverage helper must reject non-canonical governance key spelling");
@@ -5683,8 +5695,10 @@ mod tests {
     fn governance_validator_coverage_helper_rejects_registry_membership_drift_fail_closed() {
         let err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             &["max_block_ms", "ghost_validator_key"],
             &["max_block_ms", "max_parallel_workers"],
+            &[],
             "max_block_ms",
         )
         .expect_err("validator coverage helper must fail closed on registry membership drift");
@@ -5701,8 +5715,10 @@ mod tests {
     fn governance_validator_coverage_helper_rejects_duplicate_allowed_keys_fail_closed() {
         let err = validate_governance_validator_coverage_from_lists(
             &["max_block_ms", "max_block_ms"],
+            &[],
             &["max_block_ms"],
             &["max_block_ms"],
+            &[],
             "max_block_ms",
         )
         .expect_err("validator coverage helper must fail closed on duplicate allowed-key entries");
@@ -5710,6 +5726,24 @@ mod tests {
         assert!(
             err.contains("allowed-key registry contains duplicate entries"),
             "unexpected validator coverage duplicate-allowed-key error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_pinned_key_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("ghost_pinned_key", 7_001)],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on pinned-key registry drift");
+
+        assert!(
+            err.contains("governance pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "unexpected validator coverage pinned-key registry error: {err}"
         );
     }
 
