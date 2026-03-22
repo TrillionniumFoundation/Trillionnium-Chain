@@ -119,6 +119,44 @@ fn borrowed_idle_tail_slot_flips_from_borrowable_to_guarded_once_critical_backlo
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_guarded_small_retry_burst_uses_stable_lane_snapshot() {
+    let mut gate = LaneAdmissionGate::new(4, 2);
+
+    // Fill normal capacity, then activate critical backlog without saturating the
+    // lane so the final reserved critical slot stays guard-owned.
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    for (tx_id, class, expected) in [
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+        (20, IngressClass::Normal, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+        (20, IngressClass::Critical, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+    ] {
+        assert_eq!(gate.admit(tx_id, class), expected);
+        assert_eq!(gate.queued_counts(), (2, 1, 3));
+    }
+
+    // Once the final reserved slot is actually consumed, the same fresh id stays
+    // backpressured under saturation until a dequeue reopens headroom.
+    assert_eq!(gate.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 2, 4));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    let first = gate.pop_ready();
+    assert!(matches!(first, Some(10) | Some(20)));
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    let second = gate.pop_ready();
+    assert!(second.is_some());
+    assert_ne!(first, second);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn borrowed_last_idle_critical_slot_small_retry_burst_keeps_guard_outcomes_stable() {
     let mut gate = LaneAdmissionGate::new(3, 1);
 

@@ -285,12 +285,17 @@ impl LaneAdmissionGate {
         .or_else(|| is_duplicate.then_some(AdmitOutcome::Duplicate))
     }
 
-    fn reserve_slot_guard_blocks(&self, class: IngressClass) -> bool {
-        self.lane_backpressure_guard_blocks(class) && self.lane_has_global_headroom(self.lane_total())
+    fn reserve_slot_guard_blocks_with_lane_total(
+        &self,
+        lane_total: usize,
+        class: IngressClass,
+    ) -> bool {
+        self.lane_backpressure_guard_blocks(class) && self.lane_has_global_headroom(lane_total)
     }
 
     fn classify_reserved_slot_guard_probe(
         &self,
+        lane_total: usize,
         class: IngressClass,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
@@ -298,7 +303,10 @@ impl LaneAdmissionGate {
         // class, preserve the same duplicate-vs-backpressure contract that the
         // saturated path already guarantees so bounded retries do not drift into
         // lane-specific admit paths.
-        self.classify_retry_probe_when_blocked(self.reserve_slot_guard_blocks(class), is_duplicate)
+        self.classify_retry_probe_when_blocked(
+            self.reserve_slot_guard_blocks_with_lane_total(lane_total, class),
+            is_duplicate,
+        )
     }
 
     fn classify_headroom_probe(
@@ -307,8 +315,9 @@ impl LaneAdmissionGate {
         class: IngressClass,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        self.classify_pre_admission_probe(lane_total, is_duplicate)
-            .or_else(|| self.classify_reserved_slot_guard_probe(class, is_duplicate))
+        self.classify_pre_admission_probe(lane_total, is_duplicate).or_else(|| {
+            self.classify_reserved_slot_guard_probe(lane_total, class, is_duplicate)
+        })
     }
 
     fn normal_queue_has_headroom(&self) -> bool {
