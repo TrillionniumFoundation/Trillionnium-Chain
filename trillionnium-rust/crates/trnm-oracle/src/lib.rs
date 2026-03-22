@@ -71,6 +71,9 @@ impl OracleSnapshot {
         if sources.windows(2).any(|w| w[0] == w[1]) {
             return Err(OracleError::DuplicateSources);
         }
+        if sample_count == 0 {
+            return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
+        }
         if sample_count < sources.len() as u32 {
             return Err(OracleError::InconsistentSampleCount {
                 sample_count,
@@ -507,6 +510,24 @@ mod tests {
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot should fail quorum");
         assert!(matches!(err, OracleError::InsufficientSources { .. }));
+    }
+
+    #[test]
+    fn rejects_zero_sample_count_as_invalid_accounting() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko")],
+            0,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot should reject zero sample accounting");
+
+        assert!(matches!(err, OracleError::InvalidPolicy("sample_count must be > 0")));
     }
 
     #[test]
