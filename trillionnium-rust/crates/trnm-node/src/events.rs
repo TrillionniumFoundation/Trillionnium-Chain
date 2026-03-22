@@ -241,4 +241,11 @@ mod tests {
         assert_eq!(timeout_outcome_fields("Challenged"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields("Assigned"), ("false", "unknown"));
     }
+
+    #[test]
+    fn timeout_outcome_fields_stays_unknown_for_noncanonical_terminal_labels() {
+        assert_eq!(timeout_outcome_fields("completed"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("slashed"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields(" Completed"), ("false", "unknown"));
+    }
 }
