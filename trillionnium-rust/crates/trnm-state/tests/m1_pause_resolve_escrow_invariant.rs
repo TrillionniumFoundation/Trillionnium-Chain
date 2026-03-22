@@ -3582,6 +3582,99 @@ fn paused_state_pending_replacement_resolve_approval_finalizes_with_case_and_ord
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_reentry_preserves_semantically_equivalent_existing_snapshot_without_state_root_drift(
+) {
+    // L03 re-entry hardening: a paused restore replay that is semantically equivalent to the
+    // already-staged pending quorum must be treated as a no-op even if caller spelling differs,
+    // otherwise restore re-entry can churn the state root and overwrite operator-visible audit text.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_024);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_006);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 506);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Authority-B".into(),
+            authority_set: "Authority-B,Authority-A".into(),
+            task_version: 2,
+        }),
+    );
+    let snapshot_before = st
+        .pending_resolve_approval_snapshot(9_930)
+        .expect("initial paused restore should stage pending quorum");
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.state_root(), root_before);
+    let snapshot_after = st
+        .pending_resolve_approval_snapshot(9_930)
+        .expect("equivalent restore re-entry must preserve staged pending quorum");
+    assert_eq!(snapshot_after, snapshot_before);
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority_without_state_root_drift(
 ) {
     // L03 state-root hardening: paused restore may preserve operator-visible audit spelling, but

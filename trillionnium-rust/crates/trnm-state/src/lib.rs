@@ -771,8 +771,16 @@ impl StateStore {
         let Some(existing) = self.pending_resolve_approvals.get(&task_id) else {
             return false;
         };
-        let Some((first_approver, authority_set)) = self
+        let Some((snapshot_first_approver, snapshot_authority_set)) = self
             .canonical_pending_resolve_approval_snapshot(task_id, snapshot)
+        else {
+            return false;
+        };
+        let Ok(existing_first_approver) = validate_resolve_approver_token(&existing.first_approver)
+        else {
+            return false;
+        };
+        let Ok(existing_authority_set) = canonicalize_resolve_authority_set(&existing.authority_set)
         else {
             return false;
         };
@@ -780,8 +788,8 @@ impl StateStore {
         existing.slash_worker == snapshot.slash_worker
             && existing.confirmations == snapshot.confirmations
             && existing.task_version == snapshot.task_version
-            && existing.first_approver == first_approver
-            && existing.authority_set == authority_set
+            && existing_first_approver == snapshot_first_approver
+            && existing_authority_set == snapshot_authority_set
     }
 
     fn matches_task_restore_reentry_snapshot(&self, id: u64, task: &TaskObject) -> bool {
