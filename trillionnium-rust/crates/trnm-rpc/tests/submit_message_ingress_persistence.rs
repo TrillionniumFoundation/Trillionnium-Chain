@@ -313,6 +313,77 @@ fn submit_message_dedupes_duplicate_noise_before_quarantine_cap() {
 }
 
 #[test]
+fn submit_message_does_not_reintroduce_evicted_duplicate_noise_in_same_salvage_cycle() {
+    let ingress = unique_fixture_path("submit_message_quarantine_evicted_duplicate_noise", "jsonl");
+    let quarantine = ingress.with_file_name(format!(
+        "{}.quarantine.jsonl",
+        ingress
+            .file_name()
+            .and_then(|v| v.to_str())
+            .expect("ingress file name")
+    ));
+    let _ = fs::remove_file(&ingress);
+    let _ = fs::remove_file(&quarantine);
+
+    let unique_prefix = (0..256)
+        .map(|idx| format!("uniq-bad-{idx}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let duplicate_after_eviction = std::iter::repeat_n("uniq-bad-0".to_string(), 32)
+        .collect::<Vec<_>>()
+        .join("\n");
+    let fixture = format!("{unique_prefix}\n{duplicate_after_eviction}\nuniq-tail\n");
+    fs::write(&ingress, fixture).expect("write evicted-duplicate ingress fixture");
+
+    let output = Command::new("cargo")
+        .args(["run", "-p", "trnm-rpc", "--"])
+        .args([
+            "submit-message",
+            "--channel",
+            "telegram",
+            "--user-id",
+            "u-3",
+            "--session-id",
+            "s-3",
+            "--text",
+            "next",
+            "--idempotency-key",
+            "k-3",
+        ])
+        .env("TRNM_RPC_INGRESS_FILE", &ingress)
+        .output()
+        .expect("run submit-message");
+
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read deduped quarantine file");
+    let quarantine_lines: Vec<&str> = quarantine_raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    assert_eq!(quarantine_lines.len(), 256, "quarantine cap should stay bounded");
+
+    let entries: Vec<Value> = quarantine_lines
+        .iter()
+        .map(|line| serde_json::from_str(line).expect("quarantine row json"))
+        .collect();
+    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-1"));
+    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("uniq-tail"));
+    assert_eq!(
+        entries
+            .iter()
+            .filter(|v| v["raw_line"].as_str() == Some("uniq-bad-0"))
+            .count(),
+        0,
+        "duplicates of an evicted malformed row should not re-enter the same salvage cycle"
+    );
+}
+
+#[test]
 fn submit_message_rewrites_preexisting_duplicate_quarantine_rows() {
     let ingress = unique_fixture_path("submit_message_quarantine_dedupe_existing", "jsonl");
     let quarantine = ingress.with_file_name(format!(
