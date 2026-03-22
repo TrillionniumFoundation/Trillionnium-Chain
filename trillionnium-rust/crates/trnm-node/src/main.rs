@@ -2667,7 +2667,12 @@ impl PreExecPool {
                         for id in job.ids {
                             let result =
                                 std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                                    let idx = (id - 1) as usize;
+                                    let idx = id.checked_sub(1).ok_or_else(|| {
+                                        format!(
+                                            "preexec invalid tx id {} (tx ids are 1-based)",
+                                            id
+                                        )
+                                    })? as usize;
                                     let tx = picked_cloned
                                         .get(idx)
                                         .cloned()
@@ -3080,6 +3085,25 @@ mod tests {
         let followup = pre_execute_group_parallel(&pool, vec![1]);
 
         assert_eq!(malformed.0, vec![1]);
+        assert_eq!(malformed.1, 1);
+        assert_eq!(followup.0, vec![1]);
+        assert_eq!(followup.1, 0);
+    }
+
+    #[test]
+    fn preexec_pool_rejects_zero_tx_id_without_panicking_or_losing_workers() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![MockTx::CreateTask {
+            task_id: 4302,
+            creator: "alice".into(),
+            bounty: 10,
+        }]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let malformed = pre_execute_group_parallel(&pool, vec![0]);
+        let followup = pre_execute_group_parallel(&pool, vec![1]);
+
+        assert_eq!(malformed.0, Vec::<u64>::new());
         assert_eq!(malformed.1, 1);
         assert_eq!(followup.0, vec![1]);
         assert_eq!(followup.1, 0);
