@@ -3351,10 +3351,10 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_accepts_sparse_challenged_task_snapshot() {
+fn paused_state_restore_pending_resolve_snapshot_scrubs_sparse_challenged_task_snapshot() {
     // REF04 restore discipline: sparse challenged-task snapshots from WAL/checkpoint replay
-    // must still revive a staged single-approval quorum when the challenged boundary,
-    // task version, and effective authority set remain intact.
+    // are incomplete recovery inputs and must fail closed instead of reviving quorum,
+    // even when task version and effective authority set still match.
     let mut st = StateStore::new();
 
     let bootstrap = st
@@ -3417,8 +3417,9 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_sparse_challenged_task_
         }),
     );
 
-    assert_eq!(st.pending_resolve_approval(9_930_1), Some((true, 1)));
-    assert_eq!(st.pending_resolve_first_approver(9_930_1).as_deref(), Some("authority-a"));
+    assert_eq!(st.pending_resolve_approval(9_930_1), None);
+    assert_eq!(st.pending_resolve_first_approver(9_930_1), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_930_1), None);
     assert!(st.is_emergency_paused());
 }
 

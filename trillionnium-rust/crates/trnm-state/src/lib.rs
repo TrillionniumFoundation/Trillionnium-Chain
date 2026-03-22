@@ -712,8 +712,7 @@ impl StateStore {
         if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
             return;
         }
-        let paused_restore = self.is_emergency_paused();
-        if !paused_restore && !challenged_task_snapshot_complete_for_pending_resolve(&task) {
+        if !challenged_task_snapshot_complete_for_pending_resolve(&task) {
             return;
         }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
