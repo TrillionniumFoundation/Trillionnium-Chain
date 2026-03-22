@@ -4268,6 +4268,21 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_canonicalizes_duplicate_heavy_read_only_domains() {
+        let duplicate_heavy = tx(81, vec![o(17), o(29), o(17), o(11), o(29), o(11)], vec![]);
+        let canonical = tx(82, vec![o(29), o(11), o(17)], vec![]);
+
+        // Read-only hotspot detection should stay stable across duplicate-heavy
+        // permutations of the same access domain so adaptive grouping does not
+        // drift when telemetry or ingress ordering echoes the same keys.
+        assert_eq!(primary_access_domain_key(&duplicate_heavy), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&duplicate_heavy),
+            primary_access_domain_key(&canonical)
+        );
+    }
+
+    #[test]
     fn primary_access_domain_key_prefers_write_domain_over_lower_shared_read_keys() {
         let baseline = tx(9, vec![o(3), o(3), o(42)], vec![o(11), o(17), o(11)]);
         let echoed = tx(
