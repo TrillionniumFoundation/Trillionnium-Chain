@@ -151,6 +151,15 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
         "word joiner characters should be rejected to keep quarantine logs unambiguous"
     );
 
+    let invisible_separator_error = IngressQuarantineRecord {
+        error: "parse failed\u{2063}json".to_string(),
+        ..valid.clone()
+    };
+    assert!(
+        !quarantine_record_within_bounds(&invisible_separator_error),
+        "invisible separator characters should be rejected to keep quarantine logs unambiguous"
+    );
+
     let tag_character_error = IngressQuarantineRecord {
         error: "parse failed\u{E0001}json".to_string(),
         ..valid.clone()
