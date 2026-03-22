@@ -212,6 +212,36 @@ fn governance_registry_lookup_id_for_key(
     governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
 }
 
+fn governance_registry_unique_dynamic_key_for_id<'a>(
+    gov_param_key_index: &'a BTreeMap<String, u64>,
+    key_id: u64,
+) -> Result<Option<&'a str>, Vec<&'a str>> {
+    let mut matches = gov_param_key_index
+        .iter()
+        .filter_map(|(indexed_key, indexed_key_id)| {
+            (*indexed_key_id == key_id).then_some(indexed_key.as_str())
+        });
+    let first = matches.next();
+    let second = matches.next();
+    match (first, second) {
+        (None, _) => Ok(None),
+        (Some(key), None) => Ok(Some(key)),
+        (Some(first_key), Some(second_key)) => {
+            let mut ambiguous_keys = vec![first_key, second_key];
+            ambiguous_keys.extend(matches);
+            Err(ambiguous_keys)
+        }
+    }
+}
+
+fn governance_registry_lookup_key_for_id<'a>(
+    gov_param_key_index: &'a BTreeMap<String, u64>,
+    key_id: u64,
+) -> Option<&'a str> {
+    governance_expected_key_for_id(key_id)
+        .or_else(|| governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id).ok().flatten())
+}
+
 fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
     let (expected_key_id, expected_key) = governance_expected_pinned_binding(key, key_id);
     if let Some(expected_key_id) = expected_key_id {
@@ -254,17 +284,32 @@ pub(crate) fn validate_gov_param_registry_binding(
             ));
         }
     }
-    if let Some((aliased_key, _)) =
-        gov_param_key_index
-            .iter()
-            .find(|(indexed_key, indexed_key_id)| {
-                indexed_key.as_str() != key && **indexed_key_id == key_id
-            })
-    {
-        return Err(format!(
-            "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
-            key_id, key, aliased_key
-        ));
+    match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
+        Ok(Some(canonical_key)) => {
+            if canonical_key != key {
+                return Err(format!(
+                    "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
+                    key_id, canonical_key, key
+                ));
+            }
+        }
+        Ok(None) => {
+            if let Some(canonical_key) = governance_expected_key_for_id(key_id) {
+                if canonical_key != key {
+                    return Err(format!(
+                        "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
+                        key_id, canonical_key, key
+                    ));
+                }
+            }
+        }
+        Err(ambiguous_keys) => {
+            return Err(format!(
+                "governance key id alias mismatch for id {}: ambiguous_keys={}",
+                key_id,
+                ambiguous_keys.join(",")
+            ));
+        }
     }
     Ok(())
 }
@@ -4523,6 +4568,76 @@ mod tests {
         let err = validate_gov_param_registry_binding(&indexed, "resolve_authority", 9_001)
             .expect_err("registry gate must reject mismatched indexed governance key ids");
         assert!(err.contains("existing_id=7313"), "{err}");
+    }
+
+    #[test]
+    fn governance_registry_binding_reports_canonical_key_from_single_source_reverse_lookup() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+
+        let err = validate_gov_param_registry_binding(&indexed, "max_block_ms", 7_313)
+            .expect_err("shared registry gate must reject mutable key-id alias reuse");
+        assert!(
+            err.contains("canonical_key=resolve_authority"),
+            "{err}"
+        );
+        assert!(err.contains("aliased_key=max_block_ms"), "{err}");
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            Some("resolve_authority"),
+            "reverse lookup should reuse the same single source as registry validation"
+        );
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, EMERGENCY_PAUSE_KEY_ID),
+            Some("emergency_pause"),
+            "reserved reverse lookup should stay pinned even without mutable registry state"
+        );
+    }
+
+    #[test]
+    fn governance_registry_binding_rejects_ambiguous_dynamic_reverse_lookup() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("max_block_ms".to_string(), 7_313);
+        indexed.insert("resolve_authority".to_string(), 7_313);
+
+        let err = validate_gov_param_registry_binding(&indexed, "max_block_ms", 7_313)
+            .expect_err("ambiguous reverse registry aliases must fail closed");
+        assert!(err.contains("ambiguous_keys=max_block_ms,resolve_authority"), "{err}");
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            None,
+            "reverse lookup should fail closed instead of picking an arbitrary alias"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_ambiguous_dynamic_registry_id_aliases() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index.insert("max_block_ms".into(), 7_313);
+        st.gov_param_key_index
+            .insert("resolve_authority".into(), 7_313);
+        st.objects.insert(
+            7_313,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_313,
+                    key: "max_block_ms".into(),
+                    value: "250".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        assert!(
+            st.gov_param_value("max_block_ms").is_none(),
+            "ambiguous reverse registry aliases must fail closed at the string accessor boundary"
+        );
+        assert!(
+            st.gov_param_ref_for_key("max_block_ms").is_none(),
+            "ambiguous reverse registry aliases must fail closed at the ref accessor boundary"
+        );
     }
 
     #[test]
