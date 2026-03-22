@@ -1447,6 +1447,9 @@ impl StateStore {
                     return;
                 }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if key == "resolve_authority" {
+                    self.pending_resolve_approvals.clear();
+                }
             }
             None => {
                 self.pending_gov_updates.remove(key);
@@ -3938,6 +3941,71 @@ mod tests {
         assert_eq!(
             st.gov_param_string("resolve_authority"),
             Some("resolver-v1,resolver-v2".into())
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_resolve_authority_scrubs_stale_pending_resolve_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("seed resolve_authority");
+
+        let task = TaskObject {
+            task_id: 7_701,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(20),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task));
+        st.restore_pending_resolve_approval(
+            7_701,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "resolver-v1".into(),
+                authority_set: "resolver-v1,resolver-v2".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(7_701), Some((true, 1)));
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending resolve_authority restore should succeed");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
+        assert!(
+            st.pending_resolve_approval(7_701).is_none(),
+            "restore must scrub stale pending resolve metadata across a resolve_authority boundary"
         );
     }
 
