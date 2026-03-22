@@ -808,9 +808,16 @@ impl StateStore {
         task_id: u64,
         snapshot: &PendingResolveApprovalSnapshot,
     ) -> bool {
+        if snapshot.confirmations != 1 {
+            return false;
+        }
+
         let Some(existing) = self.pending_resolve_approvals.get(&task_id) else {
             return false;
         };
+        if existing.confirmations != 1 {
+            return false;
+        }
 
         let Some((snapshot_first_approver, snapshot_authority_set)) = self
             .canonical_pending_resolve_reentry_snapshot(task_id, snapshot)
@@ -3357,6 +3364,71 @@ mod tests {
             st.state_root(),
             root_before,
             "identical restore re-entry should remain a state-root no-op for pending resolve snapshots"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_identical_finalized_snapshot_reentry_scrubs_invalid_quorum() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let staged_root = st.state_root();
+
+        let finalized_snapshot = PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 2,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 3,
+        };
+        st.restore_pending_resolve_approval(task.task_id, Some(finalized_snapshot.clone()));
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            None,
+            "finalized restore snapshots without second-approver evidence must fail closed instead of surviving identical re-entry"
+        );
+        assert_ne!(
+            st.state_root(),
+            staged_root,
+            "scrubbing an invalid finalized pending resolve snapshot must perturb the deterministic root"
+        );
+
+        st.restore_pending_resolve_approval(task.task_id, Some(finalized_snapshot));
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            None,
+            "replaying the same finalized snapshot should remain fail-closed after the first scrub"
         );
     }
 
