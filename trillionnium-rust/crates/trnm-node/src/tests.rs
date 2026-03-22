@@ -9039,6 +9039,47 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_fully_checkpointed_max_height_saturates_next_height() {
+        let wal_dir = temp_wal_dir("recover-fully-checkpointed-max-height");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: u64::MAX,
+            round: 0,
+            proposal_hash: "h-max".into(),
+            committed: true,
+            state_root_hex: "r-max".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r-max".into(),
+                wal_entry_hash_hex: h1,
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.next_height, u64::MAX);
+        assert_eq!(recovered.checkpoint_height_retained, Some(u64::MAX));
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h-max"));
+        assert_eq!(recovered.wal_entries_retained, 1);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, u64::MAX);
+        assert_eq!(wal.last_round, 0);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h-max"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_absent_checkpoint() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();

@@ -126,16 +126,17 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
+        let next_height = last.height.saturating_add(1);
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
-                next_height: last.height + 1,
+                next_height,
                 last_round: last.round,
                 locked_block_hash: restored_lock.clone(),
             },
         )?;
         return Ok(RecoveredWalState {
-            next_height: last.height + 1,
+            next_height,
             restored_lock,
             checkpoint_height_retained: retained_checkpoint_height,
             last_checkpoint,
