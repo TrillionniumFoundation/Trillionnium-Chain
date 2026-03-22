@@ -1922,6 +1922,9 @@ fn checkpoint_matches_wal_entry_for_recovery(
     wal_entry: &WalMeta,
     wal_entry_hash_hex: &str,
 ) -> bool {
+    if checkpoint.height != wal_entry.height {
+        return false;
+    }
     if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
         return false;
     }
@@ -2186,6 +2189,33 @@ mod tests {
         assert_eq!(
             best.as_ref().map(|cp| cp.state_root_hex.as_str()),
             Some("r1")
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_requires_matching_height_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let mismatched_checkpoint = CheckpointMeta {
+            height: 8,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(
+                &mismatched_checkpoint,
+                &wal_entry,
+                &wal_entry_hash,
+            ),
+            "checkpoint recovery binding must reject mismatched checkpoint/WAL heights even if hash surfaces happen to align"
         );
     }
 
