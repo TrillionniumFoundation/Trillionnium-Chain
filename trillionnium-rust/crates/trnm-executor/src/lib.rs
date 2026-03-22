@@ -254,6 +254,18 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
         return keys;
     }
 
+    // Singleton read domains are also common in owned-object traffic. Keep them
+    // on the narrowest deterministic path even when callers hand us duplicate-
+    // heavy shared-write domains from widened scheduler probes.
+    if keys.len() == 1 {
+        let only = keys[0];
+        return if write_keys.contains(&only) {
+            Vec::new()
+        } else {
+            keys
+        };
+    }
+
     // Exact singleton write domains are a common owned/shared shape. Keep them
     // on the narrowest deterministic path before scanning for duplicate-heavy
     // callers that only collapse to a singleton after dedup.
@@ -1766,6 +1778,17 @@ mod tests {
         // Duplicate-heavy callers should still collapse to the singleton
         // owned/shared fast path when the effective write domain is one object.
         assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_single_read_domain_elides_duplicate_heavy_shared_writes() {
+        let write_keys = vec![44; 64];
+
+        let keys = read_domain_only_keys(&[o(44), o(44), o(44), o(44)], &write_keys);
+
+        // Singleton read domains should stay on the narrowest object-scoped path
+        // even when widened scheduler probes hand us long duplicate write domains.
+        assert!(keys.is_empty());
     }
 
     #[test]
