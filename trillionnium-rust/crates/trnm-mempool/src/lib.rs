@@ -273,6 +273,10 @@ impl LaneAdmissionGate {
         blocked.then(|| self.classify_bounded_retry_probe(is_duplicate))
     }
 
+    fn classify_duplicate_after_open_headroom(&self, is_duplicate: bool) -> Option<AdmitOutcome> {
+        is_duplicate.then_some(AdmitOutcome::Duplicate)
+    }
+
     fn classify_pre_admission_probe(
         &self,
         lane_total: usize,
@@ -282,7 +286,7 @@ impl LaneAdmissionGate {
             self.lane_is_globally_saturated(lane_total),
             is_duplicate,
         )
-        .or_else(|| is_duplicate.then_some(AdmitOutcome::Duplicate))
+        .or_else(|| self.classify_duplicate_after_open_headroom(is_duplicate))
     }
 
     fn reserve_slot_guard_blocks_with_lane_total(

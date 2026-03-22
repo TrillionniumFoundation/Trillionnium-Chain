@@ -220,6 +220,25 @@ fn borrowed_last_idle_critical_slot_repeated_guard_probes_do_not_flip_fresh_retr
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_duplicate_retry_wins_under_open_headroom_guard() {
+    let mut gate = LaneAdmissionGate::new(4, 2);
+
+    // Leave aggregate headroom open while critical backlog is active, so fresh
+    // normal spillover is reserve-guarded instead of globally saturated.
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+
+    // Under the open-headroom reserve guard, duplicate classification must still
+    // win for already queued ids while fresh normal retries stay backpressured.
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.queued_counts(), (2, 1, 3));
+}
+
+#[test]
 fn borrowed_last_idle_critical_slot_mixed_retry_burst_keeps_fresh_and_duplicate_outcomes_partitioned() {
     let mut gate = LaneAdmissionGate::new(3, 1);
 
