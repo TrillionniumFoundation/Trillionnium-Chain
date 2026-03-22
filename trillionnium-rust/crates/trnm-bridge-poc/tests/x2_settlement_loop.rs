@@ -703,7 +703,7 @@ fn x3_prep_degraded_heartbeat_reason_is_length_capped_for_replayable_compensatio
     };
     assert!(reason.starts_with("heartbeat degraded: timeout"));
     assert!(reason.ends_with('…'));
-    assert_eq!(reason.chars().count(), 181);
+    assert_eq!(reason.chars().count(), 180);
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
 
@@ -1406,7 +1406,7 @@ fn x3_prep_manual_degraded_reason_is_length_capped_for_replayable_compensation()
     };
     assert!(reason.starts_with("heartbeat degraded: manual"));
     assert!(reason.ends_with('…'));
-    assert_eq!(reason.chars().count(), 181);
+    assert_eq!(reason.chars().count(), 180);
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
 

@@ -267,8 +267,9 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
     }
 
     let mut normalized = String::new();
-    for (idx, ch) in collapsed.chars().enumerate() {
-        if idx >= MAX_COMPENSATION_REASON_CHARS {
+    for ch in collapsed.chars() {
+        if normalized.chars().count() >= MAX_COMPENSATION_REASON_CHARS {
+            normalized.pop();
             normalized.push('…');
             break;
         }
@@ -297,10 +298,10 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_enforces_max_len_with_ellipsis() {
+    fn normalize_compensation_reason_enforces_bounded_max_len_with_ellipsis() {
         let raw = "a".repeat(220);
         let normalized = normalize_compensation_reason(&raw, "fallback");
-        assert_eq!(normalized.chars().count(), 161);
+        assert_eq!(normalized.chars().count(), 160);
         assert!(normalized.ends_with('…'));
     }
 
