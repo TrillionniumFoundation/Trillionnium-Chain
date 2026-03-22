@@ -245,28 +245,62 @@ fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
             .chars()
             .any(|c| c.is_whitespace() || c.is_control())
     };
+    let has_canonical_optional_metadata = |value: Option<&str>| {
+        value
+            .map(|value| {
+                let trimmed = value.trim();
+                !trimmed.is_empty() && trimmed == value && !has_embedded_space_or_control(value)
+            })
+            .unwrap_or(true)
+    };
 
     task.metadata
         .as_ref()
-        .and_then(|metadata| metadata.metering.as_ref())
-        .map(|metering| {
-            let workload_class = metering.workload_class.trim();
-            let metering_schema = metering.metering_schema.trim();
-            let receipt_hash = metering.receipt_hash.trim();
+        .map(|metadata| {
+            has_canonical_optional_metadata(metadata.note.as_deref())
+                && has_canonical_optional_metadata(metadata.task_type.as_deref())
+                && has_canonical_optional_metadata(metadata.input_hash.as_deref())
+                && metadata
+                    .model
+                    .as_ref()
+                    .map(|model| {
+                        has_canonical_optional_metadata(model.model_id.as_deref())
+                            && has_canonical_optional_metadata(model.model_digest.as_deref())
+                            && has_canonical_optional_metadata(model.version.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .provenance
+                    .as_ref()
+                    .map(|provenance| {
+                        has_canonical_optional_metadata(provenance.producer_did.as_deref())
+                            && has_canonical_optional_metadata(provenance.produced_at.as_deref())
+                            && has_canonical_optional_metadata(provenance.provenance_index.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .metering
+                    .as_ref()
+                    .map(|metering| {
+                        let workload_class = metering.workload_class.trim();
+                        let metering_schema = metering.metering_schema.trim();
+                        let receipt_hash = metering.receipt_hash.trim();
 
-            !workload_class.is_empty()
-                && workload_class == metering.workload_class
-                && !has_embedded_space_or_control(&metering.workload_class)
-                && !metering_schema.is_empty()
-                && metering_schema == metering.metering_schema
-                && !has_embedded_space_or_control(&metering.metering_schema)
-                && metering.policy_snapshot_version != 0
-                && !receipt_hash.is_empty()
-                && receipt_hash == metering.receipt_hash
-                && !has_embedded_space_or_control(&metering.receipt_hash)
-                && metering.challenge_success_bounty_per_work_unit_den != 0
-                && metering.worker_completion_bonus_per_work_unit_den != 0
-                && metering.worker_slash_rebate_per_work_unit_den != 0
+                        !workload_class.is_empty()
+                            && workload_class == metering.workload_class
+                            && !has_embedded_space_or_control(&metering.workload_class)
+                            && !metering_schema.is_empty()
+                            && metering_schema == metering.metering_schema
+                            && !has_embedded_space_or_control(&metering.metering_schema)
+                            && metering.policy_snapshot_version != 0
+                            && !receipt_hash.is_empty()
+                            && receipt_hash == metering.receipt_hash
+                            && !has_embedded_space_or_control(&metering.receipt_hash)
+                            && metering.challenge_success_bounty_per_work_unit_den != 0
+                            && metering.worker_completion_bonus_per_work_unit_den != 0
+                            && metering.worker_slash_rebate_per_work_unit_den != 0
+                    })
+                    .unwrap_or(true)
         })
         .unwrap_or(true)
 }
