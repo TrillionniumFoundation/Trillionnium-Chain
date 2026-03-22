@@ -256,12 +256,13 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut quarantined_total = 0usize;
     let mut skipped_whitespace_noise = false;
     for (idx, line_bytes) in raw.split_terminator(|byte| *byte == b'\n').enumerate() {
+        let line_on_disk_len = line_bytes.len();
         let line_bytes = match line_bytes.strip_suffix(b"\r") {
             Some(trimmed) => trimmed,
             None => line_bytes,
         };
         if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
-            if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+            if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
                 let raw_line = if line_bytes.is_empty() {
                     "whitespace-only line omitted".to_string()
                 } else {
@@ -278,7 +279,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                     anyhow!(
                         "ingress line exceeds {} bytes parse bound (got {})",
                         INGRESS_LINE_PARSE_MAX_BYTES,
-                        line_bytes.len()
+                        line_on_disk_len
                     ),
                 ));
                 let (line_hash, raw_line, err) = match parse_result {
@@ -309,7 +310,7 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         let parse_result = match std::str::from_utf8(line_bytes) {
             Ok(line) => {
                 if line.trim().is_empty() {
-                    if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                    if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
                         let raw_line = {
                             let bounded = truncate_for_quarantine(line);
                             if bounded.trim().is_empty() {
@@ -324,21 +325,21 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                             anyhow!(
                                 "ingress line exceeds {} bytes parse bound (got {})",
                                 INGRESS_LINE_PARSE_MAX_BYTES,
-                                line_bytes.len()
+                                line_on_disk_len
                             ),
                         ))
                     } else {
                         skipped_whitespace_noise = true;
                         continue;
                     }
-                } else if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                } else if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
                     Err((
                         stable_line_hash(line),
                         truncate_for_quarantine(line),
                         anyhow!(
                             "ingress line exceeds {} bytes parse bound (got {})",
                             INGRESS_LINE_PARSE_MAX_BYTES,
-                            line_bytes.len()
+                            line_on_disk_len
                         ),
                     ))
                 } else {
@@ -356,14 +357,14 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                 }
             }
             Err(_) => {
-                if line_bytes.len() > INGRESS_LINE_PARSE_MAX_BYTES {
+                if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
                     Err((
                         stable_bounded_bytes_hash(line_bytes),
                         truncate_bytes_for_quarantine(line_bytes),
                         anyhow!(
                             "ingress line exceeds {} bytes parse bound (got {})",
                             INGRESS_LINE_PARSE_MAX_BYTES,
-                            line_bytes.len()
+                            line_on_disk_len
                         ),
                     ))
                 } else {

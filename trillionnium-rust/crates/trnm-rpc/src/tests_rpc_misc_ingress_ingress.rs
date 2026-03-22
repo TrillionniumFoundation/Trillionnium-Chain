@@ -660,6 +660,40 @@ fn load_ingress_records_compacts_unicode_whitespace_only_noise_without_quarantin
 }
 
 #[test]
+fn load_ingress_records_quarantines_crlf_line_that_only_exceeds_parse_bound_on_disk() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-crlf-parse-bound-on-disk", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let oversized_json = format!("{{\"payload\":\"{}\"}}\r\n", "x".repeat(65_522));
+    fs::write(&path, oversized_json).expect("write crlf oversized ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "crlf ingress row beyond the on-disk parse bound should fail closed");
+    assert!(quarantine.exists(), "oversized crlf ingress row should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "one oversized crlf ingress row should be quarantined");
+    assert_eq!(
+        entries[0]["error"],
+        "ingress line exceeds 65536 bytes parse bound (got 65537)",
+        "parse-bound accounting should use the on-disk line length before CR trimming"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_quarantines_oversized_ascii_whitespace_only_noise() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-oversized-ascii-whitespace-noise-quarantine", "jsonl");
