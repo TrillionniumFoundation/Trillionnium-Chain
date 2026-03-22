@@ -452,3 +452,35 @@ fn guarded_last_critical_slot_duplicate_probe_wins_before_and_after_guard_block(
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
 }
+
+#[test]
+fn guarded_last_critical_slot_critical_retry_stays_backpressured_until_reserved_headroom_reopens() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // The final reserved critical slot remains open to critical ingress while
+    // fresh normal retries are guard-blocked.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+
+    // Once the guarded slot is consumed, repeated critical retries for a new id
+    // must stay Backpressured rather than drifting into Duplicate.
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // Draining one critical item should immediately reopen the reserved slot for
+    // the same fresh critical id, even while normal backlog is still present.
+    assert_eq!(gate.pop_ready(), Some(20));
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Once admitted, the id must flip to Duplicate across classes rather than
+    // falling back to another retry classification.
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
+}

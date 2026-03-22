@@ -302,27 +302,12 @@ impl LaneAdmissionGate {
         self.classify_guarded_probe(self.lane_is_globally_saturated(lane_total), is_duplicate)
     }
 
-    fn normal_reserve_slot_guard_blocks_with_lane_total(&self, lane_total: usize) -> bool {
-        self.lane_backpressure_guard_blocks(IngressClass::Normal)
-            && self.lane_has_global_headroom(lane_total)
-    }
-
-    fn critical_reserve_slot_guard_blocks_with_lane_total(&self, lane_total: usize) -> bool {
-        self.lane_backpressure_guard_blocks(IngressClass::Critical)
-            && self.lane_has_global_headroom(lane_total)
-    }
-
     fn reserve_slot_guard_blocks_with_lane_total(
         &self,
         lane_total: usize,
         class: IngressClass,
     ) -> bool {
-        match class {
-            IngressClass::Normal => self.normal_reserve_slot_guard_blocks_with_lane_total(lane_total),
-            IngressClass::Critical => {
-                self.critical_reserve_slot_guard_blocks_with_lane_total(lane_total)
-            }
-        }
+        self.lane_backpressure_guard_blocks(class) && self.lane_has_global_headroom(lane_total)
     }
 
     fn classify_reserved_slot_guard_probe(
