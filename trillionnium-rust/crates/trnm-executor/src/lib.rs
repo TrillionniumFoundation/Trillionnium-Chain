@@ -1368,33 +1368,26 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     // Select the two smallest distinct access keys across the combined
     // read/write domain so equivalent access sets hash identically even when
     // intra-domain ordering differs.
-    let mut key_a = None;
-    let mut key_b = None;
-    for id in tx.write_set.iter().chain(tx.read_set.iter()).map(|o| o.id) {
-        match key_a {
-            None => key_a = Some(id),
-            Some(a) if id == a => {}
-            Some(a) if id < a => {
-                key_b = match key_b {
-                    Some(b) if b < a => Some(b),
-                    _ => Some(a),
-                };
-                key_a = Some(id);
-            }
-            Some(_) => match key_b {
-                None => key_b = Some(id),
-                Some(b) if id == b => {}
-                Some(b) if id < b => key_b = Some(id),
-                Some(_) => {}
-            },
+    let mut keys = dedup_access_keys(&tx.write_set);
+    extend_unique_access_keys(&mut keys, &tx.read_set);
+
+    let mut key_a = u64::MAX;
+    let mut key_b = u64::MAX;
+    for id in keys {
+        if id < key_a {
+            key_b = key_a;
+            key_a = id;
+        } else if id != key_a && id < key_b {
+            key_b = id;
         }
     }
+
     // Canonicalize the two-key access-domain signal so equivalent mixed
     // read/write domains hash identically even if read/write roles flip or
     // duplicate-heavy access lists arrive in a different order. Keep
     // singleton/keyless behavior unchanged, including when the real key is 0.
-    let key_a = key_a.unwrap_or(0);
-    let key_b = key_b.unwrap_or(0);
+    let key_a = if key_a == u64::MAX { 0 } else { key_a };
+    let key_b = if key_b == u64::MAX { 0 } else { key_b };
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
@@ -2561,6 +2554,28 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&duplicate_echoes, buckets_n),
             hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_for_duplicate_heavy_equivalent_mixed_domains() {
+        let buckets_n = 97usize;
+        let duplicate_heavy = tx(
+            3,
+            vec![o(11), o(5), o(11), o(13), o(13)],
+            vec![o(7), o(7), o(5), o(13)],
+        );
+        let canonical = tx(4, vec![o(5), o(11), o(13)], vec![o(7)]);
+
+        // Duplicate-heavy mixed domains should collapse to the same two-smallest
+        // distinct access keys as their canonical equivalent.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            hot_bucket_hint(&canonical, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
@@ -4255,7 +4270,11 @@ mod tests {
     #[test]
     fn primary_access_domain_key_prefers_write_domain_over_lower_shared_read_keys() {
         let baseline = tx(9, vec![o(3), o(3), o(42)], vec![o(11), o(17), o(11)]);
-        let echoed = tx(10, vec![o(3), o(11), o(42), o(17)], vec![o(17), o(11), o(11)]);
+        let echoed = tx(
+            10,
+            vec![o(3), o(11), o(42), o(17)],
+            vec![o(17), o(11), o(11)],
+        );
         let permuted = tx(11, vec![o(42), o(3)], vec![o(17), o(11)]);
 
         // Adaptive hotspot detection intentionally keys on the preferred write domain
