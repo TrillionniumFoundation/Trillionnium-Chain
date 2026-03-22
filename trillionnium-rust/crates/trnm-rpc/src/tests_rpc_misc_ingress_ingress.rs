@@ -184,6 +184,41 @@ fn load_ingress_records_dedupes_duplicate_noise_before_quarantine_cap() {
 }
 
 #[test]
+fn load_ingress_records_prefers_latest_duplicate_after_bounded_eviction() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-latest-duplicate-after-eviction", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    let mut rows = (0..256)
+        .map(|idx| format!("noise-{idx}"))
+        .collect::<Vec<_>>();
+    rows.push("noise-0".to_string());
+    let fixture = rows.join("\n");
+    fs::write(&path, format!("{fixture}\n")).expect("write eviction fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "all malformed rows should be quarantined");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read bounded quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 256, "quarantine journal should stay capped");
+    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("noise-1"));
+    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("noise-0"));
+    assert_eq!(entries.last().and_then(|v| v["line_number"].as_u64()), Some(257));
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
 fn load_ingress_records_bounds_quarantine_journal_growth() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-bounded", "jsonl");

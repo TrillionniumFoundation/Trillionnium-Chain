@@ -134,7 +134,14 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
                     continue;
                 }
                 if quarantined.len() >= MAX_INGRESS_QUARANTINE_RECORDS {
-                    quarantined.drain(0..(quarantined.len() + 1 - MAX_INGRESS_QUARANTINE_RECORDS));
+                    let drop_count = quarantined.len() + 1 - MAX_INGRESS_QUARANTINE_RECORDS;
+                    for dropped in quarantined.drain(0..drop_count) {
+                        seen_quarantine_keys.remove(&(
+                            dropped.source_path,
+                            dropped.line_hash,
+                            dropped.raw_line,
+                        ));
+                    }
                 }
                 quarantined.push(IngressQuarantineRecord {
                     source_path: source_path.clone(),
