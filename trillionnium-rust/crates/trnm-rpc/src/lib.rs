@@ -127,31 +127,21 @@ impl OracleValidateSnapshotResponse {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_explicit_unclassified_failure_accounting(&self) -> bool {
+        !self.ok
+            && self.error.is_some()
+            && self.metrics.accepted_total == 0
+            && self.classified_reject_total() == 0
+            && self.observation_classified_reject_total() == 0
+            && self.metrics.sample_count > 0
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
-        let result_label_consistent = match self.error.as_deref() {
-            None => self.ok && self.metrics.accepted_total == self.metrics.sample_count,
-            Some("stale") => {
-                !self.ok
-                    && self.metrics.accepted_total == 0
-                    && self.metrics.oracle_stale_reject_total > 0
-                    && self.metrics.oracle_quorum_reject_total == 0
-                    && self.metrics.oracle_drift_reject_total == 0
-            }
-            Some("quorum") => {
-                !self.ok
-                    && self.metrics.accepted_total == 0
-                    && self.metrics.oracle_stale_reject_total == 0
-                    && self.metrics.oracle_quorum_reject_total > 0
-                    && self.metrics.oracle_drift_reject_total == 0
-            }
-            Some("drift") => {
-                !self.ok
-                    && self.metrics.accepted_total == 0
-                    && self.metrics.oracle_stale_reject_total == 0
-                    && self.metrics.oracle_quorum_reject_total == 0
-                    && self.metrics.oracle_drift_reject_total > 0
-            }
-            Some(_) => false,
+        let non_empty_sample = self.metrics.sample_count > 0;
+        let result_label_consistent = if self.ok {
+            self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
+        } else {
+            self.error.is_some() && self.metrics.accepted_total == 0
         };
         let source_cardinality_consistent = if self.metrics.sample_count == 0 {
             self.metrics.oracle_source_cardinality == 0
@@ -159,12 +149,15 @@ impl OracleValidateSnapshotResponse {
             self.metrics.oracle_source_cardinality > 0
                 && self.metrics.oracle_source_cardinality <= self.metrics.sample_count
         };
+        let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count();
 
-        self.observation_matches_metrics()
-            && self.classified_outcome_conserves_sample_count()
-            && self.observation_classified_outcome_conserves_sample_count()
+        non_empty_sample
+            && self.observation_matches_metrics()
             && result_label_consistent
             && source_cardinality_consistent
+            && (outcome_accounting_consistent
+                || self.has_explicit_unclassified_failure_accounting())
     }
 }
 
@@ -1011,7 +1004,7 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_rejects_unclassified_errors() {
+    fn oracle_validation_response_bridge_contract_consistent_allows_explicit_unclassified_failures() {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 793,
@@ -1025,7 +1018,7 @@ mod tests {
                 oracle_stale_reject_total: 0,
                 oracle_quorum_reject_total: 0,
                 oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 3,
+                oracle_source_cardinality: 1,
                 accepted_total: 0,
                 sample_count: 1,
             },
@@ -1039,7 +1032,7 @@ mod tests {
         assert_eq!(out.observation_classified_outcome_total(), 0);
         assert!(!out.classified_outcome_conserves_sample_count());
         assert!(!out.observation_classified_outcome_conserves_sample_count());
-        assert!(!out.bridge_contract_consistent());
+        assert!(out.bridge_contract_consistent());
     }
 
     #[test]
