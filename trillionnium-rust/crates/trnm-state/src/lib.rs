@@ -781,10 +781,13 @@ impl StateStore {
     }
 
     fn matches_task_restore_reentry_snapshot(&self, id: u64, task: &TaskObject) -> bool {
-        let Some(current) = self.get_task(id) else {
+        let Some(current) = self.objects.get(&id) else {
             return false;
         };
-        current == *task
+        match &current.value {
+            ObjectValue::Task(existing) => current.version == task.version && *existing == *task,
+            _ => false,
+        }
     }
 
     fn pending_resolve_restore_reentry_snapshot(
@@ -2984,6 +2987,55 @@ mod tests {
             baseline.state_root(),
             "scrubbing task-version-mismatched pending resolve residue should converge to the clean restored task snapshot"
         );
+    }
+
+    #[test]
+    fn restore_task_reapplies_snapshot_when_outer_object_version_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_011,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        st.objects
+            .get_mut(&task.task_id)
+            .expect("task object should exist")
+            .version = 99;
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_eq!(st.get_ref(task.task_id).map(|r| r.version), Some(task.version));
+        assert_eq!(st.get_task(task.task_id), Some(task));
     }
 
     #[test]
