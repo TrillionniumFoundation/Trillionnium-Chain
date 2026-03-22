@@ -1908,6 +1908,90 @@ fn restore_pending_gov_update_identical_resolve_authority_snapshot_is_reentry_no
 }
 
 #[test]
+fn restore_pending_resolve_identical_snapshot_revalidates_effective_authority_boundary() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging the initial resolve approval should succeed");
+    let stale_snapshot = state
+        .pending_resolve_approval_snapshot(10)
+        .expect("stale pending resolve snapshot should exist before authority drift");
+    let root_with_stale_pending = state.state_root();
+
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-c,resolver-d".into(),
+            version: 2,
+        }),
+    );
+
+    state.restore_pending_resolve_approval(10, Some(stale_snapshot));
+
+    assert_eq!(
+        state.pending_resolve_approval(10),
+        None,
+        "restoring an identical stale pending snapshot must revalidate the effective resolve authority boundary and scrub the orphaned approval"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_stale_pending,
+        "scrubbing the stale pending resolve snapshot after authority drift must perturb the deterministic root"
+    );
+}
+
+#[test]
 fn update_task_version_change_scrubs_staged_pending_resolve_and_changes_state_root() {
     let mut state = StateStore::new();
     state
