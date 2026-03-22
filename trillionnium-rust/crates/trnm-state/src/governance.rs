@@ -767,7 +767,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
             _ => None,
         }
     }
@@ -792,7 +792,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key).copied()?;
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
     }

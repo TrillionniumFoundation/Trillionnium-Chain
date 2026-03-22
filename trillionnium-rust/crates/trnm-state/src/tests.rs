@@ -71,6 +71,39 @@ fn version_conflict() {
 }
 
 #[test]
+fn governance_reads_fail_closed_on_key_id_index_drift() {
+    let mut st = StateStore::new();
+    let gov_ref = st
+        .set_gov_param(0, 111, "max_block_ms".into(), "500".into())
+        .expect("governance param insertion should succeed");
+    let original = st
+        .get_param(gov_ref.id)
+        .expect("stored governance param should exist");
+
+    st.objects.insert(
+        gov_ref.id,
+        VersionedObject {
+            version: gov_ref.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: gov_ref.id + 1,
+                ..original
+            }),
+        },
+    );
+
+    assert_eq!(
+        st.gov_param_u64("max_block_ms"),
+        None,
+        "governance reads must fail closed when registry id and stored key_id drift"
+    );
+    assert_eq!(
+        st.gov_param_ref_for_key("max_block_ms"),
+        None,
+        "governance ref lookup must reject mismatched embedded key ids"
+    );
+}
+
+#[test]
 fn resolve_approval_requires_two_distinct_approvers_before_ready() {
     let mut st = StateStore::new();
 
