@@ -172,6 +172,12 @@ fn reserved_critical_slot_accepts_one_critical_retry_then_rebounds_normal_retrie
     assert_eq!(gate.admit(80, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (3, 2, 5));
 
+    // Once the same tx id is admitted through the reserved critical slot, retries
+    // through the previously blocked normal path must flip to Duplicate rather than
+    // staying Backpressured.
+    assert_eq!(gate.admit(80, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+
     for (tx_id, class) in [
         (81_u64, IngressClass::Normal),
         (81_u64, IngressClass::Critical),
