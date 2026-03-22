@@ -771,6 +771,15 @@ impl StateStore {
         let Some(existing) = self.pending_resolve_approvals.get(&task_id) else {
             return false;
         };
+
+        if self
+            .get_task(task_id)
+            .is_some_and(|task| task.status == TaskStatus::Challenged && task.version == snapshot.task_version)
+            && self.pending_resolve_approval_snapshot(task_id).as_ref() == Some(snapshot)
+        {
+            return true;
+        }
+
         let Some((snapshot_first_approver, snapshot_authority_set)) = self
             .canonical_pending_resolve_approval_snapshot(task_id, snapshot)
         else {

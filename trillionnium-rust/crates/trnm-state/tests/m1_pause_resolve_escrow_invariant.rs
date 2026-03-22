@@ -2751,6 +2751,66 @@ fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_d
 }
 
 #[test]
+fn paused_restore_pending_resolve_keeps_exact_finalized_snapshot_at_same_task_version_boundary() {
+    // Exact re-entry of an already-finalized pending resolve snapshot must be a no-op when the
+    // challenged task object/version pair is unchanged; otherwise restore replay can silently
+    // scrub finalized quorum state across the boundary.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(98_214, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let task = TaskObject {
+        task_id: 9_921_1,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    st.restore_task(9_921_1, Some(task));
+    st.stage_or_confirm_resolve_approval(9_921_1, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval stage should succeed");
+    let finalized = st
+        .stage_or_confirm_resolve_approval(9_921_1, 1, true, "authority-b", "authority-a,authority-b")
+        .expect("second distinct approval should finalize quorum");
+    assert!(finalized);
+
+    let snapshot = st
+        .pending_resolve_approval_snapshot(9_921_1)
+        .expect("finalized pending snapshot should exist before restore replay");
+
+    st.restore_pending_resolve_approval(9_921_1, Some(snapshot.clone()));
+
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_921_1),
+        Some(snapshot),
+        "exact finalized restore replay must preserve the live pending snapshot at the same task version boundary"
+    );
+    assert_eq!(st.pending_resolve_approval(9_921_1), Some((true, 2)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_921_1).as_deref(),
+        Some("authority-a")
+    );
+}
+
+#[test]
 fn paused_state_rejects_exact_emergency_pause_placeholder_approver_without_side_effects() {
     // L03 boundary hardening: the exact canonical emergency_pause placeholder must be rejected
     // on the live paused resolve-approval path too, not only case-drifted aliases or restore.
