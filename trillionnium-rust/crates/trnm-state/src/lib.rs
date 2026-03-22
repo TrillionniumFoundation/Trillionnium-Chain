@@ -1965,11 +1965,75 @@ impl StateStore {
 }
 
 fn has_canonical_proof_metadata_field(value: &str) -> bool {
+    fn is_disallowed_proof_metadata_char(ch: char) -> bool {
+        ch.is_whitespace()
+            || ch.is_control()
+            || matches!(
+                ch,
+                '\u{00A0}'
+                    | '\u{00AD}'
+                    | '\u{034F}'
+                    | '\u{061C}'
+                    | '\u{115F}'
+                    | '\u{1160}'
+                    | '\u{1680}'
+                    | '\u{180E}'
+                    | '\u{2000}'
+                    | '\u{2001}'
+                    | '\u{2002}'
+                    | '\u{2003}'
+                    | '\u{2004}'
+                    | '\u{2005}'
+                    | '\u{2006}'
+                    | '\u{2007}'
+                    | '\u{2008}'
+                    | '\u{2009}'
+                    | '\u{200A}'
+                    | '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{2028}'
+                    | '\u{2029}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{202F}'
+                    | '\u{205F}'
+                    | '\u{2060}'
+                    | '\u{2061}'
+                    | '\u{2062}'
+                    | '\u{2063}'
+                    | '\u{2064}'
+                    | '\u{2065}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+                    | '\u{206A}'
+                    | '\u{206B}'
+                    | '\u{206C}'
+                    | '\u{206D}'
+                    | '\u{206E}'
+                    | '\u{206F}'
+                    | '\u{2800}'
+                    | '\u{3000}'
+                    | '\u{3164}'
+                    | '\u{FEFF}'
+                    | '\u{FFF9}'
+                    | '\u{FFFA}'
+                    | '\u{FFFB}'
+            )
+            || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+            || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+    }
+
     !value.is_empty()
         && value.trim() == value
-        && value
-            .chars()
-            .all(|ch| !ch.is_whitespace() && !ch.is_control())
+        && value.chars().all(|ch| !is_disallowed_proof_metadata_char(ch))
 }
 
 fn checkpoint_has_complete_proof_metadata(cp: &CheckpointMeta) -> bool {
@@ -5634,6 +5698,48 @@ mod tests {
             got.map(|cp| cp.height),
             Some(1),
             "internally whitespace-split checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_zero_width_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2\u{200B}".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "zero-width checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
         );
     }
 
