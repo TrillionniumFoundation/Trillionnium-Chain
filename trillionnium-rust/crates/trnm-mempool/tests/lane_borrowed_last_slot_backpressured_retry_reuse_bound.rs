@@ -427,3 +427,28 @@ fn guarded_last_critical_slot_cross_class_retry_burst_flips_once_fresh_id_is_adm
         assert_eq!(gate.queued_counts(), (3, 2, 5));
     }
 }
+
+#[test]
+fn guarded_last_critical_slot_duplicate_probe_wins_before_and_after_guard_block() {
+    let mut gate = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // Under the open-headroom reserve guard, queued ids must still classify as
+    // Duplicate even if fresh normal retries are concurrently backpressured.
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.queued_counts(), (3, 1, 4));
+
+    // Once critical consumes the final reserved slot, the same duplicate outcome
+    // must remain stable on the saturated path rather than regressing to a retry
+    // classification.
+    assert_eq!(gate.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued_counts(), (3, 2, 5));
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+}
