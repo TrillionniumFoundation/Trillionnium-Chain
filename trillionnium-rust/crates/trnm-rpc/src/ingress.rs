@@ -221,6 +221,17 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
     }
 
+    fn canonicalize_quarantine_source_path(raw: String) -> String {
+        let trimmed = raw.trim();
+        if trimmed.is_empty() {
+            "ingress path omitted".to_string()
+        } else if trimmed.len() == raw.len() {
+            raw
+        } else {
+            trimmed.to_string()
+        }
+    }
+
     fn truncate_for_quarantine(raw: &str) -> String {
         canonicalize_quarantine_raw_line(truncate_sanitized_for_quarantine(
             raw,
@@ -254,8 +265,9 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     }
 
     let path = ingress_file();
-    let source_path_for_quarantine =
-        truncate_sanitized_for_quarantine(&path.display().to_string(), INGRESS_QUARANTINE_FIELD_MAX_BYTES);
+    let source_path_for_quarantine = canonicalize_quarantine_source_path(
+        truncate_sanitized_for_quarantine(&path.display().to_string(), INGRESS_QUARANTINE_FIELD_MAX_BYTES),
+    );
     let Ok(raw) = fs::read(&path) else {
         return vec![];
     };

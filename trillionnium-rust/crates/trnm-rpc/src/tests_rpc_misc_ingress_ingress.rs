@@ -256,6 +256,46 @@ fn load_ingress_records_sanitizes_quarantine_source_path_metadata() {
 }
 
 #[test]
+fn load_ingress_records_trims_quarantine_source_path_metadata_for_retention_bounds() {
+    let _guard = lock_env();
+    let dir = unique_tmp_path(" ingress-quarantine-path-padding ", "dir");
+    fs::create_dir_all(&dir).expect("create padded ingress fixture dir");
+    let path = dir.join("requests.jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    fs::write(&path, b"{\"broken\":1\n").expect("write malformed ingress fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+    assert!(quarantine.exists(), "trimmed source_path metadata should still retain the quarantine entry");
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(entries.len(), 1, "one malformed ingress row should be retained after source path trimming");
+
+    let source_path = entries[0]["source_path"]
+        .as_str()
+        .expect("quarantine source_path should be a string");
+    assert_eq!(source_path, source_path.trim(), "quarantine source_path metadata should be canonicalized before bounded retention");
+    assert!(
+        source_path.ends_with("requests.jsonl"),
+        "quarantine source_path should still identify the ingress file after trimming"
+    );
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
 fn load_ingress_records_sanitizes_quarantine_source_path_tag_metadata() {
     let _guard = lock_env();
     let path = unique_tmp_path("ingress-quarantine-path-\u{E0001}meta", "jsonl");
