@@ -126,11 +126,20 @@ fn quarantine_record_within_bounds_rejects_oversized_or_blank_fields() {
 
     let arabic_letter_mark_raw_line = IngressQuarantineRecord {
         raw_line: "{\"broken\":\"\u{061c}tail\"}".to_string(),
-        ..valid
+        ..valid.clone()
     };
     assert!(
         !quarantine_record_within_bounds(&arabic_letter_mark_raw_line),
         "arabic letter mark should be rejected to keep quarantine payload echoes unambiguous"
+    );
+
+    let tag_character_error = IngressQuarantineRecord {
+        error: "parse failed\u{E0001}json".to_string(),
+        ..valid
+    };
+    assert!(
+        !quarantine_record_within_bounds(&tag_character_error),
+        "invisible unicode tag characters should be rejected to keep quarantine logs unambiguous"
     );
 }
 

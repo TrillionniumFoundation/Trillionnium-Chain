@@ -73,6 +73,8 @@ pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -
                         | '\u{2068}'
                         | '\u{2069}'
                         | '\u{FEFF}'
+                        | '\u{E0001}'
+                        | '\u{E0020}'..='\u{E007F}'
                 )
         })
     }
