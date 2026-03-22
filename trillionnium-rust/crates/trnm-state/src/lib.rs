@@ -241,7 +241,8 @@ pub(crate) fn validate_gov_param_registry_binding(
     // (key -> canonical key_id) and the reverse reserved-id mapping
     // (reserved key_id -> canonical key) before consulting the mutable registry.
     validate_gov_param_key_id_policy(key, key_id)?;
-    if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
+    if let Some(existing_key_id) = governance_registry_lookup_id_for_key(gov_param_key_index, key)
+    {
         if existing_key_id != key_id {
             return Err(format!(
                 "governance key id mismatch for {}: existing_id={}, attempted_id={}",
@@ -1134,7 +1135,8 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if let Some(existing_id) = self.gov_param_key_index.get(&key).copied() {
+        if let Some(existing_id) = governance_registry_lookup_id_for_key(&self.gov_param_key_index, &key)
+        {
             if existing_id != key_id {
                 return Err(format!(
                     "governance key id mismatch for {}: existing_id={}, attempted_id={}",
@@ -4556,6 +4558,30 @@ mod tests {
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_repairs_same_key_registry_drift_via_single_source_binding() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+
+        let applied = st
+            .set_gov_param(8_052, 7_999, "emergency_pause".into(), "true".into())
+            .expect("canonical pinned key write should ignore same-key mutable registry drift");
+
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_key_index.get("emergency_pause").copied(),
+            Some(7_999),
+            "canonical pinned write must repair same-key registry drift back to the reserved key id"
+        );
+        assert_eq!(
+            st.get_param(7_999)
+                .map(|param| (param.key_id, param.key, param.value)),
+            Some((7_999, "emergency_pause".into(), "true".into())),
+            "canonical pinned write must materialize the governance value at the reserved slot"
+        );
+        assert!(st.is_emergency_paused());
     }
 
     #[test]
