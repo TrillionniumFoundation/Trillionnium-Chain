@@ -2355,8 +2355,9 @@ fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) ->
 }
 
 fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
-    let (tx_id, _, tx_id_overflowed, _) = timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
-    (tx_id, tx_id_overflowed)
+    let (tx_id, _, tx_id_overflowed, tx_ordinal_overflowed) =
+        timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
+    (tx_id, tx_id_overflowed || tx_ordinal_overflowed)
 }
 
 fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {

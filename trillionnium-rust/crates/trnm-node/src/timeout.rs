@@ -65,9 +65,9 @@ fn timeout_event_surface_metadata(tx_id_seed: u64, migrated_before_emit: u64) ->
 }
 
 fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
-    let (tx_id, _, tx_id_overflowed, _) =
+    let (tx_id, _, tx_id_overflowed, tx_ordinal_overflowed) =
         timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
-    (tx_id, tx_id_overflowed)
+    (tx_id, tx_id_overflowed || tx_ordinal_overflowed)
 }
 
 fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
@@ -248,7 +248,7 @@ mod tests {
 
     #[test]
     fn timeout_event_tx_metadata_marks_saturated_ordinal_as_overflow_for_visibility() {
-        assert_eq!(timeout_event_tx_metadata(0, u64::MAX), (u64::MAX, false));
+        assert_eq!(timeout_event_tx_metadata(0, u64::MAX), (u64::MAX, true));
     }
 
     #[test]
