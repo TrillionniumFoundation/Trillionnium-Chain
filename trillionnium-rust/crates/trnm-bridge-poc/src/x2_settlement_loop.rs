@@ -45,6 +45,13 @@ fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Op
         .unwrap_or((None, None, None))
 }
 
+fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
+    heartbeat
+        .heartbeat
+        .map(|h| h.source_height == 0 || h.target_height == 0 || h.target_height > h.source_height)
+        .unwrap_or(false)
+}
+
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
     token: &CapabilityToken,
@@ -78,8 +85,39 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
+    if has_invalid_heartbeat_bounds(heartbeat) {
+        let height = match &confirm {
+            SettlementConfirm::Confirmed { height } => *height,
+            SettlementConfirm::Failed { .. } => heartbeat
+                .heartbeat
+                .map(|h| h.target_height.max(h.source_height))
+                .unwrap_or(0),
+        };
+        return Err(SettlementError::InvalidHeight { height });
+    }
+
+    if heartbeat.should_retry {
+        return Err(SettlementError::RetryPending {
+            phase: "relay_heartbeat",
+        });
+    }
+
     match confirm {
         SettlementConfirm::Confirmed { height } => {
+            if height == 0 {
+                return Err(SettlementError::InvalidHeight { height });
+            }
+
+            if let Some(observed) = heartbeat.heartbeat {
+                let max_confirm_height = observed.source_height.saturating_add(1);
+                if height <= observed.target_height || height > max_confirm_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
+            }
+
+            let mut preflight = request.clone();
+            preflight.settle_authorized(token, height)?;
+
             request.settle_authorized(token, height)?;
             let event = SettlementEvent {
                 phase: "settlement_confirmed",
@@ -137,7 +175,11 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{115F}'
                 | '\u{1160}'
                 | '\u{1680}'
+                | '\u{180B}'
+                | '\u{180C}'
+                | '\u{180D}'
                 | '\u{180E}'
+                | '\u{180F}'
                 | '\u{2800}'
                 | '\u{3164}'
                 | '\u{2007}'
@@ -339,6 +381,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
         let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
     }

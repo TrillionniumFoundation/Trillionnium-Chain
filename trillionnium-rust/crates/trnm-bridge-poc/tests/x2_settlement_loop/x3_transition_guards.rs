@@ -1,4 +1,5 @@
 use super::*;
+use trnm_bridge_poc::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
 
 #[test]
 fn x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert() {
@@ -112,7 +113,7 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
         &mut request,
         &token,
         &heartbeat,
-        SettlementConfirm::Confirmed { height: 312 },
+        SettlementConfirm::Confirmed { height: 311 },
     )
     .unwrap_err();
 
@@ -124,6 +125,282 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
         }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(311));
+}
+
+#[test]
+fn x3_prep_confirm_during_heartbeat_retry_window_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-retry-window".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_failure("target relay timeout #1");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 699 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::RetryPending {
+            phase: "relay_heartbeat",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_failed_confirm_during_heartbeat_retry_window_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-retry-window".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_failure("target relay timeout #1");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::RetryPending {
+            phase: "relay_heartbeat",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_retry_window_with_invalid_heartbeat_bounds_is_rejected_before_retry_state_change() {
+    let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 701 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_zero_height_confirm_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-zero-height".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Confirmed { height: 0 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_equal_to_observed_target_height_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-equal-target-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 699 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 699 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_with_non_monotonic_heartbeat_payload_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 701 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_below_observed_target_height_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-below-target-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 698 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 698 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_failed_confirm_with_non_monotonic_heartbeat_payload_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-invalid-heartbeat-bounds".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 699,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "late target receipt timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 700 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_confirm_equal_to_observed_source_height_finalizes_with_stable_event() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-equal-source-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 700 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 700,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(700),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(700));
+}
+
+#[test]
+fn x3_prep_confirm_above_observed_source_plus_one_is_rejected_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-above-source-plus-one".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 702 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 702 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
 
 #[test]

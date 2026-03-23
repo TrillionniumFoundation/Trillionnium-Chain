@@ -13,7 +13,11 @@ pub mod bridge_status {
                     | '\u{115F}'
                     | '\u{1160}'
                     | '\u{1680}'
+                    | '\u{180B}'
+                    | '\u{180C}'
+                    | '\u{180D}'
                     | '\u{180E}'
+                    | '\u{180F}'
                     | '\u{2800}'
                     | '\u{3164}'
                     | '\u{2000}'
@@ -127,6 +131,9 @@ pub mod bridge_status {
         },
         InvalidHeight {
             height: u64,
+        },
+        RetryPending {
+            phase: &'static str,
         },
         InvalidRevertReason,
         MalformedRequest {

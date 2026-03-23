@@ -466,7 +466,7 @@ fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
         &mut request,
         &token,
         &heartbeat,
-        SettlementConfirm::Confirmed { height: 312 },
+        SettlementConfirm::Confirmed { height: 311 },
     )
     .unwrap_err();
 
