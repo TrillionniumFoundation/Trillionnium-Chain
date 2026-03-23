@@ -1,6 +1,6 @@
 use trnm_types::{GovParamObject, ObjectRef};
 
-use crate::{ObjectValue, StateStore, VersionedObject};
+use crate::{validate_gov_param_registry_binding, ObjectValue, StateStore, VersionedObject};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PendingGovParamUpdate {
@@ -527,19 +527,7 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        ensure_allowed_key_has_explicit_validator(&key)?;
-        validate_governance_key_id(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -601,19 +589,7 @@ impl StateStore {
         value: String,
         action: GovPendingUpdateAction,
     ) -> Result<GovParamUpdateOutcome, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        ensure_allowed_key_has_explicit_validator(&key)?;
-        validate_governance_key_id(&key, key_id)?;
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
