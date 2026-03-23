@@ -871,6 +871,10 @@ impl StateStore {
     ) -> bool {
         if !self.matches_task_restore_reentry_snapshot(task_id, task)
             || task.status != TaskStatus::Challenged
+            || self
+                .gov_param_key_index
+                .values()
+                .any(|mapped_id| *mapped_id == task_id)
         {
             return false;
         }
@@ -3265,6 +3269,76 @@ mod tests {
 
         assert_eq!(st.pending_resolve_approval(9_004), None);
         assert_eq!(st.pending_resolve_first_approver(9_004), None);
+    }
+
+    #[test]
+    fn restore_task_clears_pending_resolve_when_object_id_conflicts_with_gov_param_key_slot() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            9_020,
+            Some(GovParamObject {
+                key_id: 9_020,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+
+        let task = TaskObject {
+            task_id: 9_020,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        let baseline_root = {
+            let mut baseline = StateStore::new();
+            baseline.restore_gov_param(
+                9_020,
+                Some(GovParamObject {
+                    key_id: 9_020,
+                    key: "resolve_authority".into(),
+                    value: "authority-a,authority-b".into(),
+                    version: 1,
+                }),
+            );
+            baseline.restore_task(task.task_id, Some(task.clone()));
+            baseline.state_root()
+        };
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_020), None);
+        assert_eq!(st.pending_resolve_first_approver(9_020), None);
+        assert_eq!(st.state_root(), baseline_root);
     }
 
     #[test]
