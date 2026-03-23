@@ -43,6 +43,15 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
+                if task.task_id != id || task.version == 0 {
+                    if matches!(
+                        self.objects.get(&id).map(|object| &object.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
+                    }
+                    return;
+                }
                 self.objects.insert(
                     id,
                     VersionedObject {
@@ -52,7 +61,12 @@ impl StateStore {
                 );
             }
             None => {
-                self.objects.remove(&id);
+                if matches!(
+                    self.objects.get(&id).map(|object| &object.value),
+                    Some(ObjectValue::Task(_))
+                ) {
+                    self.objects.remove(&id);
+                }
             }
         }
     }
@@ -60,11 +74,11 @@ impl StateStore {
     pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
         self.invalidate_state_root_cache();
         match snapshot {
+            Some(0) | None => {
+                self.balances.remove(address);
+            }
             Some(amount) => {
                 self.balances.insert(address.to_string(), amount);
-            }
-            None => {
-                self.balances.remove(address);
             }
         }
     }
@@ -83,6 +97,8 @@ pub fn verify_wal_and_find_checkpoint(
             if e.height <= last_height {
                 return Ok(best_checkpoint);
             }
+        } else if e.prev_hash_hex.is_none() && e.height > 1 {
+            return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);

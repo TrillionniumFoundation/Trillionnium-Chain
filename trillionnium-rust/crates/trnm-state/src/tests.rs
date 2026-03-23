@@ -2485,6 +2485,38 @@ fn state_root_changes_when_pending_resolve_authority_set_changes() {
 }
 
 #[test]
+fn pending_resolve_restore_canonicalizes_authority_metadata_for_state_root() {
+    let mut staged = StateStore::new();
+    staged
+        .stage_or_confirm_resolve_approval(
+            5_200,
+            7,
+            true,
+            "Authority-A",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
+
+    let mut restored = StateStore::new();
+    restored.restore_pending_resolve_approval(
+        5_200,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        staged.state_root(),
+        restored.state_root(),
+        "state_root should ignore authority-set ordering and approver casing noise for equivalent pending resolve snapshots"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_picks_latest_valid() {
     let e1 = WalMeta {
         height: 1,
@@ -2561,6 +2593,30 @@ fn wal_checkpoint_verification_falls_back_on_chain_break() {
         .unwrap()
         .expect("checkpoint");
     assert_eq!(got.height, 1);
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_metadata_only_chain_starting_above_genesis() {
+    let e10 = WalMeta {
+        height: 10,
+        round: 0,
+        proposal_hash: "p10".into(),
+        committed: true,
+        state_root_hex: "r10".into(),
+        prev_hash_hex: None,
+    };
+
+    let checkpoints = vec![CheckpointMeta {
+        height: 10,
+        state_root_hex: "r10".into(),
+        wal_entry_hash_hex: e10.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e10]).unwrap();
+    assert!(
+        got.is_none(),
+        "restart recovery must fail closed for metadata-only WAL chains that start above genesis height"
+    );
 }
 
 #[test]

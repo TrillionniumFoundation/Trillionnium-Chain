@@ -547,6 +547,48 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
+fn restore_pending_gov_update_zero_key_id_rewinds_state_root_by_removing_target_entry() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+    let queued_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    let empty_root = StateStore::new().state_root();
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "restore_pending_gov_update should fail closed by removing the requested queue entry when the supplied snapshot key_id is zero"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "zero-key-id restore snapshot should clear the requested pending governance entry"
+    );
+    assert_ne!(
+        queued_root,
+        state.state_root(),
+        "state_root should account for fail-closed removal when a pending governance restore snapshot carries a zero key_id"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
@@ -1796,6 +1838,196 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_task_mismatched_slot_does_not_scrub_foreign_object_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 10_203, "max_block_ms".into(), "500".into())
+        .expect("foreign governance object should exist before mismatched task restore");
+
+    let foreign_root = state.state_root();
+    let task_snapshot = TaskObject {
+        task_id: 10_202,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    state.restore_task(10_203, Some(task_snapshot));
+
+    assert!(
+        state.get_task(10_203).is_none(),
+        "mismatched task restore must not materialize a task through a foreign object slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "mismatched task restore must preserve the foreign governance object and index"
+    );
+    assert_eq!(
+        state.state_root(),
+        foreign_root,
+        "mismatched task restore must not perturb state_root when the targeted slot belongs to a foreign object kind"
+    );
+
+    state.restore_task(10_203, None);
+    assert_eq!(
+        state.state_root(),
+        foreign_root,
+        "restore_task(None) must also stay task-scoped and preserve foreign object slots"
+    );
+}
+
+#[test]
+fn update_task_rejects_mismatched_embedded_task_id_and_preserves_state_root() {
+    let mut state = StateStore::new();
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10_203,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insert should succeed");
+    let canonical_snapshot = state.get_task(task_ref.id).expect("canonical task should exist");
+    let canonical_root = state.state_root();
+
+    let mut mismatched = canonical_snapshot.clone();
+    mismatched.task_id += 1;
+    mismatched.status = TaskStatus::Challenged;
+    mismatched.challenger = Some("bob".into());
+    mismatched.challenge_bond = Some(17);
+
+    let err = state
+        .update_task(task_ref.clone(), mismatched)
+        .expect_err("update_task should reject a payload whose embedded task_id disagrees with the object slot");
+
+    assert_eq!(err, "object id mismatch");
+    assert_eq!(
+        state.get_task(task_ref.id),
+        Some(canonical_snapshot),
+        "rejecting a mismatched embedded task_id must preserve the canonical task payload in its original slot"
+    );
+    assert!(
+        state.get_task(task_ref.id + 1).is_none(),
+        "rejecting a mismatched embedded task_id must not alias the task payload into a different slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "rejecting a mismatched embedded task_id must preserve the canonical deterministic root"
+    );
+}
+
+#[test]
+fn restore_task_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10_204,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insert should succeed");
+    let task_root = state.state_root();
+    assert_ne!(
+        task_root, baseline_root,
+        "sanity: materializing a task must perturb state_root"
+    );
+
+    state.restore_task(
+        task_ref.id,
+        Some(TaskObject {
+            task_id: task_ref.id,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_task(task_ref.id).is_none(),
+        "zero-version restore snapshots must fail closed by scrubbing the targeted task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "zero-version restore snapshots must rewind state_root exactly by removing the stale task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-version restore rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
@@ -2052,6 +2284,54 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
         state.state_root(),
         baseline_root,
         "repeated reads after restoring pending resolve authority metadata should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_canonicalizes_equivalent_authority_metadata_for_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Resolver-A".into(),
+            authority_set: "resolver-b,Resolver-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_a.pending_resolve_approval_snapshot(5_152),
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        })
+    );
+    assert_eq!(
+        state_b.pending_resolve_approval_snapshot(5_152),
+        state_a.pending_resolve_approval_snapshot(5_152),
+        "restore should canonicalize logically equivalent pending resolve snapshot metadata"
+    );
+    assert_eq!(
+        state_b.state_root(),
+        state_a.state_root(),
+        "state_root should match for logically equivalent pending resolve snapshots after restore canonicalization"
     );
 }
 
@@ -2561,6 +2841,96 @@ fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
         state.state_root(),
         canonical_root,
         "repeated reads after mismatched-slot restore should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
+fn restore_gov_param_zero_version_snapshot_scrubs_stale_slot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .set_gov_param(0, 7_203, "max_block_ms".to_string(), "500".to_string())
+        .expect("applied governance param should succeed");
+    let applied_root = state.state_root();
+    assert_ne!(
+        applied_root, baseline_root,
+        "sanity: materializing an applied governance param must perturb state_root"
+    );
+
+    state.restore_gov_param(
+        7_203,
+        Some(GovParamObject {
+            key_id: 7_203,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_param(7_203).is_none(),
+        "zero-version restore snapshots must fail closed by scrubbing the targeted applied governance slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms"),
+        None,
+        "zero-version restore snapshots must also clear the targeted governance key index entry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "zero-version restore snapshots must rewind state_root exactly by removing the stale applied governance slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-version restore rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_gov_param_invalid_snapshot_preserves_existing_state_root_and_rejects_unallowed_key() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 7_204, "max_block_ms".to_string(), "500".to_string())
+        .expect("baseline governance param should succeed");
+    let baseline_root = state.state_root();
+
+    state.restore_gov_param(
+        7_204,
+        Some(GovParamObject {
+            key_id: 7_204,
+            key: "totally_unknown_param".to_string(),
+            value: "999".to_string(),
+            version: 2,
+        }),
+    );
+
+    assert_eq!(
+        state.get_param(7_204),
+        Some(GovParamObject {
+            key_id: 7_204,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            version: 1,
+        }),
+        "restore_gov_param should preserve the canonical applied governance object when given an unallowed replacement key"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "restore_gov_param should preserve the canonical key index when rejecting an unallowed replacement key"
+    );
+    assert_eq!(
+        state.gov_param_string("totally_unknown_param"),
+        None,
+        "restore_gov_param must not materialize an unallowed governance key through restore"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting an unallowed governance restore snapshot must preserve the canonical deterministic root"
     );
 }
 
