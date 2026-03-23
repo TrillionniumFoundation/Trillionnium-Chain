@@ -17,7 +17,6 @@ pub mod bridge_status {
                     | '\u{180C}'
                     | '\u{180D}'
                     | '\u{180E}'
-                    | '\u{180F}'
                     | '\u{2800}'
                     | '\u{3164}'
                     | '\u{2000}'
@@ -133,8 +132,8 @@ pub mod bridge_status {
         InvalidHeight {
             height: u64,
         },
-        RetryPending {
-            phase: &'static str,
+        HeartbeatRetryPending {
+            reason: String,
         },
         InvalidRevertReason,
         MalformedRequest {

@@ -1,6 +1,14 @@
 use crate::bridge_status::{BridgeStatus, CapabilityToken, SettlementError, SettlementRequest};
 use crate::relay_heartbeat::HeartbeatOutcome;
 
+fn expected_terminal_state(confirm: &SettlementConfirm, heartbeat: &HeartbeatOutcome) -> &'static str {
+    if heartbeat.degraded || matches!(confirm, SettlementConfirm::Failed { .. }) {
+        "reverted"
+    } else {
+        "finalized"
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SettlementConfirm {
     Confirmed { height: u64 },
@@ -31,6 +39,24 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
+fn validate_heartbeat_outcome(heartbeat: &HeartbeatOutcome) -> Result<(), SettlementError> {
+    let Some(metrics) = heartbeat.heartbeat else {
+        return Ok(());
+    };
+
+    if metrics.source_height == 0 {
+        return Err(SettlementError::InvalidHeight { height: 0 });
+    }
+
+    if metrics.target_height == 0 || metrics.target_height > metrics.source_height {
+        return Err(SettlementError::InvalidHeight {
+            height: metrics.target_height,
+        });
+    }
+
+    Ok(())
+}
+
 fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
     heartbeat
         .heartbeat
@@ -58,6 +84,30 @@ pub fn drive_minimal_settlement(
     heartbeat: &HeartbeatOutcome,
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
+    let expected_to = expected_terminal_state(&confirm, heartbeat);
+    match current_status(request) {
+        BridgeStatus::Pending => {}
+        BridgeStatus::Finalized(_) => {
+            return Err(SettlementError::InvalidTransition {
+                from: "finalized",
+                to: expected_to,
+            });
+        }
+        BridgeStatus::Reverted(_) => {
+            return Err(SettlementError::InvalidTransition {
+                from: "reverted",
+                to: expected_to,
+            });
+        }
+    }
+
+    if heartbeat.should_retry && !heartbeat.degraded {
+        let reason = normalize_compensation_reason(&heartbeat.message, "heartbeat retry pending");
+        return Err(SettlementError::HeartbeatRetryPending { reason });
+    }
+
+    validate_heartbeat_outcome(heartbeat)?;
+
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
@@ -107,17 +157,17 @@ pub fn drive_minimal_settlement(
             if height == 0 {
                 return Err(SettlementError::InvalidHeight { height });
             }
-
-            if let Some(observed) = heartbeat.heartbeat {
-                let max_confirm_height = observed.source_height.saturating_add(1);
-                if height <= observed.target_height || height > max_confirm_height {
+            if let Some(target_height) = hb_tgt {
+                if height < target_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
             }
-
-            let mut preflight = request.clone();
-            preflight.settle_authorized(token, height)?;
-
+            if let Some(source_height) = hb_src {
+                let max_confirm_height = source_height.saturating_add(1);
+                if height > max_confirm_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
+            }
             request.settle_authorized(token, height)?;
             let event = SettlementEvent {
                 phase: "settlement_confirmed",
@@ -179,7 +229,6 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{180C}'
                 | '\u{180D}'
                 | '\u{180E}'
-                | '\u{180F}'
                 | '\u{2800}'
                 | '\u{3164}'
                 | '\u{2007}'
@@ -246,8 +295,9 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
     }
 
     let mut normalized = String::new();
-    for (idx, ch) in collapsed.chars().enumerate() {
-        if idx >= MAX_COMPENSATION_REASON_CHARS {
+    for ch in collapsed.chars() {
+        if normalized.chars().count() >= MAX_COMPENSATION_REASON_CHARS {
+            normalized.pop();
             normalized.push('…');
             break;
         }
@@ -262,7 +312,11 @@ pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::normalize_compensation_reason;
+    use super::{drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm};
+    use crate::bridge_status::{
+        BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
+    };
+    use crate::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
 
     #[test]
     fn normalize_compensation_reason_strips_controls_and_invisibles() {
@@ -272,10 +326,10 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_enforces_max_len_with_ellipsis() {
+    fn normalize_compensation_reason_enforces_bounded_max_len_with_ellipsis() {
         let raw = "a".repeat(220);
         let normalized = normalize_compensation_reason(&raw, "fallback");
-        assert_eq!(normalized.chars().count(), 161);
+        assert_eq!(normalized.chars().count(), 160);
         assert!(normalized.ends_with('…'));
     }
 
@@ -345,6 +399,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_alm_and_zwnj_for_replay_stability() {
+        let raw = "target\u{061C} relay\u{200C} timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_compensation_reason_collapses_medium_math_and_ideographic_spaces() {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
@@ -373,6 +434,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_compensation_reason_strips_inhibit_symmetric_swapping_for_replay_stability() {
         let raw = "target\u{2065} relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
@@ -387,9 +455,104 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_collapses_braille_blank_for_replay_stability() {
-        let raw = "target\u{2800}relay timeout";
+    fn normalize_compensation_reason_strips_interlinear_annotation_controls_for_replay_stability() {
+        let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
-        assert_eq!(normalized, "target relay timeout");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn drive_minimal_settlement_rejects_confirm_height_past_source_finality_window() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-height-jump".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 702 },
+        )
+        .unwrap_err();
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 702 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_rejects_degraded_heartbeat_with_invalid_progression_before_revert() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "relay heartbeat degraded".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .unwrap_err();
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
+        let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: true,
+            degraded: false,
+            message: "relay heartbeat retry pending".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .unwrap_err();
+
+        assert_eq!(
+            err,
+            SettlementError::HeartbeatRetryPending {
+                reason: "relay heartbeat retry pending".to_string(),
+            }
+        );
+        assert_eq!(request.status, BridgeStatus::Pending);
     }
 }

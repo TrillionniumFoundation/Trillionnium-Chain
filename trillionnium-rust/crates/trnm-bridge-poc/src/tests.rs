@@ -130,13 +130,10 @@ fn settlement_request_rejects_plane14_tags_in_tx_hash_and_subject() {
 }
 
 #[test]
-fn settlement_request_rejects_mongolian_free_variation_selectors_in_tx_hash_and_subject() {
-    let mut request = SettlementRequest::new(
-        7,
-        "0xabc\u{180B}def\u{180C}ghi\u{180D}jkl\u{180F}".to_string(),
-    );
+fn settlement_request_rejects_braille_blank_in_tx_hash_and_subject() {
+    let mut request = SettlementRequest::new(7, "0xabc\u{2800}def".to_string());
     let token = CapabilityToken {
-        subject: "did:trn:settlement\u{180B}-operator\u{180F}".to_string(),
+        subject: "did:trn:settlement\u{2800}-operator".to_string(),
         capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
     };
 

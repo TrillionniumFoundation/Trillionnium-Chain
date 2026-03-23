@@ -113,7 +113,7 @@ fn x3_prep_stale_pending_degraded_reason_above_cap_appends_single_ellipsis() {
     let suffix = reason
         .strip_prefix("heartbeat degraded: ")
         .expect("reason prefix");
-    assert_eq!(suffix.chars().count(), 161);
+    assert_eq!(suffix.chars().count(), 160);
     assert!(suffix.ends_with('…'));
     assert_eq!(suffix.matches('…').count(), 1);
 
