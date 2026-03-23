@@ -137,7 +137,7 @@ pub(crate) fn normalize_actor_or_signer(raw: &str) -> Option<String> {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct IngressQuarantineRecord {
     pub(crate) source_path: String,
     pub(crate) line_number: usize,

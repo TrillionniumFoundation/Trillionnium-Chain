@@ -1790,6 +1790,20 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
+    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+    const INGRESS_PARSE_LINE_MAX_BYTES: usize = 64 * 1024;
+
+    fn truncate_for_quarantine(raw: &str) -> String {
+        if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+            return raw.to_string();
+        }
+        let mut end = INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES;
+        while end > 0 && !raw.is_char_boundary(end) {
+            end -= 1;
+        }
+        raw[..end].to_string()
+    }
+
     let path = ingress_file();
     let Ok(raw) = fs::read_to_string(&path) else {
         return vec![];
@@ -1800,29 +1814,47 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut seen_quarantine_keys = std::collections::HashSet::new();
     for (idx, line) in raw.lines().enumerate() {
         if line.trim().is_empty() {
+            if line.len() > INGRESS_PARSE_LINE_MAX_BYTES {
+                quarantined.push(IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: idx + 1,
+                    line_hash: stable_line_hash(line),
+                    raw_line: format!("[whitespace-only line omitted: {} bytes]", line.len()),
+                    error: format!(
+                        "ingress line exceeds {} bytes parse bound (got {})",
+                        INGRESS_PARSE_LINE_MAX_BYTES,
+                        line.len()
+                    ),
+                    quarantined_at_unix_ms: now_ms(),
+                });
+            }
+            continue;
+        }
+        if line.len() > INGRESS_PARSE_LINE_MAX_BYTES {
+            quarantined.push(IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash: stable_line_hash(line),
+                raw_line: truncate_for_quarantine(line),
+                error: format!(
+                    "ingress line exceeds {} bytes parse bound (got {})",
+                    INGRESS_PARSE_LINE_MAX_BYTES,
+                    line.len()
+                ),
+                quarantined_at_unix_ms: now_ms(),
+            });
             continue;
         }
         match serde_json::from_str::<MessageIngressRecord>(line) {
             Ok(record) => records.push(record),
-            Err(err) => {
-                let line_hash = stable_line_hash(line);
-                let raw_line = truncate_quarantine_raw_line(line);
-                let quarantine_key = (source_path.clone(), line_hash, raw_line.clone());
-                if !seen_quarantine_keys.insert(quarantine_key) {
-                    continue;
-                }
-                if quarantined.len() >= MAX_INGRESS_QUARANTINE_RECORDS {
-                    quarantined.drain(0..(quarantined.len() + 1 - MAX_INGRESS_QUARANTINE_RECORDS));
-                }
-                quarantined.push(IngressQuarantineRecord {
-                    source_path: source_path.clone(),
-                    line_number: idx + 1,
-                    line_hash,
-                    raw_line,
-                    error: err.to_string(),
-                    quarantined_at_unix_ms: now_ms(),
-                });
-            }
+            Err(err) => quarantined.push(IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash: stable_line_hash(line),
+                raw_line: truncate_for_quarantine(line),
+                error: err.to_string(),
+                quarantined_at_unix_ms: now_ms(),
+            }),
         }
     }
     if !quarantined.is_empty() {
@@ -7640,13 +7672,13 @@ line2
         let _ = fs::remove_file(&quarantine);
         std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-        fs::write(
-            &path,
-            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
-not-json
-"#,
-        )
-        .expect("write ingress fixture");
+        let oversized_malformed = format!("not-json-{}", "x".repeat(5000));
+        let mut fixture = String::from(
+            "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+        );
+        fixture.push_str(&oversized_malformed);
+        fixture.push('\n');
+        fs::write(&path, fixture).expect("write ingress fixture");
 
         let records = load_ingress_records();
         assert_eq!(
@@ -7667,7 +7699,14 @@ not-json
             "malformed ingress row should be quarantined"
         );
         assert_eq!(entries[0]["line_number"], 2);
-        assert_eq!(entries[0]["raw_line"], "not-json");
+        let raw_line = entries[0]["raw_line"]
+            .as_str()
+            .expect("quarantine raw_line should be a string");
+        assert_eq!(raw_line.len(), 4096, "quarantine raw_line should be bounded");
+        assert!(
+            oversized_malformed.starts_with(raw_line),
+            "quarantine raw_line should preserve the malformed prefix"
+        );
         assert_eq!(entries[0]["source_path"], path.display().to_string());
 
         std::env::remove_var("TRNM_RPC_INGRESS_FILE");
