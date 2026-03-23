@@ -1,6 +1,61 @@
 use trnm_state::*;
 use trnm_types::*;
 
+fn task_with_boundary_metering(workload_class: &str, metering_schema: &str) -> TaskObject {
+    TaskObject {
+        task_id: 8_100,
+        creator: "creator-metric-auditor".into(),
+        bounty: 77,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: Some("inference".into()),
+            input_hash: Some("aa".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: workload_class.to_owned(),
+                metering_schema: metering_schema.to_owned(),
+                policy_snapshot_version: 7,
+                receipt_hash: "b".repeat(64),
+                prompt_tokens: 13,
+                generated_tokens: 17,
+                decode_steps: 19,
+                kv_bytes_moved: 23,
+                normalized_work_units: 29,
+                prompt_token_weight: 31,
+                generated_token_weight: 37,
+                decode_step_weight: 41,
+                kv_byte_weight: 43,
+                min_accept_work_units: 47,
+                challenge_success_bounty_base: 53,
+                challenge_success_bounty_per_work_unit_num: 59,
+                challenge_success_bounty_per_work_unit_den: 61,
+                worker_completion_bonus_per_work_unit_num: 67,
+                worker_completion_bonus_per_work_unit_den: 71,
+                worker_slash_rebate_per_work_unit_num: 73,
+                worker_slash_rebate_per_work_unit_den: 79,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    }
+}
+
+
 #[test]
 fn new_tasks_canonicalize_embedded_version_for_state_root() {
     let mut state_a = StateStore::new();
@@ -234,6 +289,25 @@ fn task_creator_and_worker_boundaries_should_affect_state_root() {
         state_a.state_root(),
         state_b.state_root(),
         "state_root should length-frame task creator and worker so adjacent string boundaries cannot hash identically"
+    );
+}
+
+#[test]
+fn task_metering_snapshot_field_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let task_a = task_with_boundary_metering("ab", "c");
+    let mut task_b = task_with_boundary_metering("a", "bc");
+    task_b.task_id = task_a.task_id;
+
+    state_a.put_task_new(task_a).unwrap();
+    state_b.put_task_new(task_b).unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame metering workload_class and metering_schema so adjacent string boundaries cannot collide"
     );
 }
 
