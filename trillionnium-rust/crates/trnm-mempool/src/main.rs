@@ -109,6 +109,14 @@ impl AdmissionGate {
                     break;
                 }
             }
+            if self.backpressured_fifo.len() > self.backpressured_ids.len() {
+                // Restored-state repair can deterministically trim retry ids while stale
+                // FIFO markers survive. Rebuild markers immediately so bounded retry
+                // bookkeeping stays aligned without waiting for a later compaction pass.
+                let mut rebuilt: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                rebuilt.sort_unstable();
+                self.backpressured_fifo = rebuilt.into_iter().collect();
+            }
             true
         } else {
             false
@@ -287,6 +295,10 @@ impl AdmissionGate {
             // As soon as all known retries are drained, release any stale fairness reservations
             // so newly arriving free-ingress traffic is not pointlessly deferred.
             self.retry_reservations = 0;
+            // Also drop stale retry FIFO markers immediately instead of waiting for the next
+            // admit()/pop_ready() boundary. This keeps retry bookkeeping cold after the last
+            // recovered retry is accepted during low-churn recovery windows.
+            self.backpressured_fifo.clear();
         }
         // Keep fairness marker until the next dequeue boundary. This preserves
         // idempotency for a just-deferred id when the queue re-saturates before
@@ -1010,6 +1022,27 @@ mod tests {
     }
 
     #[test]
+    fn admitting_last_known_retry_clears_stale_retry_fifo_markers_immediately() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Simulate restored/churned runtime state where stale FIFO markers survived
+        // around the one real retry id.
+        gate.backpressured_fifo.extend([9, 42, 9, 43]);
+        assert!(!gate.backpressured_fifo.is_empty());
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+        assert!(gate.backpressured_ids.is_empty());
+        assert!(gate.backpressured_fifo.is_empty());
+        assert_eq!(gate.retry_reservations, 0);
+    }
+
+    #[test]
     fn stale_retry_reservations_are_clamped_before_fresh_ingress_deferral() {
         let mut gate = AdmissionGate::new(3);
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
@@ -1094,6 +1127,22 @@ mod tests {
         assert!(!gate.backpressured_fifo.is_empty());
         assert!(gate.backpressured_fifo.len() <= gate.backpressured_ids.len());
         assert!(gate.backpressured_ids.contains(&99));
+    }
+
+    #[test]
+    fn restored_retry_trim_rebuilds_fifo_after_stale_marker_eviction_fallback() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Corrupted restore: retry ids and stale markers disagree, so eviction falls
+        // back to deterministic set trimming while old FIFO markers survive.
+        gate.backpressured_ids.extend([41, 42, 43]);
+        gate.backpressured_fifo.extend([7, 8]);
+
+        assert!(gate.remember_backpressured(99));
+
+        assert_eq!(gate.backpressured_ids.len(), 2);
+        assert_eq!(gate.backpressured_fifo.len(), gate.backpressured_ids.len());
+        assert_eq!(gate.backpressured_fifo.iter().copied().collect::<Vec<_>>(), vec![43, 99]);
     }
 
     #[test]
