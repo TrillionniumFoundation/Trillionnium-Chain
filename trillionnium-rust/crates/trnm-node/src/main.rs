@@ -484,14 +484,21 @@ fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
     Ok(())
 }
 
+fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
+    wal_meta_file(wal_dir).exists() || checkpoint_file(wal_dir).exists()
+}
+
 fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let last_checkpoint =
+    let mut last_checkpoint =
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
-    if entries.is_empty() && checkpoints.is_empty() && wal_file(wal_dir).exists() {
+    if entries.is_empty()
+        && checkpoints.is_empty()
+        && (wal_file(wal_dir).exists() || has_empty_metadata_scaffold(wal_dir))
+    {
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
@@ -504,6 +511,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     }
     if entries.is_empty() && !checkpoints.is_empty() {
         persist_checkpoint_meta(wal_dir, &[])?;
+        last_checkpoint = None;
         truncated = true;
     }
     if !entries.is_empty() && last_checkpoint.is_none() {
@@ -590,6 +598,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
                 persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
                 truncated = true;
             }
+            last_checkpoint = valid_checkpoints.last().cloned();
         }
     }
 
@@ -606,11 +615,17 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
+        let restored_round = if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded
+        {
+            0
+        } else {
+            last.round
+        };
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
                 next_height: last.height + 1,
-                last_round: last.round,
+                last_round: restored_round,
                 locked_block_hash: restored_lock.clone(),
             },
         )?;
@@ -2285,6 +2300,27 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
     Ok(())
 }
 
+fn timeout_bond_disposition(
+    st: &StateStore,
+    task_id: u64,
+    from_status: TaskStatus,
+) -> Option<&'static str> {
+    if matches!(from_status, TaskStatus::Challenged) {
+        st.get_task(task_id).and_then(|t| {
+            t.challenge_bond_forfeited
+                .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+        })
+    } else {
+        None
+    }
+}
+
+fn ordered_known_task_ids(known_task_ids: &HashSet<u64>) -> Vec<u64> {
+    let mut task_ids: Vec<u64> = known_task_ids.iter().copied().collect();
+    task_ids.sort_unstable();
+    task_ids
+}
+
 fn scan_and_apply_timeouts(
     st: &mut StateStore,
     known_task_ids: &HashSet<u64>,
@@ -2292,7 +2328,7 @@ fn scan_and_apply_timeouts(
     tx_id_seed: u64,
 ) -> u64 {
     let mut migrated = 0u64;
-    for task_id in known_task_ids.iter().copied() {
+    for task_id in ordered_known_task_ids(known_task_ids) {
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
@@ -2313,7 +2349,8 @@ fn scan_and_apply_timeouts(
             // challenged settlement path at all.
             continue;
         }
-        let from_status = format!("{:?}", task.status);
+        let from_status = task.status.clone();
+        let from_status_name = format!("{:?}", from_status);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
@@ -2325,20 +2362,13 @@ fn scan_and_apply_timeouts(
             let root = hex::encode(st.state_root());
             let (treasury_delta, challenger_delta) =
                 balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
-            let bond_disposition = if from_status == "Challenged" {
-                st.get_task(task_id).and_then(|t| {
-                    t.challenge_bond_forfeited
-                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
-                })
-            } else {
-                None
-            };
+            let bond_disposition = timeout_bond_disposition(st, task_id, from_status);
             emit_timeout_event(
                 st,
                 task_id,
                 tx_id_seed.saturating_add(migrated),
                 current_height,
-                &from_status,
+                &from_status_name,
                 &to_status,
                 &root,
                 &treasury_delta,
@@ -2348,7 +2378,7 @@ fn scan_and_apply_timeouts(
             );
             println!(
                 "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
-                current_height, task_id, from_status, to_status
+                current_height, task_id, from_status_name, to_status
             );
         }
     }
@@ -2615,12 +2645,18 @@ impl PreExecPool {
         if group_ids.is_empty() {
             return (vec![], 0);
         }
-        let workers = self.width.min(group_ids.len());
+
+        let mut seen_ids = HashSet::with_capacity(group_ids.len());
+        let unique_group_ids: Vec<u64> = group_ids
+            .into_iter()
+            .filter(|id| seen_ids.insert(*id))
+            .collect();
+        let workers = self.width.min(unique_group_ids.len());
         let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
         {
             let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
             for w in 0..workers {
-                let ids: Vec<u64> = group_ids
+                let ids: Vec<u64> = unique_group_ids
                     .iter()
                     .copied()
                     .enumerate()
@@ -2638,19 +2674,22 @@ impl PreExecPool {
         self.state.cv.notify_all();
         drop(tx);
 
-        let mut ok_ids = Vec::new();
+        let mut ok_ids = HashSet::with_capacity(unique_group_ids.len());
         let mut rejected = 0u64;
         for (id, ok, err) in rx {
             if ok {
-                ok_ids.push(id);
+                ok_ids.insert(id);
             } else {
                 rejected += 1;
                 println!("[preexec] tx_id={} rejected err={}", id, err);
             }
         }
 
-        ok_ids.sort_unstable();
-        (ok_ids, rejected)
+        let ordered_ok_ids = unique_group_ids
+            .into_iter()
+            .filter(|id| ok_ids.contains(id))
+            .collect();
+        (ordered_ok_ids, rejected)
     }
 }
 
@@ -2867,6 +2906,29 @@ mod tests {
 
         assert_eq!(single, (vec![1, 2], 1));
         assert_eq!(parallel, single);
+    }
+
+    #[test]
+    fn preexec_preserves_first_seen_group_order_and_dedupes_duplicates() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4_262,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4_263,
+                creator: "bob".into(),
+                bounty: 11,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 1, 2, 1]);
+
+        assert_eq!(ordered_ids, vec![2, 1]);
+        assert_eq!(rejected, 0);
     }
 
     #[test]
@@ -7604,6 +7666,63 @@ mod tests {
     }
 
     #[test]
+    fn timeout_scan_orders_known_task_ids_for_stable_event_surface() {
+        let ascending: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
+        let descending: HashSet<u64> = [7003u64, 7002u64, 7001u64].into_iter().collect();
+
+        assert_eq!(ordered_known_task_ids(&ascending), vec![7001, 7002, 7003]);
+        assert_eq!(ordered_known_task_ids(&descending), vec![7001, 7002, 7003]);
+    }
+
+    #[test]
+    fn timeout_bond_disposition_only_applies_to_challenged_transitions() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 1_000_000);
+        st.set_balance("worker7000", 1_000);
+
+        let r1 = apply_create_task(&mut st, 7000, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(7000, &result_hash, &reveal_salt, "worker7000");
+        let r2 = apply_accept_task(&mut st, r1, "worker7000".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7000".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let challenged = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .and_then(|revealed| {
+            trnm_pouw::apply_challenge_at_height(
+                &mut st,
+                revealed,
+                "challenger".into(),
+                10,
+                "challenger".into(),
+                120,
+            )
+        })
+        .unwrap();
+
+        let _ = apply_timeout(&mut st, challenged, 1_000).unwrap();
+
+        assert_eq!(
+            timeout_bond_disposition(&st, 7000, TaskStatus::Challenged),
+            Some("refunded")
+        );
+        assert_eq!(timeout_bond_disposition(&st, 7000, TaskStatus::Revealed), None);
+    }
+
+    #[test]
     fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
@@ -8432,6 +8551,32 @@ mod tests {
     }
 
     #[test]
+    fn recover_normalizes_empty_metadata_scaffold_without_preexisting_consensus_wal() {
+        let wal_dir = temp_wal_dir("recover-empty-metadata-scaffold-without-wal");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(&wal_dir, &[]).unwrap();
+        persist_checkpoint_meta(&wal_dir, &[]).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_rejects_uncommitted_genesis_entry_even_with_checkpoint_metadata() {
         let wal_dir = temp_wal_dir("recover-uncommitted-genesis-entry");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -8748,6 +8893,82 @@ mod tests {
         assert!(checkpoints
             .iter()
             .all(|cp| cp.wal_entry_hash_hex != e3.content_hash_hex()));
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_tail_rewrites_consensus_wal_round_to_zero() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-tail-round-reset");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 3,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 7,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 11,
+            proposal_hash: "metadata-only-tail".into(),
+            committed: false,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, e3]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2,
+                },
+            ],
+        )
+        .unwrap();
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 99,
+                last_round: 42,
+                locked_block_hash: Some("stale-tail-lock".into()),
+            },
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.truncated);
+        assert!(recovered.metadata_only_recovery);
+        assert!(recovered.restored_lock.is_none());
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(recovered.wal_entries_retained, 2);
 
         let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
         let wal: ConsensusWal = toml::from_str(&wal).unwrap();
@@ -10343,6 +10564,78 @@ locked_block_hash = "stale-replay-lock"
     }
 
     #[test]
+    fn recover_duplicate_height_tail_refreshes_last_checkpoint_after_pruning_stale_checkpoint() {
+        let wal_dir = temp_wal_dir("recover-duplicate-height-tail-refreshes-last-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "h2-replay".into(),
+            committed: true,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2-replay".into(),
+                    wal_entry_hash_hex: "stale-replayed-h2".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        let retained_checkpoint = recovered
+            .last_checkpoint
+            .as_ref()
+            .expect("retained checkpoint should remain after truncating duplicate tail");
+        assert_eq!(retained_checkpoint.height, 2);
+        assert_eq!(retained_checkpoint.state_root_hex, "r2");
+        assert_eq!(retained_checkpoint.wal_entry_hash_hex, h2);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "r2");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_replayed_duplicate_genesis_height_tail_truncates_to_genesis_checkpoint() {
         let wal_dir = temp_wal_dir("recover-replayed-duplicate-genesis-height-tail");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -11419,7 +11712,7 @@ locked_block_hash = "stale-lock"
         let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
         let wal: ConsensusWal = toml::from_str(&wal).unwrap();
         assert_eq!(wal.next_height, 2);
-        assert_eq!(wal.last_round, 3);
+        assert_eq!(wal.last_round, 0);
         assert!(wal.locked_block_hash.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
