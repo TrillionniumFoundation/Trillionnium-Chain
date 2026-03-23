@@ -57,7 +57,7 @@ pub(crate) fn scan_and_apply_timeouts(
             continue;
         }
         let from_status = task.status.clone();
-        let from_status_name = format!("{:?}", from_status);
+        let from_status_name = status_name(st, task_id);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
