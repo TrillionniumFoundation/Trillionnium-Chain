@@ -36,6 +36,17 @@ pub(crate) const GOV_ALLOWED_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "challenge_window_blocks",
     "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
@@ -44,13 +55,78 @@ pub(crate) const GOV_ALLOWED_KEYS: &[&str] = &[
     "monetary_base_burn_per_tick",
 ];
 pub(crate) const GOV_SENSITIVE_KEYS: &[&str] = &[
-    "challenge_window_blocks",
-    "challenge_min_bond",
-    "challenge_success_bounty",
     "min_worker_stake",
+    "challenge_min_bond",
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
+];
+pub(crate) const GOV_KEYS_WITH_EXPLICIT_VALIDATORS: &[&str] = &[
+    "max_block_ms",
+    "max_parallel_workers",
+    "challenge_window_blocks",
+    "min_worker_stake",
+    "challenge_min_bond",
+    "challenge_success_bounty",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
+    "resolve_authority",
+    "emergency_pause",
+    "monetary_policy_tick_interval_blocks",
+    "monetary_policy_tick_cooldown_blocks",
+    "monetary_base_issuance_per_tick",
+    "monetary_base_burn_per_tick",
+];
+pub(crate) const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
+    ("max_block_ms", "9"),
+    ("max_parallel_workers", "0"),
+    ("min_worker_stake", "0"),
+    ("challenge_min_bond", "0"),
+    ("challenge_min_bond_bounty_bps", "100001"),
+    ("challenge_min_bond_worker_stake_bps", "100001"),
+    ("challenge_window_blocks", "99"),
+    ("challenge_success_bounty", "-1"),
+    ("llm_meter_prompt_token_weight", "-1"),
+    ("llm_meter_generated_token_weight", "-1"),
+    ("llm_meter_decode_step_weight", "-1"),
+    ("llm_meter_kv_byte_weight", "-1"),
+    ("llm_meter_min_accept_work_units", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
+    ("resolve_authority", "   "),
+    ("emergency_pause", "TRUE"),
+    ("monetary_policy_tick_interval_blocks", "0"),
+    ("monetary_policy_tick_cooldown_blocks", "0"),
+    ("monetary_base_issuance_per_tick", "1000000000001"),
+    ("monetary_base_burn_per_tick", "1000000000001"),
 ];
 pub(crate) const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 pub(crate) const RESERVED_SYSTEM_AUTHORITY: &str = "system";
@@ -101,7 +177,107 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+fn has_explicit_gov_param_validator(key: &str) -> bool {
+    GOV_KEYS_WITH_EXPLICIT_VALIDATORS.contains(&key)
+}
+
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    match key {
+        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
+        _ => None,
+    }
+}
+
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id(key) {
+        if expected_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_governance_validator_registry_shape() -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.iter().copied().collect();
+
+    if allowed_unique.len() != GOV_ALLOWED_KEYS.len() {
+        return Err("governance allowed-key registry contains duplicate entries".into());
+    }
+    if validator_unique.len() != GOV_KEYS_WITH_EXPLICIT_VALIDATORS.len() {
+        return Err("governance explicit-validator registry contains duplicate entries".into());
+    }
+    if allowed_unique != validator_unique {
+        let missing_allowed_keys: Vec<&str> = allowed_unique
+            .difference(&validator_unique)
+            .copied()
+            .collect();
+        let rogue_validator_keys: Vec<&str> = validator_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance explicit-validator registry drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+            missing_allowed_keys.join(", "),
+            rogue_validator_keys.join(", "),
+        ));
+    }
+
+    Ok(())
+}
+
+fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let schema_sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+        .iter()
+        .map(|(key, _)| *key)
+        .collect();
+    let schema_unique: std::collections::BTreeSet<&str> =
+        schema_sample_keys.iter().copied().collect();
+
+    if schema_unique.len() != schema_sample_keys.len() {
+        return Err("governance schema invalid-sample registry contains duplicate entries".into());
+    }
+    if allowed_unique != schema_unique {
+        let missing_schema_keys: Vec<&str> = allowed_unique
+            .difference(&schema_unique)
+            .copied()
+            .collect();
+        let rogue_schema_keys: Vec<&str> = schema_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance schema invalid-sample registry drifted from allowed-key registry: missing_schema_keys=[{}], rogue_schema_keys=[{}]",
+            missing_schema_keys.join(", "),
+            rogue_schema_keys.join(", "),
+        ));
+    }
+
+    Ok(())
+}
+
+fn ensure_allowed_key_has_explicit_validator(key: &str) -> Result<(), String> {
+    validate_governance_validator_registry_shape()?;
+    validate_governance_schema_sample_registry_shape()?;
+    if GOV_ALLOWED_KEYS.contains(&key) && !has_explicit_gov_param_validator(key) {
+        return Err(format!(
+            "governance key {} is allowed but missing explicit validator registration",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    ensure_allowed_key_has_explicit_validator(key)?;
+
     match key {
         "max_block_ms" => {
             let _ = parse_u64_in_range(key, value, 10, 120_000)?;
@@ -129,6 +305,23 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         }
         "challenge_min_bond_bounty_bps" | "challenge_min_bond_worker_stake_bps" => {
             let _ = parse_u64_in_range(key, value, 0, 100_000)?;
+            Ok(())
+        }
+        "llm_meter_prompt_token_weight"
+        | "llm_meter_generated_token_weight"
+        | "llm_meter_decode_step_weight"
+        | "llm_meter_kv_byte_weight"
+        | "llm_meter_min_accept_work_units"
+        | "llm_meter_challenge_success_bounty_per_work_unit_num"
+        | "llm_meter_worker_completion_bonus_per_work_unit_num"
+        | "llm_meter_worker_slash_rebate_per_work_unit_num" => {
+            let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "llm_meter_challenge_success_bounty_per_work_unit_den"
+        | "llm_meter_worker_completion_bonus_per_work_unit_den"
+        | "llm_meter_worker_slash_rebate_per_work_unit_den" => {
+            let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
             Ok(())
         }
         "resolve_authority" => {
@@ -245,7 +438,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
-        _ => Ok(()),
+        _ => Err(format!(
+            "invalid governance value for {}: no explicit validator registered",
+            key
+        )),
     }
 }
 
@@ -334,12 +530,8 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        ensure_allowed_key_has_explicit_validator(&key)?;
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -412,12 +604,8 @@ impl StateStore {
         if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
+        ensure_allowed_key_has_explicit_validator(&key)?;
+        validate_governance_key_id(&key, key_id)?;
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
                 return Err(format!(
@@ -579,7 +767,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
             _ => None,
         }
     }
@@ -604,8 +792,75 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key).copied()?;
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        ensure_allowed_key_has_explicit_validator, governance_pinned_key_id,
+        has_explicit_gov_param_validator, validate_gov_param_value,
+        validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
+    };
+
+    #[test]
+    fn governance_allowed_keys_have_explicit_value_validators() {
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                has_explicit_gov_param_validator(key),
+                "allowed governance key missing explicit validator: {}",
+                key
+            );
+            ensure_allowed_key_has_explicit_validator(key)
+                .expect("allowed governance key should have a runtime explicitness guard");
+
+            let err = validate_gov_param_value(key, "__merge_gate_invalid_sample__")
+                .expect_err("invalid sample should be rejected fail-closed");
+            assert!(
+                !err.contains("no explicit validator registered"),
+                "allowed governance key fell through explicit validator registry: {} => {}",
+                key,
+                err
+            );
+            assert!(
+                !err.contains("missing explicit validator registration"),
+                "allowed governance key tripped runtime explicitness guard unexpectedly: {} => {}",
+                key,
+                err
+            );
+        }
+    }
+
+    #[test]
+    fn governance_pinned_key_id_guard_is_single_source_and_fail_closed() {
+        assert_eq!(governance_pinned_key_id("emergency_pause"), Some(7_999));
+        assert_eq!(governance_pinned_key_id("max_block_ms"), None);
+
+        let err = validate_governance_key_id("emergency_pause", 8_000)
+            .expect_err("pinned governance key ids must fail closed on mismatch");
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        validate_governance_key_id("emergency_pause", 7_999)
+            .expect("canonical pinned governance key id should be accepted");
+        validate_governance_key_id("max_block_ms", 9_601)
+            .expect("unpinned governance keys should stay free of accidental pinning");
+    }
+
+    #[test]
+    fn governance_schema_invalid_samples_cover_allowed_keys_once() {
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        let sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+            .iter()
+            .map(|(key, _)| *key)
+            .collect();
+        let sample_unique: std::collections::BTreeSet<&str> =
+            sample_keys.iter().copied().collect();
+
+        assert_eq!(sample_unique.len(), sample_keys.len());
+        assert_eq!(allowed_unique, sample_unique);
     }
 }

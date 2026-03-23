@@ -1,4 +1,7 @@
-use super::governance::{is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_SENSITIVE_KEYS};
+use super::governance::{
+    is_sensitive_gov_param, validate_gov_param_value, GOV_ALLOWED_KEYS,
+    GOV_KEYS_WITH_EXPLICIT_VALIDATORS, GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
+};
 use super::*;
 use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
 
@@ -65,6 +68,39 @@ fn version_conflict() {
     let _ = st.update_task(r1.clone(), t.clone()).unwrap();
     let err = st.update_task(r1, t).unwrap_err();
     assert!(err.contains("version conflict"));
+}
+
+#[test]
+fn governance_reads_fail_closed_on_key_id_index_drift() {
+    let mut st = StateStore::new();
+    let gov_ref = st
+        .set_gov_param(0, 111, "max_block_ms".into(), "500".into())
+        .expect("governance param insertion should succeed");
+    let original = st
+        .get_param(gov_ref.id)
+        .expect("stored governance param should exist");
+
+    st.objects.insert(
+        gov_ref.id,
+        VersionedObject {
+            version: gov_ref.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: gov_ref.id + 1,
+                ..original
+            }),
+        },
+    );
+
+    assert_eq!(
+        st.gov_param_u64("max_block_ms"),
+        None,
+        "governance reads must fail closed when registry id and stored key_id drift"
+    );
+    assert_eq!(
+        st.gov_param_ref_for_key("max_block_ms"),
+        None,
+        "governance ref lookup must reject mismatched embedded key ids"
+    );
 }
 
 #[test]
@@ -1307,6 +1343,27 @@ fn governance_sensitive_pending_cancel_before_activation_removes_pending() {
 }
 
 #[test]
+fn governance_non_sensitive_cancel_path_still_enforces_validator_registry_guard() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param_with_action(
+            21_005,
+            7_999,
+            "emergency_pause".into(),
+            "not-a-bool".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("non-sensitive cancel path must still fail closed before mutation");
+    assert!(
+        err.contains("governance cancel not supported for non-sensitive key emergency_pause"),
+        "unexpected cancel-path error: {err}"
+    );
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
 fn governance_sensitive_apply_without_pending_is_unchanged() {
     let mut st = StateStore::new();
     st.set_gov_param_unchecked(7322, "challenge_min_bond".into(), "100".into())
@@ -2184,34 +2241,46 @@ fn governance_timelock_classification_merge_gate_keeps_emergency_pause_immediate
 }
 
 #[test]
-fn governance_allowed_keys_schema_merge_gate_is_explicit() {
-    // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
-    // must update this table with an invalid sample that is expected to fail.
-    let expected_invalid_samples = [
-        ("max_block_ms", "9"),
-        ("max_parallel_workers", "0"),
-        ("min_worker_stake", "0"),
-        ("challenge_min_bond", "0"),
-        ("challenge_min_bond_bounty_bps", "100001"),
-        ("challenge_min_bond_worker_stake_bps", "100001"),
-        ("challenge_window_blocks", "99"),
-        ("challenge_success_bounty", "-1"),
-        ("resolve_authority", "   "),
-        ("emergency_pause", "TRUE"),
-        ("monetary_policy_tick_interval_blocks", "0"),
-        ("monetary_policy_tick_cooldown_blocks", "0"),
-        ("monetary_base_issuance_per_tick", "1000000000001"),
-        ("monetary_base_burn_per_tick", "1000000000001"),
-    ];
+fn governance_allowed_keys_have_single_explicit_validator_registry() {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.iter().copied().collect();
 
     assert_eq!(
+        validator_unique.len(),
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.len(),
+        "GOV_KEYS_WITH_EXPLICIT_VALIDATORS contains duplicate entries"
+    );
+    assert_eq!(
+        allowed_unique, validator_unique,
+        "allowed governance keys and explicit validator registry must stay identical"
+    );
+}
+
+#[test]
+fn governance_validator_registry_drift_fails_closed_at_runtime_boundary() {
+    let err = validate_gov_param_value("not_whitelisted", "1")
+        .expect_err("unknown governance keys must fail closed at the validator boundary");
+    assert!(
+        err.contains("missing explicit validator registration")
+            || err.contains("no explicit validator registered"),
+        "unexpected runtime validator drift error: {err}"
+    );
+}
+
+#[test]
+fn governance_allowed_keys_schema_merge_gate_is_explicit() {
+    // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
+    // must update the source-side invalid-sample registry beside the validators.
+    assert_eq!(
         GOV_ALLOWED_KEYS.len(),
-        expected_invalid_samples.len(),
-        "governance allowed-key list changed; update schema merge gate"
+        GOV_SCHEMA_INVALID_SAMPLES.len(),
+        "governance allowed-key list changed; update source-side schema merge gate"
     );
 
     let mut st = StateStore::new();
-    for (i, (key, bad_value)) in expected_invalid_samples.iter().enumerate() {
+    for (i, (key, bad_value)) in GOV_SCHEMA_INVALID_SAMPLES.iter().enumerate() {
         assert!(
             GOV_ALLOWED_KEYS.contains(key),
             "schema merge gate contains non-whitelisted key: {}",
@@ -2232,6 +2301,31 @@ fn governance_allowed_keys_schema_merge_gate_is_explicit() {
             err
         );
     }
+}
+
+#[test]
+fn governance_llm_meter_schema_is_explicit_and_fail_closed() {
+    let mut st = StateStore::new();
+
+    st.set_gov_param_unchecked(
+        97_050,
+        "llm_meter_prompt_token_weight".into(),
+        "42".into(),
+    )
+    .expect("llm meter key with explicit validator should be accepted");
+    assert_eq!(
+        st.gov_param_u64("llm_meter_prompt_token_weight"),
+        Some(42)
+    );
+
+    let err = st
+        .set_gov_param_unchecked(
+            97_051,
+            "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+            "0".into(),
+        )
+        .expect_err("denominator zero must fail closed");
+    assert!(err.contains("invalid governance value"), "{err}");
 }
 
 #[test]
@@ -2859,4 +2953,205 @@ fn policy_tick_cooldown_throttles_repeated_schedule_points() {
     assert!(st.policy_tick(2).is_some());
     assert!(st.policy_tick(4).is_none(), "cooldown should block h=4");
     assert!(st.policy_tick(6).is_some(), "cooldown should allow h=6");
+}
+
+#[test]
+fn restore_pending_gov_update_unknown_key_fails_closed_without_materializing_queue_entry() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "totally_unknown_key",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "totally_unknown_key".into(),
+            value: "120".into(),
+            activate_at_height: 330,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("totally_unknown_key").is_none(),
+        "restore_pending_gov_update must fail closed for non-whitelisted governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "unknown pending governance keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_non_sensitive_key_fails_closed_without_aliasing_immediate_param() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 118,
+            key: "max_block_ms".into(),
+            value: "450".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "restore_pending_gov_update must fail closed for non-sensitive immediate governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-sensitive governance keys must not be restorable into the pending timelock queue"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_noncanonical_snapshot_key_fails_closed_without_aliasing_pending_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_310,
+            key: " resolve_authority".into(),
+            value: "authority-a,authority-b".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "restore_pending_gov_update must fail closed when the snapshot key spelling is non-canonical"
+    );
+    assert!(
+        state.pending_gov_update(" resolve_authority").is_none(),
+        "non-canonical snapshot keys must not materialize an aliased pending governance slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-canonical snapshot keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param_unchecked(113, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let root_with_canonical_param = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_success_bounty",
+        Some(PendingGovParamUpdate {
+            key_id: 113,
+            key: "challenge_success_bounty".into(),
+            value: "6000".into(),
+            activate_at_height: 350,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "restore_pending_gov_update must fail closed when a snapshot reuses another governance key's canonical id"
+    );
+    assert_eq!(
+        state.gov_param_string("challenge_min_bond"),
+        Some("5000".into()),
+        "foreign key-id collision must not disturb the existing canonical governance registration"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_canonical_param,
+        "foreign key-id collision must leave the deterministic root unchanged"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_live_object_embedded_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+    let applied = state
+        .set_gov_param_unchecked(7_201, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let canonical = state
+        .get_param(applied.id)
+        .expect("canonical challenge_min_bond object should exist");
+
+    state.objects.insert(
+        applied.id,
+        VersionedObject {
+            version: applied.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: applied.id + 1,
+                ..canonical
+            }),
+        },
+    );
+    let root_with_corrupt_live_object = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the live GovParam object embeds a drifted key_id"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_corrupt_live_object,
+        "failed restore must not mutate state beyond preserving the existing corrupt live-object snapshot"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_same_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+    let root_with_canonical_pending = state.state_root();
+    assert!(state.pending_gov_update("challenge_min_bond").is_some());
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the same pending governance key reappears under a different key_id"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_canonical_pending,
+        "same-key key_id drift must scrub the staged pending entry instead of silently rebinding it to a new slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        StateStore::new().state_root(),
+        "same-key key_id drift should return to the empty baseline root after fail-closed scrubbing"
+    );
 }

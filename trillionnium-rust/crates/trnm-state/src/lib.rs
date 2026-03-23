@@ -170,6 +170,7 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -217,7 +218,451 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
 ];
+const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
+    "max_block_ms",
+    "max_parallel_workers",
+    "min_worker_stake",
+    "challenge_min_bond",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
+    "resolve_authority",
+    "emergency_pause",
+    "monetary_policy_tick_interval_blocks",
+    "monetary_policy_tick_cooldown_blocks",
+    "monetary_base_issuance_per_tick",
+    "monetary_base_burn_per_tick",
+];
+const GOV_EXPLICIT_VALUE_RULE_KEYS: &[&str] = GOV_EXPLICIT_VALIDATOR_KEYS;
+const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
+    ("max_block_ms", "9"),
+    ("max_parallel_workers", "0"),
+    ("min_worker_stake", "0"),
+    ("challenge_min_bond", "0"),
+    ("challenge_min_bond_bounty_bps", "100001"),
+    ("challenge_min_bond_worker_stake_bps", "100001"),
+    ("challenge_window_blocks", "99"),
+    ("challenge_success_bounty", "-1"),
+    ("llm_meter_prompt_token_weight", "-1"),
+    ("llm_meter_generated_token_weight", "-1"),
+    ("llm_meter_decode_step_weight", "-1"),
+    ("llm_meter_kv_byte_weight", "-1"),
+    ("llm_meter_min_accept_work_units", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
+    ("resolve_authority", "authority-a"),
+    ("emergency_pause", "TRUE"),
+    ("monetary_policy_tick_interval_blocks", "0"),
+    ("monetary_policy_tick_cooldown_blocks", "0"),
+    ("monetary_base_issuance_per_tick", "1000000000001"),
+    ("monetary_base_burn_per_tick", "1000000000001"),
+];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+
+fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
+    pinned_key_ids
+        .iter()
+        .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
+}
+
+#[allow(dead_code)]
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
+}
+
+fn validate_governance_key_id_from_lists(
+    pinned_key_ids: &[(&str, u64)],
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id_from_lists(pinned_key_ids, key) {
+        if key_id != expected_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
+
+#[allow(dead_code)]
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
+}
+
+fn format_governance_registry_membership_drift(
+    registry_name: &str,
+    allowed_unique: &std::collections::BTreeSet<&str>,
+    registry_unique: &std::collections::BTreeSet<&str>,
+) -> Option<String> {
+    let missing_allowed_keys: Vec<&str> = allowed_unique
+        .difference(registry_unique)
+        .copied()
+        .collect();
+    let rogue_registry_keys: Vec<&str> = registry_unique
+        .difference(allowed_unique)
+        .copied()
+        .collect();
+
+    if missing_allowed_keys.is_empty() && rogue_registry_keys.is_empty() {
+        return None;
+    }
+
+    Some(format!(
+        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        registry_name,
+        missing_allowed_keys.join(", "),
+        rogue_registry_keys.join(", "),
+    ))
+}
+
+fn validate_governance_explicit_registry_alignment<'a>(
+    allowed_keys: &[&'a str],
+    allowed_unique: &std::collections::BTreeSet<&'a str>,
+    registry_name: &str,
+    entry_name: &str,
+    registry_keys: &[&'a str],
+) -> Result<std::collections::BTreeSet<&'a str>, String> {
+    for key in registry_keys {
+        validate_governance_registry_key_canonical(registry_name, key)?;
+    }
+    let registry_unique: std::collections::BTreeSet<&str> = registry_keys.iter().copied().collect();
+    if registry_unique.len() != registry_keys.len() {
+        return Err(format!("governance {} contains duplicate entries", registry_name));
+    }
+
+    if let Some(err) =
+        format_governance_registry_membership_drift(registry_name, allowed_unique, &registry_unique)
+    {
+        return Err(err);
+    }
+
+    for (index, (allowed_key, registry_key)) in allowed_keys
+        .iter()
+        .zip(registry_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != registry_key {
+            return Err(format!(
+                "governance {} order drifted at index {}: allowed_key={}, {}={}",
+                registry_name, index, allowed_key, entry_name, registry_key
+            ));
+        }
+    }
+
+    for key in allowed_unique {
+        if !registry_unique.contains(key) {
+            return Err(format!(
+                "governance {} coverage missing for allowed key: {}",
+                entry_name, key
+            ));
+        }
+    }
+
+    for key in &registry_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance {} contains non-whitelisted key: {}",
+                registry_name, key
+            ));
+        }
+    }
+
+    Ok(registry_unique)
+}
+
+fn validate_governance_registry_key_canonical(
+    registry_name: &str,
+    key: &str,
+) -> Result<(), String> {
+    if key.trim() != key {
+        return Err(format!(
+            "governance {} contains non-canonical key with surrounding whitespace: {}",
+            registry_name, key
+        ));
+    }
+    if key.is_empty() {
+        return Err(format!(
+            "governance {} contains empty key entry",
+            registry_name
+        ));
+    }
+    if !key.is_ascii() {
+        return Err(format!(
+            "governance {} contains non-ascii key entry: {}",
+            registry_name, key
+        ));
+    }
+    if key.chars().any(|ch| ch.is_ascii_uppercase()) {
+        return Err(format!(
+            "governance {} contains non-canonical uppercase key: {}",
+            registry_name, key
+        ));
+    }
+    if key.chars().any(|ch| ch.is_whitespace() || ch.is_control()) {
+        return Err(format!(
+            "governance {} contains non-canonical whitespace or control character in key: {}",
+            registry_name, key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pinned_governance_key_explicit_coverage(
+    key: &str,
+    validator_unique: &std::collections::BTreeSet<&str>,
+    explicit_value_rule_unique: &std::collections::BTreeSet<&str>,
+) -> Result<(), String> {
+    if !validator_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-validator coverage for {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-value-rule coverage for {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_registry_shape_lists(
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+) -> Result<(), String> {
+    for key in allowed_keys {
+        validate_governance_registry_key_canonical("allowed-key registry", key)?;
+    }
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        allowed_keys.iter().copied().collect();
+    if allowed_unique.len() != allowed_keys.len() {
+        return Err("governance allowed-key registry contains duplicate entries".into());
+    }
+
+    for key in sensitive_keys {
+        validate_governance_registry_key_canonical("sensitive-key registry", key)?;
+    }
+    let sensitive_unique: std::collections::BTreeSet<&str> =
+        sensitive_keys.iter().copied().collect();
+    if sensitive_unique.len() != sensitive_keys.len() {
+        return Err("governance sensitive-key registry contains duplicate entries".into());
+    }
+
+    let validator_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-validator registry",
+        "validator_key",
+        explicit_validator_keys,
+    )?;
+
+    let explicit_value_rule_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-value-rule registry",
+        "explicit_value_rule_key",
+        explicit_value_rule_keys,
+    )?;
+
+    for key in &sensitive_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance sensitive-key coverage missing from allowed key registry: {}",
+                key
+            ));
+        }
+    }
+
+    let mut pinned_unique = std::collections::BTreeSet::new();
+    let mut pinned_ids = std::collections::BTreeMap::new();
+    for (key, pinned_id) in pinned_key_ids {
+        validate_governance_registry_key_canonical("pinned-key registry", key)?;
+        if !pinned_unique.insert(*key) {
+            return Err(format!(
+                "governance pinned-key registry contains duplicate entries for {}",
+                key
+            ));
+        }
+        if let Some(existing_key) = pinned_ids.insert(*pinned_id, *key) {
+            return Err(format!(
+                "governance pinned-key registry reuses pinned id {} across {} and {}",
+                pinned_id, existing_key, key
+            ));
+        }
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance pinned-key registry contains non-whitelisted key: {}",
+                key
+            ));
+        }
+        validate_pinned_governance_key_explicit_coverage(
+            key,
+            &validator_unique,
+            &explicit_value_rule_unique,
+        )?;
+    }
+
+    Ok(())
+}
+
+fn validate_governance_registry_shape() -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+    )
+}
+
+fn validate_governance_schema_sample_registry_shape_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    schema_invalid_samples: &[(&str, &str)],
+) -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        allowed_keys.iter().copied().collect();
+    let schema_sample_keys: Vec<&str> = schema_invalid_samples
+        .iter()
+        .map(|(key, _)| *key)
+        .collect();
+    for key in &schema_sample_keys {
+        validate_governance_registry_key_canonical("schema invalid-sample registry", key)?;
+    }
+    let schema_unique: std::collections::BTreeSet<&str> =
+        schema_sample_keys.iter().copied().collect();
+
+    if schema_unique.len() != schema_sample_keys.len() {
+        return Err("governance schema invalid-sample registry contains duplicate entries".into());
+    }
+    if allowed_unique != schema_unique {
+        let missing_schema_keys: Vec<&str> = allowed_unique
+            .difference(&schema_unique)
+            .copied()
+            .collect();
+        let rogue_schema_keys: Vec<&str> = schema_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance schema invalid-sample registry drifted from allowed-key registry: missing_schema_keys=[{}], rogue_schema_keys=[{}]",
+            missing_schema_keys.join(", "),
+            rogue_schema_keys.join(", "),
+        ));
+    }
+
+    for key in &schema_unique {
+        validate_governance_explicitness_from_lists(
+            allowed_keys,
+            explicit_validator_keys,
+            explicit_value_rule_keys,
+            key,
+        )
+        .map_err(|err| {
+            format!(
+                "governance schema invalid-sample registry must remain explicit-validator complete for {}: {}",
+                key, err
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
+    validate_governance_schema_sample_registry_shape_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_SCHEMA_INVALID_SAMPLES,
+    )
+}
+
+fn validate_governance_key_registration_lists(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        sensitive_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        pinned_key_ids,
+    )?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )?;
+    validate_governance_key_id_from_lists(pinned_key_ids, key, key_id)?;
+    if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
+        if existing_key_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                key, existing_key_id, key_id
+            ));
+        }
+    }
+    if let Some((existing_key, _)) = gov_param_key_index
+        .iter()
+        .find(|(existing_key, existing_key_id)| existing_key.as_str() != key && **existing_key_id == key_id)
+    {
+        return Err(format!(
+            "governance key id collision for {}: id {} already assigned to {}",
+            key, key_id, existing_key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_key_registration(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    validate_governance_registry_shape()?;
+    validate_governance_key_registration_lists(
+        gov_param_key_index,
+        key,
+        key_id,
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+    )
+}
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -316,6 +761,117 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
+fn validate_resolve_authority_governance_value(key: &str, value: &str) -> Result<(), String> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(format!(
+            "invalid governance value for {}: must be non-empty",
+            key
+        ));
+    }
+    if trimmed != value {
+        return Err(format!(
+            "invalid governance value for {}: must not contain surrounding whitespace",
+            key
+        ));
+    }
+    if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
+        return Err(format!(
+            "invalid governance value for {}: exceeds max length {}",
+            key, RESOLVE_ACTOR_ID_MAX_LEN
+        ));
+    }
+    if trimmed.chars().any(|c| c.is_whitespace()) {
+        return Err(format!(
+            "invalid governance value for {}: must not contain whitespace",
+            key
+        ));
+    }
+    if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
+        return Err(format!(
+            "invalid governance value for {}: only ASCII ',' is allowed as member separator",
+            key
+        ));
+    }
+
+    let members: Vec<&str> = trimmed.split(',').collect();
+    if members.len() < 2 {
+        return Err(format!(
+            "invalid governance value for {}: resolve authority set must include at least two members",
+            key
+        ));
+    }
+
+    let mut seen_lower = std::collections::BTreeSet::new();
+    for member in members {
+        if member.is_empty() {
+            return Err(format!(
+                "invalid governance value for {}: empty authority member is not allowed",
+                key
+            ));
+        }
+        let member_lower = member.to_ascii_lowercase();
+        if !seen_lower.insert(member_lower.clone()) {
+            return Err(format!(
+                "invalid governance value for {}: duplicate authority member '{}' is not allowed",
+                key, member
+            ));
+        }
+        if member.contains(';') || member.contains('|') {
+            return Err(format!(
+                "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
+                key
+            ));
+        }
+        if member.chars().any(|c| c.is_control()) {
+            return Err(format!(
+                "invalid governance value for {}: control characters are not allowed",
+                key
+            ));
+        }
+        if !member.is_ascii() {
+            return Err(format!(
+                "invalid governance value for {}: must contain ASCII-only account ids",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
+            return Err(format!(
+                "invalid governance value for {}: placeholder authority is not allowed",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || member.eq_ignore_ascii_case("governance.emergency_pause")
+            || member.eq_ignore_ascii_case("emergency_pause")
+        {
+            return Err(format!(
+                "invalid governance value for {}: reserved system authority is not allowed",
+                key
+            ));
+        }
+        if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || member.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        {
+            return Err(format!(
+                "invalid governance value for {}: treasury custody accounts are not allowed",
+                key
+            ));
+        }
+    }
+
+    let canonical = canonicalize_resolve_authority_set(trimmed)
+        .map_err(|err| format!("invalid governance value for {}: {}", key, err))?;
+    if canonical != trimmed {
+        return Err(format!(
+            "invalid governance value for {}: resolve authority set must use canonical lowercase sorted ordering",
+            key
+        ));
+    }
+    Ok(())
+}
+
 fn ensure_effective_resolve_authority_match(
     st: &StateStore,
     authority_set: &str,
@@ -395,7 +951,144 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+#[allow(dead_code)]
+fn has_explicit_gov_param_validator_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_validator(key: &str) -> bool {
+    has_explicit_gov_param_validator_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
+}
+
+fn validate_governance_explicitness_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> Result<(), String> {
+    if !allowed_keys.contains(&key) {
+        return Err(format!(
+            "no explicit validator registered for governance key: {}",
+            key
+        ));
+    }
+    if !explicit_validator_keys.contains(&key) {
+        return Err(format!(
+            "governance validator coverage missing for allowed key: {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_keys.contains(&key) {
+        return Err(format!(
+            "governance validator missing explicit value rule for allowed key: {}",
+            key
+        ));
+    }
+    if !has_explicit_gov_param_value_match_coverage_from_lists(
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    ) {
+        return Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_validator_coverage_from_lists(
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+    key: &str,
+) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        sensitive_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        pinned_key_ids,
+    )?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )
+}
+
+fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
+    validate_governance_validator_coverage_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+        key,
+    )
+}
+
+fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
+    if GOV_SENSITIVE_KEYS.contains(&key) && !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!(
+            "governance sensitive-key coverage missing from allowed key registry: {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_requested_governance_key_canonical(key: &str) -> Result<(), String> {
+    validate_governance_registry_key_canonical("requested governance key", key).map_err(|_| {
+        format!(
+            "governance key request must use canonical key spelling: {}",
+            key
+        )
+    })
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_value_rule(key: &str) -> bool {
+    GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
+}
+
+fn has_explicit_gov_param_value_match_coverage_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
+    has_explicit_gov_param_value_match_coverage_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    validate_governance_registry_shape()?;
+    validate_governance_schema_sample_registry_shape()?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_validator_coverage(key)?;
+    validate_governance_sensitive_key_coverage(key)?;
+
     match key {
         "max_block_ms" => {
             let _ = parse_u64_in_range(key, value, 10, 120_000)?;
@@ -442,104 +1135,7 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 100_000)?;
             Ok(())
         }
-        "resolve_authority" => {
-            let trimmed = value.trim();
-            if trimmed.is_empty() {
-                return Err(format!(
-                    "invalid governance value for {}: must be non-empty",
-                    key
-                ));
-            }
-            if trimmed != value {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain surrounding whitespace",
-                    key
-                ));
-            }
-            if trimmed.len() > 128 {
-                return Err(format!(
-                    "invalid governance value for {}: exceeds max length 128",
-                    key
-                ));
-            }
-            if trimmed.chars().any(|c| c.is_whitespace()) {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain whitespace",
-                    key
-                ));
-            }
-            if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
-                return Err(format!(
-                    "invalid governance value for {}: only ASCII ',' is allowed as member separator",
-                    key
-                ));
-            }
-
-            let members: Vec<&str> = trimmed.split(',').collect();
-            if members.len() < 2 {
-                return Err(format!(
-                    "invalid governance value for {}: resolve authority set must include at least two members",
-                    key
-                ));
-            }
-
-            let mut seen_lower = std::collections::BTreeSet::new();
-            for member in members {
-                if member.is_empty() {
-                    return Err(format!(
-                        "invalid governance value for {}: empty authority member is not allowed",
-                        key
-                    ));
-                }
-                let member_lower = member.to_ascii_lowercase();
-                if !seen_lower.insert(member_lower.clone()) {
-                    return Err(format!(
-                        "invalid governance value for {}: duplicate authority member '{}' is not allowed",
-                        key, member
-                    ));
-                }
-                if member.contains(';') || member.contains('|') {
-                    return Err(format!(
-                        "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
-                        key
-                    ));
-                }
-                if member.chars().any(|c| c.is_control()) {
-                    return Err(format!(
-                        "invalid governance value for {}: control characters are not allowed",
-                        key
-                    ));
-                }
-                if !member.is_ascii() {
-                    return Err(format!(
-                        "invalid governance value for {}: must contain ASCII-only account ids",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
-                    return Err(format!(
-                        "invalid governance value for {}: placeholder authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
-                    return Err(format!(
-                        "invalid governance value for {}: reserved system authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                    || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                    || member.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-                {
-                    return Err(format!(
-                        "invalid governance value for {}: treasury custody accounts are not allowed",
-                        key
-                    ));
-                }
-            }
-            Ok(())
-        }
+        "resolve_authority" => validate_resolve_authority_governance_value(key, value),
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())
@@ -556,8 +1152,97 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
-        _ => Ok(()),
+        _ => Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        )),
     }
+}
+
+fn validate_pending_gov_update_restore_snapshot(
+    gov_param_key_index: &std::collections::BTreeMap<String, u64>,
+    pending_gov_updates: &std::collections::BTreeMap<String, PendingGovParamUpdate>,
+    objects: &std::collections::BTreeMap<u64, VersionedObject>,
+    key: &str,
+    snapshot: &PendingGovParamUpdate,
+) -> Result<(), String> {
+    validate_requested_governance_key_canonical(key)?;
+    validate_requested_governance_key_canonical(&snapshot.key)?;
+    if snapshot.key != key {
+        return Err(format!(
+            "pending governance snapshot key mismatch: requested_key={}, snapshot_key={}",
+            key, snapshot.key
+        ));
+    }
+    if !is_sensitive_gov_param(key) {
+        return Err(format!(
+            "pending governance restore only supports sensitive keys: {}",
+            key
+        ));
+    }
+    validate_governance_key_registration(gov_param_key_index, key, snapshot.key_id)?;
+    validate_gov_param_value(key, &snapshot.value)?;
+    if snapshot.activate_at_height == 0 {
+        return Err(format!(
+            "pending governance restore requires explicit positive activate_at_height for {}",
+            key
+        ));
+    }
+
+    if pending_gov_updates
+        .get(key)
+        .is_some_and(|existing_pending| existing_pending.key_id != snapshot.key_id)
+    {
+        return Err(format!(
+            "pending governance key id mismatch for {}: existing_key_id={}, snapshot_key_id={}",
+            key,
+            pending_gov_updates
+                .get(key)
+                .map(|existing_pending| existing_pending.key_id)
+                .unwrap_or_default(),
+            snapshot.key_id
+        ));
+    }
+
+    if pending_gov_updates
+        .iter()
+        .any(|(existing_key, existing_pending)| {
+            existing_key != key && existing_pending.key_id == snapshot.key_id
+        })
+    {
+        return Err(format!(
+            "pending governance key id collision for {}: key_id {} already staged elsewhere",
+            key, snapshot.key_id
+        ));
+    }
+
+    if let Some(existing) = objects.get(&snapshot.key_id) {
+        match &existing.value {
+            ObjectValue::GovParam(existing_param) => {
+                validate_requested_governance_key_canonical(&existing_param.key)?;
+                if existing_param.key != key {
+                    return Err(format!(
+                        "pending governance key_id collision for {}: object {} already stores governance key {}",
+                        key, snapshot.key_id, existing_param.key
+                    ));
+                }
+                if existing_param.key_id != snapshot.key_id {
+                    return Err(format!(
+                        "pending governance key_id collision for {}: object {} embeds mismatched governance key_id {}",
+                        key, snapshot.key_id, existing_param.key_id
+                    ));
+                }
+            }
+            _ => {
+                return Err(format!(
+                    "pending governance key_id collision: object {} exists and is not GovParam",
+                    snapshot.key_id
+                ));
+            }
+        }
+    }
+
+    Ok(())
 }
 
 impl StateStore {
@@ -865,72 +1550,33 @@ impl StateStore {
     }
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
-        let existing_is_non_param = self
-            .objects
-            .get(&key_id)
-            .map(|existing| !matches!(existing.value, ObjectValue::GovParam(_)))
-            .unwrap_or(false);
-        if existing_is_non_param {
-            let had_index = self.gov_param_key_index.values().any(|mapped_id| *mapped_id == key_id);
-            if had_index {
-                self.invalidate_state_root_cache();
-                self.remove_gov_param_key_index_for_id(key_id);
-            }
-            return;
-        }
-
-        let scrub_target_slot = |state: &mut Self| {
-            let had_object = matches!(
-                state.objects.get(&key_id),
-                Some(VersionedObject {
-                    value: ObjectValue::GovParam(_),
-                    ..
-                })
-            );
-            let had_index = state
-                .gov_param_key_index
-                .values()
-                .any(|mapped_id| *mapped_id == key_id);
-            if had_object || had_index {
-                state.invalidate_state_root_cache();
-                state.remove_gov_param_key_index_for_id(key_id);
-                state.objects.remove(&key_id);
-            }
-        };
-
+        self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                let existing_param = self.get_param(key_id);
-                if snapshot.version == 0 {
-                    scrub_target_slot(self);
-                    return;
+                if let Some(existing) = self.objects.get(&key_id) {
+                    match &existing.value {
+                        ObjectValue::GovParam(existing_param) if existing_param.key != snapshot.key => {
+                            return;
+                        }
+                        ObjectValue::GovParam(_) => {}
+                        _ => return,
+                    }
                 }
                 if snapshot.key_id != key_id {
-                    if existing_param
-                        .as_ref()
-                        .map(|existing| existing.key != snapshot.key)
-                        .unwrap_or(false)
-                    {
-                        scrub_target_slot(self);
-                    }
                     return;
                 }
-                if !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
-                    || (snapshot.key == "emergency_pause" && snapshot.key_id != EMERGENCY_PAUSE_KEY_ID)
-                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                if validate_governance_key_registration(
+                    &self.gov_param_key_index,
+                    &snapshot.key,
+                    key_id,
+                )
+                .is_err()
                 {
-                    if existing_param.is_none() {
-                        scrub_target_slot(self);
-                    }
                     return;
                 }
-                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
-                    if existing_id != key_id {
-                        scrub_target_slot(self);
-                        return;
-                    }
+                if validate_gov_param_value(&snapshot.key, &snapshot.value).is_err() {
+                    return;
                 }
-                self.invalidate_state_root_cache();
                 self.remove_gov_param_key_index_for_id(key_id);
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
@@ -943,21 +1589,8 @@ impl StateStore {
                 );
             }
             None => {
-                let had_param_object = matches!(
-                    self.objects.get(&key_id),
-                    Some(VersionedObject {
-                        value: ObjectValue::GovParam(_),
-                        ..
-                    })
-                );
-                let had_index = self.gov_param_key_index.values().any(|mapped_id| *mapped_id == key_id);
-                if had_param_object || had_index {
-                    self.invalidate_state_root_cache();
-                }
                 self.remove_gov_param_key_index_for_id(key_id);
-                if had_param_object {
-                    self.objects.remove(&key_id);
-                }
+                self.objects.remove(&key_id);
             }
         }
     }
@@ -1223,23 +1856,7 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_governance_key_registration(&self.gov_param_key_index, &key, key_id)?;
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -1301,23 +1918,7 @@ impl StateStore {
         value: String,
         action: GovPendingUpdateAction,
     ) -> Result<GovParamUpdateOutcome, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_governance_key_registration(&self.gov_param_key_index, &key, key_id)?;
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
@@ -1492,16 +2093,34 @@ impl StateStore {
         snapshot: Option<PendingGovParamUpdate>,
     ) {
         self.invalidate_state_root_cache();
+        let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key || snapshot.key_id == 0 {
+                if validate_pending_gov_update_restore_snapshot(
+                    &self.gov_param_key_index,
+                    &self.pending_gov_updates,
+                    &self.objects,
+                    key,
+                    &snapshot,
+                )
+                .is_err()
+                {
                     self.pending_gov_updates.remove(key);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
+                    }
                     return;
                 }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
             None => {
                 self.pending_gov_updates.remove(key);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
         }
     }
@@ -1510,7 +2129,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == *id => Some(p.value.as_str()),
             _ => None,
         }
     }
@@ -1535,7 +2154,7 @@ impl StateStore {
         let id = self.gov_param_key_index.get(key).copied()?;
         let object = self.objects.get(&id)?;
         match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            ObjectValue::GovParam(p) if p.key == key && p.key_id == id => Some((id, p)),
             _ => None,
         }
     }
@@ -3993,7 +4612,693 @@ mod tests {
         let err = st
             .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
-        assert!(err.contains("not allowed"));
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_unknown_key_registration_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "forbidden_key",
+            7002,
+            GOV_ALLOWED_KEYS,
+            GOV_SENSITIVE_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_PINNED_KEY_IDS,
+        )
+        .expect_err("unknown governance keys must fail closed at the registration boundary");
+
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected registration-boundary error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_requests_reject_noncanonical_spellings_fail_closed() {
+        let mut st = StateStore::new();
+
+        for noncanonical_key in [" max_block_ms", "max_block_ms ", "MAX_BLOCK_MS"] {
+            let err = st
+                .set_gov_param_unchecked(7001, noncanonical_key.into(), "10".into())
+                .expect_err("non-canonical governance key spelling must fail closed");
+            assert!(
+                err.contains("governance key request must use canonical key spelling"),
+                "{err}"
+            );
+        }
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_duplicate_entries_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("duplicate explicit-validator registry entries must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_requires_explicit_validator_coverage_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_and_registration_explicitness_guards_stay_aligned() {
+        let registration_err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+        )
+        .expect_err("registration boundary must fail closed when explicit value-rule coverage drifts");
+
+        let validator_err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator boundary must fail closed when explicit value-rule coverage drifts");
+
+        for err in [&registration_err, &validator_err] {
+            assert!(
+                err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+                "{err}"
+            );
+            assert!(err.contains("max_parallel_workers"), "{err}");
+        }
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_duplicate_explicit_validator_entries_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &[
+                "max_block_ms",
+                "max_parallel_workers",
+                "max_parallel_workers",
+            ],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on duplicate explicit-validator entries");
+
+        assert!(
+            err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_noncanonical_keys_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[(" max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed on non-canonical keys");
+
+        assert!(
+            err.contains("schema invalid-sample registry contains non-canonical key with surrounding whitespace"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &[
+                "max_block_ms",
+                "max_parallel_workers",
+                "max_parallel_workers",
+            ],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_validator_order_drift_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_block_ms",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on validator order drift");
+
+        assert!(
+            err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_sensitive_registry_membership_drift_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_block_ms",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_sensitive_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on sensitive-key registry drift");
+
+        assert!(
+            err.contains("governance sensitive-key coverage missing from allowed key registry: ghost_sensitive_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_pinned_key_id_mismatch_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            8_000,
+            &["emergency_pause"],
+            &[],
+            &["emergency_pause"],
+            &["emergency_pause"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("registration helper must fail closed on pinned key-id drift");
+
+        assert!(
+            err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_key_id_collision_fail_closed() {
+        let mut gov_param_key_index = BTreeMap::new();
+        gov_param_key_index.insert("max_block_ms".to_string(), 7_001);
+
+        let err = validate_governance_key_registration_lists(
+            &gov_param_key_index,
+            "max_parallel_workers",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed when a different governance key already owns the id");
+
+        assert!(
+            err.contains("governance key id collision for max_parallel_workers: id 7001 already assigned to max_block_ms"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_merge_gate_is_explicit() {
+        let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALUE_RULE_KEYS.iter().copied().collect();
+        assert_eq!(
+            explicit_value_rule_unique.len(),
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            "explicit value-rule registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit value-rule registry drifted from allowed governance-key registry"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            "explicit value-rule registry drifted from explicit validator-key registry"
+        );
+
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                explicit_value_rule_unique.contains(key),
+                "allowed governance key missing from explicit value-rule registry: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_value_rule(key),
+                "allowed governance key missing explicit value rule: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_value_match_coverage(key),
+                "allowed governance key missing explicit value match coverage: {}",
+                key
+            );
+            assert_eq!(
+                has_explicit_gov_param_value_match_coverage(key),
+                has_explicit_gov_param_value_rule(key),
+                "explicit value-match coverage must derive from the explicit value-rule registry for {}",
+                key
+            );
+        }
+        assert!(!has_explicit_gov_param_value_rule("forbidden_key"));
+        assert!(!has_explicit_gov_param_value_match_coverage("forbidden_key"));
+    }
+
+    #[test]
+    fn governance_value_match_coverage_requires_validator_and_value_rule_fail_closed() {
+        assert!(has_explicit_gov_param_value_match_coverage_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit validator coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit value-rule coverage"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_validator_helper_requires_value_rule_coverage_fail_closed() {
+        assert!(has_explicit_gov_param_validator_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit value-rule coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit validator coverage"
+        );
+    }
+
+    #[test]
+    fn governance_unknown_key_validator_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_gov_param_value("forbidden_key", "1")
+            .expect_err("unknown governance keys must fail closed at the validator boundary");
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected validator-boundary error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_value_rule_key"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_value_rule_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("explicit_value_rule_key=max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_noncanonical_uppercase_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+        )
+        .expect_err("uppercase governance registry keys must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical uppercase key")
+                || err.contains("allowed-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_internal_whitespace_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max parallel workers"],
+            &[],
+            &["max_block_ms", "max parallel workers"],
+            &["max_block_ms", "max parallel workers"],
+            &[],
+        )
+        .expect_err("registry keys with internal whitespace must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical whitespace or control character in key")
+                || err.contains("allowed-key registry contains non-canonical whitespace or control character in key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_whitespace_pinned_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[(" emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("whitespace-padded pinned governance keys must fail closed");
+
+        assert!(
+            err.contains("pinned-key registry contains non-canonical key with surrounding whitespace"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("explicit-validator registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit-validator registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("validator_key=max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_non_whitelisted_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[("ghost_pinned_key", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("pinned governance keys must stay inside the allowed registry");
+
+        assert!(
+            err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_validator_coverage_fail_closed() {
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms"]),
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+        )
+        .expect_err("pinned governance keys must keep explicit validator coverage");
+
+        assert!(
+            err.contains("pinned-key registry missing explicit-validator coverage for emergency_pause"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_value_rule_coverage_fail_closed() {
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+            &std::collections::BTreeSet::from(["max_block_ms"]),
+        )
+        .expect_err("pinned governance keys must keep explicit value-rule coverage");
+
+        assert!(
+            err.contains("pinned-key registry missing explicit-value-rule coverage for emergency_pause"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_cross_key_id_reuse_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("pinned governance keys must not reuse the same pinned id across different keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_pinned_id_reuse_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            EMERGENCY_PAUSE_KEY_ID,
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("registration helper must fail closed when pinned ids are reused across keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_cross_key_pending_key_id_collision_fail_closed() {
+        let mut st = StateStore::new();
+
+        let shared_key_id = 7_310;
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 1_200,
+            }),
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("resolve_authority snapshot should restore")
+                .key_id,
+            shared_key_id
+        );
+
+        st.restore_pending_gov_update(
+            "monetary_base_issuance_per_tick",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "monetary_base_issuance_per_tick".into(),
+                value: "42".into(),
+                activate_at_height: 1_250,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("original pending update must remain intact")
+                .key_id,
+            shared_key_id
+        );
+        assert_eq!(
+            st.pending_gov_update("monetary_base_issuance_per_tick"),
+            None,
+            "restore path must reject cross-key pending key-id reuse fail-closed"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_live_gov_param_object_key_alias_on_shared_key_id() {
+        let mut st = StateStore::new();
+
+        st.objects.insert(
+            7_201,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_201,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 7_201,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                activate_at_height: 1_020,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("challenge_min_bond"),
+            None,
+            "restore must fail closed when a live GovParam object already binds the key_id to another governance key"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_zero_activate_height_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_310,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            None,
+            "restore must fail closed when a pending governance snapshot omits a positive timelock boundary"
+        );
     }
 
     #[test]
@@ -4901,6 +6206,43 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_key_id_fail_closed_error_stays_aligned_across_write_entrypoints() {
+        // REF03 guard: the pinned emergency_pause key id must come from one shared gate so
+        // unchecked, checked, and replace entrypoints all fail closed with the same boundary.
+        let mut unchecked = StateStore::new();
+        let mut checked = StateStore::new();
+        let mut replace = StateStore::new();
+
+        let unchecked_err = unchecked
+            .set_gov_param_unchecked(8_000, "emergency_pause".into(), "true".into())
+            .expect_err("unchecked non-canonical emergency_pause key_id must be rejected");
+        let checked_err = checked
+            .set_gov_param(8_052, 8_000, "emergency_pause".into(), "true".into())
+            .expect_err("checked non-canonical emergency_pause key_id must be rejected");
+        let replace_err = replace
+            .set_gov_param_with_action(
+                8_053,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace non-canonical emergency_pause key_id must be rejected");
+
+        for err in [&unchecked_err, &checked_err, &replace_err] {
+            assert!(
+                err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+                "{err}"
+            );
+        }
+        assert!(!unchecked.is_emergency_paused());
+        assert!(!checked.is_emergency_paused());
+        assert!(!replace.is_emergency_paused());
+        assert!(checked.pending_gov_update("emergency_pause").is_none());
+        assert!(replace.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
     fn emergency_pause_checked_path_is_immediate_and_non_cancellable() {
         let mut st = StateStore::new();
 
@@ -5566,6 +6908,242 @@ mod tests {
     }
 
     #[test]
+    fn governance_registry_shape_merge_gate_fails_closed() {
+        validate_governance_registry_shape()
+            .expect("governance registry shape must remain explicit, unique, and fail-closed");
+    }
+
+    #[test]
+    fn governance_validator_coverage_merge_gate_is_explicit() {
+        let validator_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALIDATOR_KEYS.iter().copied().collect();
+        assert_eq!(
+            validator_unique.len(),
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            "explicit validator-key registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit validator-key registry drifted from allowed governance-key registry"
+        );
+
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                validator_unique.contains(key),
+                "allowed governance key missing from explicit validator-key registry: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_validator(key),
+                "allowed governance key missing explicit validator: {}",
+                key
+            );
+            validate_governance_validator_coverage(key).expect(
+                "allowed governance key must remain covered by explicit validator+value-rule coverage",
+            );
+        }
+
+        let err = validate_governance_validator_coverage("not_whitelisted")
+            .expect_err("validator coverage helper must fail closed for non-whitelisted keys");
+        assert!(
+            err.contains("no explicit validator registered for governance key: not_whitelisted"),
+            "unexpected validator coverage error for non-whitelisted key: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_value_rule_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit value-rule coverage");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+            "unexpected validator coverage error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_validator_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit validator coverage");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "unexpected validator coverage error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_noncanonical_key_spelling_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[],
+            " Max_Block_Ms ",
+        )
+        .expect_err("validator coverage helper must reject non-canonical governance key spelling");
+
+        assert!(
+            err.contains("governance key request must use canonical key spelling:  Max_Block_Ms "),
+            "unexpected validator coverage canonicalization error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on registry membership drift");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "unexpected validator coverage registry-drift error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
+            "unexpected validator coverage duplicate-allowed-key error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_pinned_key_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("ghost_pinned_key", 7_001)],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on pinned-key registry drift");
+
+        assert!(
+            err.contains("governance pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "unexpected validator coverage pinned-key registry error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[("max_block_ms", "9"), ("ghost_schema_key", "0")],
+        )
+        .expect_err("schema invalid-sample registry membership drift must fail closed");
+
+        assert!(
+            err.contains("governance schema invalid-sample registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_schema_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_validator_coverage_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("explicit-validator complete for max_parallel_workers")
+                || err.contains("coverage missing for allowed key: max_parallel_workers"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_allowed_keys_schema_invalid_samples_merge_gate_is_explicit() {
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        let sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+            .iter()
+            .map(|(key, _)| *key)
+            .collect();
+        let sample_unique: std::collections::BTreeSet<&str> =
+            sample_keys.iter().copied().collect();
+
+        assert_eq!(sample_unique.len(), sample_keys.len());
+        assert_eq!(allowed_unique, sample_unique);
+
+        for (key, invalid_sample) in GOV_SCHEMA_INVALID_SAMPLES {
+            let err = validate_gov_param_value(key, invalid_sample)
+                .expect_err("invalid governance samples must fail closed");
+            assert!(
+                !err.contains("no explicit validator registered for governance key"),
+                "schema invalid sample fell through explicit validator coverage for {key}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn governance_sensitive_key_coverage_merge_gate_is_explicit() {
+        for key in GOV_SENSITIVE_KEYS {
+            assert!(
+                GOV_ALLOWED_KEYS.contains(key),
+                "sensitive governance key missing from allowed-key registry: {}",
+                key
+            );
+            validate_governance_sensitive_key_coverage(key)
+                .expect("sensitive governance key must remain present in allowed-key registry");
+            validate_governance_validator_coverage(key)
+                .expect("sensitive governance key must remain covered by an explicit validator");
+        }
+
+        validate_governance_sensitive_key_coverage("emergency_pause")
+            .expect("non-sensitive allowed keys should not trip sensitive-key coverage");
+        validate_governance_sensitive_key_coverage("not_whitelisted")
+            .expect("non-sensitive non-whitelisted keys are rejected by registration, not sensitive coverage");
+    }
+
+    #[test]
     fn governance_allowed_keys_schema_merge_gate_is_explicit() {
         // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
         // must update this table with an invalid sample that is expected to fail.
@@ -5628,6 +7206,186 @@ mod tests {
     }
 
     #[test]
+    fn governance_pinned_key_ids_merge_gate_is_explicit() {
+        let expected_pinned = [("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+
+        for key in GOV_ALLOWED_KEYS {
+            let pinned = governance_pinned_key_id(key);
+            let expected = expected_pinned
+                .iter()
+                .find_map(|(expected_key, expected_id)| (*expected_key == *key).then_some(*expected_id));
+            assert_eq!(
+                pinned, expected,
+                "governance pinned key-id map changed; update merge gate for key: {}",
+                key
+            );
+        }
+
+        for (key, expected_id) in expected_pinned {
+            let err = validate_governance_key_id(key, expected_id + 1)
+                .expect_err("mismatched pinned governance key id must be rejected");
+            assert!(err.contains("governance key id mismatch for"), "{err}");
+            validate_governance_key_id(key, expected_id)
+                .expect("canonical pinned governance key id must remain accepted");
+        }
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_non_canonical_pinned_key_id_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_000,
+            Some(GovParamObject {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(!st.is_emergency_paused());
+        assert!(st.get_param(8_000).is_none());
+        assert!(st.gov_param_string("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_unknown_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_123,
+            Some(GovParamObject {
+                key_id: 8_123,
+                key: "forbidden_key".into(),
+                value: "1".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_123).is_none());
+        assert!(st.gov_param_string("forbidden_key").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_schema_invalid_allowed_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_124,
+            Some(GovParamObject {
+                key_id: 8_124,
+                key: "max_block_ms".into(),
+                value: "9".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_non_param_object_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 8_125,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(task.clone()).expect("task bootstrap should succeed");
+
+        st.restore_gov_param(
+            8_125,
+            Some(GovParamObject {
+                key_id: 8_125,
+                key: "max_block_ms".into(),
+                value: "15".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(st.get_task(8_125), Some(task));
+        assert!(st.get_param(8_125).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_live_other_gov_param_on_key_id_alias() {
+        let mut st = StateStore::new();
+        st.set_gov_param(100, 7_001, "max_block_ms".into(), "1000".into())
+            .expect("baseline governance param should apply");
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                version: 9,
+            }),
+        );
+
+        let param = st
+            .get_param(7_001)
+            .expect("live governance param must remain bound to its original key");
+        assert_eq!(param.key, "max_block_ms");
+        assert_eq!(param.value, "1000");
+        assert_eq!(st.gov_param_u64("max_block_ms"), Some(1000));
+        assert!(st.gov_param_u64("challenge_min_bond").is_none());
+    }
+
+    #[test]
+    fn gov_param_reads_fail_closed_on_embedded_key_id_drift() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            7_001,
+            VersionedObject {
+                version: 3,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_999,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 3,
+                }),
+            },
+        );
+        st.gov_param_key_index.insert("max_block_ms".into(), 7_001);
+
+        assert!(
+            st.gov_param_string("max_block_ms").is_none(),
+            "reads must fail closed when the indexed slot and embedded governance key id diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("max_block_ms").is_none(),
+            "ref lookup must fail closed on the same embedded key-id drift"
+        );
+        assert_eq!(
+            st.get_param(7_001)
+                .expect("raw object lookup should still expose the corrupted fixture")
+                .key_id,
+            7_999
+        );
+    }
+
+    #[test]
     fn governance_resolve_authority_rejects_reserved_or_placeholder_values() {
         let mut st = StateStore::new();
 
@@ -5637,6 +7395,10 @@ mod tests {
             RESERVED_SYSTEM_AUTHORITY,
             "System",
             "authority,system",
+            "governance.emergency_pause",
+            "Emergency_Pause",
+            "authority,governance.emergency_pause",
+            "authority,Emergency_Pause",
             CHALLENGE_ESCROW_ACCOUNT,
             "Treasury.Challenge_Escrow",
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
