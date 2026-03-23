@@ -135,14 +135,15 @@ impl WalMeta {
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hash_str(&mut hasher, &self.proposal_hash);
+        hash_len_prefixed_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        hash_str(&mut hasher, &self.state_root_hex);
-        if let Some(prev) = &self.prev_hash_hex {
-            hasher.update([1]);
-            hash_str(&mut hasher, prev);
-        } else {
-            hasher.update([0]);
+        hash_len_prefixed_str(&mut hasher, &self.state_root_hex);
+        match &self.prev_hash_hex {
+            Some(prev) => {
+                hasher.update([1]);
+                hash_len_prefixed_str(&mut hasher, prev);
+            }
+            None => hasher.update([0]),
         }
         hex::encode(hasher.finalize())
     }
@@ -1179,6 +1180,47 @@ fn hash_len_prefixed_str(hasher: &mut Sha256, value: &str) {
     hash_len_prefixed_bytes(hasher, value.as_bytes());
 }
 
+fn hash_pending_resolve_approval(
+    hasher: &mut Sha256,
+    task_id: u64,
+    pending: &PendingResolveApproval,
+) {
+    hasher.update(b"resolve_pending");
+    hasher.update(task_id.to_le_bytes());
+    hasher.update([pending.slash_worker as u8]);
+    hasher.update([pending.confirmations]);
+    hash_len_prefixed_str(hasher, &pending.first_approver);
+    hash_len_prefixed_str(hasher, &pending.authority_set);
+    hasher.update(pending.task_version.to_le_bytes());
+}
+
+fn hash_task_metering_snapshot(
+    hasher: &mut Sha256,
+    metering: &trnm_types::TaskMeteringSnapshot,
+) {
+    hash_len_prefixed_str(hasher, &metering.workload_class);
+    hash_len_prefixed_str(hasher, &metering.metering_schema);
+    hasher.update([metering.policy_snapshot_version]);
+    hash_len_prefixed_str(hasher, &metering.receipt_hash);
+    hasher.update(metering.prompt_tokens.to_le_bytes());
+    hasher.update(metering.generated_tokens.to_le_bytes());
+    hasher.update(metering.decode_steps.to_le_bytes());
+    hasher.update(metering.kv_bytes_moved.to_le_bytes());
+    hasher.update(metering.normalized_work_units.to_le_bytes());
+    hasher.update(metering.prompt_token_weight.to_le_bytes());
+    hasher.update(metering.generated_token_weight.to_le_bytes());
+    hasher.update(metering.decode_step_weight.to_le_bytes());
+    hasher.update(metering.kv_byte_weight.to_le_bytes());
+    hasher.update(metering.min_accept_work_units.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_base.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_den.to_le_bytes());
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -1565,7 +1607,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver_canonical.to_string(),
+                    first_approver: approver_canonical.clone(),
                     authority_set: authority_canonical.clone(),
                     task_version,
                 });
@@ -1865,8 +1907,8 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver,
-                authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
@@ -2654,10 +2696,8 @@ impl StateStore {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
-                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
-                if key == "resolve_authority" {
-                    self.pending_resolve_approvals.clear();
-                }
+                self.pending_gov_updates
+                    .insert(snapshot.key.clone(), snapshot);
             }
             None => {
                 self.clear_pending_gov_update_bindings(key, None);
@@ -2999,53 +3039,7 @@ impl StateStore {
                             match &metadata.metering {
                                 Some(metering) => {
                                     hasher.update([1]);
-                                    hash_len_prefixed_str(&mut hasher, &metering.workload_class);
-                                    hash_len_prefixed_str(&mut hasher, &metering.metering_schema);
-                                    hasher.update([metering.policy_snapshot_version]);
-                                    hash_len_prefixed_str(&mut hasher, &metering.receipt_hash);
-                                    hasher.update(metering.prompt_tokens.to_le_bytes());
-                                    hasher.update(metering.generated_tokens.to_le_bytes());
-                                    hasher.update(metering.decode_steps.to_le_bytes());
-                                    hasher.update(metering.kv_bytes_moved.to_le_bytes());
-                                    hasher.update(metering.normalized_work_units.to_le_bytes());
-                                    hasher.update(metering.prompt_token_weight.to_le_bytes());
-                                    hasher.update(metering.generated_token_weight.to_le_bytes());
-                                    hasher.update(metering.decode_step_weight.to_le_bytes());
-                                    hasher.update(metering.kv_byte_weight.to_le_bytes());
-                                    hasher.update(metering.min_accept_work_units.to_le_bytes());
-                                    hasher.update(
-                                        metering.challenge_success_bounty_base.to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .challenge_success_bounty_per_work_unit_num
-                                            .to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .challenge_success_bounty_per_work_unit_den
-                                            .to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .worker_completion_bonus_per_work_unit_num
-                                            .to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .worker_completion_bonus_per_work_unit_den
-                                            .to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .worker_slash_rebate_per_work_unit_num
-                                            .to_le_bytes(),
-                                    );
-                                    hasher.update(
-                                        metering
-                                            .worker_slash_rebate_per_work_unit_den
-                                            .to_le_bytes(),
-                                    );
+                                    hash_task_metering_snapshot(&mut hasher, metering);
                                 }
                                 None => hasher.update([0]),
                             }
@@ -3183,19 +3177,7 @@ impl StateStore {
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
-            hasher.update(b"resolve_pending");
-            hasher.update(task_id.to_le_bytes());
-            hasher.update([pending.slash_worker as u8]);
-            hasher.update([pending.confirmations]);
-
-            let hashed_first_approver = validate_resolve_approver_token(&pending.first_approver)
-                .unwrap_or_else(|_| pending.first_approver.clone());
-            let hashed_authority_set = canonicalize_resolve_authority_set(&pending.authority_set)
-                .unwrap_or_else(|_| pending.authority_set.clone());
-
-            hash_len_prefixed_str(&mut hasher, &hashed_first_approver);
-            hash_len_prefixed_str(&mut hasher, &hashed_authority_set);
-            hasher.update(pending.task_version.to_le_bytes());
+            hash_pending_resolve_approval(&mut hasher, *task_id, pending);
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
@@ -3209,92 +3191,126 @@ impl StateStore {
     }
 }
 
-fn has_canonical_proof_metadata_field(value: &str) -> bool {
-    fn is_disallowed_proof_metadata_char(ch: char) -> bool {
-        ch.is_whitespace()
-            || ch.is_control()
-            || matches!(
-                ch,
-                '\u{00A0}'
-                    | '\u{00AD}'
-                    | '\u{034F}'
-                    | '\u{061C}'
-                    | '\u{115F}'
-                    | '\u{1160}'
-                    | '\u{1680}'
-                    | '\u{180E}'
-                    | '\u{2000}'
-                    | '\u{2001}'
-                    | '\u{2002}'
-                    | '\u{2003}'
-                    | '\u{2004}'
-                    | '\u{2005}'
-                    | '\u{2006}'
-                    | '\u{2007}'
-                    | '\u{2008}'
-                    | '\u{2009}'
-                    | '\u{200A}'
-                    | '\u{200B}'
-                    | '\u{200C}'
-                    | '\u{200D}'
-                    | '\u{200E}'
-                    | '\u{200F}'
-                    | '\u{2028}'
-                    | '\u{2029}'
-                    | '\u{202A}'
-                    | '\u{202B}'
-                    | '\u{202C}'
-                    | '\u{202D}'
-                    | '\u{202E}'
-                    | '\u{202F}'
-                    | '\u{205F}'
-                    | '\u{2060}'
-                    | '\u{2061}'
-                    | '\u{2062}'
-                    | '\u{2063}'
-                    | '\u{2064}'
-                    | '\u{2065}'
-                    | '\u{2066}'
-                    | '\u{2067}'
-                    | '\u{2068}'
-                    | '\u{2069}'
-                    | '\u{206A}'
-                    | '\u{206B}'
-                    | '\u{206C}'
-                    | '\u{206D}'
-                    | '\u{206E}'
-                    | '\u{206F}'
-                    | '\u{2800}'
-                    | '\u{3000}'
-                    | '\u{3164}'
-                    | '\u{FEFF}'
-                    | '\u{FFF9}'
-                    | '\u{FFFA}'
-                    | '\u{FFFB}'
-            )
-            || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
-            || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+fn is_canonical_hex_digest(value: &str) -> bool {
+    value.len() == 64
+        && value.as_bytes().iter().all(|byte| {
+            byte.is_ascii_digit() || (byte.is_ascii_hexdigit() && byte.is_ascii_lowercase())
+        })
+}
+
+const WAL_PROPOSAL_HASH_MAX_LEN: usize = 256;
+
+fn wal_proposal_hash_length_is_canonical(value: &str) -> bool {
+    !value.is_empty() && value.len() <= WAL_PROPOSAL_HASH_MAX_LEN
+}
+
+fn wal_proposal_hash_surface_has_forbidden_layout(value: &str) -> bool {
+    value.trim() != value || !value.is_ascii() || value.chars().any(|c| c.is_whitespace() || c.is_control())
+}
+
+fn is_canonical_wal_proposal_hash(value: &str) -> bool {
+    wal_proposal_hash_length_is_canonical(value)
+        && !wal_proposal_hash_surface_has_forbidden_layout(value)
+}
+
+fn wal_prev_hash_surface_is_canonical(height: u64, prev_hash_hex: Option<&str>) -> bool {
+    match (height, prev_hash_hex) {
+        (1, None) => true,
+        (1, Some(_)) => false,
+        (2.., Some(prev_hash_hex)) => is_canonical_hex_digest(prev_hash_hex),
+        (2.., None) => false,
+        _ => false,
+    }
+}
+
+fn checkpoint_height_surface_is_canonical(height: u64) -> bool {
+    height > 0
+}
+
+fn wal_content_hash_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    is_canonical_hex_digest(&wal_entry.content_hash_hex())
+}
+
+fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    let state_root_hex = wal_entry.state_root_hex.as_str();
+    let looks_like_digest_surface = state_root_hex.len() == 64
+        && state_root_hex
+            .as_bytes()
+            .iter()
+            .all(|byte| byte.is_ascii_hexdigit());
+
+    !looks_like_digest_surface || is_canonical_hex_digest(state_root_hex)
+}
+
+fn checkpoint_hash_surfaces_are_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    is_canonical_hex_digest(&checkpoint.state_root_hex)
+        && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
+        && is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && wal_content_hash_surface_is_canonical(wal_entry)
+}
+
+fn wal_checkpoint_metadata_surfaces_are_canonical(wal_entry: &WalMeta) -> bool {
+    is_canonical_wal_proposal_hash(&wal_entry.proposal_hash)
+        && wal_prev_hash_surface_is_canonical(
+            wal_entry.height,
+            wal_entry.prev_hash_hex.as_deref(),
+        )
+}
+
+fn checkpoint_binds_to_canonical_wal_entry(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint.height == wal_entry.height
+        && wal_entry.committed
+        && wal_checkpoint_metadata_surfaces_are_canonical(wal_entry)
+        && checkpoint.state_root_hex == wal_entry.state_root_hex
+        && checkpoint.wal_entry_hash_hex == wal_entry.content_hash_hex()
+}
+
+pub fn checkpoint_evidence_surface_is_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint_height_surface_is_canonical(checkpoint.height)
+        && checkpoint_hash_surfaces_are_canonical(checkpoint, wal_entry)
+        && checkpoint_binds_to_canonical_wal_entry(checkpoint, wal_entry)
+}
+
+fn checkpoint_matches_wal_entry_for_recovery(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+    wal_entry_hash_hex: &str,
+) -> bool {
+    if !checkpoint_height_surface_is_canonical(checkpoint.height) {
+        return false;
+    }
+    if checkpoint.height != wal_entry.height {
+        return false;
+    }
+    if !wal_entry.committed {
+        return false;
+    }
+    if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
+        return false;
+    }
+    if !wal_state_root_surface_is_canonical(wal_entry) {
+        return false;
+    }
+    if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
+        return false;
+    }
+    if is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && !is_canonical_hex_digest(&checkpoint.state_root_hex)
+    {
+        return false;
     }
 
-    !value.is_empty()
-        && value.is_ascii()
-        && value.trim() == value
-        && value.chars().all(|ch| !is_disallowed_proof_metadata_char(ch))
-}
-
-fn checkpoint_has_complete_proof_metadata(cp: &CheckpointMeta) -> bool {
-    has_canonical_proof_metadata_field(&cp.state_root_hex)
-        && has_canonical_proof_metadata_field(&cp.wal_entry_hash_hex)
-}
-
-fn wal_entry_has_complete_proof_metadata(entry: &WalMeta) -> bool {
-    has_canonical_proof_metadata_field(&entry.proposal_hash)
-        && has_canonical_proof_metadata_field(&entry.state_root_hex)
-        && entry
-            .prev_hash_hex
-            .as_ref()
-            .map(|prev| has_canonical_proof_metadata_field(prev))
-            .unwrap_or(true)
+    checkpoint.state_root_hex == wal_entry.state_root_hex
+        && wal_entry_hash_hex == checkpoint.wal_entry_hash_hex.as_str()
 }
 
 pub fn verify_wal_and_find_checkpoint(
@@ -3306,22 +3322,14 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
-        // Fail closed on incomplete restore/replay metadata. Snapshot recovery must
-        // not trust checkpoint/WAL records that omit core identity fields, and it must
-        // not silently fall back to an older checkpoint once a newer WAL record is known
-        // to be truncated/corrupt.
-        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
-            return Ok(None);
-        }
-        if e.height > 1
-            && e
-                .prev_hash_hex
-                .as_ref()
-                .map(|prev| prev.trim().is_empty())
-                .unwrap_or(true)
+        if !is_canonical_hex_digest(&e.content_hash_hex())
+            || e.prev_hash_hex
+                .as_deref()
+                .is_some_and(|prev| !is_canonical_hex_digest(prev))
         {
-            return Ok(None);
+            return Ok(best_checkpoint);
         }
+
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
@@ -3354,16 +3362,14 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
+        if !wal_checkpoint_metadata_surfaces_are_canonical(e)
+            || !wal_state_root_surface_is_canonical(e)
+        {
+            return Ok(best_checkpoint);
+        }
+
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
-            if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
-                // Fail closed on incomplete checkpoint metadata at a validated WAL height.
-                // Snapshot restore must not silently rewind to an older checkpoint when the
-                // most recent checkpoint record is present but truncated/corrupt.
-                return Ok(None);
-            }
-            if cp.state_root_hex == e.state_root_hex
-                && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-            {
+            if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
                 let should_replace = best_checkpoint
                     .as_ref()
                     .map(|best| cp.height >= best.height)
@@ -3382,6 +3388,83 @@ pub fn verify_wal_and_find_checkpoint(
 mod tests {
     use super::*;
     use trnm_types::TaskStatus;
+
+    #[test]
+    fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry));
+
+        let mut noncanonical_checkpoint = checkpoint.clone();
+        noncanonical_checkpoint.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&noncanonical_checkpoint, &wal_entry),
+            "checkpoint state-root evidence must be canonical hex"
+        );
+
+        let mut noncanonical_wal = wal_entry.clone();
+        noncanonical_wal.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &noncanonical_wal),
+            "wal state-root evidence must be canonical hex"
+        );
+
+        let mut mismatched_checkpoint_root = checkpoint.clone();
+        mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal_entry),
+            "checkpoint evidence surfaces must bind the checkpoint state root to the evidenced WAL state root"
+        );
+
+        let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+        mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
+            "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
+        );
+    }
+
+    #[test]
+    fn wal_content_hash_length_frames_variable_width_evidence_surfaces() {
+        let base_state_root = format!("{}{}", "c", "d".repeat(63));
+        let boundary_shifted_state_root = format!("{}{}", "d", "d".repeat(63));
+        let prev_hash = "01".repeat(32);
+
+        let wal_a = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: base_state_root,
+            prev_hash_hex: Some(prev_hash.clone()),
+        };
+        let wal_b = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "abc".into(),
+            committed: true,
+            state_root_hex: boundary_shifted_state_root,
+            prev_hash_hex: Some(prev_hash),
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence hashing must length-frame proposal_hash and state_root_hex so adjacent audit surfaces cannot collide by shifting string boundaries"
+        );
+    }
 
     #[test]
     fn put_and_version_update() {
@@ -3711,6 +3794,79 @@ mod tests {
         assert_eq!(
             best.as_ref().map(|cp| cp.state_root_hex.as_str()),
             Some("r1")
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_requires_matching_height_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let mismatched_checkpoint = CheckpointMeta {
+            height: 8,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(
+                &mismatched_checkpoint,
+                &wal_entry,
+                &wal_entry_hash,
+            ),
+            "checkpoint recovery binding must reject mismatched checkpoint/WAL heights even if hash surfaces happen to align"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_noncanonical_digest_surface_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "AB".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on noncanonical 64-hex state-root digest surfaces even if the checkpoint metadata otherwise aligns"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_uncommitted_wal_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: false,
+            state_root_hex: "r7".into(),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on uncommitted WAL metadata even if hash and height surfaces otherwise align"
         );
     }
 
@@ -10739,608 +10895,43 @@ mod tests {
     }
 
     #[test]
-    fn pending_resolve_snapshot_canonicalization_keeps_semantically_identical_state_roots_equal() {
-        let staged_task = TaskObject {
-            task_id: 501,
-            creator: "alice".into(),
-            bounty: 100,
-            status: TaskStatus::Challenged,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: Some("worker-1".into()),
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: Some(25),
-            resolve_deadline_height: Some(35),
-            challenge_bond: Some(500),
-            challenger: Some("bob".into()),
-            challenge_bond_forfeited: Some(false),
-            version: 1,
-        };
-
-        let mut staged = StateStore::new();
-        staged.put_task_new(staged_task.clone()).unwrap();
-        staged
-            .stage_or_confirm_resolve_approval(501, 1, true, "Authority-B", "Authority-B,authority-a")
-            .unwrap();
-
-        let mut restored = StateStore::new();
-        restored.put_task_new(staged_task).unwrap();
-        restored.restore_pending_resolve_approval(
+    fn state_root_ignores_case_and_order_only_drift_in_live_pending_resolve_authority_set() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
             501,
-            Some(PendingResolveApprovalSnapshot {
-                slash_worker: true,
-                confirmations: 1,
-                first_approver: "Authority-B".into(),
-                authority_set: "Authority-B,authority-a".into(),
-                task_version: 1,
-            }),
-        );
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
-        assert_eq!(
-            staged.pending_resolve_first_approver(501).as_deref(),
-            Some("authority-b")
-        );
-        assert_eq!(
-            staged.pending_resolve_approval_snapshot(501)
-                .as_ref()
-                .map(|snapshot| snapshot.authority_set.as_str()),
-            Some("authority-a,authority-b")
-        );
-        assert_eq!(
-            restored.pending_resolve_first_approver(501).as_deref(),
-            Some("authority-b")
-        );
-        assert_eq!(
-            restored
-                .pending_resolve_approval_snapshot(501)
-                .as_ref()
-                .map(|snapshot| snapshot.authority_set.as_str()),
-            Some("authority-a,authority-b")
-        );
-        assert_eq!(
-            staged.state_root(),
-            restored.state_root(),
-            "restore/stage paths must canonicalize semantically equivalent pending resolve snapshots identically"
-        );
-    }
-
-    #[test]
-    fn paused_restore_pending_resolve_snapshot_still_canonicalizes_state_root() {
-        let staged_task = TaskObject {
-            task_id: 502,
-            creator: "alice".into(),
-            bounty: 100,
-            status: TaskStatus::Challenged,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: Some("worker-1".into()),
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: Some(25),
-            resolve_deadline_height: Some(35),
-            challenge_bond: Some(500),
-            challenger: Some("bob".into()),
-            challenge_bond_forfeited: Some(false),
-            version: 1,
-        };
-
-        let mut staged = StateStore::new();
-        staged
-            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
-            .unwrap();
-        staged.put_task_new(staged_task.clone()).unwrap();
-        staged
-            .stage_or_confirm_resolve_approval(502, 1, true, "Authority-B", "Authority-B,authority-a")
-            .unwrap();
-
-        let mut restored = StateStore::new();
-        restored
-            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
-            .unwrap();
-        restored.put_task_new(staged_task).unwrap();
-        restored.restore_pending_resolve_approval(
-            502,
-            Some(PendingResolveApprovalSnapshot {
-                slash_worker: true,
-                confirmations: 1,
-                first_approver: "Authority-B".into(),
-                authority_set: "Authority-B,authority-a".into(),
-                task_version: 1,
-            }),
-        );
-
-        assert_eq!(
-            restored.pending_resolve_first_approver(502).as_deref(),
-            Some("authority-b")
-        );
-        assert_eq!(
-            restored
-                .pending_resolve_approval_snapshot(502)
-                .as_ref()
-                .map(|snapshot| snapshot.authority_set.as_str()),
-            Some("authority-a,authority-b")
-        );
-        assert_eq!(
-            staged.state_root(),
-            restored.state_root(),
-            "paused restore must canonicalize pending resolve snapshots the same way as staged state"
-        );
-    }
-
-    #[test]
-    fn restore_pending_resolve_snapshot_requires_matching_challenged_task() {
-        let snapshot = Some(PendingResolveApprovalSnapshot {
-            slash_worker: true,
-            confirmations: 1,
-            first_approver: "Authority-B".into(),
-            authority_set: "Authority-B,authority-a".into(),
-            task_version: 1,
-        });
-
-        let mut missing_task = StateStore::new();
-        missing_task.restore_pending_resolve_approval(501, snapshot.clone());
-        assert!(
-            missing_task.pending_resolve_approval_snapshot(501).is_none(),
-            "restore must fail closed when the referenced challenged task is absent"
-        );
-
-        let mut wrong_status = StateStore::new();
-        wrong_status
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Open,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 1,
-            })
-            .unwrap();
-        wrong_status.restore_pending_resolve_approval(501, snapshot.clone());
-        assert!(
-            wrong_status.pending_resolve_approval_snapshot(501).is_none(),
-            "restore must reject pending resolve snapshots for tasks that are no longer challenged"
-        );
-
-        let mut incomplete_challenge = StateStore::new();
-        incomplete_challenge
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: None,
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            })
-            .unwrap();
-        incomplete_challenge.restore_pending_resolve_approval(501, snapshot.clone());
-        assert!(
-            incomplete_challenge
-                .pending_resolve_approval_snapshot(501)
-                .is_none(),
-            "restore must reject pending resolve snapshots when the challenged task snapshot is incomplete"
-        );
-
-        let mut stale_cleanup = StateStore::new();
-        stale_cleanup
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: Some(35),
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            })
-            .unwrap();
-        stale_cleanup.restore_pending_resolve_approval(501, snapshot.clone());
-        assert!(
-            stale_cleanup.pending_resolve_approval_snapshot(501).is_some(),
-            "setup must restore a matching challenged pending resolve snapshot before cleanup"
-        );
-        stale_cleanup.restore_task(501, None);
-        assert!(
-            stale_cleanup.pending_resolve_approval_snapshot(501).is_none(),
-            "task restore removal must scrub stale pending resolve snapshots for snapshot completeness"
-        );
-
-        let mut key_index_collision = StateStore::new();
-        key_index_collision
-            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
-            .expect("setup must insert governance param with overlapping key id");
-        assert_eq!(
-            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
-            Some(501),
-            "setup must confirm the governance key index points at the overlapping key id"
-        );
-        key_index_collision.restore_task(501, None);
-        assert_eq!(
-            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
-            Some(501),
-            "task restore removal must not evict an unrelated governance key index mapping when ids overlap"
-        );
-        assert_eq!(
-            key_index_collision.get_param(501).unwrap().key,
-            "max_block_ms",
-            "overlapping governance param object must remain restorable after task cleanup"
-        );
-
-        let mut restore_collision = StateStore::new();
-        restore_collision
-            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
-            .expect("setup must insert governance param before colliding task restore");
-        restore_collision.restore_pending_resolve_approval(501, snapshot.clone());
-        restore_collision.restore_task(
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
             501,
-            Some(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: Some(35),
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            }),
-        );
-        assert_eq!(
-            restore_collision.gov_param_key_index.get("max_block_ms").copied(),
-            Some(501),
-            "task restore must fail closed instead of corrupting an unrelated governance key index mapping when ids overlap"
-        );
-        assert_eq!(
-            restore_collision.get_param(501).unwrap().key,
-            "max_block_ms",
-            "task restore must not overwrite an unrelated governance snapshot when ids overlap"
-        );
-        assert!(
-            restore_collision.pending_resolve_approval_snapshot(501).is_none(),
-            "failed task restore must scrub stale pending resolve snapshots when the object slot belongs to another snapshot domain"
-        );
+            1,
+            true,
+            "authority-a",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
 
-        let mut incomplete_replay = StateStore::new();
-        incomplete_replay
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: Some(35),
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            })
-            .unwrap();
-        incomplete_replay.restore_pending_resolve_approval(501, snapshot.clone());
-        assert!(
-            incomplete_replay
-                .pending_resolve_approval_snapshot(501)
-                .is_some(),
-            "setup must restore a matching challenged pending resolve snapshot before replaying an incomplete task snapshot"
-        );
-        incomplete_replay.restore_task(
-            501,
-            Some(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: None,
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            }),
-        );
-        assert!(
-            incomplete_replay
-                .pending_resolve_approval_snapshot(501)
-                .is_none(),
-            "task restore must scrub pending resolve snapshots when replayed challenged task state becomes incomplete"
-        );
-
-        let mut wrong_version = StateStore::new();
-        let wrong_version_ref = wrong_version
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: Some(35),
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 1,
-            })
-            .unwrap();
-        wrong_version
-            .update_task(
-                wrong_version_ref,
-                TaskObject {
-                    task_id: 501,
-                    creator: "alice".into(),
-                    bounty: 100,
-                    status: TaskStatus::Challenged,
-                    proof_type: Default::default(),
-                    metadata: None,
-                    worker: Some("worker-1".into()),
-                    committed_hash: None,
-                    result_hash: None,
-                    reveal_salt: None,
-                    committed_at_height: None,
-                    reveal_deadline_height: None,
-                    challenge_deadline_height: None,
-                    challenge_window_blocks_snapshot: None,
-                    challenged_at_height: Some(25),
-                    resolve_deadline_height: Some(35),
-                    challenge_bond: Some(500),
-                    challenger: Some("bob".into()),
-                    challenge_bond_forfeited: Some(false),
-                    version: 1,
-                },
-            )
-            .unwrap();
-        wrong_version.restore_pending_resolve_approval(501, snapshot);
-        assert!(
-            wrong_version.pending_resolve_approval_snapshot(501).is_none(),
-            "restore must reject stale pending resolve snapshots whose task version no longer matches"
-        );
-    }
-
-    #[test]
-    fn restore_task_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
-        let snapshot = Some(PendingResolveApprovalSnapshot {
-            first_approver: "validator-1".into(),
-            slash_worker: false,
-            confirmations: 1,
-            authority_set: "committee-a".into(),
-            task_version: 1,
-        });
-
-        let mut zero_version_collision = StateStore::new();
-        zero_version_collision
-            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
-            .expect("setup must insert governance param before invalid task restore");
-        zero_version_collision.restore_pending_resolve_approval(501, snapshot);
-        zero_version_collision.restore_task(
-            501,
-            Some(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(25),
-                resolve_deadline_height: Some(35),
-                challenge_bond: Some(500),
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: Some(false),
-                version: 0,
-            }),
+        assert_eq!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "live pending resolve approvals should hash the effective authority-set membership, not case/order-only surface drift"
         );
         assert_eq!(
-            zero_version_collision.gov_param_key_index.get("max_block_ms").copied(),
-            Some(501),
-            "invalid task restore must fail closed without corrupting an unrelated governance key index mapping when ids overlap"
+            st_b.pending_resolve_approval_snapshot(501)
+                .expect("staged approval snapshot")
+                .authority_set,
+            "authority-a,authority-b",
+            "live staged authority-set evidence should normalize to the canonical membership surface"
         );
         assert_eq!(
-            zero_version_collision.get_param(501).unwrap().key,
-            "max_block_ms",
-            "invalid task restore must not overwrite an unrelated governance snapshot when ids overlap"
-        );
-        assert!(
-            zero_version_collision.pending_resolve_approval_snapshot(501).is_none(),
-            "invalid task restore must scrub stale pending resolve snapshots for snapshot completeness"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_rejects_mismatched_snapshot_without_clobbering_other_snapshot_domains() {
-        let mut collision = StateStore::new();
-        collision
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Open,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: None,
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 1,
-            })
-            .expect("setup must insert task before invalid governance restore");
-        collision.restore_gov_param(
-            501,
-            Some(GovParamObject {
-                key_id: 999,
-                key: "max_block_ms".into(),
-                value: "500".into(),
-                version: 1,
-            }),
-        );
-        assert_eq!(
-            collision.get_task(501).unwrap().task_id,
-            501,
-            "invalid governance restore must not delete an unrelated task snapshot when ids overlap"
-        );
-        assert!(
-            collision.get_param(501).is_none(),
-            "invalid governance restore must fail closed instead of materializing a mismatched governance snapshot"
-        );
-        assert_eq!(
-            collision.gov_param_key_index.get("max_block_ms").copied(),
-            None,
-            "invalid governance restore must not publish a key index entry for a rejected snapshot"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
-        let mut collision = StateStore::new();
-        collision
-            .put_task_new(TaskObject {
-                task_id: 501,
-                creator: "alice".into(),
-                bounty: 100,
-                status: TaskStatus::Open,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: None,
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 1,
-            })
-            .expect("setup must insert task before invalid governance restore");
-        collision.restore_gov_param(
-            501,
-            Some(GovParamObject {
-                key_id: 501,
-                key: "max_block_ms".into(),
-                value: "500".into(),
-                version: 0,
-            }),
-        );
-        assert_eq!(
-            collision.get_task(501).unwrap().task_id,
-            501,
-            "zero-version governance restore must not delete an unrelated task snapshot when ids overlap"
-        );
-        assert!(
-            collision.get_param(501).is_none(),
-            "zero-version governance restore must fail closed instead of materializing an invalid governance snapshot"
-        );
-        assert_eq!(
-            collision.gov_param_key_index.get("max_block_ms").copied(),
-            None,
-            "zero-version governance restore must not publish a key index entry for a rejected snapshot"
+            st_b.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-a"),
+            "canonicalizing authority membership must not erase first-approver audit spelling"
         );
     }
 
@@ -11888,7 +11479,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_rejects_stale_duplicate_checkpoint_at_same_height() {
+    fn wal_checkpoint_verification_rejects_non_hex_checkpoint_hash_surface() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -11897,45 +11488,22 @@ mod tests {
             state_root_hex: "r1".into(),
             prev_hash_hex: None,
         };
-        let h1 = e1.content_hash_hex();
-        let e2 = WalMeta {
-            height: 2,
-            round: 0,
-            proposal_hash: "p2".into(),
-            committed: true,
-            state_root_hex: "r2".into(),
-            prev_hash_hex: Some(h1.clone()),
-        };
-        let h2 = e2.content_hash_hex();
 
-        let checkpoints = vec![
-            CheckpointMeta {
-                height: 1,
-                state_root_hex: "r1".into(),
-                wal_entry_hash_hex: e1.content_hash_hex(),
-            },
-            CheckpointMeta {
-                height: 2,
-                state_root_hex: "stale-r2".into(),
-                wal_entry_hash_hex: "stale-h2".into(),
-            },
-            CheckpointMeta {
-                height: 2,
-                state_root_hex: "r2".into(),
-                wal_entry_hash_hex: h2.clone(),
-            },
-        ];
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "not-hex".into(),
+        }];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
-        assert_eq!(
-            got.map(|cp| cp.height),
-            Some(1),
-            "stale duplicate checkpoint tuples at the same height must fail closed back to the last unambiguous checkpoint"
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint recovery must fail closed when checkpoint wal-entry evidence is not a canonical hex digest"
         );
     }
 
     #[test]
-    fn wal_checkpoint_verification_rejects_whitespace_padded_proof_metadata() {
+    fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
             round: 0,

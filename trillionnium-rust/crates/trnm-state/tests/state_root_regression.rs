@@ -205,6 +205,67 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
 }
 
 #[test]
+fn task_creator_and_worker_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "ab".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("c".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+    state_b
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "a".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("bc".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame task creator and worker so adjacent string boundaries cannot hash identically"
+    );
+}
+
+#[test]
 fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_update() {
     let proposal = GovProposalObject {
         proposal_id: 9_004,
@@ -850,6 +911,83 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn task_metering_snapshot_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_503,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "gpu.inference".into(),
+                metering_schema: "llm/v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 30,
+                kv_bytes_moved: 40,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 6,
+                challenge_success_bounty_per_work_unit_num: 7,
+                challenge_success_bounty_per_work_unit_den: 8,
+                worker_completion_bonus_per_work_unit_num: 9,
+                worker_completion_bonus_per_work_unit_den: 10,
+                worker_slash_rebate_per_work_unit_num: 11,
+                worker_slash_rebate_per_work_unit_den: 12,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .expect("task metadata should exist")
+        .metering
+        .as_mut()
+        .expect("task metering snapshot should exist")
+        .normalized_work_units = 51;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root must include task metering snapshot evidence so checkpoint audit surfaces cannot ignore metering-only task metadata changes"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
@@ -1112,6 +1250,37 @@ fn embedded_pending_gov_update_key_should_affect_state_root() {
 }
 
 #[test]
+fn pending_gov_update_string_field_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "ab",
+        Some(PendingGovParamUpdate {
+            key_id: 7_000,
+            key: "ab".into(),
+            value: "c".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "a",
+        Some(PendingGovParamUpdate {
+            key_id: 7_000,
+            key: "a".into(),
+            value: "bc".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame pending governance key/value strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn pending_gov_update_key_id_should_affect_state_root_even_when_payload_matches() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -1173,6 +1342,70 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
         st_a.state_root(),
         st_b.state_root(),
         "state_root should length-frame pending resolve approver and authority-set strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
+fn pending_resolve_canonical_actor_forms_should_keep_state_root_stable() {
+    let mut staged = StateStore::new();
+    let mut restored = StateStore::new();
+
+    staged.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
+    restored.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
+
+    staged
+        .stage_or_confirm_resolve_approval(
+            9_102,
+            1,
+            true,
+            "AUTHORITY.ALPHA",
+            "AUTHORITY.BETA,AUTHORITY.ALPHA",
+        )
+        .expect("staging should canonicalize equivalent pending resolve authority metadata");
+    restored.restore_pending_resolve_approval(
+        9_102,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(
+        staged.pending_resolve_first_approver(9_102).as_deref(),
+        Some("authority.alpha"),
+        "staged pending resolve approvals should store canonical approver ids"
+    );
+    assert_eq!(
+        staged
+            .pending_resolve_approval_snapshot(9_102)
+            .expect("staged snapshot should exist")
+            .authority_set,
+        "authority.alpha,authority.beta",
+        "staged pending resolve approvals should store canonical authority ordering"
+    );
+    assert_eq!(
+        restored.state_root(),
+        staged.state_root(),
+        "state_root should ignore case and ordering noise once pending resolve authority metadata is canonicalized"
     );
 }
 
@@ -1249,32 +1482,44 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
 }
 
 #[test]
-fn governance_proposal_string_field_boundaries_should_affect_state_root() {
-    let mut st1 = StateStore::new();
-    let mut st2 = StateStore::new();
+fn pending_resolve_task_version_must_affect_state_root_even_when_other_snapshot_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
 
-    st1.put_proposal_new(GovProposalObject {
-        proposal_id: 9_601,
-        title: "ab".into(),
-        proposer: "c".into(),
-        status: GovProposalStatus::Draft,
-        version: 1,
-    })
-    .expect("first proposal should be accepted");
+    state_a.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 4,
+        }),
+    );
 
-    st2.put_proposal_new(GovProposalObject {
-        proposal_id: 9_601,
-        title: "a".into(),
-        proposer: "bc".into(),
-        status: GovProposalStatus::Draft,
-        version: 1,
-    })
-    .expect("second proposal should be accepted");
-
+    let root_a = state_a.state_root();
     assert_ne!(
-        st1.state_root(),
-        st2.state_root(),
-        "state_root should length-frame governance proposal strings so audit-proof snapshot material cannot collide across field boundaries"
+        root_a,
+        state_b.state_root(),
+        "state_root must include the pending resolve task version so identical approval payloads for different task snapshots cannot hash identically"
+    );
+
+    state_b
+        .restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the same pending resolve task version must rewind state_root exactly"
     );
 }
 
@@ -3404,6 +3649,33 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
 }
 
 #[test]
+fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_resolve_approval(
+        5_199,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a,resolver-b".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_199).is_none(),
+        "restore_pending_resolve_approval should fail closed instead of materializing a malformed checkpoint snapshot"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "malformed pending resolve checkpoint evidence must not perturb the canonical empty root"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
@@ -5170,6 +5442,339 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
         original.state_root(),
         baseline_root,
         "the original state's cached root must remain canonical after the clone completes its restore roundtrip"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "canonical checkpoint/WAL evidence surfaces should be recognized as audit-ready"
+    );
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex = "not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &wal),
+        "checkpoint state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut bad_wal = wal.clone();
+    bad_wal.state_root_hex = "still-not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &bad_wal),
+        "WAL state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut mismatched_checkpoint_root = checkpoint.clone();
+    mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal),
+        "checkpoint state_root_hex must match the evidenced WAL state root for audit-ready checkpoint surfaces"
+    );
+
+    let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+    mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal),
+        "checkpoint wal_entry_hash_hex must bind to the exact WAL content hash for audit-ready checkpoint surfaces"
+    );
+
+    let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
+    uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint_wal_hash, &wal),
+        "checkpoint wal_entry_hash_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case WAL digest encodings"
+    );
+
+    let mut uppercase_checkpoint = checkpoint.clone();
+    uppercase_checkpoint.state_root_hex = uppercase_checkpoint.state_root_hex.to_uppercase();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal),
+        "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
+    );
+
+    let mut mismatched_height_checkpoint = checkpoint.clone();
+    mismatched_height_checkpoint.height = wal.height + 1;
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_height_checkpoint, &wal),
+        "checkpoint height must bind to the exact WAL height so audit evidence surfaces cannot replay canonical hashes across different checkpoint slots"
+    );
+
+    let mut zero_height_checkpoint = checkpoint.clone();
+    zero_height_checkpoint.height = 0;
+    let mut zero_height_wal = wal.clone();
+    zero_height_wal.height = 0;
+    zero_height_checkpoint.wal_entry_hash_hex = zero_height_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&zero_height_checkpoint, &zero_height_wal),
+        "checkpoint evidence surfaces must reject height zero so audit-ready checkpoint proofs cannot treat non-genesis metadata slots as valid state-root checkpoints"
+    );
+
+    let mut uncommitted_wal = wal.clone();
+    uncommitted_wal.committed = false;
+    let mut uncommitted_checkpoint = checkpoint.clone();
+    uncommitted_checkpoint.wal_entry_hash_hex = uncommitted_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uncommitted_checkpoint, &uncommitted_wal),
+        "checkpoint evidence surfaces must reject uncommitted WAL entries so audit-ready checkpoint proofs cannot bind to speculative state-root snapshots"
+    );
+
+    let mut blank_proposal_hash_wal = wal.clone();
+    blank_proposal_hash_wal.proposal_hash = "".into();
+    let mut blank_proposal_hash_checkpoint = checkpoint.clone();
+    blank_proposal_hash_checkpoint.wal_entry_hash_hex = blank_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&blank_proposal_hash_checkpoint, &blank_proposal_hash_wal),
+        "WAL proposal_hash must be a non-empty canonical token so checkpoint evidence surfaces cannot claim audit-ready provenance with blank proposal identity"
+    );
+
+    let mut forged_genesis_prev_hash_wal = wal.clone();
+    forged_genesis_prev_hash_wal.prev_hash_hex = Some("01".repeat(32));
+    let mut forged_genesis_prev_hash_checkpoint = checkpoint.clone();
+    forged_genesis_prev_hash_checkpoint.wal_entry_hash_hex =
+        forged_genesis_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &forged_genesis_prev_hash_checkpoint,
+            &forged_genesis_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject genesis WAL metadata with a forged prev_hash_hex so audit-ready state-root proofs cannot smuggle a fake predecessor link into height-1 checkpoints"
+    );
+
+    let mut missing_prev_hash_wal = wal.clone();
+    missing_prev_hash_wal.height = 2;
+    missing_prev_hash_wal.prev_hash_hex = None;
+    let mut missing_prev_hash_checkpoint = checkpoint.clone();
+    missing_prev_hash_checkpoint.height = 2;
+    missing_prev_hash_checkpoint.wal_entry_hash_hex = missing_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &missing_prev_hash_checkpoint,
+            &missing_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject non-genesis WAL metadata without prev_hash_hex so audit-ready state-root proofs cannot omit the predecessor link for height-2+ checkpoints"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must fail closed when WAL proposal identity is blank even if checkpoint fields otherwise match"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(257),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject overlong WAL proposal identities even when state_root_hex and wal_entry_hash_hex otherwise match canonical digests"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_newline_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal\n1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject WAL proposal identities with embedded control/whitespace so audit-ready checkpoint proofs cannot hide layout drift inside otherwise matching hashes"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_overlong_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(257),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must fail closed when WAL proposal identity exceeds the canonical audit surface bound even if checkpoint fields otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_state_root_even_when_wal_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.to_uppercase(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical checkpoint state_root_hex even when the WAL entry and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_wal_hash_even_when_state_root_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex().to_uppercase(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical checkpoint wal_entry_hash_hex even when the state_root evidence otherwise matches"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("CD".repeat(32)),
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 2,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical WAL prev_hash_hex surfaces even when the checkpoint payload otherwise lines up"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject forged genesis prev_hash_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_when_checkpoint_matches(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "AB".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
     );
 }
 

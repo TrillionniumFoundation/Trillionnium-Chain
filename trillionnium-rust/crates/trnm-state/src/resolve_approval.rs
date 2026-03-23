@@ -15,7 +15,7 @@ pub struct PendingResolveApprovalSnapshot {
     pub task_version: u64,
 }
 
-fn validate_resolve_approval_identity(approver: &str, authority_set: &str) -> Result<(), String> {
+fn validate_resolve_approval_approver(approver: &str) -> Result<String, String> {
     let approver_trimmed = approver.trim();
     if approver_trimmed.is_empty() {
         return Err("resolve approval approver must be non-empty".into());
@@ -34,7 +34,10 @@ fn validate_resolve_approval_identity(approver: &str, authority_set: &str) -> Re
     {
         return Err("resolve approval approver must be an explicit non-system authority".into());
     }
+    Ok(approver_trimmed.to_ascii_lowercase())
+}
 
+fn validate_resolve_approval_authority_set(authority_set: &str) -> Result<Vec<String>, String> {
     let authority_trimmed = authority_set.trim();
     if authority_trimmed.is_empty() || authority_trimmed != authority_set {
         return Err(
@@ -53,6 +56,7 @@ fn validate_resolve_approval_identity(approver: &str, authority_set: &str) -> Re
             || token.contains('、')
     };
     let mut seen_members = std::collections::BTreeSet::new();
+    let mut canonical_members = Vec::with_capacity(authority_members.len());
     for member in &authority_members {
         let member_trimmed = member.trim();
         if member_trimmed.is_empty()
@@ -67,18 +71,27 @@ fn validate_resolve_approval_identity(approver: &str, authority_set: &str) -> Re
             || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
         {
             return Err(
-                "resolve approval authority set contains non-canonical or forbidden member"
-                    .into(),
+                "resolve approval authority set contains non-canonical or forbidden member".into(),
             );
         }
-        if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
+        let canonical_member = member_trimmed.to_ascii_lowercase();
+        if !seen_members.insert(canonical_member.clone()) {
             return Err("resolve approval authority set must not contain duplicate members".into());
         }
+        canonical_members.push(canonical_member);
     }
-    if !authority_members.iter().any(|member| *member == approver_trimmed) {
+    Ok(canonical_members)
+}
+
+fn validate_pending_resolve_snapshot(snapshot: &PendingResolveApprovalSnapshot) -> Result<(), String> {
+    if !(1..=2).contains(&snapshot.confirmations) {
+        return Err("resolve approval snapshot confirmations must be between 1 and 2".into());
+    }
+    let approver = validate_resolve_approval_approver(&snapshot.first_approver)?;
+    let authority_members = validate_resolve_approval_authority_set(&snapshot.authority_set)?;
+    if !authority_members.iter().any(|member| member == &approver) {
         return Err("resolve approval approver must be a configured authority member".into());
     }
-
     Ok(())
 }
 
@@ -91,7 +104,11 @@ impl StateStore {
         approver: &str,
         authority_set: &str,
     ) -> Result<bool, String> {
-        validate_resolve_approval_identity(approver, authority_set)?;
+        let approver_trimmed = validate_resolve_approval_approver(approver)?;
+        let authority_members = validate_resolve_approval_authority_set(authority_set)?;
+        if !authority_members.iter().any(|member| member == &approver_trimmed) {
+            return Err("resolve approval approver must be a configured authority member".into());
+        }
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.authority_set != authority_set {
@@ -170,20 +187,20 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if snapshot.confirmations != 1 {
+                if validate_pending_resolve_snapshot(&snapshot).is_ok() {
+                    self.pending_resolve_approvals.insert(
+                        task_id,
+                        PendingResolveApproval {
+                            slash_worker: snapshot.slash_worker,
+                            confirmations: snapshot.confirmations,
+                            first_approver: snapshot.first_approver,
+                            authority_set: snapshot.authority_set,
+                            task_version: snapshot.task_version,
+                        },
+                    );
+                } else {
                     self.pending_resolve_approvals.remove(&task_id);
-                    return;
                 }
-                self.pending_resolve_approvals.insert(
-                    task_id,
-                    PendingResolveApproval {
-                        slash_worker: snapshot.slash_worker,
-                        confirmations: snapshot.confirmations,
-                        first_approver: snapshot.first_approver,
-                        authority_set: snapshot.authority_set,
-                        task_version: snapshot.task_version,
-                    },
-                );
             }
             None => {
                 self.pending_resolve_approvals.remove(&task_id);
