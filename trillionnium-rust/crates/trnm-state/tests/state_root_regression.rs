@@ -266,6 +266,25 @@ fn task_creator_and_worker_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn task_metering_snapshot_field_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let task_a = task_with_boundary_metering("ab", "c");
+    let mut task_b = task_with_boundary_metering("a", "bc");
+    task_b.task_id = task_a.task_id;
+
+    state_a.put_task_new(task_a).unwrap();
+    state_b.put_task_new(task_b).unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame metering workload_class and metering_schema so adjacent string boundaries cannot collide"
+    );
+}
+
+#[test]
 fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_update() {
     let proposal = GovProposalObject {
         proposal_id: 9_004,
