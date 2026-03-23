@@ -431,54 +431,16 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
         return keys;
     }
 
-    // Singleton read domains are also common in owned-object traffic. Keep them
-    // on the narrowest deterministic path even when callers hand us duplicate-
-    // heavy shared-write domains from widened scheduler probes.
-    if keys.len() == 1 {
-        let only = keys[0];
-        return if write_keys.contains(&only) {
-            Vec::new()
-        } else {
-            keys
-        };
-    }
-
-    // Exact singleton write domains are a common owned/shared shape. Keep them
-    // on the narrowest deterministic path before scanning for duplicate-heavy
-    // callers that only collapse to a singleton after dedup.
-    if write_keys.len() == 1 {
-        let shared = write_keys[0];
-        return keys.into_iter().filter(|key| *key != shared).collect();
-    }
-
     // Keep object-scoped access domains deterministic while avoiding quadratic
-    // write-key probes once shared domains become large. Duplicate-heavy callers
-    // can still have a tiny effective write domain even when the raw slice is
-    // longer than the small-path threshold, so probe unique keys first before
-    // paying for a HashSet allocation.
-    let mut write_domain: Vec<u64> = Vec::with_capacity(write_keys.len().min(8));
-    for key in write_keys {
-        if write_domain.contains(key) {
-            continue;
-        }
-        if write_domain.len() == 8 {
-            let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
-            return keys
-                .into_iter()
-                .filter(|read_key| !write_domain.contains(read_key))
-                .collect();
-        }
-        write_domain.push(*key);
+    // write-key probes once shared domains become large.
+    if write_keys.len() <= 8 {
+        return keys
+            .into_iter()
+            .filter(|key| !write_keys.contains(key))
+            .collect();
     }
 
-    // Duplicate-heavy owned/shared domains can still collapse to one effective
-    // shared object. Preserve the cheap singleton filter after dedup so hot
-    // duplicate bursts stay on the narrowest deterministic path.
-    if write_domain.len() == 1 {
-        let shared = write_domain[0];
-        return keys.into_iter().filter(|key| *key != shared).collect();
-    }
-
+    let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
     keys.into_iter()
         .filter(|key| !write_domain.contains(key))
         .collect()
@@ -505,10 +467,7 @@ fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut total = 0usize;
 
     for tx in txs {
-        assert_tx_access_domain_versions_are_consistent(tx);
-
-        let mut keys = dedup_access_keys(&tx.read_set);
-        extend_unique_access_keys(&mut keys, &tx.write_set);
+        let keys = tx_access_domain_keys(tx);
         total += keys.len();
         for key in keys {
             *counts.entry(key).or_insert(0) += 1;
@@ -714,8 +673,6 @@ fn build_parallel_groups_aggressive_profile(
         let mut conflict_hits = 0usize;
 
         for tx in ordered {
-            assert_tx_access_domain_versions_are_consistent(&tx);
-            let read_keys = dedup_access_keys(&tx.read_set);
             let write_keys = dedup_access_keys(&tx.write_set);
             let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
 
@@ -812,10 +769,11 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let tx_ref = tx_slot.as_ref().expect("tx must exist");
-        assert_tx_access_domain_versions_are_consistent(tx_ref);
-        let read_keys = dedup_access_keys(&tx_ref.read_set);
-        let write_keys = dedup_access_keys(&tx_ref.write_set);
+        let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
+        let read_keys = read_domain_only_keys(
+            &tx_slot.as_ref().expect("tx must exist").read_set,
+            &write_keys,
+        );
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
@@ -1413,34 +1371,14 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 }
 
-fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
-    assert_tx_access_domain_versions_are_consistent(tx);
-
-    // Canonicalize the adaptive hotspot signal within the preferred access
-    // domain. Writes remain the stronger scheduling signal, but equivalent
-    // write-domain or read-domain permutations should hash to the same key.
-    let domain = if tx.write_set.is_empty() {
-        &tx.read_set
-    } else {
-        &tx.write_set
-    };
-
-    // Keep the adaptive detector allocation-free on the common keyless and
-    // tiny-domain paths instead of scanning through the generic fold.
-    match domain.as_slice() {
-        [] => None,
-        [obj] => Some(obj.id),
-        [a, b] => Some(a.id.min(b.id)),
-        _ => {
-            let mut primary = domain[0].id;
-            for id in domain.iter().skip(1).map(|o| o.id) {
-                if id < primary {
-                    primary = id;
-                }
-            }
-            Some(primary)
-        }
-    }
+fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
+    // Reuse the same write-first, read-domain-filtered object scope as grouping
+    // and telemetry so hotspot bucketing cannot drift from executor conflict
+    // semantics on duplicate/shared-object footprints.
+    let keys = tx_access_domain_keys(tx);
+    let key_a = keys.first().copied().unwrap_or(0);
+    let key_b = keys.get(1).copied().unwrap_or(0);
+    (key_a, key_b)
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
@@ -1457,46 +1395,10 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Keep the common singleton/equal-key mixed-domain path allocation-free.
-    // Equivalent write-only, read-only, or echoed read/write domains should map
-    // to the same bucket before the broader dedup/mix path below.
-    let singleton_or_echo = match (tx.write_set.as_slice(), tx.read_set.as_slice()) {
-        ([], []) => Some((0u64, 0u64)),
-        ([obj], []) | ([], [obj]) => Some((obj.id, 0u64)),
-        ([a], [b]) if a.id == b.id => Some((a.id, 0u64)),
-        _ => None,
-    };
-
-    let mixed = if let Some((key_a, key_b)) = singleton_or_echo {
-        key_a ^ key_b.rotate_left(7)
-    } else {
-        // Keep hash mixing deterministic across targets (32/64-bit) by using a
-        // fixed-width integer domain before reducing to bucket count.
-        // Select the two smallest distinct access keys across the combined
-        // read/write domain so equivalent access sets hash identically even when
-        // intra-domain ordering differs.
-        let mut keys = dedup_access_keys(&tx.write_set);
-        extend_unique_access_keys(&mut keys, &tx.read_set);
-
-        let mut key_a = u64::MAX;
-        let mut key_b = u64::MAX;
-        for id in keys {
-            if id < key_a {
-                key_b = key_a;
-                key_a = id;
-            } else if id != key_a && id < key_b {
-                key_b = id;
-            }
-        }
-
-        // Canonicalize the two-key access-domain signal so equivalent mixed
-        // read/write domains hash identically even if read/write roles flip or
-        // duplicate-heavy access lists arrive in a different order. Keep
-        // singleton/keyless behavior unchanged, including when the real key is 0.
-        let key_a = if key_a == u64::MAX { 0 } else { key_a };
-        let key_b = if key_b == u64::MAX { 0 } else { key_b };
-        key_a ^ key_b.rotate_left(7)
-    };
+    // Keep hash mixing deterministic across targets (32/64-bit) by using a
+    // fixed-width integer domain before reducing to bucket count.
+    let (key_a, key_b) = hot_bucket_keys(tx);
+    let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
         // high-bit object ids cannot truncate on 32-bit targets before bucket
@@ -2080,90 +1982,108 @@ mod tests {
     }
 
     #[test]
-    fn access_map_capacity_hint_dedups_same_version_cross_domain_echoes() {
-        let txs = vec![
-            tx(
-                1,
-                vec![o(7), o(7), o(9)],
-                vec![ObjectRef { id: 7, version: 1 }, o(9), o(11)],
-            ),
-            tx(2, vec![o(21), o(21)], vec![o(22), o(22)]),
-        ];
-
-        // Unique access-domain footprint is {7,9,11} + {21,22} = 5.
-        assert_eq!(access_map_capacity_hint(&txs), 64);
-    }
-
-    #[test]
-    #[should_panic(
-        expected = "mixed access domain contains the same object id with multiple versions"
-    )]
-    fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
-        let txs = vec![tx(
+    fn tx_access_domain_keys_dedups_shared_object_scope_across_read_and_write_sets() {
+        let keys = tx_access_domain_keys(&tx(
             1,
-            vec![ObjectRef { id: 7, version: 2 }],
-            vec![ObjectRef { id: 7, version: 1 }, o(9)],
-        )];
+            vec![o(11), o(11), o(22), o(33)],
+            vec![o(22), o(44), o(44), o(11)],
+        ));
 
-        let _ = access_map_capacity_hint(&txs);
+        // Object-scoped access domains should stay deduplicated across both read
+        // and write footprints, with writes first so telemetry matches the
+        // scheduler's stronger conflict signal.
+        assert_eq!(keys, vec![22, 44, 11, 33]);
     }
 
     #[test]
-    fn extend_unique_access_keys_dedups_cross_domain_echoes_without_reordering_existing_keys() {
-        let mut keys = dedup_access_keys(&[o(100), o(200), o(100), o(300), o(400)]);
+    fn read_domain_only_keys_small_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![11, 22, 33, 44, 55, 66, 77, 88];
 
-        extend_unique_access_keys(
-            &mut keys,
-            &[o(300), o(500), o(200), o(600), o(500), o(700), o(700)],
+        let keys = read_domain_only_keys(
+            &[o(22), o(5), o(44), o(5), o(99), o(77), o(99), o(123)],
+            &write_keys,
         );
 
-        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+        // The small write-domain fast path should filter shared objects without
+        // disturbing first-seen ordering for surviving read-only keys.
+        assert_eq!(keys, vec![5, 99, 123]);
     }
 
     #[test]
-    fn extend_unique_access_keys_normalizes_duplicate_dst_before_appending_new_keys() {
-        let mut keys = vec![100, 200, 100, 300, 200, 400];
+    fn read_domain_only_keys_large_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![100, 200, 300, 400, 500, 600, 700, 800, 900, 1_000];
 
-        extend_unique_access_keys(
-            &mut keys,
-            &[o(300), o(500), o(200), o(600), o(500), o(700), o(700)],
+        let keys = read_domain_only_keys(
+            &[
+                o(200),
+                o(42),
+                o(500),
+                o(42),
+                o(77),
+                o(800),
+                o(77),
+                o(900),
+                o(123),
+            ],
+            &write_keys,
         );
 
-        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+        // Shared objects should be filtered once, while surviving read-only
+        // objects keep first-seen order for deterministic access-domain reporting.
+        assert_eq!(keys, vec![42, 77, 123]);
     }
 
     #[test]
-    fn extend_unique_access_keys_small_domain_path_normalizes_duplicate_dst_before_appending() {
-        let mut keys = vec![100, 200, 100, 300];
+    fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
+        let tx = tx(
+            1,
+            vec![o(9), o(9), o(40), o(50)],
+            vec![o(7), o(7), o(9), o(30)],
+        );
 
-        extend_unique_access_keys(&mut keys, &[o(300), o(400), o(200), o(500)]);
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
 
-        assert_eq!(keys, vec![100, 200, 300, 400, 500]);
+        assert_eq!(keys, vec![7, 9, 30, 40, 50]);
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
     }
 
     #[test]
-    fn extend_unique_access_keys_normalizes_duplicate_dst_even_when_extension_is_empty() {
-        let mut keys = vec![100, 200, 100, 300, 200, 400];
+    fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
+        let tx = tx(
+            1,
+            vec![o(8), o(8), o(9), o(10)],
+            vec![o(8), o(8), o(40), o(40), o(50)],
+        );
 
-        extend_unique_access_keys(&mut keys, &[]);
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
 
-        assert_eq!(keys, vec![100, 200, 300, 400]);
+        assert_eq!(keys, vec![8, 40, 50, 9, 10]);
+        assert_eq!((key_a, key_b), (8, 40));
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
     }
 
     #[test]
-    fn hot_object_share_dedups_same_version_cross_domain_echoes() {
-        let deduped = vec![
-            tx(1, vec![o(7)], vec![o(8)]),
-            tx(2, vec![o(7)], vec![o(9)]),
-            tx(3, vec![o(10)], vec![o(11)]),
-        ];
-        let echoed = vec![
-            tx(1, vec![o(7), o(8)], vec![o(8), o(7)]),
-            tx(2, vec![o(7), o(9)], vec![o(9), o(7)]),
-            tx(3, vec![o(10), o(11)], vec![o(11), o(10)]),
-        ];
+    fn overlapping_read_write_domains_do_not_double_count_shared_object_conflicts() {
+        let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
 
-        assert_eq!(hot_object_share(&echoed), hot_object_share(&deduped));
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![2]
+        );
+        // The first tx still pays its normal write-domain probes, but the shared
+        // read/write key should not be recorded twice and inflate later hit counts.
+        assert_eq!(profile.conflict_checks, 4);
+        assert_eq!(profile.conflict_hits, 1);
     }
 
     #[test]
@@ -2678,35 +2598,12 @@ mod tests {
     }
 
     #[test]
-    fn hot_bucket_hint_power_of_two_fast_path_keeps_high_bits_before_reduce() {
-        let buckets_n = 8usize;
-        let tx = tx(6, vec![], vec![o((1u64 << 40) + 5), o(3)]);
-        let (key_a, key_b) = hot_bucket_keys(&tx);
-        let mixed = key_a ^ key_b.rotate_left(7);
-
-        // Power-of-two bucket layouts must preserve the full u64 mix before the
-        // reduction step so 32-bit targets cannot truncate high bits and skew
-        // deterministic object-domain bucketing.
-        assert_eq!(hot_bucket_hint(&tx, buckets_n), (mixed % buckets_n as u64) as usize);
-    }
-
-    #[test]
     fn hot_bucket_keys_skip_duplicate_leading_refs_and_preserve_write_priority() {
         let t = tx(1, vec![o(77), o(88)], vec![o(42), o(42), o(99)]);
         assert_eq!(hot_bucket_keys(&t), (42, 99));
 
         let read_fallback = tx(2, vec![o(7), o(7), o(8)], vec![]);
         assert_eq!(hot_bucket_keys(&read_fallback), (7, 8));
-    }
-
-    #[test]
-    fn hot_bucket_keys_single_write_domain_uses_first_filtered_read_key() {
-        let t = tx(3, vec![o(42), o(42), o(77), o(88), o(77)], vec![o(42), o(42)]);
-
-        // Singleton shared-object writes should keep write priority while the
-        // second hot key comes from the filtered read-only domain.
-        assert_eq!(hot_bucket_keys(&t), (42, 77));
-        assert_eq!(tx_access_domain_keys(&t), vec![42, 77, 88]);
     }
 
     #[test]
