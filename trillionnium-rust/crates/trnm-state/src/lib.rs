@@ -1414,90 +1414,21 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     }
 }
 
-fn validate_pending_gov_update_restore_snapshot(
-    gov_param_key_index: &std::collections::BTreeMap<String, u64>,
-    pending_gov_updates: &std::collections::BTreeMap<String, PendingGovParamUpdate>,
-    objects: &std::collections::BTreeMap<u64, VersionedObject>,
-    key: &str,
-    snapshot: &PendingGovParamUpdate,
-) -> Result<(), String> {
-    validate_requested_governance_key_canonical(key)?;
-    validate_requested_governance_key_canonical(&snapshot.key)?;
-    if snapshot.key != key {
-        return Err(format!(
-            "pending governance snapshot key mismatch: requested_key={}, snapshot_key={}",
-            key, snapshot.key
-        ));
-    }
-    if !is_sensitive_gov_param(key) {
-        return Err(format!(
-            "pending governance restore only supports sensitive keys: {}",
-            key
-        ));
-    }
-    validate_governance_key_registration(gov_param_key_index, key, snapshot.key_id)?;
-    validate_gov_param_value(key, &snapshot.value)?;
-    if snapshot.activate_at_height == 0 {
-        return Err(format!(
-            "pending governance restore requires explicit positive activate_at_height for {}",
-            key
-        ));
-    }
+fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
+    task.status == TaskStatus::Challenged
+        && matches!(task.challenge_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_window_blocks_snapshot, Some(window) if window > 0)
+        && matches!(task.challenged_at_height, Some(height) if height > 0)
+        && matches!(task.resolve_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_bond, Some(bond) if bond > 0)
+        && task
+            .challenger
+            .as_deref()
+            .is_some_and(|challenger| validate_resolve_approver_token(challenger).is_ok())
+}
 
-    if pending_gov_updates
-        .get(key)
-        .is_some_and(|existing_pending| existing_pending.key_id != snapshot.key_id)
-    {
-        return Err(format!(
-            "pending governance key id mismatch for {}: existing_key_id={}, snapshot_key_id={}",
-            key,
-            pending_gov_updates
-                .get(key)
-                .map(|existing_pending| existing_pending.key_id)
-                .unwrap_or_default(),
-            snapshot.key_id
-        ));
-    }
-
-    if pending_gov_updates
-        .iter()
-        .any(|(existing_key, existing_pending)| {
-            existing_key != key && existing_pending.key_id == snapshot.key_id
-        })
-    {
-        return Err(format!(
-            "pending governance key id collision for {}: key_id {} already staged elsewhere",
-            key, snapshot.key_id
-        ));
-    }
-
-    if let Some(existing) = objects.get(&snapshot.key_id) {
-        match &existing.value {
-            ObjectValue::GovParam(existing_param) => {
-                validate_requested_governance_key_canonical(&existing_param.key)?;
-                if existing_param.key != key {
-                    return Err(format!(
-                        "pending governance key_id collision for {}: object {} already stores governance key {}",
-                        key, snapshot.key_id, existing_param.key
-                    ));
-                }
-                if existing_param.key_id != snapshot.key_id {
-                    return Err(format!(
-                        "pending governance key_id collision for {}: object {} embeds mismatched governance key_id {}",
-                        key, snapshot.key_id, existing_param.key_id
-                    ));
-                }
-            }
-            _ => {
-                return Err(format!(
-                    "pending governance key_id collision: object {} exists and is not GovParam",
-                    snapshot.key_id
-                ));
-            }
-        }
-    }
-
-    Ok(())
+fn task_supports_pending_resolve_snapshot_restore(task: &TaskObject) -> bool {
+    task_supports_pending_resolve_restore(task) && task.challenge_bond_forfeited.is_some()
 }
 
 impl StateStore {
@@ -1529,19 +1460,80 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
-        if let Some(task) = self.get_task(task_id) {
-            if task.status != TaskStatus::Challenged {
+        let Some(task) = self.get_task(task_id) else {
+            if self.is_emergency_paused() {
                 if self.pending_resolve_approvals.remove(&task_id).is_some() {
                     self.invalidate_state_root_cache();
                 }
-                return Err("resolve approval task no longer challenged".into());
+                return Err("resolve approval task missing".into());
             }
-            if task.version != task_version {
-                if self.pending_resolve_approvals.remove(&task_id).is_some() {
-                    self.invalidate_state_root_cache();
+            ensure_effective_resolve_authority_match(self, authority_set)?;
+
+            if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
+                if entry.confirmations >= 2 {
+                    return Err("resolve approval already finalized; clear pending approval first".into());
                 }
-                return Err("resolve approval task version changed".into());
+                let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
+                if entry_authority_canonical != authority_canonical {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval authority set changed".into());
+                }
+                if entry.task_version != task_version {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval task version changed".into());
+                }
             }
+
+            self.invalidate_state_root_cache();
+            let entry =
+                self.pending_resolve_approvals
+                    .entry(task_id)
+                    .or_insert(PendingResolveApproval {
+                        slash_worker,
+                        confirmations: 0,
+                        first_approver: approver.trim().to_string(),
+                        authority_set: authority_set.to_string(),
+                        task_version,
+                    });
+            if entry.slash_worker != slash_worker {
+                return Err("resolve approval decision mismatch".into());
+            }
+            if entry.confirmations >= 2 {
+                return Err("resolve approval already finalized; clear pending approval first".into());
+            }
+            if entry.confirmations > 0 {
+                let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+                if first_approver_canonical == approver_canonical {
+                    return Err("resolve approval requires distinct approver".into());
+                }
+            }
+            entry.confirmations = entry.confirmations.saturating_add(1);
+            return Ok(entry.confirmations >= 2);
+        };
+        if task.status != TaskStatus::Challenged {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task no longer challenged".into());
+        }
+        if task.version != task_version {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task version changed".into());
+        }
+        if !task_supports_pending_resolve_restore(&task)
+            || (self.is_emergency_paused()
+                && !task_supports_pending_resolve_snapshot_restore(&task))
+        {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task boundary metadata incomplete".into());
         }
         ensure_effective_resolve_authority_match(self, authority_set)?;
 
@@ -1840,6 +1832,33 @@ impl StateStore {
         else {
             return;
         };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return;
+        };
+        if snapshot.first_approver != first_approver_canonical
+            || snapshot.authority_set != authority_canonical
+        {
+            return;
+        }
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return;
+        }
+        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
+            return;
+        }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.version != snapshot.task_version
+            || !task_supports_pending_resolve_snapshot_restore(&task)
+            || task.challenge_bond_forfeited != Some(!snapshot.slash_worker)
+        {
+            return;
+        }
 
         self.pending_resolve_approvals.insert(
             task_id,
@@ -1917,23 +1936,41 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
-                if task.task_id != id
-                    || (task.status == TaskStatus::Challenged
-                        && task
-                            .metadata
-                            .as_ref()
-                            .and_then(|metadata| metadata.metering.as_ref())
-                            .is_none())
-                    || !task_snapshot_metadata_is_complete(&task)
-                {
+                if id == 0 || task.task_id != id || task.version == 0 {
+                    self.pending_resolve_approvals.remove(&id);
                     self.objects.remove(&id);
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
-                let keep_pending_resolve =
-                    self.should_preserve_pending_resolve_on_task_restore(id, &task);
-                if !keep_pending_resolve {
+                if task.status == TaskStatus::Challenged
+                    && (!task_supports_pending_resolve_restore(&task)
+                        || (self.is_emergency_paused()
+                            && !task_supports_pending_resolve_snapshot_restore(&task)))
+                {
                     self.pending_resolve_approvals.remove(&id);
+                    self.objects.remove(&id);
+                    return;
+                }
+                match self.pending_resolve_approvals.get(&id) {
+                    Some(pending)
+                        if pending.confirmations != 1
+                            || validate_resolve_approver_token(&pending.first_approver).is_err()
+                            || canonicalize_resolve_authority_set(&pending.authority_set)
+                                .map(|canonical| {
+                                    canonical != pending.authority_set
+                                        || !canonical
+                                            .split(',')
+                                            .any(|member| member == pending.first_approver)
+                                })
+                                .unwrap_or(true)
+                            || !is_effective_resolve_authority_match(self, &pending.authority_set)
+                            || pending.task_version != task.version
+                            || !task_supports_pending_resolve_snapshot_restore(&task)
+                            || task.challenge_bond_forfeited != Some(!pending.slash_worker) =>
+                    {
+                        self.pending_resolve_approvals.remove(&id);
+                    }
+                    _ => {}
                 }
                 self.objects.insert(
                     id,
@@ -1960,6 +1997,7 @@ impl StateStore {
                 }
             }
             None => {
+                self.pending_resolve_approvals.remove(&id);
                 self.objects.remove(&id);
                 self.pending_resolve_approvals.remove(&id);
             }
@@ -2600,13 +2638,26 @@ impl StateStore {
                     self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
                     return;
                 }
-                if self.pending_gov_update_has_key_id_alias(key, snapshot.key_id) {
-                    self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
-                    self.clear_pending_gov_update_key_id_aliases(snapshot.key_id, key);
+                if !GOV_ALLOWED_KEYS.contains(&key) || !is_sensitive_gov_param(key) {
+                    self.pending_gov_updates.remove(key);
                     return;
                 }
-                self.pending_gov_updates
-                    .insert(snapshot.key.clone(), snapshot);
+                if let Some(existing_key_id) = self.gov_param_key_index.get(key).copied() {
+                    if existing_key_id != snapshot.key_id {
+                        self.pending_gov_updates.remove(key);
+                        return;
+                    }
+                }
+                if snapshot.activate_at_height == 0
+                    || validate_gov_param_value(key, &snapshot.value).is_err()
+                {
+                    self.pending_gov_updates.remove(key);
+                    return;
+                }
+                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if key == "resolve_authority" {
+                    self.pending_resolve_approvals.clear();
+                }
             }
             None => {
                 self.clear_pending_gov_update_bindings(key, None);
@@ -3255,6 +3306,22 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
+        // Fail closed on incomplete restore/replay metadata. Snapshot recovery must
+        // not trust checkpoint/WAL records that omit core identity fields, and it must
+        // not silently fall back to an older checkpoint once a newer WAL record is known
+        // to be truncated/corrupt.
+        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
+            return Ok(None);
+        }
+        if e.height > 1
+            && e
+                .prev_hash_hex
+                .as_ref()
+                .map(|prev| prev.trim().is_empty())
+                .unwrap_or(true)
+        {
+            return Ok(None);
+        }
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
@@ -3287,44 +3354,13 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        let matching_height_checkpoints: Vec<&CheckpointMeta> =
-            checkpoints.iter().filter(|cp| cp.height == e.height).collect();
-
-        if matching_height_checkpoints
-            .iter()
-            .any(|cp| !checkpoint_has_complete_proof_metadata(cp))
-        {
-            // Fail closed on incomplete checkpoint proof metadata. Recovery checkpoints must carry
-            // both the claimed state root and the corresponding WAL entry hash; blank fields are
-            // not auditable proof material and must not be treated as recoverable state.
-            return Ok(best_checkpoint);
-        }
-
-        if let Some(first) = matching_height_checkpoints.first() {
-            if matching_height_checkpoints.iter().any(|cp| {
-                cp.state_root_hex != first.state_root_hex
-                    || cp.wal_entry_hash_hex != first.wal_entry_hash_hex
-            }) {
-                // Fail closed on ambiguous same-height checkpoint claims. A recoverable height must
-                // resolve to one auditable (state root, WAL hash) tuple; extra stale/forked tuples
-                // are not snapshot-complete proof material.
-                return Ok(best_checkpoint);
+        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+            if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
+                // Fail closed on incomplete checkpoint metadata at a validated WAL height.
+                // Snapshot restore must not silently rewind to an older checkpoint when the
+                // most recent checkpoint record is present but truncated/corrupt.
+                return Ok(None);
             }
-        }
-
-        if matching_height_checkpoints.iter().any(|cp| {
-            (cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-                && cp.state_root_hex != e.state_root_hex)
-                || (cp.state_root_hex == e.state_root_hex
-                    && cur_hash.as_str() != cp.wal_entry_hash_hex.as_str())
-        }) {
-            // Fail closed on conflicting checkpoint metadata: a committed WAL entry at a given
-            // height must not simultaneously claim multiple state roots, and a checkpointed
-            // state root at that height must not simultaneously point at multiple WAL hashes.
-            return Ok(best_checkpoint);
-        }
-
-        for cp in matching_height_checkpoints {
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -8563,6 +8599,118 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_incomplete_zero_activation_height_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_313, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .expect("seed resolve_authority");
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "restore must fail closed when pending governance metadata omits a positive activation height"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_resolve_authority_scrubs_stale_pending_resolve_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("seed resolve_authority");
+
+        let task = TaskObject {
+            task_id: 7_701,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(20),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task));
+        st.restore_pending_resolve_approval(
+            7_701,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "resolver-v1".into(),
+                authority_set: "resolver-v1,resolver-v2".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(7_701), Some((true, 1)));
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending resolve_authority restore should succeed");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
+        assert!(
+            st.pending_resolve_approval(7_701).is_none(),
+            "restore must scrub stale pending resolve metadata across a resolve_authority boundary"
+        );
+    }
+
+    #[test]
     fn emergency_pause_unchecked_path_clears_stale_pending_entry_if_present() {
         let mut st = StateStore::new();
 
@@ -9636,6 +9784,799 @@ mod tests {
     }
 
     #[test]
+    fn restore_task_rejects_incomplete_challenged_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_task(
+            900,
+            Some(TaskObject {
+                task_id: 900,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(900).is_none(),
+            "restore must fail closed when challenged task snapshot metadata is incomplete"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_missing_challenge_bond() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits challenge bond metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits challenge bond metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_missing_forfeit_flag() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits forfeit metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_blank_challenger() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("   ".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits challenger metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits challenger metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_noncanonical_challenger() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some(" bob ".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot challenger is noncanonical"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot challenger is noncanonical"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_zero_challenge_bond() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            902,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            902,
+            Some(TaskObject {
+                task_id: 902,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(0),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(902).is_none(),
+            "paused restore must fail closed when challenged task snapshot zeroes challenge bond metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot zeroes challenge bond metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_stale_pending_resolve_metadata_on_forfeit_decision_mismatch() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must scrub stale pending resolve metadata when challenged task forfeit decision disagrees with staged slash decision"
+        );
+        assert!(
+            st.get_task(901).is_some(),
+            "task restore should still succeed while stale pending resolve metadata is dropped"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_snapshot_task_id_mismatch_and_scrubs_pending_metadata() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            905,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            905,
+            Some(TaskObject {
+                task_id: 906,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(905).is_none(),
+            "restore must fail closed when task snapshot id disagrees with restore target"
+        );
+        assert!(
+            st.pending_resolve_approval(905).is_none(),
+            "restore must scrub stale pending resolve metadata when snapshot id mismatches target"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_task_version_and_scrubs_pending_metadata() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            907,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            907,
+            Some(TaskObject {
+                task_id: 907,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 0,
+            }),
+        );
+
+        assert!(
+            st.get_task(907).is_none(),
+            "restore must fail closed when task snapshot version is zero"
+        );
+        assert!(
+            st.pending_resolve_approval(907).is_none(),
+            "restore must scrub stale pending resolve metadata when snapshot version is zero"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_noncanonical_pending_resolve_metadata_during_replay() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            908,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            908,
+            Some(TaskObject {
+                task_id: 908,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(908).is_some(),
+            "canonical challenged task snapshot should still restore while stale pending metadata is dropped"
+        );
+        assert!(
+            st.pending_resolve_approval(908).is_none(),
+            "restore replay must fail closed by scrubbing noncanonical pending resolve metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_pending_resolve_metadata_when_authority_set_mismatches_effective_governance() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            51,
+            51,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority should configure cleanly");
+        st.pending_resolve_approvals.insert(
+            909,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            909,
+            Some(TaskObject {
+                task_id: 909,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(909).is_some(),
+            "canonical challenged task snapshot should still restore while authority-drifted pending metadata is dropped"
+        );
+        assert!(
+            st.pending_resolve_approval(909).is_none(),
+            "restore replay must fail closed by scrubbing pending resolve metadata that no longer matches effective governance authority"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_noncanonical_snapshot_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 901,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should be restorable");
+
+        st.restore_pending_resolve_approval(
+            901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must fail closed for noncanonical pending resolve snapshot metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_incomplete_task_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 7,
+        })
+        .expect("challenged task should still insert for boundary regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task boundary metadata is incomplete"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_zeroed_task_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(0),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should still insert for zeroed boundary regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task snapshot uses zeroed boundary metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_paused_replay_scrubs_stale_snapshot_on_incomplete_task_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.pending_resolve_approvals.insert(
+            903,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.put_task_new(TaskObject {
+            task_id: 903,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 7,
+        })
+        .expect("challenged task should still insert for paused replay regression coverage");
+
+        st.restore_pending_resolve_approval(
+            903,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(903).is_none(),
+            "paused restore replay must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_forfeit_decision_metadata_mismatch() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 904,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 7,
+        })
+        .expect("challenged task should insert for metadata mismatch coverage");
+
+        st.restore_pending_resolve_approval(
+            904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(904).is_none(),
+            "restore must fail closed when challenge forfeit metadata disagrees with staged slash decision"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_task_security_fields_change() {
         let mut st = StateStore::new();
         let task = TaskObject {
@@ -10648,6 +11589,29 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_genesis_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint-only recovery must fail closed when WAL metadata omits proposal identity"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
         let e1 = WalMeta {
             height: 10,
@@ -11326,6 +12290,86 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_metadata_at_latest_valid_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed instead of rewinding to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_state_root_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed when state root identity is missing"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_does_not_accept_future_checkpoint_without_matching_wal_height() {
         let e1 = WalMeta {
             height: 1,
@@ -11675,76 +12719,42 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_rejects_blank_recovery_metadata() {
-        let blank_proposal = WalMeta {
+    fn wal_checkpoint_verification_rejects_incomplete_wal_metadata_in_restore_chain() {
+        let e1 = WalMeta {
             height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let incomplete_e2 = WalMeta {
+            height: 2,
             round: 0,
             proposal_hash: "".into(),
             committed: true,
-            state_root_hex: "r1".into(),
-            prev_hash_hex: None,
-        };
-        let blank_state_root = WalMeta {
-            height: 1,
-            round: 0,
-            proposal_hash: "p1".into(),
-            committed: true,
-            state_root_hex: "   ".into(),
-            prev_hash_hex: None,
-        };
-        let valid_entry = WalMeta {
-            height: 1,
-            round: 0,
-            proposal_hash: "p1".into(),
-            committed: true,
-            state_root_hex: "r1".into(),
-            prev_hash_hex: None,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
         };
 
-        let blank_proposal_checkpoint = vec![CheckpointMeta {
-            height: 1,
-            state_root_hex: "r1".into(),
-            wal_entry_hash_hex: blank_proposal.content_hash_hex(),
-        }];
-        let blank_state_root_checkpoint = vec![CheckpointMeta {
-            height: 1,
-            state_root_hex: "   ".into(),
-            wal_entry_hash_hex: blank_state_root.content_hash_hex(),
-        }];
-        let blank_checkpoint_state_root = vec![CheckpointMeta {
-            height: 1,
-            state_root_hex: "   ".into(),
-            wal_entry_hash_hex: valid_entry.content_hash_hex(),
-        }];
-        let blank_checkpoint_wal_hash = vec![CheckpointMeta {
-            height: 1,
-            state_root_hex: "r1".into(),
-            wal_entry_hash_hex: "   ".into(),
-        }];
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+            },
+        ];
 
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
         assert!(
-            verify_wal_and_find_checkpoint(&blank_proposal_checkpoint, &[blank_proposal])
-                .unwrap()
-                .is_none(),
-            "blank proposal metadata must fail closed during checkpoint recovery"
-        );
-        assert!(
-            verify_wal_and_find_checkpoint(&blank_state_root_checkpoint, &[blank_state_root])
-                .unwrap()
-                .is_none(),
-            "blank state-root metadata must fail closed during checkpoint recovery"
-        );
-        assert!(
-            verify_wal_and_find_checkpoint(&blank_checkpoint_state_root, &[valid_entry.clone()])
-                .unwrap()
-                .is_none(),
-            "blank checkpoint state-root metadata must not be accepted as a recoverable snapshot"
-        );
-        assert!(
-            verify_wal_and_find_checkpoint(&blank_checkpoint_wal_hash, &[valid_entry])
-                .unwrap()
-                .is_none(),
-            "blank checkpoint WAL-hash metadata must not be accepted as a recoverable snapshot"
+            got.is_none(),
+            "incomplete WAL metadata must fail closed instead of falling back to an older checkpoint"
         );
     }
 
@@ -11769,6 +12779,125 @@ mod tests {
         assert!(
             got.is_none(),
             "checkpointed WAL that starts above genesis must not be treated as recoverable application state"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_missing_prev_hash_metadata_mid_chain() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let incomplete_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some("   ".into()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "missing prev-hash metadata mid-chain must fail closed instead of falling back to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_only_checkpoint_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "   ".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "whitespace-only checkpoint metadata must fail closed instead of falling back to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_only_checkpoint_wal_hash_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "   ".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "whitespace-only checkpoint WAL hash metadata must fail closed instead of falling back to an older checkpoint"
         );
     }
 
