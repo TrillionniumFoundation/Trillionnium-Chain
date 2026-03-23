@@ -1,166 +1,9 @@
 use sha2::{Digest, Sha256};
 
-use crate::{ObjectValue, StateStore};
-use trnm_types::{Hash32, PrivacyTier, TaskMetadata, TaskMeteringSnapshot, TaskModelMetadata, TaskProvenanceMetadata};
-
-fn hash_u8(hasher: &mut Sha256, value: u8) {
-    hasher.update([value]);
-}
-
-fn hash_u64(hasher: &mut Sha256, value: u64) {
-    hasher.update(value.to_le_bytes());
-}
-
-fn hash_u128(hasher: &mut Sha256, value: u128) {
-    hasher.update(value.to_le_bytes());
-}
-
-fn hash_i128(hasher: &mut Sha256, value: i128) {
-    hasher.update(value.to_le_bytes());
-}
-
-fn hash_str(hasher: &mut Sha256, value: &str) {
-    hash_u64(hasher, value.len() as u64);
-    hasher.update(value.as_bytes());
-}
-
-fn hash_optional_str(hasher: &mut Sha256, value: Option<&str>) {
-    match value {
-        Some(value) => {
-            hash_u8(hasher, 1);
-            hash_str(hasher, value);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_optional_u64(hasher: &mut Sha256, value: Option<u64>) {
-    match value {
-        Some(value) => {
-            hash_u8(hasher, 1);
-            hash_u64(hasher, value);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_optional_u128(hasher: &mut Sha256, value: Option<u128>) {
-    match value {
-        Some(value) => {
-            hash_u8(hasher, 1);
-            hash_u128(hasher, value);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_optional_bool(hasher: &mut Sha256, value: Option<bool>) {
-    match value {
-        Some(value) => {
-            hash_u8(hasher, 1);
-            hash_u8(hasher, value as u8);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_optional_bytes<const N: usize>(hasher: &mut Sha256, value: Option<&[u8; N]>) {
-    match value {
-        Some(value) => {
-            hash_u8(hasher, 1);
-            hasher.update(value);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_privacy_tier(hasher: &mut Sha256, value: Option<&PrivacyTier>) {
-    match value {
-        Some(PrivacyTier::Public) => {
-            hash_u8(hasher, 1);
-            hash_u8(hasher, 0);
-        }
-        Some(PrivacyTier::Internal) => {
-            hash_u8(hasher, 1);
-            hash_u8(hasher, 1);
-        }
-        Some(PrivacyTier::Restricted) => {
-            hash_u8(hasher, 1);
-            hash_u8(hasher, 2);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_task_model_metadata(hasher: &mut Sha256, model: Option<&TaskModelMetadata>) {
-    match model {
-        Some(model) => {
-            hash_u8(hasher, 1);
-            hash_optional_str(hasher, model.model_id.as_deref());
-            hash_optional_str(hasher, model.model_digest.as_deref());
-            hash_optional_str(hasher, model.version.as_deref());
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_task_provenance_metadata(hasher: &mut Sha256, provenance: Option<&TaskProvenanceMetadata>) {
-    match provenance {
-        Some(provenance) => {
-            hash_u8(hasher, 1);
-            hash_optional_str(hasher, provenance.producer_did.as_deref());
-            hash_optional_str(hasher, provenance.produced_at.as_deref());
-            hash_optional_str(hasher, provenance.provenance_index.as_deref());
-            hash_privacy_tier(hasher, provenance.privacy_tier.as_ref());
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: Option<&TaskMeteringSnapshot>) {
-    match metering {
-        Some(metering) => {
-            hash_u8(hasher, 1);
-            hash_str(hasher, &metering.workload_class);
-            hash_str(hasher, &metering.metering_schema);
-            hash_u8(hasher, metering.policy_snapshot_version);
-            hash_str(hasher, &metering.receipt_hash);
-            hash_u64(hasher, metering.prompt_tokens);
-            hash_u64(hasher, metering.generated_tokens);
-            hash_u64(hasher, metering.decode_steps);
-            hash_u64(hasher, metering.kv_bytes_moved);
-            hash_u128(hasher, metering.normalized_work_units);
-            hash_u128(hasher, metering.prompt_token_weight);
-            hash_u128(hasher, metering.generated_token_weight);
-            hash_u128(hasher, metering.decode_step_weight);
-            hash_u128(hasher, metering.kv_byte_weight);
-            hash_u128(hasher, metering.min_accept_work_units);
-            hash_u128(hasher, metering.challenge_success_bounty_base);
-            hash_u128(hasher, metering.challenge_success_bounty_per_work_unit_num);
-            hash_u128(hasher, metering.challenge_success_bounty_per_work_unit_den);
-            hash_u128(hasher, metering.worker_completion_bonus_per_work_unit_num);
-            hash_u128(hasher, metering.worker_completion_bonus_per_work_unit_den);
-            hash_u128(hasher, metering.worker_slash_rebate_per_work_unit_num);
-            hash_u128(hasher, metering.worker_slash_rebate_per_work_unit_den);
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
-
-fn hash_task_metadata(hasher: &mut Sha256, metadata: Option<&TaskMetadata>) {
-    match metadata {
-        Some(metadata) => {
-            hash_u8(hasher, 1);
-            hash_optional_str(hasher, metadata.note.as_deref());
-            hash_optional_str(hasher, metadata.task_type.as_deref());
-            hash_optional_str(hasher, metadata.input_hash.as_deref());
-            hash_task_model_metadata(hasher, metadata.model.as_ref());
-            hash_task_provenance_metadata(hasher, metadata.provenance.as_ref());
-            hash_task_metering_snapshot(hasher, metadata.metering.as_ref());
-        }
-        None => hash_u8(hasher, 0),
-    }
-}
+use crate::{
+    canonicalize_resolve_authority_set, validate_resolve_approver_token, ObjectValue, StateStore,
+};
+use trnm_types::Hash32;
 
 impl StateStore {
     pub fn state_root(&self) -> Hash32 {
@@ -241,12 +84,18 @@ impl StateStore {
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
             hasher.update(b"resolve_pending");
-            hash_u64(&mut hasher, *task_id);
-            hash_u8(&mut hasher, pending.slash_worker as u8);
-            hash_u8(&mut hasher, pending.confirmations);
-            hash_str(&mut hasher, &pending.first_approver);
-            hash_str(&mut hasher, &pending.authority_set);
-            hash_u64(&mut hasher, pending.task_version);
+            hasher.update(task_id.to_le_bytes());
+            hasher.update([pending.slash_worker as u8]);
+            hasher.update([pending.confirmations]);
+
+            let hashed_first_approver = validate_resolve_approver_token(&pending.first_approver)
+                .unwrap_or_else(|_| pending.first_approver.clone());
+            let hashed_authority_set = canonicalize_resolve_authority_set(&pending.authority_set)
+                .unwrap_or_else(|_| pending.authority_set.clone());
+
+            hasher.update(hashed_first_approver.as_bytes());
+            hasher.update(hashed_authority_set.as_bytes());
+            hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());

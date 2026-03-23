@@ -168,11 +168,22 @@ impl StateStore {
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
         self.invalidate_state_root_cache();
-        match snapshot.and_then(|snapshot| {
-            validated_restorable_pending_resolve_snapshot(self, task_id, snapshot)
-        }) {
-            Some(entry) => {
-                self.pending_resolve_approvals.insert(task_id, entry);
+        match snapshot {
+            Some(snapshot) => {
+                if snapshot.confirmations != 1 {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                }
+                self.pending_resolve_approvals.insert(
+                    task_id,
+                    PendingResolveApproval {
+                        slash_worker: snapshot.slash_worker,
+                        confirmations: snapshot.confirmations,
+                        first_approver: snapshot.first_approver,
+                        authority_set: snapshot.authority_set,
+                        task_version: snapshot.task_version,
+                    },
+                );
             }
             None => {
                 self.pending_resolve_approvals.remove(&task_id);
