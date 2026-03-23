@@ -1,6 +1,34 @@
 use trnm_state::*;
 use trnm_types::*;
 
+fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
+    state.restore_task(
+        task_id,
+        Some(TaskObject {
+            task_id,
+            creator: "state-root-regression".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-root".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(9),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("challenger-root".into()),
+            challenge_bond_forfeited: Some(false),
+            version,
+        }),
+    );
+}
+
 #[test]
 fn new_tasks_canonicalize_embedded_version_for_state_root() {
     let mut state_a = StateStore::new();
@@ -27,7 +55,7 @@ fn new_tasks_canonicalize_embedded_version_for_state_root() {
                 provenance_index: Some("prov-task-8001".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -99,7 +127,8 @@ fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
 }
 
 #[test]
-fn governance_proposal_status_transition_should_affect_state_root_and_match_equivalent_update_path() {
+fn governance_proposal_status_transition_should_affect_state_root_and_match_equivalent_update_path()
+{
     let proposal = GovProposalObject {
         proposal_id: 9_002,
         title: "Raise challenge success bounty".into(),
@@ -172,6 +201,67 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
         state_a.state_root(),
         state_b.state_root(),
         "state_root should length-frame governance proposal title and proposer so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
+fn task_creator_and_worker_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "ab".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("c".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+    state_b
+        .put_task_new(TaskObject {
+            task_id: 8_005,
+            creator: "a".into(),
+            bounty: 99,
+            status: TaskStatus::Assigned,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("bc".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame task creator and worker so adjacent string boundaries cannot hash identically"
     );
 }
 
@@ -372,6 +462,37 @@ fn insertion_order_of_applied_gov_params_keeps_state_root_deterministic() {
 }
 
 #[test]
+fn applied_gov_param_embedded_key_id_must_affect_state_root_even_when_slot_key_and_value_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+    state_b.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 115,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "applied governance embedded key_id must contribute to state_root so malformed restore snapshots cannot alias a canonical applied slot"
+    );
+}
+
+#[test]
 fn applied_gov_param_version_must_affect_state_root_even_when_key_and_value_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -501,7 +622,8 @@ fn restore_pending_gov_update_none_rewinds_state_root_after_removal() {
 }
 
 #[test]
-fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_removing_target_entry() {
+fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_removing_target_entry()
+{
     let mut state = StateStore::new();
 
     state.restore_pending_gov_update(
@@ -547,6 +669,90 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
+fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and_rewinds_state_root() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 116,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+    let queued_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "true".into(),
+            activate_at_height: 321,
+        }),
+    );
+
+    assert_eq!(
+        state.pending_gov_update("emergency_pause"),
+        None,
+        "non-sensitive emergency_pause metadata must not be restorable into the pending governance queue"
+    );
+    assert_eq!(
+        state.state_root(),
+        queued_root,
+        "rejecting non-sensitive pending governance metadata must leave unrelated queued proof material untouched"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_rejects_snapshot_key_id_shadowing_live_governance_metadata() {
+    let mut state = StateStore::new();
+
+    let bootstrap = state
+        .set_gov_param(
+            150,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("bootstrap challenge_min_bond write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = state
+        .set_gov_param(
+            170,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("challenge_min_bond write should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "challenge_min_bond".into(),
+            value: "121".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert_eq!(
+        state.pending_gov_update("challenge_min_bond"),
+        None,
+        "restore must fail closed when pending governance proof material rebinds a live key onto a shadow key id"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting shadow key-id restore metadata must preserve the live governance state root"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
@@ -563,7 +769,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
             input_hash: None,
             model: None,
             provenance: None,
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -662,7 +868,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
                 version: None,
             }),
             provenance: None,
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -701,6 +907,83 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
         st1.state_root(),
         st2.state_root(),
         "State root should length-frame nested task model metadata strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
+fn task_metering_snapshot_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_503,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "gpu.inference".into(),
+                metering_schema: "llm/v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 30,
+                kv_bytes_moved: 40,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 6,
+                challenge_success_bounty_per_work_unit_num: 7,
+                challenge_success_bounty_per_work_unit_den: 8,
+                worker_completion_bonus_per_work_unit_num: 9,
+                worker_completion_bonus_per_work_unit_den: 10,
+                worker_slash_rebate_per_work_unit_num: 11,
+                worker_slash_rebate_per_work_unit_den: 12,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .expect("task metadata should exist")
+        .metering
+        .as_mut()
+        .expect("task metering snapshot should exist")
+        .normalized_work_units = 51;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root must include task metering snapshot evidence so checkpoint audit surfaces cannot ignore metering-only task metadata changes"
     );
 }
 
@@ -870,7 +1153,7 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
                 provenance_index: Some("prov-privacy-1".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: None,
         committed_hash: None,
@@ -889,8 +1172,14 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
     };
 
     let mut changed_task = base_task.clone();
-    changed_task.metadata.as_mut().unwrap().provenance.as_mut().unwrap().privacy_tier =
-        Some(PrivacyTier::Restricted);
+    changed_task
+        .metadata
+        .as_mut()
+        .unwrap()
+        .provenance
+        .as_mut()
+        .unwrap()
+        .privacy_tier = Some(PrivacyTier::Restricted);
 
     st1.put_task_new(base_task).unwrap();
     st2.put_task_new(changed_task).unwrap();
@@ -961,6 +1250,37 @@ fn embedded_pending_gov_update_key_should_affect_state_root() {
 }
 
 #[test]
+fn pending_gov_update_string_field_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "ab",
+        Some(PendingGovParamUpdate {
+            key_id: 7_000,
+            key: "ab".into(),
+            value: "c".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "a",
+        Some(PendingGovParamUpdate {
+            key_id: 7_000,
+            key: "a".into(),
+            value: "bc".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame pending governance key/value strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn pending_gov_update_key_id_should_affect_state_root_even_when_payload_matches() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -1013,11 +1333,9 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
     let mut st_a = StateStore::new();
     let mut st_b = StateStore::new();
 
-    st_a
-        .stage_or_confirm_resolve_approval(9_101, 1, true, "ab", "ab,c")
+    st_a.stage_or_confirm_resolve_approval(9_101, 1, true, "ab", "ab,c")
         .expect("first pending resolve snapshot should be valid");
-    st_b
-        .stage_or_confirm_resolve_approval(9_101, 1, true, "a", "a,bc")
+    st_b.stage_or_confirm_resolve_approval(9_101, 1, true, "a", "a,bc")
         .expect("second pending resolve snapshot should be valid");
 
     assert_ne!(
@@ -1028,9 +1346,101 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_canonical_actor_forms_should_keep_state_root_stable() {
+    let mut staged = StateStore::new();
+    let mut restored = StateStore::new();
+
+    staged.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
+    restored.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_501,
+            key: "resolve_authority".into(),
+            value: "authority.alpha,authority.beta".into(),
+            activate_at_height: 10,
+        }),
+    );
+
+    staged
+        .stage_or_confirm_resolve_approval(
+            9_102,
+            1,
+            true,
+            "AUTHORITY.ALPHA",
+            "AUTHORITY.BETA,AUTHORITY.ALPHA",
+        )
+        .expect("staging should canonicalize equivalent pending resolve authority metadata");
+    restored.restore_pending_resolve_approval(
+        9_102,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(
+        staged.pending_resolve_first_approver(9_102).as_deref(),
+        Some("authority.alpha"),
+        "staged pending resolve approvals should store canonical approver ids"
+    );
+    assert_eq!(
+        staged
+            .pending_resolve_approval_snapshot(9_102)
+            .expect("staged snapshot should exist")
+            .authority_set,
+        "authority.alpha,authority.beta",
+        "staged pending resolve approvals should store canonical authority ordering"
+    );
+    assert_eq!(
+        restored.state_root(),
+        staged.state_root(),
+        "state_root should ignore case and ordering noise once pending resolve authority metadata is canonicalized"
+    );
+}
+
+#[test]
 fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_matches() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
+
+    let restore_task = |task_id| TaskObject {
+        task_id,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Challenged,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 3,
+    };
+
+    for state in [&mut state_a, &mut state_b] {
+        state.restore_task(4_201, Some(restore_task(4_201)));
+        state.restore_task(4_202, Some(restore_task(4_202)));
+    }
 
     let snapshot = PendingResolveApprovalSnapshot {
         slash_worker: true,
@@ -1060,13 +1470,56 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
             task_version: 3,
         }),
     );
-    state_b.restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    state_b
+        .restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
     state_b.restore_pending_resolve_approval(4_202, None);
 
     assert_eq!(
         state_b.state_root(),
         root_a,
         "moving an identical pending resolve snapshot onto the original task id and removing the extra entry should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
+fn pending_resolve_task_version_must_affect_state_root_even_when_other_snapshot_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        4_201,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 4,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    assert_ne!(
+        root_a,
+        state_b.state_root(),
+        "state_root must include the pending resolve task version so identical approval payloads for different task snapshots cannot hash identically"
+    );
+
+    state_b
+        .restore_pending_resolve_approval(4_201, state_a.pending_resolve_approval_snapshot(4_201));
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the same pending resolve task version must rewind state_root exactly"
     );
 }
 
@@ -1087,7 +1540,8 @@ fn treasury_balance_address_boundaries_should_affect_state_root() {
 }
 
 #[test]
-fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_treasury_and_monetary_fields_match() {
+fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_treasury_and_monetary_fields_match(
+) {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
@@ -1146,7 +1600,8 @@ fn challenge_escrow_treasury_balance_must_affect_state_root_even_when_other_trea
 }
 
 #[test]
-fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state() {
+fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state(
+) {
     let mut missing = StateStore::new();
     let mut explicit_zero = StateStore::new();
 
@@ -1267,25 +1722,56 @@ fn insertion_order_of_balances_pending_and_monetary_snapshots_keeps_state_root_d
 }
 
 #[test]
-fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
+fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches()
+{
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
 
     for st in [&mut st1, &mut st2] {
-        st.set_gov_param(0, 1, "monetary_policy_tick_interval_blocks".to_string(), "10".to_string())
-            .unwrap();
-        st.set_gov_param(0, 2, "monetary_policy_tick_cooldown_blocks".to_string(), "1".to_string())
-            .unwrap();
+        st.set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+        st.set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
     }
 
-    st1.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
-        .unwrap();
-    st1.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
-        .unwrap();
-    st2.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "9".to_string())
-        .unwrap();
-    st2.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "7".to_string())
-        .unwrap();
+    st1.set_gov_param(
+        0,
+        3,
+        "monetary_base_issuance_per_tick".to_string(),
+        "7".to_string(),
+    )
+    .unwrap();
+    st1.set_gov_param(
+        0,
+        4,
+        "monetary_base_burn_per_tick".to_string(),
+        "5".to_string(),
+    )
+    .unwrap();
+    st2.set_gov_param(
+        0,
+        3,
+        "monetary_base_issuance_per_tick".to_string(),
+        "9".to_string(),
+    )
+    .unwrap();
+    st2.set_gov_param(
+        0,
+        4,
+        "monetary_base_burn_per_tick".to_string(),
+        "7".to_string(),
+    )
+    .unwrap();
 
     let e1 = st1.policy_tick(10).unwrap();
     let e2 = st2.policy_tick(10).unwrap();
@@ -1329,10 +1815,20 @@ fn restoring_pending_and_monetary_state_rewinds_state_root_symmetrically() {
         )
         .unwrap();
     baseline
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     baseline
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     baseline.policy_tick(10).unwrap();
     baseline.set_balance("treasury.challenge_forfeits", 11);
@@ -1432,6 +1928,561 @@ fn explicit_restore_apis_rewind_state_root_after_task_balance_and_pending_resolv
 }
 
 #[test]
+fn restore_task_same_snapshot_preserves_pending_resolve_when_authority_is_still_canonical() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let challenged_snapshot = state.get_task(10);
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    state.restore_task(10, challenged_snapshot);
+
+    assert_eq!(state.get_task(10).unwrap().version, challenged_ref.version);
+    assert_eq!(state.get_task(10).unwrap().status, TaskStatus::Challenged);
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+    assert_eq!(
+        state.state_root(),
+        root_with_pending,
+        "same-snapshot restore re-entry should noop when the staged pending resolve snapshot still matches the canonical authority boundary"
+    );
+}
+
+#[test]
+fn restore_task_same_snapshot_scrubs_pending_resolve_after_proof_and_metadata_drift() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("baseline".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let challenged_snapshot = state.get_task(10);
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    let mut drifted_snapshot = challenged_snapshot.clone().expect("challenged snapshot should exist");
+    drifted_snapshot.proof_type = ProofType::Zk;
+    drifted_snapshot.metadata = Some(TaskMetadata {
+        note: Some("drifted".into()),
+        task_type: Some("verification".into()),
+        input_hash: Some("cd".repeat(32)),
+        model: None,
+        provenance: None,
+        metering: None,
+    });
+    state.restore_task(10, Some(drifted_snapshot));
+
+    assert_eq!(state.get_task(10).unwrap().version, challenged_ref.version);
+    assert_eq!(state.get_task(10).unwrap().status, TaskStatus::Challenged);
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "same-version task snapshot drift in proof/metadata must scrub pending resolve state so restore re-entry cannot reuse a stale object boundary"
+    );
+}
+
+#[test]
+fn restore_task_same_snapshot_scrubs_pending_resolve_after_authority_drift() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let challenged_snapshot = state.get_task(10);
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-c,resolver-d".into(),
+            version: 2,
+        }),
+    );
+
+    state.restore_task(10, challenged_snapshot);
+
+    assert_eq!(state.get_task(10).unwrap().version, challenged_ref.version);
+    assert_eq!(state.get_task(10).unwrap().status, TaskStatus::Challenged);
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "same-snapshot restore re-entry must scrub pending resolve state once authority drift makes the staged approval non-restorable"
+    );
+}
+
+#[test]
+fn restore_task_same_snapshot_scrubs_pending_resolve_after_pending_authority_drift() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let challenged_snapshot = state.get_task(10);
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-c,resolver-d".into(),
+            activate_at_height: 42,
+        }),
+    );
+
+    state.restore_task(10, challenged_snapshot);
+
+    assert_eq!(state.get_task(10).unwrap().version, challenged_ref.version);
+    assert_eq!(state.get_task(10).unwrap().status, TaskStatus::Challenged);
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "same-snapshot restore re-entry must scrub pending resolve state once a pending resolve_authority update changes the effective restore boundary"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_identical_resolve_authority_snapshot_is_reentry_noop() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+
+    let snapshot = PendingGovParamUpdate {
+        key_id: 1,
+        key: "resolve_authority".into(),
+        value: "resolver-c,resolver-d".into(),
+        activate_at_height: 42,
+    };
+    state.restore_pending_gov_update("resolve_authority", Some(snapshot.clone()));
+    assert_eq!(state.pending_resolve_approval(10), None);
+
+    state
+        .stage_or_confirm_resolve_approval(10, challenged_ref.version, true, "resolver-c", "resolver-c,resolver-d")
+        .expect("staging resolve approval after boundary scrub should succeed");
+    let root_with_pending = state.state_root();
+    let pending_snapshot = state.pending_resolve_approval_snapshot(10);
+
+    state.restore_pending_gov_update("resolve_authority", Some(snapshot));
+
+    assert_eq!(state.pending_resolve_approval_snapshot(10), pending_snapshot);
+    assert_eq!(state.state_root(), root_with_pending);
+}
+
+#[test]
+fn restore_pending_resolve_identical_snapshot_revalidates_effective_authority_boundary() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging the initial resolve approval should succeed");
+    let stale_snapshot = state
+        .pending_resolve_approval_snapshot(10)
+        .expect("stale pending resolve snapshot should exist before authority drift");
+    let root_with_stale_pending = state.state_root();
+
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-c,resolver-d".into(),
+            version: 2,
+        }),
+    );
+
+    state.restore_pending_resolve_approval(10, Some(stale_snapshot));
+
+    assert_eq!(
+        state.pending_resolve_approval(10),
+        None,
+        "restoring an identical stale pending snapshot must revalidate the effective resolve authority boundary and scrub the orphaned approval"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_stale_pending,
+        "scrubbing the stale pending resolve snapshot after authority drift must perturb the deterministic root"
+    );
+}
+
+#[test]
+fn update_task_version_change_scrubs_staged_pending_resolve_and_changes_state_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(
+            0,
+            1,
+            "resolve_authority".into(),
+            "resolver-a,resolver-b".into(),
+        )
+        .expect("resolve authority should be configurable for staged restore-boundary checks");
+
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 10,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+
+    let mut challenged = state.get_task(task_ref.id).unwrap();
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenger = Some("bob".into());
+    challenged.challenge_bond = Some(17);
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+
+    state
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-a",
+            "resolver-a,resolver-b",
+        )
+        .expect("staging a first resolve approval should succeed");
+    let root_with_pending = state.state_root();
+    assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
+
+    let mut reopened = state.get_task(10).unwrap();
+    reopened.status = TaskStatus::Open;
+    reopened.challenger = None;
+    reopened.challenge_bond = None;
+    state
+        .update_task(challenged_ref, reopened)
+        .expect("version-advancing task update should succeed");
+
+    assert_eq!(state.pending_resolve_approval(10), None);
+    assert_ne!(
+        state.state_root(),
+        root_with_pending,
+        "task version/status updates must scrub stale staged resolve approvals so restore re-entry cannot inherit an orphan snapshot"
+    );
+}
+
+#[test]
 fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
     let mut state = StateStore::new();
     let task = TaskObject {
@@ -1476,10 +2527,20 @@ fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     state.policy_tick(10).unwrap();
 
@@ -1587,7 +2648,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
                 provenance_index: Some("prov-task-10101".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -1605,7 +2666,9 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
         version: 3,
     };
 
-    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let task_ref = state
+        .put_task_new(task)
+        .expect("task insert should succeed");
     let task_id = task_ref.id;
     let task_snapshot = state.get_task(task_id);
     let baseline_root = state.state_root();
@@ -1646,6 +2709,86 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
         state.state_root(),
         baseline_root,
         "restoring the original task snapshot must rewind state_root exactly after proof/metadata mutations"
+    );
+}
+
+#[test]
+fn restore_task_incomplete_metering_metadata_fails_closed_and_rewinds_to_baseline_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_task(
+        10_303,
+        Some(TaskObject {
+            task_id: 10_303,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("audit-proof snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:30:00Z".into()),
+                    provenance_index: Some("prov-task-10303".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "   ".into(),
+                    prompt_tokens: 10,
+                    generated_tokens: 20,
+                    decode_steps: 30,
+                    kv_bytes_moved: 40,
+                    normalized_work_units: 50,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 2,
+                    decode_step_weight: 3,
+                    kv_byte_weight: 4,
+                    min_accept_work_units: 5,
+                    challenge_success_bounty_base: 6,
+                    challenge_success_bounty_per_work_unit_num: 7,
+                    challenge_success_bounty_per_work_unit_den: 8,
+                    worker_completion_bonus_per_work_unit_num: 9,
+                    worker_completion_bonus_per_work_unit_den: 10,
+                    worker_slash_rebate_per_work_unit_num: 11,
+                    worker_slash_rebate_per_work_unit_den: 12,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x21; 32]),
+            result_hash: Some([0x34; 32]),
+            reveal_salt: Some([0x55; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(52),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(10_303).is_none(),
+        "restore_task should fail closed when metering proof metadata is incomplete"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting incomplete metering proof metadata must preserve the canonical baseline state root"
     );
 }
 
@@ -1740,7 +2883,7 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
                 provenance_index: Some("prov-task-10202".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
-        metering: None,
+            metering: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x21; 32]),
@@ -1758,9 +2901,13 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
         version: 3,
     };
 
-    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let task_ref = state
+        .put_task_new(task)
+        .expect("task insert should succeed");
     let canonical_root = state.state_root();
-    let snapshot = state.get_task(task_ref.id).expect("canonical task snapshot should exist");
+    let snapshot = state
+        .get_task(task_ref.id)
+        .expect("canonical task snapshot should exist");
 
     state.restore_task(task_ref.id + 1, Some(snapshot.clone()));
     assert!(
@@ -1792,6 +2939,37 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
         state.state_root(),
         canonical_root,
         "repeated reads after clearing the mismatched task slot should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
+fn restore_task_none_on_non_task_slot_fails_closed_and_preserves_canonical_applied_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(0, 10_303, "max_block_ms".to_string(), "500".to_string())
+        .expect("canonical applied governance param should succeed");
+    let canonical_snapshot = state
+        .get_param(10_303)
+        .expect("canonical applied governance snapshot should exist");
+    let canonical_root = state.state_root();
+
+    state.restore_task(10_303, None);
+
+    assert_eq!(
+        state.get_param(10_303),
+        Some(canonical_snapshot),
+        "restore_task(None) must fail closed when pointed at a non-task object slot"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "task restore must not scrub the applied governance key index when the slot is not a task"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "restore_task(None) on a non-task slot must preserve the canonical deterministic applied-param root"
     );
 }
 
@@ -1831,6 +3009,11 @@ fn pending_resolve_task_id_slot_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    install_pending_resolve_root_task(&mut state_a, 5_148, 7);
+    install_pending_resolve_root_task(&mut state_a, 5_149, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_148, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_149, 7);
+
     let snapshot = PendingResolveApprovalSnapshot {
         slash_worker: true,
         confirmations: 1,
@@ -1863,6 +3046,9 @@ fn pending_resolve_task_id_slot_must_affect_state_root() {
 fn pending_resolve_slash_worker_flag_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
+
+    install_pending_resolve_root_task(&mut state_a, 5_149, 7);
+    install_pending_resolve_root_task(&mut state_b, 5_149, 7);
 
     state_a.restore_pending_resolve_approval(
         5_149,
@@ -1911,9 +3097,93 @@ fn pending_resolve_slash_worker_flag_must_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+    let mut baseline = StateStore::new();
+    let mut replayed = StateStore::new();
+
+    baseline.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    replayed.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 0,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    let baseline_root = baseline.state_root();
+    let empty_root = StateStore::new().state_root();
+    assert_eq!(
+        replayed.pending_resolve_approval(5_149),
+        None,
+        "zero-confirmation restore snapshots must scrub instead of materializing a pending resolve entry that was never staged"
+    );
+    assert_eq!(
+        replayed.state_root(),
+        empty_root,
+        "zero-confirmation restore snapshots must fail closed back to the canonical empty pending-resolve root"
+    );
+    replayed.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        replayed.state_root(),
+        baseline_root,
+        "restoring the canonical staged snapshot after a zero-confirmation scrub must rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
+
+    for state in [&mut state_a, &mut state_b] {
+        state.restore_task(
+            5_150,
+            Some(TaskObject {
+                task_id: 5_150,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+    }
 
     state_a.restore_pending_resolve_approval(
         5_150,
@@ -1939,6 +3209,7 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let root_a = state_a.state_root();
     let root_b = state_b.state_root();
     assert_eq!(state_b.pending_resolve_approval(5_150), None);
+    assert_eq!(state_b.pending_resolve_first_approver(5_150), None);
     assert_ne!(
         root_a, root_b,
         "finalized restore snapshots without an encoded second approver must scrub instead of materializing a fake quorum"
@@ -1959,6 +3230,58 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
         state_b.state_root(),
         root_a,
         "restoring the original staged snapshot should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 0,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_eq!(state_b.pending_resolve_approval(5_151), None);
+    assert_ne!(
+        root_a, root_b,
+        "zero-confirmation restore snapshots must scrub instead of materializing an incomplete pending resolve quorum"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original staged snapshot should rewind the deterministic root exactly after scrubbing an incomplete snapshot"
     );
 }
 
@@ -2014,15 +3337,59 @@ fn pending_resolve_first_approver_must_affect_state_root() {
 }
 
 #[test]
-fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root() {
+fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root(
+) {
     let mut state = StateStore::new();
     state
-        .stage_or_confirm_resolve_approval(5150, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .set_gov_param(
+            98_300,
+            7_310,
+            "resolve_authority".into(),
+            "resolver-a,resolver-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    state
+        .set_gov_param(
+            98_320,
+            7_310,
+            "resolve_authority".into(),
+            "resolver-a,resolver-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    state
+        .put_task_new(TaskObject {
+            task_id: 5_150,
+            creator: "alice".into(),
+            bounty: 42,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(42),
+            challenge_bond: Some(17),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should exist before restore rewind");
+    state
+        .stage_or_confirm_resolve_approval(5150, 1, true, "resolver-a", "resolver-a,resolver-b")
         .expect("initial staged resolve approval should succeed");
 
     let baseline_root = state.state_root();
     let baseline_snapshot = state.pending_resolve_approval_snapshot(5150);
-    assert!(baseline_snapshot.is_some(), "sanity: snapshot should capture staged approval");
+    assert!(
+        baseline_snapshot.is_some(),
+        "sanity: snapshot should capture staged approval"
+    );
 
     state.restore_pending_resolve_approval(
         5150,
@@ -2052,6 +3419,70 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
         state.state_root(),
         baseline_root,
         "repeated reads after restoring pending resolve authority metadata should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_canonicalizes_semantically_equivalent_authority_metadata() {
+    let canonical_snapshot = PendingResolveApprovalSnapshot {
+        slash_worker: true,
+        confirmations: 1,
+        first_approver: "resolver-a".into(),
+        authority_set: "resolver-a,resolver-b".into(),
+        task_version: 7,
+    };
+
+    let mut canonical_state = StateStore::new();
+    let mut replayed_state = StateStore::new();
+    for state in [&mut canonical_state, &mut replayed_state] {
+        state.restore_task(
+            5_151,
+            Some(TaskObject {
+                task_id: 5_151,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+    }
+
+    canonical_state.restore_pending_resolve_approval(5_151, Some(canonical_snapshot.clone()));
+    replayed_state.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "ReSoLvEr-A".into(),
+            authority_set: "resolver-B,ReSoLvEr-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        replayed_state.pending_resolve_approval_snapshot(5_151),
+        Some(canonical_snapshot),
+        "restore should canonicalize first approver and authority set before materializing staged pending resolve state"
+    );
+    assert_eq!(
+        replayed_state.state_root(),
+        canonical_state.state_root(),
+        "semantically equivalent pending resolve restore snapshots must re-enter with the same deterministic state_root"
     );
 }
 
@@ -2172,7 +3603,8 @@ fn insertion_order_of_multiple_pending_resolve_entries_keeps_state_root_determin
 }
 
 #[test]
-fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root() {
+fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root(
+) {
     let mut state = StateStore::new();
     state
         .stage_or_confirm_resolve_approval(5_151, 7, true, "resolver-a", "resolver-a,resolver-b")
@@ -2180,7 +3612,10 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
 
     let baseline_root = state.state_root();
     let baseline_snapshot = state.pending_resolve_approval_snapshot(5_151);
-    assert!(baseline_snapshot.is_some(), "sanity: snapshot should capture staged approval");
+    assert!(
+        baseline_snapshot.is_some(),
+        "sanity: snapshot should capture staged approval"
+    );
 
     state.restore_pending_resolve_approval(
         5_151,
@@ -2214,6 +3649,33 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
 }
 
 #[test]
+fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_resolve_approval(
+        5_199,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a,resolver-b".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_199).is_none(),
+        "restore_pending_resolve_approval should fail closed instead of materializing a malformed checkpoint snapshot"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "malformed pending resolve checkpoint evidence must not perturb the canonical empty root"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
@@ -2233,17 +3695,17 @@ fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root(
 
     state.restore_pending_resolve_approval(5_201, Some(snapshot.clone()));
     assert!(
-        state.pending_resolve_approval_snapshot(5_201).is_some(),
-        "restoring a pending resolve snapshot through another task slot should materialize a distinct staged entry for that slot"
+        state.pending_resolve_approval_snapshot(5_201).is_none(),
+        "restoring a pending resolve snapshot through another task slot without a matching challenged task must fail closed"
     );
     assert!(
         state.pending_resolve_approval_snapshot(5_200).is_some(),
         "mismatched-slot restore must preserve the canonical pending task slot"
     );
-    assert_ne!(
+    assert_eq!(
         state.state_root(),
         canonical_pending_root,
-        "adding the same pending resolve snapshot under a second task slot must perturb the root because the task_id slot is part of state identity"
+        "rejecting an orphaned mismatched-slot restore must preserve the canonical pending root"
     );
 
     state.restore_pending_resolve_approval(5_201, None);
@@ -2561,6 +4023,113 @@ fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
         state.state_root(),
         canonical_root,
         "repeated reads after mismatched-slot restore should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
+fn restore_gov_param_rejects_noncanonical_emergency_pause_key_id_without_aliasing_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_gov_param(
+        7_998,
+        Some(GovParamObject {
+            key_id: 7_998,
+            key: "emergency_pause".to_string(),
+            value: "true".to_string(),
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_param(7_998).is_none(),
+        "restore must fail closed when emergency_pause arrives through a non-canonical key id"
+    );
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        None,
+        "non-canonical emergency_pause restore must not alias into the canonical governance key registry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting a non-canonical emergency_pause restore must preserve the baseline deterministic root"
+    );
+}
+
+#[test]
+fn restore_gov_param_rejects_noncanonical_snapshot_without_deleting_live_canonical_param() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_200, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let live_snapshot = state
+        .get_param(7_999)
+        .expect("live canonical emergency_pause object must exist");
+    let root_before = state.state_root();
+
+    state.restore_gov_param(
+        7_999,
+        Some(GovParamObject {
+            key_id: 7_999,
+            key: " emergency_pause".to_string(),
+            value: "false".to_string(),
+            version: live_snapshot.version + 1,
+        }),
+    );
+
+    let after = state
+        .get_param(7_999)
+        .expect("invalid restore must not delete the live canonical governance object");
+    assert_eq!(after.key, live_snapshot.key);
+    assert_eq!(after.value, live_snapshot.value);
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "invalid restore must preserve the canonical governance registry binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "invalid restore must preserve the prior deterministic root instead of deleting the live canonical governance slot"
+    );
+}
+
+#[test]
+fn restore_gov_param_rejects_unknown_snapshot_without_deleting_live_canonical_param() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_210, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let live_snapshot = state
+        .get_param(7_999)
+        .expect("live canonical emergency_pause object must exist");
+    let root_before = state.state_root();
+
+    state.restore_gov_param(
+        7_999,
+        Some(GovParamObject {
+            key_id: 7_999,
+            key: "emergency_pause_alias".to_string(),
+            value: "false".to_string(),
+            version: live_snapshot.version + 1,
+        }),
+    );
+
+    let after = state
+        .get_param(7_999)
+        .expect("unknown-key restore must not delete the live canonical governance object");
+    assert_eq!(after.key, live_snapshot.key);
+    assert_eq!(after.value, live_snapshot.value);
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "unknown-key restore must preserve the canonical governance registry binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "unknown-key restore must preserve the prior deterministic root instead of deleting the live canonical governance slot"
     );
 }
 
@@ -2915,17 +4484,30 @@ fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
 
     let baseline_root = state.state_root();
     let monetary_snapshot = state.monetary_state_snapshot();
 
     let event = state.policy_tick(10).unwrap();
-    assert_eq!(event.net_delta, 0, "sanity: tick should have zero net issuance");
+    assert_eq!(
+        event.net_delta, 0,
+        "sanity: tick should have zero net issuance"
+    );
     assert_eq!(
         state.monetary_state().net_issuance,
         monetary_snapshot.net_issuance,
@@ -2972,14 +4554,29 @@ fn blocked_policy_tick_keeps_monetary_snapshot_and_state_root_stable() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "3".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "3".to_string(),
+        )
         .unwrap();
 
-    let first_event = state.policy_tick(10).expect("initial tick should fire at the configured interval");
-    assert_eq!(first_event.tick_count, 1, "sanity: first successful tick should advance tick_count");
+    let first_event = state
+        .policy_tick(10)
+        .expect("initial tick should fire at the configured interval");
+    assert_eq!(
+        first_event.tick_count, 1,
+        "sanity: first successful tick should advance tick_count"
+    );
 
     let baseline_snapshot = state.monetary_state_snapshot();
     let baseline_root = state.state_root();
@@ -3080,10 +4677,20 @@ fn restore_combined_pending_and_monetary_none_roundtrip_rewinds_state_root() {
         )
         .unwrap();
     state
-        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .set_gov_param(
+            0,
+            3,
+            "monetary_base_issuance_per_tick".to_string(),
+            "7".to_string(),
+        )
         .unwrap();
     state
-        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .set_gov_param(
+            0,
+            4,
+            "monetary_base_burn_per_tick".to_string(),
+            "5".to_string(),
+        )
         .unwrap();
 
     let baseline_root = state.state_root();
@@ -3261,7 +4868,9 @@ fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_ent
 
     let root_with_both = state.state_root();
     assert!(state.pending_gov_update("challenge_min_bond").is_some());
-    assert!(state.pending_gov_update("challenge_success_bounty").is_some());
+    assert!(state
+        .pending_gov_update("challenge_success_bounty")
+        .is_some());
 
     state.restore_pending_gov_update("challenge_min_bond", None);
 
@@ -3270,7 +4879,9 @@ fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_ent
         "slot-scoped restore should remove the targeted pending key"
     );
     assert!(
-        state.pending_gov_update("challenge_success_bounty").is_some(),
+        state
+            .pending_gov_update("challenge_success_bounty")
+            .is_some(),
         "slot-scoped restore must preserve unrelated pending keys"
     );
     assert_ne!(
@@ -3296,7 +4907,10 @@ fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_s
             "6000".to_string(),
         )
         .expect("sensitive governance update should stage successfully");
-    assert!(matches!(challenge_outcome, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(matches!(
+        challenge_outcome,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
 
     let challenge_snapshot = state
         .pending_gov_update("challenge_min_bond")
@@ -3396,6 +5010,41 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
         state.state_root(),
         baseline_root,
         "repeated reads after a mismatched restore must deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_non_canonical_metadata_fails_closed_without_aliasing_snapshot_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "challenge_min_bond ".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "non-canonical restore metadata must clear the requested slot instead of staging a whitespace-variant pending key"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond ").is_none(),
+        "non-canonical restore metadata must not materialize a foreign pending entry under the malformed snapshot key"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-canonical pending governance metadata must fail closed without perturbing the deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after rejecting malformed pending governance metadata should deterministically reuse the unchanged cached root"
     );
 }
 
@@ -3502,10 +5151,7 @@ fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserve
     );
 
     let mut expected = StateStore::new();
-    expected.restore_pending_gov_update(
-        "challenge_min_bond",
-        Some(canonical_other_snapshot),
-    );
+    expected.restore_pending_gov_update("challenge_min_bond", Some(canonical_other_snapshot));
 
     assert_ne!(
         state.state_root(),
@@ -3800,7 +5446,341 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
 }
 
 #[test]
-fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index() {
+fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "canonical checkpoint/WAL evidence surfaces should be recognized as audit-ready"
+    );
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex = "not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &wal),
+        "checkpoint state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut bad_wal = wal.clone();
+    bad_wal.state_root_hex = "still-not-hex".into();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &bad_wal),
+        "WAL state_root_hex must be canonical hex for audit evidence surfaces"
+    );
+
+    let mut mismatched_checkpoint_root = checkpoint.clone();
+    mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal),
+        "checkpoint state_root_hex must match the evidenced WAL state root for audit-ready checkpoint surfaces"
+    );
+
+    let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+    mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal),
+        "checkpoint wal_entry_hash_hex must bind to the exact WAL content hash for audit-ready checkpoint surfaces"
+    );
+
+    let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
+    uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint_wal_hash, &wal),
+        "checkpoint wal_entry_hash_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case WAL digest encodings"
+    );
+
+    let mut uppercase_checkpoint = checkpoint.clone();
+    uppercase_checkpoint.state_root_hex = uppercase_checkpoint.state_root_hex.to_uppercase();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal),
+        "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
+    );
+
+    let mut mismatched_height_checkpoint = checkpoint.clone();
+    mismatched_height_checkpoint.height = wal.height + 1;
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mismatched_height_checkpoint, &wal),
+        "checkpoint height must bind to the exact WAL height so audit evidence surfaces cannot replay canonical hashes across different checkpoint slots"
+    );
+
+    let mut zero_height_checkpoint = checkpoint.clone();
+    zero_height_checkpoint.height = 0;
+    let mut zero_height_wal = wal.clone();
+    zero_height_wal.height = 0;
+    zero_height_checkpoint.wal_entry_hash_hex = zero_height_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&zero_height_checkpoint, &zero_height_wal),
+        "checkpoint evidence surfaces must reject height zero so audit-ready checkpoint proofs cannot treat non-genesis metadata slots as valid state-root checkpoints"
+    );
+
+    let mut uncommitted_wal = wal.clone();
+    uncommitted_wal.committed = false;
+    let mut uncommitted_checkpoint = checkpoint.clone();
+    uncommitted_checkpoint.wal_entry_hash_hex = uncommitted_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&uncommitted_checkpoint, &uncommitted_wal),
+        "checkpoint evidence surfaces must reject uncommitted WAL entries so audit-ready checkpoint proofs cannot bind to speculative state-root snapshots"
+    );
+
+    let mut blank_proposal_hash_wal = wal.clone();
+    blank_proposal_hash_wal.proposal_hash = "".into();
+    let mut blank_proposal_hash_checkpoint = checkpoint.clone();
+    blank_proposal_hash_checkpoint.wal_entry_hash_hex = blank_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&blank_proposal_hash_checkpoint, &blank_proposal_hash_wal),
+        "WAL proposal_hash must be a non-empty canonical token so checkpoint evidence surfaces cannot claim audit-ready provenance with blank proposal identity"
+    );
+
+    let mut forged_genesis_prev_hash_wal = wal.clone();
+    forged_genesis_prev_hash_wal.prev_hash_hex = Some("01".repeat(32));
+    let mut forged_genesis_prev_hash_checkpoint = checkpoint.clone();
+    forged_genesis_prev_hash_checkpoint.wal_entry_hash_hex =
+        forged_genesis_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &forged_genesis_prev_hash_checkpoint,
+            &forged_genesis_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject genesis WAL metadata with a forged prev_hash_hex so audit-ready state-root proofs cannot smuggle a fake predecessor link into height-1 checkpoints"
+    );
+
+    let mut missing_prev_hash_wal = wal.clone();
+    missing_prev_hash_wal.height = 2;
+    missing_prev_hash_wal.prev_hash_hex = None;
+    let mut missing_prev_hash_checkpoint = checkpoint.clone();
+    missing_prev_hash_checkpoint.height = 2;
+    missing_prev_hash_checkpoint.wal_entry_hash_hex = missing_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &missing_prev_hash_checkpoint,
+            &missing_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject non-genesis WAL metadata without prev_hash_hex so audit-ready state-root proofs cannot omit the predecessor link for height-2+ checkpoints"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must fail closed when WAL proposal identity is blank even if checkpoint fields otherwise match"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(257),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject overlong WAL proposal identities even when state_root_hex and wal_entry_hash_hex otherwise match canonical digests"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_newline_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal\n1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject WAL proposal identities with embedded control/whitespace so audit-ready checkpoint proofs cannot hide layout drift inside otherwise matching hashes"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_overlong_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(257),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must fail closed when WAL proposal identity exceeds the canonical audit surface bound even if checkpoint fields otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_state_root_even_when_wal_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.to_uppercase(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical checkpoint state_root_hex even when the WAL entry and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_wal_hash_even_when_state_root_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex().to_uppercase(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical checkpoint wal_entry_hash_hex even when the state_root evidence otherwise matches"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("CD".repeat(32)),
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 2,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical WAL prev_hash_hex surfaces even when the checkpoint payload otherwise lines up"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject forged genesis prev_hash_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_when_checkpoint_matches(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "AB".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject noncanonical WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
+) {
     let mut original = StateStore::new();
     original
         .set_gov_param(0, 7_901, "max_block_ms".into(), "500".into())

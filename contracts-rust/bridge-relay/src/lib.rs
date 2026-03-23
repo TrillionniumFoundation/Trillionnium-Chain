@@ -379,7 +379,8 @@ impl BridgeRelay {
             return Err(BridgeRelayError::SettlementAlreadyFinalized { settlement_id });
         }
 
-        let _ = self.submit_proof(
+        let audit_len_before = self.audit_log.len();
+        let proof_digest = self.submit_proof(
             message,
             signatures,
             deadline,
@@ -388,20 +389,23 @@ impl BridgeRelay {
             self_bridge,
         )?;
 
-        let proof_digest = hash_message(message);
-        let _ = self.consume_nonce(
+        if let Err(err) = self.consume_nonce(
             message.source_chain_id,
             message.source_bridge_id,
             message.target_chain_id,
             message.target_bridge,
             action_settlement_finalize(),
             message.nonce,
-        )?;
+        ) {
+            self.proof_used.remove(&proof_digest);
+            self.audit_log.truncate(audit_len_before);
+            return Err(err);
+        }
 
         self.settlement_finalized.insert(settlement_id);
         self.audit_log.push(BridgeRelayEvent::SettlementFinalized {
             settlement_id,
-            proof_digest: proof_digest,
+            proof_digest,
         });
         Ok(settlement_id)
     }
@@ -1168,6 +1172,34 @@ mod tests {
         assert!(matches!(fallback, BridgeRelayError::NonceAlreadyUsed { .. }));
 
         assert_ne!(settlement_id, [0u8; 32]);
+    }
+
+    #[test]
+    fn finalize_settlement_nonce_collision_rolls_back_proof_side_effects() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay.consume_nonce(
+            msg.source_chain_id,
+            msg.source_bridge_id,
+            msg.target_chain_id,
+            msg.target_bridge,
+            action_settlement_finalize(),
+            msg.nonce,
+        )
+        .unwrap();
+        let audit_len_before = relay.audit_log().len();
+
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+        assert!(matches!(err, BridgeRelayError::NonceAlreadyUsed { .. }));
+        assert_eq!(relay.audit_log().len(), audit_len_before);
+
+        let proof_digest = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+        assert_eq!(proof_digest, hash_message(&msg));
     }
 
     #[test]

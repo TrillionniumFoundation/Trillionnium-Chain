@@ -122,3 +122,21 @@ fn test_authorized_calls_reject_non_canonical_tx_hash() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn test_authorized_calls_reject_braille_blank_tx_hash() {
+    let mut request = SettlementRequest::new(46, "0xabc\u{2800}def".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-f".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let err = request.settle_authorized(&token, 516).unwrap_err();
+    assert_eq!(
+        err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}

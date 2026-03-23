@@ -112,11 +112,12 @@ impl StateStore {
             .take();
     }
 
-    pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
+    pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        task.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,
@@ -156,11 +157,15 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(
+        &mut self,
+        mut proposal: GovProposalObject,
+    ) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        proposal.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,

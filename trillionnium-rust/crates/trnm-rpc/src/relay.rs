@@ -22,6 +22,17 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
+    if session_id.trim() != session_id
+        || session_id
+            .as_bytes()
+            .iter()
+            .any(|b| b.is_ascii_control())
+    {
+        return Err(bad_request(
+            "invalid_session",
+            format!("{field} must be canonical"),
+        ));
+    }
     Ok(())
 }
 
@@ -440,6 +451,71 @@ impl RiskQuotaState {
 const RISK_SOURCE_MAX_CHARS: usize = 64;
 const RISK_ERROR_KEY_MAX_CHARS: usize = 96;
 
+fn is_disallowed_risk_source_char(ch: char) -> bool {
+    ch.is_control()
+        || matches!(
+            ch,
+            '\u{00A0}'
+                | '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{115F}'
+                | '\u{1160}'
+                | '\u{1680}'
+                | '\u{180E}'
+                | '\u{3164}'
+                | '\u{2000}'
+                | '\u{2001}'
+                | '\u{2002}'
+                | '\u{2003}'
+                | '\u{2004}'
+                | '\u{2005}'
+                | '\u{2006}'
+                | '\u{2007}'
+                | '\u{2008}'
+                | '\u{2009}'
+                | '\u{200A}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{202F}'
+                | '\u{205F}'
+                | '\u{2800}'
+                | '\u{3000}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
+                | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
+        )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+}
+
 fn elide_risk_error_key(key: &str) -> String {
     let mut out = String::with_capacity(key.len().min(RISK_ERROR_KEY_MAX_CHARS));
     for ch in key.chars().take(RISK_ERROR_KEY_MAX_CHARS) {
@@ -458,25 +534,26 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
     }
 
     // Hot-path shortcut: most ingress already carries stable lowercase aliases
-    // without whitespace. Reuse the trimmed string directly to avoid per-char
-    // writes/allocation churn on quota accounting.
+    // without whitespace or invisible controls. Reuse the trimmed string directly
+    // to avoid per-char writes/allocation churn on quota accounting.
     if source.len() <= RISK_SOURCE_MAX_CHARS
         && source
             .chars()
-            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase())
+            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase() && !is_disallowed_risk_source_char(ch))
     {
         return source.to_string();
     }
 
-    // Collapse internal whitespace so cosmetic attribution variants don't explode
-    // quota key-space (e.g. "bot  worker" vs "bot worker").
+    // Collapse internal whitespace/invisible separators so cosmetic or adversarial
+    // attribution variants don't explode quota key-space (e.g. "bot  worker",
+    // "bot\u{2060}worker", and "bot\u{200B}worker" should share a bucket).
     // Keep this allocation-light: avoid split+collect+join on the hot ingress path.
     let mut out = String::with_capacity(source.len().min(RISK_SOURCE_MAX_CHARS));
     let mut emitted = 0usize;
     let mut pending_space = false;
 
     for ch in source.chars() {
-        if ch.is_whitespace() {
+        if ch.is_whitespace() || is_disallowed_risk_source_char(ch) {
             if emitted > 0 {
                 pending_space = true;
             }
@@ -590,7 +667,7 @@ impl RelaySessionState {
 
     fn advance_poll_start_idx(&mut self) {
         while let Some(env) = self.queue.get(self.poll_start_idx) {
-            if self.acked_ids.contains(&env.envelope_id) {
+            if self.acked_ids.remove(&env.envelope_id) {
                 self.poll_start_idx += 1;
             } else {
                 break;
@@ -707,7 +784,6 @@ impl RelayService {
     pub fn send(&self, req: RelaySendRequest) -> Result<RelaySendResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         validate_route(&req.route)?;
-        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
             self.relay_send_rejected_route_not_registered_total
                 .fetch_add(1, Ordering::Relaxed);
@@ -716,6 +792,7 @@ impl RelayService {
                 format!("route not registered: {}", req.route),
             ));
         }
+        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
 
         let mut g = self
             .sessions
@@ -800,7 +877,7 @@ impl RelayService {
             ));
         };
 
-        let before = state.acked_ids.len();
+        let mut acked = 0usize;
 
         // Backward-compatible id ack path: only accept ids that exist in this session queue.
         // Avoid rebuilding the known-id set when clients use the newer upto_seq-only path,
@@ -808,17 +885,24 @@ impl RelayService {
         if !req.envelope_ids.is_empty() {
             let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
             for id in req.envelope_ids {
-                if known_ids.contains(&id) {
-                    state.acked_ids.insert(id);
+                if known_ids.contains(&id) && state.acked_ids.insert(id) {
+                    acked += 1;
                 }
             }
         }
 
         // New batch ack path: ack all envelopes in this session whose sequence <= upto_seq.
         if let Some(upto_seq) = req.upto_seq {
-            for env in &state.queue {
-                if env.sequence <= upto_seq {
-                    state.acked_ids.insert(env.envelope_id);
+            // Queue order is sequence order and advance_poll_start_idx guarantees the
+            // prefix before poll_start_idx is already acked. Start from the live poll
+            // cursor and stop once we cross the requested range to avoid rescanning
+            // long fully-acked prefixes on hot ack loops.
+            for env in state.queue.iter().skip(state.poll_start_idx) {
+                if env.sequence > upto_seq {
+                    break;
+                }
+                if state.acked_ids.insert(env.envelope_id) {
+                    acked += 1;
                 }
             }
         }
@@ -827,7 +911,7 @@ impl RelayService {
 
         Ok(RelayAckResponse {
             session_id: req.session_id,
-            acked: state.acked_ids.len().saturating_sub(before),
+            acked,
         })
     }
 
@@ -1288,6 +1372,7 @@ mod tests {
             let g = relay.sessions.lock().unwrap();
             let state = g.get("s2-cursor").unwrap();
             assert_eq!(state.poll_start_idx, 2);
+            assert!(state.acked_ids.is_empty());
         }
 
         let pending = relay
@@ -1298,6 +1383,72 @@ mod tests {
             .unwrap();
         assert_eq!(pending.envelopes.len(), 2);
         assert!(pending.envelopes.iter().all(|e| e.sequence > 2));
+    }
+
+    #[test]
+    fn relay_ack_upto_seq_respects_poll_cursor_after_prefix_ack() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2-cursor-scan".into(),
+            })
+            .unwrap();
+
+        for payload in [b"m1".as_slice(), b"m2".as_slice(), b"m3".as_slice()] {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "s2-cursor-scan".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: payload.to_vec(),
+                    source: None,
+                })
+                .unwrap();
+        }
+
+        let first_two = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 2,
+            })
+            .unwrap();
+        assert_eq!(first_two.envelopes.len(), 2);
+
+        let ack_prefix = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: first_two.envelopes.iter().map(|e| e.envelope_id).collect(),
+                upto_seq: None,
+            })
+            .unwrap();
+        assert_eq!(ack_prefix.acked, 2);
+
+        {
+            let g = relay.sessions.lock().unwrap();
+            let state = g.get("s2-cursor-scan").unwrap();
+            assert_eq!(state.poll_start_idx, 2);
+        }
+
+        let ack_through_four = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(4),
+            })
+            .unwrap();
+        assert_eq!(ack_through_four.acked, 2);
+
+        let pending = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 10,
+            })
+            .unwrap();
+        let pending_seqs: Vec<u64> = pending.envelopes.iter().map(|e| e.sequence).collect();
+        assert_eq!(pending_seqs, vec![5, 6]);
     }
 
     #[test]
@@ -1561,6 +1712,17 @@ mod tests {
     }
 
     #[test]
+    fn relay_open_rejects_non_canonical_session_id() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .open(RelayOpenRequest {
+                session_id: " s1\n".into(),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
+    }
+
+    #[test]
     fn relay_send_rejects_invalid_route_type() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
@@ -1607,6 +1769,72 @@ mod tests {
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_route"));
         assert_eq!(relay.relay_send_rejected_route_not_registered_total(), 1);
+    }
+
+    #[test]
+    fn relay_unregistered_route_rejection_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route-quota".into(),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .send(RelaySendRequest {
+                    session_id: "s-route-quota".into(),
+                    route: "relay.unknown".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"noise".to_vec(),
+                    source: Some("src-route-noise".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/invalid_route"));
+        }
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-1".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("invalid-route noise should not burn relay quota");
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-2".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("registered traffic should still use the full configured budget");
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-3".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
@@ -2266,6 +2494,15 @@ mod tests {
         // Non-ASCII whitespace must still collapse even on the lowercase fast path.
         let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
         assert_eq!(canonical_nbsp, "bot worker");
+
+        // Braille pattern blank is visually empty and must not split source buckets.
+        let canonical_braille_blank = canonicalize_risk_source(Some("bot\u{2800}worker"));
+        assert_eq!(canonical_braille_blank, "bot worker");
+
+        // Invisible bidi/format markers must also collapse so sponsor/free-ingress
+        // quota accounting can't be split across visually identical aliases.
+        let canonical_bidi = canonicalize_risk_source(Some("relay\u{2060}\u{200d}source"));
+        assert_eq!(canonical_bidi, "relay source");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
         assert_eq!(

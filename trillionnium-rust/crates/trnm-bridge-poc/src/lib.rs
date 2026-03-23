@@ -13,7 +13,11 @@ pub mod bridge_status {
                     | '\u{115F}'
                     | '\u{1160}'
                     | '\u{1680}'
+                    | '\u{180B}'
+                    | '\u{180C}'
+                    | '\u{180D}'
                     | '\u{180E}'
+                    | '\u{2800}'
                     | '\u{3164}'
                     | '\u{2000}'
                     | '\u{2001}'
@@ -40,6 +44,7 @@ pub mod bridge_status {
                     | '\u{202E}'
                     | '\u{202F}'
                     | '\u{205F}'
+                    | '\u{2800}'
                     | '\u{3000}'
                     | '\u{2060}'
                     | '\u{2061}'
@@ -68,6 +73,20 @@ pub mod bridge_status {
 
     fn has_disallowed_subject_char(ch: char) -> bool {
         has_disallowed_request_char(ch)
+    }
+
+    fn is_non_canonical_request_field(value: &str) -> bool {
+        value.trim() != value
+            || value
+                .chars()
+                .any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
+    }
+
+    fn is_non_canonical_subject(value: &str) -> bool {
+        value.trim() != value
+            || value
+                .chars()
+                .any(|ch| ch.is_whitespace() || has_disallowed_subject_char(ch))
     }
 
     fn normalize_revert_reason(reason: &str) -> Option<String> {
@@ -127,6 +146,9 @@ pub mod bridge_status {
         InvalidHeight {
             height: u64,
         },
+        HeartbeatRetryPending {
+            reason: String,
+        },
         InvalidRevertReason,
         MalformedRequest {
             reason: &'static str,
@@ -169,9 +191,7 @@ pub mod bridge_status {
                     reason: "empty tx_hash",
                 });
             }
-            if self.tx_hash.trim() != self.tx_hash
-                || self.tx_hash.chars().any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
-            {
+            if is_non_canonical_request_field(&self.tx_hash) {
                 return Err(SettlementError::MalformedRequest {
                     reason: "non-canonical tx_hash",
                 });
@@ -185,9 +205,7 @@ pub mod bridge_status {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject
-                || token.subject.chars().any(has_disallowed_subject_char)
-            {
+            if is_non_canonical_subject(&token.subject) {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
                 });

@@ -277,3 +277,47 @@ fn sqlite_cleanup_reclaims_pending_capacity_after_ttl_expiry() {
     let recovered = engine.receive(blocked, 20);
     assert_eq!(recovered.code, AckCode::Accepted);
 }
+
+#[test]
+fn sqlite_store_clamps_zero_pending_quotas_to_keep_fresh_ingress_live() {
+    let tmp = tempfile::tempdir().expect("tempdir");
+    let db_path = tmp.path().join("reliability-zero-quota-clamp.db");
+    let store = SqliteReliabilityStore::open_with_config(
+        &db_path,
+        InMemoryReliabilityStoreConfig {
+            max_sessions: Some(8),
+            max_pending_total: Some(0),
+            max_pending_per_session: Some(0),
+            max_dedup_entries: Some(8),
+            ..InMemoryReliabilityStoreConfig::default()
+        },
+    )
+    .expect("open sqlite store");
+    let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+    let first = ReliableMessage {
+        from: "alice".to_string(),
+        chain_id: "trnm-mainnet".to_string(),
+        session_id: "s1".to_string(),
+        seq: Some(1),
+        nonce: None,
+        msg_type: "INPUT_CHUNK".to_string(),
+        payload: "one".to_string(),
+    };
+    assert_eq!(engine.receive(first, 1).code, AckCode::Accepted);
+
+    let second = ReliableMessage {
+        from: "bob".to_string(),
+        chain_id: "trnm-mainnet".to_string(),
+        session_id: "s2".to_string(),
+        seq: Some(1),
+        nonce: None,
+        msg_type: "INPUT_CHUNK".to_string(),
+        payload: "two".to_string(),
+    };
+    let second_ack = engine.receive(second, 2);
+    assert_eq!(second_ack.code, AckCode::BadRequest);
+    assert!(second_ack
+        .detail
+        .contains("pending total limit reached (1)"));
+}

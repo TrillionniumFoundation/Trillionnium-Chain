@@ -48,6 +48,9 @@ pub struct AutoAdaptiveDecision {
 }
 
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    assert_tx_access_domain_versions_are_consistent(a);
+    assert_tx_access_domain_versions_are_consistent(b);
+
     // Read-only pairs can never conflict; skip three intersection probes in
     // the common telemetry/transfer path where writes are absent.
     if a.write_set.is_empty() && b.write_set.is_empty() {
@@ -64,6 +67,13 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         return intersects(&a.write_set, &b.read_set);
     }
 
+    // Pure write/write pairs cannot produce read hazards; keep the hot Sui-like
+    // writer lane on a single probe while preserving conservative conflict
+    // semantics for mixed read/write domains below.
+    if a.read_set.is_empty() && b.read_set.is_empty() {
+        return intersects(&a.write_set, &b.write_set);
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
@@ -71,11 +81,19 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
 
 #[inline]
 fn access_key(obj: &ObjectRef) -> u64 {
+    // Conflict grouping stays object-scoped, not version-scoped: different
+    // versions of the same logical object must serialize through the same
+    // access domain so executor scheduling stays aligned with trnm-state.
     obj.id
 }
 
 #[inline]
 fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
     // Small-set fast path avoids HashSet allocation for common tiny access lists.
     if objs.len() <= 8 {
         let mut out: Vec<u64> = Vec::with_capacity(objs.len());
@@ -97,6 +115,167 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
         }
     }
     out
+}
+
+#[inline]
+fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
+    if objs.is_empty() {
+        if dst.len() <= 1 {
+            return;
+        }
+
+        let mut unique_len = 1usize;
+        for idx in 1..dst.len() {
+            let key = dst[idx];
+            if !dst[..unique_len].contains(&key) {
+                dst[unique_len] = key;
+                unique_len += 1;
+            }
+        }
+        dst.truncate(unique_len);
+        return;
+    }
+
+    // Tiny mixed domains are common in executor telemetry. Keep the merge path
+    // allocation-free there while still deduplicating same-version read/write echoes.
+    if dst.len() + objs.len() <= 8 {
+        if dst.len() > 1 {
+            let mut unique_len = 1usize;
+            for idx in 1..dst.len() {
+                let key = dst[idx];
+                if !dst[..unique_len].contains(&key) {
+                    dst[unique_len] = key;
+                    unique_len += 1;
+                }
+            }
+            dst.truncate(unique_len);
+        }
+
+        for obj in objs {
+            let key = access_key(obj);
+            if !dst.contains(&key) {
+                dst.push(key);
+            }
+        }
+        return;
+    }
+
+    let mut seen: HashSet<u64> = HashSet::with_capacity(dst.len() + objs.len());
+    let mut unique_len = 0usize;
+    for idx in 0..dst.len() {
+        let key = dst[idx];
+        if seen.insert(key) {
+            dst[unique_len] = key;
+            unique_len += 1;
+        }
+    }
+    dst.truncate(unique_len);
+    for obj in objs {
+        let key = access_key(obj);
+        if seen.insert(key) {
+            dst.push(key);
+        }
+    }
+}
+
+fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
+    if objs.len() <= 1 {
+        return true;
+    }
+
+    // Hot singleton/echo domains dominate executor read/write probes. Keep the
+    // two-entry path allocation-free so duplicate same-version echoes or exact
+    // two-version skew checks stay on a branch-only fail-closed guard.
+    if objs.len() == 2 {
+        return objs[0].id != objs[1].id || objs[0].version == objs[1].version;
+    }
+
+    // Tiny single-domain access lists are common on Sui-like object probes.
+    // Mirror the mixed-domain helper's small-set guard so same-version echoes
+    // and version skew checks stay allocation-light before the larger HashMap
+    // path kicks in for broader footprints.
+    if objs.len() <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
+    for obj in objs {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+fn combined_access_domain_versions_are_consistent(
+    reads: &[ObjectRef],
+    writes: &[ObjectRef],
+) -> bool {
+    if reads.is_empty() {
+        return access_domain_versions_are_consistent(writes);
+    }
+    if writes.is_empty() {
+        return access_domain_versions_are_consistent(reads);
+    }
+
+    let total_len = reads.len() + writes.len();
+    if total_len <= 1 {
+        return true;
+    }
+
+    // Mixed singleton path is common on Sui-like read/write echoes. Keep it
+    // branch-only so the fail-closed skew guard avoids even the tiny vector
+    // allocation used by the broader small-domain fast path.
+    if reads.len() == 1 && writes.len() == 1 {
+        return reads[0].id != writes[0].id || reads[0].version == writes[0].version;
+    }
+
+    // Keep tiny mixed domains allocation-light on the common Sui-like single-object
+    // read/write echo path while preserving the same fail-closed skew guard.
+    if total_len <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(total_len);
+        for obj in writes.iter().chain(reads.iter()) {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(total_len);
+    for obj in writes.iter().chain(reads.iter()) {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+#[inline]
+fn assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
 }
 
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
@@ -163,9 +342,10 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
 
     // Medium-small skew path: for 5..=8 keys against a moderately larger domain,
-    // avoid HashSet allocation and probe linearly. Once domains grow beyond this
-    // range, fall back to the HashSet path below to avoid repeated full scans.
-    if small.len() <= 8 && (16..=64).contains(&large.len()) {
+    // avoid HashSet allocation and probe linearly. Extend the guard slightly so
+    // duplicate-heavy domains just above the old 64-key cutoff stay on the same
+    // bounded path before falling back to the HashSet branch.
+    if small.len() <= 8 && (16..=128).contains(&large.len()) {
         let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
             let key = access_key(a);
@@ -224,8 +404,13 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return false;
     }
 
+    // Large duplicate-heavy probe vectors can show up when object-scoped read
+    // domains are widened before dedup reaches the aggressive stage checks.
+    // Collapse repeated keys once so scheduling guardrails stay bounded even on
+    // long duplicate bursts from shared-object access domains.
+    let mut seen: HashSet<u64> = HashSet::with_capacity(a.len().min(64));
     for k in a {
-        if b.contains(k) {
+        if seen.insert(*k) && b.contains(k) {
             return true;
         }
     }
@@ -239,17 +424,50 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
     build_parallel_groups_profile(txs).0
 }
 
+#[inline]
+fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64> {
+    let keys = dedup_access_keys(read_set);
+    if keys.is_empty() || write_keys.is_empty() {
+        return keys;
+    }
+
+    // Keep object-scoped access domains deterministic while avoiding quadratic
+    // write-key probes once shared domains become large.
+    if write_keys.len() <= 8 {
+        return keys
+            .into_iter()
+            .filter(|key| !write_keys.contains(key))
+            .collect();
+    }
+
+    let write_domain: HashSet<u64> = write_keys.iter().copied().collect();
+    keys.into_iter()
+        .filter(|key| !write_domain.contains(key))
+        .collect()
+}
+
+#[inline]
+fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
+    // Keep telemetry/object-domain reporting aligned with scheduler hotspot
+    // selection: writes carry the stronger conflict signal, while reads extend the
+    // object scope only when they introduce additional keys. Reuse the same
+    // read-domain filtering helper as the scheduler so grouping and reporting
+    // stay on a single deterministic object-scoped path.
+    let write_keys = dedup_access_keys(&tx.write_set);
+    let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
+
+    let mut keys = Vec::with_capacity(write_keys.len() + read_keys.len());
+    keys.extend(write_keys);
+    keys.extend(read_keys);
+    keys
+}
+
 fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut counts: HashMap<u64, usize> = HashMap::new();
     let mut total = 0usize;
 
     for tx in txs {
-        let mut keys = dedup_access_keys(&tx.read_set);
-        for key in dedup_access_keys(&tx.write_set) {
-            if !keys.contains(&key) {
-                keys.push(key);
-            }
-        }
+        let keys = tx_access_domain_keys(tx);
         total += keys.len();
         for key in keys {
             *counts.entry(key).or_insert(0) += 1;
@@ -363,9 +581,11 @@ pub fn build_parallel_groups_profile_with_strategy(
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
+        assert_tx_access_domain_versions_are_consistent(&tx);
+
         // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
-        let read_keys = dedup_access_keys(&tx.read_set);
         let write_keys = dedup_access_keys(&tx.write_set);
+        let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
 
         // read conflicts with previous writers on the same object
         for key in &read_keys {
@@ -453,8 +673,8 @@ fn build_parallel_groups_aggressive_profile(
         let mut conflict_hits = 0usize;
 
         for tx in ordered {
-            let read_keys = dedup_access_keys(&tx.read_set);
             let write_keys = dedup_access_keys(&tx.write_set);
+            let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
 
             let mut min_group = 0usize;
             for key in &read_keys {
@@ -549,8 +769,11 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let read_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").read_set);
         let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
+        let read_keys = read_domain_only_keys(
+            &tx_slot.as_ref().expect("tx must exist").read_set,
+            &write_keys,
+        );
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
@@ -572,12 +795,21 @@ fn build_parallel_groups_aggressive_profile(
         let mut placed = false;
         let mut scanned = 0usize;
         let candidate_span = groups.len().saturating_sub(min_group);
+
+        if skip_empty_stage_checks && read_empty && write_empty && candidate_span > 0 {
+            groups[min_group].push(tx_slot.take().expect("tx already moved"));
+            placed = true;
+        }
+
         let start_offset = if rr_enabled && candidate_span > 1 {
             rr_cursor % candidate_span
         } else {
             0
         };
         for step in 0..candidate_span {
+            if placed {
+                break;
+            }
             if scan_window > 0 && scanned >= scan_window {
                 break;
             }
@@ -688,9 +920,15 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     let mut footprint = 0usize;
     for tx in txs {
-        footprint = footprint
-            .saturating_add(tx.read_set.len())
-            .saturating_add(tx.write_set.len());
+        assert_tx_access_domain_versions_are_consistent(tx);
+
+        // Size conflict-domain maps from the tx's unique access domain rather than
+        // raw read/write list lengths. This keeps same-version read/write echoes and
+        // duplicate keys from inflating hot-path map capacity under mixed Sui-like
+        // read/write workloads while preserving the same fail-closed skew guard.
+        let mut keys = dedup_access_keys(&tx.write_set);
+        extend_unique_access_keys(&mut keys, &tx.read_set);
+        footprint = footprint.saturating_add(keys.len());
     }
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
@@ -791,9 +1029,9 @@ fn parse_grouped_env_usize(name: &str) -> Option<usize> {
             let rest: Vec<&str> = parts.collect();
             let comma_is_grouping = !first.is_empty()
                 && first.chars().all(|ch| ch.is_ascii_digit())
-                && rest
-                    .iter()
-                    .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+                && rest.iter().all(|segment| {
+                    segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit())
+                });
             if !comma_is_grouping {
                 return None;
             }
@@ -851,17 +1089,22 @@ fn parse_env_f64(name: &str) -> Option<f64> {
             if comma_count == 1 {
                 let (whole, frac) = numeric.split_once(',').unwrap_or((numeric, ""));
                 let whole_is_optional_sign = whole.is_empty() || whole == "+" || whole == "-";
-                if whole_is_optional_sign && !frac.is_empty() && frac.chars().all(|ch| ch.is_ascii_digit()) {
+                if whole_is_optional_sign
+                    && !frac.is_empty()
+                    && frac.chars().all(|ch| ch.is_ascii_digit())
+                {
                     let sign = if whole == "-" { "-" } else { "" };
                     format!("{sign}0.{frac}")
                 } else if !whole.is_empty()
                     && !frac.is_empty()
-                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && whole
+                        .chars()
+                        .all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
                     && frac.chars().all(|ch| ch.is_ascii_digit())
                 {
                     let whole_digits = whole.trim_start_matches(['+', '-']);
-                    let whole_is_zero = !whole_digits.is_empty()
-                        && whole_digits.chars().all(|ch| ch == '0');
+                    let whole_is_zero =
+                        !whole_digits.is_empty() && whole_digits.chars().all(|ch| ch == '0');
                     let comma_is_grouping = frac.len() == 3
                         && whole.chars().any(|ch| ch.is_ascii_digit())
                         && !whole_is_zero;
@@ -878,11 +1121,13 @@ fn parse_env_f64(name: &str) -> Option<f64> {
                 let whole = parts.next().unwrap_or("");
                 let frac_or_groups: Vec<&str> = parts.collect();
                 let comma_is_grouping = !whole.is_empty()
-                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && whole
+                        .chars()
+                        .all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
                     && whole.chars().any(|ch| ch.is_ascii_digit())
-                    && frac_or_groups
-                        .iter()
-                        .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+                    && frac_or_groups.iter().all(|segment| {
+                        segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit())
+                    });
                 if !comma_is_grouping {
                     return None;
                 }
@@ -1061,11 +1306,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = tx
-            .write_set
-            .first()
-            .or_else(|| tx.read_set.first())
-            .map(|o| o.id);
+        let key = primary_access_domain_key(tx);
         if let Some(k) = key {
             observed += 1;
             *key_hist.entry(k).or_insert(0) += 1;
@@ -1130,33 +1371,39 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 }
 
+fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
+    // Reuse the same write-first, read-domain-filtered object scope as grouping
+    // and telemetry so hotspot bucketing cannot drift from executor conflict
+    // semantics on duplicate/shared-object footprints.
+    let keys = tx_access_domain_keys(tx);
+    let key_a = keys.first().copied().unwrap_or(0);
+    let key_b = keys.get(1).copied().unwrap_or(0);
+    (key_a, key_b)
+}
+
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+
     // Defensive guard: keep helper total for misconfigured callers and tests.
     // Production reorder path always uses buckets_n>=1, but this preserves
-    // fail-closed deterministic behavior if future call sites pass zero.
-    if buckets_n == 0 {
+    // fail-closed deterministic behavior if future call sites pass zero or a
+    // collapsed single-bucket fanout.
+    if buckets_n <= 1 {
         return 0;
     }
 
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
-    let key_a = tx
-        .write_set
-        .first()
-        .or_else(|| tx.read_set.first())
-        .map(|o| o.id)
-        .unwrap_or(0);
-    let key_b = tx
-        .write_set
-        .get(1)
-        .or_else(|| tx.read_set.get(1))
-        .map(|o| o.id)
-        .unwrap_or(0);
+    let (key_a, key_b) = hot_bucket_keys(tx);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
-        // Fast-path hot scheduler probes: avoid division in the common power-of-two
-        // bucket layout while keeping deterministic bucket mapping.
-        (mixed as usize) & (buckets_n - 1)
+        // Fast-path hot scheduler probes: keep the reduction in u64-space so
+        // high-bit object ids cannot truncate on 32-bit targets before bucket
+        // selection. For power-of-two divisors this matches modulo exactly.
+        (mixed & ((buckets_n as u64) - 1)) as usize
     } else {
         // Reduce in u64-space first; casting mixed directly to usize would truncate
         // high bits on 32-bit targets and skew bucket selection under wide key domains.
@@ -1169,24 +1416,28 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
         GroupingStrategy::Original => {}
         GroupingStrategy::FootprintDesc => {
             txs.sort_by_key(|tx| {
-                let footprint = tx.read_set.len() + tx.write_set.len();
+                let footprint = tx_access_domain_keys(tx).len();
                 (std::cmp::Reverse(footprint), tx.id)
             });
         }
         GroupingStrategy::WriteFirst => {
             txs.sort_by_key(|tx| {
+                let write_keys = dedup_access_keys(&tx.write_set);
+                let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
                 (
-                    std::cmp::Reverse(tx.write_set.len()),
-                    std::cmp::Reverse(tx.read_set.len()),
+                    std::cmp::Reverse(write_keys.len()),
+                    std::cmp::Reverse(read_keys.len()),
                     tx.id,
                 )
             });
         }
         GroupingStrategy::WriteLast => {
             txs.sort_by_key(|tx| {
+                let write_keys = dedup_access_keys(&tx.write_set);
+                let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
                 (
-                    tx.write_set.len(),
-                    std::cmp::Reverse(tx.read_set.len()),
+                    write_keys.len(),
+                    std::cmp::Reverse(read_keys.len()),
                     tx.id,
                 )
             });
@@ -1195,6 +1446,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
+            // Validate mixed read/write domains up front so fail-closed skew guards still
+            // fire even when micro-batch and degenerate-bucket short-circuits return early.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             if txs.len() <= 1 {
                 return;
             }
@@ -1356,6 +1612,9 @@ mod tests {
     fn o(id: u64) -> ObjectRef {
         ObjectRef { id, version: 1 }
     }
+    fn ov(id: u64, version: u64) -> ObjectRef {
+        ObjectRef { id, version }
+    }
     fn tx(id: u64, r: Vec<ObjectRef>, w: Vec<ObjectRef>) -> Tx {
         Tx {
             id,
@@ -1374,11 +1633,35 @@ mod tests {
     }
 
     #[test]
+    fn ww_conflict_treats_object_versions_as_one_write_domain() {
+        assert!(detect_conflict(
+            &tx(1, vec![], vec![ov(7, 1)]),
+            &tx(2, vec![], vec![ov(7, 9)])
+        ));
+        assert!(!detect_conflict(
+            &tx(1, vec![], vec![ov(7, 1)]),
+            &tx(2, vec![], vec![ov(8, 9)])
+        ));
+    }
+
+    #[test]
     fn rw_conflict() {
         assert!(detect_conflict(
             &tx(1, vec![o(2)], vec![]),
             &tx(2, vec![], vec![o(2)])
         ));
+    }
+
+    #[test]
+    fn write_only_pairs_use_ww_semantics_for_hit_and_miss() {
+        let write_only_hit_a = tx(1, vec![], vec![o(7), o(7), o(11)]);
+        let write_only_hit_b = tx(2, vec![], vec![o(9), o(11)]);
+        let write_only_miss = tx(3, vec![], vec![o(99), o(100)]);
+
+        assert!(detect_conflict(&write_only_hit_a, &write_only_hit_b));
+        assert!(detect_conflict(&write_only_hit_b, &write_only_hit_a));
+        assert!(!detect_conflict(&write_only_hit_a, &write_only_miss));
+        assert!(!detect_conflict(&write_only_miss, &write_only_hit_a));
     }
 
     #[test]
@@ -1390,11 +1673,38 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn detect_conflict_rejects_cross_domain_version_skew_for_same_object_id() {
+        let skewed = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+        let other = tx(2, vec![], vec![o(9)]);
+
+        let _ = detect_conflict(&skewed, &other);
+    }
+
+    #[test]
     fn read_only_overlap_is_non_conflicting() {
         assert!(!detect_conflict(
             &tx(1, vec![o(7), o(8)], vec![]),
             &tx(2, vec![o(8), o(9)], vec![])
         ));
+    }
+
+    #[test]
+    fn detect_conflict_is_symmetric_for_read_write_fast_paths() {
+        let read_only = tx(1, vec![o(42), o(42), o(9)], vec![]);
+        let write_only_hit = tx(2, vec![], vec![o(42)]);
+        let write_only_miss = tx(3, vec![], vec![o(99)]);
+
+        assert!(detect_conflict(&read_only, &write_only_hit));
+        assert!(detect_conflict(&write_only_hit, &read_only));
+        assert!(!detect_conflict(&read_only, &write_only_miss));
+        assert!(!detect_conflict(&write_only_miss, &read_only));
     }
 
     #[test]
@@ -1454,6 +1764,29 @@ mod tests {
     }
 
     #[test]
+    fn vec_hashset_intersects_large_duplicate_probe_path_preserves_semantics() {
+        let domain: HashSet<u64> = [777u64, 888u64].into_iter().collect();
+
+        let mut hit = Vec::new();
+        for key in 1..=20u64 {
+            hit.push(key);
+            hit.push(key);
+        }
+        hit.extend([777, 777, 777, 21, 21, 22, 22]);
+
+        let mut miss = Vec::new();
+        for key in 1..=24u64 {
+            miss.push(10_000 + key);
+            miss.push(10_000 + key);
+        }
+
+        // Large duplicate-heavy probe vectors should keep the same hit/miss
+        // behavior while avoiding repeated lookups for the same object-domain key.
+        assert!(vec_hashset_intersects(&hit, &domain));
+        assert!(!vec_hashset_intersects(&miss, &domain));
+    }
+
+    #[test]
     fn skewed_small_vs_large_conflict_path_handles_large_domains() {
         let small_write = tx(1, vec![], vec![o(101), o(202), o(303), o(404)]);
         let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(o).collect();
@@ -1503,6 +1836,134 @@ mod tests {
     }
 
     #[test]
+    fn medium_small_vs_just_over_old_large_cutoff_preserves_semantics() {
+        let small_write = tx(
+            1,
+            vec![],
+            vec![o(1_101), o(1_102), o(1_103), o(1_104), o(1_105)],
+        );
+        let mut read_hit: Vec<ObjectRef> = (1..=65).map(|id| o(50_000 + id)).collect();
+        read_hit.push(o(1_104));
+        let read_miss: Vec<ObjectRef> = (1..=65).map(|id| o(60_000 + id)).collect();
+
+        assert!(detect_conflict(&small_write, &tx(2, read_hit, vec![])));
+        assert!(!detect_conflict(&small_write, &tx(3, read_miss, vec![])));
+    }
+
+    #[test]
+    fn access_domain_versions_are_consistent_for_duplicate_same_version_refs() {
+        assert!(access_domain_versions_are_consistent(&[
+            o(42),
+            o(42),
+            ObjectRef { id: 42, version: 1 },
+            o(99),
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_are_inconsistent_for_mixed_version_refs() {
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef { id: 42, version: 2 },
+            o(99),
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_two_entry_fast_path_preserves_echo_and_skew_semantics() {
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 42, version: 7 },
+        ]));
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+        ]));
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 42, version: 8 },
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_small_domain_fast_path_preserves_echo_and_skew_semantics() {
+        assert!(access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 7, version: 3 },
+        ]));
+        assert!(!access_domain_versions_are_consistent(&[
+            ObjectRef { id: 42, version: 7 },
+            ObjectRef { id: 99, version: 1 },
+            ObjectRef { id: 42, version: 8 },
+            ObjectRef { id: 7, version: 3 },
+        ]));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_consistent_across_read_write_split() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 42, version: 1 }, o(99)],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_consistent_for_mixed_singleton_distinct_ids() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 7, version: 9 }],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_consistent_for_small_duplicate_cross_domain_echoes() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 1 },
+                o(99),
+            ],
+            &[
+                o(99),
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 7, version: 1 },
+            ],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_across_read_write_split() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[ObjectRef { id: 42, version: 1 }],
+            &[ObjectRef { id: 42, version: 2 }],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_when_writes_are_empty() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
+            &[],
+        ));
+    }
+
+    #[test]
+    fn combined_access_domain_versions_are_inconsistent_when_reads_are_empty() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[],
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
+        ));
+    }
+
+    #[test]
     fn dedup_access_keys_large_path_preserves_first_seen_order() {
         let keys = dedup_access_keys(&[
             o(100),
@@ -1518,6 +1979,111 @@ mod tests {
         ]);
 
         assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
+    fn tx_access_domain_keys_dedups_shared_object_scope_across_read_and_write_sets() {
+        let keys = tx_access_domain_keys(&tx(
+            1,
+            vec![o(11), o(11), o(22), o(33)],
+            vec![o(22), o(44), o(44), o(11)],
+        ));
+
+        // Object-scoped access domains should stay deduplicated across both read
+        // and write footprints, with writes first so telemetry matches the
+        // scheduler's stronger conflict signal.
+        assert_eq!(keys, vec![22, 44, 11, 33]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_small_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![11, 22, 33, 44, 55, 66, 77, 88];
+
+        let keys = read_domain_only_keys(
+            &[o(22), o(5), o(44), o(5), o(99), o(77), o(99), o(123)],
+            &write_keys,
+        );
+
+        // The small write-domain fast path should filter shared objects without
+        // disturbing first-seen ordering for surviving read-only keys.
+        assert_eq!(keys, vec![5, 99, 123]);
+    }
+
+    #[test]
+    fn read_domain_only_keys_large_write_domain_preserves_read_order_after_filtering() {
+        let write_keys = vec![100, 200, 300, 400, 500, 600, 700, 800, 900, 1_000];
+
+        let keys = read_domain_only_keys(
+            &[
+                o(200),
+                o(42),
+                o(500),
+                o(42),
+                o(77),
+                o(800),
+                o(77),
+                o(900),
+                o(123),
+            ],
+            &write_keys,
+        );
+
+        // Shared objects should be filtered once, while surviving read-only
+        // objects keep first-seen order for deterministic access-domain reporting.
+        assert_eq!(keys, vec![42, 77, 123]);
+    }
+
+    #[test]
+    fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
+        let tx = tx(
+            1,
+            vec![o(9), o(9), o(40), o(50)],
+            vec![o(7), o(7), o(9), o(30)],
+        );
+
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
+
+        assert_eq!(keys, vec![7, 9, 30, 40, 50]);
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
+        let tx = tx(
+            1,
+            vec![o(8), o(8), o(9), o(10)],
+            vec![o(8), o(8), o(40), o(40), o(50)],
+        );
+
+        let keys = tx_access_domain_keys(&tx);
+        let (key_a, key_b) = hot_bucket_keys(&tx);
+
+        assert_eq!(keys, vec![8, 40, 50, 9, 10]);
+        assert_eq!((key_a, key_b), (8, 40));
+        assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn overlapping_read_write_domains_do_not_double_count_shared_object_conflicts() {
+        let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![2]
+        );
+        // The first tx still pays its normal write-domain probes, but the shared
+        // read/write key should not be recorded twice and inflate later hit counts.
+        assert_eq!(profile.conflict_checks, 4);
+        assert_eq!(profile.conflict_hits, 1);
     }
 
     #[test]
@@ -1610,11 +2176,26 @@ mod tests {
 
         assert_eq!(aggressive_ids, original_ids);
         assert_eq!(aggressive_profile.group_count, original_profile.group_count);
-        assert_eq!(aggressive_profile.grouped_count, original_profile.grouped_count);
-        assert_eq!(aggressive_profile.max_group_size, original_profile.max_group_size);
-        assert_eq!(aggressive_profile.min_group_size, original_profile.min_group_size);
-        assert_eq!(aggressive_profile.conflict_checks, original_profile.conflict_checks);
-        assert_eq!(aggressive_profile.conflict_hits, original_profile.conflict_hits);
+        assert_eq!(
+            aggressive_profile.grouped_count,
+            original_profile.grouped_count
+        );
+        assert_eq!(
+            aggressive_profile.max_group_size,
+            original_profile.max_group_size
+        );
+        assert_eq!(
+            aggressive_profile.min_group_size,
+            original_profile.min_group_size
+        );
+        assert_eq!(
+            aggressive_profile.conflict_checks,
+            original_profile.conflict_checks
+        );
+        assert_eq!(
+            aggressive_profile.conflict_hits,
+            original_profile.conflict_hits
+        );
         assert_eq!(aggressive_profile.candidate_groups_scanned, 0);
         assert_eq!(aggressive_profile.stage_ww_checks, 0);
         assert_eq!(aggressive_profile.stage_wr_checks, 0);
@@ -1651,6 +2232,17 @@ mod tests {
         assert!(groups.len() >= 2);
         assert!(groups[0].len() >= 2);
         assert!(groups[1].len() >= 2);
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_across_equivalent_access_domain_orderings() {
+        let write_first = tx(500, vec![o(2)], vec![o(9), o(1)]);
+        let reordered = tx(501, vec![o(9)], vec![o(2), o(1)]);
+
+        assert_eq!(
+            hot_bucket_hint(&write_first, 8),
+            hot_bucket_hint(&reordered, 8)
+        );
     }
 
     #[test]
@@ -1821,6 +2413,24 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_interleave_rejects_cross_domain_version_skew_before_micro_batch_short_circuit() {
+        let mut txs = vec![
+            tx(
+                1,
+                vec![ObjectRef { id: 7, version: 2 }],
+                vec![ObjectRef { id: 7, version: 1 }],
+            ),
+            tx(2, vec![], vec![o(9)]),
+            tx(3, vec![o(10)], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    }
+
+    #[test]
     fn hot_bucket_interleave_short_circuits_all_singleton_buckets() {
         let mut txs = vec![
             tx(71, vec![], vec![o(0)]),
@@ -1857,6 +2467,119 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_uses_first_read_key_as_secondary_mixed_domain_signal() {
+        let buckets_n = 97usize;
+        let baseline = tx(1, vec![], vec![o(5)]);
+        let mixed = tx(2, vec![o(7)], vec![o(5)]);
+
+        let baseline_bucket = hot_bucket_hint(&baseline, buckets_n);
+        let mixed_bucket = hot_bucket_hint(&mixed, buckets_n);
+
+        // A single-write + read tx should hash over the mixed access domain rather
+        // than ignoring the first read key and collapsing onto the write-only bucket.
+        assert_ne!(baseline_bucket, mixed_bucket);
+        assert_eq!(
+            mixed_bucket,
+            ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_keeps_singleton_bucket_for_same_version_cross_domain_echoes() {
+        let buckets_n = 97usize;
+        let write_only = tx(1, vec![], vec![o(5)]);
+        let echoed = tx(2, vec![o(5)], vec![o(5)]);
+
+        // Same-version read/write echoes should stay on the singleton domain
+        // bucket rather than manufacturing a synthetic two-key mix.
+        assert_eq!(
+            hot_bucket_hint(&write_only, buckets_n),
+            hot_bucket_hint(&echoed, buckets_n)
+        );
+        assert_eq!(hot_bucket_hint(&echoed, buckets_n), (5u64 % buckets_n as u64) as usize);
+    }
+
+    #[test]
+    fn hot_bucket_hint_skips_duplicate_primary_key_when_mixing_read_write_domain() {
+        let buckets_n = 97usize;
+        let duplicate_primary = tx(1, vec![o(5), o(7)], vec![o(5)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Repeated primary-key echoes across read/write sets should not collapse the
+        // secondary signal back to zero; the first distinct access key should drive
+        // the mixed-domain bucket hint.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_primary, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_skips_duplicate_primary_echoes_before_using_read_domain_key() {
+        let buckets_n = 97usize;
+        let duplicate_echoes = tx(1, vec![o(5), o(7)], vec![o(5), o(5)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Duplicate primary echoes inside the write domain should not shadow the
+        // first distinct read-domain key when deriving the mixed bucket hint.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_echoes, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_when_read_write_roles_flip_for_same_domain() {
+        let buckets_n = 97usize;
+        let write_then_read = tx(1, vec![o(7)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(7)]);
+
+        // Equivalent two-key access domains should land in the same bucket even
+        // when the read/write roles flip between the keys.
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_uses_stable_secondary_key_across_permuted_three_key_domains() {
+        let buckets_n = 97usize;
+        let baseline = tx(1, vec![o(11), o(13)], vec![o(7)]);
+        let permuted = tx(2, vec![o(13), o(11)], vec![o(7)]);
+
+        // Equivalent three-key access domains should not drift buckets just because
+        // the first distinct secondary key appeared in a different read-set order.
+        assert_eq!(
+            hot_bucket_hint(&baseline, buckets_n),
+            hot_bucket_hint(&permuted, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&baseline, buckets_n),
+            ((7u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
+        let buckets_n = 97usize;
+        let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(0)]);
+
+        // Object id 0 is a valid domain member, not an internal sentinel.
+        // Equivalent mixed domains touching {0,5} should remain bucket-stable even
+        // when the read/write roles flip.
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
@@ -1868,27 +2591,190 @@ mod tests {
         let buckets_n = 8usize;
 
         for t in txs {
-            let expected = ((t
-                .write_set
-                .first()
-                .or_else(|| t.read_set.first())
-                .map(|o| o.id)
-                .unwrap_or(0)
-                ^ t.write_set
-                    .get(1)
-                    .or_else(|| t.read_set.get(1))
-                    .map(|o| o.id)
-                    .unwrap_or(0)
-                    .rotate_left(7))
-                % buckets_n as u64) as usize;
+            let (key_a, key_b) = hot_bucket_keys(&t);
+            let expected = ((key_a ^ key_b.rotate_left(7)) % buckets_n as u64) as usize;
             assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
         }
+    }
+
+    #[test]
+    fn hot_bucket_keys_skip_duplicate_leading_refs_and_preserve_write_priority() {
+        let t = tx(1, vec![o(77), o(88)], vec![o(42), o(42), o(99)]);
+        assert_eq!(hot_bucket_keys(&t), (42, 99));
+
+        let read_fallback = tx(2, vec![o(7), o(7), o(8)], vec![]);
+        assert_eq!(hot_bucket_keys(&read_fallback), (7, 8));
     }
 
     #[test]
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
+    }
+
+    #[test]
+    fn hot_bucket_hint_single_bucket_count_fails_closed_to_bucket_zero() {
+        let t = tx(999, vec![o(7)], vec![o(42)]);
+        assert_eq!(hot_bucket_hint(&t, 1), 0);
+    }
+
+    #[test]
+    fn hot_bucket_hint_tracks_two_smallest_distinct_keys_when_new_min_arrives_last() {
+        let t = tx(1, vec![o(3)], vec![o(5), o(4)]);
+        let buckets_n = 8usize;
+        let expected = ((3u64 ^ 4u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+        assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+    }
+
+    #[test]
+    fn hot_bucket_hint_dedups_same_version_cross_domain_echoes_before_mixing() {
+        let buckets_n = 97usize;
+        let duplicate_echoes = tx(1, vec![o(7), o(7)], vec![o(5), o(5), o(7)]);
+        let deduped_domain = tx(2, vec![o(7)], vec![o(5)]);
+
+        // Same-version read/write echoes for the same object id are valid access
+        // domains and should hash identically to their deduplicated equivalent.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_echoes, buckets_n),
+            hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_for_duplicate_heavy_equivalent_mixed_domains() {
+        let buckets_n = 97usize;
+        let duplicate_heavy = tx(
+            3,
+            vec![o(11), o(5), o(11), o(13), o(13)],
+            vec![o(7), o(7), o(5), o(13)],
+        );
+        let canonical = tx(4, vec![o(5), o(11), o(13)], vec![o(7)]);
+
+        // Duplicate-heavy mixed domains should collapse to the same two-smallest
+        // distinct access keys as their canonical equivalent.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            hot_bucket_hint(&canonical, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+        let t = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_hint(&t, 8);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_object_share_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        let _ = hot_object_share(&txs);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn build_parallel_groups_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+    }
+
+    #[test]
+    fn reorder_only_grouping_strategies_keep_mixed_access_domain_skew_guardrails() {
+        let strategies = [
+            GroupingStrategy::FootprintDesc,
+            GroupingStrategy::WriteFirst,
+            GroupingStrategy::WriteLast,
+        ];
+
+        for strategy in strategies {
+            let txs = vec![tx(
+                1,
+                vec![ObjectRef { id: 7, version: 2 }],
+                vec![ObjectRef { id: 7, version: 1 }],
+            )];
+
+            let panic = std::panic::catch_unwind(|| {
+                let _ = build_parallel_groups_profile_with_strategy(&txs, strategy);
+            });
+
+            let msg = panic
+                .expect_err("reorder-only strategy must reject cross-domain version skew")
+                .downcast::<String>()
+                .map(|s| *s)
+                .or_else(|payload| payload.downcast::<&'static str>().map(|s| s.to_string()))
+                .expect("panic payload should be string-like");
+            assert!(
+                msg.contains(
+                    "mixed access domain contains the same object id with multiple versions"
+                ),
+                "unexpected panic for {strategy:?}: {msg}"
+            );
+        }
+    }
+
+    #[test]
+    fn auto_adaptive_hot_bucket_path_keeps_mixed_access_domain_skew_guardrails() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "4");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "4");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(5)]),
+            tx(2, vec![], vec![o(5)]),
+            tx(
+                3,
+                vec![ObjectRef { id: 5, version: 2 }],
+                vec![ObjectRef { id: 5, version: 1 }],
+            ),
+            tx(4, vec![], vec![o(5)]),
+        ];
+
+        let panic = std::panic::catch_unwind(|| {
+            let _ =
+                build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+        });
+
+        let msg = panic
+            .expect_err("auto-adaptive hot-bucket path must reject cross-domain version skew")
+            .downcast::<String>()
+            .map(|s| *s)
+            .or_else(|payload| payload.downcast::<&'static str>().map(|s| s.to_string()))
+            .expect("panic payload should be string-like");
+        assert!(
+            msg.contains("mixed access domain contains the same object id with multiple versions"),
+            "unexpected panic: {msg}"
+        );
     }
 
     #[test]
@@ -1960,6 +2846,35 @@ mod tests {
         let (_groups, profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
 
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+    }
+
+    #[test]
+    fn aggressive_skip_empty_stage_checks_avoids_candidate_group_scans_for_empty_access() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "2");
+        let _skip_empty = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![], vec![]),    // empty access set should not pay scan cost
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 10]);
+        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3]);
+        assert_eq!(profile.candidate_groups_scanned, 0);
         assert_eq!(profile.stage_ww_checks, 0);
         assert_eq!(profile.stage_wr_checks, 0);
         assert_eq!(profile.stage_rw_checks, 0);
@@ -2351,7 +3266,8 @@ mod tests {
     }
 
     #[test]
-    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_comma_decimal_percent_values() {
+    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_comma_decimal_percent_values()
+    {
         let _env = env_lock();
 
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+25,5%' ");
@@ -2676,7 +3592,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, 64);
-        assert!(d.use_hot_bucket, "env-tuned min batch should allow small-batch hotspot detection");
+        assert!(
+            d.use_hot_bucket,
+            "env-tuned min batch should allow small-batch hotspot detection"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -2749,7 +3668,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, 64);
-        assert!(d.use_hot_bucket, "exact boundary match should still enable hot-bucket strategy");
+        assert!(
+            d.use_hot_bucket,
+            "exact boundary match should still enable hot-bucket strategy"
+        );
         assert_eq!(d.reason, "hotspot_detected");
         assert!(d.streak_ratio >= d.streak_threshold + d.min_margin);
         assert!(d.hot_key_share >= d.min_hot_key_share);
@@ -2778,7 +3700,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
-        assert!(d.use_hot_bucket, "default min-batch boundary should still run adaptive hotspot detection");
+        assert!(
+            d.use_hot_bucket,
+            "default min-batch boundary should still run adaptive hotspot detection"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -2913,7 +3838,10 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
-        assert!(d.use_hot_bucket, "direct-scan path should see tail hotspot runs");
+        assert!(
+            d.use_hot_bucket,
+            "direct-scan path should see tail hotspot runs"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3102,7 +4030,10 @@ mod tests {
         txs.push(tx(9_999, vec![o(777)], vec![]));
 
         let d = auto_adaptive_decision(&txs);
-        assert!(d.use_hot_bucket, "read-only tail hotspot should be counted in sample");
+        assert!(
+            d.use_hot_bucket,
+            "read-only tail hotspot should be counted in sample"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
@@ -3216,7 +4147,10 @@ mod tests {
         }
 
         let baseline = auto_adaptive_decision(&txs);
-        assert!(baseline.use_hot_bucket, "baseline hotspot should clear permissive adaptive gates");
+        assert!(
+            baseline.use_hot_bucket,
+            "baseline hotspot should clear permissive adaptive gates"
+        );
 
         let gain = baseline.expected_gain_score.to_string();
         let hot_key_share = baseline.hot_key_share.to_string();
@@ -3227,7 +4161,10 @@ mod tests {
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", &gain);
 
         let d = auto_adaptive_decision(&txs);
-        assert!(d.use_hot_bucket, "expected-gain threshold should stay inclusive at exact equality");
+        assert!(
+            d.use_hot_bucket,
+            "expected-gain threshold should stay inclusive at exact equality"
+        );
         assert_eq!(d.reason, "hotspot_detected");
         assert!(d.expected_gain_score >= d.min_expected_gain_score);
         assert!(d.hot_key_share >= d.min_hot_key_share);
@@ -3325,6 +4262,24 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn auto_adaptive_decision_rejects_cross_domain_version_skew_for_same_object_id() {
+        let mut txs = Vec::with_capacity(512);
+        txs.push(tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        ));
+        for i in 1..512u64 {
+            txs.push(tx(1_000 + i, vec![], vec![o(10_000 + i)]));
+        }
+
+        let _ = auto_adaptive_decision(&txs);
+    }
+
+    #[test]
     fn auto_adaptive_empty_batches_fail_closed_even_with_permissive_env_knobs() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
@@ -3374,6 +4329,167 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_preserves_keyless_singleton_and_duplicate_write_domains() {
+        assert_eq!(primary_access_domain_key(&tx(1, vec![], vec![])), None);
+        assert_eq!(
+            primary_access_domain_key(&tx(2, vec![o(7)], vec![])),
+            Some(7)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(3, vec![o(99)], vec![o(11)])),
+            Some(11)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(4, vec![o(99)], vec![o(11), o(11), o(17)])),
+            Some(11)
+        );
+    }
+
+    #[test]
+    fn primary_access_domain_key_two_entry_fast_path_canonicalizes_write_and_read_domains() {
+        assert_eq!(
+            primary_access_domain_key(&tx(10, vec![], vec![o(17), o(11)])),
+            Some(11)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(11, vec![o(23), o(19)], vec![])),
+            Some(19)
+        );
+        assert_eq!(
+            primary_access_domain_key(&tx(12, vec![o(99)], vec![o(13), o(13)])),
+            Some(13)
+        );
+    }
+
+    #[test]
+    fn primary_access_domain_key_ignores_same_version_cross_domain_echoes() {
+        let echoed_write = tx(5, vec![o(7), o(5)], vec![o(5), o(11), o(7)]);
+        let echoed_read = tx(6, vec![o(11), o(11), o(7)], vec![o(5), o(7)]);
+        let deduped_write = tx(7, vec![o(7)], vec![o(5), o(11)]);
+        let deduped_read = tx(8, vec![o(7), o(11)], vec![o(5)]);
+
+        assert_eq!(primary_access_domain_key(&echoed_write), Some(5));
+        assert_eq!(
+            primary_access_domain_key(&echoed_write),
+            primary_access_domain_key(&deduped_write)
+        );
+        assert_eq!(primary_access_domain_key(&echoed_read), Some(5));
+        assert_eq!(
+            primary_access_domain_key(&echoed_read),
+            primary_access_domain_key(&deduped_read)
+        );
+    }
+
+    #[test]
+    fn primary_access_domain_key_canonicalizes_duplicate_heavy_read_only_domains() {
+        let duplicate_heavy = tx(81, vec![o(17), o(29), o(17), o(11), o(29), o(11)], vec![]);
+        let canonical = tx(82, vec![o(29), o(11), o(17)], vec![]);
+
+        // Read-only hotspot detection should stay stable across duplicate-heavy
+        // permutations of the same access domain so adaptive grouping does not
+        // drift when telemetry or ingress ordering echoes the same keys.
+        assert_eq!(primary_access_domain_key(&duplicate_heavy), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&duplicate_heavy),
+            primary_access_domain_key(&canonical)
+        );
+    }
+
+    #[test]
+    fn primary_access_domain_key_prefers_write_domain_over_lower_shared_read_keys() {
+        let baseline = tx(9, vec![o(3), o(3), o(42)], vec![o(11), o(17), o(11)]);
+        let echoed = tx(
+            10,
+            vec![o(3), o(11), o(42), o(17)],
+            vec![o(17), o(11), o(11)],
+        );
+        let permuted = tx(11, vec![o(42), o(3)], vec![o(17), o(11)]);
+
+        // Adaptive hotspot detection intentionally keys on the preferred write domain
+        // when writes are present. Shared read-only dependencies with lower ids must
+        // not pull the key away from the write-domain minimum, and same-version
+        // cross-domain echoes should not perturb that write-first signal.
+        assert_eq!(primary_access_domain_key(&baseline), Some(11));
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&echoed)
+        );
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&permuted)
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_cross_domain_version_skew_for_same_object_id() {
+        let t = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
+    fn auto_adaptive_canonicalizes_primary_access_key_across_equivalent_domain_orderings() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut baseline = Vec::with_capacity(64);
+        let mut permuted = Vec::with_capacity(64);
+        for i in 0..32u64 {
+            baseline.push(tx(140_000 + i, vec![o(99)], vec![o(50_000 + i), o(7)]));
+            permuted.push(tx(150_000 + i, vec![o(99)], vec![o(7), o(50_000 + i)]));
+        }
+        for i in 0..32u64 {
+            baseline.push(tx(
+                140_100 + i,
+                vec![o(99)],
+                vec![o(60_000 + i), o(70_000 + i)],
+            ));
+            permuted.push(tx(
+                150_100 + i,
+                vec![o(99)],
+                vec![o(70_000 + i), o(60_000 + i)],
+            ));
+        }
+
+        let baseline_decision = auto_adaptive_decision(&baseline);
+        let permuted_decision = auto_adaptive_decision(&permuted);
+
+        assert_eq!(baseline_decision.sample_len, 64);
+        assert_eq!(permuted_decision.sample_len, 64);
+        assert_eq!(
+            baseline_decision.use_hot_bucket,
+            permuted_decision.use_hot_bucket
+        );
+        assert_eq!(baseline_decision.reason, permuted_decision.reason);
+        assert_eq!(
+            baseline_decision.streak_ratio,
+            permuted_decision.streak_ratio
+        );
+        assert_eq!(
+            baseline_decision.hot_key_share,
+            permuted_decision.hot_key_share
+        );
+        assert_eq!(
+            baseline_decision.expected_gain_score,
+            permuted_decision.expected_gain_score
+        );
+        assert!(baseline_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_read_only_keyless_gaps_break_same_key_streaks_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
@@ -3419,6 +4535,35 @@ mod tests {
 
         let d = auto_adaptive_decision(&txs);
         assert_eq!(d.sample_len, txs.len());
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_mixed_hot_key_probe_avoids_false_hotspots_from_shared_leading_writes() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Executor conflict grouping stays object-scoped and write-first, but a
+        // shared leading write object can coexist with a unique adjacent owned
+        // object. Adaptive hotspot detection should follow the same mixed
+        // two-key hint as hot-bucket scheduling instead of collapsing the batch
+        // into a false hotspot on the shared leading key alone.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42), o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
         assert!(!d.use_hot_bucket);
         assert_eq!(d.reason, "low_hot_key_share");
         assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
@@ -3571,6 +4716,42 @@ mod tests {
         assert_eq!(profile.group_count, 1);
         assert_eq!(profile.max_group_size, txs.len());
         assert_eq!(profile.min_group_size, txs.len());
+    }
+
+    #[test]
+    fn write_first_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
+                vec![ov(77, 5), ov(77, 6)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
+
+        // WriteFirst should rank by deduped object-scoped write/read domains so
+        // duplicate/version-heavy footprints do not outrank genuinely wider work.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
+    }
+
+    #[test]
+    fn write_last_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
+                vec![ov(77, 5), ov(77, 6)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteLast);
+
+        // WriteLast should also follow deduped object-scoped domains so
+        // version-heavy footprints do not drift from the executor's scheduler.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
     }
 
     #[test]

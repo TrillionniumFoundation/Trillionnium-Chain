@@ -1,6 +1,12 @@
-use super::governance::{is_sensitive_gov_param, GOV_ALLOWED_KEYS, GOV_SENSITIVE_KEYS};
+use super::governance::{
+    is_sensitive_gov_param, validate_gov_param_value, GOV_ALLOWED_KEYS,
+    GOV_KEYS_WITH_EXPLICIT_VALIDATORS, GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
+};
 use super::*;
-use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
+use trnm_types::{
+    GovProposalObject, GovProposalStatus, ProofType, TaskMetadata, TaskMeteringSnapshot,
+    TaskObject, TaskStatus,
+};
 
 #[test]
 fn put_and_version_update() {
@@ -37,6 +43,76 @@ fn put_and_version_update() {
 }
 
 #[test]
+fn task_metering_snapshot_affects_state_root() {
+    let mut without_metering = StateStore::new();
+    let mut with_metering = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 404,
+        creator: "alice".into(),
+        bounty: 25,
+        status: TaskStatus::Completed,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(40),
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 2,
+    };
+
+    let mut metered_task = base_task.clone();
+    metered_task.metadata = Some(TaskMetadata {
+        note: Some("metered task".into()),
+        task_type: Some("inference".into()),
+        input_hash: Some("ab".repeat(32)),
+        model: None,
+        provenance: None,
+        metering: Some(TaskMeteringSnapshot {
+            workload_class: "llm_inference".into(),
+            metering_schema: "llm_token_meter_v1".into(),
+            policy_snapshot_version: 2,
+            receipt_hash: "cd".repeat(32),
+            prompt_tokens: 144,
+            generated_tokens: 55,
+            decode_steps: 13,
+            kv_bytes_moved: 4096,
+            normalized_work_units: 987,
+            prompt_token_weight: 3,
+            generated_token_weight: 5,
+            decode_step_weight: 7,
+            kv_byte_weight: 11,
+            min_accept_work_units: 100,
+            challenge_success_bounty_base: 17,
+            challenge_success_bounty_per_work_unit_num: 19,
+            challenge_success_bounty_per_work_unit_den: 23,
+            worker_completion_bonus_per_work_unit_num: 29,
+            worker_completion_bonus_per_work_unit_den: 31,
+            worker_slash_rebate_per_work_unit_num: 37,
+            worker_slash_rebate_per_work_unit_den: 41,
+        }),
+    });
+
+    without_metering.put_task_new(base_task).unwrap();
+    with_metering.put_task_new(metered_task).unwrap();
+
+    assert_ne!(
+        without_metering.state_root(),
+        with_metering.state_root(),
+        "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+    );
+}
+
+#[test]
 fn version_conflict() {
     let mut st = StateStore::new();
     let t = TaskObject {
@@ -65,6 +141,39 @@ fn version_conflict() {
     let _ = st.update_task(r1.clone(), t.clone()).unwrap();
     let err = st.update_task(r1, t).unwrap_err();
     assert!(err.contains("version conflict"));
+}
+
+#[test]
+fn governance_reads_fail_closed_on_key_id_index_drift() {
+    let mut st = StateStore::new();
+    let gov_ref = st
+        .set_gov_param(0, 111, "max_block_ms".into(), "500".into())
+        .expect("governance param insertion should succeed");
+    let original = st
+        .get_param(gov_ref.id)
+        .expect("stored governance param should exist");
+
+    st.objects.insert(
+        gov_ref.id,
+        VersionedObject {
+            version: gov_ref.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: gov_ref.id + 1,
+                ..original
+            }),
+        },
+    );
+
+    assert_eq!(
+        st.gov_param_u64("max_block_ms"),
+        None,
+        "governance reads must fail closed when registry id and stored key_id drift"
+    );
+    assert_eq!(
+        st.gov_param_ref_for_key("max_block_ms"),
+        None,
+        "governance ref lookup must reject mismatched embedded key ids"
+    );
 }
 
 #[test]
@@ -239,6 +348,242 @@ fn resolve_approval_rejects_system_or_treasury_approver_without_mutation() {
             "reserved approver id must not mutate staged confirmations"
         );
     }
+}
+
+#[test]
+fn restore_task_rejects_missing_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        9_929,
+        Some(TaskObject {
+            task_id: 9_929,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(9_929).is_none(),
+        "restore_task must fail closed when a challenged snapshot omits audit/proof metadata"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_missing_task_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_930), None);
+    assert_eq!(st.pending_resolve_first_approver(9_930), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_930), None);
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_missing_challenge_timing_metadata() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-paused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_control_char_proof_metadata() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_932,
+        Some(TaskObject {
+            task_id: 9_932,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt\npaused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(98_271),
+            challenge_window_blocks_snapshot: Some(11),
+            challenged_at_height: Some(98_260),
+            resolve_deadline_height: Some(98_282),
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_932,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_932), None);
+    assert_eq!(st.pending_resolve_first_approver(9_932), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_932), None);
 }
 
 #[test]
@@ -1096,6 +1441,26 @@ fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
 }
 
 #[test]
+fn governance_resolve_authority_unchecked_path_rejects_reserved_emergency_pause_key_id_alias() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param_unchecked(
+            7_999,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect_err("reserved emergency_pause key id must stay pinned on unchecked path");
+
+    assert!(
+        err.contains("governance key id mismatch for id 7999: expected_key=emergency_pause, attempted_key=resolve_authority"),
+        "{err}"
+    );
+    assert_eq!(st.gov_param_string("resolve_authority"), None);
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
 fn governance_resolve_authority_checked_path_rejects_key_id_shadowing_without_state_mutation() {
     let mut st = StateStore::new();
     st.set_gov_param_unchecked(
@@ -1304,6 +1669,27 @@ fn governance_sensitive_pending_cancel_before_activation_removes_pending() {
 
     assert!(st.pending_gov_update("challenge_min_bond").is_none());
     assert_eq!(st.gov_param_u64("challenge_min_bond"), Some(100));
+}
+
+#[test]
+fn governance_non_sensitive_cancel_path_still_enforces_validator_registry_guard() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param_with_action(
+            21_005,
+            7_999,
+            "emergency_pause".into(),
+            "not-a-bool".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("non-sensitive cancel path must still fail closed before mutation");
+    assert!(
+        err.contains("governance cancel not supported for non-sensitive key emergency_pause"),
+        "unexpected cancel-path error: {err}"
+    );
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+    assert!(!st.is_emergency_paused());
 }
 
 #[test]
@@ -2184,34 +2570,46 @@ fn governance_timelock_classification_merge_gate_keeps_emergency_pause_immediate
 }
 
 #[test]
-fn governance_allowed_keys_schema_merge_gate_is_explicit() {
-    // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
-    // must update this table with an invalid sample that is expected to fail.
-    let expected_invalid_samples = [
-        ("max_block_ms", "9"),
-        ("max_parallel_workers", "0"),
-        ("min_worker_stake", "0"),
-        ("challenge_min_bond", "0"),
-        ("challenge_min_bond_bounty_bps", "100001"),
-        ("challenge_min_bond_worker_stake_bps", "100001"),
-        ("challenge_window_blocks", "99"),
-        ("challenge_success_bounty", "-1"),
-        ("resolve_authority", "   "),
-        ("emergency_pause", "TRUE"),
-        ("monetary_policy_tick_interval_blocks", "0"),
-        ("monetary_policy_tick_cooldown_blocks", "0"),
-        ("monetary_base_issuance_per_tick", "1000000000001"),
-        ("monetary_base_burn_per_tick", "1000000000001"),
-    ];
+fn governance_allowed_keys_have_single_explicit_validator_registry() {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        GOV_ALLOWED_KEYS.iter().copied().collect();
+    let validator_unique: std::collections::BTreeSet<&str> =
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.iter().copied().collect();
 
     assert_eq!(
+        validator_unique.len(),
+        GOV_KEYS_WITH_EXPLICIT_VALIDATORS.len(),
+        "GOV_KEYS_WITH_EXPLICIT_VALIDATORS contains duplicate entries"
+    );
+    assert_eq!(
+        allowed_unique, validator_unique,
+        "allowed governance keys and explicit validator registry must stay identical"
+    );
+}
+
+#[test]
+fn governance_validator_registry_drift_fails_closed_at_runtime_boundary() {
+    let err = validate_gov_param_value("not_whitelisted", "1")
+        .expect_err("unknown governance keys must fail closed at the validator boundary");
+    assert!(
+        err.contains("missing explicit validator registration")
+            || err.contains("no explicit validator registered"),
+        "unexpected runtime validator drift error: {err}"
+    );
+}
+
+#[test]
+fn governance_allowed_keys_schema_merge_gate_is_explicit() {
+    // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
+    // must update the source-side invalid-sample registry beside the validators.
+    assert_eq!(
         GOV_ALLOWED_KEYS.len(),
-        expected_invalid_samples.len(),
-        "governance allowed-key list changed; update schema merge gate"
+        GOV_SCHEMA_INVALID_SAMPLES.len(),
+        "governance allowed-key list changed; update source-side schema merge gate"
     );
 
     let mut st = StateStore::new();
-    for (i, (key, bad_value)) in expected_invalid_samples.iter().enumerate() {
+    for (i, (key, bad_value)) in GOV_SCHEMA_INVALID_SAMPLES.iter().enumerate() {
         assert!(
             GOV_ALLOWED_KEYS.contains(key),
             "schema merge gate contains non-whitelisted key: {}",
@@ -2232,6 +2630,31 @@ fn governance_allowed_keys_schema_merge_gate_is_explicit() {
             err
         );
     }
+}
+
+#[test]
+fn governance_llm_meter_schema_is_explicit_and_fail_closed() {
+    let mut st = StateStore::new();
+
+    st.set_gov_param_unchecked(
+        97_050,
+        "llm_meter_prompt_token_weight".into(),
+        "42".into(),
+    )
+    .expect("llm meter key with explicit validator should be accepted");
+    assert_eq!(
+        st.gov_param_u64("llm_meter_prompt_token_weight"),
+        Some(42)
+    );
+
+    let err = st
+        .set_gov_param_unchecked(
+            97_051,
+            "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+            "0".into(),
+        )
+        .expect_err("denominator zero must fail closed");
+    assert!(err.contains("invalid governance value"), "{err}");
 }
 
 #[test]
@@ -2485,6 +2908,38 @@ fn state_root_changes_when_pending_resolve_authority_set_changes() {
 }
 
 #[test]
+fn pending_resolve_restore_canonicalizes_authority_metadata_for_state_root() {
+    let mut staged = StateStore::new();
+    staged
+        .stage_or_confirm_resolve_approval(
+            5_200,
+            7,
+            true,
+            "Authority-A",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
+
+    let mut restored = StateStore::new();
+    restored.restore_pending_resolve_approval(
+        5_200,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        staged.state_root(),
+        restored.state_root(),
+        "state_root should ignore authority-set ordering and approver casing noise for equivalent pending resolve snapshots"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_picks_latest_valid() {
     let e1 = WalMeta {
         height: 1,
@@ -2564,6 +3019,30 @@ fn wal_checkpoint_verification_falls_back_on_chain_break() {
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_metadata_only_chain_starting_above_genesis() {
+    let e10 = WalMeta {
+        height: 10,
+        round: 0,
+        proposal_hash: "p10".into(),
+        committed: true,
+        state_root_hex: "r10".into(),
+        prev_hash_hex: None,
+    };
+
+    let checkpoints = vec![CheckpointMeta {
+        height: 10,
+        state_root_hex: "r10".into(),
+        wal_entry_hash_hex: e10.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e10]).unwrap();
+    assert!(
+        got.is_none(),
+        "restart recovery must fail closed for metadata-only WAL chains that start above genesis height"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
     let e1 = WalMeta {
         height: 10,
@@ -2600,6 +3079,47 @@ fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
     let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
         .unwrap()
         .expect("checkpoint");
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_falls_back_on_height_gap() {
+    let e1 = WalMeta {
+        height: 10,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        // Missing height 11 must terminate verification fail-closed.
+        height: 12,
+        round: 1,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 10,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 12,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 10);
     assert_eq!(got.state_root_hex, "r1");
 }
 
@@ -2683,6 +3203,266 @@ fn wal_checkpoint_verification_stops_before_uncommitted_tail() {
         .expect("checkpoint");
     assert_eq!(got.height, 1);
     assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_ambiguous_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "tampered-root".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_incomplete_checkpoint_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: String::new(),
+            wal_entry_hash_hex: "missing-root".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_whitespace_only_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "   \n\t  ".into(),
+            wal_entry_hash_hex: "present-but-blank".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_non_canonical_checkpoint_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: " r2".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_when_checkpoint_metadata_exists_but_does_not_match_committed_wal_entry() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+    let h2 = e2.content_hash_hex();
+    let e3 = WalMeta {
+        height: 3,
+        round: 0,
+        proposal_hash: "p3".into(),
+        committed: true,
+        state_root_hex: "r3".into(),
+        prev_hash_hex: Some(h2),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "tampered-root".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+        CheckpointMeta {
+            height: 3,
+            state_root_hex: "r3".into(),
+            wal_entry_hash_hex: e3.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, e3])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_content_hash_length_frames_variable_metadata_fields() {
+    let a = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "ab".into(),
+        committed: true,
+        state_root_hex: "c".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+    let b = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "a".into(),
+        committed: true,
+        state_root_hex: "bc".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+
+    assert_ne!(
+        a.content_hash_hex(),
+        b.content_hash_hex(),
+        "wal content hash must length-frame proposal and state-root metadata so proof material cannot collide across field boundaries"
+    );
 }
 
 #[test]
@@ -2803,4 +3583,205 @@ fn policy_tick_cooldown_throttles_repeated_schedule_points() {
     assert!(st.policy_tick(2).is_some());
     assert!(st.policy_tick(4).is_none(), "cooldown should block h=4");
     assert!(st.policy_tick(6).is_some(), "cooldown should allow h=6");
+}
+
+#[test]
+fn restore_pending_gov_update_unknown_key_fails_closed_without_materializing_queue_entry() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "totally_unknown_key",
+        Some(PendingGovParamUpdate {
+            key_id: 117,
+            key: "totally_unknown_key".into(),
+            value: "120".into(),
+            activate_at_height: 330,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("totally_unknown_key").is_none(),
+        "restore_pending_gov_update must fail closed for non-whitelisted governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "unknown pending governance keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_non_sensitive_key_fails_closed_without_aliasing_immediate_param() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: 118,
+            key: "max_block_ms".into(),
+            value: "450".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "restore_pending_gov_update must fail closed for non-sensitive immediate governance keys"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-sensitive governance keys must not be restorable into the pending timelock queue"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_noncanonical_snapshot_key_fails_closed_without_aliasing_pending_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7_310,
+            key: " resolve_authority".into(),
+            value: "authority-a,authority-b".into(),
+            activate_at_height: 340,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "restore_pending_gov_update must fail closed when the snapshot key spelling is non-canonical"
+    );
+    assert!(
+        state.pending_gov_update(" resolve_authority").is_none(),
+        "non-canonical snapshot keys must not materialize an aliased pending governance slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "non-canonical snapshot keys must not perturb the deterministic state root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_foreign_key_id_collision_fails_closed() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param_unchecked(113, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let root_with_canonical_param = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_success_bounty",
+        Some(PendingGovParamUpdate {
+            key_id: 113,
+            key: "challenge_success_bounty".into(),
+            value: "6000".into(),
+            activate_at_height: 350,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "restore_pending_gov_update must fail closed when a snapshot reuses another governance key's canonical id"
+    );
+    assert_eq!(
+        state.gov_param_string("challenge_min_bond"),
+        Some("5000".into()),
+        "foreign key-id collision must not disturb the existing canonical governance registration"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_canonical_param,
+        "foreign key-id collision must leave the deterministic root unchanged"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_live_object_embedded_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+    let applied = state
+        .set_gov_param_unchecked(7_201, "challenge_min_bond".into(), "5000".into())
+        .expect("canonical challenge_min_bond write should succeed");
+    let canonical = state
+        .get_param(applied.id)
+        .expect("canonical challenge_min_bond object should exist");
+
+    state.objects.insert(
+        applied.id,
+        VersionedObject {
+            version: applied.version,
+            value: ObjectValue::GovParam(GovParamObject {
+                key_id: applied.id + 1,
+                ..canonical
+            }),
+        },
+    );
+    let root_with_corrupt_live_object = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the live GovParam object embeds a drifted key_id"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_corrupt_live_object,
+        "failed restore must not mutate state beyond preserving the existing corrupt live-object snapshot"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_same_key_id_drift_fails_closed() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+    let root_with_canonical_pending = state.state_root();
+    assert!(state.pending_gov_update("challenge_min_bond").is_some());
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "challenge_min_bond".into(),
+            value: "6000".into(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update must fail closed when the same pending governance key reappears under a different key_id"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_canonical_pending,
+        "same-key key_id drift must scrub the staged pending entry instead of silently rebinding it to a new slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        StateStore::new().state_root(),
+        "same-key key_id drift should return to the empty baseline root after fail-closed scrubbing"
+    );
 }

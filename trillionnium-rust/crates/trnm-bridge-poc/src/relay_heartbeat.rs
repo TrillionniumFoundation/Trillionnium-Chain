@@ -100,7 +100,10 @@ impl RelayHeartbeatMonitor {
     }
 
     pub fn record_failure(&mut self, reason: &str) -> HeartbeatOutcome {
-        self.consecutive_failures = self.consecutive_failures.saturating_add(1);
+        self.consecutive_failures = self
+            .consecutive_failures
+            .saturating_add(1)
+            .min(self.config.max_retry);
         let degraded = self.consecutive_failures >= self.config.max_retry;
         let should_retry = !degraded;
         let normalized_reason = normalize_failure_reason(reason);
@@ -132,7 +135,11 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{115F}'
             | '\u{1160}'
             | '\u{1680}'
+            | '\u{180B}'
+            | '\u{180C}'
+            | '\u{180D}'
             | '\u{180E}'
+            | '\u{2800}'
             | '\u{3164}'
             | '\u{2000}'
             | '\u{2001}'
@@ -159,6 +166,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{202E}'
             | '\u{202F}'
             | '\u{205F}'
+            | '\u{2800}'
             | '\u{3000}'
             | '\u{2060}'
             | '\u{2061}'
@@ -245,6 +253,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_mongolian_variation_selectors_for_replay_stability() {
+        let raw = "target\u{180B}relay\u{180C}timeout\u{180D}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_medium_math_and_ideographic_spaces() {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_failure_reason(raw);
@@ -280,6 +295,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability()
     {
         let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
@@ -311,6 +333,20 @@ mod tests {
     #[test]
     fn normalize_failure_reason_collapses_ogham_space_mark_for_replay_stability() {
         let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_collapses_braille_blank_for_replay_stability() {
+        let raw = "target\u{2800}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_mongolian_free_variation_selector_for_replay_stability() {
+        let raw = "target\u{180F}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
     }

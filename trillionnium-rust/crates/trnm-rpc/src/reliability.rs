@@ -220,6 +220,13 @@ fn sanitize_store_config(
         config.max_pending_per_session = Some(per_session.min(total));
     }
 
+    if let (Some(dedup), Some(total)) = (config.max_dedup_entries, config.max_pending_total) {
+        // Dedup should be able to cover the full configured pending window; otherwise
+        // misconfigured ingress caps can reject fresh idempotency keys before pending
+        // capacity is actually exhausted.
+        config.max_dedup_entries = Some(dedup.max(total));
+    }
+
     // Zero-duration retain windows collapse into effectively immediate cleanup,
     // which can jitter between retain/remove behavior across cleanup call sites.
     // Keep a 1ms floor so "retain" mode remains semantically distinct.
@@ -471,10 +478,14 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     collect_rr_cursor: usize,
 }
 
+const MIN_FREE_INGRESS_BACKOFF_MS: u64 = 1;
+const MIN_RETENTION_FLOOR_MS: u64 = 1;
+
 fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
-    if retry.base_backoff_ms == 0 {
-        retry.base_backoff_ms = 1;
-    }
+    // Keep free-ingress retry pacing on a strictly positive floor so malformed
+    // configs cannot collapse backoff/circuit timing into immediate hot loops.
+    retry.base_backoff_ms = retry.base_backoff_ms.max(MIN_FREE_INGRESS_BACKOFF_MS);
+
     if retry.max_backoff_ms == 0 {
         retry.max_backoff_ms = retry.base_backoff_ms;
     }
@@ -489,34 +500,53 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     if retry.circuit_breaker_threshold == 0 {
         retry.circuit_breaker_threshold = 1;
     }
-    if retry.circuit_open_ms == 0 {
-        retry.circuit_open_ms = retry.base_backoff_ms;
-    }
-    if retry.circuit_open_ms < retry.base_backoff_ms {
-        // Keep circuit-open window at least one base retry interval so repeated
-        // retry-exhaustion rounds cannot immediately re-open under undersized
-        // operator configs.
-        retry.circuit_open_ms = retry.base_backoff_ms;
+    let min_circuit_open_ms = retry.max_backoff_ms.max(retry.base_backoff_ms);
+    if retry.circuit_open_ms < min_circuit_open_ms {
+        // Keep circuit-open windows at least as wide as the effective retry
+        // ceiling so repeated retry-exhaustion rounds cannot re-enter earlier
+        // than the longest sanitized free-ingress backoff boundary.
+        retry.circuit_open_ms = min_circuit_open_ms;
     }
     retry
 }
 
-fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig {
+fn sanitize_retention_config(mut retention: RetentionConfig, retry: &RetryConfig) -> RetentionConfig {
     // Zero dedup ttl disables idempotency memory and allows immediate duplicate
-    // replays under concurrent ingress. Keep a 1ms floor so dedup remains active.
+    // replays under concurrent ingress. Keep a shared 1ms floor so dedup remains active.
     if retention.dedup_ttl_ms == 0 {
-        retention.dedup_ttl_ms = 1;
+        retention.dedup_ttl_ms = MIN_RETENTION_FLOOR_MS;
     }
     // Zero pending ttl drops retry state instantly and can starve in-flight
-    // reliability guarantees under short backoff loops.
+    // reliability guarantees under short backoff loops. Keep pending state alive
+    // for at least one positive retry window so sponsor/free-ingress accounting
+    // cannot evaporate before the next eligible retry boundary.
     if retention.pending_ttl_ms == 0 {
-        retention.pending_ttl_ms = 1;
+        retention.pending_ttl_ms = retry.max_backoff_ms.max(MIN_RETENTION_FLOOR_MS);
+    }
+    // Keep pending retry state alive for at least the longest sanitized retry
+    // ceiling, otherwise sponsor/free-ingress items can age out before their next
+    // scheduled retry becomes eligible for collection.
+    if retention.pending_ttl_ms < retry.max_backoff_ms {
+        retention.pending_ttl_ms = retry.max_backoff_ms;
     }
     // Zero cleanup interval causes cleanup to run on every receive(), which can
     // become a self-inflicted backpressure hotspot under sustained ingress.
     if retention.cleanup_interval_ms == 0 {
-        retention.cleanup_interval_ms = 1;
+        retention.cleanup_interval_ms = MIN_RETENTION_FLOOR_MS;
     }
+
+    let max_safe_cleanup_interval_ms = retention
+        .dedup_ttl_ms
+        .min(retention.pending_ttl_ms)
+        .max(MIN_RETENTION_FLOOR_MS);
+    if retention.cleanup_interval_ms > max_safe_cleanup_interval_ms {
+        // Keep cleanup cadence inside both retention windows so stale dedup/pending
+        // state cannot outlive its configured sponsor/free-ingress accounting bounds
+        // by an entire oversized cleanup interval. Preserve the shared positive floor
+        // even if future retention sanitization order changes.
+        retention.cleanup_interval_ms = max_safe_cleanup_interval_ms;
+    }
+
     retention
 }
 
@@ -526,10 +556,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     }
 
     pub fn new_with_retention(store: S, retry: RetryConfig, retention: RetentionConfig) -> Self {
+        let retry = sanitize_retry_config(retry);
+        let retention = sanitize_retention_config(retention, &retry);
+
         Self {
             store,
-            retry: sanitize_retry_config(retry),
-            retention: sanitize_retention_config(retention),
+            retry,
+            retention,
             last_cleanup_at_unix_ms: None,
             circuit_state: CircuitState::Closed,
             consecutive_retry_exhausted: 0,
@@ -730,13 +763,21 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     }
 
     pub fn mark_acked(&mut self, session_id: &str, ack_id: &str) -> bool {
+        self.mark_acked_at(session_id, ack_id, current_unix_ms())
+    }
+
+    fn mark_acked_at(&mut self, session_id: &str, ack_id: &str, now_unix_ms: u128) -> bool {
         let Some(mut session) = self.store.get_session(session_id) else {
             return false;
         };
         let removed = session.pending.remove(ack_id).is_some();
         if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
             self.store.remove_session(session_id);
-        } else if self.store.try_upsert_session_with_ts(session, 0).is_err() {
+        } else if self
+            .store
+            .try_upsert_session_with_ts(session, now_unix_ms)
+            .is_err()
+        {
             return false;
         }
         removed
@@ -916,7 +957,10 @@ fn is_canonical_identifier(value: &str) -> bool {
         return false;
     }
 
-    !value.as_bytes().iter().any(|b| b.is_ascii_control())
+    !value
+        .as_bytes()
+        .iter()
+        .any(|b| b.is_ascii_control() || *b == 0x7f)
 }
 
 fn is_canonical_msg_type(msg_type: &str) -> bool {
@@ -931,6 +975,13 @@ fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
     let factor = 1u64 << shift;
     base.saturating_mul(factor).min(max)
+}
+
+fn current_unix_ms() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1624,6 +1675,26 @@ mod tests {
     }
 
     #[test]
+    fn rejects_non_canonical_identifier_with_ascii_del() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice\u{7f}".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: Some(1),
+            nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
+            payload: "hello".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
     fn rejects_non_canonical_msg_type_with_control_chars() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
@@ -1734,6 +1805,117 @@ mod tests {
 
         let exact_first_attempt = exp_backoff_ms(u64::MAX - 7, u64::MAX, 1);
         assert_eq!(exact_first_attempt, u64::MAX - 7);
+    }
+
+    #[test]
+    fn reliability_engine_sanitizes_zero_retry_floor_for_free_ingress_boundaries() {
+        let engine = ReliabilityEngine::new(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                max_attempts: 0,
+                circuit_breaker_threshold: 0,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+        assert_eq!(engine.retry.max_backoff_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+        assert_eq!(engine.retry.max_attempts, 1);
+        assert_eq!(engine.retry.circuit_breaker_threshold, 1);
+        assert_eq!(engine.retry.circuit_open_ms, MIN_FREE_INGRESS_BACKOFF_MS);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_circuit_open_window_to_retry_ceiling() {
+        let engine = ReliabilityEngine::new(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 5,
+                max_backoff_ms: 80,
+                max_attempts: 3,
+                circuit_breaker_threshold: 2,
+                circuit_open_ms: 7,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 5);
+        assert_eq!(engine.retry.max_backoff_ms, 80);
+        assert_eq!(engine.retry.circuit_open_ms, 80);
+    }
+
+    #[test]
+    fn reliability_engine_sanitizes_zero_retention_floors() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 0,
+                pending_ttl_ms: 0,
+                cleanup_interval_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, MIN_RETENTION_FLOOR_MS);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, MIN_RETENTION_FLOOR_MS);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_cleanup_interval_to_smallest_retention_window() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 25,
+                pending_ttl_ms: 10,
+                cleanup_interval_ms: 250,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 25);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 25);
+    }
+
+    #[test]
+    fn reliability_engine_clamps_pending_ttl_to_retry_ceiling() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig {
+                base_backoff_ms: 25,
+                max_backoff_ms: 250,
+                max_attempts: 3,
+                circuit_breaker_threshold: 2,
+                circuit_open_ms: 250,
+            },
+            RetentionConfig {
+                dedup_ttl_ms: 1_000,
+                pending_ttl_ms: 10,
+                cleanup_interval_ms: 500,
+            },
+        );
+
+        assert_eq!(engine.retention.pending_ttl_ms, 250);
+        assert_eq!(engine.retention.cleanup_interval_ms, 250);
+    }
+
+    #[test]
+    fn reliability_engine_preserves_positive_cleanup_floor_when_one_retention_window_is_zero() {
+        let engine = ReliabilityEngine::new_with_retention(
+            InMemoryReliabilityStore::default(),
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 25,
+                pending_ttl_ms: 0,
+                cleanup_interval_ms: 250,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 25);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 25);
     }
 
     #[test]
@@ -2335,7 +2517,7 @@ mod tests {
         );
 
         let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
-        assert!(engine.mark_acked("s1", &ack.ack_id));
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_000));
 
         // Empty session should still exist before its empty-session ttl elapses.
         let due = engine.collect_due_retries(1_100);
@@ -2362,7 +2544,7 @@ mod tests {
         );
 
         let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
-        assert!(engine.mark_acked("s1", &ack.ack_id));
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_000));
 
         // Trigger cleanup at/after TTL so retained empty sessions do not linger
         // and consume quota under prolonged idle periods.
@@ -2371,6 +2553,34 @@ mod tests {
 
         let store = engine.into_store();
         assert!(store.get_session("s1").is_none());
+    }
+
+    #[test]
+    fn empty_session_cleanup_ttl_starts_at_ack_time_not_original_ingress_time() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 10_000,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert!(engine.mark_acked_at("s1", &ack.ack_id, 1_500));
+
+        let due_before_ttl = engine.collect_due_retries(1_699);
+        assert!(due_before_ttl.is_empty());
+        assert!(engine.store.get_session("s1").is_some());
+
+        let due_after_ttl = engine.collect_due_retries(1_700);
+        assert!(due_after_ttl.is_empty());
+        assert!(engine.store.get_session("s1").is_none());
     }
 
     #[test]
@@ -2556,6 +2766,38 @@ mod tests {
         let err = store
             .try_remember_dedup_key_with_ts(key2, 2)
             .expect_err("second unique key should hit clamped quota");
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
+    }
+
+    #[test]
+    fn store_config_raises_dedup_quota_to_cover_pending_total_window() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_total: Some(2),
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key1 = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key2 = DedupKey {
+            from: "bob".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key3 = DedupKey {
+            from: "carol".to_string(),
+            seq_or_nonce: 1,
+        };
+
+        assert!(store.try_remember_dedup_key_with_ts(key1, 1).is_ok());
+        assert!(store.try_remember_dedup_key_with_ts(key2, 2).is_ok());
+        let err = store
+            .try_remember_dedup_key_with_ts(key3, 3)
+            .expect_err("third unique key should hit raised quota");
         assert!(matches!(
             err,
             ReliabilityStoreError::CapacityExceeded { .. }
@@ -2792,6 +3034,25 @@ mod tests {
     }
 
     #[test]
+    fn retry_config_sanitizes_zero_base_backoff_to_positive_floor() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                max_attempts: 1,
+                circuit_breaker_threshold: 1,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 1);
+        assert_eq!(engine.retry.max_backoff_ms, 1);
+        assert_eq!(engine.retry.circuit_open_ms, 1);
+    }
+
+    #[test]
     fn retry_config_clamps_max_backoff_to_base_floor() {
         let store = InMemoryReliabilityStore::default();
         let engine = ReliabilityEngine::new(
@@ -2854,7 +3115,8 @@ mod tests {
         );
 
         assert_eq!(engine.retention.dedup_ttl_ms, 1);
-        assert_eq!(engine.retention.pending_ttl_ms, 1);
+        assert_eq!(engine.retention.pending_ttl_ms, 10_000);
+        assert_eq!(engine.retention.cleanup_interval_ms, 1);
     }
 
     #[test]

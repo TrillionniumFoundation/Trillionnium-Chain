@@ -48,6 +48,12 @@ fn ceil_mul_div_u128(value: u128, numerator: u128, denominator: u128) -> Option<
     Some(adjusted / denominator)
 }
 
+fn parse_required_u64_kv_value(kv: &BTreeMap<String, String>, key: &str) -> Option<u64> {
+    kv.get(key)
+        .and_then(|v| parse_u128_kv_value(v))
+        .and_then(|v| u64::try_from(v).ok())
+}
+
 fn task_metering_derived_query_response(
     path: String,
     normalized_work_units: u128,
@@ -166,14 +172,10 @@ pub(crate) fn parse_event_metering_query_response(
         workload_class,
         metering_schema,
         receipt_hash,
-        kv.get("metering_prompt_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_generated_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_decode_steps")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_kv_bytes_moved")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        parse_required_u64_kv_value(kv, "metering_prompt_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_generated_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_decode_steps")?,
+        parse_required_u64_kv_value(kv, "metering_kv_bytes_moved")?,
         normalized_work_units,
         kv.get("metering_prompt_token_weight")
             .and_then(|v| parse_u128_kv_value(v))?,

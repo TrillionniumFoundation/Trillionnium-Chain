@@ -1,5 +1,5 @@
 use std::{
-    collections::VecDeque,
+    collections::{HashSet, VecDeque},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::Instant,
@@ -49,6 +49,26 @@ impl OrderingEngine for PreexecOrderingEngine {
         workers: usize,
         candidate_height: u64,
     ) -> OrderingDecision {
+        let plan: Vec<Tx> = picked
+            .iter()
+            .enumerate()
+            .map(|(i, tx)| read_write_decl(snapshot, tx, (i as u64) + 1))
+            .collect();
+        let da_ids: HashSet<u64> = da_batch.tx_ids.iter().copied().collect();
+        let ordered_groups: Vec<Vec<u64>> = build_parallel_groups(&plan)
+            .into_iter()
+            .map(|group| {
+                group
+                    .into_iter()
+                    .map(|tx| tx.id)
+                    .filter(|id| da_ids.contains(id))
+                    .collect::<Vec<_>>()
+            })
+            .filter(|group_ids| !group_ids.is_empty())
+            .collect();
+        let group_count = ordered_groups.len();
+        let critical_wait_blocks = group_count.saturating_sub(1) as u64;
+
         let pool = PreExecPool::new(
             Arc::new(snapshot.clone()),
             Arc::new(picked.to_vec()),
@@ -56,13 +76,19 @@ impl OrderingEngine for PreexecOrderingEngine {
             candidate_height,
         );
         let preexec_started = Instant::now();
-        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
+        let mut ordered_ids = Vec::new();
+        let mut rejected = 0u64;
+        for group_ids in ordered_groups {
+            let (accepted_ids, group_rejected) = pre_execute_group_parallel(&pool, group_ids);
+            ordered_ids.extend(accepted_ids);
+            rejected = rejected.saturating_add(group_rejected);
+        }
         OrderingDecision {
             ordered_ids,
             rejected,
             preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
-            group_count: usize::from(!da_batch.tx_ids.is_empty()),
-            critical_wait_blocks: 0,
+            group_count,
+            critical_wait_blocks,
         }
     }
 }
@@ -122,13 +148,20 @@ impl PreExecPool {
                 match entry {
                     PreExecQueueEntry::Run(job) => {
                         for id in job.ids {
-                            let idx = (id - 1) as usize;
+                            let Some(idx) = id.checked_sub(1).map(|raw| raw as usize) else {
+                                let _ = job
+                                    .result_tx
+                                    .send((id, false, "invalid_preexec_tx_id".into()));
+                                continue;
+                            };
+                            let Some(tx) = picked_cloned.get(idx).cloned() else {
+                                let _ = job
+                                    .result_tx
+                                    .send((id, false, "invalid_preexec_tx_id".into()));
+                                continue;
+                            };
                             let mut local_state = snapshot_cloned.as_ref().clone();
-                            let res = apply_one(
-                                &mut local_state,
-                                picked_cloned[idx].clone(),
-                                candidate_height,
-                            );
+                            let res = apply_one(&mut local_state, tx, candidate_height);
                             match res {
                                 Ok(_) => {
                                     let _ = job.result_tx.send((id, true, String::new()));
@@ -155,7 +188,58 @@ impl PreExecPool {
         if group_ids.is_empty() {
             return (vec![], 0);
         }
-        let workers = self.width.min(group_ids.len());
+
+        let mut unique_group_ids = Vec::with_capacity(group_ids.len());
+        let mut seen_ids = HashSet::with_capacity(group_ids.len());
+        for id in group_ids {
+            if seen_ids.insert(id) {
+                unique_group_ids.push(id);
+            }
+        }
+
+        let workers = self.width.min(unique_group_ids.len());
+        if workers == 0 {
+            return (vec![], 0);
+        }
+        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for w in 0..workers {
+                let ids: Vec<u64> = unique_group_ids
+                    .iter()
+                    .copied()
+                    .enumerate()
+                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                    .collect();
+                if ids.is_empty() {
+                    continue;
+                }
+                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
+                    ids,
+                    result_tx: tx.clone(),
+                }));
+            }
+        }
+        self.state.cv.notify_all();
+        drop(tx);
+
+        let mut ok_ids = HashSet::with_capacity(unique_group_ids.len());
+        let mut rejected = 0u64;
+        for (id, ok, err) in rx {
+            if ok {
+                ok_ids.insert(id);
+            } else {
+                rejected += 1;
+                println!("[preexec] tx_id={} rejected err={}", id, err);
+            }
+        }
+
+        let ordered_ok_ids = unique_group_ids
+            .into_iter()
+            .filter(|id| ok_ids.contains(id))
+            .collect();
+        (ordered_ok_ids, rejected)
+    }
         let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
         {
             let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
@@ -178,18 +262,21 @@ impl PreExecPool {
         self.state.cv.notify_all();
         drop(tx);
 
-        let mut ok_ids = Vec::new();
+        let mut succeeded = std::collections::HashSet::new();
         let mut rejected = 0u64;
         for (id, ok, err) in rx {
             if ok {
-                ok_ids.push(id);
+                succeeded.insert(id);
             } else {
                 rejected += 1;
                 println!("[preexec] tx_id={} rejected err={}", id, err);
             }
         }
 
-        ok_ids.sort_unstable();
+        let ok_ids: Vec<u64> = group_ids
+            .into_iter()
+            .filter(|id| succeeded.contains(id))
+            .collect();
         (ok_ids, rejected)
     }
 }

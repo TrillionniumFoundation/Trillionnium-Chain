@@ -7,7 +7,6 @@ use std::io::{Seek, SeekFrom};
 use std::{
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
-    hash::{Hash, Hasher},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
@@ -1699,7 +1698,7 @@ fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     Ok(())
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct IngressQuarantineRecord {
     source_path: String,
     line_number: usize,
@@ -1718,48 +1717,141 @@ fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
 }
 
 fn stable_line_hash(raw: &str) -> u64 {
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    raw.hash(&mut hasher);
-    hasher.finish()
+    // Keep this deterministic across process restarts and toolchain/runtime changes
+    // so quarantine dedupe remains stable for identical bad ingress rows.
+    const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+    const FNV_PRIME: u64 = 0x00000100000001B3;
+
+    let mut hash = FNV_OFFSET_BASIS;
+    for byte in raw.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    hash
+}
+
+fn canonical_quarantine_source_path(path: &str) -> String {
+    path.trim().to_string()
+}
+
+fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u64) {
+    (
+        canonical_quarantine_source_path(&entry.source_path),
+        entry.line_number,
+        entry.line_hash,
+    )
+}
+
+fn quarantine_line_number_from_value(value: &serde_json::Value) -> Option<usize> {
+    let line_number = value.get("line_number")?;
+    if let Some(line_number) = line_number.as_u64() {
+        return usize::try_from(line_number).ok();
+    }
+
+    line_number
+        .as_str()?
+        .trim()
+        .parse::<usize>()
+        .ok()
+}
+
+fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
+    let trimmed = line.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let value = serde_json::from_str::<serde_json::Value>(trimmed).ok()?;
+    let line_hash = value
+        .get("line_hash")
+        .and_then(|hash| hash.as_u64())
+        .or_else(|| {
+            value
+                .get("raw_line")
+                .and_then(|raw| raw.as_str())
+                .map(|raw| stable_line_hash(raw.trim()))
+        })?;
+    Some((
+        canonical_quarantine_source_path(value.get("source_path")?.as_str()?),
+        quarantine_line_number_from_value(&value)?,
+        line_hash,
+    ))
+}
+
+fn load_existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(String, usize, u64)> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeSet::new();
+    };
+
+    raw.lines()
+        .filter_map(parse_quarantine_fingerprint_line)
+        .collect()
 }
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     if entries.is_empty() {
-        return Ok(());
+        return Ok(0);
     }
     let quarantine_path = ingress_quarantine_file_for(path);
     let _lock = acquire_market_file_lock(&quarantine_path)?;
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
+
+    let mut seen = load_existing_quarantine_fingerprints(&quarantine_path);
+    let pending: Vec<_> = entries
+        .iter()
+        .filter(|entry| seen.insert(quarantine_fingerprint(entry)))
+        .collect();
+    if pending.is_empty() {
+        return Ok(());
+    }
+
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(&quarantine_path)?;
-    for entry in entries {
+    for entry in pending {
         writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
-    Ok(())
+    Ok(appended)
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
+    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
+    const INGRESS_PARSE_LINE_MAX_BYTES: usize = 64 * 1024;
+
+    fn truncate_for_quarantine(raw: &str) -> String {
+        if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
+            return raw.to_string();
+        }
+        let mut end = INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES;
+        while end > 0 && !raw.is_char_boundary(end) {
+            end -= 1;
+        }
+        raw[..end].to_string()
+    }
+
     let path = ingress_file();
     let Ok(raw) = fs::read_to_string(&path) else {
         return vec![];
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
+    let source_path = path.display().to_string();
+    let mut seen_quarantine_keys = std::collections::HashSet::new();
     for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
             continue;
         }
-        match serde_json::from_str::<MessageIngressRecord>(line) {
+        match serde_json::from_str::<MessageIngressRecord>(trimmed) {
             Ok(record) => records.push(record),
             Err(err) => quarantined.push(IngressQuarantineRecord {
                 source_path: path.display().to_string(),
                 line_number: idx + 1,
-                line_hash: stable_line_hash(line),
+                line_hash: stable_line_hash(trimmed),
                 raw_line: line.to_string(),
                 error: err.to_string(),
                 quarantined_at_unix_ms: now_ms(),
@@ -1767,20 +1859,24 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
     }
     if !quarantined.is_empty() {
-        if let Err(err) = append_quarantine_records(&path, &quarantined) {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
-                path.display(),
-                quarantined.len(),
-                err
-            );
-        } else {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
-                path.display(),
-                quarantined.len(),
-                ingress_quarantine_file_for(&path).display()
-            );
+        match append_quarantine_records(&path, &quarantined) {
+            Err(err) => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                    path.display(),
+                    quarantined.len(),
+                    err
+                );
+            }
+            Ok(appended) if appended > 0 => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                    path.display(),
+                    appended,
+                    ingress_quarantine_file_for(&path).display()
+                );
+            }
+            Ok(_) => {}
         }
     }
     records
@@ -2086,12 +2182,13 @@ fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
 }
 
 fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usize) -> usize {
+    let clamped_default = default_limit.min(max_limit);
     if requested == 0 {
         eprintln!(
             "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} max={}",
-            op, default_limit, max_limit
+            op, clamped_default, max_limit
         );
-        return default_limit;
+        return clamped_default;
     }
     if requested > max_limit {
         eprintln!(
@@ -3649,7 +3746,7 @@ fn main() -> Result<()> {
                 if entry.count_in_window >= max_requests_in_window {
                     allowed = false;
                 }
-                next_allowed_unix_ms = entry.window_start_unix_ms + window_ms;
+                next_allowed_unix_ms = entry.window_start_unix_ms.saturating_add(window_ms);
             }
 
             let account_path = account_state_file();
@@ -4824,6 +4921,12 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn clamp_limit_clamps_oversized_default_when_zero_requested() {
+        let got = clamp_limit("FeeBoundaryPrep", 0, 9, 4);
+        assert_eq!(got, 4);
     }
 
     #[test]
@@ -7524,6 +7627,51 @@ line2
     }
 
     #[test]
+    fn append_quarantine_records_deduplicates_same_batch_entries() {
+        let path = unique_tmp_path("ingress-quarantine-batch", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+
+        let appended = append_quarantine_records(
+            &path,
+            &[
+                IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: 2,
+                    line_hash: 7,
+                    raw_line: "not-json".to_string(),
+                    error: "expected value".to_string(),
+                    quarantined_at_unix_ms: 1,
+                },
+                IngressQuarantineRecord {
+                    source_path: path.display().to_string(),
+                    line_number: 2,
+                    line_hash: 7,
+                    raw_line: "not-json".to_string(),
+                    error: "expected value".to_string(),
+                    quarantined_at_unix_ms: 1,
+                },
+            ],
+        )
+        .expect("append duplicated batch");
+        assert!(
+            appended == 1,
+            "duplicate malformed rows in the same batch must not inflate quarantine accounting: {appended}"
+        );
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(entries.len(), 1, "batch dedup should persist exactly one entry");
+
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
     fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
         let _guard = lock_env();
         let path = unique_tmp_path("ingress-quarantine", "jsonl");
@@ -7532,13 +7680,13 @@ line2
         let _ = fs::remove_file(&quarantine);
         std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-        fs::write(
-            &path,
-            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
-not-json
-"#,
-        )
-        .expect("write ingress fixture");
+        let oversized_malformed = format!("not-json-{}", "x".repeat(5000));
+        let mut fixture = String::from(
+            "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
+        );
+        fixture.push_str(&oversized_malformed);
+        fixture.push('\n');
+        fs::write(&path, fixture).expect("write ingress fixture");
 
         let records = load_ingress_records();
         assert_eq!(
@@ -7559,8 +7707,218 @@ not-json
             "malformed ingress row should be quarantined"
         );
         assert_eq!(entries[0]["line_number"], 2);
-        assert_eq!(entries[0]["raw_line"], "not-json");
+        let raw_line = entries[0]["raw_line"]
+            .as_str()
+            .expect("quarantine raw_line should be a string");
+        assert_eq!(raw_line.len(), 4096, "quarantine raw_line should be bounded");
+        assert!(
+            oversized_malformed.starts_with(raw_line),
+            "quarantine raw_line should preserve the malformed prefix"
+        );
         assert_eq!(entries[0]["source_path"], path.display().to_string());
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_does_not_duplicate_existing_quarantine_accounting() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-dedupe", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+
+        let first = load_ingress_records();
+        let second = load_ingress_records();
+        assert!(first.is_empty());
+        assert!(second.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "reloading identical malformed ingress rows should not duplicate quarantine accounting"
+        );
+        assert_eq!(entries[0]["line_number"], 1);
+        assert_eq!(entries[0]["raw_line"], "not-json");
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_dedupes_quarantine_accounting_for_whitespace_only_malformed_replays() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-whitespace-dedupe", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        let first = load_ingress_records();
+        assert!(first.is_empty());
+
+        fs::write(&path, "  not-json  \n").expect("rewrite malformed ingress fixture with padding");
+        let second = load_ingress_records();
+        assert!(second.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "whitespace-only malformed replays should not duplicate quarantine accounting"
+        );
+        assert_eq!(entries[0]["line_number"], 1);
+        assert_eq!(entries[0]["raw_line"], "not-json");
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_reuses_legacy_quarantine_fingerprints_without_line_hash() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-legacy-dedupe", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        fs::write(
+            &quarantine,
+            format!(
+                "{{\"source_path\":\"{}\",\"line_number\":1,\"raw_line\":\"  not-json  \",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                path.display()
+            ),
+        )
+        .expect("seed legacy quarantine fixture");
+
+        let records = load_ingress_records();
+        assert!(records.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "legacy quarantine rows without line_hash should still suppress duplicate accounting"
+        );
+        assert!(
+            entries[0].get("line_hash").is_none(),
+            "fixture should remain legacy-shaped"
+        );
+        assert_eq!(entries[0]["raw_line"], "  not-json  ");
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_reuses_legacy_quarantine_fingerprints_with_padded_source_path() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-legacy-source-path-padding", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        fs::write(
+            &quarantine,
+            format!(
+                "{{\"source_path\":\"  {}  \",\"line_number\":1,\"raw_line\":\"not-json\",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                path.display()
+            ),
+        )
+        .expect("seed padded legacy quarantine fixture");
+
+        let records = load_ingress_records();
+        assert!(records.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "legacy padded source_path should still suppress duplicate quarantine accounting"
+        );
+        assert_eq!(entries[0]["raw_line"], "not-json");
+        assert!(
+            entries[0].get("line_hash").is_none(),
+            "fixture should remain legacy-shaped"
+        );
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn load_ingress_records_reuses_legacy_quarantine_fingerprints_with_string_line_number() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine-legacy-string-line-number", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+        fs::write(
+            &quarantine,
+            format!(
+                "{{\"source_path\":\"{}\",\"line_number\":\"1\",\"raw_line\":\"not-json\",\"error\":\"legacy\",\"quarantined_at_unix_ms\":1}}\n",
+                path.display()
+            ),
+        )
+        .expect("seed string line-number legacy quarantine fixture");
+
+        let records = load_ingress_records();
+        assert!(records.is_empty());
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "legacy string line_number should still suppress duplicate quarantine accounting"
+        );
+        assert_eq!(entries[0]["line_number"], "1");
+        assert!(
+            entries[0].get("line_hash").is_none(),
+            "fixture should remain legacy-shaped"
+        );
 
         std::env::remove_var("TRNM_RPC_INGRESS_FILE");
         let _ = fs::remove_file(&path);

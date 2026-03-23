@@ -3,8 +3,7 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
-    TaskStatus,
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject, TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -38,6 +37,13 @@ struct PendingResolveApproval {
     first_approver: String,
     authority_set: String,
     task_version: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TaskRestoreReentryBoundaryAction {
+    Noop,
+    ScrubPendingResolve,
+    Reapply,
 }
 
 impl Default for StateStore {
@@ -121,16 +127,23 @@ pub struct WalMeta {
 
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
+        fn hash_str(hasher: &mut Sha256, value: &str) {
+            hasher.update((value.len() as u64).to_le_bytes());
+            hasher.update(value.as_bytes());
+        }
+
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        hash_len_prefixed_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
-        if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
-        } else {
-            hasher.update(b"genesis");
+        hash_len_prefixed_str(&mut hasher, &self.state_root_hex);
+        match &self.prev_hash_hex {
+            Some(prev) => {
+                hasher.update([1]);
+                hash_len_prefixed_str(&mut hasher, prev);
+            }
+            None => hasher.update([0]),
         }
         hex::encode(hasher.finalize())
     }
@@ -170,6 +183,189 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+
+fn governance_pinned_binding(key: Option<&str>, key_id: Option<u64>) -> Option<(&'static str, u64)> {
+    GOV_PINNED_KEY_IDS.iter().copied().find(|(pinned_key, pinned_key_id)| {
+        key.is_some_and(|candidate| candidate == *pinned_key)
+            || key_id.is_some_and(|candidate| candidate == *pinned_key_id)
+    })
+}
+
+fn governance_expected_pinned_binding(key: &str, key_id: u64) -> (Option<u64>, Option<&'static str>) {
+    match governance_pinned_binding(Some(key), Some(key_id)) {
+        Some((pinned_key, pinned_key_id)) => {
+            let expected_key_id = (pinned_key == key).then_some(pinned_key_id);
+            let expected_key = (pinned_key_id == key_id).then_some(pinned_key);
+            (expected_key_id, expected_key)
+        }
+        None => (None, None),
+    }
+}
+
+fn governance_pinned_binding_for_key(key: &str) -> Option<(&'static str, u64)> {
+    governance_pinned_binding(Some(key), None)
+}
+
+fn governance_pinned_binding_for_id(key_id: u64) -> Option<(&'static str, u64)> {
+    governance_pinned_binding(None, Some(key_id))
+}
+
+fn governance_expected_key_id(key: &str) -> Option<u64> {
+    governance_pinned_binding_for_key(key).map(|(_, pinned_key_id)| pinned_key_id)
+}
+
+fn governance_expected_key_for_id(key_id: u64) -> Option<&'static str> {
+    governance_pinned_binding_for_id(key_id).map(|(pinned_key, _)| pinned_key)
+}
+
+fn governance_registry_lookup_id_for_key(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+) -> Option<u64> {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return None;
+    }
+    governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
+}
+
+fn governance_registry_unique_dynamic_key_for_id<'a>(
+    gov_param_key_index: &'a BTreeMap<String, u64>,
+    key_id: u64,
+) -> Result<Option<&'a str>, Vec<&'a str>> {
+    let mut matches = gov_param_key_index.iter().filter_map(|(indexed_key, indexed_key_id)| {
+        (*indexed_key_id == key_id && GOV_ALLOWED_KEYS.contains(&indexed_key.as_str()))
+            .then_some(indexed_key.as_str())
+    });
+    let first = matches.next();
+    let second = matches.next();
+    match (first, second) {
+        (None, _) => Ok(None),
+        (Some(key), None) => Ok(Some(key)),
+        (Some(first_key), Some(second_key)) => {
+            let mut ambiguous_keys = vec![first_key, second_key];
+            ambiguous_keys.extend(matches);
+            Err(ambiguous_keys)
+        }
+    }
+}
+
+fn governance_registry_lookup_key_for_id<'a>(
+    gov_param_key_index: &'a BTreeMap<String, u64>,
+    key_id: u64,
+) -> Option<&'a str> {
+    let dynamic_key = match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
+        Ok(dynamic_key) => dynamic_key,
+        Err(_) => return None,
+    };
+
+    match (governance_expected_key_for_id(key_id), dynamic_key) {
+        (Some(expected_key), Some(indexed_key)) if indexed_key != expected_key => None,
+        (Some(expected_key), _) => Some(expected_key),
+        (None, dynamic_key) => dynamic_key,
+    }
+}
+
+fn validate_gov_param_key_id_policy(key: &str, key_id: u64) -> Result<(), String> {
+    let (expected_key_id, expected_key) = governance_expected_pinned_binding(key, key_id);
+    if let Some(expected_key_id) = expected_key_id {
+        if key_id != expected_key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_key_id, key_id
+            ));
+        }
+    }
+    if let Some(expected_key) = expected_key {
+        if key != expected_key {
+            return Err(format!(
+                "governance key id mismatch for id {}: expected_key={}, attempted_key={}",
+                key_id, expected_key, key
+            ));
+        }
+    }
+    Ok(())
+}
+
+pub(crate) fn validate_gov_param_registry_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!("governance key not allowed: {}", key));
+    }
+    // Shared single-source gate: enforce both the forward pinned-key mapping
+    // (key -> canonical key_id) and the reverse reserved-id mapping
+    // (reserved key_id -> canonical key) before consulting the mutable registry.
+    validate_gov_param_key_id_policy(key, key_id)?;
+    if let Some(existing_key_id) = governance_registry_lookup_id_for_key(gov_param_key_index, key)
+    {
+        if existing_key_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                key, existing_key_id, key_id
+            ));
+        }
+    }
+    match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
+        Ok(Some(canonical_key)) => {
+            if canonical_key != key {
+                return Err(format!(
+                    "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
+                    key_id, canonical_key, key
+                ));
+            }
+        }
+        Ok(None) => {
+            if let Some(canonical_key) = governance_expected_key_for_id(key_id) {
+                if canonical_key != key {
+                    return Err(format!(
+                        "governance key id alias mismatch for id {}: canonical_key={}, aliased_key={}",
+                        key_id, canonical_key, key
+                    ));
+                }
+            }
+        }
+        Err(ambiguous_keys) => {
+            return Err(format!(
+                "governance key id alias mismatch for id {}: ambiguous_keys={}",
+                key_id,
+                ambiguous_keys.join(",")
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_gov_param_snapshot_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    requested_key: &str,
+    snapshot_key: &str,
+    snapshot_key_id: u64,
+) -> Result<(), String> {
+    if snapshot_key != requested_key {
+        return Err(format!(
+            "governance key mismatch: requested_key={}, snapshot_key={}",
+            requested_key, snapshot_key
+        ));
+    }
+    validate_gov_param_registry_binding(gov_param_key_index, snapshot_key, snapshot_key_id)
+}
+
+fn validate_pending_gov_param_snapshot_binding(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    requested_key: &str,
+    snapshot: &PendingGovParamUpdate,
+) -> Result<(), String> {
+    validate_gov_param_snapshot_binding(
+        gov_param_key_index,
+        requested_key,
+        &snapshot.key,
+        snapshot.key_id,
+    )
+}
+
 const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -217,7 +413,451 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
 ];
+const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
+    "max_block_ms",
+    "max_parallel_workers",
+    "min_worker_stake",
+    "challenge_min_bond",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
+    "llm_meter_min_accept_work_units",
+    "llm_meter_challenge_success_bounty_per_work_unit_num",
+    "llm_meter_challenge_success_bounty_per_work_unit_den",
+    "llm_meter_worker_completion_bonus_per_work_unit_num",
+    "llm_meter_worker_completion_bonus_per_work_unit_den",
+    "llm_meter_worker_slash_rebate_per_work_unit_num",
+    "llm_meter_worker_slash_rebate_per_work_unit_den",
+    "resolve_authority",
+    "emergency_pause",
+    "monetary_policy_tick_interval_blocks",
+    "monetary_policy_tick_cooldown_blocks",
+    "monetary_base_issuance_per_tick",
+    "monetary_base_burn_per_tick",
+];
+const GOV_EXPLICIT_VALUE_RULE_KEYS: &[&str] = GOV_EXPLICIT_VALIDATOR_KEYS;
+const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
+    ("max_block_ms", "9"),
+    ("max_parallel_workers", "0"),
+    ("min_worker_stake", "0"),
+    ("challenge_min_bond", "0"),
+    ("challenge_min_bond_bounty_bps", "100001"),
+    ("challenge_min_bond_worker_stake_bps", "100001"),
+    ("challenge_window_blocks", "99"),
+    ("challenge_success_bounty", "-1"),
+    ("llm_meter_prompt_token_weight", "-1"),
+    ("llm_meter_generated_token_weight", "-1"),
+    ("llm_meter_decode_step_weight", "-1"),
+    ("llm_meter_kv_byte_weight", "-1"),
+    ("llm_meter_min_accept_work_units", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
+    ("resolve_authority", "authority-a"),
+    ("emergency_pause", "TRUE"),
+    ("monetary_policy_tick_interval_blocks", "0"),
+    ("monetary_policy_tick_cooldown_blocks", "0"),
+    ("monetary_base_issuance_per_tick", "1000000000001"),
+    ("monetary_base_burn_per_tick", "1000000000001"),
+];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+
+fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
+    pinned_key_ids
+        .iter()
+        .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
+}
+
+#[allow(dead_code)]
+fn governance_pinned_key_id(key: &str) -> Option<u64> {
+    governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
+}
+
+fn validate_governance_key_id_from_lists(
+    pinned_key_ids: &[(&str, u64)],
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    if let Some(expected_id) = governance_pinned_key_id_from_lists(pinned_key_ids, key) {
+        if key_id != expected_id {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, expected_id, key_id
+            ));
+        }
+    }
+    Ok(())
+}
+
+#[allow(dead_code)]
+fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
+    validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
+}
+
+fn format_governance_registry_membership_drift(
+    registry_name: &str,
+    allowed_unique: &std::collections::BTreeSet<&str>,
+    registry_unique: &std::collections::BTreeSet<&str>,
+) -> Option<String> {
+    let missing_allowed_keys: Vec<&str> = allowed_unique
+        .difference(registry_unique)
+        .copied()
+        .collect();
+    let rogue_registry_keys: Vec<&str> = registry_unique
+        .difference(allowed_unique)
+        .copied()
+        .collect();
+
+    if missing_allowed_keys.is_empty() && rogue_registry_keys.is_empty() {
+        return None;
+    }
+
+    Some(format!(
+        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        registry_name,
+        missing_allowed_keys.join(", "),
+        rogue_registry_keys.join(", "),
+    ))
+}
+
+fn validate_governance_explicit_registry_alignment<'a>(
+    allowed_keys: &[&'a str],
+    allowed_unique: &std::collections::BTreeSet<&'a str>,
+    registry_name: &str,
+    entry_name: &str,
+    registry_keys: &[&'a str],
+) -> Result<std::collections::BTreeSet<&'a str>, String> {
+    for key in registry_keys {
+        validate_governance_registry_key_canonical(registry_name, key)?;
+    }
+    let registry_unique: std::collections::BTreeSet<&str> = registry_keys.iter().copied().collect();
+    if registry_unique.len() != registry_keys.len() {
+        return Err(format!("governance {} contains duplicate entries", registry_name));
+    }
+
+    if let Some(err) =
+        format_governance_registry_membership_drift(registry_name, allowed_unique, &registry_unique)
+    {
+        return Err(err);
+    }
+
+    for (index, (allowed_key, registry_key)) in allowed_keys
+        .iter()
+        .zip(registry_keys.iter())
+        .enumerate()
+    {
+        if allowed_key != registry_key {
+            return Err(format!(
+                "governance {} order drifted at index {}: allowed_key={}, {}={}",
+                registry_name, index, allowed_key, entry_name, registry_key
+            ));
+        }
+    }
+
+    for key in allowed_unique {
+        if !registry_unique.contains(key) {
+            return Err(format!(
+                "governance {} coverage missing for allowed key: {}",
+                entry_name, key
+            ));
+        }
+    }
+
+    for key in &registry_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance {} contains non-whitelisted key: {}",
+                registry_name, key
+            ));
+        }
+    }
+
+    Ok(registry_unique)
+}
+
+fn validate_governance_registry_key_canonical(
+    registry_name: &str,
+    key: &str,
+) -> Result<(), String> {
+    if key.trim() != key {
+        return Err(format!(
+            "governance {} contains non-canonical key with surrounding whitespace: {}",
+            registry_name, key
+        ));
+    }
+    if key.is_empty() {
+        return Err(format!(
+            "governance {} contains empty key entry",
+            registry_name
+        ));
+    }
+    if !key.is_ascii() {
+        return Err(format!(
+            "governance {} contains non-ascii key entry: {}",
+            registry_name, key
+        ));
+    }
+    if key.chars().any(|ch| ch.is_ascii_uppercase()) {
+        return Err(format!(
+            "governance {} contains non-canonical uppercase key: {}",
+            registry_name, key
+        ));
+    }
+    if key.chars().any(|ch| ch.is_whitespace() || ch.is_control()) {
+        return Err(format!(
+            "governance {} contains non-canonical whitespace or control character in key: {}",
+            registry_name, key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pinned_governance_key_explicit_coverage(
+    key: &str,
+    validator_unique: &std::collections::BTreeSet<&str>,
+    explicit_value_rule_unique: &std::collections::BTreeSet<&str>,
+) -> Result<(), String> {
+    if !validator_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-validator coverage for {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_unique.contains(key) {
+        return Err(format!(
+            "governance pinned-key registry missing explicit-value-rule coverage for {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_registry_shape_lists(
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+) -> Result<(), String> {
+    for key in allowed_keys {
+        validate_governance_registry_key_canonical("allowed-key registry", key)?;
+    }
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        allowed_keys.iter().copied().collect();
+    if allowed_unique.len() != allowed_keys.len() {
+        return Err("governance allowed-key registry contains duplicate entries".into());
+    }
+
+    for key in sensitive_keys {
+        validate_governance_registry_key_canonical("sensitive-key registry", key)?;
+    }
+    let sensitive_unique: std::collections::BTreeSet<&str> =
+        sensitive_keys.iter().copied().collect();
+    if sensitive_unique.len() != sensitive_keys.len() {
+        return Err("governance sensitive-key registry contains duplicate entries".into());
+    }
+
+    let validator_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-validator registry",
+        "validator_key",
+        explicit_validator_keys,
+    )?;
+
+    let explicit_value_rule_unique = validate_governance_explicit_registry_alignment(
+        allowed_keys,
+        &allowed_unique,
+        "explicit-value-rule registry",
+        "explicit_value_rule_key",
+        explicit_value_rule_keys,
+    )?;
+
+    for key in &sensitive_unique {
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance sensitive-key coverage missing from allowed key registry: {}",
+                key
+            ));
+        }
+    }
+
+    let mut pinned_unique = std::collections::BTreeSet::new();
+    let mut pinned_ids = std::collections::BTreeMap::new();
+    for (key, pinned_id) in pinned_key_ids {
+        validate_governance_registry_key_canonical("pinned-key registry", key)?;
+        if !pinned_unique.insert(*key) {
+            return Err(format!(
+                "governance pinned-key registry contains duplicate entries for {}",
+                key
+            ));
+        }
+        if let Some(existing_key) = pinned_ids.insert(*pinned_id, *key) {
+            return Err(format!(
+                "governance pinned-key registry reuses pinned id {} across {} and {}",
+                pinned_id, existing_key, key
+            ));
+        }
+        if !allowed_unique.contains(key) {
+            return Err(format!(
+                "governance pinned-key registry contains non-whitelisted key: {}",
+                key
+            ));
+        }
+        validate_pinned_governance_key_explicit_coverage(
+            key,
+            &validator_unique,
+            &explicit_value_rule_unique,
+        )?;
+    }
+
+    Ok(())
+}
+
+fn validate_governance_registry_shape() -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+    )
+}
+
+fn validate_governance_schema_sample_registry_shape_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    schema_invalid_samples: &[(&str, &str)],
+) -> Result<(), String> {
+    let allowed_unique: std::collections::BTreeSet<&str> =
+        allowed_keys.iter().copied().collect();
+    let schema_sample_keys: Vec<&str> = schema_invalid_samples
+        .iter()
+        .map(|(key, _)| *key)
+        .collect();
+    for key in &schema_sample_keys {
+        validate_governance_registry_key_canonical("schema invalid-sample registry", key)?;
+    }
+    let schema_unique: std::collections::BTreeSet<&str> =
+        schema_sample_keys.iter().copied().collect();
+
+    if schema_unique.len() != schema_sample_keys.len() {
+        return Err("governance schema invalid-sample registry contains duplicate entries".into());
+    }
+    if allowed_unique != schema_unique {
+        let missing_schema_keys: Vec<&str> = allowed_unique
+            .difference(&schema_unique)
+            .copied()
+            .collect();
+        let rogue_schema_keys: Vec<&str> = schema_unique
+            .difference(&allowed_unique)
+            .copied()
+            .collect();
+        return Err(format!(
+            "governance schema invalid-sample registry drifted from allowed-key registry: missing_schema_keys=[{}], rogue_schema_keys=[{}]",
+            missing_schema_keys.join(", "),
+            rogue_schema_keys.join(", "),
+        ));
+    }
+
+    for key in &schema_unique {
+        validate_governance_explicitness_from_lists(
+            allowed_keys,
+            explicit_validator_keys,
+            explicit_value_rule_keys,
+            key,
+        )
+        .map_err(|err| {
+            format!(
+                "governance schema invalid-sample registry must remain explicit-validator complete for {}: {}",
+                key, err
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
+    validate_governance_schema_sample_registry_shape_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_SCHEMA_INVALID_SAMPLES,
+    )
+}
+
+fn validate_governance_key_registration_lists(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        sensitive_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        pinned_key_ids,
+    )?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )?;
+    validate_governance_key_id_from_lists(pinned_key_ids, key, key_id)?;
+    if let Some(existing_key_id) = gov_param_key_index.get(key).copied() {
+        if existing_key_id != key_id {
+            return Err(format!(
+                "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                key, existing_key_id, key_id
+            ));
+        }
+    }
+    if let Some((existing_key, _)) = gov_param_key_index
+        .iter()
+        .find(|(existing_key, existing_key_id)| existing_key.as_str() != key && **existing_key_id == key_id)
+    {
+        return Err(format!(
+            "governance key id collision for {}: id {} already assigned to {}",
+            key, key_id, existing_key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_key_registration(
+    gov_param_key_index: &BTreeMap<String, u64>,
+    key: &str,
+    key_id: u64,
+) -> Result<(), String> {
+    validate_governance_registry_shape()?;
+    validate_governance_key_registration_lists(
+        gov_param_key_index,
+        key,
+        key_id,
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+    )
+}
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -231,6 +871,79 @@ fn resolve_actor_has_forbidden_separator(token: &str) -> bool {
         || token.contains('；')
         || token.contains('，')
         || token.contains('、')
+}
+
+fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
+    let has_embedded_space_or_control = |value: &str| {
+        value
+            .chars()
+            .any(|c| c.is_whitespace() || c.is_control())
+    };
+    let has_canonical_optional_metadata = |value: Option<&str>| {
+        value
+            .map(|value| {
+                let trimmed = value.trim();
+                !trimmed.is_empty() && trimmed == value && !has_embedded_space_or_control(value)
+            })
+            .unwrap_or(true)
+    };
+
+    task.metadata
+        .as_ref()
+        .map(|metadata| {
+            has_canonical_optional_metadata(metadata.note.as_deref())
+                && has_canonical_optional_metadata(metadata.task_type.as_deref())
+                && has_canonical_optional_metadata(metadata.input_hash.as_deref())
+                && metadata
+                    .model
+                    .as_ref()
+                    .map(|model| {
+                        has_canonical_optional_metadata(model.model_id.as_deref())
+                            && has_canonical_optional_metadata(model.model_digest.as_deref())
+                            && has_canonical_optional_metadata(model.version.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .provenance
+                    .as_ref()
+                    .map(|provenance| {
+                        has_canonical_optional_metadata(provenance.producer_did.as_deref())
+                            && has_canonical_optional_metadata(provenance.produced_at.as_deref())
+                            && has_canonical_optional_metadata(provenance.provenance_index.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .metering
+                    .as_ref()
+                    .map(|metering| {
+                        let workload_class = metering.workload_class.trim();
+                        let metering_schema = metering.metering_schema.trim();
+                        let receipt_hash = metering.receipt_hash.trim();
+
+                        !workload_class.is_empty()
+                            && workload_class == metering.workload_class
+                            && !has_embedded_space_or_control(&metering.workload_class)
+                            && !metering_schema.is_empty()
+                            && metering_schema == metering.metering_schema
+                            && !has_embedded_space_or_control(&metering.metering_schema)
+                            && metering.policy_snapshot_version != 0
+                            && !receipt_hash.is_empty()
+                            && receipt_hash == metering.receipt_hash
+                            && !has_embedded_space_or_control(&metering.receipt_hash)
+                            && metering.challenge_success_bounty_per_work_unit_den != 0
+                            && metering.worker_completion_bonus_per_work_unit_den != 0
+                            && metering.worker_slash_rebate_per_work_unit_den != 0
+                    })
+                    .unwrap_or(true)
+        })
+        .unwrap_or(true)
+}
+
+fn challenged_task_snapshot_anchor_is_complete(task: &TaskObject) -> bool {
+    task.challenged_at_height.is_some()
+        && task.challenge_deadline_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_window_blocks_snapshot.is_some_and(|window| window != 0)
 }
 
 fn resolve_actor_is_reserved(token: &str) -> bool {
@@ -248,12 +961,10 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
     if trimmed.is_empty() {
         return Err("resolve approval approver must be non-empty".into());
     }
-    if trimmed != raw
-        || trimmed
-            .chars()
-            .any(|c| c.is_whitespace() || c.is_control())
-    {
-        return Err("resolve approval approver must not contain whitespace or control characters".into());
+    if trimmed != raw || trimmed.chars().any(|c| c.is_whitespace() || c.is_control()) {
+        return Err(
+            "resolve approval approver must not contain whitespace or control characters".into(),
+        );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
         return Err(format!(
@@ -274,8 +985,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     let trimmed = raw.trim();
     if trimmed.is_empty() || trimmed != raw {
         return Err(
-            "resolve approval authority set must be a canonical comma-delimited actor list"
-                .into(),
+            "resolve approval authority set must be a canonical comma-delimited actor list".into(),
         );
     }
     if trimmed.len() > RESOLVE_ACTOR_ID_MAX_LEN {
@@ -304,8 +1014,7 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
             || resolve_actor_is_reserved(member_trimmed)
         {
             return Err(
-                "resolve approval authority set contains non-canonical or forbidden member"
-                    .into(),
+                "resolve approval authority set contains non-canonical or forbidden member".into(),
             );
         }
         if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
@@ -316,24 +1025,46 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
+fn effective_resolve_authority_canonical(st: &StateStore) -> Result<Option<String>, String> {
+    if let Some(pending) = st.pending_gov_update("resolve_authority") {
+        let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
+            "resolve approval authority set must match pending governance authority".to_string()
+        })?;
+        return Ok(Some(expected));
+    }
+    if let Some(current) = st.gov_param_string("resolve_authority") {
+        let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
+            "resolve approval authority set must match configured governance authority".to_string()
+        })?;
+        return Ok(Some(expected));
+    }
+    Ok(None)
+}
+
 fn ensure_effective_resolve_authority_match(
     st: &StateStore,
     authority_set: &str,
 ) -> Result<(), String> {
     let provided = canonicalize_resolve_authority_set(authority_set)?;
     if let Some(pending) = st.pending_gov_update("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&pending.value)
-            .map_err(|_| "resolve approval authority set must match pending governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
+            "resolve approval authority set must match pending governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match pending governance authority".into());
+            return Err(
+                "resolve approval authority set must match pending governance authority".into(),
+            );
         }
         return Ok(());
     }
     if let Some(current) = st.gov_param_string("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&current)
-            .map_err(|_| "resolve approval authority set must match configured governance authority".to_string())?;
+        let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
+            "resolve approval authority set must match configured governance authority".to_string()
+        })?;
         if expected != provided {
-            return Err("resolve approval authority set must match configured governance authority".into());
+            return Err(
+                "resolve approval authority set must match configured governance authority".into(),
+            );
         }
     }
     Ok(())
@@ -341,6 +1072,87 @@ fn ensure_effective_resolve_authority_match(
 
 fn is_effective_resolve_authority_match(st: &StateStore, authority_set: &str) -> bool {
     ensure_effective_resolve_authority_match(st, authority_set).is_ok()
+}
+
+fn validated_restorable_pending_resolve_snapshot(
+    st: &StateStore,
+    task_id: u64,
+    snapshot: PendingResolveApprovalSnapshot,
+) -> Option<PendingResolveApproval> {
+    if task_id == 0 || snapshot.task_version == 0 {
+        return None;
+    }
+    if snapshot.confirmations != 1 {
+        return None;
+    }
+    let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+    else {
+        return None;
+    };
+    let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set) else {
+        return None;
+    };
+    if !authority_canonical
+        .split(',')
+        .any(|member| member == first_approver_canonical)
+    {
+        return None;
+    }
+    if st.pending_gov_update("resolve_authority").is_none()
+        && st.gov_param_string("resolve_authority").is_none()
+    {
+        return None;
+    }
+    if !is_effective_resolve_authority_match(st, &snapshot.authority_set) {
+        return None;
+    }
+    let Some(task) = st.get_task(task_id) else {
+        return None;
+    };
+    if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+        return None;
+    }
+    if task.metadata.as_ref().and_then(|metadata| metadata.metering.as_ref()).is_none() {
+        return None;
+    }
+    if !task_snapshot_metadata_is_complete(&task) {
+        return None;
+    }
+    if !challenged_task_snapshot_anchor_is_complete(&task) {
+        return None;
+    }
+    // Audit-proof restore must fail closed unless the challenged-task anchor is still present as
+    // a canonical, non-system actor id. Snapshot metadata cannot self-authenticate challenger
+    // identity when the live task metadata has drifted into reserved or malformed forms.
+    let has_canonical_actor = |actor: &str| validate_resolve_approver_token(actor).is_ok();
+    if !task
+        .challenger
+        .as_deref()
+        .is_some_and(has_canonical_actor)
+    {
+        return None;
+    }
+    if snapshot.slash_worker
+        && !task
+            .worker
+            .as_deref()
+            .is_some_and(has_canonical_actor)
+    {
+        // Fail closed for audit-proof restore when the live slash target has drifted into a
+        // reserved/system or otherwise non-canonical actor id. Snapshot evidence must still bind
+        // to a real, live worker identity before a slash quorum can be revived.
+        return None;
+    }
+
+    Some(PendingResolveApproval {
+        slash_worker: snapshot.slash_worker,
+        confirmations: snapshot.confirmations,
+        // Preserve the original snapshot spelling for auditability while validating
+        // membership/equivalence against canonical forms above.
+        first_approver: snapshot.first_approver,
+        authority_set: snapshot.authority_set,
+        task_version: snapshot.task_version,
+    })
 }
 
 fn is_sensitive_gov_param(key: &str) -> bool {
@@ -366,6 +1178,47 @@ fn hash_len_prefixed_bytes(hasher: &mut Sha256, bytes: &[u8]) {
 
 fn hash_len_prefixed_str(hasher: &mut Sha256, value: &str) {
     hash_len_prefixed_bytes(hasher, value.as_bytes());
+}
+
+fn hash_pending_resolve_approval(
+    hasher: &mut Sha256,
+    task_id: u64,
+    pending: &PendingResolveApproval,
+) {
+    hasher.update(b"resolve_pending");
+    hasher.update(task_id.to_le_bytes());
+    hasher.update([pending.slash_worker as u8]);
+    hasher.update([pending.confirmations]);
+    hash_len_prefixed_str(hasher, &pending.first_approver);
+    hash_len_prefixed_str(hasher, &pending.authority_set);
+    hasher.update(pending.task_version.to_le_bytes());
+}
+
+fn hash_task_metering_snapshot(
+    hasher: &mut Sha256,
+    metering: &trnm_types::TaskMeteringSnapshot,
+) {
+    hash_len_prefixed_str(hasher, &metering.workload_class);
+    hash_len_prefixed_str(hasher, &metering.metering_schema);
+    hasher.update([metering.policy_snapshot_version]);
+    hash_len_prefixed_str(hasher, &metering.receipt_hash);
+    hasher.update(metering.prompt_tokens.to_le_bytes());
+    hasher.update(metering.generated_tokens.to_le_bytes());
+    hasher.update(metering.decode_steps.to_le_bytes());
+    hasher.update(metering.kv_bytes_moved.to_le_bytes());
+    hasher.update(metering.normalized_work_units.to_le_bytes());
+    hasher.update(metering.prompt_token_weight.to_le_bytes());
+    hasher.update(metering.generated_token_weight.to_le_bytes());
+    hasher.update(metering.decode_step_weight.to_le_bytes());
+    hasher.update(metering.kv_byte_weight.to_le_bytes());
+    hasher.update(metering.min_accept_work_units.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_base.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.challenge_success_bounty_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_completion_bonus_per_work_unit_den.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_num.to_le_bytes());
+    hasher.update(metering.worker_slash_rebate_per_work_unit_den.to_le_bytes());
 }
 
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
@@ -395,7 +1248,144 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+#[allow(dead_code)]
+fn has_explicit_gov_param_validator_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_validator(key: &str) -> bool {
+    has_explicit_gov_param_validator_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
+}
+
+fn validate_governance_explicitness_from_lists(
+    allowed_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> Result<(), String> {
+    if !allowed_keys.contains(&key) {
+        return Err(format!(
+            "no explicit validator registered for governance key: {}",
+            key
+        ));
+    }
+    if !explicit_validator_keys.contains(&key) {
+        return Err(format!(
+            "governance validator coverage missing for allowed key: {}",
+            key
+        ));
+    }
+    if !explicit_value_rule_keys.contains(&key) {
+        return Err(format!(
+            "governance validator missing explicit value rule for allowed key: {}",
+            key
+        ));
+    }
+    if !has_explicit_gov_param_value_match_coverage_from_lists(
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    ) {
+        return Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_governance_validator_coverage_from_lists(
+    allowed_keys: &[&str],
+    sensitive_keys: &[&str],
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    pinned_key_ids: &[(&str, u64)],
+    key: &str,
+) -> Result<(), String> {
+    validate_governance_registry_shape_lists(
+        allowed_keys,
+        sensitive_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        pinned_key_ids,
+    )?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_explicitness_from_lists(
+        allowed_keys,
+        explicit_validator_keys,
+        explicit_value_rule_keys,
+        key,
+    )
+}
+
+fn validate_governance_validator_coverage(key: &str) -> Result<(), String> {
+    validate_governance_validator_coverage_from_lists(
+        GOV_ALLOWED_KEYS,
+        GOV_SENSITIVE_KEYS,
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        GOV_PINNED_KEY_IDS,
+        key,
+    )
+}
+
+fn validate_governance_sensitive_key_coverage(key: &str) -> Result<(), String> {
+    if GOV_SENSITIVE_KEYS.contains(&key) && !GOV_ALLOWED_KEYS.contains(&key) {
+        return Err(format!(
+            "governance sensitive-key coverage missing from allowed key registry: {}",
+            key
+        ));
+    }
+    Ok(())
+}
+
+fn validate_requested_governance_key_canonical(key: &str) -> Result<(), String> {
+    validate_governance_registry_key_canonical("requested governance key", key).map_err(|_| {
+        format!(
+            "governance key request must use canonical key spelling: {}",
+            key
+        )
+    })
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_value_rule(key: &str) -> bool {
+    GOV_EXPLICIT_VALUE_RULE_KEYS.contains(&key)
+}
+
+fn has_explicit_gov_param_value_match_coverage_from_lists(
+    explicit_validator_keys: &[&str],
+    explicit_value_rule_keys: &[&str],
+    key: &str,
+) -> bool {
+    explicit_validator_keys.contains(&key) && explicit_value_rule_keys.contains(&key)
+}
+
+#[allow(dead_code)]
+fn has_explicit_gov_param_value_match_coverage(key: &str) -> bool {
+    has_explicit_gov_param_value_match_coverage_from_lists(
+        GOV_EXPLICIT_VALIDATOR_KEYS,
+        GOV_EXPLICIT_VALUE_RULE_KEYS,
+        key,
+    )
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    validate_governance_registry_shape()?;
+    validate_governance_schema_sample_registry_shape()?;
+    validate_requested_governance_key_canonical(key)?;
+    validate_governance_validator_coverage(key)?;
+    validate_governance_sensitive_key_coverage(key)?;
+
     match key {
         "max_block_ms" => {
             let _ = parse_u64_in_range(key, value, 10, 120_000)?;
@@ -442,104 +1432,7 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 100_000)?;
             Ok(())
         }
-        "resolve_authority" => {
-            let trimmed = value.trim();
-            if trimmed.is_empty() {
-                return Err(format!(
-                    "invalid governance value for {}: must be non-empty",
-                    key
-                ));
-            }
-            if trimmed != value {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain surrounding whitespace",
-                    key
-                ));
-            }
-            if trimmed.len() > 128 {
-                return Err(format!(
-                    "invalid governance value for {}: exceeds max length 128",
-                    key
-                ));
-            }
-            if trimmed.chars().any(|c| c.is_whitespace()) {
-                return Err(format!(
-                    "invalid governance value for {}: must not contain whitespace",
-                    key
-                ));
-            }
-            if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
-                return Err(format!(
-                    "invalid governance value for {}: only ASCII ',' is allowed as member separator",
-                    key
-                ));
-            }
-
-            let members: Vec<&str> = trimmed.split(',').collect();
-            if members.len() < 2 {
-                return Err(format!(
-                    "invalid governance value for {}: resolve authority set must include at least two members",
-                    key
-                ));
-            }
-
-            let mut seen_lower = std::collections::BTreeSet::new();
-            for member in members {
-                if member.is_empty() {
-                    return Err(format!(
-                        "invalid governance value for {}: empty authority member is not allowed",
-                        key
-                    ));
-                }
-                let member_lower = member.to_ascii_lowercase();
-                if !seen_lower.insert(member_lower.clone()) {
-                    return Err(format!(
-                        "invalid governance value for {}: duplicate authority member '{}' is not allowed",
-                        key, member
-                    ));
-                }
-                if member.contains(';') || member.contains('|') {
-                    return Err(format!(
-                        "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
-                        key
-                    ));
-                }
-                if member.chars().any(|c| c.is_control()) {
-                    return Err(format!(
-                        "invalid governance value for {}: control characters are not allowed",
-                        key
-                    ));
-                }
-                if !member.is_ascii() {
-                    return Err(format!(
-                        "invalid governance value for {}: must contain ASCII-only account ids",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
-                    return Err(format!(
-                        "invalid governance value for {}: placeholder authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
-                    return Err(format!(
-                        "invalid governance value for {}: reserved system authority is not allowed",
-                        key
-                    ));
-                }
-                if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                    || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                    || member.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-                {
-                    return Err(format!(
-                        "invalid governance value for {}: treasury custody accounts are not allowed",
-                        key
-                    ));
-                }
-            }
-            Ok(())
-        }
+        "resolve_authority" => validate_resolve_authority_governance_value(key, value),
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())
@@ -556,8 +1449,28 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
-        _ => Ok(()),
+        _ => Err(format!(
+            "governance validator missing explicit match coverage for allowed key: {}",
+            key
+        )),
     }
+}
+
+fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
+    task.status == TaskStatus::Challenged
+        && matches!(task.challenge_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_window_blocks_snapshot, Some(window) if window > 0)
+        && matches!(task.challenged_at_height, Some(height) if height > 0)
+        && matches!(task.resolve_deadline_height, Some(height) if height > 0)
+        && matches!(task.challenge_bond, Some(bond) if bond > 0)
+        && task
+            .challenger
+            .as_deref()
+            .is_some_and(|challenger| validate_resolve_approver_token(challenger).is_ok())
+}
+
+fn task_supports_pending_resolve_snapshot_restore(task: &TaskObject) -> bool {
+    task_supports_pending_resolve_restore(task) && task.challenge_bond_forfeited.is_some()
 }
 
 impl StateStore {
@@ -580,6 +1493,7 @@ impl StateStore {
             return Err("resolve approval task version must be >= 1".into());
         }
 
+        let approver_audit = approver.trim().to_string();
         let approver_canonical = validate_resolve_approver_token(approver)?;
         let authority_canonical = canonicalize_resolve_authority_set(authority_set)?;
         if !authority_canonical
@@ -588,28 +1502,92 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
-        if let Some(task) = self.get_task(task_id) {
-            if task.status != TaskStatus::Challenged {
+        let Some(task) = self.get_task(task_id) else {
+            if self.is_emergency_paused() {
                 if self.pending_resolve_approvals.remove(&task_id).is_some() {
                     self.invalidate_state_root_cache();
                 }
-                return Err("resolve approval task no longer challenged".into());
+                return Err("resolve approval task missing".into());
             }
-            if task.version != task_version {
-                if self.pending_resolve_approvals.remove(&task_id).is_some() {
-                    self.invalidate_state_root_cache();
+            ensure_effective_resolve_authority_match(self, authority_set)?;
+
+            if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
+                if entry.confirmations >= 2 {
+                    return Err("resolve approval already finalized; clear pending approval first".into());
                 }
-                return Err("resolve approval task version changed".into());
+                let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
+                if entry_authority_canonical != authority_canonical {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval authority set changed".into());
+                }
+                if entry.task_version != task_version {
+                    self.invalidate_state_root_cache();
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return Err("resolve approval task version changed".into());
+                }
             }
+
+            self.invalidate_state_root_cache();
+            let entry =
+                self.pending_resolve_approvals
+                    .entry(task_id)
+                    .or_insert(PendingResolveApproval {
+                        slash_worker,
+                        confirmations: 0,
+                        first_approver: approver.trim().to_string(),
+                        authority_set: authority_set.to_string(),
+                        task_version,
+                    });
+            if entry.slash_worker != slash_worker {
+                return Err("resolve approval decision mismatch".into());
+            }
+            if entry.confirmations >= 2 {
+                return Err("resolve approval already finalized; clear pending approval first".into());
+            }
+            if entry.confirmations > 0 {
+                let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+                if first_approver_canonical == approver_canonical {
+                    return Err("resolve approval requires distinct approver".into());
+                }
+            }
+            entry.confirmations = entry.confirmations.saturating_add(1);
+            return Ok(entry.confirmations >= 2);
+        };
+        if task.status != TaskStatus::Challenged {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task no longer challenged".into());
+        }
+        if task.version != task_version {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task version changed".into());
+        }
+        if !task_supports_pending_resolve_restore(&task)
+            || (self.is_emergency_paused()
+                && !task_supports_pending_resolve_snapshot_restore(&task))
+        {
+            if self.pending_resolve_approvals.remove(&task_id).is_some() {
+                self.invalidate_state_root_cache();
+            }
+            return Err("resolve approval task boundary metadata incomplete".into());
         }
         ensure_effective_resolve_authority_match(self, authority_set)?;
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.confirmations >= 2 {
-                return Err("resolve approval already finalized; clear pending approval first".into());
+                return Err(
+                    "resolve approval already finalized; clear pending approval first".into(),
+                );
             }
-            let entry_authority_canonical = canonicalize_resolve_authority_set(&entry.authority_set)
-                .map_err(|_| "resolve approval authority set changed".to_string())?;
+            let entry_authority_canonical =
+                canonicalize_resolve_authority_set(&entry.authority_set)
+                    .map_err(|_| "resolve approval authority set changed".to_string())?;
             if entry_authority_canonical != authority_canonical {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
@@ -629,8 +1607,8 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver.trim().to_string(),
-                    authority_set: authority_set.to_string(),
+                    first_approver: approver_canonical.clone(),
+                    authority_set: authority_canonical.clone(),
                     task_version,
                 });
         if entry.slash_worker != slash_worker {
@@ -640,8 +1618,9 @@ impl StateStore {
             return Err("resolve approval already finalized; clear pending approval first".into());
         }
         if entry.confirmations > 0 {
-            let first_approver_canonical = validate_resolve_approver_token(&entry.first_approver)
-                .map_err(|_| "resolve approval requires distinct approver".to_string())?;
+            let first_approver_canonical =
+                validate_resolve_approver_token(&entry.first_approver)
+                    .map_err(|_| "resolve approval requires distinct approver".to_string())?;
             if first_approver_canonical == approver_canonical {
                 return Err("resolve approval requires distinct approver".into());
             }
@@ -651,8 +1630,9 @@ impl StateStore {
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
-        self.invalidate_state_root_cache();
-        self.pending_resolve_approvals.remove(&task_id);
+        if self.pending_resolve_approvals.remove(&task_id).is_some() {
+            self.invalidate_state_root_cache();
+        }
     }
 
     pub fn pending_resolve_approval(&self, task_id: u64) -> Option<(bool, u8)> {
@@ -682,11 +1662,201 @@ impl StateStore {
             })
     }
 
+    fn canonical_pending_resolve_approval_snapshot_for_task(
+        &self,
+        task_id: u64,
+        task: &TaskObject,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> Option<(String, String)> {
+        if task_id == 0 || snapshot.task_version == 0 {
+            return None;
+        }
+        if snapshot.confirmations != 1 {
+            return None;
+        }
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
+        else {
+            return None;
+        };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return None;
+        };
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return None;
+        }
+        if !is_effective_resolve_authority_match(self, &authority_canonical) {
+            return None;
+        }
+        let Some(current_ref) = self.get_ref(task_id) else {
+            return None;
+        };
+        if task.task_id != task_id
+            || task.status != TaskStatus::Challenged
+            || task.version != snapshot.task_version
+            || current_ref.version != snapshot.task_version
+        {
+            return None;
+        }
+
+        Some((first_approver_canonical, authority_canonical))
+    }
+
+    fn canonical_pending_resolve_approval_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> Option<(String, String)> {
+        let task = self.get_task(task_id)?;
+        self.canonical_pending_resolve_approval_snapshot_for_task(task_id, &task, snapshot)
+    }
+
+    fn canonical_pending_resolve_reentry_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> Option<(String, String)> {
+        if task_id == 0 || !matches!(snapshot.confirmations, 1 | 2) || snapshot.task_version == 0 {
+            return None;
+        }
+        let task = self.get_task(task_id)?;
+        let current_ref = self.get_ref(task_id)?;
+        if task.task_id != task_id
+            || task.status != TaskStatus::Challenged
+            || task.version != snapshot.task_version
+            || current_ref.version != snapshot.task_version
+        {
+            return None;
+        }
+
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
+        else {
+            return None;
+        };
+        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
+        else {
+            return None;
+        };
+        if !authority_canonical
+            .split(',')
+            .any(|member| member == first_approver_canonical)
+        {
+            return None;
+        }
+        if !is_effective_resolve_authority_match(self, &authority_canonical) {
+            return None;
+        }
+
+        Some((first_approver_canonical, authority_canonical))
+    }
+
+    fn pending_resolve_matches_task_version(&self, task_id: u64, task_version: u64) -> bool {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|pending| pending.task_version == task_version)
+            .unwrap_or(false)
+    }
+
+    fn matches_pending_resolve_restore_reentry_snapshot(
+        &self,
+        task_id: u64,
+        snapshot: &PendingResolveApprovalSnapshot,
+    ) -> bool {
+        if snapshot.confirmations != 1 {
+            return false;
+        }
+
+        let Some(existing) = self.pending_resolve_approvals.get(&task_id) else {
+            return false;
+        };
+        if existing.confirmations != 1 {
+            return false;
+        }
+
+        let Some((snapshot_first_approver, snapshot_authority_set)) = self
+            .canonical_pending_resolve_reentry_snapshot(task_id, snapshot)
+        else {
+            return false;
+        };
+        let Ok(existing_first_approver) = validate_resolve_approver_token(&existing.first_approver)
+        else {
+            return false;
+        };
+        let Ok(existing_authority_set) = canonicalize_resolve_authority_set(&existing.authority_set)
+        else {
+            return false;
+        };
+
+        existing.slash_worker == snapshot.slash_worker
+            && existing.confirmations == snapshot.confirmations
+            && existing.task_version == snapshot.task_version
+            && existing_first_approver == snapshot_first_approver
+            && existing_authority_set == snapshot_authority_set
+    }
+
+    fn matches_task_restore_reentry_snapshot(&self, id: u64, task: &TaskObject) -> bool {
+        let Some(current) = self.objects.get(&id) else {
+            return false;
+        };
+        match &current.value {
+            ObjectValue::Task(existing) => current.version == task.version && *existing == *task,
+            _ => false,
+        }
+    }
+
+    fn pending_resolve_restore_reentry_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<PendingResolveApprovalSnapshot> {
+        let pending = self.pending_resolve_approvals.get(&task_id)?;
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: pending.slash_worker,
+            confirmations: pending.confirmations,
+            first_approver: pending.first_approver.clone(),
+            authority_set: pending.authority_set.clone(),
+            task_version: pending.task_version,
+        })
+    }
+
+    fn should_preserve_pending_resolve_on_task_restore(
+        &self,
+        task_id: u64,
+        task: &TaskObject,
+    ) -> bool {
+        if !self.matches_task_restore_reentry_snapshot(task_id, task)
+            || task.status != TaskStatus::Challenged
+        {
+            return false;
+        }
+        if !self.pending_resolve_matches_task_version(task_id, task.version) {
+            return false;
+        }
+        let Some(snapshot) = self.pending_resolve_restore_reentry_snapshot(task_id) else {
+            return false;
+        };
+        if snapshot.confirmations != 1 {
+            return false;
+        }
+        self.canonical_pending_resolve_approval_snapshot(task_id, &snapshot)
+            .is_some()
+    }
+
     pub fn restore_pending_resolve_approval(
         &mut self,
         task_id: u64,
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
+        if let Some(snapshot) = snapshot.as_ref() {
+            if self.matches_pending_resolve_restore_reentry_snapshot(task_id, snapshot) {
+                return;
+            }
+        }
+
         self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
 
@@ -699,7 +1869,8 @@ impl StateStore {
         if snapshot.confirmations != 1 {
             return;
         }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        let Ok(first_approver_canonical) =
+            validate_resolve_approver_token(&snapshot.first_approver)
         else {
             return;
         };
@@ -707,6 +1878,11 @@ impl StateStore {
         else {
             return;
         };
+        if snapshot.first_approver != first_approver_canonical
+            || snapshot.authority_set != authority_canonical
+        {
+            return;
+        }
         if !authority_canonical
             .split(',')
             .any(|member| member == first_approver_canonical)
@@ -716,10 +1892,14 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
             return;
         }
-        if let Some(task) = self.get_task(task_id) {
-            if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-                return;
-            }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.version != snapshot.task_version
+            || !task_supports_pending_resolve_snapshot_restore(&task)
+            || task.challenge_bond_forfeited != Some(!snapshot.slash_worker)
+        {
+            return;
         }
 
         self.pending_resolve_approvals.insert(
@@ -727,21 +1907,112 @@ impl StateStore {
             PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: snapshot.first_approver,
-                authority_set: snapshot.authority_set,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
                 task_version: snapshot.task_version,
             },
         );
     }
 
-    pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+    fn has_pending_resolve_restore_reentry_boundary_hazard(
+        &self,
+        id: u64,
+        task: &TaskObject,
+    ) -> bool {
+        self.pending_resolve_approvals.get(&id).is_some()
+            && !self.should_preserve_pending_resolve_on_task_restore(id, task)
+    }
+
+    fn matches_task_restore_reentry_boundary(&self, id: u64, task: &TaskObject) -> bool {
+        if self
+            .gov_param_key_index
+            .values()
+            .any(|mapped_id| *mapped_id == id)
+        {
+            return false;
+        }
+        self.matches_task_restore_reentry_snapshot(id, task)
+    }
+
+    fn task_restore_reentry_boundary_action(
+        &self,
+        id: u64,
+        task: &TaskObject,
+    ) -> TaskRestoreReentryBoundaryAction {
+        if !self.matches_task_restore_reentry_boundary(id, task) {
+            return TaskRestoreReentryBoundaryAction::Reapply;
+        }
+        if self.has_pending_resolve_restore_reentry_boundary_hazard(id, task) {
+            return TaskRestoreReentryBoundaryAction::ScrubPendingResolve;
+        }
+        TaskRestoreReentryBoundaryAction::Noop
+    }
+
+    fn scrub_pending_resolve_on_task_restore_reentry(&mut self, id: u64) {
         self.invalidate_state_root_cache();
-        self.remove_gov_param_key_index_for_id(id);
+        self.pending_resolve_approvals.remove(&id);
+    }
+
+    pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+        if let Some(task) = snapshot.as_ref() {
+            if task.task_id == id {
+                match self.task_restore_reentry_boundary_action(id, task) {
+                    TaskRestoreReentryBoundaryAction::Noop => return,
+                    TaskRestoreReentryBoundaryAction::ScrubPendingResolve => {
+                        self.scrub_pending_resolve_on_task_restore_reentry(id);
+                        return;
+                    }
+                    TaskRestoreReentryBoundaryAction::Reapply => {}
+                }
+            }
+        }
+
+        if self
+            .objects
+            .get(&id)
+            .is_some_and(|existing| !matches!(existing.value, ObjectValue::Task(_)))
+        {
+            return;
+        }
+
+        self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
-                if task.task_id != id {
+                if id == 0 || task.task_id != id || task.version == 0 {
+                    self.pending_resolve_approvals.remove(&id);
+                    self.objects.remove(&id);
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
+                if task.status == TaskStatus::Challenged
+                    && (!task_supports_pending_resolve_restore(&task)
+                        || (self.is_emergency_paused()
+                            && !task_supports_pending_resolve_snapshot_restore(&task)))
+                {
+                    self.pending_resolve_approvals.remove(&id);
                     self.objects.remove(&id);
                     return;
+                }
+                match self.pending_resolve_approvals.get(&id) {
+                    Some(pending)
+                        if pending.confirmations != 1
+                            || validate_resolve_approver_token(&pending.first_approver).is_err()
+                            || canonicalize_resolve_authority_set(&pending.authority_set)
+                                .map(|canonical| {
+                                    canonical != pending.authority_set
+                                        || !canonical
+                                            .split(',')
+                                            .any(|member| member == pending.first_approver)
+                                })
+                                .unwrap_or(true)
+                            || !is_effective_resolve_authority_match(self, &pending.authority_set)
+                            || pending.task_version != task.version
+                            || !task_supports_pending_resolve_snapshot_restore(&task)
+                            || task.challenge_bond_forfeited != Some(!pending.slash_worker) =>
+                    {
+                        self.pending_resolve_approvals.remove(&id);
+                    }
+                    _ => {}
                 }
                 self.objects.insert(
                     id,
@@ -750,27 +2021,46 @@ impl StateStore {
                         value: ObjectValue::Task(task),
                     },
                 );
+                if existing_task_matches && !stale_pending_resolve {
+                    return;
+                }
+                if stale_pending_resolve {
+                    self.pending_resolve_approvals.remove(&id);
+                }
+                self.invalidate_state_root_cache();
+                if !existing_task_matches {
+                    self.objects.insert(
+                        id,
+                        VersionedObject {
+                            version: task.version,
+                            value: ObjectValue::Task(task),
+                        },
+                    );
+                }
             }
             None => {
+                self.pending_resolve_approvals.remove(&id);
                 self.objects.remove(&id);
+                self.pending_resolve_approvals.remove(&id);
             }
         }
     }
 
     pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
         self.invalidate_state_root_cache();
-        self.remove_gov_param_key_index_for_id(key_id);
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key_id != key_id {
+                if snapshot.key_id != key_id
+                    || validate_gov_param_snapshot_binding(
+                        &self.gov_param_key_index,
+                        &snapshot.key,
+                        &snapshot.key,
+                        snapshot.key_id,
+                    )
+                    .is_err()
+                {
                     self.objects.remove(&key_id);
                     return;
-                }
-                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
-                    if existing_id != key_id {
-                        self.objects.remove(&key_id);
-                        return;
-                    }
                 }
                 self.gov_param_key_index
                     .insert(snapshot.key.clone(), snapshot.key_id);
@@ -783,7 +2073,12 @@ impl StateStore {
                 );
             }
             None => {
-                self.objects.remove(&key_id);
+                if matches!(
+                    self.objects.get(&key_id).map(|existing| &existing.value),
+                    Some(ObjectValue::GovParam(_))
+                ) {
+                    self.objects.remove(&key_id);
+                }
             }
         }
     }
@@ -821,11 +2116,39 @@ impl StateStore {
         })
     }
 
+    fn validated_gov_param_object_at_id(&self, id: u64) -> Option<&GovParamObject> {
+        let object = self.objects.get(&id)?;
+        let param = match &object.value {
+            ObjectValue::GovParam(p) if p.key_id == id => p,
+            _ => return None,
+        };
+        let registry_matches_object = self.gov_param_key_index.get(&param.key).copied() == Some(id);
+        let pinned_binding_matches_object = governance_expected_key_for_id(id)
+            .is_some_and(|expected_key| expected_key == param.key.as_str());
+        if !registry_matches_object && !pinned_binding_matches_object {
+            return None;
+        }
+        if validate_gov_param_registry_binding(&self.gov_param_key_index, &param.key, param.key_id)
+            .is_err()
+        {
+            return None;
+        }
+        Some(param)
+    }
+
+    fn canonical_gov_param_binding_at_id(&self, id: u64) -> Option<(&str, &GovParamObject)> {
+        let param = self.validated_gov_param_object_at_id(id)?;
+        let canonical_key = governance_expected_key_for_id(id).unwrap_or(param.key.as_str());
+        (param.key == canonical_key).then_some((canonical_key, param))
+    }
+
+    fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
+        self.canonical_gov_param_binding_at_id(id)
+            .map(|(_, param)| param)
+    }
+
     pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
-        self.objects.get(&id).and_then(|v| match &v.value {
-            ObjectValue::GovParam(p) => Some(p.clone()),
-            _ => None,
-        })
+        self.canonical_gov_param_object_by_id(id).cloned()
     }
 
     fn invalidate_state_root_cache(&self) {
@@ -836,7 +2159,8 @@ impl StateStore {
     }
 
     fn remove_gov_param_key_index_for_id(&mut self, id: u64) {
-        self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
+        self.gov_param_key_index
+            .retain(|_, mapped_id| *mapped_id != id);
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
@@ -868,9 +2192,30 @@ impl StateStore {
         if current.version != expected.version {
             return Err("version conflict".into());
         }
+        if task.task_id != expected.id {
+            return Err("object id mismatch".into());
+        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
+        if let Some(pending) = self.pending_resolve_approvals.get(&expected.id) {
+            let should_keep_pending = self
+                .canonical_pending_resolve_approval_snapshot_for_task(
+                    expected.id,
+                    &task,
+                    &PendingResolveApprovalSnapshot {
+                        slash_worker: pending.slash_worker,
+                        confirmations: pending.confirmations,
+                        first_approver: pending.first_approver.clone(),
+                        authority_set: pending.authority_set.clone(),
+                        task_version: pending.task_version,
+                    },
+                )
+                .is_some();
+            if !should_keep_pending {
+                self.pending_resolve_approvals.remove(&expected.id);
+            }
+        }
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -884,7 +2229,10 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, mut proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(
+        &mut self,
+        mut proposal: GovProposalObject,
+    ) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
@@ -971,7 +2319,8 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if let Some(existing_id) = self.gov_param_key_index.get(&key).copied() {
+        if let Some(existing_id) = governance_registry_lookup_id_for_key(&self.gov_param_key_index, &key)
+        {
             if existing_id != key_id {
                 return Err(format!(
                     "governance key id mismatch for {}: existing_id={}, attempted_id={}",
@@ -1046,23 +2395,7 @@ impl StateStore {
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -1073,9 +2406,7 @@ impl StateStore {
                 self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(existing_ref);
@@ -1124,23 +2455,7 @@ impl StateStore {
         value: String,
         action: GovPendingUpdateAction,
     ) -> Result<GovParamUpdateOutcome, String> {
-        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
-        }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
-        }
-        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
-            if existing_key_id != key_id {
-                return Err(format!(
-                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
-                    key, existing_key_id, key_id
-                ));
-            }
-        }
+        validate_gov_param_registry_binding(&self.gov_param_key_index, &key, key_id)?;
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
@@ -1305,8 +2620,46 @@ impl StateStore {
         Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
     }
 
+    fn pending_gov_update_has_key_id_alias(&self, key: &str, key_id: u64) -> bool {
+        self.pending_gov_updates.iter().any(|(other_key, other_pending)| {
+            other_key.as_str() != key && other_pending.key_id == key_id
+        })
+    }
+
+    fn canonical_pending_gov_update_for_key(&self, key: &str) -> Option<&PendingGovParamUpdate> {
+        let pending = self.pending_gov_updates.get(key)?;
+        if validate_pending_gov_param_snapshot_binding(&self.gov_param_key_index, key, pending)
+            .is_err()
+        {
+            return None;
+        }
+        if self.pending_gov_update_has_key_id_alias(key, pending.key_id) {
+            return None;
+        }
+        Some(pending)
+    }
+
     pub fn pending_gov_update(&self, key: &str) -> Option<PendingGovParamUpdate> {
-        self.pending_gov_updates.get(key).cloned()
+        self.canonical_pending_gov_update_for_key(key).cloned()
+    }
+
+    fn clear_pending_gov_update_bindings(
+        &mut self,
+        requested_key: &str,
+        snapshot_key: Option<&str>,
+    ) {
+        self.pending_gov_updates.remove(requested_key);
+        if let Some(snapshot_key) = snapshot_key {
+            if snapshot_key != requested_key {
+                self.pending_gov_updates.remove(snapshot_key);
+            }
+        }
+    }
+
+    fn clear_pending_gov_update_key_id_aliases(&mut self, key_id: u64, preserved_key: &str) {
+        self.pending_gov_updates.retain(|other_key, other_pending| {
+            other_key.as_str() == preserved_key || other_pending.key_id != key_id
+        });
     }
 
     pub fn restore_pending_gov_update(
@@ -1314,28 +2667,61 @@ impl StateStore {
         key: &str,
         snapshot: Option<PendingGovParamUpdate>,
     ) {
-        self.invalidate_state_root_cache();
+        let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                if snapshot.key != key {
+                if validate_pending_gov_param_snapshot_binding(
+                    &self.gov_param_key_index,
+                    key,
+                    &snapshot,
+                )
+                .is_err()
+                {
+                    self.clear_pending_gov_update_bindings(key, Some(&snapshot.key));
+                    return;
+                }
+                if !GOV_ALLOWED_KEYS.contains(&key) || !is_sensitive_gov_param(key) {
                     self.pending_gov_updates.remove(key);
                     return;
                 }
-                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+                if let Some(existing_key_id) = self.gov_param_key_index.get(key).copied() {
+                    if existing_key_id != snapshot.key_id {
+                        self.pending_gov_updates.remove(key);
+                        return;
+                    }
+                }
+                if snapshot.activate_at_height == 0
+                    || validate_gov_param_value(key, &snapshot.value).is_err()
+                {
+                    self.pending_gov_updates.remove(key);
+                    return;
+                }
+                self.pending_gov_updates
+                    .insert(snapshot.key.clone(), snapshot);
             }
             None => {
-                self.pending_gov_updates.remove(key);
+                self.clear_pending_gov_update_bindings(key, None);
             }
         }
     }
 
-    fn gov_param_value(&self, key: &str) -> Option<&str> {
-        let id = self.gov_param_key_index.get(key)?;
-        let object = self.objects.get(id)?;
-        match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
-            _ => None,
+    fn validated_gov_param_registry_id_for_key(&self, key: &str) -> Option<u64> {
+        let id = governance_registry_lookup_id_for_key(&self.gov_param_key_index, key)?;
+        if validate_gov_param_registry_binding(&self.gov_param_key_index, key, id).is_err() {
+            return None;
         }
+        Some(id)
+    }
+
+    fn canonical_gov_param_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
+        let id = self.validated_gov_param_registry_id_for_key(key)?;
+        let (canonical_key, param) = self.canonical_gov_param_binding_at_id(id)?;
+        (canonical_key == key).then_some((id, param))
+    }
+
+    fn gov_param_value(&self, key: &str) -> Option<&str> {
+        let (_, param) = self.canonical_gov_param_for_key(key)?;
+        Some(param.value.as_str())
     }
 
     pub fn is_emergency_paused(&self) -> bool {
@@ -1355,12 +2741,7 @@ impl StateStore {
     }
 
     fn gov_param_ref_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
-        let id = self.gov_param_key_index.get(key).copied()?;
-        let object = self.objects.get(&id)?;
-        match &object.value {
-            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
-            _ => None,
-        }
+        self.canonical_gov_param_for_key(key)
     }
 
     fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {
@@ -1639,13 +3020,26 @@ impl StateStore {
                                         Some(privacy_tier) => {
                                             hasher.update([1]);
                                             hasher.update(match privacy_tier {
-                                                trnm_types::PrivacyTier::Public => b"public".as_slice(),
-                                                trnm_types::PrivacyTier::Internal => b"internal".as_slice(),
-                                                trnm_types::PrivacyTier::Restricted => b"restricted".as_slice(),
+                                                trnm_types::PrivacyTier::Public => {
+                                                    b"public".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Internal => {
+                                                    b"internal".as_slice()
+                                                }
+                                                trnm_types::PrivacyTier::Restricted => {
+                                                    b"restricted".as_slice()
+                                                }
                                             });
                                         }
                                         None => hasher.update([0]),
                                     }
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.metering {
+                                Some(metering) => {
+                                    hasher.update([1]);
+                                    hash_task_metering_snapshot(&mut hasher, metering);
                                 }
                                 None => hasher.update([0]),
                             }
@@ -1783,13 +3177,7 @@ impl StateStore {
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
-            hasher.update(b"resolve_pending");
-            hasher.update(task_id.to_le_bytes());
-            hasher.update([pending.slash_worker as u8]);
-            hasher.update([pending.confirmations]);
-            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
-            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
-            hasher.update(pending.task_version.to_le_bytes());
+            hash_pending_resolve_approval(&mut hasher, *task_id, pending);
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
@@ -1803,6 +3191,128 @@ impl StateStore {
     }
 }
 
+fn is_canonical_hex_digest(value: &str) -> bool {
+    value.len() == 64
+        && value.as_bytes().iter().all(|byte| {
+            byte.is_ascii_digit() || (byte.is_ascii_hexdigit() && byte.is_ascii_lowercase())
+        })
+}
+
+const WAL_PROPOSAL_HASH_MAX_LEN: usize = 256;
+
+fn wal_proposal_hash_length_is_canonical(value: &str) -> bool {
+    !value.is_empty() && value.len() <= WAL_PROPOSAL_HASH_MAX_LEN
+}
+
+fn wal_proposal_hash_surface_has_forbidden_layout(value: &str) -> bool {
+    value.trim() != value || !value.is_ascii() || value.chars().any(|c| c.is_whitespace() || c.is_control())
+}
+
+fn is_canonical_wal_proposal_hash(value: &str) -> bool {
+    wal_proposal_hash_length_is_canonical(value)
+        && !wal_proposal_hash_surface_has_forbidden_layout(value)
+}
+
+fn wal_prev_hash_surface_is_canonical(height: u64, prev_hash_hex: Option<&str>) -> bool {
+    match (height, prev_hash_hex) {
+        (1, None) => true,
+        (1, Some(_)) => false,
+        (2.., Some(prev_hash_hex)) => is_canonical_hex_digest(prev_hash_hex),
+        (2.., None) => false,
+        _ => false,
+    }
+}
+
+fn checkpoint_height_surface_is_canonical(height: u64) -> bool {
+    height > 0
+}
+
+fn wal_content_hash_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    is_canonical_hex_digest(&wal_entry.content_hash_hex())
+}
+
+fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    let state_root_hex = wal_entry.state_root_hex.as_str();
+    let looks_like_digest_surface = state_root_hex.len() == 64
+        && state_root_hex
+            .as_bytes()
+            .iter()
+            .all(|byte| byte.is_ascii_hexdigit());
+
+    !looks_like_digest_surface || is_canonical_hex_digest(state_root_hex)
+}
+
+fn checkpoint_hash_surfaces_are_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    is_canonical_hex_digest(&checkpoint.state_root_hex)
+        && is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex)
+        && is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && wal_content_hash_surface_is_canonical(wal_entry)
+}
+
+fn wal_checkpoint_metadata_surfaces_are_canonical(wal_entry: &WalMeta) -> bool {
+    is_canonical_wal_proposal_hash(&wal_entry.proposal_hash)
+        && wal_prev_hash_surface_is_canonical(
+            wal_entry.height,
+            wal_entry.prev_hash_hex.as_deref(),
+        )
+}
+
+fn checkpoint_binds_to_canonical_wal_entry(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint.height == wal_entry.height
+        && wal_entry.committed
+        && wal_checkpoint_metadata_surfaces_are_canonical(wal_entry)
+        && checkpoint.state_root_hex == wal_entry.state_root_hex
+        && checkpoint.wal_entry_hash_hex == wal_entry.content_hash_hex()
+}
+
+pub fn checkpoint_evidence_surface_is_canonical(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> bool {
+    checkpoint_height_surface_is_canonical(checkpoint.height)
+        && checkpoint_hash_surfaces_are_canonical(checkpoint, wal_entry)
+        && checkpoint_binds_to_canonical_wal_entry(checkpoint, wal_entry)
+}
+
+fn checkpoint_matches_wal_entry_for_recovery(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+    wal_entry_hash_hex: &str,
+) -> bool {
+    if !checkpoint_height_surface_is_canonical(checkpoint.height) {
+        return false;
+    }
+    if checkpoint.height != wal_entry.height {
+        return false;
+    }
+    if !wal_entry.committed {
+        return false;
+    }
+    if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
+        return false;
+    }
+    if !wal_state_root_surface_is_canonical(wal_entry) {
+        return false;
+    }
+    if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
+        return false;
+    }
+    if is_canonical_hex_digest(&wal_entry.state_root_hex)
+        && !is_canonical_hex_digest(&checkpoint.state_root_hex)
+    {
+        return false;
+    }
+
+    checkpoint.state_root_hex == wal_entry.state_root_hex
+        && wal_entry_hash_hex == checkpoint.wal_entry_hash_hex.as_str()
+}
+
 pub fn verify_wal_and_find_checkpoint(
     checkpoints: &[CheckpointMeta],
     wal_entries: &[WalMeta],
@@ -1812,17 +3322,33 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
+        if !is_canonical_hex_digest(&e.content_hash_hex())
+            || e.prev_hash_hex
+                .as_deref()
+                .is_some_and(|prev| !is_canonical_hex_digest(prev))
+        {
+            return Ok(best_checkpoint);
+        }
+
         if let Some(last_height) = prev_height {
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
             // during restart recovery.
-            if e.height != last_height.saturating_add(1) {
+            let Some(expected_height) = last_height.checked_add(1) else {
+                return Ok(best_checkpoint);
+            };
+            if e.height != expected_height {
                 return Ok(best_checkpoint);
             }
         } else if e.height != 1 {
             // Until StateStore snapshot restore/replay exists, a checkpointed WAL chain
             // that starts above genesis height is metadata-only and must not be used to
             // claim safe application-state recovery.
+            return Ok(best_checkpoint);
+        }
+        if !wal_entry_has_complete_proof_metadata(e) {
+            // Fail closed on incomplete WAL proof metadata. Blank proposal/state-root/prev-hash
+            // fields are not auditable recovery evidence and must not advance checkpoint selection.
             return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
@@ -1836,10 +3362,14 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
+        if !wal_checkpoint_metadata_surfaces_are_canonical(e)
+            || !wal_state_root_surface_is_canonical(e)
+        {
+            return Ok(best_checkpoint);
+        }
+
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
-            if cp.state_root_hex == e.state_root_hex
-                && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
-            {
+            if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
                 let should_replace = best_checkpoint
                     .as_ref()
                     .map(|best| cp.height >= best.height)
@@ -1858,6 +3388,83 @@ pub fn verify_wal_and_find_checkpoint(
 mod tests {
     use super::*;
     use trnm_types::TaskStatus;
+
+    #[test]
+    fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry));
+
+        let mut noncanonical_checkpoint = checkpoint.clone();
+        noncanonical_checkpoint.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&noncanonical_checkpoint, &wal_entry),
+            "checkpoint state-root evidence must be canonical hex"
+        );
+
+        let mut noncanonical_wal = wal_entry.clone();
+        noncanonical_wal.state_root_hex = "not-hex".into();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &noncanonical_wal),
+            "wal state-root evidence must be canonical hex"
+        );
+
+        let mut mismatched_checkpoint_root = checkpoint.clone();
+        mismatched_checkpoint_root.state_root_hex = "cd".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_root, &wal_entry),
+            "checkpoint evidence surfaces must bind the checkpoint state root to the evidenced WAL state root"
+        );
+
+        let mut mismatched_checkpoint_wal_hash = checkpoint.clone();
+        mismatched_checkpoint_wal_hash.wal_entry_hash_hex = "ef".repeat(32);
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
+            "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
+        );
+    }
+
+    #[test]
+    fn wal_content_hash_length_frames_variable_width_evidence_surfaces() {
+        let base_state_root = format!("{}{}", "c", "d".repeat(63));
+        let boundary_shifted_state_root = format!("{}{}", "d", "d".repeat(63));
+        let prev_hash = "01".repeat(32);
+
+        let wal_a = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: base_state_root,
+            prev_hash_hex: Some(prev_hash.clone()),
+        };
+        let wal_b = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "abc".into(),
+            committed: true,
+            state_root_hex: boundary_shifted_state_root,
+            prev_hash_hex: Some(prev_hash),
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence hashing must length-frame proposal_hash and state_root_hex so adjacent audit surfaces cannot collide by shifting string boundaries"
+        );
+    }
 
     #[test]
     fn put_and_version_update() {
@@ -1894,6 +3501,204 @@ mod tests {
     }
 
     #[test]
+    fn task_metering_snapshot_affects_state_root() {
+        let mut without_metering = StateStore::new();
+        let mut with_metering = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 404,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut metered_task = base_task.clone();
+        metered_task.metadata = Some(trnm_types::TaskMetadata {
+            note: Some("metered task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(trnm_types::TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 2,
+                receipt_hash: "cd".repeat(32),
+                prompt_tokens: 144,
+                generated_tokens: 55,
+                decode_steps: 13,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 987,
+                prompt_token_weight: 3,
+                generated_token_weight: 5,
+                decode_step_weight: 7,
+                kv_byte_weight: 11,
+                min_accept_work_units: 100,
+                challenge_success_bounty_base: 17,
+                challenge_success_bounty_per_work_unit_num: 19,
+                challenge_success_bounty_per_work_unit_den: 23,
+                worker_completion_bonus_per_work_unit_num: 29,
+                worker_completion_bonus_per_work_unit_den: 31,
+                worker_slash_rebate_per_work_unit_num: 37,
+                worker_slash_rebate_per_work_unit_den: 41,
+            }),
+        });
+
+        without_metering.put_task_new(base_task).unwrap();
+        with_metering.put_task_new(metered_task).unwrap();
+
+        assert_ne!(
+            without_metering.state_root(),
+            with_metering.state_root(),
+            "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_incomplete_metering_proof_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 405,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("restored task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: Some(trnm_types::TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 0,
+                    receipt_hash: "cd".repeat(32),
+                    prompt_tokens: 144,
+                    generated_tokens: 55,
+                    decode_steps: 13,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 987,
+                    prompt_token_weight: 3,
+                    generated_token_weight: 5,
+                    decode_step_weight: 7,
+                    kv_byte_weight: 11,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 17,
+                    challenge_success_bounty_per_work_unit_num: 19,
+                    challenge_success_bounty_per_work_unit_den: 0,
+                    worker_completion_bonus_per_work_unit_num: 29,
+                    worker_completion_bonus_per_work_unit_den: 31,
+                    worker_slash_rebate_per_work_unit_num: 37,
+                    worker_slash_rebate_per_work_unit_den: 41,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(405, Some(task));
+
+        assert!(
+            st.get_task(405).is_none(),
+            "restore_task must fail closed when metering proof metadata omits a concrete policy snapshot version or uses zero denominators"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_non_canonical_metering_proof_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 406,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("restored task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: Some(trnm_types::TaskMeteringSnapshot {
+                    workload_class: " llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1 ".into(),
+                    policy_snapshot_version: 2,
+                    receipt_hash: format!("{}\n", "cd".repeat(32)),
+                    prompt_tokens: 144,
+                    generated_tokens: 55,
+                    decode_steps: 13,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 987,
+                    prompt_token_weight: 3,
+                    generated_token_weight: 5,
+                    decode_step_weight: 7,
+                    kv_byte_weight: 11,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 17,
+                    challenge_success_bounty_per_work_unit_num: 19,
+                    challenge_success_bounty_per_work_unit_den: 23,
+                    worker_completion_bonus_per_work_unit_num: 29,
+                    worker_completion_bonus_per_work_unit_den: 31,
+                    worker_slash_rebate_per_work_unit_num: 37,
+                    worker_slash_rebate_per_work_unit_den: 41,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(406, Some(task));
+
+        assert!(
+            st.get_task(406).is_none(),
+            "restore_task must fail closed when metering proof metadata uses whitespace-padded fields instead of canonical snapshot material"
+        );
+    }
+
+    #[test]
     fn version_conflict() {
         let mut st = StateStore::new();
         let t = TaskObject {
@@ -1922,6 +3727,30 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn wal_content_hash_distinguishes_ambiguous_variable_length_fields() {
+        let base = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: "c".into(),
+            prev_hash_hex: Some("tail".into()),
+        };
+        let ambiguous = WalMeta {
+            proposal_hash: "a".into(),
+            state_root_hex: "bc".into(),
+            prev_hash_hex: Some("tail".into()),
+            ..base.clone()
+        };
+
+        assert_ne!(
+            base.content_hash_hex(),
+            ambiguous.content_hash_hex(),
+            "WAL content hashes must distinguish variable-length proposal/state-root tuples so checkpoint selection cannot alias semantically different entries"
+        );
     }
 
     #[test]
@@ -1962,7 +3791,83 @@ mod tests {
         .expect("verifier should fail closed instead of accepting uncommitted tail metadata");
 
         assert_eq!(best.as_ref().map(|cp| cp.height), Some(1));
-        assert_eq!(best.as_ref().map(|cp| cp.state_root_hex.as_str()), Some("r1"));
+        assert_eq!(
+            best.as_ref().map(|cp| cp.state_root_hex.as_str()),
+            Some("r1")
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_requires_matching_height_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let mismatched_checkpoint = CheckpointMeta {
+            height: 8,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(
+                &mismatched_checkpoint,
+                &wal_entry,
+                &wal_entry_hash,
+            ),
+            "checkpoint recovery binding must reject mismatched checkpoint/WAL heights even if hash surfaces happen to align"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_noncanonical_digest_surface_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "AB".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on noncanonical 64-hex state-root digest surfaces even if the checkpoint metadata otherwise aligns"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_uncommitted_wal_even_before_wal_scan_filtering() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: false,
+            state_root_hex: "r7".into(),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed on uncommitted WAL metadata even if hash and height surfaces otherwise align"
+        );
     }
 
     #[test]
@@ -2010,6 +3915,25 @@ mod tests {
 
         st.clear_pending_resolve_approval(42);
         assert!(st.pending_resolve_approval(42).is_none());
+    }
+
+    #[test]
+    fn clear_pending_resolve_approval_noop_preserves_state_root() {
+        let mut st = StateStore::new();
+        let root_before = st.state_root();
+
+        st.clear_pending_resolve_approval(42);
+
+        assert_eq!(
+            st.pending_resolve_approval(42),
+            None,
+            "clearing a missing pending resolve approval must remain a no-op"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "clearing a missing pending resolve approval must preserve state_root"
+        );
     }
 
     #[test]
@@ -2328,6 +4252,316 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_allows_canonical_snapshot_without_backing_task() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), Some((true, 1)));
+        assert_ne!(
+            st.state_root(),
+            baseline,
+            "restore must materialize a canonical pending approval snapshot when the task id is otherwise unused"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_snapshot_when_id_is_owned_by_non_task_object() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            9_901,
+            Some(GovParamObject {
+                key_id: 9_901,
+                key: "monetary_base_burn_per_tick".into(),
+                value: "11".into(),
+                version: 1,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), None);
+        assert_eq!(
+            st.get_param(9_901)
+                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            Some((
+                9_901,
+                "monetary_base_burn_per_tick".into(),
+                "11".into(),
+                1,
+            )),
+            "pending resolve restore must not materialize on an id already owned by a non-task object"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "cross-type pending resolve restore rejection must leave state_root unchanged"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_canonicalizes_snapshot_metadata_and_state_root() {
+        let mut restored = StateStore::new();
+        restored.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-A".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 3,
+            }),
+        );
+
+        let mut canonical = StateStore::new();
+        canonical.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_first_approver(9_901),
+            Some("authority-a".to_string()),
+            "restore should canonicalize the stored approver identity to its deterministic form"
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(9_901)
+                .map(|snapshot| snapshot.authority_set),
+            Some("authority-a,authority-b".to_string()),
+            "restore should canonicalize stored authority-set metadata to deterministic ordering"
+        );
+        assert_eq!(
+            restored.pending_resolve_approval_snapshot(9_901),
+            canonical.pending_resolve_approval_snapshot(9_901),
+            "logically equivalent snapshots should collapse to the same canonical stored pending approval"
+        );
+        assert_eq!(
+            restored.state_root(),
+            canonical.state_root(),
+            "restore must normalize canonical-equivalent snapshots to the same pending-approval state root"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_replacement_from_existing_state() {
+        let mut st = StateStore::new();
+        st.restore_task(
+            9_901,
+            Some(TaskObject {
+                task_id: 9_901,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let root_before = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_901), None);
+        assert_eq!(
+            st.pending_resolve_first_approver(9_901),
+            None,
+            "invalid restore snapshot must scrub the existing staged approver"
+        );
+        assert_ne!(
+            st.state_root(),
+            root_before,
+            "invalid restore snapshot must invalidate the pending-approval state root"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_snapshot_when_backing_task_is_not_challenged() {
+        let mut st = StateStore::new();
+        st.restore_task(
+            9_904,
+            Some(TaskObject {
+                task_id: 9_904,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_904), None);
+        assert_eq!(
+            st.state_root(),
+            baseline,
+            "restore must reject pending resolve snapshots that do not match the backing task lifecycle"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_replaces_existing_stage_when_only_task_version_changes() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let root_with_pending = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            9_902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_902), Some((true, 1)));
+        assert_ne!(
+            st.state_root(),
+            root_with_pending,
+            "restore must treat task_version as part of pending resolve object identity when replacing an existing staged snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_zero_identity_inputs() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            0,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(0), None);
+        assert_eq!(st.state_root(), baseline);
+
+        st.restore_pending_resolve_approval(
+            9_903,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 0,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_903), None);
+        assert_eq!(st.state_root(), baseline);
+
+        st.restore_pending_resolve_approval(
+            9_904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 0,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_904), None);
+        assert_eq!(st.state_root(), baseline);
+    }
+
+    #[test]
     fn resolve_approval_clears_stale_stage_on_authority_set_rotation() {
         let mut st = StateStore::new();
 
@@ -2386,6 +4620,957 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(8_181), Some((true, 2)));
         assert_eq!(
             st.pending_resolve_first_approver(8_181).as_deref(),
+            Some("authority-a")
+        );
+    }
+
+    #[test]
+    fn resolve_approval_stage_canonicalizes_authority_metadata_for_restore_roundtrip() {
+        let mut staged = StateStore::new();
+        staged.restore_task(
+            8_182,
+            Some(TaskObject {
+                task_id: 8_182,
+                creator: "creator-restore".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-restore".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-restore".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+        let mut restored = staged.clone();
+
+        staged
+            .stage_or_confirm_resolve_approval(
+                8_182,
+                7,
+                true,
+                "Authority-A",
+                "authority-b,Authority-A",
+            )
+            .expect("mixed-case stage should canonicalize into a valid pending resolve snapshot");
+        let staged_root = staged.state_root();
+        let staged_snapshot = staged
+            .pending_resolve_approval_snapshot(8_182)
+            .expect("staged snapshot should exist");
+
+        assert_eq!(
+            staged_snapshot.first_approver,
+            "authority-a",
+            "stage path should store the canonical first approver so restore re-entry sees the same logical snapshot"
+        );
+        assert_eq!(
+            staged_snapshot.authority_set,
+            "authority-a,authority-b",
+            "stage path should store the canonical authority set ordering so restore re-entry sees the same logical snapshot"
+        );
+
+        restored.restore_pending_resolve_approval(8_182, Some(staged_snapshot));
+
+        assert_eq!(
+            restored.state_root(),
+            staged_root,
+            "restoring a staged pending resolve snapshot should preserve the deterministic state root when re-entry canonicalization is semantically identical"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_preserves_audit_spelling_for_equivalent_authority_snapshot() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            1,
+            Some(GovParamObject {
+                key_id: 1,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        st.restore_task(
+            9_000,
+            Some(TaskObject {
+                task_id: 9_000,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-a".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(55),
+                resolve_deadline_height: Some(66),
+                challenge_bond: Some(7),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+
+        st.restore_pending_resolve_approval(
+            9_000,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,Authority-A".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_000), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_000).as_deref(),
+            Some("authority-b")
+        );
+        let snapshot = st
+            .pending_resolve_approval_snapshot(9_000)
+            .expect("equivalent snapshot should be restored");
+        assert_eq!(snapshot.first_approver, "authority-b");
+        assert_eq!(snapshot.authority_set, "authority-a,authority-b");
+    }
+
+    #[test]
+    fn restore_task_preserves_pending_resolve_across_identical_same_version_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_001,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+        let root_before_reentry = st.state_root();
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_001), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_001).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.state_root(), root_before_reentry);
+    }
+
+    #[test]
+    fn restore_task_scrubs_finalized_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let finalized = st
+            .stage_or_confirm_resolve_approval(
+                task.task_id,
+                3,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
+            .expect("second approval should finalize quorum");
+        assert!(finalized);
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 2)));
+        let root_with_finalized_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(9_006), None);
+        assert_eq!(st.pending_resolve_first_approver(9_006), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_finalized_pending,
+            "identical restore re-entry must invalidate the cached state root when finalized pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing finalized pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_corrupt_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_007,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 0,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_corrupt_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_corrupt_pending,
+            "identical restore re-entry must invalidate the cached state root when corrupt pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing corrupt pending resolve residue should converge to the same state root as the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_version_mismatched_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_010,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 2,
+            },
+        );
+        let root_with_version_mismatch = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_version_mismatch,
+            "identical restore re-entry must invalidate the cached state root when a stale task-version pending resolve residue is scrubbed"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing task-version-mismatched pending resolve residue should converge to the clean restored task snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_reapplies_snapshot_when_outer_object_version_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_011,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        st.objects
+            .get_mut(&task.task_id)
+            .expect("task object should exist")
+            .version = 99;
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_eq!(st.get_ref(task.task_id).map(|r| r.version), Some(task.version));
+        assert_eq!(st.get_task(task.task_id), Some(task));
+    }
+
+    #[test]
+    fn restore_pending_resolve_rejects_snapshot_when_outer_task_version_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_012,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.objects
+            .get_mut(&task.task_id)
+            .expect("task object should exist")
+            .version = 99;
+        let root_before_restore = st.state_root();
+
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_eq!(
+            st.get_ref(task.task_id).map(|r| r.version),
+            Some(99),
+            "rejecting the pending restore must not silently rewrite the drifted outer object version"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before_restore,
+            "rejecting a pending restore snapshot across an outer object/version drift should remain a state-root no-op"
+        );
+    }
+
+    #[test]
+    fn restore_task_preserves_equivalent_pending_resolve_on_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_008,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_noncanonical_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(task.task_id).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id)
+                .expect("equivalent pending resolve snapshot should survive")
+                .authority_set,
+            "authority-b,authority-a"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_with_noncanonical_pending,
+            "identical restore re-entry should preserve semantically equivalent pending resolve audit spelling"
+        );
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_when_restored_version_changes() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_004,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        let mut restored = task;
+        restored.version = 4;
+        st.restore_task(restored.task_id, Some(restored));
+
+        assert_eq!(st.pending_resolve_approval(9_004), None);
+        assert_eq!(st.pending_resolve_first_approver(9_004), None);
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_when_task_is_removed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_002,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        st.restore_task(task.task_id, None);
+
+        assert_eq!(st.pending_resolve_approval(9_002), None);
+        assert_eq!(st.pending_resolve_first_approver(9_002), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_is_noop_for_identical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        let root_before = st.state_root();
+        let snapshot_before = st
+            .pending_resolve_approval_snapshot(task.task_id)
+            .expect("pending resolve snapshot should exist before identical restore re-entry");
+
+        st.restore_pending_resolve_approval(task.task_id, Some(snapshot_before.clone()));
+
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            Some(snapshot_before),
+            "identical restore re-entry should preserve the canonical pending resolve snapshot"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "identical restore re-entry should remain a state-root no-op for pending resolve snapshots"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_identical_finalized_snapshot_reentry_scrubs_invalid_quorum() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_006,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        let staged_root = st.state_root();
+
+        let finalized_snapshot = PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 2,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 3,
+        };
+        st.restore_pending_resolve_approval(task.task_id, Some(finalized_snapshot.clone()));
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            None,
+            "finalized restore snapshots without second-approver evidence must fail closed instead of surviving identical re-entry"
+        );
+        assert_ne!(
+            st.state_root(),
+            staged_root,
+            "scrubbing an invalid finalized pending resolve snapshot must perturb the deterministic root"
+        );
+
+        st.restore_pending_resolve_approval(task.task_id, Some(finalized_snapshot));
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(task.task_id),
+            None,
+            "replaying the same finalized snapshot should remain fail-closed after the first scrub"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_pending_resolve_on_identical_non_challenged_snapshot_reentry() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_009,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.pending_resolve_approvals.insert(
+            task.task_id,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            },
+        );
+        let root_with_stale_pending = st.state_root();
+
+        st.restore_task(task.task_id, Some(task.clone()));
+
+        assert_eq!(st.pending_resolve_approval(task.task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task.task_id), None);
+        assert_ne!(
+            st.state_root(),
+            root_with_stale_pending,
+            "identical restore re-entry must scrub stale pending resolve residue once the task is no longer challenged"
+        );
+
+        let mut baseline = StateStore::new();
+        baseline.restore_task(task.task_id, Some(task));
+        assert_eq!(
+            st.state_root(),
+            baseline.state_root(),
+            "scrubbing stale pending resolve residue on a non-challenged task should converge to the clean restored snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_when_effective_authority_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_003,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        st.set_gov_param_unchecked(
+            7001,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority update should apply");
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_003), None);
+        assert_eq!(st.pending_resolve_first_approver(9_003), None);
+    }
+
+    #[test]
+    fn restore_task_clears_stale_pending_resolve_when_pending_authority_drifts() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_004,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        let scheduled = st
+            .set_gov_param(
+                10,
+                7001,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("pending resolve authority drift should schedule cleanly");
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_004), None);
+        assert_eq!(st.pending_resolve_first_approver(9_004), None);
+    }
+
+    #[test]
+    fn restore_task_preserves_pending_resolve_across_identical_snapshot_reentry_with_authority_case_drift(
+    ) {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 9_005,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(55),
+            resolve_deadline_height: Some(66),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task.clone()));
+        st.restore_pending_resolve_approval(
+            task.task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "Authority-A,Authority-B".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(task.task_id), Some((true, 1)));
+
+        st.set_gov_param_unchecked(
+            7001,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority case-normalization update should apply");
+
+        st.restore_task(task.task_id, Some(task));
+
+        assert_eq!(st.pending_resolve_approval(9_005), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_005).as_deref(),
             Some("authority-a")
         );
     }
@@ -2611,7 +5796,693 @@ mod tests {
         let err = st
             .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
-        assert!(err.contains("not allowed"));
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_unknown_key_registration_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "forbidden_key",
+            7002,
+            GOV_ALLOWED_KEYS,
+            GOV_SENSITIVE_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_PINNED_KEY_IDS,
+        )
+        .expect_err("unknown governance keys must fail closed at the registration boundary");
+
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected registration-boundary error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_requests_reject_noncanonical_spellings_fail_closed() {
+        let mut st = StateStore::new();
+
+        for noncanonical_key in [" max_block_ms", "max_block_ms ", "MAX_BLOCK_MS"] {
+            let err = st
+                .set_gov_param_unchecked(7001, noncanonical_key.into(), "10".into())
+                .expect_err("non-canonical governance key spelling must fail closed");
+            assert!(
+                err.contains("governance key request must use canonical key spelling"),
+                "{err}"
+            );
+        }
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_duplicate_entries_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("duplicate explicit-validator registry entries must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_requires_explicit_validator_coverage_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_and_registration_explicitness_guards_stay_aligned() {
+        let registration_err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+        )
+        .expect_err("registration boundary must fail closed when explicit value-rule coverage drifts");
+
+        let validator_err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator boundary must fail closed when explicit value-rule coverage drifts");
+
+        for err in [&registration_err, &validator_err] {
+            assert!(
+                err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+                "{err}"
+            );
+            assert!(err.contains("max_parallel_workers"), "{err}");
+        }
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_duplicate_explicit_validator_entries_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &[
+                "max_block_ms",
+                "max_parallel_workers",
+                "max_parallel_workers",
+            ],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on duplicate explicit-validator entries");
+
+        assert!(
+            err.contains("explicit-validator registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_noncanonical_keys_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[(" max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed on non-canonical keys");
+
+        assert!(
+            err.contains("schema invalid-sample registry contains non-canonical key with surrounding whitespace"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_parallel_workers",
+            7_002,
+            &[
+                "max_block_ms",
+                "max_parallel_workers",
+                "max_parallel_workers",
+            ],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_validator_order_drift_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_block_ms",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_parallel_workers", "max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on validator order drift");
+
+        assert!(
+            err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_sensitive_registry_membership_drift_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "max_block_ms",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_sensitive_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed on sensitive-key registry drift");
+
+        assert!(
+            err.contains("governance sensitive-key coverage missing from allowed key registry: ghost_sensitive_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_pinned_key_id_mismatch_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            8_000,
+            &["emergency_pause"],
+            &[],
+            &["emergency_pause"],
+            &["emergency_pause"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("registration helper must fail closed on pinned key-id drift");
+
+        assert!(
+            err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_key_id_collision_fail_closed() {
+        let mut gov_param_key_index = BTreeMap::new();
+        gov_param_key_index.insert("max_block_ms".to_string(), 7_001);
+
+        let err = validate_governance_key_registration_lists(
+            &gov_param_key_index,
+            "max_parallel_workers",
+            7_001,
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("registration helper must fail closed when a different governance key already owns the id");
+
+        assert!(
+            err.contains("governance key id collision for max_parallel_workers: id 7001 already assigned to max_block_ms"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_merge_gate_is_explicit() {
+        let explicit_value_rule_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALUE_RULE_KEYS.iter().copied().collect();
+        assert_eq!(
+            explicit_value_rule_unique.len(),
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            "explicit value-rule registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit value-rule registry drifted from allowed governance-key registry"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALUE_RULE_KEYS,
+            GOV_EXPLICIT_VALIDATOR_KEYS,
+            "explicit value-rule registry drifted from explicit validator-key registry"
+        );
+
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                explicit_value_rule_unique.contains(key),
+                "allowed governance key missing from explicit value-rule registry: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_value_rule(key),
+                "allowed governance key missing explicit value rule: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_value_match_coverage(key),
+                "allowed governance key missing explicit value match coverage: {}",
+                key
+            );
+            assert_eq!(
+                has_explicit_gov_param_value_match_coverage(key),
+                has_explicit_gov_param_value_rule(key),
+                "explicit value-match coverage must derive from the explicit value-rule registry for {}",
+                key
+            );
+        }
+        assert!(!has_explicit_gov_param_value_rule("forbidden_key"));
+        assert!(!has_explicit_gov_param_value_match_coverage("forbidden_key"));
+    }
+
+    #[test]
+    fn governance_value_match_coverage_requires_validator_and_value_rule_fail_closed() {
+        assert!(has_explicit_gov_param_value_match_coverage_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit validator coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_value_match_coverage_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "value-match coverage must fail closed without explicit value-rule coverage"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_validator_helper_requires_value_rule_coverage_fail_closed() {
+        assert!(has_explicit_gov_param_validator_from_lists(
+            &["max_block_ms"],
+            &["max_block_ms"],
+            "max_block_ms"
+        ));
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &["max_block_ms"],
+                &[],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit value-rule coverage"
+        );
+        assert!(
+            !has_explicit_gov_param_validator_from_lists(
+                &[],
+                &["max_block_ms"],
+                "max_block_ms"
+            ),
+            "explicit validator helper must fail closed without explicit validator coverage"
+        );
+    }
+
+    #[test]
+    fn governance_unknown_key_validator_boundary_fails_closed_with_explicit_registry_error() {
+        let err = validate_gov_param_value("forbidden_key", "1")
+            .expect_err("unknown governance keys must fail closed at the validator boundary");
+        assert!(
+            err.contains("no explicit validator registered for governance key: forbidden_key"),
+            "unexpected validator-boundary error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "ghost_value_rule_key"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_value_rule_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_explicit_value_rule_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit value-rule registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-value-rule registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("explicit_value_rule_key=max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_noncanonical_uppercase_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &["max_block_ms", "MAX_PARALLEL_WORKERS"],
+            &[],
+        )
+        .expect_err("uppercase governance registry keys must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical uppercase key")
+                || err.contains("allowed-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_internal_whitespace_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max parallel workers"],
+            &[],
+            &["max_block_ms", "max parallel workers"],
+            &["max_block_ms", "max parallel workers"],
+            &[],
+        )
+        .expect_err("registry keys with internal whitespace must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry contains non-canonical whitespace or control character in key")
+                || err.contains("allowed-key registry contains non-canonical whitespace or control character in key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_whitespace_pinned_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[(" emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("whitespace-padded pinned governance keys must fail closed");
+
+        assert!(
+            err.contains("pinned-key registry contains non-canonical key with surrounding whitespace"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+        )
+        .expect_err("explicit-validator registry membership drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_registry_rejects_order_drift_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+            &["max_parallel_workers", "max_block_ms", "min_worker_stake"],
+            &["max_block_ms", "max_parallel_workers", "min_worker_stake"],
+            &[],
+        )
+        .expect_err("explicit-validator registry ordering drift must fail closed");
+
+        assert!(
+            err.contains("explicit-validator registry order drifted at index 0"),
+            "{err}"
+        );
+        assert!(err.contains("allowed_key=max_block_ms"), "{err}");
+        assert!(err.contains("validator_key=max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_non_whitelisted_key_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[("ghost_pinned_key", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("pinned governance keys must stay inside the allowed registry");
+
+        assert!(
+            err.contains("pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_validator_coverage_fail_closed() {
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms"]),
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+        )
+        .expect_err("pinned governance keys must keep explicit validator coverage");
+
+        assert!(
+            err.contains("pinned-key registry missing explicit-validator coverage for emergency_pause"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_missing_explicit_value_rule_coverage_fail_closed() {
+        let err = validate_pinned_governance_key_explicit_coverage(
+            "emergency_pause",
+            &std::collections::BTreeSet::from(["max_block_ms", "emergency_pause"]),
+            &std::collections::BTreeSet::from(["max_block_ms"]),
+        )
+        .expect_err("pinned governance keys must keep explicit value-rule coverage");
+
+        assert!(
+            err.contains("pinned-key registry missing explicit-value-rule coverage for emergency_pause"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_key_registry_rejects_cross_key_id_reuse_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("pinned governance keys must not reuse the same pinned id across different keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_cross_key_pinned_id_reuse_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "emergency_pause",
+            EMERGENCY_PAUSE_KEY_ID,
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &["max_block_ms", "emergency_pause", "resolve_authority"],
+            &[
+                ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+                ("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            ],
+        )
+        .expect_err("registration helper must fail closed when pinned ids are reused across keys");
+
+        assert!(
+            err.contains("pinned-key registry reuses pinned id")
+                && err.contains("emergency_pause")
+                && err.contains("resolve_authority"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_cross_key_pending_key_id_collision_fail_closed() {
+        let mut st = StateStore::new();
+
+        let shared_key_id = 7_310;
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 1_200,
+            }),
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("resolve_authority snapshot should restore")
+                .key_id,
+            shared_key_id
+        );
+
+        st.restore_pending_gov_update(
+            "monetary_base_issuance_per_tick",
+            Some(PendingGovParamUpdate {
+                key_id: shared_key_id,
+                key: "monetary_base_issuance_per_tick".into(),
+                value: "42".into(),
+                activate_at_height: 1_250,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority")
+                .expect("original pending update must remain intact")
+                .key_id,
+            shared_key_id
+        );
+        assert_eq!(
+            st.pending_gov_update("monetary_base_issuance_per_tick"),
+            None,
+            "restore path must reject cross-key pending key-id reuse fail-closed"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_live_gov_param_object_key_alias_on_shared_key_id() {
+        let mut st = StateStore::new();
+
+        st.objects.insert(
+            7_201,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_201,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 7_201,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                activate_at_height: 1_020,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("challenge_min_bond"),
+            None,
+            "restore must fail closed when a live GovParam object already binds the key_id to another governance key"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_zero_activate_height_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_310,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            None,
+            "restore must fail closed when a pending governance snapshot omits a positive timelock boundary"
+        );
     }
 
     #[test]
@@ -2781,6 +6652,35 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_requires_matching_base_gov_param_snapshot() {
+        let snapshot = Some(PendingGovParamUpdate {
+            key_id: 7401,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 42,
+        });
+
+        let mut missing_base = StateStore::new();
+        missing_base.restore_pending_gov_update("challenge_min_bond", snapshot.clone());
+        assert!(
+            missing_base.pending_gov_update("challenge_min_bond").is_none(),
+            "restore must fail closed when the referenced governance base snapshot is absent"
+        );
+
+        let mut matching_base = StateStore::new();
+        matching_base
+            .set_gov_param_unchecked(7401, "challenge_min_bond".into(), "100".into())
+            .expect("setup must insert matching governance param before restore");
+        matching_base.restore_pending_gov_update("challenge_min_bond", snapshot);
+        let restored = matching_base
+            .pending_gov_update("challenge_min_bond")
+            .expect("restore should accept a pending governance snapshot backed by a matching base object");
+        assert_eq!(restored.key_id, 7401);
+        assert_eq!(restored.activate_at_height, 42);
+        assert_eq!(restored.value, "120");
+    }
+
+    #[test]
     fn governance_same_key_different_id_shadow_attempt_rejected() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7401, "max_block_ms".into(), "15".into())
@@ -2803,6 +6703,27 @@ mod tests {
         assert_eq!(st.gov_param_u64("max_block_ms"), Some(20));
         assert_eq!(st.gov_param_u128("max_block_ms"), Some(20));
         assert_eq!(st.gov_param_string("max_block_ms"), Some("20".into()));
+    }
+
+    #[test]
+    fn governance_readers_fail_closed_when_registry_points_at_noncanonical_param() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7403, "max_block_ms".into(), "20".into())
+            .unwrap();
+
+        let object = st
+            .objects
+            .get_mut(&7403)
+            .expect("canonical max_block_ms object must exist");
+        let ObjectValue::GovParam(param) = &mut object.value else {
+            panic!("expected governance param object");
+        };
+        param.key_id = 7_999;
+
+        assert_eq!(st.gov_param_u64("max_block_ms"), None);
+        assert_eq!(st.gov_param_u128("max_block_ms"), None);
+        assert_eq!(st.gov_param_string("max_block_ms"), None);
+        assert_eq!(st.gov_param_ref_for_key("max_block_ms"), None);
     }
 
     #[test]
@@ -3170,6 +7091,702 @@ mod tests {
     }
 
     #[test]
+    fn governance_accessors_fail_closed_on_key_id_registry_mismatch() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7315,
+            Some(GovParamObject {
+                key_id: 9001,
+                key: "resolve_authority".into(),
+                value: "resolver-v1,resolver-v2".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert_eq!(
+            st.gov_param_u64("resolve_authority"),
+            None,
+            "typed accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "object ref accessor must fail closed when registry id and object key_id diverge"
+        );
+        assert!(
+            st.get_param(7315).is_none(),
+            "id accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_emergency_pause_accessor_fail_closed_on_reserved_id_alias() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "reserved id aliasing must fail closed instead of toggling emergency pause"
+        );
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "reserved-key string accessor must reject aliased objects even when they occupy the pinned id slot"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "id accessor must reject aliased objects at the reserved emergency_pause slot"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_non_canonical_emergency_pause_key_id() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pending restore must fail closed for non-canonical emergency_pause key_id"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejected pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_index_mismatched_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_313,
+            Some(GovParamObject {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("resolve_authority")
+                .map(|(id, _)| id),
+            Some(7_313),
+            "sanity: canonical registry binding should exist before exercising mismatched pending restore"
+        );
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 9_001,
+                key: "resolve_authority".into(),
+                value: "authority-c,authority-d".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "pending restore must fail closed when snapshot key_id diverges from the shared registry binding"
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("resolve_authority")
+                .map(|(id, _)| id),
+            Some(7_313),
+            "rejected pending restore must preserve the canonical configured governance registry binding"
+        );
+    }
+
+    #[test]
+    fn governance_restore_rejects_non_canonical_emergency_pause_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            8_000,
+            Some(GovParamObject {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "restore must not expose non-canonical emergency_pause registry entries"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "restore must fail closed instead of honoring a non-canonical emergency_pause slot"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "restore must not leave a resolvable ref for a non-canonical emergency_pause slot"
+        );
+    }
+
+    const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
+
+    #[test]
+    fn governance_expected_pinned_binding_is_single_source_for_reserved_key_and_id() {
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+            (Some(EMERGENCY_PAUSE_KEY_ID), Some("emergency_pause")),
+            "reserved governance key and reserved key id must resolve from the same single-source pinned registry"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding(
+                NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+                EMERGENCY_PAUSE_KEY_ID
+            ),
+            (None, Some("emergency_pause")),
+            "foreign governance keys must still resolve the reserved id side fail-closed"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", 9_200),
+            (Some(EMERGENCY_PAUSE_KEY_ID), None),
+            "reserved governance keys must still resolve the reserved key side fail-closed"
+        );
+    }
+
+    #[test]
+    fn governance_expected_key_helpers_share_single_source_for_reserved_emergency_pause() {
+        assert_eq!(
+            governance_pinned_binding_for_key("emergency_pause"),
+            Some(("emergency_pause", EMERGENCY_PAUSE_KEY_ID)),
+            "forward reserved-key lookup must reuse the shared single-source pinned registry"
+        );
+        assert_eq!(
+            governance_pinned_binding_for_id(EMERGENCY_PAUSE_KEY_ID),
+            Some(("emergency_pause", EMERGENCY_PAUSE_KEY_ID)),
+            "reverse reserved-id lookup must reuse the shared single-source pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_id("emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "accessor-facing key->id helper must stay aligned with the shared pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_for_id(EMERGENCY_PAUSE_KEY_ID),
+            Some("emergency_pause"),
+            "accessor-facing id->key helper must stay aligned with the shared pinned registry"
+        );
+        assert_eq!(
+            governance_expected_key_id(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign governance keys must not acquire a reserved key id through helper drift"
+        );
+        assert_eq!(
+            governance_expected_key_for_id(9_200),
+            None,
+            "unreserved key ids must remain unmapped through the shared helper path"
+        );
+    }
+
+    #[test]
+    fn governance_registry_binding_rejects_non_allowlisted_algorand_key_at_reserved_id_fail_closed() {
+        let err = validate_gov_param_registry_binding(
+            &BTreeMap::new(),
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            EMERGENCY_PAUSE_KEY_ID,
+        )
+        .expect_err("foreign algorand governance key must fail closed at reserved id gate");
+
+        assert_eq!(
+            err,
+            format!(
+                "governance key not allowed: {}",
+                NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID
+            )
+        );
+    }
+
+    #[test]
+    fn governance_restore_rejects_non_allowlisted_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            9_200,
+            Some(GovParamObject {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "restore must not expose non-allowlisted governance keys"
+        );
+        assert!(
+            st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "restore must fail closed instead of leaving a resolvable ref for a non-allowlisted governance key"
+        );
+        assert!(
+            st.gov_param_key_index
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "restore must not register non-allowlisted governance keys in the shared registry"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
+
+        assert_eq!(
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "string accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert_eq!(
+            st.gov_param_u64(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "typed accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert!(
+            st.gov_param_ref_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "ref accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+        assert_eq!(
+            st.get_param(9_200)
+                .map(|param| (param.key_id, param.key, param.value)),
+            None,
+            "id accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_resolve_canonical_reserved_emergency_pause_id_via_single_source_mapping() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            Some("true".into()),
+            "string accessor must resolve the canonical reserved emergency_pause binding even if the mutable registry entry is absent"
+        );
+        assert_eq!(
+            st.gov_param_ref_for_key("emergency_pause")
+                .map(|(id, param)| (id, param.key.as_str(), param.value.as_str())),
+            Some((EMERGENCY_PAUSE_KEY_ID, "emergency_pause", "true")),
+            "ref accessor must resolve the canonical reserved emergency_pause binding"
+        );
+        assert_eq!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID)
+                .map(|param| (param.key_id, param.key, param.value)),
+            Some((EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())),
+            "id accessor must resolve the canonical reserved emergency_pause binding"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "canonical reserved-id binding must surface as an active emergency pause"
+        );
+    }
+
+    #[test]
+    fn governance_reserved_key_accessor_stays_aligned_with_id_accessor_single_source() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let by_key = st
+            .gov_param_ref_for_key("emergency_pause")
+            .map(|(id, param)| (id, param.key.clone(), param.value.clone()));
+        let by_id = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .map(|param| (param.key_id, param.key, param.value));
+
+        assert_eq!(
+            by_key, by_id,
+            "reserved-key accessor must reuse the same canonical single-source binding surfaced by the id accessor"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_for_reserved_emergency_pause_id_alias_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            EMERGENCY_PAUSE_KEY_ID,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: EMERGENCY_PAUSE_KEY_ID,
+                    key: "algorand_governance_key_id".into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("algorand_governance_key_id".into(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "string accessor must fail closed when a foreign governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("algorand_governance_key_id").is_none(),
+            "ref accessor must fail closed when a foreign governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "canonical key lookup must also fail closed when a foreign algorand key occupies the reserved emergency_pause key id"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "id accessor must fail closed when the reserved emergency_pause key id is rebound to a foreign key"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "reserved-id alias injection must not surface as an active emergency pause"
+        );
+    }
+
+    #[test]
+    fn governance_get_param_fails_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                    value: "key-42".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
+
+        assert!(
+            st.get_param(9_200).is_none(),
+            "direct governance object accessor must fail closed for a non-allowlisted registry entry"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_key_name_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_888,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "pending restore must fail closed when the snapshot key name diverges from the requested registry key"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "mismatched pending restore must not materialize a foreign pinned governance key under its own name"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejected mismatched pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_scrubs_stale_alias_binding_on_rejected_key_mismatch() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_887,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_888,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "rejected restore must not materialize a foreign algorand governance key"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "rejected restore must scrub stale reserved-key pending aliases instead of preserving ambiguous pending state"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "scrubbed stale pending alias must not affect effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn pending_governance_accessor_fails_closed_for_non_allowlisted_algorand_registry_injection() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+            PendingGovParamUpdate {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 77_777,
+            },
+        );
+
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "pending accessor must fail closed for a non-allowlisted governance registry entry"
+        );
+    }
+
+    #[test]
+    fn pending_governance_accessor_fails_closed_for_reserved_emergency_pause_key_id_alias() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 42,
+            },
+        );
+        st.pending_gov_updates.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 42,
+            },
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pending accessor must fail closed when another pending governance key aliases the reserved emergency_pause key id"
+        );
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "foreign pending governance alias must also remain inaccessible"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_scrubs_existing_key_id_aliases_fail_closed() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 41,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 42,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed instead of accepting a pending entry while a key-id alias exists"
+        );
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "restore rejection must scrub stale key-id aliases instead of preserving ambiguous pending state"
+        );
+        assert!(
+            st.pending_gov_updates.get("emergency_pause").is_none(),
+            "rejected restore must not retain the requested canonical pending entry"
+        );
+        assert!(
+            st.pending_gov_updates
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "rejected restore must remove the conflicting raw alias entry"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_rejects_non_allowlisted_algorand_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_pending_gov_update(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+            Some(PendingGovParamUpdate {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "pending restore must fail closed for a non-allowlisted governance key"
+        );
+        assert!(
+            st.pending_gov_updates
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_key_name_registry_mismatch() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7316,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
+
+        let object = st
+            .objects
+            .get_mut(&7316)
+            .expect("canonical resolve_authority object should exist");
+        let version = object.version;
+        object.value = ObjectValue::GovParam(GovParamObject {
+            key_id: 7316,
+            key: "challenge_min_bond".into(),
+            value: "resolver-v1,resolver-v2".into(),
+            version,
+        });
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when registry key and object key diverge"
+        );
+        assert_eq!(
+            st.gov_param_u128("resolve_authority"),
+            None,
+            "typed accessor must fail closed when registry key and object key diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "object ref accessor must fail closed when registry key and object key diverge"
+        );
+        assert!(
+            st.get_param(7316).is_none(),
+            "direct id accessor must fail closed when registry key and object key diverge"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_key_id_alias_registry_injection() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_316,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
+        st.gov_param_key_index
+            .insert("challenge_min_bond".into(), 7_316);
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "string accessor must fail closed when another governance key aliases the same key_id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "ref accessor must fail closed when another governance key aliases the same key_id"
+        );
+        assert_eq!(
+            st.pending_gov_update("resolve_authority"),
+            None,
+            "pending accessor must fail closed when registry aliasing breaks the single-source key_id binding"
+        );
+        assert!(
+            st.get_param(7_316).is_none(),
+            "direct id accessor must fail closed when registry aliasing breaks the single-source key_id binding"
+        );
+    }
+
+    #[test]
     fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(
@@ -3469,6 +8086,314 @@ mod tests {
     }
 
     #[test]
+    fn governance_expected_key_id_registry_merge_gate_is_explicit() {
+        for (key, expected_key_id) in GOV_PINNED_KEY_IDS {
+            assert_eq!(
+                governance_expected_key_id(key),
+                Some(*expected_key_id),
+                "{key}"
+            );
+            assert_eq!(
+                governance_expected_key_for_id(*expected_key_id),
+                Some(*key),
+                "{expected_key_id}"
+            );
+        }
+
+        for key in GOV_ALLOWED_KEYS {
+            if !GOV_PINNED_KEY_IDS
+                .iter()
+                .any(|(pinned_key, _)| pinned_key == key)
+            {
+                assert_eq!(
+                    governance_expected_key_id(key),
+                    None,
+                    "unexpected pinned governance key-id policy for {key}"
+                );
+            }
+        }
+
+        assert_eq!(governance_expected_key_id("resolve_authority"), None);
+        assert_eq!(governance_expected_key_for_id(7_312), None);
+    }
+
+    #[test]
+    fn governance_restore_rejects_reusing_canonical_emergency_pause_id_for_another_key_fail_closed()
+    {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "resolve_authority".into(),
+                value: "resolver-v1,resolver-v2".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.gov_param_ref_for_key("resolve_authority").is_none(),
+            "restore must fail closed instead of letting another governance key reuse the canonical emergency_pause id"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "accessors must not expose a governance param restored under a pinned id reserved for a different key"
+        );
+        assert!(
+            st.objects.get(&EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "rejected restore must not leave a stray gov param object at the reserved emergency_pause id"
+        );
+        assert!(
+            st.gov_param_key_index.get("resolve_authority").is_none(),
+            "rejected restore must not register another key against the reserved emergency_pause id"
+        );
+    }
+
+    #[test]
+    fn governance_pinned_binding_is_single_source_for_key_and_reserved_id_lookups() {
+        assert_eq!(
+            governance_pinned_binding_for_key("emergency_pause"),
+            Some(("emergency_pause", 7_999))
+        );
+        assert_eq!(
+            governance_pinned_binding_for_id(7_999),
+            Some(("emergency_pause", 7_999))
+        );
+        assert_eq!(
+            governance_pinned_binding_for_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign governance keys must not resolve through the shared pinned-key registry"
+        );
+        assert_eq!(governance_pinned_binding_for_key("resolve_authority"), None);
+        assert_eq!(governance_pinned_binding_for_id(8_000), None);
+    }
+
+    #[test]
+    fn governance_registry_lookup_id_for_key_prefers_single_source_pinned_binding() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("emergency_pause".to_string(), 8_000);
+        indexed.insert("resolve_authority".to_string(), 7_313);
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            9_200,
+        );
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "reserved governance keys must resolve from the shared pinned registry even when the mutable index drifts"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
+            Some(7_313),
+            "non-pinned governance keys should still resolve through the mutable registry"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign governance keys must fail closed instead of resolving through mutable registry drift"
+        );
+    }
+
+    #[test]
+    fn governance_expected_pinned_binding_routes_both_directions_from_single_source() {
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", 8_000),
+            (Some(EMERGENCY_PAUSE_KEY_ID), None),
+            "pinned key lookups should surface the canonical reserved id even when the attempted id drifts"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("resolve_authority", EMERGENCY_PAUSE_KEY_ID),
+            (None, Some("emergency_pause")),
+            "reserved id lookups should surface the canonical pinned key even when another key attempts to reuse it"
+        );
+        assert_eq!(
+            governance_expected_pinned_binding("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+            (Some(EMERGENCY_PAUSE_KEY_ID), Some("emergency_pause")),
+            "canonical pinned key/id pair should resolve both expectations from the shared single source"
+        );
+    }
+
+    #[test]
+    fn governance_registry_binding_merge_gate_rejects_non_canonical_emergency_pause_routing() {
+        let empty_index = BTreeMap::new();
+        let err = validate_gov_param_registry_binding(&empty_index, "emergency_pause", 8_000)
+            .expect_err(
+            "pinned governance key must reject non-canonical key ids at the shared registry gate",
+        );
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        let err = validate_gov_param_registry_binding(&empty_index, "resolve_authority", 7_999)
+            .expect_err("shared registry gate must reject routing another governance key through the reserved emergency_pause key id");
+        assert!(err.contains("expected_key=emergency_pause"), "{err}");
+
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+        let err = validate_gov_param_registry_binding(&indexed, "resolve_authority", 9_001)
+            .expect_err("registry gate must reject mismatched indexed governance key ids");
+        assert!(err.contains("existing_id=7313"), "{err}");
+    }
+
+    #[test]
+    fn governance_registry_binding_reports_canonical_key_from_single_source_reverse_lookup() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+
+        let err = validate_gov_param_registry_binding(&indexed, "max_block_ms", 7_313)
+            .expect_err("shared registry gate must reject mutable key-id alias reuse");
+        assert!(
+            err.contains("canonical_key=resolve_authority"),
+            "{err}"
+        );
+        assert!(err.contains("aliased_key=max_block_ms"), "{err}");
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            Some("resolve_authority"),
+            "reverse lookup should reuse the same single source as registry validation"
+        );
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, EMERGENCY_PAUSE_KEY_ID),
+            Some("emergency_pause"),
+            "reserved reverse lookup should stay pinned even without mutable registry state"
+        );
+    }
+
+    #[test]
+    fn governance_registry_binding_rejects_ambiguous_dynamic_reverse_lookup() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("max_block_ms".to_string(), 7_313);
+        indexed.insert("resolve_authority".to_string(), 7_313);
+
+        let err = validate_gov_param_registry_binding(&indexed, "max_block_ms", 7_313)
+            .expect_err("ambiguous reverse registry aliases must fail closed");
+        assert!(err.contains("ambiguous_keys=max_block_ms,resolve_authority"), "{err}");
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            None,
+            "reverse lookup should fail closed instead of picking an arbitrary alias"
+        );
+    }
+
+    #[test]
+    fn governance_reverse_lookup_ignores_non_allowlisted_dynamic_registry_keys_fail_closed() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(), 9_200);
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 9_200),
+            None,
+            "reverse lookup must ignore non-allowlisted dynamic governance keys instead of surfacing a foreign alias"
+        );
+    }
+
+    #[test]
+    fn governance_reverse_lookup_fails_closed_when_dynamic_registry_reuses_reserved_key_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, EMERGENCY_PAUSE_KEY_ID),
+            None,
+            "reverse lookup must fail closed when a mutable registry entry reuses the reserved emergency_pause key id"
+        );
+    }
+
+    #[test]
+    fn governance_accessors_fail_closed_on_ambiguous_dynamic_registry_id_aliases() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index.insert("max_block_ms".into(), 7_313);
+        st.gov_param_key_index
+            .insert("resolve_authority".into(), 7_313);
+        st.objects.insert(
+            7_313,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_313,
+                    key: "max_block_ms".into(),
+                    value: "250".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        assert!(
+            st.gov_param_value("max_block_ms").is_none(),
+            "ambiguous reverse registry aliases must fail closed at the string accessor boundary"
+        );
+        assert!(
+            st.gov_param_ref_for_key("max_block_ms").is_none(),
+            "ambiguous reverse registry aliases must fail closed at the ref accessor boundary"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_accessors_fail_closed_when_registry_and_object_share_same_wrong_key_id() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 8_000,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
+
+        assert!(
+            st.gov_param_value("emergency_pause").is_none(),
+            "string accessor must fail closed when a pinned governance key is routed through a non-canonical key id"
+        );
+        assert!(
+            st.gov_param_string("emergency_pause").is_none(),
+            "public string accessor must fail closed when registry and object agree on the same wrong pinned key id"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "emergency pause must remain disabled when accessor routing observes a non-canonical pinned key id"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_accessors_fail_closed_when_registry_id_is_canonical_but_object_key_id_is_not() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            7_999,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 8_000,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 7_999);
+
+        assert!(
+            st.gov_param_value("emergency_pause").is_none(),
+            "string accessor must fail closed when a pinned governance object embeds a non-canonical key id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "ref accessor must fail closed when registry id is canonical but snapshot key id is not"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "emergency pause must remain disabled when the embedded pinned key id diverges from the registry"
+        );
+    }
+
+    #[test]
     fn emergency_pause_checked_path_rejects_non_canonical_key_id() {
         // Merge-gate guard: emergency_pause must remain pinned to canonical key id.
         let mut st = StateStore::new();
@@ -3478,6 +8403,51 @@ mod tests {
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_repairs_same_key_registry_drift_via_single_source_binding() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+
+        let applied = st
+            .set_gov_param(8_052, 7_999, "emergency_pause".into(), "true".into())
+            .expect("canonical pinned key write should ignore same-key mutable registry drift");
+
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_key_index.get("emergency_pause").copied(),
+            Some(7_999),
+            "canonical pinned write must repair same-key registry drift back to the reserved key id"
+        );
+        assert_eq!(
+            st.get_param(7_999)
+                .map(|param| (param.key_id, param.key, param.value)),
+            Some((7_999, "emergency_pause".into(), "true".into())),
+            "canonical pinned write must materialize the governance value at the reserved slot"
+        );
+        assert!(st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_unchecked_idempotent_replay_uses_single_source_lookup_without_registry_entry() {
+        let mut st = StateStore::new();
+        let first = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "false".into())
+            .expect("canonical emergency_pause write should succeed");
+        st.gov_param_key_index.remove("emergency_pause");
+
+        let replay = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "false".into())
+            .expect("idempotent replay should recover pinned emergency_pause through the single-source helper");
+
+        assert_eq!(replay, first);
+        assert_eq!(
+            st.get_param(7_999)
+                .map(|param| (param.version, param.key_id, param.key, param.value)),
+            Some((1, 7_999, "emergency_pause".into(), "false".into())),
+            "idempotent replay must not churn version/state when the pinned key is recoverable from the shared single-source binding"
+        );
     }
 
     #[test]
@@ -3516,6 +8486,43 @@ mod tests {
         assert!(err.contains("expected_id=7999"), "{err}");
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_key_id_fail_closed_error_stays_aligned_across_write_entrypoints() {
+        // REF03 guard: the pinned emergency_pause key id must come from one shared gate so
+        // unchecked, checked, and replace entrypoints all fail closed with the same boundary.
+        let mut unchecked = StateStore::new();
+        let mut checked = StateStore::new();
+        let mut replace = StateStore::new();
+
+        let unchecked_err = unchecked
+            .set_gov_param_unchecked(8_000, "emergency_pause".into(), "true".into())
+            .expect_err("unchecked non-canonical emergency_pause key_id must be rejected");
+        let checked_err = checked
+            .set_gov_param(8_052, 8_000, "emergency_pause".into(), "true".into())
+            .expect_err("checked non-canonical emergency_pause key_id must be rejected");
+        let replace_err = replace
+            .set_gov_param_with_action(
+                8_053,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace non-canonical emergency_pause key_id must be rejected");
+
+        for err in [&unchecked_err, &checked_err, &replace_err] {
+            assert!(
+                err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+                "{err}"
+            );
+        }
+        assert!(!unchecked.is_emergency_paused());
+        assert!(!checked.is_emergency_paused());
+        assert!(!replace.is_emergency_paused());
+        assert!(checked.pending_gov_update("emergency_pause").is_none());
+        assert!(replace.pending_gov_update("emergency_pause").is_none());
     }
 
     #[test]
@@ -3744,6 +8751,118 @@ mod tests {
         assert!(
             st.pending_gov_update("emergency_pause").is_none(),
             "stale pending entry must be removed for non-sensitive emergency_pause"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_incomplete_zero_activation_height_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_313, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .expect("seed resolve_authority");
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 0,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "restore must fail closed when pending governance metadata omits a positive activation height"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_resolve_authority_scrubs_stale_pending_resolve_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("seed resolve_authority");
+
+        let task = TaskObject {
+            task_id: 7_701,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(20),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task));
+        st.restore_pending_resolve_approval(
+            7_701,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "resolver-v1".into(),
+                authority_set: "resolver-v1,resolver-v2".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(7_701), Some((true, 1)));
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 7_313,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending resolve_authority restore should succeed");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
+        assert!(
+            st.pending_resolve_approval(7_701).is_none(),
+            "restore must scrub stale pending resolve metadata across a resolve_authority boundary"
         );
     }
 
@@ -4184,6 +9303,242 @@ mod tests {
     }
 
     #[test]
+    fn governance_registry_shape_merge_gate_fails_closed() {
+        validate_governance_registry_shape()
+            .expect("governance registry shape must remain explicit, unique, and fail-closed");
+    }
+
+    #[test]
+    fn governance_validator_coverage_merge_gate_is_explicit() {
+        let validator_unique: std::collections::BTreeSet<&str> =
+            GOV_EXPLICIT_VALIDATOR_KEYS.iter().copied().collect();
+        assert_eq!(
+            validator_unique.len(),
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            "explicit validator-key registry must remain duplicate-free"
+        );
+        assert_eq!(
+            GOV_EXPLICIT_VALIDATOR_KEYS.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "explicit validator-key registry drifted from allowed governance-key registry"
+        );
+
+        for key in GOV_ALLOWED_KEYS {
+            assert!(
+                validator_unique.contains(key),
+                "allowed governance key missing from explicit validator-key registry: {}",
+                key
+            );
+            assert!(
+                has_explicit_gov_param_validator(key),
+                "allowed governance key missing explicit validator: {}",
+                key
+            );
+            validate_governance_validator_coverage(key).expect(
+                "allowed governance key must remain covered by explicit validator+value-rule coverage",
+            );
+        }
+
+        let err = validate_governance_validator_coverage("not_whitelisted")
+            .expect_err("validator coverage helper must fail closed for non-whitelisted keys");
+        assert!(
+            err.contains("no explicit validator registered for governance key: not_whitelisted"),
+            "unexpected validator coverage error for non-whitelisted key: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_value_rule_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit value-rule coverage");
+
+        assert!(
+            err.contains("explicit-value-rule registry drifted from allowed-key registry"),
+            "unexpected validator coverage error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_missing_explicit_validator_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            "max_parallel_workers",
+        )
+        .expect_err("validator coverage helper must fail closed without explicit validator coverage");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "unexpected validator coverage error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_noncanonical_key_spelling_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[],
+            " Max_Block_Ms ",
+        )
+        .expect_err("validator coverage helper must reject non-canonical governance key spelling");
+
+        assert!(
+            err.contains("governance key request must use canonical key spelling:  Max_Block_Ms "),
+            "unexpected validator coverage canonicalization error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            &["max_block_ms", "ghost_validator_key"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on registry membership drift");
+
+        assert!(
+            err.contains("explicit-validator registry drifted from allowed-key registry"),
+            "unexpected validator coverage registry-drift error: {err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_validator_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_duplicate_allowed_keys_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms", "max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on duplicate allowed-key entries");
+
+        assert!(
+            err.contains("allowed-key registry contains duplicate entries"),
+            "unexpected validator coverage duplicate-allowed-key error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_validator_coverage_helper_rejects_pinned_key_registry_membership_drift_fail_closed() {
+        let err = validate_governance_validator_coverage_from_lists(
+            &["max_block_ms"],
+            &[],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("ghost_pinned_key", 7_001)],
+            "max_block_ms",
+        )
+        .expect_err("validator coverage helper must fail closed on pinned-key registry drift");
+
+        assert!(
+            err.contains("governance pinned-key registry contains non-whitelisted key: ghost_pinned_key"),
+            "unexpected validator coverage pinned-key registry error: {err}"
+        );
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_membership_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &[("max_block_ms", "9"), ("ghost_schema_key", "0")],
+        )
+        .expect_err("schema invalid-sample registry membership drift must fail closed");
+
+        assert!(
+            err.contains("governance schema invalid-sample registry drifted from allowed-key registry"),
+            "{err}"
+        );
+        assert!(err.contains("max_parallel_workers"), "{err}");
+        assert!(err.contains("ghost_schema_key"), "{err}");
+    }
+
+    #[test]
+    fn governance_schema_invalid_sample_registry_rejects_validator_coverage_drift_fail_closed() {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &["max_block_ms"],
+            &[("max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err("schema invalid-sample registry must fail closed when explicit validator coverage drifts");
+
+        assert!(
+            err.contains("explicit-validator complete for max_parallel_workers")
+                || err.contains("coverage missing for allowed key: max_parallel_workers"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_allowed_keys_schema_invalid_samples_merge_gate_is_explicit() {
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        let sample_keys: Vec<&str> = GOV_SCHEMA_INVALID_SAMPLES
+            .iter()
+            .map(|(key, _)| *key)
+            .collect();
+        let sample_unique: std::collections::BTreeSet<&str> =
+            sample_keys.iter().copied().collect();
+
+        assert_eq!(sample_unique.len(), sample_keys.len());
+        assert_eq!(allowed_unique, sample_unique);
+
+        for (key, invalid_sample) in GOV_SCHEMA_INVALID_SAMPLES {
+            let err = validate_gov_param_value(key, invalid_sample)
+                .expect_err("invalid governance samples must fail closed");
+            assert!(
+                !err.contains("no explicit validator registered for governance key"),
+                "schema invalid sample fell through explicit validator coverage for {key}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn governance_sensitive_key_coverage_merge_gate_is_explicit() {
+        for key in GOV_SENSITIVE_KEYS {
+            assert!(
+                GOV_ALLOWED_KEYS.contains(key),
+                "sensitive governance key missing from allowed-key registry: {}",
+                key
+            );
+            validate_governance_sensitive_key_coverage(key)
+                .expect("sensitive governance key must remain present in allowed-key registry");
+            validate_governance_validator_coverage(key)
+                .expect("sensitive governance key must remain covered by an explicit validator");
+        }
+
+        validate_governance_sensitive_key_coverage("emergency_pause")
+            .expect("non-sensitive allowed keys should not trip sensitive-key coverage");
+        validate_governance_sensitive_key_coverage("not_whitelisted")
+            .expect("non-sensitive non-whitelisted keys are rejected by registration, not sensitive coverage");
+    }
+
+    #[test]
     fn governance_allowed_keys_schema_merge_gate_is_explicit() {
         // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
         // must update this table with an invalid sample that is expected to fail.
@@ -4246,6 +9601,186 @@ mod tests {
     }
 
     #[test]
+    fn governance_pinned_key_ids_merge_gate_is_explicit() {
+        let expected_pinned = [("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+
+        for key in GOV_ALLOWED_KEYS {
+            let pinned = governance_pinned_key_id(key);
+            let expected = expected_pinned
+                .iter()
+                .find_map(|(expected_key, expected_id)| (*expected_key == *key).then_some(*expected_id));
+            assert_eq!(
+                pinned, expected,
+                "governance pinned key-id map changed; update merge gate for key: {}",
+                key
+            );
+        }
+
+        for (key, expected_id) in expected_pinned {
+            let err = validate_governance_key_id(key, expected_id + 1)
+                .expect_err("mismatched pinned governance key id must be rejected");
+            assert!(err.contains("governance key id mismatch for"), "{err}");
+            validate_governance_key_id(key, expected_id)
+                .expect("canonical pinned governance key id must remain accepted");
+        }
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_non_canonical_pinned_key_id_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_000,
+            Some(GovParamObject {
+                key_id: 8_000,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(!st.is_emergency_paused());
+        assert!(st.get_param(8_000).is_none());
+        assert!(st.gov_param_string("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_unknown_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_123,
+            Some(GovParamObject {
+                key_id: 8_123,
+                key: "forbidden_key".into(),
+                value: "1".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_123).is_none());
+        assert!(st.gov_param_string("forbidden_key").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_schema_invalid_allowed_key_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            8_124,
+            Some(GovParamObject {
+                key_id: 8_124,
+                key: "max_block_ms".into(),
+                value: "9".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_non_param_object_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 8_125,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(task.clone()).expect("task bootstrap should succeed");
+
+        st.restore_gov_param(
+            8_125,
+            Some(GovParamObject {
+                key_id: 8_125,
+                key: "max_block_ms".into(),
+                value: "15".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(st.get_task(8_125), Some(task));
+        assert!(st.get_param(8_125).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_does_not_clobber_live_other_gov_param_on_key_id_alias() {
+        let mut st = StateStore::new();
+        st.set_gov_param(100, 7_001, "max_block_ms".into(), "1000".into())
+            .expect("baseline governance param should apply");
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                version: 9,
+            }),
+        );
+
+        let param = st
+            .get_param(7_001)
+            .expect("live governance param must remain bound to its original key");
+        assert_eq!(param.key, "max_block_ms");
+        assert_eq!(param.value, "1000");
+        assert_eq!(st.gov_param_u64("max_block_ms"), Some(1000));
+        assert!(st.gov_param_u64("challenge_min_bond").is_none());
+    }
+
+    #[test]
+    fn gov_param_reads_fail_closed_on_embedded_key_id_drift() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            7_001,
+            VersionedObject {
+                version: 3,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_999,
+                    key: "max_block_ms".into(),
+                    value: "1000".into(),
+                    version: 3,
+                }),
+            },
+        );
+        st.gov_param_key_index.insert("max_block_ms".into(), 7_001);
+
+        assert!(
+            st.gov_param_string("max_block_ms").is_none(),
+            "reads must fail closed when the indexed slot and embedded governance key id diverge"
+        );
+        assert!(
+            st.gov_param_ref_for_key("max_block_ms").is_none(),
+            "ref lookup must fail closed on the same embedded key-id drift"
+        );
+        assert_eq!(
+            st.get_param(7_001)
+                .expect("raw object lookup should still expose the corrupted fixture")
+                .key_id,
+            7_999
+        );
+    }
+
+    #[test]
     fn governance_resolve_authority_rejects_reserved_or_placeholder_values() {
         let mut st = StateStore::new();
 
@@ -4255,6 +9790,10 @@ mod tests {
             RESERVED_SYSTEM_AUTHORITY,
             "System",
             "authority,system",
+            "governance.emergency_pause",
+            "Emergency_Pause",
+            "authority,governance.emergency_pause",
+            "authority,Emergency_Pause",
             CHALLENGE_ESCROW_ACCOUNT,
             "Treasury.Challenge_Escrow",
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
@@ -4398,6 +9937,799 @@ mod tests {
 
         let err = st.credit_balance("treasury", 2).unwrap_err();
         assert!(err.contains("balance overflow on credit"));
+    }
+
+    #[test]
+    fn restore_task_rejects_incomplete_challenged_metadata() {
+        let mut st = StateStore::new();
+
+        st.restore_task(
+            900,
+            Some(TaskObject {
+                task_id: 900,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(900).is_none(),
+            "restore must fail closed when challenged task snapshot metadata is incomplete"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_missing_challenge_bond() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits challenge bond metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits challenge bond metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_missing_forfeit_flag() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits forfeit metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_blank_challenger() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("   ".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot omits challenger metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot omits challenger metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_noncanonical_challenger() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some(" bob ".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(901).is_none(),
+            "paused restore must fail closed when challenged task snapshot challenger is noncanonical"
+        );
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot challenger is noncanonical"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_paused_challenged_metadata_zero_challenge_bond() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+        st.pending_resolve_approvals.insert(
+            902,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            902,
+            Some(TaskObject {
+                task_id: 902,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(0),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(902).is_none(),
+            "paused restore must fail closed when challenged task snapshot zeroes challenge bond metadata"
+        );
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "paused restore must scrub stale pending resolve metadata when challenged task snapshot zeroes challenge bond metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_stale_pending_resolve_metadata_on_forfeit_decision_mismatch() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            901,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            901,
+            Some(TaskObject {
+                task_id: 901,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must scrub stale pending resolve metadata when challenged task forfeit decision disagrees with staged slash decision"
+        );
+        assert!(
+            st.get_task(901).is_some(),
+            "task restore should still succeed while stale pending resolve metadata is dropped"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_snapshot_task_id_mismatch_and_scrubs_pending_metadata() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            905,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            905,
+            Some(TaskObject {
+                task_id: 906,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(905).is_none(),
+            "restore must fail closed when task snapshot id disagrees with restore target"
+        );
+        assert!(
+            st.pending_resolve_approval(905).is_none(),
+            "restore must scrub stale pending resolve metadata when snapshot id mismatches target"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_task_version_and_scrubs_pending_metadata() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            907,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            907,
+            Some(TaskObject {
+                task_id: 907,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 0,
+            }),
+        );
+
+        assert!(
+            st.get_task(907).is_none(),
+            "restore must fail closed when task snapshot version is zero"
+        );
+        assert!(
+            st.pending_resolve_approval(907).is_none(),
+            "restore must scrub stale pending resolve metadata when snapshot version is zero"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_noncanonical_pending_resolve_metadata_during_replay() {
+        let mut st = StateStore::new();
+        st.pending_resolve_approvals.insert(
+            908,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            908,
+            Some(TaskObject {
+                task_id: 908,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(908).is_some(),
+            "canonical challenged task snapshot should still restore while stale pending metadata is dropped"
+        );
+        assert!(
+            st.pending_resolve_approval(908).is_none(),
+            "restore replay must fail closed by scrubbing noncanonical pending resolve metadata"
+        );
+    }
+
+    #[test]
+    fn restore_task_scrubs_pending_resolve_metadata_when_authority_set_mismatches_effective_governance() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            51,
+            51,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority should configure cleanly");
+        st.pending_resolve_approvals.insert(
+            909,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.restore_task(
+            909,
+            Some(TaskObject {
+                task_id: 909,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 7,
+            }),
+        );
+
+        assert!(
+            st.get_task(909).is_some(),
+            "canonical challenged task snapshot should still restore while authority-drifted pending metadata is dropped"
+        );
+        assert!(
+            st.pending_resolve_approval(909).is_none(),
+            "restore replay must fail closed by scrubbing pending resolve metadata that no longer matches effective governance authority"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_noncanonical_snapshot_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 901,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should be restorable");
+
+        st.restore_pending_resolve_approval(
+            901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "authority-b,authority-a".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must fail closed for noncanonical pending resolve snapshot metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_incomplete_task_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 7,
+        })
+        .expect("challenged task should still insert for boundary regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task boundary metadata is incomplete"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_zeroed_task_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(0),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should still insert for zeroed boundary regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task snapshot uses zeroed boundary metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_paused_replay_scrubs_stale_snapshot_on_incomplete_task_metadata() {
+        let mut st = StateStore::new();
+        st.set_gov_param(7_999, EMERGENCY_PAUSE_KEY_ID, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.pending_resolve_approvals.insert(
+            903,
+            PendingResolveApproval {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            },
+        );
+
+        st.put_task_new(TaskObject {
+            task_id: 903,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 7,
+        })
+        .expect("challenged task should still insert for paused replay regression coverage");
+
+        st.restore_pending_resolve_approval(
+            903,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(903).is_none(),
+            "paused restore replay must scrub stale pending resolve metadata when challenged task snapshot omits forfeit metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_forfeit_decision_metadata_mismatch() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 904,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 7,
+        })
+        .expect("challenged task should insert for metadata mismatch coverage");
+
+        st.restore_pending_resolve_approval(
+            904,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(904).is_none(),
+            "restore must fail closed when challenge forfeit metadata disagrees with staged slash decision"
+        );
     }
 
     #[test]
@@ -4559,6 +10891,47 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_ignores_case_and_order_only_drift_in_live_pending_resolve_authority_set() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "Authority-B,Authority-A",
+        )
+        .unwrap();
+
+        assert_eq!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "live pending resolve approvals should hash the effective authority-set membership, not case/order-only surface drift"
+        );
+        assert_eq!(
+            st_b.pending_resolve_approval_snapshot(501)
+                .expect("staged approval snapshot")
+                .authority_set,
+            "authority-a,authority-b",
+            "live staged authority-set evidence should normalize to the canonical membership surface"
+        );
+        assert_eq!(
+            st_b.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-a"),
+            "canonicalizing authority membership must not erase first-approver audit spelling"
         );
     }
 
@@ -4807,6 +11180,29 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_genesis_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint-only recovery must fail closed when WAL metadata omits proposal identity"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
         let e1 = WalMeta {
             height: 10,
@@ -4934,11 +11330,12 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "replayed same-height checkpoint tuples must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -5031,10 +11428,12 @@ mod tests {
         ];
 
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+            .unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "uncommitted replay checkpoint tuples must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -5080,6 +11479,30 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_non_hex_checkpoint_hash_surface() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "not-hex".into(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint recovery must fail closed when checkpoint wal-entry evidence is not a canonical hex digest"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
@@ -5108,22 +11531,142 @@ mod tests {
             },
             CheckpointMeta {
                 height: 2,
-                state_root_hex: "stale-r2".into(),
-                wal_entry_hash_hex: "stale-h2".into(),
+                state_root_hex: " r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "whitespace-padded checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_internal_whitespace_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
             },
             CheckpointMeta {
                 height: 2,
                 state_root_hex: "r2".into(),
-                wal_entry_hash_hex: h2.clone(),
+                wal_entry_hash_hex: format!("{} {}", &h2[..1], &h2[1..]),
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
-        assert_eq!(got.wal_entry_hash_hex, h2);
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "internally whitespace-split checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_non_ascii_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: format!("{}é", e2.content_hash_hex()),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "non-ASCII checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_zero_width_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2\u{200B}".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "zero-width checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
     }
 
     #[test]
@@ -5215,6 +11758,52 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_conflicting_state_root_for_same_wal_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2-forged".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
     fn wal_checkpoint_verification_rejects_metadata_only_tail_after_checkpoint() {
         let e1 = WalMeta {
             height: 1,
@@ -5269,6 +11858,86 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_metadata_at_latest_valid_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed instead of rewinding to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_checkpoint_state_root_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete checkpoint metadata at the latest validated WAL height must fail closed when state root identity is missing"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_does_not_accept_future_checkpoint_without_matching_wal_height() {
         let e1 = WalMeta {
             height: 1,
@@ -5309,7 +11978,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_unsorted_stale_and_future_checkpoints() {
+    fn wal_checkpoint_verification_rejects_unsorted_conflicting_checkpoint_even_with_future_noise() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -5352,11 +12021,165 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "same-height stale checkpoint tuples must fail closed back to the last unambiguous checkpoint even when future checkpoints are ignored"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_same_height_state_root_claimed_by_different_wal_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "forged-h2".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "conflicting checkpoint metadata for the same height/state root must fail closed back to the last unambiguous checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        for incomplete_checkpoint in [
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: " ".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "\t".into(),
+            },
+        ] {
+            let checkpoints = vec![
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                incomplete_checkpoint,
+            ];
+
+            let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), e2.clone()]).unwrap();
+            assert_eq!(
+                got.map(|cp| cp.height),
+                Some(1),
+                "blank checkpoint proof metadata must fail closed back to the last complete checkpoint"
+            );
+        }
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_wal_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let valid_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        for incomplete_e2 in [
+            WalMeta {
+                proposal_hash: " ".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                state_root_hex: "\t".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                prev_hash_hex: Some(" ".into()),
+                ..valid_e2.clone()
+            },
+        ] {
+            let checkpoints = vec![
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: incomplete_e2.state_root_hex.clone(),
+                    wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+                },
+            ];
+
+            let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), incomplete_e2]).unwrap();
+            assert_eq!(
+                got.map(|cp| cp.height),
+                Some(1),
+                "blank WAL proof metadata must fail closed back to the last complete checkpoint"
+            );
+        }
     }
 
     #[test]
@@ -5464,6 +12287,46 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_incomplete_wal_metadata_in_restore_chain() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let incomplete_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "incomplete WAL metadata must fail closed instead of falling back to an older checkpoint"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_rejects_chain_that_starts_above_genesis_height() {
         let e2 = WalMeta {
             height: 2,
@@ -5484,6 +12347,125 @@ mod tests {
         assert!(
             got.is_none(),
             "checkpointed WAL that starts above genesis must not be treated as recoverable application state"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_missing_prev_hash_metadata_mid_chain() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let incomplete_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some("   ".into()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, incomplete_e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "missing prev-hash metadata mid-chain must fail closed instead of falling back to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_only_checkpoint_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "   ".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "whitespace-only checkpoint metadata must fail closed instead of falling back to an older checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_only_checkpoint_wal_hash_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "   ".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "whitespace-only checkpoint WAL hash metadata must fail closed instead of falling back to an older checkpoint"
         );
     }
 

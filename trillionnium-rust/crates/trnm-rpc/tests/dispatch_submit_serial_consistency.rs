@@ -105,3 +105,27 @@ fn dispatch_open_and_submit_message_stay_serializable_under_contention() {
     ));
     assert!(!lock.exists(), "ingress lock file should be cleaned");
 }
+
+#[test]
+fn dispatch_open_with_no_open_tasks_leaves_ingress_unchanged() {
+    let ingress = unique_fixture_path("dispatch_submit_noop", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let seed = r#"{"request_id":"r-seed","task_id":10001,"channel":"telegram","user_id":"u-seed","session_id":"s-seed","text":"seed","idempotency_key":"k-seed","status":"Assigned","created_at_unix_ms":1,"assigned_worker":"worker-existing","assigned_at_unix_ms":2,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}"#;
+    fs::write(&ingress, format!("{}\n", seed)).expect("seed ingress");
+    let before = fs::read_to_string(&ingress).expect("read ingress before noop dispatch");
+
+    let out_dispatch = run_dispatch(&ingress);
+    assert!(
+        out_dispatch.status.success(),
+        "dispatch stderr: {}",
+        String::from_utf8_lossy(&out_dispatch.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out_dispatch.stdout);
+    let assigned: Value = serde_json::from_str(&stdout).expect("dispatch json response");
+    assert_eq!(assigned, serde_json::json!([]), "noop dispatch should assign nothing");
+
+    let after = fs::read_to_string(&ingress).expect("read ingress after noop dispatch");
+    assert_eq!(after, before, "noop dispatch should not rewrite ingress state");
+}

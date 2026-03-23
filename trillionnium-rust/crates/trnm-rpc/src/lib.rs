@@ -127,10 +127,37 @@ impl OracleValidateSnapshotResponse {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_explicit_unclassified_failure_accounting(&self) -> bool {
+        !self.ok
+            && self.error.is_some()
+            && self.metrics.accepted_total == 0
+            && self.classified_reject_total() == 0
+            && self.observation_classified_reject_total() == 0
+            && self.metrics.sample_count > 0
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
-        self.observation_matches_metrics()
-            && self.classified_outcome_conserves_sample_count()
-            && self.observation_classified_outcome_conserves_sample_count()
+        let non_empty_sample = self.metrics.sample_count > 0;
+        let result_label_consistent = if self.ok {
+            self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
+        } else {
+            self.error.is_some() && self.metrics.accepted_total == 0
+        };
+        let source_cardinality_consistent = if self.metrics.sample_count == 0 {
+            self.metrics.oracle_source_cardinality == 0
+        } else {
+            self.metrics.oracle_source_cardinality > 0
+                && self.metrics.oracle_source_cardinality <= self.metrics.sample_count
+        };
+        let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count();
+
+        non_empty_sample
+            && self.observation_matches_metrics()
+            && result_label_consistent
+            && source_cardinality_consistent
+            && (outcome_accounting_consistent
+                || self.has_explicit_unclassified_failure_accounting())
     }
 }
 
@@ -308,11 +335,12 @@ pub fn query_account_state(
     accounts: &BTreeMap<String, AccountState>,
     address: &str,
 ) -> Result<AccountState, AccountQueryError> {
-    validate_trnm_address(address)?;
+    let normalized_address = address.trim();
+    validate_trnm_address(normalized_address)?;
     accounts
-        .get(address)
+        .get(normalized_address)
         .cloned()
-        .ok_or_else(|| AccountQueryError::AccountNotFound(address.to_string()))
+        .ok_or_else(|| AccountQueryError::AccountNotFound(normalized_address.to_string()))
 }
 
 #[cfg(test)]
@@ -884,6 +912,24 @@ mod tests {
     }
 
     #[test]
+    fn query_account_state_accepts_whitespace_drift() {
+        let address = format!("trnm1{}", "1".repeat(40));
+        let mut accounts = BTreeMap::new();
+        accounts.insert(
+            address.clone(),
+            AccountState {
+                address: address.clone(),
+                balance: 42,
+                nonce: 7,
+            },
+        );
+
+        let got = query_account_state(&accounts, &format!("  {}\n", address)).unwrap();
+        assert_eq!(got.balance, 42);
+        assert_eq!(got.nonce, 7);
+    }
+
+    #[test]
     fn query_account_state_rejects_non_hex_suffix() {
         let accounts = BTreeMap::new();
         let bad = format!("trnm1{}", "z".repeat(40));
@@ -977,7 +1023,7 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_rejects_unclassified_errors() {
+    fn oracle_validation_response_bridge_contract_consistent_allows_explicit_unclassified_failures() {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 793,
@@ -991,7 +1037,7 @@ mod tests {
                 oracle_stale_reject_total: 0,
                 oracle_quorum_reject_total: 0,
                 oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 3,
+                oracle_source_cardinality: 1,
                 accepted_total: 0,
                 sample_count: 1,
             },
@@ -1005,7 +1051,7 @@ mod tests {
         assert_eq!(out.observation_classified_outcome_total(), 0);
         assert!(!out.classified_outcome_conserves_sample_count());
         assert!(!out.observation_classified_outcome_conserves_sample_count());
-        assert!(!out.bridge_contract_consistent());
+        assert!(out.bridge_contract_consistent());
     }
 
     #[test]
@@ -1024,7 +1070,7 @@ mod tests {
                     oracle_stale_reject_total: 0,
                     oracle_quorum_reject_total: 0,
                     oracle_drift_reject_total: 0,
-                    oracle_source_cardinality: 2,
+                    oracle_source_cardinality: 1,
                     accepted_total: 1,
                     sample_count: 1,
                 },
@@ -1043,7 +1089,7 @@ mod tests {
                     oracle_stale_reject_total: 1,
                     oracle_quorum_reject_total: 0,
                     oracle_drift_reject_total: 0,
-                    oracle_source_cardinality: 2,
+                    oracle_source_cardinality: 1,
                     accepted_total: 0,
                     sample_count: 1,
                 },
@@ -1081,7 +1127,7 @@ mod tests {
                     oracle_stale_reject_total: 0,
                     oracle_quorum_reject_total: 0,
                     oracle_drift_reject_total: 1,
-                    oracle_source_cardinality: 2,
+                    oracle_source_cardinality: 1,
                     accepted_total: 0,
                     sample_count: 1,
                 },
@@ -1161,6 +1207,112 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_zero_sample_positive_source_cardinality() {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 795,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 0,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_ok_error_label_mismatch() {
+        let ok_with_error: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 796,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: Some("quorum".into()),
+        }
+        .into();
+        assert!(!ok_with_error.bridge_contract_consistent());
+
+        let err_without_label: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 797,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: None,
+        }
+        .into();
+        assert!(!err_without_label.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_classified_error_label_counter_mismatch(
+    ) {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 798,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
     fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_without_error_field()
     {
         let payload = json!({
@@ -1194,5 +1346,64 @@ mod tests {
         assert_eq!(out.observation_classified_reject_total(), 0);
         assert!(out.classified_outcome_conserves_sample_count());
         assert!(out.observation_classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_zero_source_cardinality() {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 794,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 0,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_source_cardinality_above_sample_count(
+    ) {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 799,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
     }
 }
