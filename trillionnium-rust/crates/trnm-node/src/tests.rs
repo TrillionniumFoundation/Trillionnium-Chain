@@ -204,6 +204,32 @@
     }
 
     #[test]
+    fn preexec_preserves_requested_group_order_for_successful_ids() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4061,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4062,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_998,
+                worker: "worker4063".into(),
+            },
+        ];
+
+        let pool = PreExecPool::new(Arc::new(state), Arc::new(picked), 3, 1);
+        let result = pre_execute_group_parallel(&pool, vec![2, 1, 3]);
+
+        assert_eq!(result, (vec![2, 1], 1));
+    }
+
+    #[test]
     fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
         let mut state = StateStore::new();
         state.set_balance("worker4100", 1_000);
@@ -5121,61 +5147,40 @@
     }
 
     #[test]
-    fn timeout_scan_orders_known_task_ids_for_stable_event_surface() {
+    fn sorted_timeout_candidate_ids_stabilizes_event_scan_order() {
         let known: HashSet<u64> = [7003u64, 7001u64, 7002u64].into_iter().collect();
 
-        assert_eq!(ordered_known_task_ids(&known), vec![7001, 7002, 7003]);
+        assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
     }
 
     #[test]
-    fn timeout_bond_disposition_only_applies_to_challenged_transitions() {
-        let mut st = StateStore::new();
-        st.set_balance("challenger", 1_000_000);
-        st.set_balance("worker7000", 1_000);
+    fn sorted_timeout_candidate_ids_filters_synthetic_ids_above_scan_cap() {
+        let known: HashSet<u64> = [7003u64, TIMEOUT_SCAN_MAX_TASK_ID + 1, 7001u64, 7002u64]
+            .into_iter()
+            .collect();
 
-        let r1 = apply_create_task(&mut st, 7000, "alice".into(), 100).unwrap();
-        let result_hash = [7u8; 32];
-        let reveal_salt = [9u8; 32];
-        let committed = compute_commitment(7000, &result_hash, &reveal_salt, "worker7000");
-        let r2 = apply_accept_task(&mut st, r1, "worker7000".into()).unwrap();
-        let r3 = trnm_pouw::apply_commit_result_at_height(
-            &mut st,
-            r2,
-            "worker7000".into(),
-            committed,
-            100,
-        )
-        .unwrap();
-        let challenged = trnm_pouw::apply_reveal_result_at_height(
-            &mut st,
-            r3,
-            result_hash,
-            reveal_salt,
-            None,
-            110,
-        )
-        .and_then(|revealed| {
-            trnm_pouw::apply_challenge_at_height(
-                &mut st,
-                revealed,
-                "challenger".into(),
-                10,
-                "challenger".into(),
-                120,
-            )
-        })
-        .unwrap();
+        assert_eq!(sorted_timeout_candidate_ids(&known), vec![7001, 7002, 7003]);
+    }
 
-        let _ = apply_timeout(&mut st, challenged, 1_000).unwrap();
+    #[test]
+    fn timeout_event_tx_id_starts_after_seed_and_preserves_scan_order_visibility() {
+        assert_eq!(timeout_event_tx_id(9_000_000, 0), 9_000_001);
+        assert_eq!(timeout_event_tx_id(9_000_000, 1), 9_000_002);
+        assert_eq!(timeout_event_tx_id(u64::MAX, 0), u64::MAX);
+        assert_eq!(timeout_event_tx_id(9_000_000, u64::MAX), u64::MAX);
+    }
 
-        assert_eq!(
-            timeout_bond_disposition(&st, 7000, TaskStatus::Challenged),
-            Some("refunded")
-        );
-        assert_eq!(
-            timeout_bond_disposition(&st, 7000, TaskStatus::Revealed),
-            None
-        );
+    #[test]
+    fn timeout_event_tx_metadata_keeps_tx_id_and_overflow_flag_consistent_at_boundary() {
+        assert_eq!(timeout_event_tx_metadata(9_000_000, 0), (9_000_001, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 0), (u64::MAX, false));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX - 1, 1), (u64::MAX, true));
+        assert_eq!(timeout_event_tx_metadata(u64::MAX, 0), (u64::MAX, true));
+    }
+
+    #[test]
+    fn timeout_event_tx_metadata_marks_saturated_ordinal_as_overflow_for_visibility() {
+        assert_eq!(timeout_event_tx_metadata(0, u64::MAX), (u64::MAX, true));
     }
 
     #[test]
@@ -8007,6 +8012,84 @@ locked_block_hash = "stale-replay-lock"
     }
 
     #[test]
+    fn recover_duplicate_height_tail_that_continues_past_checkpoint_is_metadata_only_recovery() {
+        let wal_dir = temp_wal_dir("recover-duplicate-height-tail-continues-past-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "h2-replay".into(),
+            committed: true,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "h3".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(replayed_e2.content_hash_hex()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2, e3]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2,
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.restored_lock.is_none());
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(recovered.wal_entries_retained, 2);
+        assert!(
+            recovered.metadata_only_recovery,
+            "committed replay metadata that continues past the retained checkpoint must stay fail-closed until StateStore restore/replay exists"
+        );
+        assert!(recovered.truncated);
+
+        let retained = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(retained.len(), 2);
+        assert_eq!(retained[0].height, 1);
+        assert_eq!(retained[1].height, 2);
+        assert_eq!(retained[1].proposal_hash, "h2");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_replayed_duplicate_genesis_height_tail_truncates_to_genesis_checkpoint() {
         let wal_dir = temp_wal_dir("recover-replayed-duplicate-genesis-height-tail");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -9191,6 +9274,47 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_fully_checkpointed_max_height_saturates_next_height() {
+        let wal_dir = temp_wal_dir("recover-fully-checkpointed-max-height");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: u64::MAX,
+            round: 0,
+            proposal_hash: "h-max".into(),
+            committed: true,
+            state_root_hex: "r-max".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r-max".into(),
+                wal_entry_hash_hex: h1,
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.next_height, u64::MAX);
+        assert_eq!(recovered.checkpoint_height_retained, Some(u64::MAX));
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h-max"));
+        assert_eq!(recovered.wal_entries_retained, 1);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, u64::MAX);
+        assert_eq!(wal.last_round, 0);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h-max"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_absent_checkpoint() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -9207,6 +9331,8 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
+        assert!(err.contains("retained no committed WAL entries"));
+        assert!(!err.contains("through height 0"));
         assert!(err.contains("last retained checkpoint: none"));
 
         let _ = fs::remove_dir_all(&wal_dir);

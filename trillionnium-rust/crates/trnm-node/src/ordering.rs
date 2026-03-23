@@ -262,22 +262,22 @@ impl PreExecPool {
         self.state.cv.notify_all();
         drop(tx);
 
-        let mut ok_ids = HashSet::with_capacity(group_ids.len());
+        let mut succeeded = std::collections::HashSet::new();
         let mut rejected = 0u64;
         for (id, ok, err) in rx {
             if ok {
-                ok_ids.insert(id);
+                succeeded.insert(id);
             } else {
                 rejected += 1;
                 println!("[preexec] tx_id={} rejected err={}", id, err);
             }
         }
 
-        let ordered_ok_ids = group_ids
+        let ok_ids: Vec<u64> = group_ids
             .into_iter()
-            .filter(|id| ok_ids.contains(id))
+            .filter(|id| succeeded.contains(id))
             .collect();
-        (ordered_ok_ids, rejected)
+        (ok_ids, rejected)
     }
 }
 
