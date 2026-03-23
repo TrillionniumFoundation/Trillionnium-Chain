@@ -22,6 +22,17 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
+    if session_id.trim() != session_id
+        || session_id
+            .as_bytes()
+            .iter()
+            .any(|b| b.is_ascii_control())
+    {
+        return Err(bad_request(
+            "invalid_session",
+            format!("{field} must be canonical"),
+        ));
+    }
     Ok(())
 }
 
@@ -590,7 +601,7 @@ impl RelaySessionState {
 
     fn advance_poll_start_idx(&mut self) {
         while let Some(env) = self.queue.get(self.poll_start_idx) {
-            if self.acked_ids.contains(&env.envelope_id) {
+            if self.acked_ids.remove(&env.envelope_id) {
                 self.poll_start_idx += 1;
             } else {
                 break;
@@ -707,7 +718,6 @@ impl RelayService {
     pub fn send(&self, req: RelaySendRequest) -> Result<RelaySendResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         validate_route(&req.route)?;
-        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
             self.relay_send_rejected_route_not_registered_total
                 .fetch_add(1, Ordering::Relaxed);
@@ -716,6 +726,7 @@ impl RelayService {
                 format!("route not registered: {}", req.route),
             ));
         }
+        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
 
         let mut g = self
             .sessions
@@ -800,7 +811,7 @@ impl RelayService {
             ));
         };
 
-        let before = state.acked_ids.len();
+        let mut acked = 0usize;
 
         // Backward-compatible id ack path: only accept ids that exist in this session queue.
         // Avoid rebuilding the known-id set when clients use the newer upto_seq-only path,
@@ -808,17 +819,24 @@ impl RelayService {
         if !req.envelope_ids.is_empty() {
             let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
             for id in req.envelope_ids {
-                if known_ids.contains(&id) {
-                    state.acked_ids.insert(id);
+                if known_ids.contains(&id) && state.acked_ids.insert(id) {
+                    acked += 1;
                 }
             }
         }
 
         // New batch ack path: ack all envelopes in this session whose sequence <= upto_seq.
         if let Some(upto_seq) = req.upto_seq {
-            for env in &state.queue {
-                if env.sequence <= upto_seq {
-                    state.acked_ids.insert(env.envelope_id);
+            // Queue order is sequence order and advance_poll_start_idx guarantees the
+            // prefix before poll_start_idx is already acked. Start from the live poll
+            // cursor and stop once we cross the requested range to avoid rescanning
+            // long fully-acked prefixes on hot ack loops.
+            for env in state.queue.iter().skip(state.poll_start_idx) {
+                if env.sequence > upto_seq {
+                    break;
+                }
+                if state.acked_ids.insert(env.envelope_id) {
+                    acked += 1;
                 }
             }
         }
@@ -827,7 +845,7 @@ impl RelayService {
 
         Ok(RelayAckResponse {
             session_id: req.session_id,
-            acked: state.acked_ids.len().saturating_sub(before),
+            acked,
         })
     }
 
@@ -1288,6 +1306,7 @@ mod tests {
             let g = relay.sessions.lock().unwrap();
             let state = g.get("s2-cursor").unwrap();
             assert_eq!(state.poll_start_idx, 2);
+            assert!(state.acked_ids.is_empty());
         }
 
         let pending = relay
@@ -1298,6 +1317,72 @@ mod tests {
             .unwrap();
         assert_eq!(pending.envelopes.len(), 2);
         assert!(pending.envelopes.iter().all(|e| e.sequence > 2));
+    }
+
+    #[test]
+    fn relay_ack_upto_seq_respects_poll_cursor_after_prefix_ack() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2-cursor-scan".into(),
+            })
+            .unwrap();
+
+        for payload in [b"m1".as_slice(), b"m2".as_slice(), b"m3".as_slice()] {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "s2-cursor-scan".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: payload.to_vec(),
+                    source: None,
+                })
+                .unwrap();
+        }
+
+        let first_two = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 2,
+            })
+            .unwrap();
+        assert_eq!(first_two.envelopes.len(), 2);
+
+        let ack_prefix = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: first_two.envelopes.iter().map(|e| e.envelope_id).collect(),
+                upto_seq: None,
+            })
+            .unwrap();
+        assert_eq!(ack_prefix.acked, 2);
+
+        {
+            let g = relay.sessions.lock().unwrap();
+            let state = g.get("s2-cursor-scan").unwrap();
+            assert_eq!(state.poll_start_idx, 2);
+        }
+
+        let ack_through_four = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor-scan".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(4),
+            })
+            .unwrap();
+        assert_eq!(ack_through_four.acked, 2);
+
+        let pending = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor-scan".into(),
+                limit: 10,
+            })
+            .unwrap();
+        let pending_seqs: Vec<u64> = pending.envelopes.iter().map(|e| e.sequence).collect();
+        assert_eq!(pending_seqs, vec![5, 6]);
     }
 
     #[test]
@@ -1561,6 +1646,17 @@ mod tests {
     }
 
     #[test]
+    fn relay_open_rejects_non_canonical_session_id() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .open(RelayOpenRequest {
+                session_id: " s1\n".into(),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
+    }
+
+    #[test]
     fn relay_send_rejects_invalid_route_type() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
@@ -1607,6 +1703,72 @@ mod tests {
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_route"));
         assert_eq!(relay.relay_send_rejected_route_not_registered_total(), 1);
+    }
+
+    #[test]
+    fn relay_unregistered_route_rejection_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route-quota".into(),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .send(RelaySendRequest {
+                    session_id: "s-route-quota".into(),
+                    route: "relay.unknown".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"noise".to_vec(),
+                    source: Some("src-route-noise".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/invalid_route"));
+        }
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-1".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("invalid-route noise should not burn relay quota");
+        relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-2".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .expect("registered traffic should still use the full configured budget");
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route-quota".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ok-3".to_vec(),
+                source: Some("src-route-noise".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
