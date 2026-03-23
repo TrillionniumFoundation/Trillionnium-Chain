@@ -275,6 +275,12 @@ fn assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
     );
 }
 
+fn assert_tx_access_domain_versions_are_consistent_batch(txs: &[Tx]) {
+    for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
+    }
+}
+
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
@@ -471,6 +477,8 @@ pub fn build_parallel_groups_profile_with_strategy(
         );
     }
 
+    assert_tx_access_domain_versions_are_consistent_batch(txs);
+
     let mut selected = strategy;
     if matches!(selected, GroupingStrategy::AutoAdaptive) {
         let d = auto_adaptive_decision(txs);
@@ -537,8 +545,6 @@ pub fn build_parallel_groups_profile_with_strategy(
     for tx in ordered {
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
-
-        assert_tx_access_domain_versions_are_consistent(&tx);
 
         // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
         let read_keys = dedup_access_keys(&tx.read_set);
