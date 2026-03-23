@@ -1,6 +1,6 @@
 # BridgeRelay Rust MVP (contracts-rust/bridge-relay)
 
-Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），用于替代 Solidity MVP lane 的核心接口验证。
+Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），用于承载当前外置合约路线的核心接口验证。
 
 ## 范围
 
