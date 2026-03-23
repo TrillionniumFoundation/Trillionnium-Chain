@@ -32,3 +32,9 @@ fn clamp_limit_keeps_in_range_value() {
     );
     assert_eq!(got, 17);
 }
+
+#[test]
+fn clamp_limit_clamps_oversized_default_when_zero_requested() {
+    let got = clamp_limit("FeeBoundaryPrep", 0, 9, 4);
+    assert_eq!(got, 4);
+}

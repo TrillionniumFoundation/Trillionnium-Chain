@@ -78,6 +78,15 @@ impl OracleSnapshot {
         if sources.windows(2).any(|w| w[0] == w[1]) {
             return Err(OracleError::DuplicateSources);
         }
+        if sample_count == 0 {
+            return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
+        }
+        if sample_count < sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
+                sample_count,
+                source_count: sources.len() as u32,
+            });
+        }
 
         let mut snapshot = Self {
             feed_id,
@@ -242,9 +251,7 @@ impl OraclePolicy {
 
         if let Some(median) = snapshot.median {
             let deviation = deviation_bps(snapshot.value, median);
-            let exceeds_deviation_boundary = deviation > self.max_deviation_bps
-                || (self.max_deviation_bps != 0 && deviation == self.max_deviation_bps);
-            if exceeds_deviation_boundary {
+            if deviation_reaches_boundary(deviation, self.max_deviation_bps) {
                 return Err(OracleError::DeviationExceeded {
                     deviation_bps: deviation,
                     max_deviation_bps: self.max_deviation_bps,
@@ -254,6 +261,10 @@ impl OraclePolicy {
 
         Ok(())
     }
+}
+
+fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
+    deviation_bps > max_deviation_bps || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
 }
 
 fn deviation_bps(value: i128, baseline: i128) -> u32 {
@@ -266,8 +277,8 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
 
     let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    let deviation = numerator / denominator;
-    deviation.min(MAX_DEVIATION_BPS_CAP as u128) as u32
+    let scaled = numerator / denominator;
+    scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -483,6 +494,10 @@ pub enum OracleError {
     InvalidWindow { start_ms: u64, end_ms: u64 },
     #[error("duplicate source ids are not allowed")]
     DuplicateSources,
+    #[error(
+        "inconsistent sample_count: sample_count={sample_count}, source_count={source_count}"
+    )]
+    InconsistentSampleCount { sample_count: u32, source_count: u32 },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
@@ -619,6 +634,48 @@ mod tests {
     }
 
     #[test]
+    fn rejects_zero_sample_count_as_invalid_accounting() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko")],
+            0,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot should reject zero sample accounting");
+
+        assert!(matches!(err, OracleError::InvalidPolicy("sample_count must be > 0")));
+    }
+
+    #[test]
+    fn rejects_sample_count_below_distinct_source_count() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            1,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot should reject undercounted sample accounting");
+
+        assert!(matches!(
+            err,
+            OracleError::InconsistentSampleCount {
+                sample_count: 1,
+                source_count: 2
+            }
+        ));
+    }
+
+    #[test]
     fn rejects_sample_count_above_update_rate_cap() {
         let p = policy();
         let snap = OracleSnapshot::new(
@@ -733,6 +790,34 @@ mod tests {
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
         assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn zero_baseline_cap_boundary_is_treated_as_drift_guardrail() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(100_000, Some(0), 10_000);
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("zero-baseline cap boundary should fail closed");
+        assert!(matches!(
+            err,
+            OracleError::DeviationExceeded {
+                deviation_bps: MAX_DEVIATION_BPS_CAP,
+                max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            }
+        ));
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
     }
 
     #[test]
@@ -891,6 +976,51 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_preserves_exact_drift_boundary_as_drift_label() {
+        let p = policy();
+        let snap = snapshot_with(105_000, Some(100_000), 10_000); // 500 bps
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn observed_report_caps_extreme_drift_boundary_to_guardrail_ceiling() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(i128::MAX, Some(1), 10_000);
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("extreme drift should fail closed at the capped guardrail");
+        assert!(matches!(
+            err,
+            OracleError::DeviationExceeded {
+                deviation_bps: MAX_DEVIATION_BPS_CAP,
+                max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            }
+        ));
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
     }
 
     #[test]

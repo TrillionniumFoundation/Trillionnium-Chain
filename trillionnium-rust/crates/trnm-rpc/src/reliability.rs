@@ -220,6 +220,13 @@ fn sanitize_store_config(
         config.max_pending_per_session = Some(per_session.min(total));
     }
 
+    if let (Some(dedup), Some(total)) = (config.max_dedup_entries, config.max_pending_total) {
+        // Dedup should be able to cover the full configured pending window; otherwise
+        // misconfigured ingress caps can reject fresh idempotency keys before pending
+        // capacity is actually exhausted.
+        config.max_dedup_entries = Some(dedup.max(total));
+    }
+
     // Zero-duration retain windows collapse into effectively immediate cleanup,
     // which can jitter between retain/remove behavior across cleanup call sites.
     // Keep a 1ms floor so "retain" mode remains semantically distinct.
@@ -2759,6 +2766,38 @@ mod tests {
         let err = store
             .try_remember_dedup_key_with_ts(key2, 2)
             .expect_err("second unique key should hit clamped quota");
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
+    }
+
+    #[test]
+    fn store_config_raises_dedup_quota_to_cover_pending_total_window() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_total: Some(2),
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key1 = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key2 = DedupKey {
+            from: "bob".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key3 = DedupKey {
+            from: "carol".to_string(),
+            seq_or_nonce: 1,
+        };
+
+        assert!(store.try_remember_dedup_key_with_ts(key1, 1).is_ok());
+        assert!(store.try_remember_dedup_key_with_ts(key2, 2).is_ok());
+        let err = store
+            .try_remember_dedup_key_with_ts(key3, 3)
+            .expect_err("third unique key should hit raised quota");
         assert!(matches!(
             err,
             ReliabilityStoreError::CapacityExceeded { .. }

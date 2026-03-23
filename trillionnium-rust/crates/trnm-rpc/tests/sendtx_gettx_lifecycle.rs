@@ -58,13 +58,19 @@ fn run_rpc(temp: &TempDir, args: &[&str]) -> (bool, String, String) {
 }
 
 fn submit_ok(temp: &TempDir, nonce: u64) -> String {
+    submit_with_amount_and_fee(temp, 10, 1, nonce)
+}
+
+fn submit_with_amount_and_fee(temp: &TempDir, amount: u128, fee: u128, nonce: u64) -> String {
     let alice = address_from_secret_hex(ALICE_SK_HEX);
     let bob = address_from_secret_hex(BOB_SK_HEX);
+    let amount_s = amount.to_string();
+    let fee_s = fee.to_string();
     let mut tx = TransferTx {
         from: alice.clone(),
         to: bob,
-        amount: 10,
-        fee: 1,
+        amount,
+        fee,
         nonce,
         signature: String::new(),
     };
@@ -79,9 +85,9 @@ fn submit_ok(temp: &TempDir, nonce: u64) -> String {
             "--to",
             &tx.to,
             "--amount",
-            "10",
+            &amount_s,
             "--fee",
-            "1",
+            &fee_s,
             "--nonce",
             &nonce.to_string(),
             "--signature",
@@ -141,6 +147,21 @@ fn sendtx_gettx_fail_nonce_conflict() {
         .as_str()
         .unwrap()
         .contains("nonce rollback/replay"));
+}
+
+#[test]
+fn sendtx_gettx_commits_exact_amount_plus_fee_u128_boundary() {
+    let temp = TempDir::new().unwrap();
+    write_accounts(&temp.path().join("accounts.json"), u128::MAX, 0);
+
+    let tx_hash = submit_with_amount_and_fee(&temp, u128::MAX - 1, 1, 0);
+
+    let (ok, out, err) = run_rpc(&temp, &["get-tx", "--tx-hash", &tx_hash]);
+    assert!(ok, "get-tx failed: {err}");
+    let v: Value = serde_json::from_str(&out).unwrap();
+    assert_eq!(v["tx_hash"], tx_hash);
+    assert_eq!(v["status"], "committed");
+    assert!(v["error"].is_null());
 }
 
 #[test]

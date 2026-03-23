@@ -20,6 +20,22 @@ pub(crate) const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
 pub(crate) const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
 pub(crate) const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
 
+fn faucet_window_ms(window_seconds: u64) -> u128 {
+    (window_seconds as u128) * 1000
+}
+
+fn faucet_window_rolled_over(
+    window_start_unix_ms: u128,
+    now_unix_ms: u128,
+    window_ms: u128,
+) -> bool {
+    window_start_unix_ms == 0 || now_unix_ms.saturating_sub(window_start_unix_ms) >= window_ms
+}
+
+fn faucet_next_allowed_unix_ms(window_start_unix_ms: u128, window_ms: u128) -> u128 {
+    window_start_unix_ms.saturating_add(window_ms)
+}
+
 pub(crate) fn handle_query_balance(address: &str) -> Result<()> {
     let accounts = load_account_state(&account_state_file());
     let account = query_account_state(&accounts, address).map_err(|e| rpc_fail(e.to_rpc_error()))?;
@@ -137,22 +153,20 @@ pub(crate) fn handle_faucet_request(address: String, amount: u128, now_unix_ms: 
     let limits_path = faucet_limits_file();
     let _limits_lock = acquire_market_file_lock(&limits_path)?;
     let mut limits = load_faucet_limits(&limits_path);
-    let window_ms = (window_seconds as u128) * 1000;
+    let window_ms = faucet_window_ms(window_seconds);
     let next_allowed_unix_ms;
     let mut allowed = true;
 
     {
         let entry = limits.entry(address.clone()).or_default();
-        if entry.window_start_unix_ms == 0
-            || now_unix_ms.saturating_sub(entry.window_start_unix_ms) >= window_ms
-        {
+        if faucet_window_rolled_over(entry.window_start_unix_ms, now_unix_ms, window_ms) {
             entry.window_start_unix_ms = now_unix_ms;
             entry.count_in_window = 0;
         }
         if entry.count_in_window >= max_requests_in_window {
             allowed = false;
         }
-        next_allowed_unix_ms = entry.window_start_unix_ms + window_ms;
+        next_allowed_unix_ms = faucet_next_allowed_unix_ms(entry.window_start_unix_ms, window_ms);
     }
 
     let account_path = account_state_file();

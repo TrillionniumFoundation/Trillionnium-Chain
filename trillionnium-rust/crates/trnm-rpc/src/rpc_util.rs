@@ -19,12 +19,13 @@ pub(crate) fn clamp_limit(
     default_limit: usize,
     max_limit: usize,
 ) -> usize {
+    let effective_default = default_limit.min(max_limit);
     if requested == 0 {
         eprintln!(
-            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} max={}",
-            op, default_limit, max_limit
+            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} effective_default={} max={}",
+            op, default_limit, effective_default, max_limit
         );
-        return default_limit;
+        return effective_default;
     }
     if requested > max_limit {
         eprintln!(

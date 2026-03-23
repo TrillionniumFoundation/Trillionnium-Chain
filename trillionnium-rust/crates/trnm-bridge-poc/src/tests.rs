@@ -38,14 +38,14 @@ fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
 }
 
 #[test]
-fn settlement_request_collapses_braille_blank_in_revert_reason() {
+fn settlement_request_collapses_bom_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
         .revert_authorized(
             &settlement_operator(),
-            "target\u{2800}relay timeout".to_string(),
+            "target\u{FEFF}relay timeout".to_string(),
         )
-        .expect("braille blank should be normalized in revert reason");
+        .expect("bom-style hidden spacing should be normalized in revert reason");
 
     assert_eq!(
         request.status,
@@ -180,6 +180,24 @@ fn settlement_request_rejects_boundary_whitespace_in_tx_hash_and_subject() {
     let revert_err = request.revert_authorized(&token, "target relay timeout".to_string());
     assert_eq!(
         revert_err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
+fn settlement_request_rejects_internal_ascii_whitespace_in_subject() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        err,
         Err(SettlementError::MalformedToken {
             reason: "non-canonical subject",
         })

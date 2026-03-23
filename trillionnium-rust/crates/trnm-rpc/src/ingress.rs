@@ -1,5 +1,5 @@
 use std::{
-    collections::HashSet,
+    collections::BTreeSet,
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::Write,
@@ -40,76 +40,62 @@ fn stable_bounded_bytes_hash(bytes: &[u8]) -> u64 {
     hasher.finish()
 }
 
-fn stable_line_hash(raw: &str) -> u64 {
-    stable_bounded_bytes_hash(raw.as_bytes())
+fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u64) {
+    (
+        entry.source_path.clone(),
+        entry.line_number,
+        entry.line_hash,
+    )
 }
 
-fn is_forbidden_quarantine_char(ch: char) -> bool {
-    ch.is_control()
-        || matches!(
-            ch,
-            '\u{061C}'
-                | '\u{200B}'
-                | '\u{200C}'
-                | '\u{200D}'
-                | '\u{200E}'
-                | '\u{200F}'
-                | '\u{2028}'
-                | '\u{2029}'
-                | '\u{202A}'
-                | '\u{202B}'
-                | '\u{202C}'
-                | '\u{202D}'
-                | '\u{202E}'
-                | '\u{2066}'
-                | '\u{2067}'
-                | '\u{2068}'
-                | '\u{2069}'
-                | '\u{2060}'
-                | '\u{2061}'
-                | '\u{2062}'
-                | '\u{2063}'
-                | '\u{2064}'
-                | '\u{FEFF}'
-                | '\u{E0001}'
-                | '\u{E0020}'..='\u{E007F}'
-        )
-        || ('\u{FDD0}'..='\u{FDEF}').contains(&ch)
-        || (ch as u32 & 0xFFFE == 0xFFFE && (ch as u32) <= 0x10FFFF)
+fn quarantine_line_hash_from_value(value: &serde_json::Value) -> Option<u64> {
+    if let Some(raw_line) = value.get("raw_line").and_then(|raw| raw.as_str()) {
+        return Some(stable_line_hash(raw_line.trim()));
+    }
+
+    let line_hash = value.get("line_hash")?;
+    if let Some(line_hash) = line_hash.as_u64() {
+        return Some(line_hash);
+    }
+
+    line_hash.as_str()?.trim().parse::<u64>().ok()
 }
 
-pub(crate) fn quarantine_record_within_bounds(entry: &IngressQuarantineRecord) -> bool {
-    const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
-    const INGRESS_QUARANTINE_FIELD_MAX_BYTES: usize = 4096;
-    const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
-    const INGRESS_QUARANTINE_LINE_NUMBER_MAX: usize = 1_048_576;
-
-    fn contains_forbidden_quarantine_chars(raw: &str) -> bool {
-        raw.chars().any(is_forbidden_quarantine_char)
+fn quarantine_line_number_from_value(value: &serde_json::Value) -> Option<usize> {
+    let line_number = value.get("line_number")?;
+    if let Some(line_number) = line_number.as_u64() {
+        return usize::try_from(line_number).ok();
     }
 
-    if entry.line_number == 0
-        || entry.line_number > INGRESS_QUARANTINE_LINE_NUMBER_MAX
-        || entry.source_path.trim().is_empty()
-        || entry.raw_line.trim().is_empty()
-        || entry.error.trim().is_empty()
-        || entry.source_path != entry.source_path.trim()
-        || entry.raw_line != entry.raw_line.trim()
-        || entry.error != entry.error.trim()
-        || entry.quarantined_at_unix_ms == 0
-        || entry.raw_line.as_bytes().len() > INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES
-        || entry.source_path.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
-        || entry.error.as_bytes().len() > INGRESS_QUARANTINE_FIELD_MAX_BYTES
-        || contains_forbidden_quarantine_chars(&entry.source_path)
-        || contains_forbidden_quarantine_chars(&entry.raw_line)
-        || contains_forbidden_quarantine_chars(&entry.error)
-    {
-        return false;
+    line_number
+        .as_str()?
+        .trim()
+        .parse::<usize>()
+        .ok()
+}
+
+fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
+    let trimmed = line.trim();
+    if trimmed.is_empty() {
+        return None;
     }
 
-    serde_json::to_string(entry)
-        .map(|line| line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES)
-        .unwrap_or(false)
+    let value = serde_json::from_str::<serde_json::Value>(trimmed).ok()?;
+    Some((
+        value.get("source_path")?.as_str()?.to_string(),
+        quarantine_line_number_from_value(&value)?,
+        quarantine_line_hash_from_value(&value)?,
+    ))
+}
+
+fn load_existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(String, usize, u64)> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeSet::new();
+    };
+
+    raw.lines()
+        .filter_map(parse_quarantine_fingerprint_line)
+        .collect()
 }
 
 fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
@@ -126,51 +112,13 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         fs::create_dir_all(parent)?;
     }
 
-    let mut retained_lines = Vec::new();
-    let mut retained_identities = HashSet::new();
-    match fs::metadata(&quarantine_path) {
-        Ok(meta) if meta.len() > INGRESS_QUARANTINE_READ_MAX_BYTES => {}
-        _ => {
-            if let Some(raw) = fs::read(&quarantine_path).ok() {
-                for line in raw
-                    .split(|byte| *byte == b'\n')
-                    .filter_map(|line_bytes| std::str::from_utf8(line_bytes).ok())
-                    .map(|line| line.trim_end_matches('\r'))
-                    .filter(|line| !line.trim().is_empty())
-                    .filter(|line| line.as_bytes().len() <= INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES)
-                {
-                    let Some(entry) = serde_json::from_str::<IngressQuarantineRecord>(line).ok()
-                    else {
-                        continue;
-                    };
-                    if quarantine_record_within_bounds(&entry)
-                        && retained_identities.insert((
-                            entry.source_path.clone(),
-                            entry.line_hash,
-                            entry.raw_line.clone(),
-                            entry.error.clone(),
-                        ))
-                    {
-                        retained_lines.push(line.to_string());
-                    }
-                }
-            }
-        }
-    }
-    for entry in entries {
-        if quarantine_record_within_bounds(entry)
-            && retained_identities.insert((
-                entry.source_path.clone(),
-                entry.line_hash,
-                entry.raw_line.clone(),
-                entry.error.clone(),
-            ))
-        {
-            retained_lines.push(serde_json::to_string(entry)?);
-        }
-    }
-    if retained_lines.len() > INGRESS_QUARANTINE_FILE_MAX_RECORDS {
-        retained_lines.drain(..retained_lines.len() - INGRESS_QUARANTINE_FILE_MAX_RECORDS);
+    let mut seen = load_existing_quarantine_fingerprints(&quarantine_path);
+    let pending: Vec<_> = entries
+        .iter()
+        .filter(|entry| seen.insert(quarantine_fingerprint(entry)))
+        .collect();
+    if pending.is_empty() {
+        return Ok(());
     }
 
     let mut file = OpenOptions::new()
@@ -178,8 +126,8 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         .write(true)
         .truncate(true)
         .open(&quarantine_path)?;
-    for line in retained_lines {
-        writeln!(file, "{line}")?;
+    for entry in pending {
+        writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
     file.sync_all()?;
     Ok(appended)
@@ -272,133 +220,21 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
     };
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
-    let mut quarantined_seen = HashSet::new();
-    let mut quarantined_total = 0usize;
-    let mut skipped_whitespace_noise = false;
-    for (idx, line_bytes) in raw.split_terminator(|byte| *byte == b'\n').enumerate() {
-        let line_on_disk_len = line_bytes.len();
-        let line_bytes = match line_bytes.strip_suffix(b"\r") {
-            Some(trimmed) => trimmed,
-            None => line_bytes,
-        };
-        if line_bytes.iter().all(|byte| byte.is_ascii_whitespace()) {
-            if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                let raw_line = quarantine_whitespace_raw_line(line_bytes);
-                let parse_result = Err((
-                    stable_bounded_bytes_hash(line_bytes),
-                    raw_line,
-                    anyhow!(
-                        "ingress line exceeds {} bytes parse bound (got {})",
-                        INGRESS_LINE_PARSE_MAX_BYTES,
-                        line_on_disk_len
-                    ),
-                ));
-                let (line_hash, raw_line, err) = match parse_result {
-                    Ok(_) => unreachable!("successful parse path continues early"),
-                    Err(parts) => parts,
-                };
-                quarantined_total += 1;
-                let error = err.to_string();
-                if quarantined_seen.insert((line_hash, raw_line.clone(), error.clone())) {
-                    push_tail_limited(
-                        &mut quarantined,
-                        IngressQuarantineRecord {
-                            source_path: source_path_for_quarantine.clone(),
-                            line_number: idx + 1,
-                            line_hash,
-                            raw_line,
-                            error,
-                            quarantined_at_unix_ms: now_ms(),
-                        },
-                        INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
-                    );
-                }
-                continue;
-            }
-            skipped_whitespace_noise = true;
+    for (idx, line) in raw.lines().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
             continue;
         }
-        let parse_result = match std::str::from_utf8(line_bytes) {
-            Ok(line) => {
-                if line.trim().is_empty() {
-                    if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                        let raw_line = quarantine_whitespace_raw_line(line_bytes);
-                        Err((
-                            stable_line_hash(line),
-                            raw_line,
-                            anyhow!(
-                                "ingress line exceeds {} bytes parse bound (got {})",
-                                INGRESS_LINE_PARSE_MAX_BYTES,
-                                line_on_disk_len
-                            ),
-                        ))
-                    } else {
-                        skipped_whitespace_noise = true;
-                        continue;
-                    }
-                } else if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                    Err((
-                        stable_line_hash(line),
-                        truncate_for_quarantine(line),
-                        anyhow!(
-                            "ingress line exceeds {} bytes parse bound (got {})",
-                            INGRESS_LINE_PARSE_MAX_BYTES,
-                            line_on_disk_len
-                        ),
-                    ))
-                } else {
-                    match serde_json::from_str::<MessageIngressRecord>(line) {
-                        Ok(record) => {
-                            records.push(record);
-                            continue;
-                        }
-                        Err(err) => Err((
-                            stable_line_hash(line),
-                            truncate_for_quarantine(line),
-                            err.into(),
-                        )),
-                    }
-                }
-            }
-            Err(_) => {
-                if line_on_disk_len > INGRESS_LINE_PARSE_MAX_BYTES {
-                    Err((
-                        stable_bounded_bytes_hash(line_bytes),
-                        truncate_bytes_for_quarantine(line_bytes),
-                        anyhow!(
-                            "ingress line exceeds {} bytes parse bound (got {})",
-                            INGRESS_LINE_PARSE_MAX_BYTES,
-                            line_on_disk_len
-                        ),
-                    ))
-                } else {
-                    Err((
-                        stable_bounded_bytes_hash(line_bytes),
-                        truncate_bytes_for_quarantine(line_bytes),
-                        anyhow!("ingress line is not valid utf-8"),
-                    ))
-                }
-            }
-        };
-        let (line_hash, raw_line, err) = match parse_result {
-            Ok(_) => unreachable!("successful parse path continues early"),
-            Err(parts) => parts,
-        };
-        quarantined_total += 1;
-        let error = err.to_string();
-        if quarantined_seen.insert((line_hash, raw_line.clone(), error.clone())) {
-            push_tail_limited(
-                &mut quarantined,
-                IngressQuarantineRecord {
-                    source_path: source_path_for_quarantine.clone(),
-                    line_number: idx + 1,
-                    line_hash,
-                    raw_line,
-                    error,
-                    quarantined_at_unix_ms: now_ms(),
-                },
-                INGRESS_QUARANTINE_APPEND_MAX_RECORDS,
-            );
+        match serde_json::from_str::<MessageIngressRecord>(trimmed) {
+            Ok(record) => records.push(record),
+            Err(err) => quarantined.push(IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash: stable_line_hash(trimmed),
+                raw_line: line.to_string(),
+                error: err.to_string(),
+                quarantined_at_unix_ms: now_ms(),
+            }),
         }
     }
     if !quarantined.is_empty() {

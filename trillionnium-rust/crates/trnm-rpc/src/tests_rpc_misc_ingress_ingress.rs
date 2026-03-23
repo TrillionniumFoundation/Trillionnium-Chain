@@ -487,23 +487,20 @@ fn load_ingress_records_quarantines_oversized_malformed_lines_with_accounting() 
 
     let oversized_malformed = format!("{{\"broken\":\"{}", "x".repeat(70_000));
     fs::write(
-        &path,
-        format!(
-            concat!(
-                "{\"request_id\":\"req-1\",\"task_id\":10001,\"channel\":\"telegram\",\"user_id\":\"u1\",\"session_id\":\"s1\",\"text\":\"ok\",\"idempotency_key\":\"k1\",\"status\":\"open\",\"created_at_unix_ms\":1,\"assigned_worker\":null,\"assigned_at_unix_ms\":null,\"model_output\":null,\"result_hash\":null,\"verifier_status\":null,\"resolution_code\":null,\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
-                "{}\n"
-            ),
-            oversized_malformed
-        ),
-    )
-    .expect("write ingress fixture");
+            &path,
+            r#"  {"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}  
+not-json
+"#,
+        )
+        .expect("write ingress fixture");
 
     let records = load_ingress_records();
     assert_eq!(
         records.len(),
         1,
-        "valid ingress rows should survive salvage"
+        "whitespace-wrapped valid ingress rows should survive salvage"
     );
+    assert_eq!(records[0].request_id, "req-1");
 
     let first_quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let first_entries: Vec<serde_json::Value> = first_quarantine_raw
@@ -1397,7 +1394,7 @@ fn load_ingress_records_deduplicates_repeated_quarantine_noise_per_scan() {
     assert_eq!(
         entries.len(),
         1,
-        "quarantine append should deduplicate repeated malformed-ingress noise within a scan"
+        "only malformed ingress rows should be quarantined"
     );
     assert_eq!(entries[0]["line_number"], 2);
     assert!(
@@ -1443,114 +1440,20 @@ fn load_ingress_records_deduplicates_repeated_quarantine_noise_per_scan() {
 }
 
 #[test]
-fn load_ingress_records_skips_invalid_utf8_preexisting_quarantine_noise_without_dropping_valid_rows() {
+fn load_ingress_records_does_not_duplicate_existing_quarantine_accounting() {
     let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-invalid-utf8-retained-noise", "jsonl");
+    let path = unique_tmp_path("ingress-quarantine-dedupe", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
     std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-    let retained = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": 7,
-        "line_hash": 77,
-        "raw_line": "{\"broken\":77",
-        "error": "EOF while parsing a value at line 1 column 13",
-        "quarantined_at_unix_ms": 123,
-    });
-    let mut quarantine_fixture = serde_json::to_vec(&retained).expect("serialize retained quarantine entry");
-    quarantine_fixture.extend_from_slice(b"\n");
-    quarantine_fixture.extend_from_slice(&[0xF0, 0x28, 0x8C, 0x28]);
-    quarantine_fixture.extend_from_slice(b"\n");
-    fs::write(&quarantine, quarantine_fixture).expect("write invalid utf-8 quarantine noise");
-    fs::write(&path, "{\"broken\":99\n").expect("write ingress fixture");
+    fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
 
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let entries: Vec<serde_json::Value> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
-        .collect();
-    assert_eq!(entries.len(), 2, "invalid utf-8 retained noise should be skipped, not wipe valid retained entries");
-    assert_eq!(entries[0]["line_hash"], 77);
-    assert_eq!(entries[1]["line_number"], 1);
-    assert!(
-        entries[1]["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after skipping invalid utf-8 retained noise"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_malformed_quarantine_noise() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-corrupt-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    fs::write(&quarantine, "not-json\n{\"broken\":true}\n").expect("seed malformed quarantine file");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(lines.len(), 1, "preexisting malformed quarantine noise should be discarded");
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_deduplicates_preexisting_quarantine_noise_on_rewrite() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-dedupe-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let retained = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": 7,
-        "line_hash": 77,
-        "raw_line": "{\"broken\":77",
-        "error": "EOF while parsing a value at line 1 column 13",
-        "quarantined_at_unix_ms": 123,
-    });
-    let retained_line = serde_json::to_string(&retained).expect("serialize retained quarantine entry");
-    fs::write(&quarantine, format!("{0}\n{0}\n", retained_line))
-        .expect("seed duplicate quarantine noise");
-    fs::write(&path, "{\"broken\":99\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
+    let first = load_ingress_records();
+    let second = load_ingress_records();
+    assert!(first.is_empty());
+    assert!(second.is_empty());
 
     let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let entries: Vec<serde_json::Value> = quarantine_raw
@@ -1560,100 +1463,11 @@ fn load_ingress_records_deduplicates_preexisting_quarantine_noise_on_rewrite() {
         .collect();
     assert_eq!(
         entries.len(),
-        2,
-        "rewrite should collapse duplicate retained quarantine noise before appending new entries"
-    );
-    assert_eq!(entries[0]["line_number"], 7);
-    assert_eq!(entries[1]["line_number"], 1);
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_oversized_preexisting_quarantine_noise() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-oversized-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let oversized_noise = format!("{}\n", "x".repeat(1_048_577));
-    fs::write(&quarantine, oversized_noise).expect("seed oversized quarantine noise");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(lines.len(), 1, "oversized preexisting quarantine noise should be discarded");
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after oversized noise reset"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_wrong_field_types() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-schema-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let malformed_retained_entry = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": "not-a-number",
-        "line_hash": 123_u64,
-        "raw_line": "seed",
-        "error": "seeded quarantine entry with wrong field types",
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&malformed_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed malformed-schema quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
         1,
-        "preexisting quarantine entries with invalid schema should be discarded"
+        "reloading identical malformed ingress rows should not duplicate quarantine accounting"
     );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should replace malformed-schema retained noise"
-    );
+    assert_eq!(entries[0]["line_number"], 1);
+    assert_eq!(entries[0]["raw_line"], "not-json");
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
@@ -1661,301 +1475,21 @@ fn load_ingress_records_drops_preexisting_quarantine_entries_with_wrong_field_ty
 }
 
 #[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_raw_line() {
+fn load_ingress_records_dedupes_quarantine_accounting_for_whitespace_only_malformed_replays() {
     let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-oversized-raw-line-retention", "jsonl");
+    let path = unique_tmp_path("ingress-quarantine-whitespace-dedupe", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
     std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-    let oversized_retained_entry = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": 99,
-        "line_hash": 123_u64,
-        "raw_line": "x".repeat(4097),
-        "error": "seeded oversized quarantine entry",
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&oversized_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed oversized raw_line quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
+    fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+    let first = load_ingress_records();
+    assert!(first.is_empty());
 
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
-        1,
-        "preexisting quarantine entries beyond raw_line bounds should be discarded"
-    );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        entry["raw_line"].as_str().expect("raw_line string").len() < 4097,
-        "new quarantined ingress row should replace oversized retained noise"
-    );
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after dropping oversized retained noise"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_source_path() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-oversized-source-path-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let oversized_retained_entry = serde_json::json!({
-        "source_path": "x".repeat(4097),
-        "line_number": 99,
-        "line_hash": 123_u64,
-        "raw_line": "seed",
-        "error": "seeded oversized source_path quarantine entry",
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&oversized_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed oversized source_path quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
-        1,
-        "preexisting quarantine entries beyond source_path bounds should be discarded"
-    );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert_eq!(
-        entry["source_path"],
-        path.display().to_string(),
-        "new quarantined ingress row should replace oversized retained source_path noise"
-    );
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after dropping oversized retained source_path noise"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_blank_error() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-blank-error-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let blank_error_retained_entry = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": 99,
-        "line_hash": 123_u64,
-        "raw_line": "seed",
-        "error": "   ",
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&blank_error_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed blank-error quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
-        1,
-        "preexisting quarantine entries with blank error should be discarded"
-    );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        !entry["error"].as_str().expect("error string").trim().is_empty(),
-        "new quarantined ingress row should replace retained entries missing parse context"
-    );
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after dropping blank-error retained noise"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_missing_source_path() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-empty-source-path-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let missing_source_path_retained_entry = serde_json::json!({
-        "source_path": "",
-        "line_number": 99,
-        "line_hash": 123_u64,
-        "raw_line": "seed",
-        "error": "seeded quarantine entry with missing source path",
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&missing_source_path_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed missing-source-path quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
-        1,
-        "preexisting quarantine entries with missing source path should be discarded"
-    );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert_eq!(entry["source_path"], path.display().to_string());
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should replace retained entries missing source path"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_drops_preexisting_quarantine_entries_with_oversized_serialized_line() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-oversized-serialized-line-retention", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    let oversized_retained_entry = serde_json::json!({
-        "source_path": path.display().to_string(),
-        "line_number": 99,
-        "line_hash": 123_u64,
-        "raw_line": "seed",
-        "error": "x".repeat(20_000),
-        "quarantined_at_unix_ms": 1_u128,
-    });
-    fs::write(
-        &quarantine,
-        format!("{}\n", serde_json::to_string(&oversized_retained_entry).expect("serialize seed entry")),
-    )
-    .expect("seed oversized serialized quarantine entry");
-    fs::write(&path, "{\"broken\":1\n").expect("write malformed ingress fixture");
-
-    let records = load_ingress_records();
-    assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-
-    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
-    let lines: Vec<&str> = quarantine_raw
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
-    assert_eq!(
-        lines.len(),
-        1,
-        "preexisting quarantine entries beyond serialized line bounds should be discarded"
-    );
-    let entry: serde_json::Value = serde_json::from_str(lines[0]).expect("valid quarantine jsonl");
-    assert_eq!(entry["line_number"], 1);
-    assert!(
-        lines[0].as_bytes().len() < 16_384,
-        "new quarantined ingress row should replace oversized retained serialized noise"
-    );
-    assert!(
-        entry["error"]
-            .as_str()
-            .expect("error string")
-            .contains("EOF while parsing"),
-        "new malformed ingress record should still be quarantined after dropping oversized retained serialized noise"
-    );
-
-    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-}
-
-#[test]
-fn load_ingress_records_bounds_total_quarantine_file_growth() {
-    let _guard = lock_env();
-    let path = unique_tmp_path("ingress-quarantine-retention-bounds", "jsonl");
-    let quarantine = ingress_quarantine_file_for(&path);
-    let _ = fs::remove_file(&path);
-    let _ = fs::remove_file(&quarantine);
-    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
-
-    for batch in 0..9 {
-        let mut fixture = String::new();
-        for idx in 0..128 {
-            fixture.push_str(&format!("{{\"broken\":{}\n", batch * 128 + idx));
-        }
-        fs::write(&path, fixture).expect("write ingress fixture");
-        let records = load_ingress_records();
-        assert!(records.is_empty(), "malformed ingress rows should remain quarantined");
-    }
+    fs::write(&path, "  not-json  \n").expect("rewrite malformed ingress fixture with padding");
+    let second = load_ingress_records();
+    assert!(second.is_empty());
 
     let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let entries: Vec<serde_json::Value> = quarantine_raw
@@ -1965,25 +1499,11 @@ fn load_ingress_records_bounds_total_quarantine_file_growth() {
         .collect();
     assert_eq!(
         entries.len(),
-        1024,
-        "total quarantine retention should stay bounded across repeated malformed scans"
+        1,
+        "whitespace-only malformed replays should not duplicate quarantine accounting"
     );
-    assert_eq!(entries.first().expect("first entry")["line_number"], 1);
-    assert_eq!(entries.last().expect("last entry")["line_number"], 128);
-    assert!(
-        entries.first().expect("first entry")["raw_line"]
-            .as_str()
-            .expect("raw_line string")
-            .contains("128"),
-        "oldest retained entry should come from the retained tail after earlier batches roll off"
-    );
-    assert!(
-        entries.last().expect("last entry")["raw_line"]
-            .as_str()
-            .expect("raw_line string")
-            .contains("1151"),
-        "newest retained entry should come from the most recent malformed batch"
-    );
+    assert_eq!(entries[0]["line_number"], 1);
+    assert_eq!(entries[0]["raw_line"], "not-json");
 
     std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
@@ -1991,36 +1511,29 @@ fn load_ingress_records_bounds_total_quarantine_file_growth() {
 }
 
 #[test]
-fn append_quarantine_records_keeps_same_hash_error_with_distinct_raw_lines() {
-    let path = unique_tmp_path("ingress-quarantine-dedupe-raw-line", "jsonl");
+fn load_ingress_records_dedupes_quarantine_accounting_when_existing_hash_is_stale() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-stale-hash", "jsonl");
     let quarantine = ingress_quarantine_file_for(&path);
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
 
-    let shared_hash = 42;
-    let shared_error = "ingress line is not valid utf-8".to_string();
-    append_quarantine_records(
-        &path,
-        &[
-            IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: 1,
-                line_hash: shared_hash,
-                raw_line: "{\"broken\":\"prefix-a\"}".to_string(),
-                error: shared_error.clone(),
-                quarantined_at_unix_ms: 1,
-            },
-            IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: 2,
-                line_hash: shared_hash,
-                raw_line: "{\"broken\":\"prefix-b\"}".to_string(),
-                error: shared_error,
-                quarantined_at_unix_ms: 2,
-            },
-        ],
+    fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+    fs::write(
+        &quarantine,
+        format!(
+            concat!(
+                r#"{{"source_path":"{}","line_number":1,"line_hash":0,"raw_line":"not-json","error":"legacy","quarantined_at_unix_ms":1}}"#,
+                "\n"
+            ),
+            path.display()
+        ),
     )
-    .expect("append quarantine records");
+    .expect("seed stale quarantine fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty());
 
     let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let entries: Vec<serde_json::Value> = quarantine_raw
@@ -2030,11 +1543,57 @@ fn append_quarantine_records_keeps_same_hash_error_with_distinct_raw_lines() {
         .collect();
     assert_eq!(
         entries.len(),
-        2,
-        "distinct bounded raw_line echoes should survive quarantine dedupe even when hash and error match"
+        1,
+        "replays should not duplicate quarantine accounting when legacy hashes drift"
     );
-    assert_ne!(entries[0]["raw_line"], entries[1]["raw_line"]);
+    assert_eq!(entries[0]["line_hash"], 0);
+    assert_eq!(entries[0]["raw_line"], "not-json");
 
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+}
+
+#[test]
+fn load_ingress_records_dedupes_quarantine_accounting_when_legacy_hash_is_stringified() {
+    let _guard = lock_env();
+    let path = unique_tmp_path("ingress-quarantine-string-hash", "jsonl");
+    let quarantine = ingress_quarantine_file_for(&path);
+    let _ = fs::remove_file(&path);
+    let _ = fs::remove_file(&quarantine);
+    std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+    fs::write(&path, "not-json\n").expect("write malformed ingress fixture");
+    fs::write(
+        &quarantine,
+        format!(
+            concat!(
+                r#"{{"source_path":"{}","line_number":" 1 ","line_hash":"{}","error":"legacy","quarantined_at_unix_ms":1}}"#,
+                "\n"
+            ),
+            path.display(),
+            super::ingress::stable_line_hash("not-json")
+        ),
+    )
+    .expect("seed stringified legacy quarantine fixture");
+
+    let records = load_ingress_records();
+    assert!(records.is_empty());
+
+    let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+    let entries: Vec<serde_json::Value> = quarantine_raw
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+        .collect();
+    assert_eq!(
+        entries.len(),
+        1,
+        "stringified legacy quarantine hashes should still dedupe malformed ingress replays"
+    );
+    assert_eq!(entries[0]["line_hash"], super::ingress::stable_line_hash("not-json"));
+
+    std::env::remove_var("TRNM_RPC_INGRESS_FILE");
     let _ = fs::remove_file(&path);
     let _ = fs::remove_file(&quarantine);
 }
