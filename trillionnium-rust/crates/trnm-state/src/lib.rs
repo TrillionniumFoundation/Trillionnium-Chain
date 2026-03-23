@@ -121,16 +121,23 @@ pub struct WalMeta {
 
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
+        fn update_len_prefixed(hasher: &mut Sha256, bytes: &[u8]) {
+            hasher.update((bytes.len() as u64).to_le_bytes());
+            hasher.update(bytes);
+        }
+
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        update_len_prefixed(&mut hasher, self.proposal_hash.as_bytes());
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
-        if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
-        } else {
-            hasher.update(b"genesis");
+        update_len_prefixed(&mut hasher, self.state_root_hex.as_bytes());
+        match &self.prev_hash_hex {
+            Some(prev) => {
+                hasher.update([1]);
+                update_len_prefixed(&mut hasher, prev.as_bytes());
+            }
+            None => hasher.update([0]),
         }
         hex::encode(hasher.finalize())
     }
@@ -1315,7 +1322,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver_audit,
+                    first_approver: approver_canonical.clone(),
                     authority_set: authority_canonical.clone(),
                     task_version,
                 });
@@ -1392,6 +1399,15 @@ impl StateStore {
             scrub_pending(self, task_id);
             return;
         }
+        let Some(task) = self.get_task(task_id) else {
+            return;
+        };
+        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+            return;
+        }
+        if !challenged_task_snapshot_complete_for_pending_resolve(&task) {
+            return;
+        }
         let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
         else {
             scrub_pending(self, task_id);
@@ -1413,108 +1429,68 @@ impl StateStore {
             scrub_pending(self, task_id);
             return;
         }
-        match self.get_task(task_id) {
-            Some(task)
-                if task.status == TaskStatus::Challenged
-                    && task.version == snapshot.task_version => {}
-            Some(_) => {
-                scrub_pending(self, task_id);
-                return;
-            }
-            None => {
-                if self
-                    .objects
-                    .get(&task_id)
-                    .map(|existing| !matches!(existing.value, ObjectValue::Task(_)))
-                    .unwrap_or(false)
-                {
-                    scrub_pending(self, task_id);
-                    return;
-                }
-                if self.is_emergency_paused() {
-                    scrub_pending(self, task_id);
-                    return;
-                }
-            }
-        }
 
-        let restored = PendingResolveApproval {
-            slash_worker: snapshot.slash_worker,
-            confirmations: snapshot.confirmations,
-            first_approver: first_approver_canonical.clone(),
-            authority_set: authority_canonical.clone(),
-            task_version: snapshot.task_version,
-        };
-        if let Some(existing) = self.pending_resolve_approvals.get(&task_id) {
-            let existing_matches = existing.slash_worker == restored.slash_worker
-                && existing.confirmations == restored.confirmations
-                && existing.task_version == restored.task_version
-                && validate_resolve_approver_token(&existing.first_approver)
-                    .map(|canonical| canonical == first_approver_canonical)
-                    .unwrap_or(false)
-                && canonicalize_resolve_authority_set(&existing.authority_set)
-                    .map(|canonical| canonical == authority_canonical)
-                    .unwrap_or(false);
-            if existing_matches {
-                return;
-            }
-        }
-
-        self.invalidate_state_root_cache();
-        self.pending_resolve_approvals.insert(task_id, restored);
+        self.pending_resolve_approvals.insert(
+            task_id,
+            PendingResolveApproval {
+                slash_worker: snapshot.slash_worker,
+                confirmations: snapshot.confirmations,
+                first_approver: first_approver_canonical,
+                authority_set: authority_canonical,
+                task_version: snapshot.task_version,
+            },
+        );
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
-        let existing_is_non_task = self
-            .objects
-            .get(&id)
-            .map(|existing| !matches!(existing.value, ObjectValue::Task(_)))
-            .unwrap_or(false);
-        if existing_is_non_task {
-            if self.pending_resolve_approvals.remove(&id).is_some() {
-                self.invalidate_state_root_cache();
-            }
-            return;
-        }
-
+        self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
-                if task.version == 0 {
-                    let has_existing_task = matches!(
-                        self.objects.get(&id),
-                        Some(VersionedObject {
-                            value: ObjectValue::Task(_),
-                            ..
-                        })
-                    );
-                    if has_existing_task {
-                        return;
-                    }
-                    let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
-                    if removed_pending {
-                        self.invalidate_state_root_cache();
-                    }
-                    return;
-                }
                 if task.task_id != id {
-                    if self.pending_resolve_approvals.remove(&id).is_some() {
-                        self.invalidate_state_root_cache();
+                    if matches!(
+                        self.objects.get(&id).map(|existing| &existing.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
                     }
+                    self.pending_resolve_approvals.remove(&id);
                     return;
                 }
-                let stale_pending_resolve = self
+                if task.task_id == 0 || task.version == 0 {
+                    if matches!(
+                        self.objects.get(&id).map(|existing| &existing.value),
+                        Some(ObjectValue::Task(_))
+                    ) {
+                        self.objects.remove(&id);
+                    }
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
+                if matches!(
+                    self.objects.get(&id).map(|existing| &existing.value),
+                    Some(value) if !matches!(value, ObjectValue::Task(_))
+                ) {
+                    self.pending_resolve_approvals.remove(&id);
+                    return;
+                }
+                if self
                     .pending_resolve_approvals
                     .get(&id)
                     .map(|pending| {
-                        pending.task_version != task.version || task.status != TaskStatus::Challenged
+                        task.status != TaskStatus::Challenged
+                            || pending.task_version != task.version
+                            || !challenged_task_snapshot_complete_for_pending_resolve(&task)
                     })
-                    .unwrap_or(false);
-                let existing_task_matches = matches!(
-                    self.objects.get(&id),
-                    Some(VersionedObject {
-                        version,
-                        value: ObjectValue::Task(existing_task),
-                    }) if *version == task.version && existing_task == &task
+                    .unwrap_or(false)
+                {
+                    self.pending_resolve_approvals.remove(&id);
+                }
+                self.objects.insert(
+                    id,
+                    VersionedObject {
+                        version: task.version,
+                        value: ObjectValue::Task(task),
+                    },
                 );
                 if existing_task_matches && !stale_pending_resolve {
                     return;
@@ -1534,17 +1510,13 @@ impl StateStore {
                 }
             }
             None => {
-                let removed_task = matches!(
-                    self.objects.get(&id),
-                    Some(VersionedObject {
-                        value: ObjectValue::Task(_),
-                        ..
-                    })
-                ) && self.objects.remove(&id).is_some();
-                let removed_pending = self.pending_resolve_approvals.remove(&id).is_some();
-                if removed_task || removed_pending {
-                    self.invalidate_state_root_cache();
+                if matches!(
+                    self.objects.get(&id).map(|existing| &existing.value),
+                    Some(ObjectValue::Task(_))
+                ) {
+                    self.objects.remove(&id);
                 }
+                self.pending_resolve_approvals.remove(&id);
             }
         }
     }
@@ -1553,13 +1525,29 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if let Some(existing) = self.objects.get(&key_id) {
-                    match &existing.value {
-                        ObjectValue::GovParam(existing_param) if existing_param.key != snapshot.key => {
-                            return;
+                if key_id == 0
+                    || snapshot.key_id != key_id
+                    || snapshot.version == 0
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                {
+                    if matches!(
+                        self.objects.get(&key_id).map(|existing| &existing.value),
+                        Some(ObjectValue::GovParam(_))
+                    ) {
+                        self.objects.remove(&key_id);
+                    }
+                    return;
+                }
+                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
+                    if existing_id != key_id {
+                        if matches!(
+                            self.objects.get(&key_id).map(|existing| &existing.value),
+                            Some(ObjectValue::GovParam(_))
+                        ) {
+                            self.objects.remove(&key_id);
                         }
-                        ObjectValue::GovParam(_) => {}
-                        _ => return,
+                        return;
                     }
                 }
                 if snapshot.key_id != key_id {
@@ -1589,8 +1577,12 @@ impl StateStore {
                 );
             }
             None => {
-                self.remove_gov_param_key_index_for_id(key_id);
-                self.objects.remove(&key_id);
+                if matches!(
+                    self.objects.get(&key_id).map(|existing| &existing.value),
+                    Some(ObjectValue::GovParam(_))
+                ) {
+                    self.objects.remove(&key_id);
+                }
             }
         }
     }
@@ -2096,14 +2088,17 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                if validate_pending_gov_update_restore_snapshot(
-                    &self.gov_param_key_index,
-                    &self.pending_gov_updates,
-                    &self.objects,
-                    key,
-                    &snapshot,
-                )
-                .is_err()
+                let base_matches_snapshot = self
+                    .gov_param_ref_for_key(&snapshot.key)
+                    .map(|(id, param)| id == snapshot.key_id && param.key_id == snapshot.key_id)
+                    .unwrap_or(false);
+                if snapshot.key != key
+                    || snapshot.key_id == 0
+                    || snapshot.activate_at_height == 0
+                    || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
+                    || !is_sensitive_gov_param(&snapshot.key)
+                    || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
+                    || !base_matches_snapshot
                 {
                     self.pending_gov_updates.remove(key);
                     if scrubs_resolve_quorum {
@@ -2583,12 +2578,12 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            let first_approver_canonical = validate_resolve_approver_token(&pending.first_approver)
+            let first_approver_hashed = validate_resolve_approver_token(&pending.first_approver)
                 .unwrap_or_else(|_| pending.first_approver.clone());
-            let authority_canonical = canonicalize_resolve_authority_set(&pending.authority_set)
+            let authority_set_hashed = canonicalize_resolve_authority_set(&pending.authority_set)
                 .unwrap_or_else(|_| pending.authority_set.clone());
-            hash_len_prefixed_str(&mut hasher, &first_approver_canonical);
-            hash_len_prefixed_str(&mut hasher, &authority_canonical);
+            hash_len_prefixed_str(&mut hasher, &first_approver_hashed);
+            hash_len_prefixed_str(&mut hasher, &authority_set_hashed);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
@@ -2601,6 +2596,19 @@ impl StateStore {
         *cache_guard = Some(root.clone());
         root
     }
+}
+
+pub(crate) fn challenged_task_snapshot_complete_for_pending_resolve(task: &TaskObject) -> bool {
+    task.challenged_at_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_bond.is_some()
+        && task
+            .challenger
+            .as_deref()
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .is_some()
+        && task.challenge_bond_forfeited.is_some()
 }
 
 pub fn verify_wal_and_find_checkpoint(
@@ -2616,13 +2624,22 @@ pub fn verify_wal_and_find_checkpoint(
             // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
             // or gap-skipping entries must not be treated as a valid continuation
             // during restart recovery.
-            if e.height != last_height.saturating_add(1) {
+            let Some(expected_height) = last_height.checked_add(1) else {
+                return Ok(best_checkpoint);
+            };
+            if e.height != expected_height {
                 return Ok(best_checkpoint);
             }
         } else if e.height != 1 {
             // Until StateStore snapshot restore/replay exists, a checkpointed WAL chain
             // that starts above genesis height is metadata-only and must not be used to
             // claim safe application-state recovery.
+            return Ok(best_checkpoint);
+        }
+        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
+            // Recovery metadata must remain complete: blank proposal/state-root values
+            // indicate a truncated or forged WAL entry and must not advance checkpoint
+            // selection during restart recovery.
             return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
@@ -2636,7 +2653,37 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+        let height_checkpoints: Vec<&CheckpointMeta> =
+            checkpoints.iter().filter(|cp| cp.height == e.height).collect();
+        if let Some(first_complete) = height_checkpoints
+            .iter()
+            .copied()
+            .find(|cp| {
+                !cp.state_root_hex.trim().is_empty() && !cp.wal_entry_hash_hex.trim().is_empty()
+            })
+        {
+            let has_conflict = height_checkpoints.iter().copied().any(|cp| {
+                !cp.state_root_hex.trim().is_empty()
+                    && !cp.wal_entry_hash_hex.trim().is_empty()
+                    && (cp.state_root_hex != first_complete.state_root_hex
+                        || cp.wal_entry_hash_hex != first_complete.wal_entry_hash_hex)
+            });
+            if has_conflict {
+                // Snapshot metadata at a given height must be unique once complete.
+                // Conflicting checkpoint records indicate ambiguous restore state and
+                // must not be papered over by selecting the entry that happens to match
+                // the current WAL replay.
+                return Ok(best_checkpoint);
+            }
+        }
+
+        for cp in height_checkpoints {
+            if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
+                // Checkpoint metadata must be complete before it can participate in
+                // replay/restore recovery. Blank state-root or WAL-hash fields are
+                // treated as incomplete snapshots and ignored fail-closed.
+                continue;
+            }
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -2725,874 +2772,26 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_rejects_zero_version_snapshot() {
-        let mut st = StateStore::new();
-        let invalid = TaskObject {
-            task_id: 7,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 0,
+    fn wal_content_hash_distinguishes_ambiguous_variable_length_fields() {
+        let base = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "ab".into(),
+            committed: true,
+            state_root_hex: "c".into(),
+            prev_hash_hex: Some("tail".into()),
+        };
+        let ambiguous = WalMeta {
+            proposal_hash: "a".into(),
+            state_root_hex: "bc".into(),
+            prev_hash_hex: Some("tail".into()),
+            ..base.clone()
         };
 
-        st.restore_task(7, Some(invalid));
-
-        assert!(st.get_task(7).is_none(), "restore must reject zero-version task snapshots");
-        assert!(
-            st.get_ref(7).is_none(),
-            "restore must not create an object ref for zero-version tasks"
-        );
-    }
-
-    #[test]
-    fn restore_task_rejects_zero_version_replacement_without_clobbering_existing_object() {
-        let mut st = StateStore::new();
-        st.put_task_new(TaskObject {
-            task_id: 7,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        })
-        .unwrap();
-        let root_before = st.state_root();
-
-        st.restore_task(
-            7,
-            Some(TaskObject {
-                task_id: 7,
-                creator: "mallory".into(),
-                bounty: 99,
-                status: TaskStatus::Assigned,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 0,
-            }),
-        );
-
-        assert_eq!(
-            st.get_task(7)
-                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
-            Some((7, "alice".into(), 10, TaskStatus::Open, 1)),
-            "zero-version restore must not clobber the existing task object"
-        );
-        assert_eq!(
-            st.get_ref(7),
-            Some(ObjectRef { id: 7, version: 1 }),
-            "zero-version restore must preserve the existing object version"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "rejected zero-version replacement must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_rejects_zero_version_snapshot() {
-        let mut st = StateStore::new();
-        let invalid = GovParamObject {
-            key_id: 17,
-            key: "monetary_base_burn_per_tick".into(),
-            value: "11".into(),
-            version: 0,
-        };
-
-        st.restore_gov_param(17, Some(invalid));
-
-        assert!(
-            st.get_param(17).is_none(),
-            "restore must reject zero-version governance param snapshots"
-        );
-        assert!(
-            st.get_ref(17).is_none(),
-            "restore must not create an object ref for zero-version governance param snapshots"
-        );
-    }
-
-    #[test]
-    fn restore_task_refuses_cross_type_id_collision_and_preserves_state_root() {
-        let mut st = StateStore::new();
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 17,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "11".into(),
-                version: 1,
-            }),
-        );
-        let root_before = st.state_root();
-
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 17,
-                creator: "alice".into(),
-                bounty: 10,
-                status: TaskStatus::Open,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: None,
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 1,
-            }),
-        );
-
-        assert!(
-            st.get_task(17).is_none(),
-            "task restore must fail closed on cross-type object id collisions"
-        );
-        assert_eq!(
-            st.get_param(17).map(|param| (param.key, param.value, param.version)),
-            Some((
-                "monetary_base_burn_per_tick".into(),
-                "11".into(),
-                1,
-            )),
-            "cross-type task restore must preserve the existing governance object"
-        );
-        assert_eq!(
-            st.gov_param_key_index
-                .get("monetary_base_burn_per_tick")
-                .copied(),
-            Some(17),
-            "task restore must not clear governance key-index entries when the colliding object is rejected"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "rejected cross-type restore must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_task_cross_type_collision_preserves_state_when_pending_resolve_never_materialized() {
-        let mut st = StateStore::new();
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 17,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "11".into(),
-                version: 1,
-            }),
-        );
-        st.restore_pending_resolve_approval(
-            17,
-            Some(PendingResolveApprovalSnapshot {
-                slash_worker: true,
-                confirmations: 1,
-                first_approver: "authority-a".into(),
-                authority_set: "authority-a,authority-b".into(),
-                task_version: 1,
-            }),
-        );
-        let root_before = st.state_root();
-
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 17,
-                creator: "mallory".into(),
-                bounty: 99,
-                status: TaskStatus::Assigned,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-9".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 2,
-            }),
-        );
-
-        assert_eq!(
-            st.pending_resolve_approval(17),
-            None,
-            "cross-type ids must not retain staged pending resolve approval snapshots"
-        );
-        assert_eq!(
-            st.get_param(17).map(|param| (param.key, param.value, param.version)),
-            Some((
-                "monetary_base_burn_per_tick".into(),
-                "11".into(),
-                1,
-            )),
-            "cross-type task restore rejection must preserve the existing governance object"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "cross-type task restore rejection must leave state_root unchanged when no pending resolve snapshot could materialize"
-        );
-    }
-
-    #[test]
-    fn restore_task_rejects_mismatched_snapshot_without_perturbing_state_root() {
-        let mut st = StateStore::new();
-        let root_before = st.state_root();
-
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 18,
-                creator: "alice".into(),
-                bounty: 10,
-                status: TaskStatus::Open,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: None,
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 1,
-            }),
-        );
-
-        assert!(
-            st.get_task(17).is_none(),
-            "restore must reject mismatched task snapshots"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "rejected mismatched restore must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_task_rejects_invalid_replacement_without_clobbering_existing_object() {
-        let mut st = StateStore::new();
-        st.put_task_new(TaskObject {
-            task_id: 17,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        })
-        .unwrap();
-        let root_before = st.state_root();
-
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 18,
-                creator: "mallory".into(),
-                bounty: 99,
-                status: TaskStatus::Assigned,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 2,
-            }),
-        );
-
-        assert_eq!(
-            st.get_task(17)
-                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
-            Some((17, "alice".into(), 10, TaskStatus::Open, 1)),
-            "invalid restore snapshot must not clobber the existing task object"
-        );
-        assert_eq!(
-            st.get_ref(17),
-            Some(ObjectRef { id: 17, version: 1 }),
-            "invalid restore snapshot must preserve the existing object version"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "invalid restore snapshot must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_task_idempotent_snapshot_preserves_state_root_and_version() {
-        let mut st = StateStore::new();
-        let original = TaskObject {
-            task_id: 17,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        };
-        st.put_task_new(original.clone()).unwrap();
-        let root_before = st.state_root();
-
-        st.restore_task(17, Some(original));
-
-        assert_eq!(
-            st.get_ref(17),
-            Some(ObjectRef { id: 17, version: 1 }),
-            "idempotent restore must not churn the task object version"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "idempotent restore must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_task_scrubs_stale_pending_resolve_snapshot_on_invalid_replacement() {
-        let mut st = StateStore::new();
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 17,
-                creator: "alice".into(),
-                bounty: 10,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(12),
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: None,
-                version: 1,
-            }),
-        );
-        st.restore_pending_resolve_approval(
-            17,
-            Some(PendingResolveApprovalSnapshot {
-                slash_worker: true,
-                confirmations: 1,
-                first_approver: "authority-a".into(),
-                authority_set: "authority-a,authority-b".into(),
-                task_version: 1,
-            }),
-        );
-        let root_before = st.state_root();
-
-        st.restore_task(
-            17,
-            Some(TaskObject {
-                task_id: 18,
-                creator: "mallory".into(),
-                bounty: 99,
-                status: TaskStatus::Assigned,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: None,
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: None,
-                challenge_bond_forfeited: None,
-                version: 2,
-            }),
-        );
-
-        assert_eq!(
-            st.get_task(17)
-                .map(|task| (task.task_id, task.creator, task.bounty, task.status, task.version)),
-            Some((17, "alice".into(), 10, TaskStatus::Challenged, 1)),
-            "invalid replacement must not clobber the existing challenged task object"
-        );
-        assert_eq!(
-            st.pending_resolve_approval(17),
-            None,
-            "invalid replacement must scrub stale pending resolve approval residue"
-        );
         assert_ne!(
-            st.state_root(),
-            root_before,
-            "scrubbing stale pending resolve approval residue must perturb the state root"
-        );
-    }
-
-    #[test]
-    fn restore_task_none_preserves_cross_type_object_and_state_root() {
-        let mut st = StateStore::new();
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 17,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "11".into(),
-                version: 1,
-            }),
-        );
-        let root_before = st.state_root();
-
-        st.restore_task(17, None);
-
-        assert!(
-            st.get_task(17).is_none(),
-            "task deletion on a cross-type id must not materialize a task"
-        );
-        assert_eq!(
-            st.get_param(17).map(|param| (param.key, param.value, param.version)),
-            Some((
-                "monetary_base_burn_per_tick".into(),
-                "11".into(),
-                1,
-            )),
-            "task deletion must not remove a non-task object that shares the id"
-        );
-        assert_eq!(
-            st.gov_param_key_index
-                .get("monetary_base_burn_per_tick")
-                .copied(),
-            Some(17),
-            "cross-type task deletion must preserve governance key-index entries"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "cross-type task deletion must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_task_clears_stale_pending_resolve_snapshot_when_version_or_status_changes() {
-        let mut st = StateStore::new();
-        st.restore_task(
-            82,
-            Some(TaskObject {
-                task_id: 82,
-                creator: "alice".into(),
-                bounty: 10,
-                status: TaskStatus::Challenged,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(12),
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: None,
-                version: 1,
-            }),
-        );
-        st.restore_pending_resolve_approval(
-            82,
-            Some(PendingResolveApprovalSnapshot {
-                slash_worker: true,
-                confirmations: 1,
-                first_approver: "val-1".into(),
-                authority_set: "val-1,val-2".into(),
-                task_version: 1,
-            }),
-        );
-        let challenged_root = st.state_root();
-
-        st.restore_task(
-            82,
-            Some(TaskObject {
-                task_id: 82,
-                creator: "alice".into(),
-                bounty: 10,
-                status: TaskStatus::Assigned,
-                proof_type: Default::default(),
-                metadata: None,
-                worker: Some("worker-1".into()),
-                committed_hash: None,
-                result_hash: None,
-                reveal_salt: None,
-                committed_at_height: None,
-                reveal_deadline_height: None,
-                challenge_deadline_height: None,
-                challenge_window_blocks_snapshot: None,
-                challenged_at_height: Some(12),
-                resolve_deadline_height: None,
-                challenge_bond: None,
-                challenger: Some("bob".into()),
-                challenge_bond_forfeited: None,
-                version: 2,
-            }),
-        );
-
-        assert_eq!(
-            st.get_task(82).map(|task| (task.status, task.version)),
-            Some((TaskStatus::Assigned, 2)),
-            "restore should still install the replacement task snapshot"
-        );
-        assert_eq!(
-            st.pending_resolve_approval(82),
-            None,
-            "restore must clear stale pending resolve approval snapshots when the task version/status no longer matches"
-        );
-        assert_ne!(
-            st.state_root(),
-            challenged_root,
-            "state_root must change when stale pending resolve approval residue is scrubbed during restore"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_refuses_cross_type_id_collision_and_preserves_state_root() {
-        let mut st = StateStore::new();
-        st.put_task_new(TaskObject {
-            task_id: 17,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        })
-        .unwrap();
-        let root_before = st.state_root();
-
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 17,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "11".into(),
-                version: 1,
-            }),
-        );
-
-        assert!(
-            st.get_param(17).is_none(),
-            "gov param restore must fail closed on cross-type object id collisions"
-        );
-        assert_eq!(
-            st.get_task(17).map(|task| (task.task_id, task.creator, task.version)),
-            Some((17, "alice".into(), 1)),
-            "cross-type gov-param restore must preserve the existing task object"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "rejected cross-type restore must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_rejects_invalid_replacement_without_clobbering_existing_object() {
-        let mut st = StateStore::new();
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 17,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "11".into(),
-                version: 1,
-            }),
-        );
-        let root_before = st.state_root();
-
-        st.restore_gov_param(
-            17,
-            Some(GovParamObject {
-                key_id: 18,
-                key: "monetary_base_burn_per_tick".into(),
-                value: "99".into(),
-                version: 2,
-            }),
-        );
-
-        assert_eq!(
-            st.get_param(17).map(|param| (param.key_id, param.key, param.value, param.version)),
-            Some((
-                17,
-                "monetary_base_burn_per_tick".into(),
-                "11".into(),
-                1,
-            )),
-            "invalid restore snapshot must not clobber the existing governance object"
-        );
-        assert_eq!(
-            st.get_ref(17),
-            Some(ObjectRef { id: 17, version: 1 }),
-            "invalid restore snapshot must preserve the existing object version"
-        );
-        assert_eq!(
-            st.gov_param_key_index
-                .get("monetary_base_burn_per_tick")
-                .copied(),
-            Some(17),
-            "invalid restore snapshot must preserve governance key indexing"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "invalid restore snapshot must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_none_preserves_cross_type_object_and_state_root() {
-        let mut st = StateStore::new();
-        st.put_task_new(TaskObject {
-            task_id: 77,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        })
-        .unwrap();
-        let root_before = st.state_root();
-
-        st.restore_gov_param(77, None);
-
-        assert!(
-            st.get_param(77).is_none(),
-            "gov-param deletion on a cross-type id must not materialize a governance object"
-        );
-        assert_eq!(
-            st.get_task(77).map(|task| (task.task_id, task.creator, task.version)),
-            Some((77, "alice".into(), 1)),
-            "gov-param deletion must not remove a non-governance object that shares the id"
-        );
-        assert_eq!(
-            st.state_root(),
-            root_before,
-            "cross-type gov-param deletion must leave state_root unchanged"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_cross_type_collision_scrubs_stale_key_index_residue() {
-        let mut st = StateStore::new();
-        st.put_task_new(TaskObject {
-            task_id: 77,
-            creator: "alice".into(),
-            bounty: 10,
-            status: TaskStatus::Open,
-            proof_type: Default::default(),
-            metadata: None,
-            worker: None,
-            committed_hash: None,
-            result_hash: None,
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: None,
-            challenge_window_blocks_snapshot: None,
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 1,
-        })
-        .unwrap();
-        st.gov_param_key_index.insert("max_block_ms".into(), 77);
-        st.invalidate_state_root_cache();
-        let root_with_stale_index = st.state_root();
-
-        st.restore_gov_param(
-            77,
-            Some(GovParamObject {
-                key_id: 77,
-                key: "max_block_ms".into(),
-                value: "250".into(),
-                version: 1,
-            }),
-        );
-
-        assert!(
-            st.get_param(77).is_none(),
-            "cross-type gov-param restore must still fail closed without materializing a governance object"
-        );
-        assert_eq!(
-            st.get_task(77).map(|task| (task.task_id, task.creator, task.version)),
-            Some((77, "alice".into(), 1)),
-            "cross-type gov-param restore must preserve the existing task object"
-        );
-        assert!(
-            st.gov_param_key_index.is_empty(),
-            "cross-type gov-param restore rejection must scrub stale governance key-index residue"
-        );
-        assert_ne!(
-            st.state_root(),
-            root_with_stale_index,
-            "scrubbing stale governance key-index residue must perturb the state root"
-        );
-    }
-
-    #[test]
-    fn restore_gov_param_none_invalidates_cached_state_root_when_clearing_stale_key_index() {
-        let mut st = StateStore::new();
-        let empty_root = st.state_root();
-
-        st.gov_param_key_index.insert("max_block_ms".into(), 77);
-        st.invalidate_state_root_cache();
-        let indexed_root = st.state_root();
-        assert_ne!(
-            indexed_root, empty_root,
-            "state_root must account for governance key-index residue even before a backing object is present"
-        );
-
-        st.restore_gov_param(77, None);
-
-        assert_eq!(
-            st.state_root(),
-            empty_root,
-            "restore_gov_param(None) must invalidate the cached state_root when it clears stale key-index residue"
-        );
-        assert!(
-            st.gov_param_key_index.is_empty(),
-            "restore_gov_param(None) should remove the stale governance key-index entry"
+            base.content_hash_hex(),
+            ambiguous.content_hash_hex(),
+            "WAL content hashes must distinguish variable-length proposal/state-root tuples so checkpoint selection cannot alias semantically different entries"
         );
     }
 
@@ -5465,6 +4664,35 @@ mod tests {
             .expect("failed checked apply must not scrub pending queue");
         assert_eq!(pending.key_id, 7_400);
         assert_eq!(pending.activate_at_height, 77_700);
+    }
+
+    #[test]
+    fn restore_pending_gov_update_requires_matching_base_gov_param_snapshot() {
+        let snapshot = Some(PendingGovParamUpdate {
+            key_id: 7401,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 42,
+        });
+
+        let mut missing_base = StateStore::new();
+        missing_base.restore_pending_gov_update("challenge_min_bond", snapshot.clone());
+        assert!(
+            missing_base.pending_gov_update("challenge_min_bond").is_none(),
+            "restore must fail closed when the referenced governance base snapshot is absent"
+        );
+
+        let mut matching_base = StateStore::new();
+        matching_base
+            .set_gov_param_unchecked(7401, "challenge_min_bond".into(), "100".into())
+            .expect("setup must insert matching governance param before restore");
+        matching_base.restore_pending_gov_update("challenge_min_bond", snapshot);
+        let restored = matching_base
+            .pending_gov_update("challenge_min_bond")
+            .expect("restore should accept a pending governance snapshot backed by a matching base object");
+        assert_eq!(restored.key_id, 7401);
+        assert_eq!(restored.activate_at_height, 42);
+        assert_eq!(restored.value, "120");
     }
 
     #[test]
@@ -7707,6 +6935,612 @@ mod tests {
     }
 
     #[test]
+    fn pending_resolve_snapshot_canonicalization_keeps_semantically_identical_state_roots_equal() {
+        let staged_task = TaskObject {
+            task_id: 501,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        };
+
+        let mut staged = StateStore::new();
+        staged.put_task_new(staged_task.clone()).unwrap();
+        staged
+            .stage_or_confirm_resolve_approval(501, 1, true, "Authority-B", "Authority-B,authority-a")
+            .unwrap();
+
+        let mut restored = StateStore::new();
+        restored.put_task_new(staged_task).unwrap();
+        restored.restore_pending_resolve_approval(
+            501,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,authority-a".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            staged.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            staged.pending_resolve_approval_snapshot(501)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            restored.pending_resolve_first_approver(501).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(501)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            staged.state_root(),
+            restored.state_root(),
+            "restore/stage paths must canonicalize semantically equivalent pending resolve snapshots identically"
+        );
+    }
+
+    #[test]
+    fn paused_restore_pending_resolve_snapshot_still_canonicalizes_state_root() {
+        let staged_task = TaskObject {
+            task_id: 502,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        };
+
+        let mut staged = StateStore::new();
+        staged
+            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        staged.put_task_new(staged_task.clone()).unwrap();
+        staged
+            .stage_or_confirm_resolve_approval(502, 1, true, "Authority-B", "Authority-B,authority-a")
+            .unwrap();
+
+        let mut restored = StateStore::new();
+        restored
+            .set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        restored.put_task_new(staged_task).unwrap();
+        restored.restore_pending_resolve_approval(
+            502,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,authority-a".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_first_approver(502).as_deref(),
+            Some("authority-b")
+        );
+        assert_eq!(
+            restored
+                .pending_resolve_approval_snapshot(502)
+                .as_ref()
+                .map(|snapshot| snapshot.authority_set.as_str()),
+            Some("authority-a,authority-b")
+        );
+        assert_eq!(
+            staged.state_root(),
+            restored.state_root(),
+            "paused restore must canonicalize pending resolve snapshots the same way as staged state"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_snapshot_requires_matching_challenged_task() {
+        let snapshot = Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Authority-B".into(),
+            authority_set: "Authority-B,authority-a".into(),
+            task_version: 1,
+        });
+
+        let mut missing_task = StateStore::new();
+        missing_task.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            missing_task.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must fail closed when the referenced challenged task is absent"
+        );
+
+        let mut wrong_status = StateStore::new();
+        wrong_status
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            })
+            .unwrap();
+        wrong_status.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            wrong_status.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must reject pending resolve snapshots for tasks that are no longer challenged"
+        );
+
+        let mut incomplete_challenge = StateStore::new();
+        incomplete_challenge
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: None,
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        incomplete_challenge.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            incomplete_challenge
+                .pending_resolve_approval_snapshot(501)
+                .is_none(),
+            "restore must reject pending resolve snapshots when the challenged task snapshot is incomplete"
+        );
+
+        let mut stale_cleanup = StateStore::new();
+        stale_cleanup
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        stale_cleanup.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            stale_cleanup.pending_resolve_approval_snapshot(501).is_some(),
+            "setup must restore a matching challenged pending resolve snapshot before cleanup"
+        );
+        stale_cleanup.restore_task(501, None);
+        assert!(
+            stale_cleanup.pending_resolve_approval_snapshot(501).is_none(),
+            "task restore removal must scrub stale pending resolve snapshots for snapshot completeness"
+        );
+
+        let mut key_index_collision = StateStore::new();
+        key_index_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param with overlapping key id");
+        assert_eq!(
+            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "setup must confirm the governance key index points at the overlapping key id"
+        );
+        key_index_collision.restore_task(501, None);
+        assert_eq!(
+            key_index_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "task restore removal must not evict an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            key_index_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "overlapping governance param object must remain restorable after task cleanup"
+        );
+
+        let mut restore_collision = StateStore::new();
+        restore_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param before colliding task restore");
+        restore_collision.restore_pending_resolve_approval(501, snapshot.clone());
+        restore_collision.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            }),
+        );
+        assert_eq!(
+            restore_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "task restore must fail closed instead of corrupting an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            restore_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "task restore must not overwrite an unrelated governance snapshot when ids overlap"
+        );
+        assert!(
+            restore_collision.pending_resolve_approval_snapshot(501).is_none(),
+            "failed task restore must scrub stale pending resolve snapshots when the object slot belongs to another snapshot domain"
+        );
+
+        let mut incomplete_replay = StateStore::new();
+        incomplete_replay
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        incomplete_replay.restore_pending_resolve_approval(501, snapshot.clone());
+        assert!(
+            incomplete_replay
+                .pending_resolve_approval_snapshot(501)
+                .is_some(),
+            "setup must restore a matching challenged pending resolve snapshot before replaying an incomplete task snapshot"
+        );
+        incomplete_replay.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: None,
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            }),
+        );
+        assert!(
+            incomplete_replay
+                .pending_resolve_approval_snapshot(501)
+                .is_none(),
+            "task restore must scrub pending resolve snapshots when replayed challenged task state becomes incomplete"
+        );
+
+        let mut wrong_version = StateStore::new();
+        let wrong_version_ref = wrong_version
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 1,
+            })
+            .unwrap();
+        wrong_version
+            .update_task(
+                wrong_version_ref,
+                TaskObject {
+                    task_id: 501,
+                    creator: "alice".into(),
+                    bounty: 100,
+                    status: TaskStatus::Challenged,
+                    proof_type: Default::default(),
+                    metadata: None,
+                    worker: Some("worker-1".into()),
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: Some(25),
+                    resolve_deadline_height: Some(35),
+                    challenge_bond: Some(500),
+                    challenger: Some("bob".into()),
+                    challenge_bond_forfeited: Some(false),
+                    version: 1,
+                },
+            )
+            .unwrap();
+        wrong_version.restore_pending_resolve_approval(501, snapshot);
+        assert!(
+            wrong_version.pending_resolve_approval_snapshot(501).is_none(),
+            "restore must reject stale pending resolve snapshots whose task version no longer matches"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
+        let snapshot = Some(PendingResolveApprovalSnapshot {
+            first_approver: "validator-1".into(),
+            slash_worker: false,
+            confirmations: 1,
+            authority_set: "committee-a".into(),
+            task_version: 1,
+        });
+
+        let mut zero_version_collision = StateStore::new();
+        zero_version_collision
+            .set_gov_param_unchecked(501, "max_block_ms".into(), "500".into())
+            .expect("setup must insert governance param before invalid task restore");
+        zero_version_collision.restore_pending_resolve_approval(501, snapshot);
+        zero_version_collision.restore_task(
+            501,
+            Some(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(false),
+                version: 0,
+            }),
+        );
+        assert_eq!(
+            zero_version_collision.gov_param_key_index.get("max_block_ms").copied(),
+            Some(501),
+            "invalid task restore must fail closed without corrupting an unrelated governance key index mapping when ids overlap"
+        );
+        assert_eq!(
+            zero_version_collision.get_param(501).unwrap().key,
+            "max_block_ms",
+            "invalid task restore must not overwrite an unrelated governance snapshot when ids overlap"
+        );
+        assert!(
+            zero_version_collision.pending_resolve_approval_snapshot(501).is_none(),
+            "invalid task restore must scrub stale pending resolve snapshots for snapshot completeness"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_mismatched_snapshot_without_clobbering_other_snapshot_domains() {
+        let mut collision = StateStore::new();
+        collision
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            })
+            .expect("setup must insert task before invalid governance restore");
+        collision.restore_gov_param(
+            501,
+            Some(GovParamObject {
+                key_id: 999,
+                key: "max_block_ms".into(),
+                value: "500".into(),
+                version: 1,
+            }),
+        );
+        assert_eq!(
+            collision.get_task(501).unwrap().task_id,
+            501,
+            "invalid governance restore must not delete an unrelated task snapshot when ids overlap"
+        );
+        assert!(
+            collision.get_param(501).is_none(),
+            "invalid governance restore must fail closed instead of materializing a mismatched governance snapshot"
+        );
+        assert_eq!(
+            collision.gov_param_key_index.get("max_block_ms").copied(),
+            None,
+            "invalid governance restore must not publish a key index entry for a rejected snapshot"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_version_snapshot_without_clobbering_other_snapshot_domains() {
+        let mut collision = StateStore::new();
+        collision
+            .put_task_new(TaskObject {
+                task_id: 501,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Open,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 1,
+            })
+            .expect("setup must insert task before invalid governance restore");
+        collision.restore_gov_param(
+            501,
+            Some(GovParamObject {
+                key_id: 501,
+                key: "max_block_ms".into(),
+                value: "500".into(),
+                version: 0,
+            }),
+        );
+        assert_eq!(
+            collision.get_task(501).unwrap().task_id,
+            501,
+            "zero-version governance restore must not delete an unrelated task snapshot when ids overlap"
+        );
+        assert!(
+            collision.get_param(501).is_none(),
+            "zero-version governance restore must fail closed instead of materializing an invalid governance snapshot"
+        );
+        assert_eq!(
+            collision.gov_param_key_index.get("max_block_ms").copied(),
+            None,
+            "zero-version governance restore must not publish a key index entry for a rejected snapshot"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_embedded_gov_param_key_id_changes() {
         let mut st_a = StateStore::new();
         st_a.objects.insert(
@@ -8081,8 +7915,8 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
@@ -8177,8 +8011,63 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_fails_closed_on_height_overflow_tail() {
+        let e1 = WalMeta {
+            height: u64::MAX - 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: u64::MAX,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let overflowing_tail = WalMeta {
+            height: 0,
+            round: 2,
+            proposal_hash: "p3-overflow-tail".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h2),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 0,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: overflowing_tail.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, overflowing_tail])
+            .unwrap();
+        assert!(
+            got.is_none(),
+            "overflowed WAL height tails must fail closed instead of wrapping to a forged checkpoint"
+        );
     }
 
     #[test]
@@ -8224,7 +8113,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
+    fn wal_checkpoint_verification_rejects_conflicting_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -8240,7 +8129,7 @@ mod tests {
             proposal_hash: "p2".into(),
             committed: true,
             state_root_hex: "r2".into(),
-            prev_hash_hex: Some(h1),
+            prev_hash_hex: Some(h1.clone()),
         };
         let h2 = e2.content_hash_hex();
 
@@ -8265,9 +8154,9 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
-        assert_eq!(got.wal_entry_hash_hex, h2);
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+        assert_eq!(got.wal_entry_hash_hex, h1);
     }
 
     #[test]
@@ -8453,7 +8342,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_ignores_unsorted_stale_and_future_checkpoints() {
+    fn wal_checkpoint_verification_rejects_unsorted_conflicting_checkpoint_even_with_future_noise() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -8499,8 +8388,8 @@ mod tests {
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.height, 2);
-        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
@@ -8604,6 +8493,80 @@ mod tests {
         assert!(
             got.is_none(),
             "an uncommitted genesis WAL entry must not be accepted as a recoverable checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_recovery_metadata() {
+        let blank_proposal = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let blank_state_root = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "   ".into(),
+            prev_hash_hex: None,
+        };
+        let valid_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+
+        let blank_proposal_checkpoint = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: blank_proposal.content_hash_hex(),
+        }];
+        let blank_state_root_checkpoint = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "   ".into(),
+            wal_entry_hash_hex: blank_state_root.content_hash_hex(),
+        }];
+        let blank_checkpoint_state_root = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "   ".into(),
+            wal_entry_hash_hex: valid_entry.content_hash_hex(),
+        }];
+        let blank_checkpoint_wal_hash = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "   ".into(),
+        }];
+
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_proposal_checkpoint, &[blank_proposal])
+                .unwrap()
+                .is_none(),
+            "blank proposal metadata must fail closed during checkpoint recovery"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_state_root_checkpoint, &[blank_state_root])
+                .unwrap()
+                .is_none(),
+            "blank state-root metadata must fail closed during checkpoint recovery"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_checkpoint_state_root, &[valid_entry.clone()])
+                .unwrap()
+                .is_none(),
+            "blank checkpoint state-root metadata must not be accepted as a recoverable snapshot"
+        );
+        assert!(
+            verify_wal_and_find_checkpoint(&blank_checkpoint_wal_hash, &[valid_entry])
+                .unwrap()
+                .is_none(),
+            "blank checkpoint WAL-hash metadata must not be accepted as a recoverable snapshot"
         );
     }
 

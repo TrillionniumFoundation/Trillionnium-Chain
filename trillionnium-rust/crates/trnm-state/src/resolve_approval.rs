@@ -3,6 +3,7 @@ use crate::{
     CHALLENGE_FORFEIT_TREASURY_ACCOUNT, DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
     RESERVED_SYSTEM_AUTHORITY, WORKER_SLASH_TREASURY_ACCOUNT,
 };
+use trnm_types::TaskStatus;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PendingResolveApprovalSnapshot {
@@ -11,6 +12,73 @@ pub struct PendingResolveApprovalSnapshot {
     pub first_approver: String,
     pub authority_set: String,
     pub task_version: u64,
+}
+
+fn validate_resolve_approval_identity(approver: &str, authority_set: &str) -> Result<(), String> {
+    let approver_trimmed = approver.trim();
+    if approver_trimmed.is_empty() {
+        return Err("resolve approval approver must be non-empty".into());
+    }
+    if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
+        return Err("resolve approval approver must not contain whitespace".into());
+    }
+    if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
+        return Err("resolve approval approver must be a single canonical actor id".into());
+    }
+    if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+        || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+        || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+        || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        || approver_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+    {
+        return Err("resolve approval approver must be an explicit non-system authority".into());
+    }
+
+    let authority_trimmed = authority_set.trim();
+    if authority_trimmed.is_empty() || authority_trimmed != authority_set {
+        return Err(
+            "resolve approval authority set must be a canonical comma-delimited actor list".into(),
+        );
+    }
+    let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
+    if authority_members.len() < 2 {
+        return Err("resolve approval authority set must include at least two members".into());
+    }
+    let has_forbidden_separator = |token: &str| {
+        token.contains(';')
+            || token.contains('|')
+            || token.contains('；')
+            || token.contains('，')
+            || token.contains('、')
+    };
+    let mut seen_members = std::collections::BTreeSet::new();
+    for member in &authority_members {
+        let member_trimmed = member.trim();
+        if member_trimmed.is_empty()
+            || member_trimmed != *member
+            || member_trimmed.chars().any(|c| c.is_whitespace())
+            || has_forbidden_separator(member_trimmed)
+            || !member_trimmed.is_ascii()
+            || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+            || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        {
+            return Err(
+                "resolve approval authority set contains non-canonical or forbidden member"
+                    .into(),
+            );
+        }
+        if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
+            return Err("resolve approval authority set must not contain duplicate members".into());
+        }
+    }
+    if !authority_members.iter().any(|member| *member == approver_trimmed) {
+        return Err("resolve approval approver must be a configured authority member".into());
+    }
+
+    Ok(())
 }
 
 impl StateStore {
@@ -22,76 +90,7 @@ impl StateStore {
         approver: &str,
         authority_set: &str,
     ) -> Result<bool, String> {
-        let approver_trimmed = approver.trim();
-        if approver_trimmed.is_empty() {
-            return Err("resolve approval approver must be non-empty".into());
-        }
-        if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
-            return Err("resolve approval approver must not contain whitespace".into());
-        }
-        if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
-            return Err("resolve approval approver must be a single canonical actor id".into());
-        }
-        if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-            || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            || approver_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-        {
-            return Err(
-                "resolve approval approver must be an explicit non-system authority".into(),
-            );
-        }
-
-        let authority_trimmed = authority_set.trim();
-        if authority_trimmed.is_empty() || authority_trimmed != authority_set {
-            return Err(
-                "resolve approval authority set must be a canonical comma-delimited actor list"
-                    .into(),
-            );
-        }
-        let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
-        if authority_members.len() < 2 {
-            return Err("resolve approval authority set must include at least two members".into());
-        }
-        let has_forbidden_separator = |token: &str| {
-            token.contains(';')
-                || token.contains('|')
-                || token.contains('；')
-                || token.contains('，')
-                || token.contains('、')
-        };
-        let mut seen_members = std::collections::BTreeSet::new();
-        for member in &authority_members {
-            let member_trimmed = member.trim();
-            if member_trimmed.is_empty()
-                || member_trimmed != *member
-                || member_trimmed.chars().any(|c| c.is_whitespace())
-                || has_forbidden_separator(member_trimmed)
-                || !member_trimmed.is_ascii()
-                || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-                || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-                || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-            {
-                return Err(
-                    "resolve approval authority set contains non-canonical or forbidden member"
-                        .into(),
-                );
-            }
-            if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
-                return Err(
-                    "resolve approval authority set must not contain duplicate members".into(),
-                );
-            }
-        }
-        if !authority_members
-            .iter()
-            .any(|member| *member == approver_trimmed)
-        {
-            return Err("resolve approval approver must be a configured authority member".into());
-        }
+        validate_resolve_approval_identity(approver, authority_set)?;
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.authority_set != authority_set {
@@ -170,10 +169,31 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                if task_id == 0 || snapshot.task_version == 0 || snapshot.confirmations == 0 {
+                if task_id == 0
+                    || snapshot.task_version == 0
+                    || snapshot.confirmations != 1
+                    || validate_resolve_approval_identity(
+                        &snapshot.first_approver,
+                        &snapshot.authority_set,
+                    )
+                    .is_err()
+                {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }
+
+                let Some(task) = self.get_task(task_id) else {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                };
+                if task.version != snapshot.task_version
+                    || task.status != TaskStatus::Challenged
+                    || !challenged_task_snapshot_complete_for_pending_resolve(task)
+                {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                }
+
                 self.pending_resolve_approvals.insert(
                     task_id,
                     PendingResolveApproval {

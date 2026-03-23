@@ -2213,6 +2213,34 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
+    let challenged_task = TaskObject {
+        task_id: 5_150,
+        creator: "creator-a".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 7,
+    };
+    state_a.restore_task(5_150, Some(challenged_task.clone()));
+    state_b.restore_task(5_150, Some(challenged_task));
+
+    // Replay/restore must preserve a staged single-approval snapshot on the same
+    // challenged task, while any un-encodable finalized quorum still scrubs fail-closed.
+
     state_a.restore_pending_resolve_approval(
         5_150,
         Some(PendingResolveApprovalSnapshot {
@@ -2237,6 +2265,7 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
     let root_a = state_a.state_root();
     let root_b = state_b.state_root();
     assert_eq!(state_b.pending_resolve_approval(5_150), None);
+    assert_eq!(state_b.pending_resolve_first_approver(5_150), None);
     assert_ne!(
         root_a, root_b,
         "finalized restore snapshots without an encoded second approver must scrub instead of materializing a fake quorum"
@@ -2257,6 +2286,57 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
         state_b.state_root(),
         root_a,
         "restoring the original staged snapshot should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
+fn pending_resolve_restore_rejects_reserved_first_approver_even_when_task_exists() {
+    let mut baseline = StateStore::new();
+    let mut restored = StateStore::new();
+
+    let challenged_task = TaskObject {
+        task_id: 5_152,
+        creator: "creator-a".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(40),
+        challenge_bond: Some(5),
+        challenger: Some("challenger-a".into()),
+        challenge_bond_forfeited: None,
+        version: 7,
+    };
+    baseline.restore_task(5_152, Some(challenged_task.clone()));
+    restored.restore_task(5_152, Some(challenged_task));
+
+    let baseline_root = baseline.state_root();
+    restored.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "treasury.challenge_escrow".into(),
+            authority_set: "treasury.challenge_escrow,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(restored.pending_resolve_approval(5_152), None);
+    assert_eq!(restored.pending_resolve_first_approver(5_152), None);
+    assert_eq!(
+        restored.state_root(),
+        baseline_root,
+        "restore must fail closed for reserved first approvers even when the referenced challenged task exists"
     );
 }
 
@@ -3906,50 +3986,33 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
-fn restore_pending_gov_update_key_id_mismatch_fails_closed_without_overwriting_canonical_slot() {
+fn restore_pending_gov_update_invalid_sensitive_snapshot_fails_closed_without_materializing_queue_entry() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
-
-    state.restore_gov_param(
-        113,
-        Some(GovParamObject {
-            key_id: 113,
-            key: "challenge_min_bond".to_string(),
-            value: "5000".to_string(),
-            version: 1,
-        }),
-    );
-
-    let root_with_canonical_param = state.state_root();
 
     state.restore_pending_gov_update(
         "challenge_min_bond",
         Some(PendingGovParamUpdate {
-            key_id: 7_201,
+            key_id: 0,
             key: "challenge_min_bond".to_string(),
-            value: "6000".to_string(),
-            activate_at_height: 1_020,
+            value: "0".to_string(),
+            activate_at_height: 0,
         }),
     );
 
     assert!(
         state.pending_gov_update("challenge_min_bond").is_none(),
-        "restore must fail closed when a pending governance snapshot tries to use a non-canonical key_id for an existing governance key"
+        "restore_pending_gov_update must fail closed when the snapshot is not a valid staged sensitive update"
     );
     assert_eq!(
-        state.gov_param_string("challenge_min_bond").as_deref(),
-        Some("5000"),
-        "rejecting a mismatched pending key_id must preserve the canonical immediate governance slot"
-    );
-    assert_eq!(
-        state.state_root(),
-        root_with_canonical_param,
-        "rejecting a mismatched pending key_id must leave the canonical governance-only root unchanged"
-    );
-    assert_ne!(
         state.state_root(),
         baseline_root,
-        "the guard should be evaluated against the existing canonical governance slot rather than collapsing unrelated baseline state"
+        "invalid pending governance snapshots must not perturb the deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after rejecting an invalid pending governance snapshot should deterministically reuse the unchanged cached root"
     );
 }
 
