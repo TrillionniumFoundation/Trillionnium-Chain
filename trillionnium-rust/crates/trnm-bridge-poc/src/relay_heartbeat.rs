@@ -164,6 +164,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{202E}'
             | '\u{202F}'
             | '\u{205F}'
+            | '\u{2800}'
             | '\u{3000}'
             | '\u{2060}'
             | '\u{2061}'

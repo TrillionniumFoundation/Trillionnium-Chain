@@ -56,9 +56,16 @@ impl OracleSnapshot {
         window_end_ms: u64,
         snapshot_ts_ms: u64,
     ) -> Result<Self, OracleError> {
-        let feed_id = feed_id.into().trim().to_ascii_lowercase();
+        let raw_feed_id = feed_id.into();
+        let feed_id = raw_feed_id.trim().to_ascii_lowercase();
         if feed_id.is_empty() {
             return Err(OracleError::EmptyFeedId);
+        }
+        if raw_feed_id != feed_id {
+            return Err(OracleError::NonCanonicalFeedId {
+                raw: raw_feed_id,
+                canonical: feed_id,
+            });
         }
         if window_end_ms < window_start_ms {
             return Err(OracleError::InvalidWindow {
@@ -172,9 +179,36 @@ impl OraclePolicy {
         now_ts_ms: u64,
     ) -> Result<(), OracleError> {
         self.validate()?;
+
+        let canonical_feed_id = snapshot.feed_id.trim().to_ascii_lowercase();
+        if canonical_feed_id.is_empty() {
+            return Err(OracleError::EmptyFeedId);
+        }
+        if snapshot.feed_id != canonical_feed_id {
+            return Err(OracleError::NonCanonicalFeedId {
+                raw: snapshot.feed_id.clone(),
+                canonical: canonical_feed_id,
+            });
+        }
+        if snapshot.window_end_ms < snapshot.window_start_ms {
+            return Err(OracleError::InvalidWindow {
+                start_ms: snapshot.window_start_ms,
+                end_ms: snapshot.window_end_ms,
+            });
+        }
+
+        validate_snapshot_sources(snapshot)?;
+
         snapshot.validate_hash()?;
 
-        if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
+        if snapshot.snapshot_ts_ms > now_ts_ms {
+            return Err(OracleError::FutureSnapshot {
+                snapshot_ts_ms: snapshot.snapshot_ts_ms,
+                now_ts_ms,
+            });
+        }
+
+        if now_ts_ms - snapshot.snapshot_ts_ms > self.max_staleness_ms {
             return Err(OracleError::StaleSnapshot {
                 snapshot_ts_ms: snapshot.snapshot_ts_ms,
                 now_ts_ms,
@@ -187,6 +221,13 @@ impl OraclePolicy {
         {
             return Err(OracleError::InsufficientSources {
                 min_sources: self.min_sources,
+                actual_sources: snapshot.sources.len() as u32,
+                sample_count: snapshot.sample_count,
+            });
+        }
+
+        if snapshot.sample_count < snapshot.sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
                 actual_sources: snapshot.sources.len() as u32,
                 sample_count: snapshot.sample_count,
             });
@@ -223,9 +264,10 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline) as u128 * 10_000;
+    let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    (numerator / denominator) as u32
+    let deviation = numerator / denominator;
+    deviation.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -280,9 +322,30 @@ fn canonical_source_cardinality(snapshot: &OracleSnapshot) -> u32 {
     snapshot
         .sources
         .iter()
-        .map(|source| source.as_str())
+        .map(|source| source.as_str().trim().to_ascii_lowercase())
         .collect::<BTreeSet<_>>()
         .len() as u32
+}
+
+fn validate_snapshot_sources(snapshot: &OracleSnapshot) -> Result<(), OracleError> {
+    let mut canonical_sources = BTreeSet::new();
+    for source in &snapshot.sources {
+        let raw = source.as_str();
+        if raw.trim().is_empty() {
+            return Err(OracleError::EmptySourceId);
+        }
+        let canonical = raw.trim().to_ascii_lowercase();
+        if raw != canonical {
+            return Err(OracleError::NonCanonicalSourceId {
+                raw: raw.to_string(),
+                canonical,
+            });
+        }
+        if !canonical_sources.insert(canonical) {
+            return Err(OracleError::DuplicateSources);
+        }
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -328,10 +391,30 @@ impl OracleValidationReport {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_explicit_unclassified_failure_accounting(&self) -> bool {
+        !self.ok
+            && self.error.is_some()
+            && self.metrics.accepted_total == 0
+            && self.classified_reject_total() == 0
+            && self.observation_classified_reject_total() == 0
+            && self.metrics.sample_count > 0
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
-        self.observation_matches_metrics()
-            && self.classified_outcome_conserves_sample_count()
-            && self.observation_classified_outcome_conserves_sample_count()
+        let non_empty_sample = self.metrics.sample_count > 0;
+        let result_label_consistent = if self.ok {
+            self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
+        } else {
+            self.error.is_some() && self.metrics.accepted_total == 0
+        };
+        let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count();
+
+        non_empty_sample
+            && self.observation_matches_metrics()
+            && result_label_consistent
+            && (outcome_accounting_consistent
+                || self.has_explicit_unclassified_failure_accounting())
     }
 }
 
@@ -357,7 +440,8 @@ pub fn validate_snapshot_observed(
             observation.stale_reject_total = 1;
             Some("stale".to_string())
         }
-        Err(OracleError::InsufficientSources { .. }) => {
+        Err(OracleError::InsufficientSources { .. })
+        | Err(OracleError::InconsistentSampleCount { .. }) => {
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
@@ -393,6 +477,8 @@ pub enum OracleError {
     NonCanonicalSourceId { raw: String, canonical: String },
     #[error("feed id is empty")]
     EmptyFeedId,
+    #[error("feed id must be canonical lowercase+trim: raw={raw}, canonical={canonical}")]
+    NonCanonicalFeedId { raw: String, canonical: String },
     #[error("invalid window: start={start_ms}, end={end_ms}")]
     InvalidWindow { start_ms: u64, end_ms: u64 },
     #[error("duplicate source ids are not allowed")]
@@ -401,6 +487,11 @@ pub enum OracleError {
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
+    #[error("future snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}")]
+    FutureSnapshot {
+        snapshot_ts_ms: u64,
+        now_ts_ms: u64,
+    },
     #[error(
         "stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}"
     )]
@@ -421,6 +512,13 @@ pub enum OracleError {
     DeviationExceeded {
         deviation_bps: u32,
         max_deviation_bps: u32,
+    },
+    #[error(
+        "inconsistent sample count: sources={actual_sources}, sample_count={sample_count}"
+    )]
+    InconsistentSampleCount {
+        actual_sources: u32,
+        sample_count: u32,
     },
     #[error(
         "update rate exceeded: sample_count={sample_count}, max_update_rate_per_window={max_update_rate_per_window}"
@@ -461,6 +559,30 @@ mod tests {
             snapshot_ts_ms,
         )
         .expect("snapshot should be valid")
+    }
+
+    #[test]
+    fn rejects_non_canonical_feed_id_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            " BTC/USD ",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot build should reject non-canonical feed id");
+
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalFeedId {
+                raw: " BTC/USD ".to_string(),
+                canonical: "btc/usd".to_string(),
+            }
+        );
     }
 
     #[test]
@@ -519,6 +641,34 @@ mod tests {
     }
 
     #[test]
+    fn rejects_sample_count_below_source_cardinality() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink"), source("pyth")],
+            2,
+            Some(100_000),
+            None,
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("snapshot should fail inconsistent accounting guardrail");
+        assert!(matches!(
+            err,
+            OracleError::InconsistentSampleCount {
+                actual_sources: 3,
+                sample_count: 2,
+            }
+        ));
+    }
+
+    #[test]
     fn rejects_deviation_exceeded() {
         let p = policy();
         let snap = snapshot_with(120_000, Some(100_000), 10_000); // 2000 bps
@@ -560,6 +710,12 @@ mod tests {
     }
 
     #[test]
+    fn deviation_bps_saturates_at_cap_for_extreme_values() {
+        assert_eq!(deviation_bps(i128::MAX, 1), MAX_DEVIATION_BPS_CAP);
+        assert_eq!(deviation_bps(i128::MIN, -1), MAX_DEVIATION_BPS_CAP);
+    }
+
+    #[test]
     fn observed_report_preserves_zero_deviation_boundary_as_drift_label() {
         let p = OraclePolicy {
             min_sources: 2,
@@ -595,7 +751,7 @@ mod tests {
         .expect("snapshot 1");
 
         let s2 = OracleSnapshot::new(
-            "BTC/USD",
+            "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink")],
             2,
@@ -609,6 +765,23 @@ mod tests {
 
         assert_eq!(s1.snapshot_hash, s2.snapshot_hash);
         assert!(s1.validate_hash().is_ok());
+    }
+
+    #[test]
+    fn rejects_future_snapshot_timestamp() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_001);
+
+        let err = p
+            .validate_snapshot(&snap, 10_000)
+            .expect_err("future-dated snapshot should fail oracle guardrail");
+        assert!(matches!(
+            err,
+            OracleError::FutureSnapshot {
+                snapshot_ts_ms: 10_001,
+                now_ts_ms: 10_000,
+            }
+        ));
     }
 
     #[test]
@@ -678,6 +851,34 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_maps_inconsistent_sample_count_to_quorum_error_label() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink"), source("pyth")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("quorum"));
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_drift_rejection_to_stable_error_label() {
         let p = policy();
         let snap = snapshot_with(120_000, Some(100_000), 10_000);
@@ -721,6 +922,7 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
@@ -904,11 +1106,89 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert!(matches!(
-            report.error.as_deref(),
-            Some(error) if error.starts_with("snapshot hash mismatch:")
-        ));
+        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    }
+
+    #[test]
+    fn rejects_deserialized_duplicate_sources_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized duplicate sources must fail guardrail");
+        assert_eq!(err, OracleError::DuplicateSources);
+    }
+
+    #[test]
+    fn rejects_deserialized_non_canonical_feed_id_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": " BTC/USD ",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink"],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized non-canonical feed id must fail guardrail");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalFeedId {
+                raw: " BTC/USD ".to_string(),
+                canonical: "btc/usd".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn rejects_deserialized_non_canonical_source_id_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", " Chainlink "],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized non-canonical source id must fail guardrail");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSourceId {
+                raw: " Chainlink ".to_string(),
+                canonical: "chainlink".to_string(),
+            }
+        );
     }
 
     #[test]
@@ -1055,5 +1335,49 @@ mod tests {
         assert!(report.observation_matches_metrics());
         assert!(!report.observation_classified_outcome_conserves_sample_count());
         assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_empty_bridge_sample_even_when_counters_align() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            10_100,
+        );
+
+        assert!(report.bridge_contract_consistent());
+        report.ok = false;
+        report.error = Some("stale".to_string());
+        report.observation.accepted_total = 0;
+        report.observation.stale_reject_total = 0;
+        report.metrics.accepted_total = 0;
+        report.metrics.oracle_stale_reject_total = 0;
+        report.metrics.sample_count = 0;
+
+        assert!(report.observation_matches_metrics());
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_classified_outcome_conserves_sample_count());
+        assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_ok_error_coherence_drift() {
+        let mut success = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            10_100,
+        );
+        assert!(success.bridge_contract_consistent());
+        success.error = Some("stale".to_string());
+        assert!(!success.bridge_contract_consistent());
+
+        let mut failure = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            16_000,
+        );
+        assert!(failure.bridge_contract_consistent());
+        failure.error = None;
+        assert!(!failure.bridge_contract_consistent());
     }
 }

@@ -1,5 +1,8 @@
 use std::{
-    fs,
+    collections::BTreeSet,
+    fs::{self, OpenOptions},
+    hash::{Hash, Hasher},
+    io::Write,
     path::{Path, PathBuf},
 };
 
@@ -48,89 +51,59 @@ fn truncate_quarantine_raw_line(raw: &str) -> String {
     raw[..end].to_string()
 }
 
-fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
+fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (usize, u64) {
+    (entry.line_number, entry.line_hash)
+}
+
+fn existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(usize, u64)> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeSet::new();
+    };
+    raw.lines()
+        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+        .filter_map(|value| {
+            let line_number = value.get("line_number")?.as_u64()? as usize;
+            let line_hash = value
+                .get("line_hash")
+                .and_then(|hash| hash.as_u64())
+                .or_else(|| {
+                    value
+                        .get("raw_line")
+                        .and_then(|raw| raw.as_str())
+                        .map(stable_line_hash)
+                })?;
+            Some((line_number, line_hash))
+        })
+        .collect()
+}
+
+fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<usize> {
+    if entries.is_empty() {
+        return Ok(0);
+    }
     let quarantine_path = ingress_quarantine_file_for(path);
     let _lock = acquire_market_file_lock(&quarantine_path)?;
     if let Some(parent) = quarantine_path.parent() {
         fs::create_dir_all(parent)?;
     }
-
-    let mut seen = std::collections::HashMap::new();
-    let mut retained = Vec::new();
-    let mut existing_total = 0usize;
-    let mut changed = false;
-    if let Ok(existing_raw) = fs::read_to_string(&quarantine_path) {
-        for line in existing_raw.lines().filter(|line| !line.trim().is_empty()) {
-            existing_total += 1;
-            let Ok(mut existing) = serde_json::from_str::<IngressQuarantineRecord>(line) else {
-                changed = true;
-                continue;
-            };
-            let original_raw_line = existing.raw_line.clone();
-            existing.raw_line = truncate_quarantine_raw_line(&existing.raw_line);
-            if existing.raw_line != original_raw_line {
-                changed = true;
-            }
-            let key = (
-                existing.source_path.clone(),
-                existing.line_hash,
-                existing.raw_line.clone(),
-            );
-            if let std::collections::hash_map::Entry::Vacant(slot) = seen.entry(key) {
-                slot.insert(retained.len());
-                retained.push(existing);
-            }
-        }
+    let mut seen = existing_quarantine_fingerprints(&quarantine_path);
+    let pending = entries
+        .iter()
+        .filter(|entry| seen.insert(quarantine_fingerprint(entry)))
+        .collect::<Vec<_>>();
+    if pending.is_empty() {
+        return Ok(0);
     }
-
-    let mut changed = changed || existing_total != retained.len();
-    for entry in entries {
-        let key = (
-            entry.source_path.clone(),
-            entry.line_hash,
-            entry.raw_line.clone(),
-        );
-        match seen.entry(key) {
-            std::collections::hash_map::Entry::Vacant(slot) => {
-                slot.insert(retained.len());
-                retained.push(entry.clone());
-                changed = true;
-            }
-            std::collections::hash_map::Entry::Occupied(mut slot) => {
-                let idx = *slot.get();
-                if retained[idx].line_number != entry.line_number
-                    || retained[idx].error != entry.error
-                    || retained[idx].quarantined_at_unix_ms != entry.quarantined_at_unix_ms
-                {
-                    retained.remove(idx);
-                    for seen_idx in seen.values_mut() {
-                        if *seen_idx > idx {
-                            *seen_idx -= 1;
-                        }
-                    }
-                    let new_idx = retained.len();
-                    retained.push(entry.clone());
-                    *slot.get_mut() = new_idx;
-                    changed = true;
-                }
-            }
-        }
+    let appended = pending.len();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&quarantine_path)?;
+    for entry in pending {
+        writeln!(file, "{}", serde_json::to_string(entry)?)?;
     }
-    if retained.len() > MAX_INGRESS_QUARANTINE_RECORDS {
-        let drop_count = retained.len() - MAX_INGRESS_QUARANTINE_RECORDS;
-        retained.drain(0..drop_count);
-        changed = true;
-    }
-    if !changed {
-        return Ok(());
-    }
-
-    let mut out = String::new();
-    for entry in retained {
-        out.push_str(&serde_json::to_string(&entry)?);
-        out.push('\n');
-    }
-    atomic_write_text_file(&quarantine_path, &out)
+    file.sync_all()?;
+    Ok(appended)
 }
 
 pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -170,30 +143,25 @@ pub(crate) fn load_ingress_records() -> Vec<MessageIngressRecord> {
             }
         }
     }
-    if let Err(err) = append_quarantine_records(&path, &quarantined) {
-        if !quarantined.is_empty() {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
-                path.display(),
-                quarantined.len(),
-                err
-            );
-        }
-    } else if !quarantined.is_empty() {
-        eprintln!(
-            "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
-            path.display(),
-            quarantined.len(),
-            ingress_quarantine_file_for(&path).display()
-        );
-
-        if let Err(err) = save_ingress_records(&records) {
-            eprintln!(
-                "[trnm-rpc][warn][INGRESS_QUARANTINE_REWRITE] path={} retained={} err={}",
-                path.display(),
-                records.len(),
-                err
-            );
+    if !quarantined.is_empty() {
+        match append_quarantine_records(&path, &quarantined) {
+            Err(err) => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                    path.display(),
+                    quarantined.len(),
+                    err
+                );
+            }
+            Ok(appended) if appended > 0 => {
+                eprintln!(
+                    "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                    path.display(),
+                    appended,
+                    ingress_quarantine_file_for(&path).display()
+                );
+            }
+            Ok(_) => {}
         }
     }
     records
