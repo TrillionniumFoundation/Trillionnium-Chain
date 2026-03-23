@@ -127,6 +127,12 @@ impl AdmissionGate {
     fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
         // Fairness deferral must never evict older retry ids. When bounded memory has
         // room, insert directly and append a FIFO marker (no eviction/compaction path).
+        if self.backpressured_ids.is_empty() && !self.backpressured_fifo.is_empty() {
+            // After a full retry drain, fairness-only deferrals can be the next writer
+            // to retry bookkeeping. Drop stale FIFO markers eagerly so the first new
+            // deferred id starts from a clean bounded state instead of carrying old tails.
+            self.backpressured_fifo.clear();
+        }
         if self.backpressured_ids.len() < self.capacity && self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
             // Fairness-only deferrals can run for long windows without hitting the
@@ -1078,6 +1084,19 @@ mod tests {
         }
 
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+    }
+
+    #[test]
+    fn fairness_only_deferral_clears_stale_fifo_before_first_new_retry_marker() {
+        let mut gate = AdmissionGate::new(2);
+
+        gate.backpressured_fifo.extend([7, 8, 9]);
+        assert!(gate.backpressured_ids.is_empty());
+
+        gate.remember_backpressured_without_eviction(42);
+
+        assert_eq!(gate.backpressured_fifo, [42]);
+        assert_eq!(gate.backpressured_ids, [42].into_iter().collect());
     }
 
     #[test]
