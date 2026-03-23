@@ -373,6 +373,37 @@ fn insertion_order_of_applied_gov_params_keeps_state_root_deterministic() {
 }
 
 #[test]
+fn applied_gov_param_embedded_key_id_must_affect_state_root_even_when_slot_key_and_value_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+    state_b.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 115,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "applied governance embedded key_id must contribute to state_root so malformed restore snapshots cannot alias a canonical applied slot"
+    );
+}
+
+#[test]
 fn applied_gov_param_version_must_affect_state_root_even_when_key_and_value_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
@@ -549,13 +580,13 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
-fn restore_pending_gov_update_zero_key_id_rewinds_state_root_by_removing_target_entry() {
+fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and_rewinds_state_root() {
     let mut state = StateStore::new();
 
     state.restore_pending_gov_update(
         "challenge_min_bond",
         Some(PendingGovParamUpdate {
-            key_id: 117,
+            key_id: 116,
             key: "challenge_min_bond".into(),
             value: "120".into(),
             activate_at_height: 320,
@@ -564,29 +595,71 @@ fn restore_pending_gov_update_zero_key_id_rewinds_state_root_by_removing_target_
     let queued_root = state.state_root();
 
     state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "true".into(),
+            activate_at_height: 321,
+        }),
+    );
+
+    assert_eq!(
+        state.pending_gov_update("emergency_pause"),
+        None,
+        "non-sensitive emergency_pause metadata must not be restorable into the pending governance queue"
+    );
+    assert_eq!(
+        state.state_root(),
+        queued_root,
+        "rejecting non-sensitive pending governance metadata must leave unrelated queued proof material untouched"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_rejects_snapshot_key_id_shadowing_live_governance_metadata() {
+    let mut state = StateStore::new();
+
+    let bootstrap = state
+        .set_gov_param(
+            150,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("bootstrap challenge_min_bond write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = state
+        .set_gov_param(
+            170,
+            116,
+            "challenge_min_bond".into(),
+            "120".into(),
+        )
+        .expect("challenge_min_bond write should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
         "challenge_min_bond",
         Some(PendingGovParamUpdate {
-            key_id: 0,
+            key_id: 117,
             key: "challenge_min_bond".into(),
-            value: "120".into(),
+            value: "121".into(),
             activate_at_height: 320,
         }),
     );
 
-    let empty_root = StateStore::new().state_root();
+    assert_eq!(
+        state.pending_gov_update("challenge_min_bond"),
+        None,
+        "restore must fail closed when pending governance proof material rebinds a live key onto a shadow key id"
+    );
     assert_eq!(
         state.state_root(),
-        empty_root,
-        "restore_pending_gov_update should fail closed by removing the requested queue entry when the supplied snapshot key_id is zero"
-    );
-    assert!(
-        state.pending_gov_update("challenge_min_bond").is_none(),
-        "zero-key-id restore snapshot should clear the requested pending governance entry"
-    );
-    assert_ne!(
-        queued_root,
-        state.state_root(),
-        "state_root should account for fail-closed removal when a pending governance restore snapshot carries a zero key_id"
+        baseline_root,
+        "rejecting shadow key-id restore metadata must preserve the live governance state root"
     );
 }
 
@@ -1116,6 +1189,36 @@ fn pending_resolve_task_id_must_affect_state_root_even_when_snapshot_payload_mat
         state_b.state_root(),
         root_a,
         "moving an identical pending resolve snapshot onto the original task id and removing the extra entry should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
+fn governance_proposal_string_field_boundaries_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    st1.put_proposal_new(GovProposalObject {
+        proposal_id: 9_601,
+        title: "ab".into(),
+        proposer: "c".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    })
+    .expect("first proposal should be accepted");
+
+    st2.put_proposal_new(GovProposalObject {
+        proposal_id: 9_601,
+        title: "a".into(),
+        proposer: "bc".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    })
+    .expect("second proposal should be accepted");
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root should length-frame governance proposal strings so audit-proof snapshot material cannot collide across field boundaries"
     );
 }
 
@@ -1754,6 +1857,86 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
 }
 
 #[test]
+fn restore_task_incomplete_metering_metadata_fails_closed_and_rewinds_to_baseline_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_task(
+        10_303,
+        Some(TaskObject {
+            task_id: 10_303,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("audit-proof snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:30:00Z".into()),
+                    provenance_index: Some("prov-task-10303".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "   ".into(),
+                    prompt_tokens: 10,
+                    generated_tokens: 20,
+                    decode_steps: 30,
+                    kv_bytes_moved: 40,
+                    normalized_work_units: 50,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 2,
+                    decode_step_weight: 3,
+                    kv_byte_weight: 4,
+                    min_accept_work_units: 5,
+                    challenge_success_bounty_base: 6,
+                    challenge_success_bounty_per_work_unit_num: 7,
+                    challenge_success_bounty_per_work_unit_den: 8,
+                    worker_completion_bonus_per_work_unit_num: 9,
+                    worker_completion_bonus_per_work_unit_den: 10,
+                    worker_slash_rebate_per_work_unit_num: 11,
+                    worker_slash_rebate_per_work_unit_den: 12,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x21; 32]),
+            result_hash: Some([0x34; 32]),
+            reveal_salt: Some([0x55; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(52),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(10_303).is_none(),
+        "restore_task should fail closed when metering proof metadata is incomplete"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting incomplete metering proof metadata must preserve the canonical baseline state root"
+    );
+}
+
+#[test]
 fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entry() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
@@ -2290,53 +2473,54 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
 }
 
 #[test]
-fn pending_resolve_restore_rejects_reserved_first_approver_even_when_task_exists() {
-    let mut baseline = StateStore::new();
-    let mut restored = StateStore::new();
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
 
-    let challenged_task = TaskObject {
-        task_id: 5_152,
-        creator: "creator-a".into(),
-        bounty: 10,
-        status: TaskStatus::Challenged,
-        proof_type: Default::default(),
-        metadata: None,
-        worker: Some("worker-a".into()),
-        committed_hash: None,
-        result_hash: None,
-        reveal_salt: None,
-        committed_at_height: None,
-        reveal_deadline_height: None,
-        challenge_deadline_height: None,
-        challenge_window_blocks_snapshot: Some(10),
-        challenged_at_height: Some(25),
-        resolve_deadline_height: Some(40),
-        challenge_bond: Some(5),
-        challenger: Some("challenger-a".into()),
-        challenge_bond_forfeited: None,
-        version: 7,
-    };
-    baseline.restore_task(5_152, Some(challenged_task.clone()));
-    restored.restore_task(5_152, Some(challenged_task));
-
-    let baseline_root = baseline.state_root();
-    restored.restore_pending_resolve_approval(
-        5_152,
+    state_a.restore_pending_resolve_approval(
+        5_151,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: true,
             confirmations: 1,
-            first_approver: "treasury.challenge_escrow".into(),
-            authority_set: "treasury.challenge_escrow,resolver-b".into(),
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 0,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
             task_version: 7,
         }),
     );
 
-    assert_eq!(restored.pending_resolve_approval(5_152), None);
-    assert_eq!(restored.pending_resolve_first_approver(5_152), None);
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_eq!(state_b.pending_resolve_approval(5_151), None);
+    assert_ne!(
+        root_a, root_b,
+        "zero-confirmation restore snapshots must scrub instead of materializing an incomplete pending resolve quorum"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
     assert_eq!(
-        restored.state_root(),
-        baseline_root,
-        "restore must fail closed for reserved first approvers even when the referenced challenged task exists"
+        state_b.state_root(),
+        root_a,
+        "restoring the original staged snapshot should rewind the deterministic root exactly after scrubbing an incomplete snapshot"
     );
 }
 
@@ -2438,12 +2622,12 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
-fn restore_pending_resolve_snapshot_canonicalizes_equivalent_authority_metadata_for_state_root() {
-    let mut state_a = StateStore::new();
-    let mut state_b = StateStore::new();
+fn pending_resolve_restore_canonicalizes_metadata_before_hashing() {
+    let mut canonical = StateStore::new();
+    let mut mixed_case = StateStore::new();
 
-    state_a.restore_pending_resolve_approval(
-        5_152,
+    canonical.restore_pending_resolve_approval(
+        5_300,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: true,
             confirmations: 1,
@@ -2452,36 +2636,33 @@ fn restore_pending_resolve_snapshot_canonicalizes_equivalent_authority_metadata_
             task_version: 7,
         }),
     );
-    state_b.restore_pending_resolve_approval(
-        5_152,
+    mixed_case.restore_pending_resolve_approval(
+        5_300,
         Some(PendingResolveApprovalSnapshot {
             slash_worker: true,
             confirmations: 1,
             first_approver: "Resolver-A".into(),
-            authority_set: "resolver-b,Resolver-A".into(),
+            authority_set: "Resolver-B,Resolver-A".into(),
             task_version: 7,
         }),
     );
 
     assert_eq!(
-        state_a.pending_resolve_approval_snapshot(5_152),
-        Some(PendingResolveApprovalSnapshot {
-            slash_worker: true,
-            confirmations: 1,
-            first_approver: "resolver-a".into(),
-            authority_set: "resolver-a,resolver-b".into(),
-            task_version: 7,
-        })
+        mixed_case.pending_resolve_first_approver(5_300).as_deref(),
+        Some("resolver-a"),
+        "restore_pending_resolve_approval must store canonical approver metadata"
     );
     assert_eq!(
-        state_b.pending_resolve_approval_snapshot(5_152),
-        state_a.pending_resolve_approval_snapshot(5_152),
-        "restore should canonicalize logically equivalent pending resolve snapshot metadata"
+        mixed_case
+            .pending_resolve_approval_snapshot(5_300)
+            .map(|snapshot| snapshot.authority_set),
+        Some("resolver-a,resolver-b".into()),
+        "restore_pending_resolve_approval must store canonical authority-set metadata"
     );
     assert_eq!(
-        state_b.state_root(),
-        state_a.state_root(),
-        "state_root should match for logically equivalent pending resolve snapshots after restore canonicalization"
+        mixed_case.state_root(),
+        canonical.state_root(),
+        "case-only restore metadata drift must canonicalize to the same deterministic state root"
     );
 }
 
@@ -3986,33 +4167,37 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
-fn restore_pending_gov_update_invalid_sensitive_snapshot_fails_closed_without_materializing_queue_entry() {
+fn restore_pending_gov_update_non_canonical_metadata_fails_closed_without_aliasing_snapshot_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
 
     state.restore_pending_gov_update(
         "challenge_min_bond",
         Some(PendingGovParamUpdate {
-            key_id: 0,
-            key: "challenge_min_bond".to_string(),
-            value: "0".to_string(),
-            activate_at_height: 0,
+            key_id: 7_202,
+            key: "challenge_min_bond ".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
         }),
     );
 
     assert!(
         state.pending_gov_update("challenge_min_bond").is_none(),
-        "restore_pending_gov_update must fail closed when the snapshot is not a valid staged sensitive update"
+        "non-canonical restore metadata must clear the requested slot instead of staging a whitespace-variant pending key"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond ").is_none(),
+        "non-canonical restore metadata must not materialize a foreign pending entry under the malformed snapshot key"
     );
     assert_eq!(
         state.state_root(),
         baseline_root,
-        "invalid pending governance snapshots must not perturb the deterministic root"
+        "non-canonical pending governance metadata must fail closed without perturbing the deterministic root"
     );
     assert_eq!(
         state.state_root(),
         baseline_root,
-        "repeated reads after rejecting an invalid pending governance snapshot should deterministically reuse the unchanged cached root"
+        "repeated reads after rejecting malformed pending governance metadata should deterministically reuse the unchanged cached root"
     );
 }
 

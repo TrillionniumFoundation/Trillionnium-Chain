@@ -1,7 +1,8 @@
 use crate::{
-    store::PendingResolveApproval, StateStore, CHALLENGE_ESCROW_ACCOUNT,
-    CHALLENGE_FORFEIT_TREASURY_ACCOUNT, DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
-    RESERVED_SYSTEM_AUTHORITY, WORKER_SLASH_TREASURY_ACCOUNT,
+    store::PendingResolveApproval, validated_restorable_pending_resolve_snapshot, StateStore,
+    CHALLENGE_ESCROW_ACCOUNT, CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
+    DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER, RESERVED_SYSTEM_AUTHORITY,
+    WORKER_SLASH_TREASURY_ACCOUNT,
 };
 use trnm_types::TaskStatus;
 
@@ -167,43 +168,11 @@ impl StateStore {
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
         self.invalidate_state_root_cache();
-        match snapshot {
-            Some(snapshot) => {
-                if task_id == 0
-                    || snapshot.task_version == 0
-                    || snapshot.confirmations != 1
-                    || validate_resolve_approval_identity(
-                        &snapshot.first_approver,
-                        &snapshot.authority_set,
-                    )
-                    .is_err()
-                {
-                    self.pending_resolve_approvals.remove(&task_id);
-                    return;
-                }
-
-                let Some(task) = self.get_task(task_id) else {
-                    self.pending_resolve_approvals.remove(&task_id);
-                    return;
-                };
-                if task.version != snapshot.task_version
-                    || task.status != TaskStatus::Challenged
-                    || !challenged_task_snapshot_complete_for_pending_resolve(task)
-                {
-                    self.pending_resolve_approvals.remove(&task_id);
-                    return;
-                }
-
-                self.pending_resolve_approvals.insert(
-                    task_id,
-                    PendingResolveApproval {
-                        slash_worker: snapshot.slash_worker,
-                        confirmations: snapshot.confirmations,
-                        first_approver: snapshot.first_approver,
-                        authority_set: snapshot.authority_set,
-                        task_version: snapshot.task_version,
-                    },
-                );
+        match snapshot.and_then(|snapshot| {
+            validated_restorable_pending_resolve_snapshot(self, task_id, snapshot)
+        }) {
+            Some(entry) => {
+                self.pending_resolve_approvals.insert(task_id, entry);
             }
             None => {
                 self.pending_resolve_approvals.remove(&task_id);

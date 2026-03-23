@@ -121,23 +121,22 @@ pub struct WalMeta {
 
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
-        fn update_len_prefixed(hasher: &mut Sha256, bytes: &[u8]) {
-            hasher.update((bytes.len() as u64).to_le_bytes());
-            hasher.update(bytes);
+        fn hash_str(hasher: &mut Sha256, value: &str) {
+            hasher.update((value.len() as u64).to_le_bytes());
+            hasher.update(value.as_bytes());
         }
 
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        update_len_prefixed(&mut hasher, self.proposal_hash.as_bytes());
+        hash_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        update_len_prefixed(&mut hasher, self.state_root_hex.as_bytes());
-        match &self.prev_hash_hex {
-            Some(prev) => {
-                hasher.update([1]);
-                update_len_prefixed(&mut hasher, prev.as_bytes());
-            }
-            None => hasher.update([0]),
+        hash_str(&mut hasher, &self.state_root_hex);
+        if let Some(prev) = &self.prev_hash_hex {
+            hasher.update([1]);
+            hash_str(&mut hasher, prev);
+        } else {
+            hasher.update([0]);
         }
         hex::encode(hasher.finalize())
     }
@@ -685,6 +684,79 @@ fn resolve_actor_has_forbidden_separator(token: &str) -> bool {
         || token.contains('、')
 }
 
+fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
+    let has_embedded_space_or_control = |value: &str| {
+        value
+            .chars()
+            .any(|c| c.is_whitespace() || c.is_control())
+    };
+    let has_canonical_optional_metadata = |value: Option<&str>| {
+        value
+            .map(|value| {
+                let trimmed = value.trim();
+                !trimmed.is_empty() && trimmed == value && !has_embedded_space_or_control(value)
+            })
+            .unwrap_or(true)
+    };
+
+    task.metadata
+        .as_ref()
+        .map(|metadata| {
+            has_canonical_optional_metadata(metadata.note.as_deref())
+                && has_canonical_optional_metadata(metadata.task_type.as_deref())
+                && has_canonical_optional_metadata(metadata.input_hash.as_deref())
+                && metadata
+                    .model
+                    .as_ref()
+                    .map(|model| {
+                        has_canonical_optional_metadata(model.model_id.as_deref())
+                            && has_canonical_optional_metadata(model.model_digest.as_deref())
+                            && has_canonical_optional_metadata(model.version.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .provenance
+                    .as_ref()
+                    .map(|provenance| {
+                        has_canonical_optional_metadata(provenance.producer_did.as_deref())
+                            && has_canonical_optional_metadata(provenance.produced_at.as_deref())
+                            && has_canonical_optional_metadata(provenance.provenance_index.as_deref())
+                    })
+                    .unwrap_or(true)
+                && metadata
+                    .metering
+                    .as_ref()
+                    .map(|metering| {
+                        let workload_class = metering.workload_class.trim();
+                        let metering_schema = metering.metering_schema.trim();
+                        let receipt_hash = metering.receipt_hash.trim();
+
+                        !workload_class.is_empty()
+                            && workload_class == metering.workload_class
+                            && !has_embedded_space_or_control(&metering.workload_class)
+                            && !metering_schema.is_empty()
+                            && metering_schema == metering.metering_schema
+                            && !has_embedded_space_or_control(&metering.metering_schema)
+                            && metering.policy_snapshot_version != 0
+                            && !receipt_hash.is_empty()
+                            && receipt_hash == metering.receipt_hash
+                            && !has_embedded_space_or_control(&metering.receipt_hash)
+                            && metering.challenge_success_bounty_per_work_unit_den != 0
+                            && metering.worker_completion_bonus_per_work_unit_den != 0
+                            && metering.worker_slash_rebate_per_work_unit_den != 0
+                    })
+                    .unwrap_or(true)
+        })
+        .unwrap_or(true)
+}
+
+fn challenged_task_snapshot_anchor_is_complete(task: &TaskObject) -> bool {
+    task.challenged_at_height.is_some()
+        && task.challenge_deadline_height.is_some()
+        && task.resolve_deadline_height.is_some()
+        && task.challenge_window_blocks_snapshot.is_some_and(|window| window != 0)
+}
+
 fn resolve_actor_is_reserved(token: &str) -> bool {
     token.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
         || token.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
@@ -904,6 +976,87 @@ fn ensure_effective_resolve_authority_match(
 
 fn is_effective_resolve_authority_match(st: &StateStore, authority_set: &str) -> bool {
     ensure_effective_resolve_authority_match(st, authority_set).is_ok()
+}
+
+fn validated_restorable_pending_resolve_snapshot(
+    st: &StateStore,
+    task_id: u64,
+    snapshot: PendingResolveApprovalSnapshot,
+) -> Option<PendingResolveApproval> {
+    if task_id == 0 || snapshot.task_version == 0 {
+        return None;
+    }
+    if snapshot.confirmations != 1 {
+        return None;
+    }
+    let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+    else {
+        return None;
+    };
+    let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set) else {
+        return None;
+    };
+    if !authority_canonical
+        .split(',')
+        .any(|member| member == first_approver_canonical)
+    {
+        return None;
+    }
+    if st.pending_gov_update("resolve_authority").is_none()
+        && st.gov_param_string("resolve_authority").is_none()
+    {
+        return None;
+    }
+    if !is_effective_resolve_authority_match(st, &snapshot.authority_set) {
+        return None;
+    }
+    let Some(task) = st.get_task(task_id) else {
+        return None;
+    };
+    if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
+        return None;
+    }
+    if task.metadata.as_ref().and_then(|metadata| metadata.metering.as_ref()).is_none() {
+        return None;
+    }
+    if !task_snapshot_metadata_is_complete(&task) {
+        return None;
+    }
+    if !challenged_task_snapshot_anchor_is_complete(&task) {
+        return None;
+    }
+    // Audit-proof restore must fail closed unless the challenged-task anchor is still present as
+    // a canonical, non-system actor id. Snapshot metadata cannot self-authenticate challenger
+    // identity when the live task metadata has drifted into reserved or malformed forms.
+    let has_canonical_actor = |actor: &str| validate_resolve_approver_token(actor).is_ok();
+    if !task
+        .challenger
+        .as_deref()
+        .is_some_and(has_canonical_actor)
+    {
+        return None;
+    }
+    if snapshot.slash_worker
+        && !task
+            .worker
+            .as_deref()
+            .is_some_and(has_canonical_actor)
+    {
+        // Fail closed for audit-proof restore when the live slash target has drifted into a
+        // reserved/system or otherwise non-canonical actor id. Snapshot evidence must still bind
+        // to a real, live worker identity before a slash quorum can be revived.
+        return None;
+    }
+
+    Some(PendingResolveApproval {
+        slash_worker: snapshot.slash_worker,
+        confirmations: snapshot.confirmations,
+        // Preserve the original snapshot spelling for auditability while validating
+        // membership/equivalence against canonical forms above.
+        first_approver: snapshot.first_approver,
+        authority_set: snapshot.authority_set,
+        task_version: snapshot.task_version,
+    })
 }
 
 fn is_sensitive_gov_param(key: &str) -> bool {
@@ -1391,69 +1544,29 @@ impl StateStore {
             scrub_pending(self, task_id);
             return;
         };
-        if task_id == 0 || snapshot.task_version == 0 {
-            scrub_pending(self, task_id);
-            return;
-        }
-        if snapshot.confirmations != 1 {
-            scrub_pending(self, task_id);
-            return;
-        }
-        let Some(task) = self.get_task(task_id) else {
-            return;
-        };
-        if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
-            return;
-        }
-        if !challenged_task_snapshot_complete_for_pending_resolve(&task) {
-            return;
-        }
-        let Ok(first_approver_canonical) = validate_resolve_approver_token(&snapshot.first_approver)
+        let Some(snapshot) = validated_restorable_pending_resolve_snapshot(self, task_id, snapshot)
         else {
             scrub_pending(self, task_id);
             return;
         };
-        let Ok(authority_canonical) = canonicalize_resolve_authority_set(&snapshot.authority_set)
-        else {
-            scrub_pending(self, task_id);
-            return;
-        };
-        if !authority_canonical
-            .split(',')
-            .any(|member| member == first_approver_canonical)
-        {
-            scrub_pending(self, task_id);
-            return;
-        }
-        if !is_effective_resolve_authority_match(self, &snapshot.authority_set) {
-            scrub_pending(self, task_id);
-            return;
-        }
 
-        self.pending_resolve_approvals.insert(
-            task_id,
-            PendingResolveApproval {
-                slash_worker: snapshot.slash_worker,
-                confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
-                task_version: snapshot.task_version,
-            },
-        );
+        self.pending_resolve_approvals.insert(task_id, snapshot);
     }
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(task) => {
-                if task.task_id != id {
-                    if matches!(
-                        self.objects.get(&id).map(|existing| &existing.value),
-                        Some(ObjectValue::Task(_))
-                    ) {
-                        self.objects.remove(&id);
-                    }
-                    self.pending_resolve_approvals.remove(&id);
+                if task.task_id != id
+                    || (task.status == TaskStatus::Challenged
+                        && task
+                            .metadata
+                            .as_ref()
+                            .and_then(|metadata| metadata.metering.as_ref())
+                            .is_none())
+                    || !task_snapshot_metadata_is_complete(&task)
+                {
+                    self.objects.remove(&id);
                     return;
                 }
                 if task.task_id == 0 || task.version == 0 {
@@ -2088,17 +2201,22 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
-                let base_matches_snapshot = self
-                    .gov_param_ref_for_key(&snapshot.key)
-                    .map(|(id, param)| id == snapshot.key_id && param.key_id == snapshot.key_id)
-                    .unwrap_or(false);
+                let canonical_key = snapshot.key.trim();
+                let key_id_mismatch = (snapshot.key == "emergency_pause"
+                    && snapshot.key_id != EMERGENCY_PAUSE_KEY_ID)
+                    || self
+                        .gov_param_key_index
+                        .get(&snapshot.key)
+                        .is_some_and(|existing_id| *existing_id != snapshot.key_id);
                 if snapshot.key != key
-                    || snapshot.key_id == 0
-                    || snapshot.activate_at_height == 0
+                    || key.trim() != key
+                    || key.is_empty()
+                    || canonical_key.is_empty()
+                    || canonical_key != snapshot.key
                     || !GOV_ALLOWED_KEYS.contains(&snapshot.key.as_str())
                     || !is_sensitive_gov_param(&snapshot.key)
+                    || key_id_mismatch
                     || validate_gov_param_value(&snapshot.key, &snapshot.value).is_err()
-                    || !base_matches_snapshot
                 {
                     self.pending_gov_updates.remove(key);
                     if scrubs_resolve_quorum {
@@ -2440,6 +2558,59 @@ impl StateStore {
                                 }
                                 None => hasher.update([0]),
                             }
+                            match &metadata.metering {
+                                Some(metering) => {
+                                    hasher.update([1]);
+                                    hash_len_prefixed_str(&mut hasher, &metering.workload_class);
+                                    hash_len_prefixed_str(&mut hasher, &metering.metering_schema);
+                                    hasher.update([metering.policy_snapshot_version]);
+                                    hash_len_prefixed_str(&mut hasher, &metering.receipt_hash);
+                                    hasher.update(metering.prompt_tokens.to_le_bytes());
+                                    hasher.update(metering.generated_tokens.to_le_bytes());
+                                    hasher.update(metering.decode_steps.to_le_bytes());
+                                    hasher.update(metering.kv_bytes_moved.to_le_bytes());
+                                    hasher.update(metering.normalized_work_units.to_le_bytes());
+                                    hasher.update(metering.prompt_token_weight.to_le_bytes());
+                                    hasher.update(metering.generated_token_weight.to_le_bytes());
+                                    hasher.update(metering.decode_step_weight.to_le_bytes());
+                                    hasher.update(metering.kv_byte_weight.to_le_bytes());
+                                    hasher.update(metering.min_accept_work_units.to_le_bytes());
+                                    hasher.update(
+                                        metering.challenge_success_bounty_base.to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .challenge_success_bounty_per_work_unit_num
+                                            .to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .challenge_success_bounty_per_work_unit_den
+                                            .to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .worker_completion_bonus_per_work_unit_num
+                                            .to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .worker_completion_bonus_per_work_unit_den
+                                            .to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .worker_slash_rebate_per_work_unit_num
+                                            .to_le_bytes(),
+                                    );
+                                    hasher.update(
+                                        metering
+                                            .worker_slash_rebate_per_work_unit_den
+                                            .to_le_bytes(),
+                                    );
+                                }
+                                None => hasher.update([0]),
+                            }
                         }
                         None => hasher.update([0]),
                     }
@@ -2598,17 +2769,92 @@ impl StateStore {
     }
 }
 
-pub(crate) fn challenged_task_snapshot_complete_for_pending_resolve(task: &TaskObject) -> bool {
-    task.challenged_at_height.is_some()
-        && task.resolve_deadline_height.is_some()
-        && task.challenge_bond.is_some()
-        && task
-            .challenger
-            .as_deref()
-            .map(str::trim)
-            .filter(|s| !s.is_empty())
-            .is_some()
-        && task.challenge_bond_forfeited.is_some()
+fn has_canonical_proof_metadata_field(value: &str) -> bool {
+    fn is_disallowed_proof_metadata_char(ch: char) -> bool {
+        ch.is_whitespace()
+            || ch.is_control()
+            || matches!(
+                ch,
+                '\u{00A0}'
+                    | '\u{00AD}'
+                    | '\u{034F}'
+                    | '\u{061C}'
+                    | '\u{115F}'
+                    | '\u{1160}'
+                    | '\u{1680}'
+                    | '\u{180E}'
+                    | '\u{2000}'
+                    | '\u{2001}'
+                    | '\u{2002}'
+                    | '\u{2003}'
+                    | '\u{2004}'
+                    | '\u{2005}'
+                    | '\u{2006}'
+                    | '\u{2007}'
+                    | '\u{2008}'
+                    | '\u{2009}'
+                    | '\u{200A}'
+                    | '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{2028}'
+                    | '\u{2029}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{202F}'
+                    | '\u{205F}'
+                    | '\u{2060}'
+                    | '\u{2061}'
+                    | '\u{2062}'
+                    | '\u{2063}'
+                    | '\u{2064}'
+                    | '\u{2065}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+                    | '\u{206A}'
+                    | '\u{206B}'
+                    | '\u{206C}'
+                    | '\u{206D}'
+                    | '\u{206E}'
+                    | '\u{206F}'
+                    | '\u{2800}'
+                    | '\u{3000}'
+                    | '\u{3164}'
+                    | '\u{FEFF}'
+                    | '\u{FFF9}'
+                    | '\u{FFFA}'
+                    | '\u{FFFB}'
+            )
+            || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+            || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+    }
+
+    !value.is_empty()
+        && value.is_ascii()
+        && value.trim() == value
+        && value.chars().all(|ch| !is_disallowed_proof_metadata_char(ch))
+}
+
+fn checkpoint_has_complete_proof_metadata(cp: &CheckpointMeta) -> bool {
+    has_canonical_proof_metadata_field(&cp.state_root_hex)
+        && has_canonical_proof_metadata_field(&cp.wal_entry_hash_hex)
+}
+
+fn wal_entry_has_complete_proof_metadata(entry: &WalMeta) -> bool {
+    has_canonical_proof_metadata_field(&entry.proposal_hash)
+        && has_canonical_proof_metadata_field(&entry.state_root_hex)
+        && entry
+            .prev_hash_hex
+            .as_ref()
+            .map(|prev| has_canonical_proof_metadata_field(prev))
+            .unwrap_or(true)
 }
 
 pub fn verify_wal_and_find_checkpoint(
@@ -2636,10 +2882,9 @@ pub fn verify_wal_and_find_checkpoint(
             // claim safe application-state recovery.
             return Ok(best_checkpoint);
         }
-        if e.proposal_hash.trim().is_empty() || e.state_root_hex.trim().is_empty() {
-            // Recovery metadata must remain complete: blank proposal/state-root values
-            // indicate a truncated or forged WAL entry and must not advance checkpoint
-            // selection during restart recovery.
+        if !wal_entry_has_complete_proof_metadata(e) {
+            // Fail closed on incomplete WAL proof metadata. Blank proposal/state-root/prev-hash
+            // fields are not auditable recovery evidence and must not advance checkpoint selection.
             return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
@@ -2653,37 +2898,44 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        let height_checkpoints: Vec<&CheckpointMeta> =
+        let matching_height_checkpoints: Vec<&CheckpointMeta> =
             checkpoints.iter().filter(|cp| cp.height == e.height).collect();
-        if let Some(first_complete) = height_checkpoints
+
+        if matching_height_checkpoints
             .iter()
-            .copied()
-            .find(|cp| {
-                !cp.state_root_hex.trim().is_empty() && !cp.wal_entry_hash_hex.trim().is_empty()
-            })
+            .any(|cp| !checkpoint_has_complete_proof_metadata(cp))
         {
-            let has_conflict = height_checkpoints.iter().copied().any(|cp| {
-                !cp.state_root_hex.trim().is_empty()
-                    && !cp.wal_entry_hash_hex.trim().is_empty()
-                    && (cp.state_root_hex != first_complete.state_root_hex
-                        || cp.wal_entry_hash_hex != first_complete.wal_entry_hash_hex)
-            });
-            if has_conflict {
-                // Snapshot metadata at a given height must be unique once complete.
-                // Conflicting checkpoint records indicate ambiguous restore state and
-                // must not be papered over by selecting the entry that happens to match
-                // the current WAL replay.
+            // Fail closed on incomplete checkpoint proof metadata. Recovery checkpoints must carry
+            // both the claimed state root and the corresponding WAL entry hash; blank fields are
+            // not auditable proof material and must not be treated as recoverable state.
+            return Ok(best_checkpoint);
+        }
+
+        if let Some(first) = matching_height_checkpoints.first() {
+            if matching_height_checkpoints.iter().any(|cp| {
+                cp.state_root_hex != first.state_root_hex
+                    || cp.wal_entry_hash_hex != first.wal_entry_hash_hex
+            }) {
+                // Fail closed on ambiguous same-height checkpoint claims. A recoverable height must
+                // resolve to one auditable (state root, WAL hash) tuple; extra stale/forked tuples
+                // are not snapshot-complete proof material.
                 return Ok(best_checkpoint);
             }
         }
 
-        for cp in height_checkpoints {
-            if cp.state_root_hex.trim().is_empty() || cp.wal_entry_hash_hex.trim().is_empty() {
-                // Checkpoint metadata must be complete before it can participate in
-                // replay/restore recovery. Blank state-root or WAL-hash fields are
-                // treated as incomplete snapshots and ignored fail-closed.
-                continue;
-            }
+        if matching_height_checkpoints.iter().any(|cp| {
+            (cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+                && cp.state_root_hex != e.state_root_hex)
+                || (cp.state_root_hex == e.state_root_hex
+                    && cur_hash.as_str() != cp.wal_entry_hash_hex.as_str())
+        }) {
+            // Fail closed on conflicting checkpoint metadata: a committed WAL entry at a given
+            // height must not simultaneously claim multiple state roots, and a checkpointed
+            // state root at that height must not simultaneously point at multiple WAL hashes.
+            return Ok(best_checkpoint);
+        }
+
+        for cp in matching_height_checkpoints {
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
@@ -2738,6 +2990,204 @@ mod tests {
         t2.status = TaskStatus::Assigned;
         let r2 = st.update_task(r1, t2).unwrap();
         assert_eq!(r2.version, 2);
+    }
+
+    #[test]
+    fn task_metering_snapshot_affects_state_root() {
+        let mut without_metering = StateStore::new();
+        let mut with_metering = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 404,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut metered_task = base_task.clone();
+        metered_task.metadata = Some(trnm_types::TaskMetadata {
+            note: Some("metered task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(trnm_types::TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 2,
+                receipt_hash: "cd".repeat(32),
+                prompt_tokens: 144,
+                generated_tokens: 55,
+                decode_steps: 13,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 987,
+                prompt_token_weight: 3,
+                generated_token_weight: 5,
+                decode_step_weight: 7,
+                kv_byte_weight: 11,
+                min_accept_work_units: 100,
+                challenge_success_bounty_base: 17,
+                challenge_success_bounty_per_work_unit_num: 19,
+                challenge_success_bounty_per_work_unit_den: 23,
+                worker_completion_bonus_per_work_unit_num: 29,
+                worker_completion_bonus_per_work_unit_den: 31,
+                worker_slash_rebate_per_work_unit_num: 37,
+                worker_slash_rebate_per_work_unit_den: 41,
+            }),
+        });
+
+        without_metering.put_task_new(base_task).unwrap();
+        with_metering.put_task_new(metered_task).unwrap();
+
+        assert_ne!(
+            without_metering.state_root(),
+            with_metering.state_root(),
+            "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_incomplete_metering_proof_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 405,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("restored task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: Some(trnm_types::TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 0,
+                    receipt_hash: "cd".repeat(32),
+                    prompt_tokens: 144,
+                    generated_tokens: 55,
+                    decode_steps: 13,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 987,
+                    prompt_token_weight: 3,
+                    generated_token_weight: 5,
+                    decode_step_weight: 7,
+                    kv_byte_weight: 11,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 17,
+                    challenge_success_bounty_per_work_unit_num: 19,
+                    challenge_success_bounty_per_work_unit_den: 0,
+                    worker_completion_bonus_per_work_unit_num: 29,
+                    worker_completion_bonus_per_work_unit_den: 31,
+                    worker_slash_rebate_per_work_unit_num: 37,
+                    worker_slash_rebate_per_work_unit_den: 41,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(405, Some(task));
+
+        assert!(
+            st.get_task(405).is_none(),
+            "restore_task must fail closed when metering proof metadata omits a concrete policy snapshot version or uses zero denominators"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_non_canonical_metering_proof_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 406,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("restored task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: Some(trnm_types::TaskMeteringSnapshot {
+                    workload_class: " llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1 ".into(),
+                    policy_snapshot_version: 2,
+                    receipt_hash: format!("{}\n", "cd".repeat(32)),
+                    prompt_tokens: 144,
+                    generated_tokens: 55,
+                    decode_steps: 13,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 987,
+                    prompt_token_weight: 3,
+                    generated_token_weight: 5,
+                    decode_step_weight: 7,
+                    kv_byte_weight: 11,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 17,
+                    challenge_success_bounty_per_work_unit_num: 19,
+                    challenge_success_bounty_per_work_unit_den: 23,
+                    worker_completion_bonus_per_work_unit_num: 29,
+                    worker_completion_bonus_per_work_unit_den: 31,
+                    worker_slash_rebate_per_work_unit_num: 37,
+                    worker_slash_rebate_per_work_unit_den: 41,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(406, Some(task));
+
+        assert!(
+            st.get_task(406).is_none(),
+            "restore_task must fail closed when metering proof metadata uses whitespace-padded fields instead of canonical snapshot material"
+        );
     }
 
     #[test]
@@ -7912,11 +8362,12 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 1);
-        assert_eq!(got.state_root_hex, "r1");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "replayed same-height checkpoint tuples must fail closed back to the last unambiguous checkpoint"
+        );
     }
 
     #[test]
@@ -8009,64 +8460,11 @@ mod tests {
         ];
 
         let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 1);
-        assert_eq!(got.state_root_hex, "r1");
-    }
-
-    #[test]
-    fn wal_checkpoint_verification_fails_closed_on_height_overflow_tail() {
-        let e1 = WalMeta {
-            height: u64::MAX - 1,
-            round: 0,
-            proposal_hash: "p1".into(),
-            committed: true,
-            state_root_hex: "r1".into(),
-            prev_hash_hex: None,
-        };
-        let h1 = e1.content_hash_hex();
-        let e2 = WalMeta {
-            height: u64::MAX,
-            round: 1,
-            proposal_hash: "p2".into(),
-            committed: true,
-            state_root_hex: "r2".into(),
-            prev_hash_hex: Some(h1.clone()),
-        };
-        let h2 = e2.content_hash_hex();
-        let overflowing_tail = WalMeta {
-            height: 0,
-            round: 2,
-            proposal_hash: "p3-overflow-tail".into(),
-            committed: true,
-            state_root_hex: "r3".into(),
-            prev_hash_hex: Some(h2),
-        };
-
-        let checkpoints = vec![
-            CheckpointMeta {
-                height: u64::MAX - 1,
-                state_root_hex: "r1".into(),
-                wal_entry_hash_hex: h1,
-            },
-            CheckpointMeta {
-                height: u64::MAX,
-                state_root_hex: "r2".into(),
-                wal_entry_hash_hex: e2.content_hash_hex(),
-            },
-            CheckpointMeta {
-                height: 0,
-                state_root_hex: "r3".into(),
-                wal_entry_hash_hex: overflowing_tail.content_hash_hex(),
-            },
-        ];
-
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, overflowing_tail])
             .unwrap();
-        assert!(
-            got.is_none(),
-            "overflowed WAL height tails must fail closed instead of wrapping to a forged checkpoint"
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "uncommitted replay checkpoint tuples must fail closed back to the last unambiguous checkpoint"
         );
     }
 
@@ -8113,7 +8511,7 @@ mod tests {
     }
 
     #[test]
-    fn wal_checkpoint_verification_rejects_conflicting_duplicate_checkpoint_at_same_height() {
+    fn wal_checkpoint_verification_rejects_stale_duplicate_checkpoint_at_same_height() {
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -8151,12 +8549,179 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 1);
-        assert_eq!(got.state_root_hex, "r1");
-        assert_eq!(got.wal_entry_hash_hex, h1);
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "stale duplicate checkpoint tuples at the same height must fail closed back to the last unambiguous checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_whitespace_padded_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: " r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "whitespace-padded checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_internal_whitespace_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: format!("{} {}", &h2[..1], &h2[1..]),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "internally whitespace-split checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_non_ascii_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: format!("{}é", e2.content_hash_hex()),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "non-ASCII checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_zero_width_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2\u{200B}".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "zero-width checkpoint proof metadata is not canonical audit material and must fail closed to the last clean checkpoint"
+        );
     }
 
     #[test]
@@ -8245,6 +8810,52 @@ mod tests {
         assert_eq!(got.height, 1);
         assert_eq!(got.state_root_hex, "r1");
         assert_eq!(got.wal_entry_hash_hex, h1);
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_conflicting_state_root_for_same_wal_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2-forged".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
     }
 
     #[test]
@@ -8385,11 +8996,165 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 1);
-        assert_eq!(got.state_root_hex, "r1");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "same-height stale checkpoint tuples must fail closed back to the last unambiguous checkpoint even when future checkpoints are ignored"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_same_height_state_root_claimed_by_different_wal_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "forged-h2".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert_eq!(
+            got.map(|cp| cp.height),
+            Some(1),
+            "conflicting checkpoint metadata for the same height/state root must fail closed back to the last unambiguous checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_checkpoint_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        for incomplete_checkpoint in [
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: " ".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "\t".into(),
+            },
+        ] {
+            let checkpoints = vec![
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                incomplete_checkpoint,
+            ];
+
+            let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), e2.clone()]).unwrap();
+            assert_eq!(
+                got.map(|cp| cp.height),
+                Some(1),
+                "blank checkpoint proof metadata must fail closed back to the last complete checkpoint"
+            );
+        }
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_blank_wal_proof_metadata() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let valid_e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        for incomplete_e2 in [
+            WalMeta {
+                proposal_hash: " ".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                state_root_hex: "\t".into(),
+                ..valid_e2.clone()
+            },
+            WalMeta {
+                prev_hash_hex: Some(" ".into()),
+                ..valid_e2.clone()
+            },
+        ] {
+            let checkpoints = vec![
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: incomplete_e2.state_root_hex.clone(),
+                    wal_entry_hash_hex: incomplete_e2.content_hash_hex(),
+                },
+            ];
+
+            let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), incomplete_e2]).unwrap();
+            assert_eq!(
+                got.map(|cp| cp.height),
+                Some(1),
+                "blank WAL proof metadata must fail closed back to the last complete checkpoint"
+            );
+        }
     }
 
     #[test]

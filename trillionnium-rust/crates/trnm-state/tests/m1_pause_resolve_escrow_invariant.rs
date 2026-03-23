@@ -2,7 +2,64 @@ use trnm_state::{
     GovParamUpdateOutcome, GovPendingUpdateAction, PendingGovParamUpdate,
     PendingResolveApprovalSnapshot, StateStore,
 };
-use trnm_types::{TaskObject, TaskStatus};
+use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_worker_on_slash_boundary() {
+    // REF05 micro-hardening: audit snapshots must stay fail-closed when they attempt to revive
+    // a slash-worker quorum for a challenged task that no longer has any worker attached.
+    // Snapshot proof material is incomplete without a live slash target.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(98_329, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_349, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_350, 7_999, "emergency_pause".into(), "true".into())
+        .expect("emergency pause should enable successfully");
+    assert!(st.is_emergency_paused());
+
+    st.put_task_new(TaskObject {
+        task_id: 9_938,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: Some("challenger".into()),
+        challenge_bond_forfeited: None,
+        version: 7,
+    })
+    .expect("challenged workerless task should exist before restore attempt");
+
+    st.restore_pending_resolve_approval(
+        9_938,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_938), None);
+    assert_eq!(st.pending_resolve_first_approver(9_938), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_938), None);
+    assert!(st.pending_gov_update("resolve_authority").is_none());
+    assert!(st.is_emergency_paused());
+}
 
 #[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_live_task_version_mismatch_boundary() {
@@ -3426,6 +3483,235 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authori
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_governance_authority_boundary() {
+    // REF05 micro-hardening: restore must fail closed when snapshot metadata references a
+    // resolve authority set but governance has no configured or pending authority to anchor it.
+    // Audit-proof snapshots cannot be treated as self-authenticating authority metadata.
+    let mut st = StateStore::new();
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_929,
+        Some(TaskObject {
+            task_id: 9_929,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_929,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_929), None);
+    assert_eq!(st.pending_resolve_first_approver(9_929), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_929), None);
+    assert_eq!(st.gov_param_string("resolve_authority"), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_task_metadata_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task lacks
+    // metering metadata entirely, because the snapshot is no longer complete enough to stand as
+    // audit/proof material for a revived pending resolve quorum.
+    let mut st = StateStore::new();
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_930), None);
+    assert_eq!(st.pending_resolve_first_approver(9_930), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_930), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_non_canonical_model_metadata_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when optional model metadata
+    // drifts into non-canonical form, because malformed proof context should not be revived as a
+    // complete pending resolve quorum snapshot.
+    let mut st = StateStore::new();
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                model: Some(TaskModelMetadata {
+                    model_id: Some(" model-paused".into()),
+                    model_digest: Some("digest-paused".into()),
+                    version: Some("v1".into()),
+                }),
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-9_931".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(98_271),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(98_261),
+            resolve_deadline_height: Some(98_281),
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority(
 ) {
     // M1 micro-hardening: paused rollback/restore must accept semantically identical
@@ -3471,7 +3757,32 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
             bounty: 1,
             status: TaskStatus::Challenged,
             proof_type: Default::default(),
-            metadata: None,
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-9_930".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
             worker: Some("worker-paused".into()),
             committed_hash: None,
             result_hash: None,
@@ -3506,12 +3817,11 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
         Some("Authority-B"),
         "restore should preserve approver audit spelling while accepting equivalent authority-set semantics"
     );
-    assert_eq!(
-        st.pending_resolve_approval_snapshot(9_930)
-            .expect("equivalent snapshot should survive paused restore")
-            .authority_set,
-        "Authority-B,Authority-A"
-    );
+    let restored_snapshot = st
+        .pending_resolve_approval_snapshot(9_930)
+        .expect("equivalent snapshot should survive paused restore");
+    assert_eq!(restored_snapshot.first_approver, "Authority-B");
+    assert_eq!(restored_snapshot.authority_set, "Authority-B,Authority-A");
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into())
@@ -3779,6 +4089,107 @@ fn paused_state_pending_replacement_resolve_approval_finalizes_with_case_and_ord
         forfeits_before
     );
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_reserved_worker_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task keeps
+    // only a reserved/system worker alias, because snapshot evidence cannot authenticate a live
+    // slash target from treasury/system metadata.
+    let mut st = StateStore::new();
+    let bootstrap = st
+        .set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                note: Some("paused restore reserved worker boundary".into()),
+                task_type: None,
+                input_hash: None,
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "gpu-heavy".into(),
+                    metering_schema: "schema-v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-reserved-worker".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 5,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 3,
+                    challenge_success_bounty_per_work_unit_den: 2,
+                    worker_completion_bonus_per_work_unit_num: 4,
+                    worker_completion_bonus_per_work_unit_den: 3,
+                    worker_slash_rebate_per_work_unit_num: 5,
+                    worker_slash_rebate_per_work_unit_den: 4,
+                }),
+                model: None,
+                provenance: None,
+            }),
+            worker: Some("treasury.challenge_forfeits".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+    assert!(st.is_emergency_paused());
 }
 
 #[test]
@@ -4208,6 +4619,409 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_emergency_p
     assert_eq!(st.pending_resolve_first_approver(9_926), None);
     assert_eq!(st.pending_resolve_approval_snapshot(9_926), None);
     assert_eq!(st.gov_param_string("resolve_authority"), Some("authority-a,authority-b".into()));
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_challenged_task_boundary() {
+    // M1 micro-hardening: paused rollback/restore must fail closed if the challenged task
+    // object is absent, so audit snapshots cannot revive orphaned pending resolve quorum.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_020);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_002);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 502);
+
+    st.set_gov_param(98_216, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_pending_resolve_approval(
+        9_927,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_927),
+        None,
+        "paused restore must scrub orphaned pending resolve snapshot when challenged task is missing"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_927), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_927), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_challenger_boundary() {
+    // REF05 micro-hardening: paused rollback/restore must fail closed when a challenged task has
+    // lost its challenger anchor, because the snapshot is no longer complete enough to serve as
+    // audit-proof resolve evidence.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_021);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_003);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 503);
+
+    st.set_gov_param(
+        98_240,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_260,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_928,
+        Some(TaskObject {
+            task_id: 9_928,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_928,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_928),
+        None,
+        "paused restore must scrub pending resolve snapshot when challenged task is missing challenger metadata"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_928), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_928), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_blank_challenger_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task keeps
+    // only blank challenger metadata, because whitespace-only anchors are not complete evidence.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_021);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_003);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 503);
+
+    st.set_gov_param(
+        98_240,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_260,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_928,
+        Some(TaskObject {
+            task_id: 9_928,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("   ".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_928,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_928),
+        None,
+        "paused restore must scrub pending resolve snapshot when challenged task has only blank challenger metadata"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_928), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_928), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_reserved_challenger_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task keeps
+    // only reserved/system challenger metadata, because snapshot evidence cannot authenticate a
+    // live challenger anchor that aliases protocol-owned identities.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_021);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_003);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 503);
+
+    st.set_gov_param(
+        98_240,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_260,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_928,
+        Some(TaskObject {
+            task_id: 9_928,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("system".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_928,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_928),
+        None,
+        "paused restore must scrub pending resolve snapshot when challenged task has only reserved challenger metadata"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_928), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_928), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_non_ascii_challenger_boundary() {
+    // REF05 micro-hardening: audit-proof restore must fail closed when the challenged task keeps
+    // only non-canonical challenger metadata, because proof anchors should obey the same actor-id
+    // rules as approval authorities.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_021);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_003);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 503);
+
+    st.set_gov_param(
+        98_240,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_260,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(98_261, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_928,
+        Some(TaskObject {
+            task_id: 9_928,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("挑战者".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_928,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_928),
+        None,
+        "paused restore must scrub pending resolve snapshot when challenged task has only non-canonical challenger metadata"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_928), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_928), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);

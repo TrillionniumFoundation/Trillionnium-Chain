@@ -3,7 +3,10 @@ use super::governance::{
     GOV_KEYS_WITH_EXPLICIT_VALIDATORS, GOV_SCHEMA_INVALID_SAMPLES, GOV_SENSITIVE_KEYS,
 };
 use super::*;
-use trnm_types::{GovProposalObject, GovProposalStatus, TaskObject, TaskStatus};
+use trnm_types::{
+    GovProposalObject, GovProposalStatus, ProofType, TaskMetadata, TaskMeteringSnapshot,
+    TaskObject, TaskStatus,
+};
 
 #[test]
 fn put_and_version_update() {
@@ -37,6 +40,76 @@ fn put_and_version_update() {
     t2.status = TaskStatus::Assigned;
     let r2 = st.update_task(r1, t2).unwrap();
     assert_eq!(r2.version, 2);
+}
+
+#[test]
+fn task_metering_snapshot_affects_state_root() {
+    let mut without_metering = StateStore::new();
+    let mut with_metering = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 404,
+        creator: "alice".into(),
+        bounty: 25,
+        status: TaskStatus::Completed,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(40),
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 2,
+    };
+
+    let mut metered_task = base_task.clone();
+    metered_task.metadata = Some(TaskMetadata {
+        note: Some("metered task".into()),
+        task_type: Some("inference".into()),
+        input_hash: Some("ab".repeat(32)),
+        model: None,
+        provenance: None,
+        metering: Some(TaskMeteringSnapshot {
+            workload_class: "llm_inference".into(),
+            metering_schema: "llm_token_meter_v1".into(),
+            policy_snapshot_version: 2,
+            receipt_hash: "cd".repeat(32),
+            prompt_tokens: 144,
+            generated_tokens: 55,
+            decode_steps: 13,
+            kv_bytes_moved: 4096,
+            normalized_work_units: 987,
+            prompt_token_weight: 3,
+            generated_token_weight: 5,
+            decode_step_weight: 7,
+            kv_byte_weight: 11,
+            min_accept_work_units: 100,
+            challenge_success_bounty_base: 17,
+            challenge_success_bounty_per_work_unit_num: 19,
+            challenge_success_bounty_per_work_unit_den: 23,
+            worker_completion_bonus_per_work_unit_num: 29,
+            worker_completion_bonus_per_work_unit_den: 31,
+            worker_slash_rebate_per_work_unit_num: 37,
+            worker_slash_rebate_per_work_unit_den: 41,
+        }),
+    });
+
+    without_metering.put_task_new(base_task).unwrap();
+    with_metering.put_task_new(metered_task).unwrap();
+
+    assert_ne!(
+        without_metering.state_root(),
+        with_metering.state_root(),
+        "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+    );
 }
 
 #[test]
@@ -275,6 +348,242 @@ fn resolve_approval_rejects_system_or_treasury_approver_without_mutation() {
             "reserved approver id must not mutate staged confirmations"
         );
     }
+}
+
+#[test]
+fn restore_task_rejects_missing_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        9_929,
+        Some(TaskObject {
+            task_id: 9_929,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(9_929).is_none(),
+        "restore_task must fail closed when a challenged snapshot omits audit/proof metadata"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_missing_task_metadata_for_challenged_task() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_930,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_930), None);
+    assert_eq!(st.pending_resolve_first_approver(9_930), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_930), None);
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_missing_challenge_timing_metadata() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-paused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_control_char_proof_metadata() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_932,
+        Some(TaskObject {
+            task_id: 9_932,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt\npaused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(98_271),
+            challenge_window_blocks_snapshot: Some(11),
+            challenged_at_height: Some(98_260),
+            resolve_deadline_height: Some(98_282),
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_932,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_932), None);
+    assert_eq!(st.pending_resolve_first_approver(9_932), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_932), None);
 }
 
 #[test]
@@ -2877,7 +3186,7 @@ fn wal_checkpoint_verification_stops_before_uncommitted_tail() {
 }
 
 #[test]
-fn wal_checkpoint_verification_fails_closed_on_conflicting_duplicate_checkpoint_height() {
+fn wal_checkpoint_verification_fails_closed_on_ambiguous_metadata_at_same_height() {
     let e1 = WalMeta {
         height: 1,
         round: 0,
@@ -2919,6 +3228,221 @@ fn wal_checkpoint_verification_fails_closed_on_conflicting_duplicate_checkpoint_
         .expect("checkpoint");
     assert_eq!(got.height, 1);
     assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_incomplete_checkpoint_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: String::new(),
+            wal_entry_hash_hex: "missing-root".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_whitespace_only_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "   \n\t  ".into(),
+            wal_entry_hash_hex: "present-but-blank".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_on_non_canonical_checkpoint_metadata_at_same_height() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: " r2".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_checkpoint_verification_fails_closed_when_checkpoint_metadata_exists_but_does_not_match_committed_wal_entry() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some(h1.clone()),
+    };
+    let h2 = e2.content_hash_hex();
+    let e3 = WalMeta {
+        height: 3,
+        round: 0,
+        proposal_hash: "p3".into(),
+        committed: true,
+        state_root_hex: "r3".into(),
+        prev_hash_hex: Some(h2),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "tampered-root".into(),
+            wal_entry_hash_hex: "tampered-hash".into(),
+        },
+        CheckpointMeta {
+            height: 3,
+            state_root_hex: "r3".into(),
+            wal_entry_hash_hex: e3.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, e3])
+        .unwrap()
+        .expect("checkpoint");
+    assert_eq!(got.height, 1);
+    assert_eq!(got.state_root_hex, "r1");
+}
+
+#[test]
+fn wal_content_hash_length_frames_variable_metadata_fields() {
+    let a = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "ab".into(),
+        committed: true,
+        state_root_hex: "c".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+    let b = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "a".into(),
+        committed: true,
+        state_root_hex: "bc".into(),
+        prev_hash_hex: Some("def".into()),
+    };
+
+    assert_ne!(
+        a.content_hash_hex(),
+        b.content_hash_hex(),
+        "wal content hash must length-frame proposal and state-root metadata so proof material cannot collide across field boundaries"
+    );
 }
 
 #[test]

@@ -21,18 +21,115 @@ pub struct WalMeta {
     pub prev_hash_hex: Option<String>,
 }
 
+fn hash_len_framed_str(hasher: &mut Sha256, value: &str) {
+    hasher.update((value.len() as u64).to_le_bytes());
+    hasher.update(value.as_bytes());
+}
+
+fn has_canonical_metadata(value: &str) -> bool {
+    let trimmed = value.trim();
+    !trimmed.is_empty() && trimmed == value
+}
+
+fn has_complete_task_metering_snapshot(metering: &trnm_types::TaskMeteringSnapshot) -> bool {
+    has_canonical_metadata(&metering.workload_class)
+        && has_canonical_metadata(&metering.metering_schema)
+        && has_canonical_metadata(&metering.receipt_hash)
+}
+
+fn has_complete_task_metadata(metadata: &trnm_types::TaskMetadata) -> bool {
+    metadata
+        .note
+        .as_deref()
+        .map(has_canonical_metadata)
+        .unwrap_or(true)
+        && metadata
+            .task_type
+            .as_deref()
+            .map(has_canonical_metadata)
+            .unwrap_or(true)
+        && metadata
+            .input_hash
+            .as_deref()
+            .map(has_canonical_metadata)
+            .unwrap_or(true)
+        && metadata
+            .model
+            .as_ref()
+            .map(|model| {
+                model
+                    .model_id
+                    .as_deref()
+                    .map(has_canonical_metadata)
+                    .unwrap_or(true)
+                    && model
+                        .model_digest
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+                    && model
+                        .version
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+            })
+            .unwrap_or(true)
+        && metadata
+            .provenance
+            .as_ref()
+            .map(|provenance| {
+                provenance
+                    .producer_did
+                    .as_deref()
+                    .map(has_canonical_metadata)
+                    .unwrap_or(true)
+                    && provenance
+                        .produced_at
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+                    && provenance
+                        .provenance_index
+                        .as_deref()
+                        .map(has_canonical_metadata)
+                        .unwrap_or(true)
+            })
+            .unwrap_or(true)
+        && metadata
+            .metering
+            .as_ref()
+            .map(has_complete_task_metering_snapshot)
+            .unwrap_or(true)
+}
+
+fn has_complete_checkpoint_meta(checkpoint: &CheckpointMeta) -> bool {
+    has_canonical_metadata(&checkpoint.state_root_hex)
+        && has_canonical_metadata(&checkpoint.wal_entry_hash_hex)
+}
+
+fn has_complete_wal_meta(entry: &WalMeta) -> bool {
+    has_canonical_metadata(&entry.proposal_hash)
+        && has_canonical_metadata(&entry.state_root_hex)
+        && entry
+            .prev_hash_hex
+            .as_ref()
+            .map(|prev| has_canonical_metadata(prev))
+            .unwrap_or(true)
+}
+
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
-        hasher.update(self.proposal_hash.as_bytes());
+        hash_len_framed_str(&mut hasher, &self.proposal_hash);
         hasher.update([self.committed as u8]);
-        hasher.update(self.state_root_hex.as_bytes());
+        hash_len_framed_str(&mut hasher, &self.state_root_hex);
         if let Some(prev) = &self.prev_hash_hex {
-            hasher.update(prev.as_bytes());
+            hasher.update([1]);
+            hash_len_framed_str(&mut hasher, prev);
         } else {
-            hasher.update(b"genesis");
+            hasher.update([0]);
         }
         hex::encode(hasher.finalize())
     }
@@ -42,11 +139,14 @@ impl StateStore {
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
         match snapshot {
-            Some(task) => {
-                if task.task_id != id {
-                    self.objects.remove(&id);
-                    return;
-                }
+            Some(task)
+                if task.task_id == id
+                    && task
+                        .metadata
+                        .as_ref()
+                        .map(has_complete_task_metadata)
+                        .unwrap_or(true) =>
+            {
                 self.objects.insert(
                     id,
                     VersionedObject {
@@ -55,13 +155,8 @@ impl StateStore {
                     },
                 );
             }
-            None => {
-                if matches!(
-                    self.objects.get(&id).map(|object| &object.value),
-                    Some(ObjectValue::Task(_))
-                ) {
-                    self.objects.remove(&id);
-                }
+            Some(_) | None => {
+                self.objects.remove(&id);
             }
         }
     }
@@ -96,6 +191,9 @@ pub fn verify_wal_and_find_checkpoint(
                 return Ok(best_checkpoint);
             }
         }
+        if !has_complete_wal_meta(e) {
+            return Ok(best_checkpoint);
+        }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
         }
@@ -106,20 +204,26 @@ pub fn verify_wal_and_find_checkpoint(
         prev_hash = Some(cur_hash.clone());
         prev_height = Some(e.height);
 
-        let height_checkpoints: Vec<&CheckpointMeta> =
+        let matching_height: Vec<&CheckpointMeta> =
             checkpoints.iter().filter(|cp| cp.height == e.height).collect();
-        if height_checkpoints.len() > 1 {
-            let first = height_checkpoints[0];
-            let has_conflict = height_checkpoints.iter().skip(1).any(|cp| {
-                cp.state_root_hex != first.state_root_hex
-                    || cp.wal_entry_hash_hex != first.wal_entry_hash_hex
-            });
-            if has_conflict {
-                return Ok(best_checkpoint);
-            }
+        if matching_height.iter().any(|cp| !has_complete_checkpoint_meta(cp)) {
+            return Ok(best_checkpoint);
+        }
+        let canonical_matches = matching_height
+            .iter()
+            .filter(|cp| {
+                cp.state_root_hex == e.state_root_hex
+                    && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+            })
+            .count();
+        if matching_height.len() > 1 && canonical_matches != 1 {
+            return Ok(best_checkpoint);
+        }
+        if !matching_height.is_empty() && canonical_matches == 0 {
+            return Ok(best_checkpoint);
         }
 
-        for cp in height_checkpoints {
+        for cp in matching_height {
             if cp.state_root_hex == e.state_root_hex
                 && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
             {
