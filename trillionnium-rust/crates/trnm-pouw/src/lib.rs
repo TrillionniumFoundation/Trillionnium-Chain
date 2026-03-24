@@ -7500,6 +7500,73 @@ mod tests {
     }
 
     #[test]
+    fn challenged_resolve_retains_snapshot_and_collateral_metadata_for_audit() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(98_998, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let r1 = apply_create_task(&mut st, 198_998, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(198_998, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+            180,
+        )
+        .expect_err("first resolver should stage multisig approval");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            180,
+        )
+        .unwrap();
+
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: even after explicit resolve finalizes
+        // the challenge, keep the exact challenge snapshot plus collateral trail so
+        // later accounting/proof audits can reconstruct which policy window and
+        // bond path governed settlement.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenged_at_height, Some(120));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(220));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenge_bond_forfeited, Some(true));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_worker_stake_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
