@@ -35,6 +35,31 @@
 OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 ```
 
+## Operator handoff / 引用纪律清单
+
+在把本地证据包交给 validator/operator/release reviewer 之前，先按下面清单逐项确认：
+
+1. **先看 `summary.txt` / `manifest.txt`，不要凭终端滚屏口述结论。**
+   - local evidence 以 `summary.txt` 为唯一汇总入口。
+   - RC rehearsal 以 `manifest.txt` 为审计入口；必要时再展开对应 `*.log`。
+2. **先看 `result=` / `pass_count=` / `fail_count=`，再看单项日志。**
+   - 只要出现任意 `FAIL(...)`，本轮就只能算失败留痕，不能表述成当前 release-ready 证据。
+3. **引用命令时优先复制脚本产出的 `replay_command=` / `rollback_command=`。**
+   - 不要手工重写成“差不多一样”的命令，避免漏掉 deterministic 前缀、`OUT_DIR`、或固定的 `TRNM_CHALLENGE_REEXEC_ENTRY`。
+4. **把历史证据和当前 truth-source 明确分开。**
+   - `historical_evidence_only=true` 表示它只能证明“这轮本地/历史演练发生过什么”，不能替代仓库根 `RELEASE_READINESS.md` 的当前结论。
+5. **交接时至少带上 4 个锚点字段。**
+   - `git_branch=`
+   - `git_head=`
+   - `generated_at=`
+   - `truth_source=`
+
+推荐交接口径：
+
+> “本次证据包/RC manifest 仅说明该分支在该时间点、该环境下的本地演练结果；当前是否可发布，仍以 `truth_source=` 指向的 `RELEASE_READINESS.md` 为准。”
+
+这条口径的目的，是把 Cosmos/CometBFT 式的 validator/operator handoff 做到 **可审计、可复放、可回滚**，避免“终端看起来绿过一次”就被误转述成 release 结论。
+
 ## RC 复现与回滚留痕（M3）
 
 为减少“同命令不同结果”的波动，建议在采集证据前固定环境，并优先使用与 `RELEASE_READINESS.md` 一致的 deterministic 前缀：
