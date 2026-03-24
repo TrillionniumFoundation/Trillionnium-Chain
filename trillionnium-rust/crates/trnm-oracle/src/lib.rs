@@ -694,6 +694,26 @@ mod tests {
     }
 
     #[test]
+    fn accepts_sample_count_exactly_at_update_rate_cap() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            60,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        p.validate_snapshot(&snap, 10_100)
+            .expect("sample_count exactly at the configured cap should remain valid");
+    }
+
+    #[test]
     fn rejects_sample_count_below_source_cardinality() {
         let p = policy();
         let snap = OracleSnapshot::new(
