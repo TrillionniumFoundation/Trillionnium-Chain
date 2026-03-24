@@ -3,8 +3,8 @@ use std::{collections::BTreeMap, env, path::PathBuf, time::Duration};
 
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
-    adapter_error_signal, append_submission, attach_llm_provenance, classify_adapter_error,
-    commitment, execute_payload, load_ingress_records, reputation_score_impact,
+    adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
+    classify_adapter_error, commitment, execute_payload, load_ingress_records,
     resolve_llm_adapter_policy, run_llm_adapter_with_retry, save_ingress_records,
     transition_request_status, AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
     PROOF_ADAPTER_ENV,
@@ -76,12 +76,12 @@ pub(crate) fn handle_run_assigned(
             Err(e) => {
                 let (resolution_code, failure_tag) = classify_adapter_error(&e);
                 let reputation_signal = adapter_error_signal(e.kind);
-                let (reputation_label, reputation_delta) = reputation_score_impact(reputation_signal);
+                let (reputation_label, reputation_delta) =
+                    apply_reputation_signal(rec, reputation_signal);
                 rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
                 rec.verifier_status = Some("rejected".to_string());
                 rec.resolution_code = Some(resolution_code.to_string());
                 rec.adapter_error = Some(e.context.clone());
-                rec.reputation_delta = Some(reputation_delta);
                 n += 1;
                 println!(
                     "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} error={}",
@@ -107,9 +107,8 @@ pub(crate) fn handle_run_assigned(
 
         if v_status != "accepted" {
             let (reputation_label, reputation_delta) =
-                reputation_score_impact(ReputationSignal::VerifierRejected);
+                apply_reputation_signal(rec, ReputationSignal::VerifierRejected);
             rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
-            rec.reputation_delta = Some(reputation_delta);
             n += 1;
             println!(
                 "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={}",
@@ -139,9 +138,8 @@ pub(crate) fn handle_run_assigned(
             )?;
         }
         let (reputation_label, reputation_delta) =
-            reputation_score_impact(ReputationSignal::Accepted);
+            apply_reputation_signal(rec, ReputationSignal::Accepted);
         rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
-        rec.reputation_delta = Some(reputation_delta);
         n += 1;
         println!(
             "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={}",

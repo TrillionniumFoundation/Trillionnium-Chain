@@ -89,3 +89,39 @@ fn reputation_score_impact_remains_one_to_one_across_signals() {
         );
     }
 }
+
+#[test]
+fn apply_reputation_signal_updates_record_via_single_mapping_path() {
+    let mut rec = MessageIngressRecord {
+        request_id: "req-reputation-apply".to_string(),
+        task_id: 1500,
+        channel: "telegram".to_string(),
+        user_id: "u1".to_string(),
+        session_id: "s1".to_string(),
+        text: "hello".to_string(),
+        idempotency_key: "ik-reputation-apply".to_string(),
+        status: RequestStatus::Assigned.as_str().to_string(),
+        created_at_unix_ms: 1,
+        assigned_worker: Some("worker-1".to_string()),
+        assigned_at_unix_ms: Some(2),
+        model_output: None,
+        provider_request_id: None,
+        provenance_schema_version: None,
+        llm_provenance: None,
+        result_hash: None,
+        verifier_status: None,
+        resolution_code: None,
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+        adapter_error: None,
+        reputation_delta: None,
+    };
+
+    let (label, delta) = apply_reputation_signal(&mut rec, ReputationSignal::VerifierRejected);
+    assert_eq!((label, delta), ("verifier_rejected", -2));
+    assert_eq!(rec.reputation_delta, Some(-2));
+
+    let (label, delta) = apply_reputation_signal(&mut rec, ReputationSignal::Accepted);
+    assert_eq!((label, delta), ("accepted", 3));
+    assert_eq!(rec.reputation_delta, Some(3));
+}

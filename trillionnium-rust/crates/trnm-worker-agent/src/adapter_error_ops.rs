@@ -1,4 +1,5 @@
 use crate::adapter_parse::context_matches_token;
+use crate::state::MessageIngressRecord;
 use crate::{RC_DUPLICATE, RC_NONCE_REJECTED, RC_SLO_VIOLATION};
 
 use super::{AdapterError, AdapterErrorKind, ReputationSignal};
@@ -50,6 +51,15 @@ pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str
 
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_score_impact(signal).1
+}
+
+pub(crate) fn apply_reputation_signal(
+    rec: &mut MessageIngressRecord,
+    signal: ReputationSignal,
+) -> (&'static str, i32) {
+    let (label, delta) = reputation_score_impact(signal);
+    rec.reputation_delta = Some(delta);
+    (label, delta)
 }
 
 pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {

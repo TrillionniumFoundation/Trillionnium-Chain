@@ -1754,6 +1754,15 @@ pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_score_impact(signal).1
 }
 
+pub(crate) fn apply_reputation_signal(
+    rec: &mut MessageIngressRecord,
+    signal: ReputationSignal,
+) -> (&'static str, i32) {
+    let (label, delta) = reputation_score_impact(signal);
+    rec.reputation_delta = Some(delta);
+    (label, delta)
+}
+
 pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
     match kind {
         AdapterErrorKind::Retriable => ReputationSignal::AdapterRetryExhausted,
