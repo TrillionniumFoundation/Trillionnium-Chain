@@ -70,12 +70,13 @@ pub(crate) fn persist_committed_height(
                 .expect("just-pushed committed WAL entry must exist"),
         ) {
             let checkpoint_summary = checkpoint.evidence_summary();
+            let wal_summary = wal_entries
+                .last()
+                .expect("just-pushed committed WAL entry must exist")
+                .evidence_summary();
             checkpoints.push(checkpoint);
             persist_checkpoint_meta(wal_dir, checkpoints)?;
-            println!(
-                "[bft-checkpoint] {} proposal_hash={}",
-                checkpoint_summary, proposal_hash
-            );
+            println!("[bft-checkpoint] {} {}", checkpoint_summary, wal_summary);
         }
     }
 

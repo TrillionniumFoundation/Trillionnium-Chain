@@ -163,6 +163,19 @@ impl WalMeta {
         }
         hex::encode(hasher.finalize())
     }
+
+    pub fn evidence_summary(&self) -> String {
+        format!(
+            "wal_height={} wal_round={} wal_proposal_hash={} wal_committed={} wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+            self.height,
+            self.round,
+            self.proposal_hash,
+            self.committed,
+            self.state_root_hex,
+            self.prev_hash_hex.as_deref().unwrap_or("none"),
+            self.content_hash_hex()
+        )
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -4155,6 +4168,37 @@ mod tests {
             summary,
             changed_wal_hash.evidence_summary(),
             "checkpoint evidence summary must change when the DA-relevant WAL hash changes"
+        );
+    }
+
+    #[test]
+    fn wal_evidence_summary_is_deterministic_and_hash_backed() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("cd".repeat(32)),
+        };
+
+        let summary = wal.evidence_summary();
+        assert_eq!(
+            summary,
+            format!(
+                "wal_height=7 wal_round=3 wal_proposal_hash=proposal-7 wal_committed=true wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+                wal.state_root_hex,
+                wal.prev_hash_hex.as_deref().unwrap(),
+                wal.content_hash_hex()
+            )
+        );
+
+        let mut changed_prev_hash = wal.clone();
+        changed_prev_hash.prev_hash_hex = None;
+        assert_ne!(
+            summary,
+            changed_prev_hash.evidence_summary(),
+            "wal evidence summary must change when the predecessor proof surface changes"
         );
     }
 

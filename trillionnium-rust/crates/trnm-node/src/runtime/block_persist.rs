@@ -40,12 +40,10 @@ pub(crate) fn persist_checkpoint_if_needed(args: &Args, runtime: &mut RuntimeSta
         };
         if checkpoint_evidence_surface_is_canonical(&checkpoint, wal_entry) {
             let checkpoint_summary = checkpoint.evidence_summary();
+            let wal_summary = wal_entry.evidence_summary();
             runtime.checkpoints.push(checkpoint);
             persist_checkpoint_meta(&runtime.wal_dir, &runtime.checkpoints)?;
-            println!(
-                "[bft-checkpoint] {} proposal_hash={}",
-                checkpoint_summary, proposal_hash
-            );
+            println!("[bft-checkpoint] {} {}", checkpoint_summary, wal_summary);
         }
     }
     Ok(())
