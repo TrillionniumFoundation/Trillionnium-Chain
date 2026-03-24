@@ -13,11 +13,7 @@ SECTION_RE = re.compile(r"^---\s+strategy=(.+?)\s+---$")
 KV_RE = re.compile(r"^([a-zA-Z0-9_\.-]+)=(.+)$")
 
 
-<<<<<<< HEAD
 def pick_latest(root: Path, pattern: str) -> Optional[str]:
-=======
-def pick_latest(root: Path, pattern: str) -> str | None:
->>>>>>> feat/p2.3-stability-observability
     files = sorted(glob.glob(str(root / pattern)), key=os.path.getmtime, reverse=True)
     return files[0] if files else None
 
@@ -159,7 +155,6 @@ def summarize_csv(path: Path):
     return out
 
 
-<<<<<<< HEAD
 def pctl(values: list[float], q: float) -> float:
     if not values:
         return 0.0
@@ -168,8 +163,6 @@ def pctl(values: list[float], q: float) -> float:
     return xs[idx]
 
 
-=======
->>>>>>> feat/p2.3-stability-observability
 def render_markdown(rows: list[dict]) -> str:
     lines = ["# Aggressive Profiling Summary", f"generated_at={datetime.now().isoformat()}", ""]
 
@@ -185,7 +178,6 @@ def render_markdown(rows: list[dict]) -> str:
 
     lines.append("")
     lines.append("## Aggregate by workload")
-<<<<<<< HEAD
     lines.append("| workload | avg_ratio | p50_ratio | p95_ratio | scan_p50 | scan_p95 | scan_max | avg_scan_tx | avg_scan_group | avg_total_hit |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
 
@@ -202,20 +194,6 @@ def render_markdown(rows: list[dict]) -> str:
                 pctl(scans, 0.50),
                 pctl(scans, 0.95),
                 max(scans) if scans else 0.0,
-=======
-    lines.append("| workload | avg_ratio | p95_ratio | avg_scan_tx | avg_scan_group | avg_total_hit |")
-    lines.append("|---|---:|---:|---:|---:|---:|")
-
-    for wl in sorted({r["workload"] for r in rows}):
-        subset = [r for r in rows if r["workload"] == wl]
-        ratios = sorted(r["elapsed_ratio"] for r in subset)
-        p95_idx = min(len(ratios) - 1, int(len(ratios) * 0.95))
-        lines.append(
-            "| {} | {:.3f} | {:.3f} | {:.3f} | {:.3f} | {:.4f} |".format(
-                wl,
-                sum(r["elapsed_ratio"] for r in subset) / len(subset),
-                ratios[p95_idx],
->>>>>>> feat/p2.3-stability-observability
                 sum(r["scan_per_tx"] for r in subset) / len(subset),
                 sum(r["scan_per_group"] for r in subset) / len(subset),
                 sum(r["total_hit_rate"] for r in subset) / len(subset),

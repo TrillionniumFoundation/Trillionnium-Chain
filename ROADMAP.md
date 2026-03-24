@@ -3,13 +3,9 @@
 更新日期：2026-02-20
 策略：先稳内核，再接外设。
 
-<<<<<<< HEAD
 > 注：本文件保留为前一阶段（W1/W2）记录，不是当前 release readiness / truth source，也不应被解读为“今天已达到可发布基线”。
 > 当前是否可发布、哪些 ready/GO 表述仍有效，请以仓库根 `RELEASE_READINESS.md` 为准。
 > 下一阶段（P3→P5）执行路线见：
-=======
-> 注：本文件保留为前一阶段（W1/W2）记录。下一阶段（P3→P5）执行路线见：
->>>>>>> feat/p2.3-stability-observability
 > - `docs/strategy/rust-l1-p3-p5-competitive-roadmap.md`
 > - `docs/strategy/p3-week1-execution-plan.md`
 
