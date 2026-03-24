@@ -101,11 +101,6 @@ pub fn drive_minimal_settlement(
         }
     }
 
-    if heartbeat.should_retry && !heartbeat.degraded {
-        let reason = normalize_compensation_reason(&heartbeat.message, "heartbeat retry pending");
-        return Err(SettlementError::HeartbeatRetryPending { reason });
-    }
-
     validate_heartbeat_outcome(heartbeat)?;
 
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
@@ -571,7 +566,7 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
+    fn drive_minimal_settlement_rejects_retrying_heartbeat_with_invalid_progression_before_retry_pending() {
         let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -596,12 +591,7 @@ mod tests {
         )
         .unwrap_err();
 
-        assert_eq!(
-            err,
-            SettlementError::HeartbeatRetryPending {
-                reason: "relay heartbeat retry pending".to_string(),
-            }
-        );
+        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
         assert_eq!(request.status, BridgeStatus::Pending);
     }
 }
