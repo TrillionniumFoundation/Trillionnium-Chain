@@ -171,6 +171,69 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_zero_id_task_snapshot_fails_closed_without_perturbing_empty_root() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_task(
+        0,
+        Some(TaskObject {
+            task_id: 0,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("invalid zero-id replay snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:25:00Z".into()),
+                    provenance_index: Some("prov-task-zero-id".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x30; 32]),
+            result_hash: Some([0x40; 32]),
+            reveal_salt: Some([0x50; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(28),
+            resolve_deadline_height: Some(52),
+            challenge_bond: Some(17),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(0).is_none(),
+        "zero-id restore snapshots must fail closed instead of materializing a task object"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-id restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-id restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn restore_zero_version_task_snapshot_fails_closed_without_perturbing_empty_root() {
     let mut state = StateStore::new();
     let empty_root = state.state_root();
