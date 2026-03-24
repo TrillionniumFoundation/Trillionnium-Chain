@@ -61,6 +61,16 @@ fn normalize_market_worker_key_strips_soft_hyphen_alias_spoofing() {
 }
 
 #[test]
+fn normalize_market_worker_key_collapses_non_ascii_whitespace_aliases() {
+    let got = normalize_market_worker_key("Worker\u{00A0}A").expect("normalized");
+    assert_eq!(got, "worker a");
+    assert_eq!(
+        normalize_market_worker_key("\u{2003}Worker\tA\n").expect("normalized"),
+        got
+    );
+}
+
+#[test]
 fn normalize_actor_or_signer_strips_controls_and_zero_width() {
     let got = normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
     assert_eq!(got, "alice bob");

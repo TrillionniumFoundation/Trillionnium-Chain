@@ -163,7 +163,7 @@ pub(crate) fn normalize_market_worker_key(raw: &str) -> Option<String> {
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
             '\u{00AD}' => None,
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>();
@@ -189,7 +189,7 @@ pub(crate) fn normalize_market_status_key(raw: &str) -> String {
         .filter_map(|ch| match ch {
             '\u{00AD}' => None,
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>()

@@ -1476,7 +1476,7 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
             '\u{00AD}' => None,
             // Treat control bytes as whitespace separators so malformed/injected
             // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>();
@@ -1504,7 +1504,7 @@ fn normalize_market_status_key(raw: &str) -> String {
             // remain stable against malformed JSONL producers and hidden-char drift.
             '\u{00AD}' => None,
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>()
@@ -1520,7 +1520,7 @@ fn normalize_actor_or_signer(raw: &str) -> Option<String> {
         .chars()
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect();

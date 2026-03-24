@@ -89,6 +89,36 @@ fn market_reputation_loader_collapses_internal_whitespace_aliases() {
 }
 
 #[test]
+fn market_reputation_loader_collapses_non_ascii_whitespace_aliases() {
+    let mut path = std::env::temp_dir();
+    path.push(format!(
+        "trnm_rpc_market_reputation_unicode_ws_{}_{}.json",
+        std::process::id(),
+        now_ms()
+    ));
+    fs::write(
+        &path,
+        "{\"worker\\u00a0a\": 10, \"worker a\": 27, \"worker\\u2003b\": -4}",
+    )
+    .expect("write unicode-whitespace reputation fixture");
+
+    with_market_path_env(
+        &[(
+            MARKET_REPUTATION_FILE_ENV,
+            Some(path.to_string_lossy().as_ref()),
+        )],
+        || {
+            let rep = load_market_reputation();
+            assert_eq!(rep.get("worker a"), Some(&27));
+            assert_eq!(rep.get("worker b"), Some(&-4));
+            assert_eq!(rep.len(), 2);
+        },
+    );
+
+    let _ = fs::remove_file(path);
+}
+
+#[test]
 fn market_reputation_loader_collapses_zero_width_aliases() {
     let mut path = std::env::temp_dir();
     path.push(format!(
