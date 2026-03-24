@@ -187,4 +187,44 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn load_checkpoint_meta_canonicalizes_out_of_order_disk_entries_for_audit_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-load-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&CheckpointMetaList {
+            checkpoints: vec![
+                CheckpointMeta {
+                    height: 3,
+                    state_root_hex: "cc".repeat(32),
+                    wal_entry_hash_hex: "33".repeat(32),
+                },
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "aa".repeat(32),
+                    wal_entry_hash_hex: "11".repeat(32),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "bb".repeat(32),
+                    wal_entry_hash_hex: "22".repeat(32),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), raw).unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 3);
+        assert_eq!(checkpoints[0].height, 1);
+        assert_eq!(checkpoints[0].state_root_hex, "aa".repeat(32));
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "bb".repeat(32));
+        assert_eq!(checkpoints[2].height, 3);
+        assert_eq!(checkpoints[2].state_root_hex, "cc".repeat(32));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
+
