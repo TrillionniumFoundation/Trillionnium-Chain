@@ -136,7 +136,7 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
-    if heartbeat.should_retry {
+    if heartbeat.should_retry && matches!(confirm, SettlementConfirm::Confirmed { .. }) {
         return Err(SettlementError::HeartbeatRetryPending {
             reason: normalize_compensation_reason(
                 &heartbeat.message,
