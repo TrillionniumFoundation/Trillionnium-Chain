@@ -333,4 +333,46 @@ mod tests {
 
         let _ = std::fs::remove_file(&ack_log);
     }
+
+    #[test]
+    fn classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-blank-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            80,
+            "failed",
+            Some("   ".to_string()),
+            Some("reveal-old".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with blank commit receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 80);
+        assert_eq!(decision.ack_status, "failed");
+        assert_eq!(decision.reason_code, "missing_tx_hash_receipt");
+        assert_eq!(decision.commit_tx_hash_for_ack, None);
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-old"));
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
 }
