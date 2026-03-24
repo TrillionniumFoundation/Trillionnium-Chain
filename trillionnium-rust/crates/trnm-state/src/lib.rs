@@ -128,11 +128,6 @@ pub struct WalMeta {
 
 impl WalMeta {
     pub fn content_hash_hex(&self) -> String {
-        fn hash_str(hasher: &mut Sha256, value: &str) {
-            hasher.update((value.len() as u64).to_le_bytes());
-            hasher.update(value.as_bytes());
-        }
-
         let mut hasher = Sha256::new();
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.round.to_le_bytes());
@@ -801,6 +796,7 @@ fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
     )
 }
 
+#[cfg(test)]
 fn validate_governance_key_registration_lists(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
@@ -849,23 +845,6 @@ fn validate_governance_key_registration_lists(
     Ok(())
 }
 
-fn validate_governance_key_registration(
-    gov_param_key_index: &BTreeMap<String, u64>,
-    key: &str,
-    key_id: u64,
-) -> Result<(), String> {
-    validate_governance_registry_shape()?;
-    validate_governance_key_registration_lists(
-        gov_param_key_index,
-        key,
-        key_id,
-        GOV_ALLOWED_KEYS,
-        GOV_SENSITIVE_KEYS,
-        GOV_EXPLICIT_VALIDATOR_KEYS,
-        GOV_EXPLICIT_VALUE_RULE_KEYS,
-        GOV_PINNED_KEY_IDS,
-    )
-}
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -1073,21 +1052,6 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
-fn effective_resolve_authority_canonical(st: &StateStore) -> Result<Option<String>, String> {
-    if let Some(pending) = st.pending_gov_update("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&pending.value).map_err(|_| {
-            "resolve approval authority set must match pending governance authority".to_string()
-        })?;
-        return Ok(Some(expected));
-    }
-    if let Some(current) = st.gov_param_string("resolve_authority") {
-        let expected = canonicalize_resolve_authority_set(&current).map_err(|_| {
-            "resolve approval authority set must match configured governance authority".to_string()
-        })?;
-        return Ok(Some(expected));
-    }
-    Ok(None)
-}
 
 fn ensure_effective_resolve_authority_match(
     st: &StateStore,
@@ -2468,11 +2432,6 @@ impl StateStore {
         let param = self.validated_gov_param_object_at_id(id)?;
         let canonical_key = governance_expected_key_for_id(id).unwrap_or(param.key.as_str());
         (param.key == canonical_key).then_some((canonical_key, param))
-    }
-
-    fn canonical_gov_param_object_by_id(&self, id: u64) -> Option<&GovParamObject> {
-        self.canonical_gov_param_binding_at_id(id)
-            .map(|(_, param)| param)
     }
 
     pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
