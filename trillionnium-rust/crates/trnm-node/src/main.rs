@@ -12934,10 +12934,13 @@ fn main() -> Result<()> {
             checkpoints.push(CheckpointMeta {
                 height,
                 state_root_hex: root.clone(),
-                wal_entry_hash_hex: wal_hash,
+                wal_entry_hash_hex: wal_hash.clone(),
             });
             persist_checkpoint_meta(&wal_dir, &checkpoints)?;
-            println!("[bft-checkpoint] height={} state_root={}", height, root);
+            println!(
+                "[bft-checkpoint] height={} state_root={} wal_entry_hash={}",
+                height, root, wal_hash
+            );
         }
 
         persist_consensus_wal(

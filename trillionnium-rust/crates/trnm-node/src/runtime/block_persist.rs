@@ -46,12 +46,17 @@ pub(crate) fn persist_checkpoint_if_needed(args: &Args, runtime: &mut RuntimeSta
         });
         persist_checkpoint_meta(&runtime.wal_dir, &runtime.checkpoints)?;
         println!(
-            "[bft-checkpoint] height={} state_root={}",
+            "[bft-checkpoint] height={} state_root={} wal_entry_hash={}",
             runtime.height,
             runtime
                 .wal_entries
                 .last()
                 .map(|entry| entry.state_root_hex.as_str())
+                .unwrap_or_default(),
+            runtime
+                .checkpoints
+                .last()
+                .map(|checkpoint| checkpoint.wal_entry_hash_hex.as_str())
                 .unwrap_or_default()
         );
     }
