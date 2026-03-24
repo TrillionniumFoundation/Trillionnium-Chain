@@ -462,6 +462,13 @@ impl CapabilityAuditQueryError {
             },
         }
     }
+
+    fn http_status(&self) -> &'static str {
+        match self {
+            Self::TokenNotFound(_) => "404 Not Found",
+            Self::InvalidRegistryState { .. } => "422 Unprocessable Entity",
+        }
+    }
 }
 
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
@@ -3153,8 +3160,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             http_json_response("200 OK", &body)
                         }
                         Err(err) => {
-                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            http_json_response("404 Not Found", &body)
+                            let rpc_error = err.to_rpc_error();
+                            let body = serde_json::json!({"ok": false, "code": rpc_error.code, "message": rpc_error.message}).to_string();
+                            http_json_response(err.http_status(), &body)
                         }
                     }
                 } else {

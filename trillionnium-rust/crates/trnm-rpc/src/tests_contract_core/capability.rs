@@ -94,3 +94,22 @@ fn resolve_capability_token_subject_or_token_fail_closed_without_structured_toke
         "subject lookup must fail-closed when structured token mapping is missing"
     );
 }
+
+#[test]
+fn capability_audit_query_error_http_status_preserves_not_found() {
+    let err = CapabilityAuditQueryError::TokenNotFound(404);
+
+    assert_eq!(err.http_status(), "404 Not Found");
+    assert_eq!(err.to_rpc_error().code, "CAPABILITY_NOT_FOUND");
+}
+
+#[test]
+fn capability_audit_query_error_http_status_preserves_invalid_registry_state() {
+    let err = CapabilityAuditQueryError::InvalidRegistryState {
+        field: "subject_did",
+        value: "did:org:bad subject".to_string(),
+    };
+
+    assert_eq!(err.http_status(), "422 Unprocessable Entity");
+    assert_eq!(err.to_rpc_error().code, "INVALID_REGISTRY_STATE");
+}

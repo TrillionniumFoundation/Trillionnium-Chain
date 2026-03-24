@@ -31,6 +31,13 @@ impl CapabilityAuditQueryError {
             },
         }
     }
+
+    pub(crate) fn http_status(&self) -> &'static str {
+        match self {
+            Self::TokenNotFound(_) => "404 Not Found",
+            Self::InvalidRegistryState { .. } => "422 Unprocessable Entity",
+        }
+    }
 }
 
 pub(crate) fn load_identity_registry(path: &Path) -> IdentityRegistry {
