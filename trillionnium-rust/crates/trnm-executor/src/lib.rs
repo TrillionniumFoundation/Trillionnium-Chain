@@ -2897,6 +2897,36 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_grouping_strategy_keeps_mixed_access_domain_skew_guardrails() {
+        let strategies = [GroupingStrategy::AggressiveGreedy];
+
+        for strategy in strategies {
+            let txs = vec![tx(
+                1,
+                vec![ObjectRef { id: 7, version: 2 }],
+                vec![ObjectRef { id: 7, version: 1 }],
+            )];
+
+            let panic = std::panic::catch_unwind(|| {
+                let _ = build_parallel_groups_profile_with_strategy(&txs, strategy);
+            });
+
+            let msg = panic
+                .expect_err("aggressive grouping must reject cross-domain version skew")
+                .downcast::<String>()
+                .map(|s| *s)
+                .or_else(|payload| payload.downcast::<&'static str>().map(|s| s.to_string()))
+                .expect("panic payload should be string-like");
+            assert!(
+                msg.contains(
+                    "mixed access domain contains the same object id with multiple versions"
+                ),
+                "unexpected panic for {strategy:?}: {msg}"
+            );
+        }
+    }
+
+    #[test]
     fn reorder_only_grouping_strategies_keep_mixed_access_domain_skew_guardrails() {
         let strategies = [
             GroupingStrategy::FootprintDesc,
