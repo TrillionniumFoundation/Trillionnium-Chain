@@ -1444,8 +1444,9 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     // version only after mixed read/write domains have passed the fail-closed skew
     // guard. Use the smallest combined key as primary to preserve mixed-domain
     // role-flip stability, while choosing secondary by deterministic domain family:
-    // when primary is write-dominant, prefer the next write key; otherwise prefer
-    // read-local secondary before write spillover.
+    // when primary is write-dominant, prefer the next write key; otherwise fold in
+    // the first write-domain key before falling back to another read-local key so
+    // mixed domains retain a stable writer signal.
     let mut write_keys = dedup_access_keys_no_version(&tx.write_set);
     let mut read_keys = dedup_access_keys_no_version(&tx.read_set);
     write_keys.sort_unstable();
@@ -2763,6 +2764,15 @@ mod tests {
             hot_bucket_hint(&baseline, buckets_n),
             ((7u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
         );
+    }
+
+    #[test]
+    fn hot_bucket_keys_fold_write_spillover_before_second_read_key() {
+        let tx = tx(1, vec![o(3), o(4)], vec![o(9)]);
+
+        // When the minimum key is read-only, the secondary signal should still
+        // retain the writer lane before falling back to another read-local key.
+        assert_eq!(hot_bucket_keys(&tx), (3, 9));
     }
 
     #[test]
