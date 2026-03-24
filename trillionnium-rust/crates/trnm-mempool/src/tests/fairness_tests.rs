@@ -46,6 +46,24 @@ fn reserve_only_mode_keeps_fairness_streak_cold_during_spillover_drains() {
 }
 
 #[test]
+fn critical_spillover_warms_normal_fairness_like_direct_normal_admission() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    // Saturate the critical reserve first.
+    assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // The next critical ingress spills into free normal capacity while both
+    // lanes stay backlogged.
+    assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Critical spillover should arm the same fairness warmup contract as a
+    // direct normal admission, so the newly occupied normal lane gets the next turn.
+    assert_eq!(g.pop_ready(), Some(102));
+    assert_eq!(g.pop_ready(), Some(100));
+}
+
+#[test]
 fn fairness_warmup_does_not_slow_critical_when_normal_lane_drains() {
     let mut g = LaneAdmissionGate::new(4, 1);
 
