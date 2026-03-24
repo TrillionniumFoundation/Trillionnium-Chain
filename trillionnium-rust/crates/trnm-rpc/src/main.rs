@@ -3623,6 +3623,7 @@ fn main() -> Result<()> {
                 bail!("param not found: {}", key);
             };
             let out = GovParamQueryResponse {
+                key_id: p.key_id,
                 key: p.key,
                 value: p.value,
                 version: p.version,

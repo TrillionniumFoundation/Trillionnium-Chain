@@ -79,6 +79,7 @@ pub struct GovProposalQueryResponse {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovParamQueryResponse {
+    pub key_id: u64,
     pub key: String,
     pub value: String,
     pub version: u64,

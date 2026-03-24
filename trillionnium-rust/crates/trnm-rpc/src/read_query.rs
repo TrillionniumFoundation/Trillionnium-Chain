@@ -48,6 +48,7 @@ pub(crate) fn handle_query_param(key: &str) -> Result<()> {
         bail!("param not found: {}", key);
     };
     let out = GovParamQueryResponse {
+        key_id: p.key_id,
         key: p.key,
         value: p.value,
         version: p.version,
