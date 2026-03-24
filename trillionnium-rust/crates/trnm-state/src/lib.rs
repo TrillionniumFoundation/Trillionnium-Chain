@@ -8941,6 +8941,26 @@ mod tests {
     }
 
     #[test]
+    fn governance_registry_lookup_id_for_key_keeps_reserved_binding_when_foreign_alias_reuses_reserved_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            EMERGENCY_PAUSE_KEY_ID,
+        );
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "forward lookup must keep the reserved emergency_pause binding even when a foreign alias reuses the same mutable key id"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign aliases reusing a reserved governance id must not resolve through the allowlisted forward registry"
+        );
+    }
+
+    #[test]
     fn governance_expected_pinned_binding_routes_both_directions_from_single_source() {
         assert_eq!(
             governance_expected_pinned_binding("emergency_pause", 8_000),
