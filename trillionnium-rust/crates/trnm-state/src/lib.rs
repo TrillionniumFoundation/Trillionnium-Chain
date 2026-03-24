@@ -2319,6 +2319,8 @@ impl StateStore {
                 let snapshot_key = snapshot.key.clone();
                 if snapshot_key == "algorand_governance_key_id" {
                     self.clear_pending_gov_update_bindings(&snapshot_key, None);
+                    self.remove_gov_param_key_index_for_id(key_id);
+                    self.objects.remove(&key_id);
                     self.invalidate_state_root_cache();
                     return;
                 }
@@ -8455,6 +8457,51 @@ mod tests {
                 .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
+        );
+    }
+
+    #[test]
+    fn governance_restore_applied_param_rejects_non_allowlisted_algorand_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                    value: "key-41".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
+
+        st.restore_gov_param(
+            9_200,
+            Some(GovParamObject {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                version: 2,
+            }),
+        );
+
+        assert!(
+            st.get_param(9_200).is_none(),
+            "applied restore must fail closed by scrubbing the raw non-allowlisted governance object"
+        );
+        assert!(
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "public accessors must not resolve a non-allowlisted applied governance key after rejected restore"
+        );
+        assert!(
+            st.gov_param_key_index
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "applied restore must not retain a raw key-index entry for a non-allowlisted governance key"
         );
     }
 
