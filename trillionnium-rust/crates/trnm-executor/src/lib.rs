@@ -1431,6 +1431,11 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
+    // Fail closed before deriving scheduler hotspot buckets: mixed read/write
+    // footprints for the same object id must not silently collapse across
+    // mismatched versions and drift the execution-domain lane signal.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
     // Canonicalize access-domain buckets by deduping object ids independently of
     // version. Use the smallest combined key as primary to preserve mixed-domain
     // role-flip stability, while choosing secondary by deterministic domain family:
@@ -2172,6 +2177,20 @@ mod tests {
         assert_eq!(keys, vec![8, 40, 50, 9, 10]);
         assert_eq!((key_a, key_b), (8, 40));
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_keys_reject_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_keys(&tx);
     }
 
     #[test]
