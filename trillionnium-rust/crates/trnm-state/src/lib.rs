@@ -534,7 +534,7 @@ fn format_governance_registry_membership_drift(
     }
 
     Some(format!(
-        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_registry_keys=[{}]",
         registry_name,
         missing_allowed_keys.join(", "),
         rogue_registry_keys.join(", "),
@@ -6601,6 +6601,8 @@ mod tests {
             err.contains("explicit-validator registry drifted from allowed-key registry"),
             "{err}"
         );
+        assert!(err.contains("missing_allowed_keys=[max_parallel_workers]"), "{err}");
+        assert!(err.contains("rogue_registry_keys=[]"), "{err}");
         assert!(err.contains("max_parallel_workers"), "{err}");
     }
 
@@ -6635,6 +6637,8 @@ mod tests {
                 err.contains("explicit-value-rule registry drifted from allowed-key registry"),
                 "{err}"
             );
+            assert!(err.contains("missing_allowed_keys=[max_parallel_workers]"), "{err}");
+            assert!(err.contains("rogue_registry_keys=[]"), "{err}");
             assert!(err.contains("max_parallel_workers"), "{err}");
         }
     }
