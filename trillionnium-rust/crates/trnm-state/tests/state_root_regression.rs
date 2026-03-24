@@ -1,6 +1,42 @@
 use trnm_state::*;
 use trnm_types::*;
 
+fn pending_gov_base_value(key: &str) -> &'static str {
+    match key {
+        "max_block_ms" => "500",
+        "max_parallel_workers" => "32",
+        "min_worker_stake" => "1000",
+        "challenge_min_bond" => "100",
+        "challenge_success_bounty" => "10",
+        _ => panic!("missing pending gov base fixture for {key}"),
+    }
+}
+
+fn install_pending_gov_base(state: &mut StateStore, key_id: u64, key: &str) {
+    if state.get_param(key_id).is_none() {
+        state.restore_gov_param(
+            key_id,
+            Some(GovParamObject {
+                key_id,
+                key: key.to_string(),
+                value: pending_gov_base_value(key).to_string(),
+                version: 1,
+            }),
+        );
+    }
+}
+
+fn restore_pending_gov_update_with_base(
+    state: &mut StateStore,
+    key: &str,
+    snapshot: PendingGovParamUpdate,
+) {
+    if snapshot.key == key {
+        install_pending_gov_base(state, snapshot.key_id, key);
+    }
+    state.restore_pending_gov_update(key, Some(snapshot));
+}
+
 fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
     state.restore_task(
         task_id,
@@ -202,6 +238,69 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
         state_b.state_root(),
         "state_root should length-frame governance proposal title and proposer so field-boundary collisions cannot hash identically"
     );
+}
+
+fn task_with_boundary_metering(workload_class: &str, metering_schema: &str) -> TaskObject {
+    TaskObject {
+        task_id: 8_901,
+        creator: "alice".into(),
+        bounty: 99,
+        status: TaskStatus::Assigned,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("boundary metering".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("aa".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-b".into()),
+                model_digest: Some("bb".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-12T08:00:00Z".into()),
+                provenance_index: Some("prov-task-boundary".into()),
+                privacy_tier: Some(PrivacyTier::Public),
+            }),
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: workload_class.into(),
+                metering_schema: metering_schema.into(),
+                policy_snapshot_version: 1,
+                receipt_hash: "cc".repeat(32),
+                prompt_tokens: 16,
+                generated_tokens: 8,
+                decode_steps: 6,
+                kv_bytes_moved: 1024,
+                normalized_work_units: 99,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 10,
+                challenge_success_bounty_base: 11,
+                challenge_success_bounty_per_work_unit_num: 13,
+                challenge_success_bounty_per_work_unit_den: 17,
+                worker_completion_bonus_per_work_unit_num: 19,
+                worker_completion_bonus_per_work_unit_den: 23,
+                worker_slash_rebate_per_work_unit_num: 29,
+                worker_slash_rebate_per_work_unit_den: 31,
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: Some([0x22; 32]),
+        reveal_salt: Some([0x33; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(7),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    }
 }
 
 #[test]
@@ -569,17 +668,22 @@ fn restore_pending_gov_update_rewinds_state_root_after_value_mutation() {
         value: "120".into(),
         activate_at_height: 250,
     };
-    state.restore_pending_gov_update("challenge_min_bond", Some(baseline_snapshot.clone()));
+    restore_pending_gov_update_with_base(
+        &mut state,
+        "challenge_min_bond",
+        baseline_snapshot.clone(),
+    );
     let root_before = state.state_root();
 
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 114,
             key: "challenge_min_bond".into(),
             value: "150".into(),
             activate_at_height: 275,
-        }),
+        },
     );
     let root_after = state.state_root();
 
@@ -588,7 +692,7 @@ fn restore_pending_gov_update_rewinds_state_root_after_value_mutation() {
         "state_root should incorporate pending governance queue payloads so changed staged values/timelocks cannot hash identically"
     );
 
-    state.restore_pending_gov_update("challenge_min_bond", Some(baseline_snapshot));
+    restore_pending_gov_update_with_base(&mut state, "challenge_min_bond", baseline_snapshot);
     assert_eq!(
         state.state_root(),
         root_before,
@@ -605,15 +709,17 @@ fn restore_pending_gov_update_rewinds_state_root_after_value_mutation() {
 fn restore_pending_gov_update_none_rewinds_state_root_after_removal() {
     let mut state = StateStore::new();
 
+    install_pending_gov_base(&mut state, 115, "challenge_min_bond");
     let empty_root = state.state_root();
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 115,
             key: "challenge_min_bond".into(),
             value: "120".into(),
             activate_at_height: 300,
-        }),
+        },
     );
     let queued_root = state.state_root();
 
@@ -645,14 +751,17 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 {
     let mut state = StateStore::new();
 
-    state.restore_pending_gov_update(
+    install_pending_gov_base(&mut state, 116, "challenge_min_bond");
+    let empty_root = state.state_root();
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 116,
             key: "challenge_min_bond".into(),
             value: "120".into(),
             activate_at_height: 320,
-        }),
+        },
     );
     let queued_root = state.state_root();
 
@@ -666,7 +775,7 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
         }),
     );
 
-    let empty_root = StateStore::new().state_root();
+    let empty_root = empty_root;
     assert_eq!(
         state.state_root(),
         empty_root,
@@ -688,7 +797,8 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
 }
 
 #[test]
-fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and_rewinds_state_root() {
+fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and_rewinds_state_root(
+) {
     let mut state = StateStore::new();
 
     state.restore_pending_gov_update(
@@ -729,21 +839,11 @@ fn restore_pending_gov_update_rejects_snapshot_key_id_shadowing_live_governance_
     let mut state = StateStore::new();
 
     let bootstrap = state
-        .set_gov_param(
-            150,
-            116,
-            "challenge_min_bond".into(),
-            "120".into(),
-        )
+        .set_gov_param(150, 116, "challenge_min_bond".into(), "120".into())
         .expect("bootstrap challenge_min_bond write should succeed");
     assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
     let applied = state
-        .set_gov_param(
-            170,
-            116,
-            "challenge_min_bond".into(),
-            "120".into(),
-        )
+        .set_gov_param(170, 116, "challenge_min_bond".into(), "120".into())
         .expect("challenge_min_bond write should apply after timelock");
     assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
 
@@ -1242,15 +1342,17 @@ fn embedded_pending_gov_update_key_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
 
-    st1.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut st1,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7001,
             key: "challenge_min_bond".into(),
             value: "5000".into(),
             activate_at_height: 1020,
-        }),
+        },
     );
+    install_pending_gov_base(&mut st2, 7001, "challenge_min_bond");
     st2.restore_pending_gov_update(
         "challenge_min_bond",
         Some(PendingGovParamUpdate {
@@ -1304,23 +1406,25 @@ fn pending_gov_update_key_id_should_affect_state_root_even_when_payload_matches(
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7001,
             key: "challenge_min_bond".into(),
             value: "5000".into(),
             activate_at_height: 1020,
-        }),
+        },
     );
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7002,
             key: "challenge_min_bond".into(),
             value: "5000".into(),
             activate_at_height: 1020,
-        }),
+        },
     );
 
     let root_a = state_a.state_root();
@@ -1330,18 +1434,20 @@ fn pending_gov_update_key_id_should_affect_state_root_even_when_payload_matches(
         "pending governance key_id must contribute to state_root so identical staged payloads under different canonical key slots cannot hash identically"
     );
 
-    state_b.restore_pending_gov_update(
+    let mut rewound = StateStore::new();
+    restore_pending_gov_update_with_base(
+        &mut rewound,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7001,
             key: "challenge_min_bond".into(),
             value: "5000".into(),
             activate_at_height: 1020,
-        }),
+        },
     );
 
     assert_eq!(
-        state_b.state_root(),
+        rewound.state_root(),
         root_a,
         "restoring the original pending governance key_id should rewind the deterministic root exactly"
     );
@@ -2083,7 +2189,9 @@ fn restore_task_same_snapshot_scrubs_pending_resolve_after_proof_and_metadata_dr
     let root_with_pending = state.state_root();
     assert_eq!(state.pending_resolve_approval(10), Some((true, 1)));
 
-    let mut drifted_snapshot = challenged_snapshot.clone().expect("challenged snapshot should exist");
+    let mut drifted_snapshot = challenged_snapshot
+        .clone()
+        .expect("challenged snapshot should exist");
     drifted_snapshot.proof_type = ProofType::Zk;
     drifted_snapshot.metadata = Some(TaskMetadata {
         note: Some("drifted".into()),
@@ -2333,14 +2441,23 @@ fn restore_pending_gov_update_identical_resolve_authority_snapshot_is_reentry_no
     assert_eq!(state.pending_resolve_approval(10), None);
 
     state
-        .stage_or_confirm_resolve_approval(10, challenged_ref.version, true, "resolver-c", "resolver-c,resolver-d")
+        .stage_or_confirm_resolve_approval(
+            10,
+            challenged_ref.version,
+            true,
+            "resolver-c",
+            "resolver-c,resolver-d",
+        )
         .expect("staging resolve approval after boundary scrub should succeed");
     let root_with_pending = state.state_root();
     let pending_snapshot = state.pending_resolve_approval_snapshot(10);
 
     state.restore_pending_gov_update("resolve_authority", Some(snapshot));
 
-    assert_eq!(state.pending_resolve_approval_snapshot(10), pending_snapshot);
+    assert_eq!(
+        state.pending_resolve_approval_snapshot(10),
+        pending_snapshot
+    );
     assert_eq!(state.state_root(), root_with_pending);
 }
 
@@ -2691,7 +2808,6 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
     let task_id = task_ref.id;
     let task_snapshot = state.get_task(task_id);
     let baseline_root = state.state_root();
-
     let mut changed_task = state.get_task(task_ref.id).expect("task should exist");
     changed_task.proof_type = ProofType::Zk;
     changed_task.challenge_window_blocks_snapshot = Some(24);
@@ -3253,7 +3369,7 @@ fn pending_resolve_finalized_restore_without_second_approver_scrubs_and_rewinds(
 }
 
 #[test]
-fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds() {
+fn pending_resolve_zero_confirmation_restore_scrubs_and_rewinds_followup() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
@@ -4866,23 +4982,25 @@ fn restore_pending_gov_update_none_on_mismatched_slot_keeps_canonical_pending_ro
 fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_entries() {
     let mut state = StateStore::new();
 
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_011,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_success_bounty",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_012,
             key: "challenge_success_bounty".to_string(),
             value: "12".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     let root_with_both = state.state_root();
@@ -5072,42 +5190,46 @@ fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "min_worker_stake",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_202,
             key: "min_worker_stake".to_string(),
             value: "9000".to_string(),
             activate_at_height: 1_040,
-        }),
+        },
     );
 
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "min_worker_stake",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_202,
             key: "min_worker_stake".to_string(),
             value: "9000".to_string(),
             activate_at_height: 1_040,
-        }),
+        },
     );
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     assert_eq!(
@@ -5121,23 +5243,25 @@ fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
 fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserves_other_entries() {
     let mut state = StateStore::new();
 
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_301,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state,
         "max_block_ms",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_302,
             key: "max_block_ms".to_string(),
             value: "500".to_string(),
             activate_at_height: 33,
-        }),
+        },
     );
 
     let canonical_other_snapshot = state
@@ -5170,7 +5294,8 @@ fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserve
     );
 
     let mut expected = StateStore::new();
-    expected.restore_pending_gov_update("challenge_min_bond", Some(canonical_other_snapshot));
+    install_pending_gov_base(&mut expected, 7_302, "max_block_ms");
+    restore_pending_gov_update_with_base(&mut expected, "challenge_min_bond", canonical_other_snapshot);
 
     assert_ne!(
         state.state_root(),
@@ -5189,23 +5314,25 @@ fn pending_gov_update_key_id_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_202,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     let root_a = state_a.state_root();
@@ -5215,18 +5342,20 @@ fn pending_gov_update_key_id_changes_must_affect_state_root() {
         "pending governance key_id must contribute to state_root so logically distinct staged updates do not hash the same"
     );
 
-    state_b.restore_pending_gov_update(
+    let mut rewound = StateStore::new();
+    restore_pending_gov_update_with_base(
+        &mut rewound,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     assert_eq!(
-        state_b.state_root(),
+        rewound.state_root(),
         root_a,
         "restoring the original pending governance key_id should rewind the deterministic root exactly"
     );
@@ -5237,23 +5366,25 @@ fn pending_gov_update_activation_height_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_021,
-        }),
+        },
     );
 
     let root_a = state_a.state_root();
@@ -5263,14 +5394,15 @@ fn pending_gov_update_activation_height_changes_must_affect_state_root() {
         "pending governance activation height must contribute to state_root so distinct timelock schedules do not hash the same"
     );
 
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     assert_eq!(
@@ -5285,23 +5417,25 @@ fn pending_gov_update_value_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
 
-    state_a.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_a,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6000".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
-    state_b.restore_pending_gov_update(
+    restore_pending_gov_update_with_base(
+        &mut state_b,
         "challenge_min_bond",
-        Some(PendingGovParamUpdate {
+        PendingGovParamUpdate {
             key_id: 7_201,
             key: "challenge_min_bond".to_string(),
             value: "6500".to_string(),
             activate_at_height: 1_020,
-        }),
+        },
     );
 
     let root_a = state_a.state_root();
@@ -5514,8 +5648,9 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     );
 
     let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
-    uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
-        uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+    uppercase_checkpoint_wal_hash.wal_entry_hash_hex = uppercase_checkpoint_wal_hash
+        .wal_entry_hash_hex
+        .to_uppercase();
     assert!(
         !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint_wal_hash, &wal),
         "checkpoint wal_entry_hash_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case WAL digest encodings"
@@ -5637,7 +5772,8 @@ fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_m
 }
 
 #[test]
-fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_newline_even_when_hashes_match() {
+fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_newline_even_when_hashes_match()
+{
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -5705,7 +5841,8 @@ fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_state_root_even_w
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_wal_hash_even_when_state_root_matches() {
+fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_wal_hash_even_when_state_root_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,

@@ -2,7 +2,7 @@ use trnm_state::{
     GovParamUpdateOutcome, GovPendingUpdateAction, PendingGovParamUpdate,
     PendingResolveApprovalSnapshot, StateStore,
 };
-use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
+use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskModelMetadata, TaskObject, TaskStatus};
 
 #[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_worker_on_slash_boundary() {
@@ -11,10 +11,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_worker_on_slash_
     // Snapshot proof material is incomplete without a live slash target.
     let mut st = StateStore::new();
 
-    st.set_gov_param(98_329, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_349, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_329,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_349,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_350, 7_999, "emergency_pause".into(), "true".into())
         .expect("emergency pause should enable successfully");
     assert!(st.is_emergency_paused());
@@ -67,10 +77,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_live_task_version_mismat
     // when the snapshot task_version no longer matches the live challenged task version.
     let mut st = StateStore::new();
 
-    st.set_gov_param(98_329, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_349, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_329,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_349,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_350, 7_999, "emergency_pause".into(), "true".into())
         .expect("emergency pause should enable successfully");
     assert!(st.is_emergency_paused());
@@ -176,6 +196,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
         }),
     );
 
+    let root_with_pending = st.state_root();
     st.restore_pending_resolve_approval(
         9_937,
         Some(PendingResolveApprovalSnapshot {
@@ -183,17 +204,17 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_challenged_task_boun
             confirmations: 1,
             first_approver: "authority-a".into(),
             authority_set: "authority-a,authority-b".into(),
-            task_version,
+            task_version: 7,
         }),
     );
 
     assert_eq!(st.pending_resolve_approval(9_937), None);
     assert_eq!(st.pending_resolve_first_approver(9_937), None);
     assert_eq!(st.pending_resolve_approval_snapshot(9_937), None);
-    assert_ne!(
+    assert_eq!(
         st.state_root(),
         root_with_pending,
-        "scrubbing stale pending resolve approvals must invalidate cached state root"
+        "scrubbing non-challenged pending restore input must not perturb state root"
     );
     assert!(st.pending_gov_update("resolve_authority").is_none());
     assert!(st.is_emergency_paused());
@@ -2005,7 +2026,8 @@ fn paused_state_rejects_resolve_task_version_drift_and_clears_stale_quorum_witho
 }
 
 #[test]
-fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_boundary_metadata_becomes_incomplete() {
+fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_boundary_metadata_becomes_incomplete(
+) {
     // REF14 metadata completeness: restoring a challenged task snapshot with missing
     // resolve-boundary metadata must immediately scrub any staged paused quorum instead of
     // carrying stale restore state until a later approval attempt notices the drift.
@@ -2087,11 +2109,15 @@ fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_boundary_metadata
     assert_eq!(st.pending_resolve_approval(9_901_5), None);
     assert_eq!(st.pending_resolve_first_approver(9_901_5), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
-fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_forfeit_metadata_becomes_incomplete() {
+fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_forfeit_metadata_becomes_incomplete()
+{
     // REF14 metadata completeness: restoring a challenged task snapshot with missing
     // challenge_bond_forfeited must immediately scrub any staged paused quorum instead of
     // carrying stale restore state across the custody-state boundary.
@@ -2173,7 +2199,10 @@ fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_forfeit_metadata_
     assert_eq!(st.pending_resolve_approval(9_901_6), None);
     assert_eq!(st.pending_resolve_first_approver(9_901_6), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -2259,7 +2288,10 @@ fn paused_state_restore_task_scrubs_staged_resolve_quorum_when_challenger_metada
     assert_eq!(st.pending_resolve_approval(9_901_7), None);
     assert_eq!(st.pending_resolve_first_approver(9_901_7), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -2525,7 +2557,8 @@ fn pause_toggle_rejects_wrong_key_id_without_mutating_escrow_or_resolve_state() 
 }
 
 #[test]
-fn paused_restore_pending_resolve_authority_rejects_non_gov_object_key_id_collision_and_scrubs_quorum() {
+fn paused_restore_pending_resolve_authority_rejects_non_gov_object_key_id_collision_and_scrubs_quorum(
+) {
     // REF03 key-id single-source guard: restore paths must fail closed when the pending
     // governance key id reuses a live non-governance object slot.
     let mut st = StateStore::new();
@@ -2559,8 +2592,13 @@ fn paused_restore_pending_resolve_authority_rejects_non_gov_object_key_id_collis
     );
     st.set_gov_param(98_199, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
-    st.set_gov_param(98_199, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("resolve_authority baseline must be set");
+    st.set_gov_param(
+        98_199,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("resolve_authority baseline must be set");
     assert!(st.is_emergency_paused());
 
     st.stage_or_confirm_resolve_approval(9_910, 1, true, "authority-a", "authority-a,authority-b")
@@ -2592,7 +2630,10 @@ fn paused_restore_pending_resolve_authority_rejects_non_gov_object_key_id_collis
     );
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
-    assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeits_before);
+    assert_eq!(
+        st.balance_of("treasury.challenge_forfeits"),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -2606,8 +2647,13 @@ fn paused_restore_pending_resolve_authority_rejects_live_key_id_collision_and_sc
 
     st.set_gov_param(98_199, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
-    st.set_gov_param(98_199, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("resolve_authority baseline must be set");
+    st.set_gov_param(
+        98_199,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("resolve_authority baseline must be set");
     st.set_gov_param(98_199, 7_001, "max_block_ms".into(), "1000".into())
         .expect("other governance key must occupy the colliding key id");
     assert!(st.is_emergency_paused());
@@ -2641,11 +2687,15 @@ fn paused_restore_pending_resolve_authority_rejects_live_key_id_collision_and_sc
     );
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
-    assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeits_before);
+    assert_eq!(
+        st.balance_of("treasury.challenge_forfeits"),
+        forfeits_before
+    );
 }
 
 #[test]
-fn paused_restore_pending_resolve_authority_rejects_noncanonical_requested_key_without_aliasing_pending_slot() {
+fn paused_restore_pending_resolve_authority_rejects_noncanonical_requested_key_without_aliasing_pending_slot(
+) {
     // REF03 explicit-validator guard: restore must fail closed before any aliasing if the
     // requested governance key spelling is non-canonical, even when the snapshot payload itself
     // looks otherwise valid.
@@ -3348,10 +3398,22 @@ fn paused_restore_pending_resolve_keeps_exact_finalized_snapshot_at_same_task_ve
     };
 
     st.restore_task(9_921_1, Some(task));
-    st.stage_or_confirm_resolve_approval(9_921_1, 1, true, "authority-a", "authority-a,authority-b")
-        .expect("first paused approval stage should succeed");
+    st.stage_or_confirm_resolve_approval(
+        9_921_1,
+        1,
+        true,
+        "authority-a",
+        "authority-a,authority-b",
+    )
+    .expect("first paused approval stage should succeed");
     let finalized = st
-        .stage_or_confirm_resolve_approval(9_921_1, 1, true, "authority-b", "authority-a,authority-b")
+        .stage_or_confirm_resolve_approval(
+            9_921_1,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b",
+        )
         .expect("second distinct approval should finalize quorum");
     assert!(finalized);
 
@@ -3927,7 +3989,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_governance_autho
             bounty: 1,
             status: TaskStatus::Challenged,
             proof_type: Default::default(),
-            metadata: None,
+            metadata: Some(TaskMetadata::default()),
             worker: Some("worker-paused".into()),
             committed_hash: None,
             result_hash: None,
@@ -4659,10 +4721,22 @@ fn paused_restore_pending_resolve_keeps_semantically_equivalent_finalized_snapsh
     };
 
     st.restore_task(9_921_2, Some(task));
-    st.stage_or_confirm_resolve_approval(9_921_2, 1, true, "authority-a", "authority-a,authority-b")
-        .expect("first paused approval stage should succeed");
+    st.stage_or_confirm_resolve_approval(
+        9_921_2,
+        1,
+        true,
+        "authority-a",
+        "authority-a,authority-b",
+    )
+    .expect("first paused approval stage should succeed");
     let finalized = st
-        .stage_or_confirm_resolve_approval(9_921_2, 1, true, "authority-b", "authority-a,authority-b")
+        .stage_or_confirm_resolve_approval(
+            9_921_2,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b",
+        )
         .expect("second distinct approval should finalize quorum");
     assert!(finalized);
 
@@ -4670,7 +4744,6 @@ fn paused_restore_pending_resolve_keeps_semantically_equivalent_finalized_snapsh
         .pending_resolve_approval_snapshot(9_921_2)
         .expect("finalized pending snapshot should exist before restore replay");
     let root_before = st.state_root();
-
     st.restore_pending_resolve_approval(
         9_921_2,
         Some(PendingResolveApprovalSnapshot {
@@ -4734,7 +4807,7 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
                 bounty: 1,
                 status: TaskStatus::Challenged,
                 proof_type: Default::default(),
-                metadata: None,
+                metadata: Some(TaskMetadata::default()),
                 worker: Some("worker-paused".into()),
                 committed_hash: None,
                 result_hash: None,
@@ -6379,7 +6452,7 @@ fn paused_state_rejects_zero_task_id_resolve_approval_without_side_effects() {
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_task_boundary() {
+fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_task_boundary_v2() {
     // M1 micro-hardening: paused rollback/restore must fail closed when no challenged task
     // exists, so WAL/snapshot replay cannot revive pending resolve quorum against a missing task.
     let mut st = StateStore::new();
@@ -6491,10 +6564,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_id_metadata() 
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_012);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 512);
 
-    st.set_gov_param(98_225, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_245, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_225,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_245,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_246, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6546,10 +6629,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_confirmation_metada
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_010);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 510);
 
-    st.set_gov_param(98_223, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_243, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_223,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_243,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_244, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6627,10 +6720,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_incomplete_challenged_me
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_011);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 511);
 
-    st.set_gov_param(98_224, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_244, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_224,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_244,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_245, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6707,10 +6810,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_challenge_window_me
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_012);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 512);
 
-    st.set_gov_param(98_225, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_245, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_225,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_245,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_246, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6788,10 +6901,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_resolve_deadline_me
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_012_1);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 512_1);
 
-    st.set_gov_param(98_225_1, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_245_1, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_225_1,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_245_1,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_246_1, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6869,10 +6992,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_blank_challenger_metadat
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_012_2);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 512_2);
 
-    st.set_gov_param(98_225_2, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_245_2, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_225_2,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_245_2,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_246_2, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -6950,10 +7083,20 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_missing_forfeit_metadata
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_013);
     st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 513);
 
-    st.set_gov_param(98_226, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_246, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_226,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_246,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_247, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -7259,10 +7402,20 @@ fn paused_first_resolve_approval_rejects_incomplete_challenged_task_boundary() {
     // REF14 metadata completeness: even while paused, live resolve-approval staging must fail
     // closed when the challenged task no longer carries the full restore boundary metadata.
     let mut st = StateStore::new();
-    st.set_gov_param(98_401, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_421, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_401,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_421,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_422, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
@@ -7294,13 +7447,7 @@ fn paused_first_resolve_approval_rejects_incomplete_challenged_task_boundary() {
     );
 
     let err = st
-        .stage_or_confirm_resolve_approval(
-            9_946,
-            1,
-            true,
-            "authority-a",
-            "authority-a,authority-b",
-        )
+        .stage_or_confirm_resolve_approval(9_946, 1, true, "authority-a", "authority-a,authority-b")
         .expect_err("incomplete challenged task must reject paused resolve approval staging");
 
     assert!(
@@ -7319,10 +7466,20 @@ fn paused_first_resolve_approval_rejects_missing_forfeit_metadata() {
     // when challenge_bond_forfeited is absent, because the challenged-task custody boundary is
     // incomplete and replay must not infer that state later.
     let mut st = StateStore::new();
-    st.set_gov_param(98_423, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority write should succeed");
-    st.set_gov_param(98_443, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-        .expect("bootstrap resolve_authority should apply after timelock");
+    st.set_gov_param(
+        98_423,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(
+        98_443,
+        7_310,
+        "resolve_authority".into(),
+        "authority-a,authority-b".into(),
+    )
+    .expect("bootstrap resolve_authority should apply after timelock");
     st.set_gov_param(98_444, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
