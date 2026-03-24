@@ -21,8 +21,8 @@ use trnm_pouw::{
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{
-    verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
-    WalMeta,
+    verify_wal_and_find_checkpoint_node_recovery, CheckpointMeta, PendingResolveApprovalSnapshot,
+    StateStore, WalMeta,
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
@@ -491,8 +491,8 @@ fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
 fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let mut last_checkpoint =
-        verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
+    let mut last_checkpoint = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &entries)
+        .map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
     if entries.is_empty()
@@ -2181,7 +2181,8 @@ fn restore_pending_resolve_approval_from_snapshot(
     if snapshot.confirmations != 1 {
         return;
     }
-    if !is_canonical_resolve_approver_snapshot(&snapshot.first_approver) {
+    let snapshot_first_approver = snapshot.first_approver.trim().to_ascii_lowercase();
+    if !is_canonical_resolve_approver_snapshot(&snapshot_first_approver) {
         return;
     }
 
@@ -2204,12 +2205,13 @@ fn restore_pending_resolve_approval_from_snapshot(
         return;
     }
 
-    let _ = st.stage_or_confirm_resolve_approval(
+    st.restore_pending_resolve_approval_from_rollback(
         task_id,
-        snapshot.task_version,
-        snapshot.slash_worker,
-        &snapshot.first_approver,
-        &snapshot.authority_set,
+        Some(PendingResolveApprovalSnapshot {
+            first_approver: snapshot_first_approver,
+            authority_set: snapshot_authority_set,
+            ..snapshot
+        }),
     );
 }
 
@@ -2448,7 +2450,7 @@ fn scan_and_apply_timeouts(
                 event_tx_overflowed,
                 event_tx_ordinal_overflowed,
                 current_height,
-                &from_status_name,
+                &from_status,
                 &to_status,
                 &root,
                 &treasury_delta,
@@ -7123,15 +7125,15 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
         assert_eq!(
             st.pending_resolve_first_approver(8_115).as_deref(),
-            Some("Authority-D")
+            Some("authority-d")
         );
         assert_eq!(
             st.pending_resolve_approval_snapshot(8_115),
             Some(PendingResolveApprovalSnapshot {
                 slash_worker: false,
                 confirmations: 1,
-                first_approver: "Authority-D".into(),
-                authority_set: "Authority-D,Authority-C".into(),
+                first_approver: "authority-d".into(),
+                authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             })
         );
