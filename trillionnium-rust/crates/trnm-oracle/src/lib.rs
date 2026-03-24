@@ -54,6 +54,7 @@ pub struct OracleSnapshotAuditView {
     pub mad: Option<u128>,
     pub window_start_ms: u64,
     pub window_end_ms: u64,
+    pub window_span_ms: u64,
     pub snapshot_ts_ms: u64,
     pub snapshot_hash: String,
 }
@@ -182,6 +183,7 @@ impl OracleSnapshot {
             mad: self.mad,
             window_start_ms: self.window_start_ms,
             window_end_ms: self.window_end_ms,
+            window_span_ms: self.window_end_ms.saturating_sub(self.window_start_ms),
             snapshot_ts_ms: self.snapshot_ts_ms,
             snapshot_hash: self.snapshot_hash.clone(),
         }
@@ -646,6 +648,7 @@ mod tests {
         assert_eq!(audit.mad, Some(120));
         assert_eq!(audit.window_start_ms, 1_000);
         assert_eq!(audit.window_end_ms, 2_000);
+        assert_eq!(audit.window_span_ms, 1_000);
         assert_eq!(audit.snapshot_ts_ms, 10_000);
         assert_eq!(audit.snapshot_hash, snap.snapshot_hash);
     }

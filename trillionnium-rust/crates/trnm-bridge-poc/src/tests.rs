@@ -31,6 +31,7 @@ fn settlement_audit_view_exposes_explicit_terminal_fields() {
             chain_id: 7,
             tx_hash: "0xfinal".to_string(),
             status: "finalized",
+            is_terminal: true,
             finalized_height: Some(88),
             revert_reason: None,
         }
@@ -44,6 +45,7 @@ fn settlement_audit_view_exposes_explicit_terminal_fields() {
             chain_id: 7,
             tx_hash: "0xrevert".to_string(),
             status: "reverted",
+            is_terminal: true,
             finalized_height: None,
             revert_reason: Some("proof mismatch".to_string()),
         }
