@@ -176,16 +176,29 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     })
 }
 
+fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
+    match recovered.wal_entries_retained {
+        0 => "retained no committed WAL entries".into(),
+        1 => format!(
+            "retained 1 committed WAL entry through height {}",
+            recovered.next_height.saturating_sub(1)
+        ),
+        count => format!(
+            "retained {} committed WAL entries through height {}",
+            count,
+            recovered.next_height.saturating_sub(1)
+        ),
+    }
+}
+
 pub(crate) fn metadata_only_recovery_error(
     wal_dir: &Path,
     recovered: &RecoveredWalState,
 ) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
-        recovered.wal_entries_retained,
-        if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-        recovered.next_height.saturating_sub(1),
+        retained_wal_summary(recovered),
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
