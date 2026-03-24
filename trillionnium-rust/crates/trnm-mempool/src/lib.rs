@@ -585,7 +585,11 @@ impl LaneAdmissionGate {
     pub fn queued_counts(&self) -> (usize, usize, usize) {
         let normal = self.normal.queue.len();
         let critical = self.critical.queue.len();
-        (normal, critical, self.lane_total())
+        let total = self.lane_total();
+
+        debug_assert_eq!(normal.saturating_add(critical), total);
+
+        (normal, critical, total)
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
