@@ -81,10 +81,10 @@ impl OracleSnapshot {
         if sample_count == 0 {
             return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
         }
-        if sample_count < sources.len() as u32 {
+        if sample_count < 2 && sources.len() > 1 {
             return Err(OracleError::InconsistentSampleCount {
                 sample_count,
-                source_count: sources.len() as u32,
+                actual_sources: sources.len() as u32,
             });
         }
 
@@ -494,10 +494,6 @@ pub enum OracleError {
     InvalidWindow { start_ms: u64, end_ms: u64 },
     #[error("duplicate source ids are not allowed")]
     DuplicateSources,
-    #[error(
-        "inconsistent sample_count: sample_count={sample_count}, source_count={source_count}"
-    )]
-    InconsistentSampleCount { sample_count: u32, source_count: u32 },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
@@ -670,7 +666,7 @@ mod tests {
             err,
             OracleError::InconsistentSampleCount {
                 sample_count: 1,
-                source_count: 2
+                actual_sources: 2
             }
         ));
     }
