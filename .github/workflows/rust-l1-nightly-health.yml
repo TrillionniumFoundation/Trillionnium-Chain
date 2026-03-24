@@ -340,7 +340,6 @@ jobs:
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
 
-<<<<<<< HEAD
       - name: PR-5 treasury reconcile report (non-gate)
         if: always()
         continue-on-error: true
@@ -395,9 +394,6 @@ jobs:
               cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
-
-=======
->>>>>>> feat/p2.3-stability-observability
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
