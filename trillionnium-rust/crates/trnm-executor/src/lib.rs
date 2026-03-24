@@ -118,6 +118,30 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
 }
 
 #[inline]
+fn dedup_access_keys_no_version(objs: &[ObjectRef]) -> Vec<u64> {
+    if objs.len() <= 8 {
+        let mut out: Vec<u64> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            let key = access_key(obj);
+            if !out.contains(&key) {
+                out.push(key);
+            }
+        }
+        return out;
+    }
+
+    let mut seen: HashSet<u64> = HashSet::with_capacity(objs.len());
+    let mut out: Vec<u64> = Vec::with_capacity(objs.len());
+    for obj in objs {
+        let key = access_key(obj);
+        if seen.insert(key) {
+            out.push(key);
+        }
+    }
+    out
+}
+
+#[inline]
 fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
     debug_assert!(
         access_domain_versions_are_consistent(objs),
@@ -468,11 +492,25 @@ fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
     keys
 }
 
+fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
+    // Fail-closed if a tx carries mixed read/write footprints for the same object id
+    // with mismatched versions.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
+    let write_keys = dedup_access_keys(&tx.write_set);
+    if let Some(key) = write_keys.into_iter().min() {
+        return Some(key);
+    }
+
+    read_domain_only_keys(&tx.read_set, &[]).into_iter().min()
+}
+
 fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut counts: HashMap<u64, usize> = HashMap::new();
     let mut total = 0usize;
 
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
         let keys = tx_access_domain_keys(tx);
         total += keys.len();
         for key in keys {
@@ -1260,6 +1298,7 @@ fn auto_adaptive_sample_len(batch_len: usize) -> usize {
 }
 
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
+    assert_tx_access_domain_versions_are_consistent_batch(txs);
     let threshold = auto_hot_streak_threshold();
     let min_margin = auto_reorder_min_margin();
     let min_hot_key_share = auto_reorder_min_hot_key_share();
@@ -1288,8 +1327,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let sample_len = auto_adaptive_sample_len(txs.len());
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
-    let mut prev_key: Option<u64> = None;
-    let mut key_hist: HashMap<u64, usize> = HashMap::new();
+    let mut prev_key: Option<(u64, u64)> = None;
+    let mut key_hist: HashMap<(u64, u64), usize> = HashMap::new();
     let mut observed = 0usize;
 
     let batch_len = txs.len();
@@ -1312,7 +1351,16 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = primary_access_domain_key(tx);
+        let key = if tx.write_set.is_empty() || tx.read_set.is_empty() {
+            let (key_a, key_b) = hot_bucket_keys(tx);
+            if key_a == 0 && key_b == 0 {
+                None
+            } else {
+                Some((key_a, key_b))
+            }
+        } else {
+            primary_access_domain_key(tx).map(|key| (key, 0))
+        };
         if let Some(k) = key {
             observed += 1;
             *key_hist.entry(k).or_insert(0) += 1;
@@ -1378,13 +1426,54 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
-    // Reuse the same write-first, read-domain-filtered object scope as grouping
-    // and telemetry so hotspot bucketing cannot drift from executor conflict
-    // semantics on duplicate/shared-object footprints.
-    let keys = tx_access_domain_keys(tx);
-    let key_a = keys.first().copied().unwrap_or(0);
-    let key_b = keys.get(1).copied().unwrap_or(0);
-    (key_a, key_b)
+    // Canonicalize access-domain buckets by deduping object ids independently of
+    // version. Use the smallest combined key as primary to preserve mixed-domain
+    // role-flip stability, while choosing secondary by deterministic domain family:
+    // when primary is write-dominant, prefer the next write key; otherwise prefer
+    // read-local secondary before write spillover.
+    let mut write_keys = dedup_access_keys_no_version(&tx.write_set);
+    let mut read_keys = dedup_access_keys_no_version(&tx.read_set);
+    write_keys.sort_unstable();
+    read_keys.sort_unstable();
+
+    if write_keys.is_empty() {
+        return (
+            read_keys.first().copied().unwrap_or(0),
+            read_keys.get(1).copied().unwrap_or(0),
+        );
+    }
+    if read_keys.is_empty() {
+        return (
+            write_keys.first().copied().unwrap_or(0),
+            write_keys.get(1).copied().unwrap_or(0),
+        );
+    }
+
+    let mut all_keys: Vec<u64> = write_keys.clone();
+    all_keys.extend(read_keys.iter());
+    all_keys.sort_unstable();
+    all_keys.dedup();
+    if all_keys.is_empty() {
+        return (0, 0);
+    }
+
+    let primary = all_keys[0];
+    if write_keys[0] == primary {
+        let secondary = write_keys
+            .iter()
+            .copied()
+            .find(|k| *k != primary)
+            .or_else(|| read_keys.iter().copied().find(|k| *k != primary))
+            .unwrap_or(0);
+        return (primary, secondary);
+    }
+
+    let secondary = write_keys
+        .first()
+        .copied()
+        .or_else(|| read_keys.iter().copied().find(|k| *k != primary))
+        .unwrap_or(0);
+    (primary, secondary)
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
@@ -1428,8 +1517,8 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
         }
         GroupingStrategy::WriteFirst => {
             txs.sort_by_key(|tx| {
-                let write_keys = dedup_access_keys(&tx.write_set);
-                let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
+                let write_keys = dedup_access_keys_no_version(&tx.write_set);
+                let read_keys = dedup_access_keys_no_version(&tx.read_set);
                 (
                     std::cmp::Reverse(write_keys.len()),
                     std::cmp::Reverse(read_keys.len()),
@@ -1439,13 +1528,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
         }
         GroupingStrategy::WriteLast => {
             txs.sort_by_key(|tx| {
-                let write_keys = dedup_access_keys(&tx.write_set);
-                let read_keys = read_domain_only_keys(&tx.read_set, &write_keys);
-                (
-                    write_keys.len(),
-                    std::cmp::Reverse(read_keys.len()),
-                    tx.id,
-                )
+                let write_keys = dedup_access_keys_no_version(&tx.write_set);
+                let read_keys = dedup_access_keys_no_version(&tx.read_set);
+                (write_keys.len(), std::cmp::Reverse(read_keys.len()), tx.id)
             });
         }
         GroupingStrategy::HotBucketInterleave => {
@@ -2210,10 +2295,10 @@ mod tests {
 
     fn env_lock() -> MutexGuard<'static, ()> {
         static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-        ENV_LOCK
-            .get_or_init(|| Mutex::new(()))
-            .lock()
-            .expect("env test lock poisoned")
+        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+            Ok(guard) => guard,
+            Err(err) => err.into_inner(),
+        }
     }
 
     #[test]
@@ -2502,7 +2587,10 @@ mod tests {
             hot_bucket_hint(&write_only, buckets_n),
             hot_bucket_hint(&echoed, buckets_n)
         );
-        assert_eq!(hot_bucket_hint(&echoed, buckets_n), (5u64 % buckets_n as u64) as usize);
+        assert_eq!(
+            hot_bucket_hint(&echoed, buckets_n),
+            (5u64 % buckets_n as u64) as usize
+        );
     }
 
     #[test]
@@ -2878,8 +2966,14 @@ mod tests {
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
 
         assert_eq!(groups.len(), 2);
-        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 10]);
-        assert_eq!(groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3]);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1, 10]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![3]
+        );
         assert_eq!(profile.candidate_groups_scanned, 0);
         assert_eq!(profile.stage_ww_checks, 0);
         assert_eq!(profile.stage_wr_checks, 0);
