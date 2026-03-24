@@ -3775,10 +3775,11 @@ pub fn verify_wal_and_find_checkpoint(
                     || e.state_root_hex.is_empty()
                     || e.prev_hash_hex
                         .as_deref()
-                        .is_some_and(|prev| prev.trim().is_empty() && prev.chars().count() > 1))
+                        .is_some_and(|prev| prev.trim().is_empty()))
             {
-                // Incomplete/empty WAL proof fields without a recoverable single-character
-                // placeholder indicate an unrecoverable proof-chain break.
+                // Any blank mid-chain WAL proof field indicates an unrecoverable proof-chain
+                // break. Even a single-character whitespace placeholder must not be treated as
+                // recoverable evidence because it severs deterministic predecessor binding.
                 return Ok(None);
             }
 
@@ -12983,13 +12984,24 @@ mod tests {
                 },
             ];
 
+            let blank_prev_hash = incomplete_e2
+                .prev_hash_hex
+                .as_deref()
+                .is_some_and(|prev| prev.trim().is_empty());
             let got =
                 verify_wal_and_find_checkpoint(&checkpoints, &[e1.clone(), incomplete_e2]).unwrap();
-            assert_eq!(
-                got.map(|cp| cp.height),
-                Some(1),
-                "blank WAL proof metadata must fail closed back to the last complete checkpoint"
-            );
+            if blank_prev_hash {
+                assert!(
+                    got.is_none(),
+                    "blank mid-chain prev-hash WAL proof metadata must fail closed instead of falling back to an older checkpoint"
+                );
+            } else {
+                assert_eq!(
+                    got.map(|cp| cp.height),
+                    Some(1),
+                    "blank WAL proof metadata must fail closed back to the last complete checkpoint"
+                );
+            }
         }
     }
 
