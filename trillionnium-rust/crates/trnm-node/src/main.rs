@@ -453,6 +453,15 @@ fn persist_wal_meta_entries(wal_dir: &Path, entries: &[WalMeta]) -> Result<()> {
     Ok(())
 }
 
+fn sort_checkpoint_meta_canonical(checkpoints: &mut [CheckpointMeta]) {
+    checkpoints.sort_by(|a, b| {
+        a.height
+            .cmp(&b.height)
+            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
+            .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+    });
+}
+
 fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
     let f = checkpoint_file(wal_dir);
     if !f.exists() {
@@ -462,16 +471,16 @@ fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
-    list.checkpoints.sort_by_key(|cp| cp.height);
+    sort_checkpoint_meta_canonical(&mut list.checkpoints);
     Ok(list.checkpoints)
 }
 
 fn persist_checkpoint_meta(wal_dir: &Path, checkpoints: &[CheckpointMeta]) -> Result<()> {
     fs::create_dir_all(wal_dir)?;
     let f = checkpoint_file(wal_dir);
-    let raw = toml::to_string(&CheckpointMetaList {
-        checkpoints: checkpoints.to_vec(),
-    })?;
+    let mut checkpoints = checkpoints.to_vec();
+    sort_checkpoint_meta_canonical(&mut checkpoints);
+    let raw = toml::to_string(&CheckpointMetaList { checkpoints })?;
     fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
     Ok(())
 }
@@ -10299,6 +10308,54 @@ locked_block_hash = "stale-lock"
         assert_eq!(checkpoints[1].height, 2);
         assert_eq!(checkpoints[1].state_root_hex, "r2");
         assert_eq!(checkpoints[1].wal_entry_hash_hex, h2);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn persist_checkpoint_meta_writes_canonical_checkpoint_order_for_da_consumers() {
+        let wal_dir = temp_wal_dir("persist-canonicalize-checkpoints-da-surface");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "root-z".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 3);
+        assert_eq!(checkpoints[0].height, 1);
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-c");
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-a");
+        assert_eq!(checkpoints[1].state_root_hex, "root-a");
+        assert_eq!(checkpoints[2].height, 2);
+        assert_eq!(checkpoints[2].wal_entry_hash_hex, "hash-b");
+        assert_eq!(checkpoints[2].state_root_hex, "root-z");
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let height1_pos = raw.find("height = 1").unwrap();
+        let hash_a_pos = raw.find("wal_entry_hash_hex = \"hash-a\"").unwrap();
+        let hash_b_pos = raw.find("wal_entry_hash_hex = \"hash-b\"").unwrap();
+        assert!(height1_pos < hash_a_pos);
+        assert!(hash_a_pos < hash_b_pos);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
