@@ -1426,8 +1426,14 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+
     // Canonicalize access-domain buckets by deduping object ids independently of
-    // version. Use the smallest combined key as primary to preserve mixed-domain
+    // version only after mixed read/write domains have passed the fail-closed skew
+    // guard. Use the smallest combined key as primary to preserve mixed-domain
     // role-flip stability, while choosing secondary by deterministic domain family:
     // when primary is write-dominant, prefer the next write key; otherwise prefer
     // read-local secondary before write spillover.
@@ -2193,6 +2199,20 @@ mod tests {
         assert_eq!(keys, vec![8, 40, 50, 9, 10]);
         assert_eq!((key_a, key_b), (8, 40));
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let skewed = tx(
+            1,
+            vec![ObjectRef { id: 8, version: 2 }],
+            vec![ObjectRef { id: 8, version: 1 }, o(40)],
+        );
+
+        let _ = hot_bucket_keys(&skewed);
     }
 
     #[test]
