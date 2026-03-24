@@ -1778,6 +1778,20 @@ pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str
     (impact.label, impact.delta)
 }
 
+pub(crate) fn reputation_signal_from_delta(delta: i32) -> Option<ReputationSignal> {
+    match delta {
+        3 => Some(ReputationSignal::Accepted),
+        -1 => Some(ReputationSignal::AdapterRetryExhausted),
+        -2 => Some(ReputationSignal::VerifierRejected),
+        -3 => Some(ReputationSignal::AdapterNonRetriable),
+        _ => None,
+    }
+}
+
+pub(crate) fn reputation_impact_from_delta(delta: i32) -> Option<ReputationImpact> {
+    reputation_signal_from_delta(delta).map(reputation_impact)
+}
+
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_impact(signal).delta
 }
