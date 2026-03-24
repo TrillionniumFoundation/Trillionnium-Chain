@@ -104,6 +104,15 @@ pub(crate) fn persist_wal_meta_entries(wal_dir: &Path, entries: &[WalMeta]) -> R
     Ok(())
 }
 
+fn canonicalize_checkpoint_meta(checkpoints: &mut [CheckpointMeta]) {
+    checkpoints.sort_by(|a, b| {
+        a.height
+            .cmp(&b.height)
+            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
+            .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+    });
+}
+
 pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
     let f = checkpoint_file(wal_dir);
     if !f.exists() {
@@ -113,12 +122,7 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
-    list.checkpoints.sort_by(|a, b| {
-        a.height
-            .cmp(&b.height)
-            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
-            .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
-    });
+    canonicalize_checkpoint_meta(&mut list.checkpoints);
     Ok(list.checkpoints)
 }
 
@@ -128,9 +132,9 @@ pub(crate) fn persist_checkpoint_meta(
 ) -> Result<()> {
     fs::create_dir_all(wal_dir)?;
     let f = checkpoint_file(wal_dir);
-    let raw = toml::to_string(&CheckpointMetaList {
-        checkpoints: checkpoints.to_vec(),
-    })?;
+    let mut checkpoints = checkpoints.to_vec();
+    canonicalize_checkpoint_meta(&mut checkpoints);
+    let raw = toml::to_string(&CheckpointMetaList { checkpoints })?;
     fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
     Ok(())
 }
@@ -141,4 +145,46 @@ pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Resul
     let raw = toml::to_string(wal)?;
     fs::write(&f, raw).with_context(|| format!("write wal failed: {}", f.display()))?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_wal_dir(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!("trnm-node-wal-{}-{}", name, now_unix_ms()))
+    }
+
+    #[test]
+    fn persist_checkpoint_meta_canonicalizes_disk_order_for_audit_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "bb".repeat(32),
+                    wal_entry_hash_hex: "22".repeat(32),
+                },
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "aa".repeat(32),
+                    wal_entry_hash_hex: "11".repeat(32),
+                },
+            ],
+        )
+        .unwrap();
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let parsed: CheckpointMetaList = toml::from_str(&raw).unwrap();
+        assert_eq!(parsed.checkpoints.len(), 2);
+        assert_eq!(parsed.checkpoints[0].height, 1);
+        assert_eq!(parsed.checkpoints[0].state_root_hex, "aa".repeat(32));
+        assert_eq!(parsed.checkpoints[1].height, 2);
+        assert_eq!(parsed.checkpoints[1].state_root_hex, "bb".repeat(32));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
