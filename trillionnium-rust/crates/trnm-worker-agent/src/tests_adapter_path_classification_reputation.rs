@@ -134,6 +134,44 @@ fn reputation_score_impact_remains_one_to_one_across_signals() {
 }
 
 #[test]
+fn reputation_tier_delta_and_label_ordering_stay_monotonic() {
+    let ordered = [
+        ReputationSignal::Accepted,
+        ReputationSignal::AdapterRetryExhausted,
+        ReputationSignal::VerifierRejected,
+        ReputationSignal::AdapterNonRetriable,
+    ];
+
+    let mut previous: Option<ReputationImpact> = None;
+    for signal in ordered {
+        let impact = reputation_impact(signal);
+        assert_eq!(
+            reputation_score_impact(signal),
+            (impact.label, impact.delta),
+            "score-impact tuple must stay derived from the canonical impact mapping"
+        );
+        assert_eq!(
+            reputation_tier(signal),
+            impact.tier,
+            "tier helper must stay derived from the canonical impact mapping"
+        );
+
+        if let Some(prev) = previous {
+            assert!(
+                prev.tier > impact.tier,
+                "reputation tiers must remain strictly descending along the canonical ordering"
+            );
+            assert!(
+                prev.delta > impact.delta,
+                "reputation deltas must remain strictly descending along the canonical ordering"
+            );
+        }
+
+        previous = Some(impact);
+    }
+}
+
+#[test]
 fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     let mut rec = MessageIngressRecord {
         request_id: "req-reputation-apply".to_string(),
