@@ -231,7 +231,13 @@ fn governance_registry_lookup_id_for_key(
     if !GOV_ALLOWED_KEYS.contains(&key) {
         return None;
     }
-    governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
+    governance_expected_key_id(key).or_else(|| {
+        let indexed_id = gov_param_key_index.get(key).copied()?;
+        match governance_expected_key_for_id(indexed_id) {
+            Some(expected_key) if expected_key != key => None,
+            _ => Some(indexed_id),
+        }
+    })
 }
 
 fn governance_registry_unique_dynamic_key_for_id<'a>(
@@ -8957,6 +8963,23 @@ mod tests {
             governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "foreign aliases reusing a reserved governance id must not resolve through the allowlisted forward registry"
+        );
+    }
+
+    #[test]
+    fn governance_forward_lookup_fails_closed_when_dynamic_registry_reuses_reserved_key_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
+            None,
+            "forward lookup must fail closed when a mutable registry entry reuses the reserved emergency_pause key id for another allowlisted governance key"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "fail-closed dynamic lookup must not disturb the canonical reserved forward binding"
         );
     }
 
