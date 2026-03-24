@@ -1734,28 +1734,14 @@ fn canonical_quarantine_source_path(path: &str) -> String {
     path.trim().to_string()
 }
 
-fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, usize, u64) {
+fn quarantine_fingerprint(entry: &IngressQuarantineRecord) -> (String, u64) {
     (
         canonical_quarantine_source_path(&entry.source_path),
-        entry.line_number,
         entry.line_hash,
     )
 }
 
-fn quarantine_line_number_from_value(value: &serde_json::Value) -> Option<usize> {
-    let line_number = value.get("line_number")?;
-    if let Some(line_number) = line_number.as_u64() {
-        return usize::try_from(line_number).ok();
-    }
-
-    line_number
-        .as_str()?
-        .trim()
-        .parse::<usize>()
-        .ok()
-}
-
-fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)> {
+fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, u64)> {
     let trimmed = line.trim();
     if trimmed.is_empty() {
         return None;
@@ -1773,22 +1759,15 @@ fn parse_quarantine_fingerprint_line(line: &str) -> Option<(String, usize, u64)>
         })?;
     Some((
         canonical_quarantine_source_path(value.get("source_path")?.as_str()?),
-        quarantine_line_number_from_value(&value)?,
         line_hash,
     ))
 }
 
-fn load_existing_quarantine_fingerprints(path: &Path) -> BTreeSet<(String, usize, u64)> {
-    let Ok(raw) = fs::read_to_string(path) else {
-        return BTreeSet::new();
-    };
+fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<usize> {
+    const INGRESS_QUARANTINE_FILE_MAX_RECORDS: usize = 256;
+    const INGRESS_QUARANTINE_READ_MAX_BYTES: u64 = 1_048_576;
+    const INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES: usize = 16_384;
 
-    raw.lines()
-        .filter_map(parse_quarantine_fingerprint_line)
-        .collect()
-}
-
-fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
     if entries.is_empty() {
         return Ok(0);
     }
@@ -1798,29 +1777,93 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         fs::create_dir_all(parent)?;
     }
 
-    let mut seen = load_existing_quarantine_fingerprints(&quarantine_path);
-    let pending: Vec<_> = entries
-        .iter()
-        .filter(|entry| seen.insert(quarantine_fingerprint(entry)))
-        .collect();
-    if pending.is_empty() {
-        return Ok(());
+    let mut existing: Vec<serde_json::Value> = Vec::new();
+    let mut existing_keys: Vec<(String, u64)> = Vec::new();
+
+    if let Ok(raw) = fs::read_to_string(&quarantine_path) {
+        if (raw.len() as u64) <= INGRESS_QUARANTINE_READ_MAX_BYTES {
+            for line in raw.lines() {
+                let trimmed = line.trim();
+                if trimmed.is_empty() {
+                    continue;
+                }
+
+                let Some(key) = parse_quarantine_fingerprint_line(trimmed) else {
+                    continue;
+                };
+
+                let Ok(value) = serde_json::from_str::<serde_json::Value>(trimmed) else {
+                    continue;
+                };
+
+                if let Some(pos) = existing_keys.iter().position(|(entry_source, entry_hash)| {
+                    entry_source == &key.0 && entry_hash == &key.1
+                }) {
+                    existing.remove(pos);
+                    existing_keys.remove(pos);
+                }
+
+                existing.push(value);
+                existing_keys.push(key);
+            }
+        }
+    }
+
+    let mut seen_batch = std::collections::HashSet::new();
+    let mut appended = 0usize;
+    for entry in entries {
+        let key = quarantine_fingerprint(entry);
+        if !seen_batch.insert(key.clone()) {
+            continue;
+        }
+
+        if existing_keys
+            .iter()
+            .any(|(entry_source, entry_hash)| entry_source == &key.0 && entry_hash == &key.1)
+        {
+            continue;
+        }
+
+        appended += 1;
+
+        let mut value = serde_json::to_value(entry)?;
+        if let Some(serde_json::Value::String(raw_line)) = value.get_mut("raw_line") {
+            let mut sanitized = raw_line.clone();
+            if sanitized.len() > INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES {
+                let mut end = INGRESS_QUARANTINE_RETAINED_LINE_MAX_BYTES;
+                while end > 0 && !sanitized.is_char_boundary(end) {
+                    end -= 1;
+                }
+                sanitized.truncate(end);
+                *raw_line = sanitized;
+            }
+        }
+
+        existing.push(value);
+        existing_keys.push(key);
+    }
+
+    if existing.len() > INGRESS_QUARANTINE_FILE_MAX_RECORDS {
+        let drop_count = existing.len() - INGRESS_QUARANTINE_FILE_MAX_RECORDS;
+        existing.drain(0..drop_count);
+        existing_keys.drain(0..drop_count);
     }
 
     let mut file = OpenOptions::new()
         .create(true)
-        .append(true)
+        .write(true)
+        .truncate(true)
         .open(&quarantine_path)?;
-    for entry in pending {
-        writeln!(file, "{}", serde_json::to_string(entry)?)?;
+    for entry in existing {
+        writeln!(file, "{}", entry.to_string())?;
     }
     file.sync_all()?;
+
     Ok(appended)
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
     const INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES: usize = 4096;
-    const INGRESS_PARSE_LINE_MAX_BYTES: usize = 64 * 1024;
 
     fn truncate_for_quarantine(raw: &str) -> String {
         if raw.len() <= INGRESS_QUARANTINE_RAW_LINE_MAX_BYTES {
@@ -1840,7 +1883,8 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let mut records = Vec::new();
     let mut quarantined = Vec::new();
     let source_path = path.display().to_string();
-    let mut seen_quarantine_keys = std::collections::HashSet::new();
+    let mut seen_quarantine_keys: std::collections::HashSet<(String, u64)> =
+        std::collections::HashSet::new();
     for (idx, line) in raw.lines().enumerate() {
         let trimmed = line.trim();
         if trimmed.is_empty() {
@@ -1848,14 +1892,20 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
         }
         match serde_json::from_str::<MessageIngressRecord>(trimmed) {
             Ok(record) => records.push(record),
-            Err(err) => quarantined.push(IngressQuarantineRecord {
-                source_path: path.display().to_string(),
-                line_number: idx + 1,
-                line_hash: stable_line_hash(trimmed),
-                raw_line: line.to_string(),
-                error: err.to_string(),
-                quarantined_at_unix_ms: now_ms(),
-            }),
+            Err(err) => {
+                let line_hash = stable_line_hash(trimmed);
+                let key = (source_path.clone(), line_hash);
+                if seen_quarantine_keys.insert(key) {
+                    quarantined.push(IngressQuarantineRecord {
+                        source_path: source_path.clone(),
+                        line_number: idx + 1,
+                        line_hash,
+                        raw_line: truncate_for_quarantine(line),
+                        error: err.to_string(),
+                        quarantined_at_unix_ms: now_ms(),
+                    });
+                }
+            }
         }
     }
     if !quarantined.is_empty() {
