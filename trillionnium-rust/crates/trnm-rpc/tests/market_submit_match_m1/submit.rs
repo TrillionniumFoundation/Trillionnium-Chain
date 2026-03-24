@@ -215,3 +215,38 @@ fn market_submit_bid_duplicate_worker_is_case_and_whitespace_insensitive() {
     ]);
     assert!(stderr.contains("\"code\": \"duplicate-bid\""));
 }
+
+#[test]
+fn market_submit_bid_accepts_open_status_after_hidden_separator_normalization() {
+    let _guard = lock_test_guard();
+    let tasks = unique_market_fixture_path("market_submit_hidden_open_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_submit_hidden_open_bids", "jsonl");
+    fs::write(
+        &tasks,
+        r#"{"task_id":33001,"creator":"alice","bounty":100,"description":"normalized open status","status":"\uFEFFopen\u200B","created_at_unix_ms":1}"#,
+    )
+    .expect("write tasks fixture");
+    fs::write(&bids, "").expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let bid_out = run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            "33001",
+            "--worker",
+            "worker-a",
+            "--price",
+            "88",
+        ],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    assert!(bid_out.contains("\"worker\": \"worker-a\""));
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}

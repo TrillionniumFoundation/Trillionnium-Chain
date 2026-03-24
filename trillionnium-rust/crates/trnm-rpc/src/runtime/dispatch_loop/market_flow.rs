@@ -70,7 +70,7 @@ pub(super) fn handle_market_submit_bid(task_id: u64, worker: String, price: u128
                 message: format!("market task not found: {}", task_id),
             }));
         };
-        if task.status != "open" {
+        if normalize_market_status_key(&task.status) != "open" {
             return Err(rpc_fail(RpcErrorResponse {
                 code: "task-not-open",
                 message: format!("market task not in open status: {}", task.status),
@@ -126,7 +126,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
             message: format!("market task not found: {}", task_id),
         }));
     };
-    if task.status != "open" {
+    if normalize_market_status_key(&task.status) != "open" {
         return Err(rpc_fail(RpcErrorResponse {
             code: "task-not-open",
             message: format!("market task not in open status: {}", task.status),
