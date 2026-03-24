@@ -246,3 +246,16 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::is_health_probe_path;
+
+    #[test]
+    fn accepts_health_probe_aliases() {
+        assert!(is_health_probe_path("/health"));
+        assert!(is_health_probe_path("/livez"));
+        assert!(is_health_probe_path("/readyz"));
+        assert!(!is_health_probe_path("/healthz"));
+    }
+}
