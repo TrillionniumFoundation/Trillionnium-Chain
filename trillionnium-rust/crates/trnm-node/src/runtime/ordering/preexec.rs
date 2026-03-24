@@ -72,11 +72,20 @@ impl PreExecPool {
         if group_ids.is_empty() {
             return (vec![], 0);
         }
-        let workers = self.width.min(group_ids.len());
+
+        let mut unique_group_ids = Vec::with_capacity(group_ids.len());
+        let mut seen_ids = HashSet::with_capacity(group_ids.len());
+        for id in group_ids {
+            if seen_ids.insert(id) {
+                unique_group_ids.push(id);
+            }
+        }
+
+        let workers = self.width.min(unique_group_ids.len());
         let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
         {
             let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
-            for ids in shard_group_ids(&group_ids, workers) {
+            for ids in shard_group_ids(&unique_group_ids, workers) {
                 queue.push_back(PreExecQueueEntry::Run(PreExecJob {
                     ids,
                     result_tx: tx.clone(),
@@ -85,7 +94,7 @@ impl PreExecPool {
         }
         self.state.cv.notify_all();
         drop(tx);
-        collect_group_results(rx)
+        collect_group_results(rx, unique_group_ids)
     }
 }
 
@@ -141,19 +150,26 @@ fn shard_group_ids(group_ids: &[u64], workers: usize) -> Vec<Vec<u64>> {
     shards
 }
 
-fn collect_group_results(rx: mpsc::Receiver<(u64, bool, String)>) -> (Vec<u64>, u64) {
-    let mut ok_ids = Vec::new();
+fn collect_group_results(
+    rx: mpsc::Receiver<(u64, bool, String)>,
+    ordered_group_ids: Vec<u64>,
+) -> (Vec<u64>, u64) {
+    let mut ok_ids = HashSet::with_capacity(ordered_group_ids.len());
     let mut rejected = 0u64;
     for (id, ok, err) in rx {
         if ok {
-            ok_ids.push(id);
+            ok_ids.insert(id);
         } else {
             rejected += 1;
             println!("[preexec] tx_id={} rejected err={}", id, err);
         }
     }
-    ok_ids.sort_unstable();
-    (ok_ids, rejected)
+
+    let ordered_ok_ids = ordered_group_ids
+        .into_iter()
+        .filter(|id| ok_ids.contains(id))
+        .collect();
+    (ordered_ok_ids, rejected)
 }
 
 impl Drop for PreExecPool {

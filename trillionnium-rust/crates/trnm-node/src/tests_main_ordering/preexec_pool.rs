@@ -54,3 +54,26 @@ fn preexec_pool_rejects_invalid_job_ids_without_losing_workers() {
     assert_eq!(followup.0, vec![1]);
     assert_eq!(followup.1, 0);
 }
+
+#[test]
+fn preexec_pool_preserves_first_seen_group_order_while_deduping_duplicates() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![
+        MockTx::CreateTask {
+            task_id: 4401,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::CreateTask {
+            task_id: 4402,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+    ]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+    let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 1, 2, 1]);
+
+    assert_eq!(ordered_ids, vec![2, 1]);
+    assert_eq!(rejected, 0);
+}
