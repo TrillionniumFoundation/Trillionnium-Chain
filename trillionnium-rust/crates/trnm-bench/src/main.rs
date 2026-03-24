@@ -213,6 +213,7 @@ fn main() {
         let conflict_hits_per_tx = profile.conflict_hits_per_tx();
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
         let retry_pressure = profile.retry_pressure();
+        let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
         let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
         let stage_rw_hit_rate = ratio(profile.stage_rw_hits, profile.stage_rw_checks);
@@ -238,6 +239,10 @@ fn main() {
             candidate_groups_per_tx
         ));
         lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
+        lines.push(format!(
+            "profile.candidate_groups_per_retry_hit={:.4}",
+            candidate_groups_per_retry_hit
+        ));
         lines.push(format!(
             "profile.stage_ww_hit_rate={:.4}",
             stage_ww_hit_rate

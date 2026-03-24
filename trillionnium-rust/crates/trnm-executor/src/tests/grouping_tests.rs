@@ -313,6 +313,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.conflict_hits_per_tx(), 0.0);
     assert_eq!(profile.candidate_groups_per_tx(), 0.0);
     assert_eq!(profile.retry_pressure(), 0.0);
+    assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
     assert_eq!(profile.ww_retry_hit_rate(), 0.0);
     assert_eq!(profile.wr_retry_hit_rate(), 0.0);
     assert_eq!(profile.rw_retry_hit_rate(), 0.0);
@@ -347,6 +348,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert!((profile.conflict_hits_per_tx() - 0.75).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
     assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_retry_hit() - (10.0 / 6.0)).abs() < f64::EPSILON);
     assert!((profile.ww_retry_hit_rate() - (1.0 / 3.0)).abs() < f64::EPSILON);
     assert!((profile.wr_retry_hit_rate() - 0.8).abs() < f64::EPSILON);
     assert!((profile.rw_retry_hit_rate() - 0.5).abs() < f64::EPSILON);

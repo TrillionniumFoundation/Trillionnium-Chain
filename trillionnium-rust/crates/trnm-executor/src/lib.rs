@@ -59,6 +59,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn candidate_groups_per_retry_hit(&self) -> f64 {
+        ratio_usize(self.candidate_groups_scanned, self.conflict_hits)
+    }
+
+    #[inline]
     pub fn ww_retry_hit_rate(&self) -> f64 {
         ratio_usize(self.stage_ww_hits, self.stage_ww_checks)
     }
