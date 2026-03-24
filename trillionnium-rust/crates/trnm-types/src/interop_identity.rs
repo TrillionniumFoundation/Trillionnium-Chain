@@ -188,13 +188,7 @@ impl SettlementRecord {
         settlement_tx: Option<String>,
         revert_reason: Option<String>,
     ) -> Result<(), InteropIdentityError> {
-        self.apply_status_with_receipt_status(
-            to,
-            at_height,
-            settlement_tx,
-            None,
-            revert_reason,
-        )
+        self.apply_status_with_receipt_status(to, at_height, settlement_tx, None, revert_reason)
     }
 
     pub fn apply_status_with_receipt_status(
@@ -1048,8 +1042,7 @@ impl fmt::Display for InteropIdentityError {
                 write!(
                     f,
                     "invalid settlement receipt status: expected {}, got {}",
-                    expected,
-                    got
+                    expected, got
                 )
             }
             InteropIdentityError::DidAlreadyExists { did } => {
@@ -1209,20 +1202,20 @@ mod tests {
             }
         ));
 
-        rec
-            .apply_status_with_receipt_status(
-                SettlementStatus::Finalized,
-                105,
-                Some("0xok".to_string()),
-                Some(SETTLEMENT_TX_RECEIPT_SUCCESS),
-                None,
-            )
-            .unwrap();
+        rec.apply_status_with_receipt_status(
+            SettlementStatus::Finalized,
+            105,
+            Some("0xok".to_string()),
+            Some(SETTLEMENT_TX_RECEIPT_SUCCESS),
+            None,
+        )
+        .unwrap();
         assert_eq!(rec.settlement_tx.as_deref(), Some("0xok"));
     }
 
     #[test]
-    fn settlement_state_machine_enforces_pending_terminal_model() {        let route = BridgeRoute {
+    fn settlement_state_machine_enforces_pending_terminal_model() {
+        let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
             source_chain: "ethereum".to_string(),
             target_chain: "trillionnium".to_string(),

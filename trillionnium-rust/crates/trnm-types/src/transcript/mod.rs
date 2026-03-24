@@ -1,128 +1,17 @@
+mod normalization;
+mod records;
+mod verification;
+
 use crate::{Hash32, RelayAuthEnvelope};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum MerkleDirection {
-    Left,
-    Right,
-}
+pub use records::{MerkleDirection, TranscriptError, TranscriptMerkleTree, TranscriptProof};
+pub use verification::verify_proof;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TranscriptProof {
-    pub leaf: Hash32,
-    pub path: Vec<Hash32>,
-    pub directions: Vec<MerkleDirection>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum TranscriptError {
-    EmptySegment,
-    EmptyTargets,
-    InvalidRange {
-        start_seq: u64,
-        end_seq: u64,
-    },
-    MissingSequence {
-        expected_seq: u64,
-    },
-    OrderMismatch {
-        expected_seq: u64,
-        got_seq: u64,
-    },
-    TargetOutOfRange {
-        target_seq: u64,
-        start_seq: u64,
-        end_seq: u64,
-    },
-}
-
-/// Built Merkle layers for a transcript segment. levels[0] is leaf layer,
-/// levels[last][0] is root.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct TranscriptMerkleTree {
-    levels: Vec<Vec<Hash32>>,
-}
-
-impl TranscriptMerkleTree {
-    pub fn root(&self) -> Hash32 {
-        self.levels
-            .last()
-            .and_then(|l| l.first().copied())
-            .unwrap_or([0u8; 32])
-    }
-
-    pub fn leaf_count(&self) -> usize {
-        self.levels.first().map_or(0, Vec::len)
-    }
-
-    pub fn proof(&self, target_index: usize) -> Option<TranscriptProof> {
-        let leaves = self.levels.first()?;
-        if target_index >= leaves.len() {
-            return None;
-        }
-
-        let mut idx = target_index;
-        let mut path = Vec::with_capacity(self.levels.len().saturating_sub(1));
-        let mut directions = Vec::with_capacity(self.levels.len().saturating_sub(1));
-
-        for level in self.levels.iter().take(self.levels.len().saturating_sub(1)) {
-            let sibling_idx = if idx.is_multiple_of(2) {
-                idx + 1
-            } else {
-                idx - 1
-            };
-            let sibling = if sibling_idx < level.len() {
-                level[sibling_idx]
-            } else {
-                level[idx]
-            };
-
-            path.push(sibling);
-            directions.push(if idx.is_multiple_of(2) {
-                MerkleDirection::Right
-            } else {
-                MerkleDirection::Left
-            });
-            idx /= 2;
-        }
-
-        Some(TranscriptProof {
-            leaf: leaves[target_index],
-            path,
-            directions,
-        })
-    }
-}
+use normalization::collect_segment_hashes;
+use verification::build_merkle_levels;
 
 pub fn relay_auth_envelope_hash(env: &RelayAuthEnvelope) -> Hash32 {
-    let mut hasher = Sha256::new();
-    hasher.update(RelayAuthEnvelope::SIGNING_DOMAIN_V1.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.chain_id.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.msg_type.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.version.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.task_id.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.session_id.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.seq.to_string().as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.timestamp_ms.to_string().as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.from.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.to.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.nonce.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.payload_hash.as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.sig.as_bytes());
-    hasher.finalize().into()
+    normalization::relay_auth_envelope_hash(env)
 }
 
 pub fn transcript_segment_root(
@@ -190,94 +79,6 @@ pub fn transcript_segment_tree(
     Ok(TranscriptMerkleTree {
         levels: build_merkle_levels(hashes),
     })
-}
-
-pub fn verify_proof(root: &Hash32, proof: &TranscriptProof) -> bool {
-    if proof.path.len() != proof.directions.len() {
-        return false;
-    }
-
-    let mut acc = proof.leaf;
-    for (sibling, direction) in proof.path.iter().zip(proof.directions.iter()) {
-        acc = match direction {
-            MerkleDirection::Left => hash_pair(sibling, &acc),
-            MerkleDirection::Right => hash_pair(&acc, sibling),
-        };
-    }
-    &acc == root
-}
-
-fn collect_segment_hashes(
-    envelopes: &[RelayAuthEnvelope],
-    start_seq: u64,
-    end_seq: u64,
-) -> Result<Vec<Hash32>, TranscriptError> {
-    if start_seq > end_seq {
-        return Err(TranscriptError::InvalidRange { start_seq, end_seq });
-    }
-
-    let mut expected_seq = start_seq;
-    let mut hashes = Vec::new();
-
-    for env in envelopes {
-        if env.seq < start_seq {
-            continue;
-        }
-        if env.seq > end_seq {
-            break;
-        }
-        if env.seq != expected_seq {
-            return Err(TranscriptError::OrderMismatch {
-                expected_seq,
-                got_seq: env.seq,
-            });
-        }
-        hashes.push(relay_auth_envelope_hash(env));
-        expected_seq = expected_seq.saturating_add(1);
-    }
-
-    if hashes.is_empty() {
-        return Err(TranscriptError::EmptySegment);
-    }
-
-    if expected_seq <= end_seq {
-        return Err(TranscriptError::MissingSequence { expected_seq });
-    }
-
-    Ok(hashes)
-}
-
-fn build_merkle_levels(leaves: Vec<Hash32>) -> Vec<Vec<Hash32>> {
-    if leaves.is_empty() {
-        return vec![vec![[0u8; 32]]];
-    }
-
-    let mut levels = vec![leaves];
-    while levels.last().is_some_and(|l| l.len() > 1) {
-        let prev = levels.last().expect("level exists");
-        let mut next = Vec::with_capacity(prev.len().div_ceil(2));
-        let mut i = 0;
-        while i < prev.len() {
-            let left = prev[i];
-            let right = if i + 1 < prev.len() {
-                prev[i + 1]
-            } else {
-                left
-            };
-            next.push(hash_pair(&left, &right));
-            i += 2;
-        }
-        levels.push(next);
-    }
-
-    levels
-}
-
-fn hash_pair(left: &Hash32, right: &Hash32) -> Hash32 {
-    let mut hasher = Sha256::new();
-    hasher.update(left);
-    hasher.update(right);
-    hasher.finalize().into()
 }
 
 #[cfg(test)]
