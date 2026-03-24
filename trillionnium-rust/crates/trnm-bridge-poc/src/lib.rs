@@ -171,6 +171,15 @@ pub mod bridge_status {
         pub status: BridgeStatus,
     }
 
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct SettlementAuditView {
+        pub chain_id: u32,
+        pub tx_hash: String,
+        pub status: &'static str,
+        pub finalized_height: Option<u64>,
+        pub revert_reason: Option<String>,
+    }
+
     impl SettlementRequest {
         pub fn new(chain_id: u32, tx_hash: String) -> Self {
             SettlementRequest {
@@ -244,6 +253,32 @@ pub mod bridge_status {
                 });
             }
             self.transition_to_finalized(height)
+        }
+
+        pub fn audit_view(&self) -> SettlementAuditView {
+            match &self.status {
+                BridgeStatus::Pending => SettlementAuditView {
+                    chain_id: self.chain_id,
+                    tx_hash: self.tx_hash.clone(),
+                    status: "pending",
+                    finalized_height: None,
+                    revert_reason: None,
+                },
+                BridgeStatus::Finalized(height) => SettlementAuditView {
+                    chain_id: self.chain_id,
+                    tx_hash: self.tx_hash.clone(),
+                    status: "finalized",
+                    finalized_height: Some(*height),
+                    revert_reason: None,
+                },
+                BridgeStatus::Reverted(reason) => SettlementAuditView {
+                    chain_id: self.chain_id,
+                    tx_hash: self.tx_hash.clone(),
+                    status: "reverted",
+                    finalized_height: None,
+                    revert_reason: Some(reason.clone()),
+                },
+            }
         }
 
         pub fn revert_authorized(

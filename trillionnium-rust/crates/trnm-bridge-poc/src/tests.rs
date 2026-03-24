@@ -22,6 +22,35 @@ fn settlement_request_rejects_ogham_space_mark_in_tx_hash() {
 }
 
 #[test]
+fn settlement_audit_view_exposes_explicit_terminal_fields() {
+    let mut finalized = SettlementRequest::new(7, "0xfinal".to_string());
+    finalized.status = BridgeStatus::Finalized(88);
+    assert_eq!(
+        finalized.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xfinal".to_string(),
+            status: "finalized",
+            finalized_height: Some(88),
+            revert_reason: None,
+        }
+    );
+
+    let mut reverted = SettlementRequest::new(7, "0xrevert".to_string());
+    reverted.status = BridgeStatus::Reverted("proof mismatch".to_string());
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xrevert".to_string(),
+            status: "reverted",
+            finalized_height: None,
+            revert_reason: Some("proof mismatch".to_string()),
+        }
+    );
+}
+
+#[test]
 fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request

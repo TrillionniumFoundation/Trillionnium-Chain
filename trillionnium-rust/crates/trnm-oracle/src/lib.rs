@@ -43,6 +43,21 @@ pub struct OracleSnapshot {
     pub snapshot_hash: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OracleSnapshotAuditView {
+    pub feed_id: String,
+    pub value: i128,
+    pub source_ids: Vec<String>,
+    pub source_count: u32,
+    pub sample_count: u32,
+    pub median: Option<i128>,
+    pub mad: Option<u128>,
+    pub window_start_ms: u64,
+    pub window_end_ms: u64,
+    pub snapshot_ts_ms: u64,
+    pub snapshot_hash: String,
+}
+
 impl OracleSnapshot {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
@@ -150,6 +165,26 @@ impl OracleSnapshot {
             });
         }
         Ok(())
+    }
+
+    pub fn audit_view(&self) -> OracleSnapshotAuditView {
+        OracleSnapshotAuditView {
+            feed_id: self.feed_id.clone(),
+            value: self.value,
+            source_ids: self
+                .sources
+                .iter()
+                .map(|source| source.as_str().to_string())
+                .collect(),
+            source_count: self.sources.len() as u32,
+            sample_count: self.sample_count,
+            median: self.median,
+            mad: self.mad,
+            window_start_ms: self.window_start_ms,
+            window_end_ms: self.window_end_ms,
+            snapshot_ts_ms: self.snapshot_ts_ms,
+            snapshot_hash: self.snapshot_hash.clone(),
+        }
     }
 }
 
@@ -594,6 +629,25 @@ mod tests {
                 canonical: "btc/usd".to_string(),
             }
         );
+    }
+
+    #[test]
+    fn snapshot_audit_view_exposes_explicit_canonical_proof_fields() {
+        let snap = snapshot_with(100_000, Some(100_000), 10_000);
+
+        let audit = snap.audit_view();
+
+        assert_eq!(audit.feed_id, "btc/usd");
+        assert_eq!(audit.value, 100_000);
+        assert_eq!(audit.source_ids, vec!["chainlink", "coingecko"]);
+        assert_eq!(audit.source_count, 2);
+        assert_eq!(audit.sample_count, 2);
+        assert_eq!(audit.median, Some(100_000));
+        assert_eq!(audit.mad, Some(120));
+        assert_eq!(audit.window_start_ms, 1_000);
+        assert_eq!(audit.window_end_ms, 2_000);
+        assert_eq!(audit.snapshot_ts_ms, 10_000);
+        assert_eq!(audit.snapshot_hash, snap.snapshot_hash);
     }
 
     #[test]
