@@ -12988,13 +12988,15 @@ fn main() -> Result<()> {
         persist_wal_meta_entries(&wal_dir, &wal_entries)?;
 
         if args.bft_checkpoint_interval > 0 && height % args.bft_checkpoint_interval == 0 {
-            checkpoints.push(CheckpointMeta {
+            let checkpoint = CheckpointMeta {
                 height,
                 state_root_hex: root.clone(),
                 wal_entry_hash_hex: wal_hash,
-            });
+            };
+            let checkpoint_summary = checkpoint.evidence_summary();
+            checkpoints.push(checkpoint);
             persist_checkpoint_meta(&wal_dir, &checkpoints)?;
-            println!("[bft-checkpoint] height={} state_root={}", height, root);
+            println!("[bft-checkpoint] {} proposal_hash={}", checkpoint_summary, proposal_hash);
         }
 
         persist_consensus_wal(

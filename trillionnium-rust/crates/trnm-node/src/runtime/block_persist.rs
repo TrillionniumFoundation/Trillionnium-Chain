@@ -39,14 +39,12 @@ pub(crate) fn persist_checkpoint_if_needed(args: &Args, runtime: &mut RuntimeSta
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
         if checkpoint_evidence_surface_is_canonical(&checkpoint, wal_entry) {
-            runtime.checkpoints.push(checkpoint.clone());
+            let checkpoint_summary = checkpoint.evidence_summary();
+            runtime.checkpoints.push(checkpoint);
             persist_checkpoint_meta(&runtime.wal_dir, &runtime.checkpoints)?;
             println!(
-                "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
-                runtime.height,
-                checkpoint.state_root_hex,
-                checkpoint.wal_entry_hash_hex,
-                proposal_hash
+                "[bft-checkpoint] {} proposal_hash={}",
+                checkpoint_summary, proposal_hash
             );
         }
     }
