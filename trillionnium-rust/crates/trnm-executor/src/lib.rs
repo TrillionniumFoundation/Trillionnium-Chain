@@ -4535,6 +4535,34 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_write_only_version_skew_for_same_object_id() {
+        let t = tx(
+            2,
+            vec![],
+            vec![ObjectRef { id: 7, version: 2 }, ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_read_only_version_skew_for_same_object_id() {
+        let t = tx(
+            3,
+            vec![ObjectRef { id: 9, version: 4 }, ObjectRef { id: 9, version: 3 }],
+            vec![],
+        );
+
+        let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
     fn auto_adaptive_canonicalizes_primary_access_key_across_equivalent_domain_orderings() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
