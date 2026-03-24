@@ -1284,6 +1284,10 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         bounty: task.bounty,
         result_hash_hex: task.result_hash.map(hex::encode),
         version: task.version,
+        metadata_compatibility: task
+            .metadata
+            .as_ref()
+            .map(|metadata| metadata.compatibility_profile()),
         metering: task
             .metadata
             .as_ref()
@@ -3266,6 +3270,7 @@ fn query_task_from_node_events(
         bounty: 100,
         result_hash_hex: None,
         version,
+        metadata_compatibility: None,
         metering: None,
     })
 }
@@ -3322,6 +3327,7 @@ fn query_task_response(
         bounty: 100,
         result_hash_hex,
         version: task_recs.len() as u64,
+        metadata_compatibility: None,
         metering: None,
     })
 }

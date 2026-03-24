@@ -94,6 +94,7 @@ pub(crate) fn query_task_from_node_events(
         bounty: 100,
         result_hash_hex: None,
         version,
+        metadata_compatibility: None,
         metering: None,
     })
 }
@@ -150,6 +151,7 @@ pub(crate) fn query_task_response(
         bounty: 100,
         result_hash_hex,
         version: task_recs.len() as u64,
+        metadata_compatibility: None,
         metering: None,
     })
 }

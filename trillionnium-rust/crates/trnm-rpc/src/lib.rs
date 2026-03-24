@@ -6,7 +6,7 @@ mod transfer;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
-use trnm_types::{GovProposalStatus, TaskStatus};
+use trnm_types::{GovProposalStatus, TaskMetadataCompatibility, TaskStatus};
 
 pub use relay::*;
 pub use transfer::{
@@ -64,6 +64,8 @@ pub struct TaskQueryResponse {
     pub bounty: u128,
     pub result_hash_hex: Option<String>,
     pub version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_compatibility: Option<TaskMetadataCompatibility>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,
 }
@@ -369,6 +371,7 @@ mod tests {
             bounty: 100,
             result_hash_hex: None,
             version: 1,
+            metadata_compatibility: None,
             metering: None,
         };
         let v = serde_json::to_value(task).unwrap();
@@ -394,6 +397,7 @@ mod tests {
             bounty: 100,
             result_hash_hex: None,
             version: 1,
+            metadata_compatibility: None,
             metering: None,
         };
         let v = serde_json::to_value(task).unwrap();
@@ -443,6 +447,7 @@ mod tests {
             bounty: 100,
             result_hash_hex: Some("abcd".into()),
             version: 3,
+            metadata_compatibility: None,
             metering: Some(TaskMeteringQueryResponse {
                 workload_class: "llm_inference".into(),
                 metering_schema: "llm_token_meter_v1".into(),

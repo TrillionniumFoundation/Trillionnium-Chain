@@ -249,6 +249,10 @@ pub(crate) fn query_task_from_state_snapshot(
         bounty: task.bounty,
         result_hash_hex: task.result_hash.map(hex::encode),
         version: task.version,
+        metadata_compatibility: task
+            .metadata
+            .as_ref()
+            .map(|metadata| metadata.compatibility_profile()),
         metering: task
             .metadata
             .as_ref()
