@@ -133,7 +133,11 @@ fn smoke_tx_commit_query_fallback_roundtrip() {
         .args(["tx", "query", tx_hash])
         .output()
         .unwrap();
-    assert!(query.status.success(), "stderr: {}", String::from_utf8_lossy(&query.stderr));
+    assert!(
+        query.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&query.stderr)
+    );
     let query_stdout = String::from_utf8_lossy(&query.stdout);
     assert!(query_stdout.contains(&format!("tx_hash={}", tx_hash)));
     assert!(query_stdout.contains("status=pending"));

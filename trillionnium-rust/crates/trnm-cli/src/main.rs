@@ -139,9 +139,7 @@ enum QueryCommand {
         denom: String,
     },
     /// Query task status / audit view via RPC
-    Task {
-        task_id: u64,
-    },
+    Task { task_id: u64 },
     /// Query task event timeline / audit view via RPC
     Events {
         task_id: u64,
@@ -264,7 +262,10 @@ fn events_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
     parse_events_query_response(&stdout, task_id)
 }
 
-fn parse_request_full_query_response(raw: &str, requested_request_id: &str) -> Result<serde_json::Value> {
+fn parse_request_full_query_response(
+    raw: &str,
+    requested_request_id: &str,
+) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse request-full response as json: {err}"))?;
     let Some(request) = parsed.get("request") else {
@@ -288,7 +289,10 @@ fn parse_request_full_query_response(raw: &str, requested_request_id: &str) -> R
     };
     for (idx, event) in events.iter().enumerate() {
         let Some(event_task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
-            bail!("request-full response event {} missing numeric task_id", idx);
+            bail!(
+                "request-full response event {} missing numeric task_id",
+                idx
+            );
         };
         if event_task_id != task_id {
             bail!(
@@ -385,30 +389,49 @@ fn push_metering_summary_lines(
         scalar_summary(metering.get("workload_class")).unwrap_or_else(|| "-".into());
     let metering_schema =
         scalar_summary(metering.get("metering_schema")).unwrap_or_else(|| "-".into());
-    let receipt_hash =
-        scalar_summary(metering.get("receipt_hash")).unwrap_or_else(|| "-".into());
+    let receipt_hash = scalar_summary(metering.get("receipt_hash")).unwrap_or_else(|| "-".into());
     lines.push(format!(
         "{}metering work_units={} class={} schema={} receipt_hash={}",
         indent, normalized_work_units_str, workload_class, metering_schema, receipt_hash
     ));
 
     if let Some(policy) = metering.get("policy") {
-        let floor_str = scalar_summary(policy.get("min_accept_work_units")).unwrap_or_else(|| "-".into());
+        let floor_str =
+            scalar_summary(policy.get("min_accept_work_units")).unwrap_or_else(|| "-".into());
         let floor = scalar_summary_u128(policy.get("min_accept_work_units"));
-        let bounty_base_str = scalar_summary(policy.get("challenge_success_bounty_base")).unwrap_or_else(|| "-".into());
+        let bounty_base_str = scalar_summary(policy.get("challenge_success_bounty_base"))
+            .unwrap_or_else(|| "-".into());
         let bounty_base = scalar_summary_u128(policy.get("challenge_success_bounty_base"));
-        let chall_num_str = scalar_summary(policy.get("challenge_success_bounty_per_work_unit_num")).unwrap_or_else(|| "-".into());
-        let chall_den_str = scalar_summary(policy.get("challenge_success_bounty_per_work_unit_den")).unwrap_or_else(|| "-".into());
-        let chall_num = scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_num"));
-        let chall_den = scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_den"));
-        let worker_bonus_num_str = scalar_summary(policy.get("worker_completion_bonus_per_work_unit_num")).unwrap_or_else(|| "-".into());
-        let worker_bonus_den_str = scalar_summary(policy.get("worker_completion_bonus_per_work_unit_den")).unwrap_or_else(|| "-".into());
-        let worker_bonus_num = scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_num"));
-        let worker_bonus_den = scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_den"));
-        let worker_rebate_num_str = scalar_summary(policy.get("worker_slash_rebate_per_work_unit_num")).unwrap_or_else(|| "-".into());
-        let worker_rebate_den_str = scalar_summary(policy.get("worker_slash_rebate_per_work_unit_den")).unwrap_or_else(|| "-".into());
-        let worker_rebate_num = scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_num"));
-        let worker_rebate_den = scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_den"));
+        let chall_num_str =
+            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_num"))
+                .unwrap_or_else(|| "-".into());
+        let chall_den_str =
+            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_den"))
+                .unwrap_or_else(|| "-".into());
+        let chall_num =
+            scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_num"));
+        let chall_den =
+            scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_den"));
+        let worker_bonus_num_str =
+            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_num"))
+                .unwrap_or_else(|| "-".into());
+        let worker_bonus_den_str =
+            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_den"))
+                .unwrap_or_else(|| "-".into());
+        let worker_bonus_num =
+            scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_num"));
+        let worker_bonus_den =
+            scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_den"));
+        let worker_rebate_num_str =
+            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_num"))
+                .unwrap_or_else(|| "-".into());
+        let worker_rebate_den_str =
+            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_den"))
+                .unwrap_or_else(|| "-".into());
+        let worker_rebate_num =
+            scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_num"));
+        let worker_rebate_den =
+            scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_den"));
 
         lines.push(format!(
             "{}policy snapshot={} floor={} bounty_base={} chall_bonus={}/{} worker_bonus={}/{} worker_rebate={}/{}",
@@ -539,8 +562,10 @@ fn render_events_query_summary(parsed: &serde_json::Value) -> Result<String> {
             push_metering_summary_lines(&mut lines, "  ", metering, Some(event));
         }
     }
-    Ok(lines.join("
-"))
+    Ok(lines.join(
+        "
+",
+    ))
 }
 
 fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<String> {
@@ -554,8 +579,10 @@ fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<Strin
     let status = scalar_summary(request.get("status")).unwrap_or_else(|| "-".into());
     let channel = scalar_summary(request.get("channel")).unwrap_or_else(|| "-".into());
     let session_id = scalar_summary(request.get("session_id")).unwrap_or_else(|| "-".into());
-    let verifier_status = scalar_summary(parsed.get("verifier_status")).unwrap_or_else(|| "-".into());
-    let resolution_code = scalar_summary(parsed.get("resolution_code")).unwrap_or_else(|| "-".into());
+    let verifier_status =
+        scalar_summary(parsed.get("verifier_status")).unwrap_or_else(|| "-".into());
+    let resolution_code =
+        scalar_summary(parsed.get("resolution_code")).unwrap_or_else(|| "-".into());
     let result_hash = scalar_summary(parsed.get("result_hash")).unwrap_or_else(|| "-".into());
     let commit_tx_hash = scalar_summary(parsed.get("commit_tx_hash")).unwrap_or_else(|| "-".into());
     let reveal_tx_hash = scalar_summary(parsed.get("reveal_tx_hash")).unwrap_or_else(|| "-".into());
@@ -567,9 +594,15 @@ fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<Strin
     let mut lines = vec![
         format!("request_id={}", request_id),
         format!("task_id={}", task_id),
-        format!("status={} verifier_status={} resolution_code={}", status, verifier_status, resolution_code),
+        format!(
+            "status={} verifier_status={} resolution_code={}",
+            status, verifier_status, resolution_code
+        ),
         format!("channel={} session_id={}", channel, session_id),
-        format!("commit_tx_hash={} reveal_tx_hash={} result_hash={}", commit_tx_hash, reveal_tx_hash, result_hash),
+        format!(
+            "commit_tx_hash={} reveal_tx_hash={} result_hash={}",
+            commit_tx_hash, reveal_tx_hash, result_hash
+        ),
         format!("events_total={}", events.len()),
     ];
     for (idx, event) in events.iter().enumerate() {
@@ -588,8 +621,10 @@ fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<Strin
             push_metering_summary_lines(&mut lines, "  ", metering, Some(event));
         }
     }
-    Ok(lines.join("
-"))
+    Ok(lines.join(
+        "
+",
+    ))
 }
 
 fn task_query(task_id: u64) -> Result<serde_json::Value> {
@@ -1832,15 +1867,23 @@ mod tests {
     fn events_query_parse_json_accepts_metering_audit_payloads() {
         let raw = r#"[{"event_type":"resolve","task_id":42,"from_status":"Challenged","to_status":"Completed","actor":"authority","tx_id":12,"block_height":4,"state_root":"0xdef","ts_unix_ms":124,"metering":{"workload_class":"llm_inference","metering_schema":"llm_token_meter_v1","receipt_hash":"deadbeef","prompt_tokens":128,"generated_tokens":32,"decode_steps":32,"kv_bytes_moved":4096,"normalized_work_units":192,"prompt_token_weight":1,"generated_token_weight":1,"decode_step_weight":1,"kv_byte_weight":0,"policy":{"snapshot_version":1,"min_accept_work_units":100,"challenge_success_bounty_base":1,"challenge_success_bounty_per_work_unit_num":1,"challenge_success_bounty_per_work_unit_den":192,"worker_completion_bonus_per_work_unit_num":1,"worker_completion_bonus_per_work_unit_den":256,"worker_slash_rebate_per_work_unit_num":1,"worker_slash_rebate_per_work_unit_den":384}}}]"#;
         let parsed = parse_events_query_response(raw, 42).unwrap();
-        assert_eq!(parsed[0]["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(parsed[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            parsed[0]["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            parsed[0]["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]
     fn events_query_rejects_mismatched_task_id() {
         let raw = r#"[{"event_type":"commit","task_id":43,"from_status":"Assigned","to_status":"Committed","actor":"worker-a","tx_id":1,"block_height":1,"state_root":"abc","ts_unix_ms":1}]"#;
         let err = parse_events_query_response(raw, 42).unwrap_err();
-        assert!(err.to_string().contains("events query response task_id mismatch"));
+        assert!(err
+            .to_string()
+            .contains("events query response task_id mismatch"));
     }
 
     #[test]
@@ -1852,8 +1895,14 @@ mod tests {
         let got = events_query(42, 5).unwrap();
         std::env::remove_var("TRNM_QUERY_EVENTS_CMD");
         assert_eq!(got[0]["task_id"], serde_json::json!(42));
-        assert_eq!(got[0]["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(got[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            got[0]["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            got[0]["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]
@@ -1897,7 +1946,9 @@ mod tests {
             }
         ]);
         let summary = render_events_query_summary(&raw).unwrap();
-        assert!(summary.contains("challenge_bonus_total=2 (metered=1) worker_completion_bonus=1 worker_slash_rebate=1"));
+        assert!(summary.contains(
+            "challenge_bonus_total=2 (metered=1) worker_completion_bonus=1 worker_slash_rebate=1"
+        ));
         assert!(!summary.contains("challenge_bonus_total=19009"));
     }
 
@@ -1996,22 +2047,32 @@ mod tests {
         let raw = r#"{"request":{"request_id":"req-42","task_id":42,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hi","idempotency_key":"k1","status":"resolved","created_at_unix_ms":123},"verifier_status":"ok","resolution_code":"completed","result_hash":"abcd","commit_tx_hash":"0x1","reveal_tx_hash":"0x2","events":[{"event_type":"reveal","task_id":42,"from_status":"Committed","to_status":"Revealed","actor":"worker-a","tx_id":2,"block_height":2,"state_root":"0xdef","ts_unix_ms":124,"metering":{"normalized_work_units":192,"policy":{"snapshot_version":1}}}]}"#;
         let parsed = parse_request_full_query_response(raw, "req-42").unwrap();
         assert_eq!(parsed["request"]["request_id"], serde_json::json!("req-42"));
-        assert_eq!(parsed["events"][0]["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(parsed["events"][0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            parsed["events"][0]["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            parsed["events"][0]["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]
     fn request_full_query_rejects_mismatched_request_id() {
         let raw = r#"{"request":{"request_id":"req-43","task_id":42},"events":[]}"#;
         let err = parse_request_full_query_response(raw, "req-42").unwrap_err();
-        assert!(err.to_string().contains("request-full response request_id mismatch"));
+        assert!(err
+            .to_string()
+            .contains("request-full response request_id mismatch"));
     }
 
     #[test]
     fn request_full_query_rejects_event_task_id_mismatch() {
         let raw = r#"{"request":{"request_id":"req-42","task_id":42},"events":[{"task_id":43}]}"#;
         let err = parse_request_full_query_response(raw, "req-42").unwrap_err();
-        assert!(err.to_string().contains("request-full response event task_id mismatch"));
+        assert!(err
+            .to_string()
+            .contains("request-full response event task_id mismatch"));
     }
 
     #[test]
@@ -2023,23 +2084,37 @@ mod tests {
         let got = request_full_query("req-42", 5).unwrap();
         std::env::remove_var("TRNM_QUERY_REQUEST_FULL_CMD");
         assert_eq!(got["request"]["request_id"], serde_json::json!("req-42"));
-        assert_eq!(got["events"][0]["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(got["events"][0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            got["events"][0]["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            got["events"][0]["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]
     fn task_query_parse_json_accepts_metering_audit_payload() {
         let raw = r#"{"task_id":42,"status":"Revealed","worker":"worker-a","bounty":777,"result_hash_hex":"abcd","version":9,"metering":{"workload_class":"llm_inference","metering_schema":"llm_token_meter_v1","receipt_hash":"deadbeef","prompt_tokens":128,"generated_tokens":32,"decode_steps":32,"kv_bytes_moved":4096,"normalized_work_units":192,"prompt_token_weight":1,"generated_token_weight":1,"decode_step_weight":1,"kv_byte_weight":0,"policy":{"snapshot_version":1,"min_accept_work_units":100,"challenge_success_bounty_base":1,"challenge_success_bounty_per_work_unit_num":1,"challenge_success_bounty_per_work_unit_den":192,"worker_completion_bonus_per_work_unit_num":1,"worker_completion_bonus_per_work_unit_den":256,"worker_slash_rebate_per_work_unit_num":1,"worker_slash_rebate_per_work_unit_den":384}}}"#;
         let parsed = parse_task_query_response(raw, 42).unwrap();
-        assert_eq!(parsed["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(parsed["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            parsed["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            parsed["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]
     fn task_query_rejects_mismatched_task_id() {
         let raw = r#"{"task_id":43,"status":"Open","worker":null,"bounty":100,"result_hash_hex":null,"version":1}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
-        assert!(err.to_string().contains("task query response task_id mismatch"));
+        assert!(err
+            .to_string()
+            .contains("task query response task_id mismatch"));
     }
 
     #[test]
@@ -2051,8 +2126,14 @@ mod tests {
         let got = task_query(42).unwrap();
         std::env::remove_var("TRNM_QUERY_TASK_CMD");
         assert_eq!(got["task_id"], serde_json::json!(42));
-        assert_eq!(got["metering"]["normalized_work_units"], serde_json::json!(192));
-        assert_eq!(got["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+        assert_eq!(
+            got["metering"]["normalized_work_units"],
+            serde_json::json!(192)
+        );
+        assert_eq!(
+            got["metering"]["policy"]["snapshot_version"],
+            serde_json::json!(1)
+        );
     }
 
     #[test]

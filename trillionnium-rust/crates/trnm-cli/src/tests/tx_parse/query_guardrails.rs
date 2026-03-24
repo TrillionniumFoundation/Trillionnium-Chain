@@ -1,0 +1,28 @@
+use super::super::*;
+
+#[test]
+fn tx_query_rejects_mismatched_tx_hash() {
+    std::env::set_var(
+        "TRNM_TX_QUERY_CMD",
+        "printf '{\"tx_hash\":\"0xaaaa\",\"status\":\"committed\"}'",
+    );
+    let got = tx_query("0xbbbb");
+    std::env::remove_var("TRNM_TX_QUERY_CMD");
+    assert!(got.is_err());
+}
+
+#[test]
+fn tx_query_rejects_non_hex_like_tx_hash_before_shell_exec() {
+    std::env::set_var(
+        "TRNM_TX_QUERY_CMD",
+        "printf '{\"tx_hash\":\"0xaaaa\",\"status\":\"committed\"}'",
+    );
+    let got = tx_query("0xabc; touch /tmp/pwned");
+    std::env::remove_var("TRNM_TX_QUERY_CMD");
+    assert!(got.is_err());
+    let msg = got.err().unwrap().to_string();
+    assert!(
+        msg.contains("invalid tx hash for query"),
+        "unexpected: {msg}"
+    );
+}

@@ -1,0 +1,77 @@
+use super::super::*;
+
+#[test]
+fn tx_query_parse_json_and_kv() {
+    let json = "{\"tx_hash\":\"0xabc\",\"status\":\"committed\",\"error\":null}";
+    let parsed = parse_tx_query_response(json, "0xabc").unwrap();
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+
+    let kv = "tx_hash=0xdef\nstatus=fail\nerror=insufficient balance\n";
+    let parsed_kv = parse_tx_query_response(kv, "0xdef").unwrap();
+    assert_eq!(parsed_kv.status, "fail");
+    assert_eq!(parsed_kv.error.as_deref(), Some("insufficient balance"));
+}
+
+#[test]
+fn tx_query_parse_json_nested_result_payload() {
+    let json = "{\"result\":{\"tx_hash\":\"0xabc\",\"status\":\"success\",\"error\":null}}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xabc");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
+    let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
+    let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
+    assert_eq!(parsed_camel.tx_hash, "0xabc");
+    assert_eq!(parsed_camel.status, "committed");
+
+    let transaction = "{\"transactionHash\":\"0xdef\",\"status\":\"committed\"}";
+    let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
+    assert_eq!(parsed_transaction.tx_hash, "0xdef");
+    assert_eq!(parsed_transaction.status, "committed");
+}
+
+#[test]
+fn tx_query_parse_json_treats_nullish_error_variants_as_empty() {
+    let json = "{\"tx_hash\":\"0x777\",\"status\":\"committed\",\"error\":\"NULL,\"}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0x777");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_json_preserves_non_string_error_payloads() {
+    let json_numeric = "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":404}";
+    let parsed_numeric = parse_tx_query_response(json_numeric, "0xfallback").unwrap();
+    assert_eq!(parsed_numeric.error.as_deref(), Some("404"));
+
+    let json_obj = "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
+    let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
+    assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+}
+
+#[test]
+fn tx_query_parse_rejects_invalid_tx_hash_if_field_is_present() {
+    let bad_json = "{\"tx_hash\":\"not-a-hash\",\"status\":\"committed\"}";
+    let err_json = parse_tx_query_response(bad_json, "0xabc").unwrap_err();
+    assert!(
+        err_json
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_json}"
+    );
+
+    let bad_kv = "tx_hash=not-a-hash\nstatus=committed\n";
+    let err_kv = parse_tx_query_response(bad_kv, "0xabc").unwrap_err();
+    assert!(
+        err_kv
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_kv}"
+    );
+}

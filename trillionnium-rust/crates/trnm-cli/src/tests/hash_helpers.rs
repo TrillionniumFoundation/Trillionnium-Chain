@@ -1,0 +1,43 @@
+use super::*;
+
+#[test]
+fn extract_tx_hash_supports_json_and_kv() {
+    assert_eq!(extract_tx_hash("tx_hash=abc123").as_deref(), Some("abc123"));
+    assert_eq!(
+        extract_tx_hash("{\"tx_hash\":\"deadbeef\",\"status\":\"ok\"}").as_deref(),
+        Some("deadbeef")
+    );
+}
+
+#[test]
+fn extract_tx_hash_trims_quotes_and_trailing_punctuation() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=\"0xabc123\", status=submitted").as_deref(),
+        Some("0xabc123")
+    );
+    assert_eq!(
+        extract_tx_hash("{\"txhash\":\"0xdef456;\"}").as_deref(),
+        Some("0xdef456")
+    );
+}
+
+#[test]
+fn extract_tx_hash_rejects_non_hex_prefixed_values() {
+    assert_eq!(extract_tx_hash("tx_hash=0xzz99").as_deref(), None);
+    assert_eq!(
+        extract_tx_hash("{\"tx_hash\":\"0xhash-not-hex\"}").as_deref(),
+        None
+    );
+}
+
+#[test]
+fn extract_tx_hash_accepts_case_insensitive_keys_and_colon_separator() {
+    assert_eq!(
+        extract_tx_hash("INFO start TX_HASH:0xbeef01, done").as_deref(),
+        Some("0xbeef01")
+    );
+    assert_eq!(
+        extract_tx_hash("meta txHash=0xcafe02;").as_deref(),
+        Some("0xcafe02")
+    );
+}
