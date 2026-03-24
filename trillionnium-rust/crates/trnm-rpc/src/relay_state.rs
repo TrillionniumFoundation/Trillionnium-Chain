@@ -234,6 +234,9 @@ impl RelayService {
             from_seq: req.from_seq,
             to_seq: req.to_seq,
             segment_root_hex: hex::encode(root),
+            range_len: expected_len as u64,
+            message_count: expected_len as u32,
+            proof_count: expected_len as u32,
             messages,
             proofs,
         })
@@ -273,6 +276,15 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     let expected_len = (resp.to_seq - resp.from_seq + 1) as usize;
     if expected_len != resp.messages.len() {
         bail!("seq range does not match message count");
+    }
+    if resp.range_len != expected_len as u64 {
+        bail!("range_len does not match seq range");
+    }
+    if resp.message_count != resp.messages.len() as u32 {
+        bail!("message_count does not match messages length");
+    }
+    if resp.proof_count != resp.proofs.len() as u32 {
+        bail!("proof_count does not match proofs length");
     }
 
     let expected_root = decode_hex_32(&resp.segment_root_hex, "segment root")?;

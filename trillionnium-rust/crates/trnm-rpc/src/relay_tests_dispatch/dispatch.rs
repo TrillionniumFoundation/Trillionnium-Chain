@@ -44,6 +44,9 @@ fn relay_query_session_proof_returns_messages_root_and_proofs() {
 
     assert_eq!(out.task_id, 42);
     assert_eq!(out.session_id, "sp1");
+    assert_eq!(out.range_len, 3);
+    assert_eq!(out.message_count, 3);
+    assert_eq!(out.proof_count, 3);
     assert_eq!(out.messages.len(), 3);
     assert_eq!(out.proofs.len(), 3);
     assert_eq!(out.messages[0].sequence, 2);
