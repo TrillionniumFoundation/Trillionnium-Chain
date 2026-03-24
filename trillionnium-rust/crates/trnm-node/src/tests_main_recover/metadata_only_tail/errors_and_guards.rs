@@ -34,6 +34,7 @@ fn recover_metadata_only_error_reports_retained_wal_entries() {
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
     assert!(err.contains("retained 1 committed WAL entry through height 1"));
     assert!(err.contains("last retained checkpoint: 1"));
+    assert!(err.contains("checkpoint_evidence: checkpoint_height=1 state_root=r1 wal_entry_hash="));
 
     let would_require_snapshot_restore = recovered
         .checkpoint_height_retained
@@ -65,6 +66,7 @@ fn recover_metadata_only_error_reports_absent_checkpoint() {
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
     assert!(err.contains("last retained checkpoint: none"));
+    assert!(err.contains("checkpoint_evidence: none"));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
