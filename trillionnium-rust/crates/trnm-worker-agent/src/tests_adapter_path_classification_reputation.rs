@@ -11,6 +11,26 @@ fn reputation_delta_maps_market_penalty_and_reward_signals() {
 }
 
 #[test]
+fn reputation_score_impact_exposes_stable_labels_and_deltas() {
+    assert_eq!(
+        reputation_score_impact(ReputationSignal::Accepted),
+        ("accepted", 3)
+    );
+    assert_eq!(
+        reputation_score_impact(ReputationSignal::VerifierRejected),
+        ("verifier_rejected", -2)
+    );
+    assert_eq!(
+        reputation_score_impact(ReputationSignal::AdapterRetryExhausted),
+        ("adapter_retry_exhausted", -1)
+    );
+    assert_eq!(
+        reputation_score_impact(ReputationSignal::AdapterNonRetriable),
+        ("adapter_non_retriable", -3)
+    );
+}
+
+#[test]
 fn verifier_rejection_penalty_sits_between_retryable_and_non_retriable_adapter_failures() {
     let verifier_penalty = reputation_delta(ReputationSignal::VerifierRejected);
     let retryable_penalty = reputation_delta(ReputationSignal::AdapterRetryExhausted);
@@ -51,4 +71,21 @@ fn adapter_error_signal_maps_retryability_to_penalty_tier() {
         adapter_error_signal(AdapterErrorKind::NonRetriable),
         ReputationSignal::AdapterNonRetriable
     );
+}
+
+#[test]
+fn reputation_score_impact_remains_one_to_one_across_signals() {
+    let impacts = [
+        reputation_score_impact(ReputationSignal::Accepted),
+        reputation_score_impact(ReputationSignal::VerifierRejected),
+        reputation_score_impact(ReputationSignal::AdapterRetryExhausted),
+        reputation_score_impact(ReputationSignal::AdapterNonRetriable),
+    ];
+
+    for (idx, impact) in impacts.iter().enumerate() {
+        assert!(
+            impacts.iter().skip(idx + 1).all(|other| other != impact),
+            "each reputation signal must keep a unique label+delta impact"
+        );
+    }
 }

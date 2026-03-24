@@ -39,13 +39,17 @@ pub(crate) fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'sta
     }
 }
 
-pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
+pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str, i32) {
     match signal {
-        ReputationSignal::Accepted => 3,
-        ReputationSignal::VerifierRejected => -2,
-        ReputationSignal::AdapterRetryExhausted => -1,
-        ReputationSignal::AdapterNonRetriable => -3,
+        ReputationSignal::Accepted => ("accepted", 3),
+        ReputationSignal::VerifierRejected => ("verifier_rejected", -2),
+        ReputationSignal::AdapterRetryExhausted => ("adapter_retry_exhausted", -1),
+        ReputationSignal::AdapterNonRetriable => ("adapter_non_retriable", -3),
     }
+}
+
+pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
+    reputation_score_impact(signal).1
 }
 
 pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
