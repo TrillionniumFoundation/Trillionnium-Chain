@@ -15,6 +15,10 @@ use crate::snapshot::load_latest_adapter_records;
 use crate::taskview::{query_events_response, query_task_response};
 use crate::NodeEventScanMode;
 
+fn is_health_probe_path(path: &str) -> bool {
+    matches!(path, "/health" | "/livez" | "/readyz")
+}
+
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -47,7 +51,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
         let path = target.map(|raw| raw.split('?').next().unwrap_or(raw));
 
         let response = match (path, target) {
-            (Some("/health"), _) => {
+            (Some(path), _) if is_health_probe_path(path) => {
                 let body = serde_json::json!({
                     "ok": true,
                     "service": "trnm-rpc",
@@ -142,4 +146,17 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_health_probe_path;
+
+    #[test]
+    fn accepts_health_probe_aliases() {
+        assert!(is_health_probe_path("/health"));
+        assert!(is_health_probe_path("/livez"));
+        assert!(is_health_probe_path("/readyz"));
+        assert!(!is_health_probe_path("/healthz"));
+    }
 }

@@ -1,5 +1,9 @@
 use super::*;
 
+fn is_health_probe_path(path: &str) -> bool {
+    matches!(path, "/health" | "/livez" | "/readyz")
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -131,7 +135,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
         let path = target.map(|raw| raw.split('?').next().unwrap_or(raw));
 
         let response = match (path, target) {
-            (Some("/health"), _) => {
+            (Some(path), _) if is_health_probe_path(path) => {
                 let body = serde_json::json!({
                     "ok": true,
                     "service": "trnm-rpc",
