@@ -24,6 +24,29 @@ Before starting, confirm all of the following:
 
 If any invariant fails, stop and fix the operator state first.
 
+### Canonical worktree / branch identity check
+
+Before running any release or evidence script, resolve identity from git instead of terminal memory:
+
+```bash
+git rev-parse --show-toplevel
+git branch --show-current
+git rev-parse HEAD
+git status --short
+git worktree list --porcelain
+```
+
+Interpretation rule:
+- `git rev-parse --show-toplevel` must match the intended repo root for the rehearsal
+- `git branch --show-current` must return the release/rehearsal branch name; if it is empty, treat the run as detached-HEAD and **No-Go** until explicitly explained
+- `git rev-parse HEAD` must be copied into the ticket / handoff note together with the branch name
+- `git status --short` must be empty for clean-tree release rehearsals
+- `git worktree list --porcelain` should show the current path attached to the branch you intend to rehearse; if branch/path pairing is different from expectation, stop instead of "fixing it later"
+
+Operator rule:
+- do not begin `testnet_preflight.sh`, `run_local_release_evidence.sh`, or `release_rc.sh` until the exact worktree path, branch, and commit are all recorded together
+- if an artifact later reports a different branch or commit than this pre-run identity block, treat the handoff as **No-Go** until reconciled
+
 ## Recommended execution order
 
 ### 1. Fast preflight
