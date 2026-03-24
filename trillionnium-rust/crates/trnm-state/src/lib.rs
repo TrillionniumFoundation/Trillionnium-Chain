@@ -4149,6 +4149,55 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches(
+    ) {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: String::new(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must fail closed when WAL proposal identity is blank even if checkpoint fields otherwise match"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_proposal_hash_with_edge_whitespace() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: " proposal ".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject WAL proposal identities with edge whitespace so checkpoint/proof audit surfaces stay canonical during restart"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
