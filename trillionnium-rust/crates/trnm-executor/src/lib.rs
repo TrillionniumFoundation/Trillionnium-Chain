@@ -478,6 +478,10 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
 
 #[inline]
 fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
+    // Fail-closed before collapsing object ids so telemetry and any reorder path
+    // that depends on this helper cannot silently erase cross-domain version skew.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
     // Keep telemetry/object-domain reporting aligned with scheduler hotspot
     // selection: writes carry the stronger conflict signal, while reads extend the
     // object scope only when they introduce additional keys. Reuse the same
@@ -1516,6 +1520,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
         GroupingStrategy::FootprintDesc => {
+            assert_tx_access_domain_versions_are_consistent_batch(txs);
             txs.sort_by_key(|tx| {
                 let footprint = tx_access_domain_keys(tx).len();
                 (std::cmp::Reverse(footprint), tx.id)
@@ -2148,6 +2153,20 @@ mod tests {
         // and write footprints, with writes first so telemetry matches the
         // scheduler's stronger conflict signal.
         assert_eq!(keys, vec![22, 44, 11, 33]);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn tx_access_domain_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let skewed = tx(
+            1,
+            vec![ObjectRef { id: 11, version: 2 }, o(33)],
+            vec![ObjectRef { id: 11, version: 1 }, o(44)],
+        );
+
+        let _ = tx_access_domain_keys(&skewed);
     }
 
     #[test]
@@ -4610,6 +4629,20 @@ mod tests {
         );
 
         let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn footprint_desc_rejects_cross_domain_version_skew_for_same_object_id() {
+        let mut txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
     }
 
     #[test]
