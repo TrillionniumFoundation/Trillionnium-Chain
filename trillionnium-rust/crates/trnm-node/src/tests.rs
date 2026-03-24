@@ -5780,6 +5780,63 @@
     }
 
     #[test]
+    fn persist_checkpoint_meta_canonicalizes_equal_height_entries_for_auditable_ordering() {
+        let wal_dir = temp_wal_dir("persist-checkpoint-meta-canonical-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ]
+        );
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let first = raw.find("root-a").unwrap();
+        let second = raw.rfind("root-b").unwrap();
+        assert!(first < second);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_clears_orphan_checkpoints_when_wal_is_empty() {
         let wal_dir = temp_wal_dir("recover-orphan-checkpoints");
         fs::create_dir_all(&wal_dir).unwrap();
