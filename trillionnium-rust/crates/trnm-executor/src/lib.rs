@@ -119,6 +119,11 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
 
 #[inline]
 fn dedup_access_keys_no_version(objs: &[ObjectRef]) -> Vec<u64> {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
     if objs.len() <= 8 {
         let mut out: Vec<u64> = Vec::with_capacity(objs.len());
         for obj in objs {
@@ -1778,6 +1783,15 @@ mod tests {
             &tx(1, vec![o(1)], vec![]),
             &tx(2, vec![o(2)], vec![])
         ));
+    }
+
+    #[test]
+    #[should_panic(expected = "access domain contains the same object id with multiple versions")]
+    fn dedup_access_keys_no_version_rejects_same_object_version_skew() {
+        let _ = dedup_access_keys_no_version(&[
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef { id: 42, version: 2 },
+        ]);
     }
 
     #[test]
