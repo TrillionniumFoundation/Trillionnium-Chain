@@ -4540,6 +4540,39 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_stays_on_canonical_write_lane_under_duplicate_heavy_mixed_domains() {
+        let baseline = tx(
+            13,
+            vec![o(2), o(41), o(2), o(41), o(99)],
+            vec![o(19), o(13), o(19), o(13), o(13)],
+        );
+        let echoed = tx(
+            14,
+            vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+            vec![o(19), o(13), o(19), o(13)],
+        );
+        let permuted = tx(
+            15,
+            vec![o(99), o(41), o(2), o(2)],
+            vec![o(19), o(13), o(19), o(13), o(19)],
+        );
+
+        // Avalanche-style lane isolation benefits from a stable primary execution
+        // domain key even when telemetry/ingress repeats the same write-domain keys
+        // and mixed read/write echoes arrive in different orders. Lower read-only
+        // keys must not steal the canonical write-lane signal.
+        assert_eq!(primary_access_domain_key(&baseline), Some(13));
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&echoed)
+        );
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&permuted)
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
