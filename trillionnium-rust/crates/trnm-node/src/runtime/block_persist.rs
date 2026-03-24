@@ -35,24 +35,20 @@ pub(crate) fn persist_checkpoint_if_needed(args: &Args, runtime: &mut RuntimeSta
             .last()
             .map(|entry| entry.content_hash_hex())
             .unwrap_or_default();
+        let checkpoint_state_root = runtime
+            .wal_entries
+            .last()
+            .map(|entry| entry.state_root_hex.clone())
+            .unwrap_or_default();
         runtime.checkpoints.push(CheckpointMeta {
             height: runtime.height,
-            state_root_hex: runtime
-                .wal_entries
-                .last()
-                .map(|entry| entry.state_root_hex.clone())
-                .unwrap_or_default(),
-            wal_entry_hash_hex: wal_hash,
+            state_root_hex: checkpoint_state_root.clone(),
+            wal_entry_hash_hex: wal_hash.clone(),
         });
         persist_checkpoint_meta(&runtime.wal_dir, &runtime.checkpoints)?;
         println!(
-            "[bft-checkpoint] height={} state_root={}",
-            runtime.height,
-            runtime
-                .wal_entries
-                .last()
-                .map(|entry| entry.state_root_hex.as_str())
-                .unwrap_or_default()
+            "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
+            runtime.height, checkpoint_state_root, wal_hash, proposal_hash
         );
     }
     Ok(())

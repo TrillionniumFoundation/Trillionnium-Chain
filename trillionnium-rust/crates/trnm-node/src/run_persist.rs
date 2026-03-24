@@ -61,10 +61,13 @@ pub(crate) fn persist_committed_height(
         checkpoints.push(CheckpointMeta {
             height,
             state_root_hex: state_root_hex.to_string(),
-            wal_entry_hash_hex: wal_hash,
+            wal_entry_hash_hex: wal_hash.clone(),
         });
         persist_checkpoint_meta(wal_dir, checkpoints)?;
-        println!("[bft-checkpoint] height={} state_root={}", height, state_root_hex);
+        println!(
+            "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
+            height, state_root_hex, wal_hash, proposal_hash
+        );
     }
 
     persist_consensus_wal(
