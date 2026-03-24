@@ -7452,6 +7452,54 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_retains_snapshot_and_collateral_metadata_for_audit() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(98997, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 198997, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(198997, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let err = apply_timeout(&mut st, r5.clone(), 220).unwrap_err();
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let r6 = apply_timeout(&mut st, r5, 221).unwrap();
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: once a challenge exists, retain the
+        // challenge window snapshot plus collateral/accountability metadata after
+        // terminalization so later accounting and proof audits can reconstruct
+        // the exact challenge lifecycle.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenged_at_height, Some(120));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(220));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_worker_stake_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
