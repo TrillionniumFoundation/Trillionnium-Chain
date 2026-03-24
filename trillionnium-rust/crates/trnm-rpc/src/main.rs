@@ -586,6 +586,12 @@ fn ceil_mul_div_u128(value: u128, numerator: u128, denominator: u128) -> Option<
     Some(adjusted / denominator)
 }
 
+fn parse_required_u64_kv_value(kv: &BTreeMap<String, String>, key: &str) -> Option<u64> {
+    kv.get(key)
+        .and_then(|v| parse_u128_kv_value(v))
+        .and_then(|v| u64::try_from(v).ok())
+}
+
 fn task_metering_derived_query_response(
     path: String,
     normalized_work_units: u128,
@@ -704,14 +710,10 @@ fn parse_event_metering_query_response(
         workload_class,
         metering_schema,
         receipt_hash,
-        kv.get("metering_prompt_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_generated_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_decode_steps")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_kv_bytes_moved")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        parse_required_u64_kv_value(kv, "metering_prompt_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_generated_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_decode_steps")?,
+        parse_required_u64_kv_value(kv, "metering_kv_bytes_moved")?,
         normalized_work_units,
         kv.get("metering_prompt_token_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
@@ -7395,6 +7397,22 @@ mod tests {
         );
         assert_eq!(metering.derived.path, "Completed");
         assert_eq!(metering.derived.challenge_bonus_total, 2);
+    }
+
+    #[test]
+    fn load_node_events_skips_metering_block_with_u64_overflow_fields() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+        let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version=1 metering_prompt_tokens=18446744073709551616 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=192 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384\n";
+        fs::write(run.join("node1.log"), line).expect("write log");
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert_eq!(loaded.events.len(), 1);
+        assert!(
+            loaded.events[0].metering.is_none(),
+            "overflowing metering u64 fields must fail closed instead of truncating"
+        );
     }
 
     #[test]
