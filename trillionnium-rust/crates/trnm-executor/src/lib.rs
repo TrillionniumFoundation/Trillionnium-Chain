@@ -59,6 +59,21 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn ww_retry_hit_rate(&self) -> f64 {
+        ratio_usize(self.stage_ww_hits, self.stage_ww_checks)
+    }
+
+    #[inline]
+    pub fn wr_retry_hit_rate(&self) -> f64 {
+        ratio_usize(self.stage_wr_hits, self.stage_wr_checks)
+    }
+
+    #[inline]
+    pub fn rw_retry_hit_rate(&self) -> f64 {
+        ratio_usize(self.stage_rw_hits, self.stage_rw_checks)
+    }
+
+    #[inline]
     pub fn dominant_retry_stage(&self) -> &'static str {
         let ranking = [
             ("ww", self.stage_ww_hits),
