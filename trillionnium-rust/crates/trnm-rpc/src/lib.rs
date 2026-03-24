@@ -374,7 +374,6 @@ mod tests {
         }
     }
 
-
     #[test]
     fn rpc_task_query_omits_metering_when_absent() {
         let task = TaskQueryResponse {
@@ -436,7 +435,10 @@ mod tests {
         let v = serde_json::to_value(task).unwrap();
         assert_eq!(v["metering"]["normalized_work_units"], json!(192));
         assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
-        assert_eq!(v["metering"]["policy"]["challenge_success_bounty_base"], json!(1));
+        assert_eq!(
+            v["metering"]["policy"]["challenge_success_bounty_base"],
+            json!(1)
+        );
         assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
         assert_eq!(v["metering"]["derived"]["accept_floor_pass"], json!(true));
     }
@@ -1023,7 +1025,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_allows_explicit_unclassified_failures() {
+    fn oracle_validation_response_bridge_contract_consistent_allows_explicit_unclassified_failures()
+    {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 793,
@@ -1207,7 +1210,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_rejects_zero_sample_positive_source_cardinality() {
+    fn oracle_validation_response_bridge_contract_consistent_rejects_zero_sample_positive_source_cardinality(
+    ) {
         let out: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
             now_ts_ms: 795,

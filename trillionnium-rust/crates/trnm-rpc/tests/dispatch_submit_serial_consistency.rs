@@ -124,8 +124,15 @@ fn dispatch_open_with_no_open_tasks_leaves_ingress_unchanged() {
 
     let stdout = String::from_utf8_lossy(&out_dispatch.stdout);
     let assigned: Value = serde_json::from_str(&stdout).expect("dispatch json response");
-    assert_eq!(assigned, serde_json::json!([]), "noop dispatch should assign nothing");
+    assert_eq!(
+        assigned,
+        serde_json::json!([]),
+        "noop dispatch should assign nothing"
+    );
 
     let after = fs::read_to_string(&ingress).expect("read ingress after noop dispatch");
-    assert_eq!(after, before, "noop dispatch should not rewrite ingress state");
+    assert_eq!(
+        after, before,
+        "noop dispatch should not rewrite ingress state"
+    );
 }

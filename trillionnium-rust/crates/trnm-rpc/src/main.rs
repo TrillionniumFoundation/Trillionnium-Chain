@@ -2986,7 +2986,6 @@ fn parse_query_normalized_audit_events_query_from_path(
     Ok(query_params)
 }
 
-
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
     let normalized = raw
         .trim()
@@ -7716,7 +7715,11 @@ line2
             .filter(|line| !line.trim().is_empty())
             .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
             .collect();
-        assert_eq!(entries.len(), 1, "batch dedup should persist exactly one entry");
+        assert_eq!(
+            entries.len(),
+            1,
+            "batch dedup should persist exactly one entry"
+        );
 
         let _ = fs::remove_file(&quarantine);
     }
@@ -7760,7 +7763,11 @@ line2
         let raw_line = entries[0]["raw_line"]
             .as_str()
             .expect("quarantine raw_line should be a string");
-        assert_eq!(raw_line.len(), 4096, "quarantine raw_line should be bounded");
+        assert_eq!(
+            raw_line.len(),
+            4096,
+            "quarantine raw_line should be bounded"
+        );
         assert!(
             oversized_malformed.starts_with(raw_line),
             "quarantine raw_line should preserve the malformed prefix"

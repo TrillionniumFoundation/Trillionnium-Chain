@@ -511,7 +511,6 @@ fn query_capability_audit_rejects_noncanonical_subject_did_from_registry_snapsho
     assert!(stderr.contains("non-canonical subject_did"), "{stderr}");
 }
 
-
 #[test]
 fn query_capability_audit_rejects_non_numeric_token_id() {
     let tmp = tempdir().expect("tempdir");
@@ -523,8 +522,10 @@ fn query_capability_audit_rejects_non_numeric_token_id() {
         registry_path.to_str().expect("utf8 path"),
     );
 
-    assert!(stderr.contains("invalid value 'not-a-number' for '--token-id <TOKEN_ID>'"),
-        "{stderr}");
+    assert!(
+        stderr.contains("invalid value 'not-a-number' for '--token-id <TOKEN_ID>'"),
+        "{stderr}"
+    );
 }
 
 #[test]

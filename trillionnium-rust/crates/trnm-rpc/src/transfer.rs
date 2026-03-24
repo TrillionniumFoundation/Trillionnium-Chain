@@ -166,7 +166,10 @@ pub fn compute_tx_hash(tx: &TransferTx) -> String {
     format!("0x{}", hex::encode(h.finalize()))
 }
 
-fn tx_status_at_ingress(txs: &BTreeMap<String, TxLifecycleRecord>, tx_hash: &str) -> Option<TxStatus> {
+fn tx_status_at_ingress(
+    txs: &BTreeMap<String, TxLifecycleRecord>,
+    tx_hash: &str,
+) -> Option<TxStatus> {
     txs.get(tx_hash).map(|record| record.status.clone())
 }
 

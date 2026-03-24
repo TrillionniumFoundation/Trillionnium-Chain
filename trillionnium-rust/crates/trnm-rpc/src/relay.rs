@@ -22,11 +22,7 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
-    if session_id.trim() != session_id
-        || session_id
-            .as_bytes()
-            .iter()
-            .any(|b| b.is_ascii_control())
+    if session_id.trim() != session_id || session_id.as_bytes().iter().any(|b| b.is_ascii_control())
     {
         return Err(bad_request(
             "invalid_session",
@@ -537,9 +533,9 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
     // without whitespace or invisible controls. Reuse the trimmed string directly
     // to avoid per-char writes/allocation churn on quota accounting.
     if source.len() <= RISK_SOURCE_MAX_CHARS
-        && source
-            .chars()
-            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase() && !is_disallowed_risk_source_char(ch))
+        && source.chars().all(|ch| {
+            !ch.is_whitespace() && !ch.is_uppercase() && !is_disallowed_risk_source_char(ch)
+        })
     {
         return source.to_string();
     }

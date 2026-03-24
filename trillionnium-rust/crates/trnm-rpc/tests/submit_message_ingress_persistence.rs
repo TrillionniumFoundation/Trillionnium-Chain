@@ -191,16 +191,25 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
 
     let rewritten = fs::read_to_string(&ingress).expect("read rewritten ingress");
     let rewritten_lines: Vec<&str> = rewritten.lines().filter(|l| !l.trim().is_empty()).collect();
-    assert_eq!(rewritten_lines.len(), 2, "invalid row should be removed after first submit replay");
+    assert_eq!(
+        rewritten_lines.len(),
+        2,
+        "invalid row should be removed after first submit replay"
+    );
 
     let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
     let quarantine_lines: Vec<&str> = quarantine_raw
         .lines()
         .filter(|l| !l.trim().is_empty())
         .collect();
-    assert_eq!(quarantine_lines.len(), 1, "first replay should quarantine exactly once");
+    assert_eq!(
+        quarantine_lines.len(),
+        1,
+        "first replay should quarantine exactly once"
+    );
 
-    let quarantined: Value = serde_json::from_str(quarantine_lines[0]).expect("quarantine row json");
+    let quarantined: Value =
+        serde_json::from_str(quarantine_lines[0]).expect("quarantine row json");
     assert_eq!(quarantined["raw_line"].as_str(), Some("not-json"));
     assert_eq!(
         quarantined["line_hash"].as_u64(),
@@ -215,7 +224,8 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
         String::from_utf8_lossy(&second.stderr)
     );
 
-    let quarantine_raw_second = fs::read_to_string(&quarantine).expect("read quarantine file again");
+    let quarantine_raw_second =
+        fs::read_to_string(&quarantine).expect("read quarantine file again");
     let quarantine_lines_second: Vec<&str> = quarantine_raw_second
         .lines()
         .filter(|l| !l.trim().is_empty())
@@ -298,10 +308,22 @@ fn submit_message_dedupes_duplicate_noise_before_quarantine_cap() {
         .iter()
         .map(|line| serde_json::from_str(line).expect("quarantine row json"))
         .collect();
-    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-1"));
-    assert_eq!(entries.get(253).and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-254"));
-    assert_eq!(entries.get(254).and_then(|v| v["raw_line"].as_str()), Some("storm-dup"));
-    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("uniq-tail"));
+    assert_eq!(
+        entries.first().and_then(|v| v["raw_line"].as_str()),
+        Some("uniq-bad-1")
+    );
+    assert_eq!(
+        entries.get(253).and_then(|v| v["raw_line"].as_str()),
+        Some("uniq-bad-254")
+    );
+    assert_eq!(
+        entries.get(254).and_then(|v| v["raw_line"].as_str()),
+        Some("storm-dup")
+    );
+    assert_eq!(
+        entries.last().and_then(|v| v["raw_line"].as_str()),
+        Some("uniq-tail")
+    );
     assert_eq!(
         entries
             .iter()
@@ -365,14 +387,24 @@ fn submit_message_does_not_reintroduce_evicted_duplicate_noise_in_same_salvage_c
         .lines()
         .filter(|l| !l.trim().is_empty())
         .collect();
-    assert_eq!(quarantine_lines.len(), 256, "quarantine cap should stay bounded");
+    assert_eq!(
+        quarantine_lines.len(),
+        256,
+        "quarantine cap should stay bounded"
+    );
 
     let entries: Vec<Value> = quarantine_lines
         .iter()
         .map(|line| serde_json::from_str(line).expect("quarantine row json"))
         .collect();
-    assert_eq!(entries.first().and_then(|v| v["raw_line"].as_str()), Some("uniq-bad-1"));
-    assert_eq!(entries.last().and_then(|v| v["raw_line"].as_str()), Some("uniq-tail"));
+    assert_eq!(
+        entries.first().and_then(|v| v["raw_line"].as_str()),
+        Some("uniq-bad-1")
+    );
+    assert_eq!(
+        entries.last().and_then(|v| v["raw_line"].as_str()),
+        Some("uniq-tail")
+    );
     assert_eq!(
         entries
             .iter()
@@ -407,9 +439,13 @@ fn submit_message_rewrites_preexisting_duplicate_quarantine_rows() {
         "error": "expected value at line 1 column 1",
         "quarantined_at_unix_ms": 1
     });
-    let duplicate_line = serde_json::to_string(&duplicate_quarantine).expect("serialize quarantine");
-    fs::write(&quarantine, format!("{}\n{}\n", duplicate_line, duplicate_line))
-        .expect("seed duplicate quarantine");
+    let duplicate_line =
+        serde_json::to_string(&duplicate_quarantine).expect("serialize quarantine");
+    fs::write(
+        &quarantine,
+        format!("{}\n{}\n", duplicate_line, duplicate_line),
+    )
+    .expect("seed duplicate quarantine");
 
     let output = Command::new("cargo")
         .args(["run", "-p", "trnm-rpc", "--"])

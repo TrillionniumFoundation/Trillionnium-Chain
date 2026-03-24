@@ -1,0 +1,391 @@
+pub(crate) use super::*;
+
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
+use std::collections::HashMap;
+use std::fs;
+use std::path::Path;
+
+pub(crate) fn write_json_fixture<T: Serialize>(prefix: &str, value: &T) -> std::path::PathBuf {
+    let path = unique_tmp_path(prefix, "json");
+    let bytes = serde_json::to_vec_pretty(value).expect("serialize fixture");
+    fs::write(&path, bytes).expect("write fixture");
+    path
+}
+
+pub(crate) fn oracle_policy_fixture() -> serde_json::Value {
+    json!({
+        "max_staleness_ms": 60_000,
+        "min_source_count": 2,
+        "max_deviation_bps": 500,
+        "feed_id": "btc/usd",
+    })
+}
+
+pub(crate) fn oracle_snapshot_fixture(
+    aggregate_price: u64,
+    reference_price: Option<u64>,
+    observed_at_ms: u64,
+) -> serde_json::Value {
+    let reference_price = reference_price.unwrap_or(aggregate_price);
+    json!({
+        "observed_at_ms": observed_at_ms,
+        "aggregate_price": aggregate_price,
+        "reference_price": reference_price,
+        "feed_id": "btc/usd",
+        "sources": [
+            {
+                "source_id": "binance",
+                "price": aggregate_price,
+                "observed_at_ms": observed_at_ms,
+            },
+            {
+                "source_id": "coinbase",
+                "price": reference_price,
+                "observed_at_ms": observed_at_ms,
+            },
+        ],
+    })
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct OracleValidationObservation {
+    pub outcome: String,
+    pub feed_id: String,
+    pub stale_reject_total: u32,
+    pub quorum_reject_total: u32,
+    pub drift_reject_total: u32,
+    pub accepted_total: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct OracleValidationMetrics {
+    pub oracle_stale_reject_total: u32,
+    pub oracle_quorum_reject_total: u32,
+    pub oracle_drift_reject_total: u32,
+    pub oracle_source_cardinality: u32,
+    pub accepted_total: u32,
+    pub sample_count: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct OracleValidateSnapshotResponse {
+    pub ok: bool,
+    pub now_ts_ms: u64,
+    pub observation: OracleValidationObservation,
+    pub metrics: OracleValidationMetrics,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct OracleValidateSnapshotTarget {
+    pub snapshot: String,
+    pub policy: String,
+    pub now_ts_ms: Option<u64>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SnapshotFile {
+    observed_at_ms: u64,
+    aggregate_price: u64,
+    reference_price: u64,
+    feed_id: String,
+    sources: Vec<Value>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PolicyFile {
+    max_staleness_ms: u64,
+    min_source_count: u64,
+    max_deviation_bps: u64,
+    #[allow(dead_code)]
+    feed_id: String,
+}
+
+fn from_hex(n: u8) -> Option<u8> {
+    match n {
+        b'0'..=b'9' => Some(n - b'0'),
+        b'a'..=b'f' => Some(n - b'a' + 10),
+        b'A'..=b'F' => Some(n - b'A' + 10),
+        _ => None,
+    }
+}
+
+fn decode_url_component(input: &str) -> Option<String> {
+    let bytes = input.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'%' if i + 2 < bytes.len() => {
+                let hi = from_hex(bytes[i + 1])?;
+                let lo = from_hex(bytes[i + 2])?;
+                out.push((hi << 4) | lo);
+                i += 3;
+            }
+            b'%' => return None,
+            b'+' => {
+                out.push(b' ');
+                i += 1;
+            }
+            byte => {
+                out.push(byte);
+                i += 1;
+            }
+        }
+    }
+    String::from_utf8(out).ok()
+}
+
+pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
+    let query = target.split_once('?')?.1;
+    let mut out = HashMap::new();
+    for pair in query.split('&') {
+        if pair.is_empty() {
+            continue;
+        }
+        let (raw_k, raw_v) = pair.split_once('=')?;
+        let key = decode_url_component(raw_k)?;
+        let value = decode_url_component(raw_v)?;
+        if out.insert(key, value).is_some() {
+            return None;
+        }
+    }
+    Some(out)
+}
+
+pub(crate) fn parse_oracle_validate_snapshot_target(
+    target: &str,
+) -> Result<OracleValidateSnapshotTarget, String> {
+    if !(target.starts_with("/oracle/validate_snapshot")
+        || target.starts_with("/oracle/metrics")
+        || target.starts_with("/metrics"))
+    {
+        return Err("unexpected oracle target".to_string());
+    }
+
+    let params =
+        parse_http_query_params(target).ok_or_else(|| "invalid query params".to_string())?;
+    for key in params.keys() {
+        if key != "snapshot" && key != "policy" && key != "now_ts_ms" {
+            return Err(format!("unknown query parameter: {key}"));
+        }
+    }
+
+    let snapshot = params
+        .get("snapshot")
+        .ok_or_else(|| "missing snapshot".to_string())?;
+    if snapshot.trim().is_empty() {
+        return Err("empty snapshot".to_string());
+    }
+    let snapshot = snapshot.to_string();
+
+    let policy = params
+        .get("policy")
+        .ok_or_else(|| "missing policy".to_string())?;
+    if policy.trim().is_empty() {
+        return Err("empty policy".to_string());
+    }
+    let policy = policy.to_string();
+
+    let now_ts_ms = match params.get("now_ts_ms") {
+        Some(v) if !v.is_empty() => Some(
+            v.parse::<u64>()
+                .map_err(|_| "invalid now_ts_ms".to_string())?,
+        ),
+        Some(_) => return Err("empty now_ts_ms".to_string()),
+        None => None,
+    };
+
+    Ok(OracleValidateSnapshotTarget {
+        snapshot,
+        policy,
+        now_ts_ms,
+    })
+}
+
+fn compute_deviation_bps(aggregate: u64, reference: u64) -> u64 {
+    if reference == 0 {
+        return 0;
+    }
+    let diff = aggregate.max(reference) - aggregate.min(reference);
+    ((diff as u128 * 10_000) / (reference as u128)) as u64
+}
+
+pub(crate) fn oracle_validate_snapshot_response(
+    snapshot_path: &Path,
+    policy_path: &Path,
+    now_ts_ms: u64,
+) -> Result<OracleValidateSnapshotResponse, String> {
+    let snapshot_text = fs::read_to_string(snapshot_path).map_err(|e| e.to_string())?;
+    let policy_text = fs::read_to_string(policy_path).map_err(|e| e.to_string())?;
+
+    let snapshot_val: SnapshotFile =
+        serde_json::from_str(&snapshot_text).map_err(|e| e.to_string())?;
+    let policy_val: PolicyFile = serde_json::from_str(&policy_text).map_err(|e| e.to_string())?;
+
+    let source_count = snapshot_val.sources.len() as u32;
+    let cardinality = source_count;
+
+    if source_count == 0 {
+        return Err("snapshot has no sources".to_string());
+    }
+
+    let mut outcome = "accepted";
+    let mut stale_reject_total = 0;
+    let mut quorum_reject_total = 0;
+    let mut drift_reject_total = 0;
+    let mut accepted_total = 0;
+    let mut error = None;
+
+    let stale = now_ts_ms.saturating_sub(snapshot_val.observed_at_ms) > policy_val.max_staleness_ms;
+    let quorum = source_count < policy_val.min_source_count as u32;
+    let drift = compute_deviation_bps(snapshot_val.aggregate_price, snapshot_val.reference_price)
+        > policy_val.max_deviation_bps;
+
+    if stale {
+        outcome = "stale";
+        stale_reject_total = 1;
+        error = Some(format!(
+            "snapshot stale: observed_at_ms={} max_staleness_ms={}",
+            snapshot_val.observed_at_ms, policy_val.max_staleness_ms
+        ));
+    } else if quorum {
+        outcome = "quorum";
+        quorum_reject_total = 1;
+        error = Some("quorum reject".to_string());
+    } else if drift {
+        outcome = "drift";
+        drift_reject_total = 1;
+        error = Some("deviation exceeded".to_string());
+    } else {
+        accepted_total = 1;
+    }
+
+    let ok = error.is_none();
+
+    Ok(OracleValidateSnapshotResponse {
+        ok,
+        now_ts_ms,
+        observation: OracleValidationObservation {
+            outcome: outcome.to_string(),
+            feed_id: snapshot_val.feed_id,
+            stale_reject_total,
+            quorum_reject_total,
+            drift_reject_total,
+            accepted_total,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: stale_reject_total,
+            oracle_quorum_reject_total: quorum_reject_total,
+            oracle_drift_reject_total: drift_reject_total,
+            oracle_source_cardinality: cardinality,
+            accepted_total,
+            sample_count: 1,
+        },
+        error,
+    })
+}
+
+fn base_prometheus_text() -> String {
+    "trnm_rpc_service_up{service=\"trnm-rpc\"} 1\ntrnm_rpc_service_info{service=\"trnm-rpc\",version=\"1\"} 1\n".to_string()
+}
+
+fn metrics_from_target(target: &str) -> String {
+    let req = parse_oracle_validate_snapshot_target(target).ok();
+    let mut text = base_prometheus_text();
+    let Some(req) = req else {
+        return text;
+    };
+
+    let report = oracle_validate_snapshot_response(
+        Path::new(&req.snapshot),
+        Path::new(&req.policy),
+        req.now_ts_ms.unwrap_or(0),
+    );
+    let Ok(report) = report else {
+        return text;
+    };
+
+    let outcome = report.observation.outcome.as_str();
+    let out_count = if report.ok { 1 } else { 0 };
+    text.push_str(&format!(
+        "oracle_validation_ok{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
+        report.observation.feed_id, outcome, out_count
+    ));
+    text.push_str(&format!(
+        "accepted_total{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
+        report.observation.feed_id, outcome, report.metrics.accepted_total
+    ));
+    text.push_str(&format!(
+        "oracle_source_cardinality{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
+        report.observation.feed_id, outcome, report.metrics.oracle_source_cardinality
+    ));
+    text
+}
+
+fn json_response<T: Serialize>(value: &T) -> String {
+    format!(
+        "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n{}",
+        serde_json::to_string(value).expect("serialize response")
+    )
+}
+
+fn error_response(message: &str) -> String {
+    let body = json!({"code":"INVALID_REQUEST","message":message});
+    format!(
+        "HTTP/1.1 400 Bad Request\r\nContent-Type: application/json; charset=utf-8\r\n\r\n{}",
+        serde_json::to_string(&body).expect("serialize response")
+    )
+}
+
+pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
+    let target = target.unwrap_or("/metrics");
+    if target.starts_with("/oracle/validate_snapshot") {
+        let req = parse_oracle_validate_snapshot_target(target);
+        match req {
+            Ok(request) => {
+                let report = oracle_validate_snapshot_response(
+                    Path::new(&request.snapshot),
+                    Path::new(&request.policy),
+                    request.now_ts_ms.unwrap_or(0),
+                );
+                match report {
+                    Ok(resp) => json_response(&resp),
+                    Err(err) => error_response(&err),
+                }
+            }
+            Err(err) => error_response(&err),
+        }
+    } else if target.starts_with("/oracle/metrics") || target.starts_with("/metrics") {
+        if !target.contains('?') {
+            return format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n\r\n{}",
+                base_prometheus_text()
+            );
+        }
+
+        match parse_oracle_validate_snapshot_target(target) {
+            Ok(_) => format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n\r\n{}",
+                metrics_from_target(target)
+            ),
+            Err(err) => error_response(&err),
+        }
+    } else {
+        "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests_rpc_oracle_snapshot_validation.rs"]
+mod tests_rpc_oracle_snapshot_validation;
+
+#[cfg(test)]
+#[path = "../tests_rpc_oracle_snapshot_parse.rs"]
+mod tests_rpc_oracle_snapshot_parse;
+
+#[cfg(test)]
+#[path = "../tests_rpc_oracle_snapshot_http.rs"]
+mod tests_rpc_oracle_snapshot_http;
