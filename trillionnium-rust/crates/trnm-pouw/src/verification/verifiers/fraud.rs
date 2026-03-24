@@ -292,7 +292,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_task_id_binding_fail_closed() {
+    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_task_id_binding_fail_closed()
+    {
         let verifier = FraudVerifier;
         let task = mock_task();
 
@@ -637,7 +638,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_uppercase_prefixed_alias_fail_closed() {
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_uppercase_prefixed_alias_fail_closed(
+    ) {
         let verifier = FraudVerifier;
         let mut task = mock_task();
         task.result_hash = Some([9u8; 32]);
@@ -950,7 +952,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_result_hash_binding_fail_closed() {
+    fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_result_hash_binding_fail_closed()
+    {
         let verifier = FraudVerifier;
         let mut task = mock_task();
         task.result_hash = Some([9u8; 32]);

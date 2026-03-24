@@ -346,22 +346,22 @@ impl VerifierProfileRegistrySource for FileJsonVerifierProfileRegistrySource {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError> {
         let mut registry = self.defaults.clone();
-        let raw = std::fs::read_to_string(&self.path).map_err(|err| BackendExecutionError::Internal {
-            backend: request.backend_label(RealTeeBackend::backend_id_static()),
-            reason: format!(
-                "failed to read verifier profile registry file '{}': {err}",
-                self.path
-            ),
-        })?;
-        let entries: Vec<VerifierProfileRegistryEntry> = serde_json::from_str(&raw).map_err(|err| {
-            BackendExecutionError::Internal {
+        let raw =
+            std::fs::read_to_string(&self.path).map_err(|err| BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "failed to read verifier profile registry file '{}': {err}",
+                    self.path
+                ),
+            })?;
+        let entries: Vec<VerifierProfileRegistryEntry> =
+            serde_json::from_str(&raw).map_err(|err| BackendExecutionError::Internal {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: format!(
                     "failed to decode verifier profile registry file '{}': {err}",
                     self.path
                 ),
-            }
-        })?;
+            })?;
         registry.apply_entries(entries);
         Ok(registry)
     }
@@ -400,17 +400,17 @@ impl VerifierProfileRegistrySource for EnvJsonVerifierProfileRegistrySource {
             .map(str::trim)
             .filter(|value| !value.is_empty())
         {
-            registry = FileJsonVerifierProfileRegistrySource::from_path(registry, path).load(request)?;
+            registry =
+                FileJsonVerifierProfileRegistrySource::from_path(registry, path).load(request)?;
         }
         let Some(raw) = self.vars.get("TRNM_TEE_PROFILE_REGISTRY_JSON") else {
             return Ok(registry);
         };
-        let entries: Vec<VerifierProfileRegistryEntry> = serde_json::from_str(raw).map_err(|err| {
-            BackendExecutionError::Internal {
+        let entries: Vec<VerifierProfileRegistryEntry> =
+            serde_json::from_str(raw).map_err(|err| BackendExecutionError::Internal {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: format!("failed to decode TRNM_TEE_PROFILE_REGISTRY_JSON: {err}"),
-            }
-        })?;
+            })?;
         registry.apply_entries(entries);
         Ok(registry)
     }
@@ -475,7 +475,14 @@ impl VerifierProfileResolver for RegistryBackedVerifierProfileResolver {
                 ),
             });
         }
-        if entry.auth_required && transport.auth_ref.as_deref().unwrap_or("").trim().is_empty() {
+        if entry.auth_required
+            && transport
+                .auth_ref
+                .as_deref()
+                .unwrap_or("")
+                .trim()
+                .is_empty()
+        {
             return Err(BackendExecutionError::NotConfigured {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
             });
@@ -889,7 +896,9 @@ trait VerifierHttpClientSessionWireResponseParser: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionWireRequestBuilder;
 
-impl VerifierHttpClientSessionWireRequestBuilder for DirectVerifierHttpClientSessionWireRequestBuilder {
+impl VerifierHttpClientSessionWireRequestBuilder
+    for DirectVerifierHttpClientSessionWireRequestBuilder
+{
     fn build_wire_request(
         &self,
         session_request: &VerifierHttpClientSessionRequest,
@@ -1079,7 +1088,9 @@ trait VerifierHttpClientSessionRawIoResponseParser: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionTransportRequestBuilder;
 
-impl VerifierHttpClientSessionTransportRequestBuilder for DirectVerifierHttpClientSessionTransportRequestBuilder {
+impl VerifierHttpClientSessionTransportRequestBuilder
+    for DirectVerifierHttpClientSessionTransportRequestBuilder
+{
     fn build_transport_request(
         &self,
         call_request: &VerifierHttpClientSessionCallRequest,
@@ -1180,7 +1191,9 @@ trait VerifierHttpClientSessionByteStreamResponseParser: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionSocketRequestBuilder;
 
-impl VerifierHttpClientSessionSocketRequestBuilder for DirectVerifierHttpClientSessionSocketRequestBuilder {
+impl VerifierHttpClientSessionSocketRequestBuilder
+    for DirectVerifierHttpClientSessionSocketRequestBuilder
+{
     fn build_socket_request(
         &self,
         transport_request: &VerifierHttpClientSessionTransportRequest,
@@ -1447,7 +1460,9 @@ trait VerifierHttpClientSessionProtocolResponseCodec: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionProtocolRequestCodec;
 
-impl VerifierHttpClientSessionProtocolRequestCodec for DirectVerifierHttpClientSessionProtocolRequestCodec {
+impl VerifierHttpClientSessionProtocolRequestCodec
+    for DirectVerifierHttpClientSessionProtocolRequestCodec
+{
     fn encode_protocol_request(
         &self,
         frame_request: &VerifierHttpClientSessionFrameRequest,
@@ -1564,7 +1579,9 @@ trait VerifierHttpClientSessionProtocolEnvelopeParser: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionProtocolBytesEncoder;
 
-impl VerifierHttpClientSessionProtocolBytesEncoder for DirectVerifierHttpClientSessionProtocolBytesEncoder {
+impl VerifierHttpClientSessionProtocolBytesEncoder
+    for DirectVerifierHttpClientSessionProtocolBytesEncoder
+{
     fn encode_bytes_request(
         &self,
         protocol_request: &VerifierHttpClientSessionProtocolRequest,
@@ -1685,7 +1702,9 @@ trait VerifierHttpClientSessionProtocolEnvelopeNormalizer: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionProtocolByteStreamFramer;
 
-impl VerifierHttpClientSessionProtocolByteStreamFramer for DirectVerifierHttpClientSessionProtocolByteStreamFramer {
+impl VerifierHttpClientSessionProtocolByteStreamFramer
+    for DirectVerifierHttpClientSessionProtocolByteStreamFramer
+{
     fn frame_bytes_request(
         &self,
         bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
@@ -1703,7 +1722,8 @@ impl VerifierHttpClientSessionProtocolByteStreamFramer for DirectVerifierHttpCli
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameRequest, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameRequest, BackendExecutionError>
+    {
         Ok(VerifierHttpClientSessionProtocolByteStreamFrameRequest {
             method: bytes_request.method,
             url: bytes_request.url.clone(),
@@ -1810,7 +1830,9 @@ trait VerifierHttpClientSessionProtocolByteStreamAssembler: Send + Sync {
 #[allow(dead_code)]
 struct DirectVerifierHttpClientSessionProtocolByteStreamChunker;
 
-impl VerifierHttpClientSessionProtocolByteStreamChunker for DirectVerifierHttpClientSessionProtocolByteStreamChunker {
+impl VerifierHttpClientSessionProtocolByteStreamChunker
+    for DirectVerifierHttpClientSessionProtocolByteStreamChunker
+{
     fn chunk_request(
         &self,
         framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
@@ -2101,18 +2123,21 @@ impl VerifierHttpClientSessionProtocolChunkSequenceWindowPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkSequenceWindowRequest {
-            method: frames_request.method,
-            url: frames_request.url.clone(),
-            headers: frames_request.headers.clone(),
-            frames: frames_request.frames.clone(),
-            window_start_sequence: 0,
-            window_frame_count: frames_request.frames.len(),
-            timeout_ms: frames_request.timeout_ms,
-            profile: frames_request.profile.clone(),
-            transport_mode: frames_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkSequenceWindowRequest {
+                method: frames_request.method,
+                url: frames_request.url.clone(),
+                headers: frames_request.headers.clone(),
+                frames: frames_request.frames.clone(),
+                window_start_sequence: 0,
+                window_frame_count: frames_request.frames.len(),
+                timeout_ms: frames_request.timeout_ms,
+                profile: frames_request.profile.clone(),
+                transport_mode: frames_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -2413,20 +2438,23 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
-            method: ack_request.method,
-            url: ack_request.url.clone(),
-            headers: ack_request.headers.clone(),
-            frames: ack_request.frames.clone(),
-            window_start_sequence: ack_request.window_start_sequence,
-            window_frame_count: ack_request.window_frame_count,
-            expected_ack_sequence: ack_request.expected_ack_sequence,
-            retransmit_budget: ack_request.retransmit_budget,
-            timeout_ms: ack_request.timeout_ms,
-            profile: ack_request.profile.clone(),
-            transport_mode: ack_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
+                method: ack_request.method,
+                url: ack_request.url.clone(),
+                headers: ack_request.headers.clone(),
+                frames: ack_request.frames.clone(),
+                window_start_sequence: ack_request.window_start_sequence,
+                window_frame_count: ack_request.window_frame_count,
+                expected_ack_sequence: ack_request.expected_ack_sequence,
+                retransmit_budget: ack_request.retransmit_budget,
+                timeout_ms: ack_request.timeout_ms,
+                profile: ack_request.profile.clone(),
+                transport_mode: ack_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -2575,20 +2603,23 @@ impl VerifierHttpClientSessionProtocolChunkAckConvergencePlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkAckConvergenceRequest {
-            method: budget_request.method,
-            url: budget_request.url.clone(),
-            headers: budget_request.headers.clone(),
-            frames: budget_request.frames.clone(),
-            window_start_sequence: budget_request.window_start_sequence,
-            window_frame_count: budget_request.window_frame_count,
-            expected_ack_sequence: budget_request.expected_ack_sequence,
-            retransmit_budget: budget_request.retransmit_budget,
-            timeout_ms: budget_request.timeout_ms,
-            profile: budget_request.profile.clone(),
-            transport_mode: budget_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkAckConvergenceRequest {
+                method: budget_request.method,
+                url: budget_request.url.clone(),
+                headers: budget_request.headers.clone(),
+                frames: budget_request.frames.clone(),
+                window_start_sequence: budget_request.window_start_sequence,
+                window_frame_count: budget_request.window_frame_count,
+                expected_ack_sequence: budget_request.expected_ack_sequence,
+                retransmit_budget: budget_request.retransmit_budget,
+                timeout_ms: budget_request.timeout_ms,
+                profile: budget_request.profile.clone(),
+                transport_mode: budget_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -2647,7 +2678,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner: Send + Sy
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -2677,7 +2711,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange: Send + S
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -2741,20 +2778,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest {
-            method: convergence_request.method,
-            url: convergence_request.url.clone(),
-            headers: convergence_request.headers.clone(),
-            frames: convergence_request.frames.clone(),
-            window_start_sequence: convergence_request.window_start_sequence,
-            window_frame_count: convergence_request.window_frame_count,
-            expected_ack_sequence: convergence_request.expected_ack_sequence,
-            retransmit_budget: convergence_request.retransmit_budget,
-            timeout_ms: convergence_request.timeout_ms,
-            profile: convergence_request.profile.clone(),
-            transport_mode: convergence_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest {
+                method: convergence_request.method,
+                url: convergence_request.url.clone(),
+                headers: convergence_request.headers.clone(),
+                frames: convergence_request.frames.clone(),
+                window_start_sequence: convergence_request.window_start_sequence,
+                window_frame_count: convergence_request.window_frame_count,
+                expected_ack_sequence: convergence_request.expected_ack_sequence,
+                retransmit_budget: convergence_request.retransmit_budget,
+                timeout_ms: convergence_request.timeout_ms,
+                profile: convergence_request.profile.clone(),
+                transport_mode: convergence_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -2814,7 +2856,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner: Send + Sy
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -2845,7 +2890,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange: Send + S
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -2877,7 +2925,10 @@ trait VerifierHttpClientSessionProtocolChunkOutcomeMaterializer: Send + Sync {
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -2911,20 +2962,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest {
-            method: outcome_request.method,
-            url: outcome_request.url.clone(),
-            headers: outcome_request.headers.clone(),
-            frames: outcome_request.frames.clone(),
-            window_start_sequence: outcome_request.window_start_sequence,
-            window_frame_count: outcome_request.window_frame_count,
-            expected_ack_sequence: outcome_request.expected_ack_sequence,
-            retransmit_budget: outcome_request.retransmit_budget,
-            timeout_ms: outcome_request.timeout_ms,
-            profile: outcome_request.profile.clone(),
-            transport_mode: outcome_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest {
+                method: outcome_request.method,
+                url: outcome_request.url.clone(),
+                headers: outcome_request.headers.clone(),
+                frames: outcome_request.frames.clone(),
+                window_start_sequence: outcome_request.window_start_sequence,
+                window_frame_count: outcome_request.window_frame_count,
+                expected_ack_sequence: outcome_request.expected_ack_sequence,
+                retransmit_budget: outcome_request.retransmit_budget,
+                timeout_ms: outcome_request.timeout_ms,
+                profile: outcome_request.profile.clone(),
+                transport_mode: outcome_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3017,7 +3073,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationStatusExchange: Send + Sy
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3050,7 +3109,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictNormalizer: Send + Sync {
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3085,20 +3147,23 @@ impl VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationStatusRequest {
-            method: verdict_request.method,
-            url: verdict_request.url.clone(),
-            headers: verdict_request.headers.clone(),
-            frames: verdict_request.frames.clone(),
-            window_start_sequence: verdict_request.window_start_sequence,
-            window_frame_count: verdict_request.window_frame_count,
-            expected_ack_sequence: verdict_request.expected_ack_sequence,
-            retransmit_budget: verdict_request.retransmit_budget,
-            timeout_ms: verdict_request.timeout_ms,
-            profile: verdict_request.profile.clone(),
-            transport_mode: verdict_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationStatusRequest {
+                method: verdict_request.method,
+                url: verdict_request.url.clone(),
+                headers: verdict_request.headers.clone(),
+                frames: verdict_request.frames.clone(),
+                window_start_sequence: verdict_request.window_start_sequence,
+                window_frame_count: verdict_request.window_frame_count,
+                expected_ack_sequence: verdict_request.expected_ack_sequence,
+                retransmit_budget: verdict_request.retransmit_budget,
+                timeout_ms: verdict_request.timeout_ms,
+                profile: verdict_request.profile.clone(),
+                transport_mode: verdict_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3160,7 +3225,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner: Se
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3193,7 +3261,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange: S
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3227,7 +3298,10 @@ trait VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper: Send + Sync
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3263,20 +3337,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest {
-            method: status_request.method,
-            url: status_request.url.clone(),
-            headers: status_request.headers.clone(),
-            frames: status_request.frames.clone(),
-            window_start_sequence: status_request.window_start_sequence,
-            window_frame_count: status_request.window_frame_count,
-            expected_ack_sequence: status_request.expected_ack_sequence,
-            retransmit_budget: status_request.retransmit_budget,
-            timeout_ms: status_request.timeout_ms,
-            profile: status_request.profile.clone(),
-            transport_mode: status_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest {
+                method: status_request.method,
+                url: status_request.url.clone(),
+                headers: status_request.headers.clone(),
+                frames: status_request.frames.clone(),
+                window_start_sequence: status_request.window_start_sequence,
+                window_frame_count: status_request.window_frame_count,
+                expected_ack_sequence: status_request.expected_ack_sequence,
+                retransmit_budget: status_request.retransmit_budget,
+                timeout_ms: status_request.timeout_ms,
+                profile: status_request.profile.clone(),
+                transport_mode: status_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3314,7 +3393,10 @@ impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+        BackendExecutionError,
+    > {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
@@ -3413,7 +3495,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner: Send + S
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3447,7 +3532,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange: Send + 
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3552,7 +3640,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver: Send + Sy
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3587,7 +3678,10 @@ trait VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection: Send + 
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -3624,20 +3718,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest {
-            method: classification_request.method,
-            url: classification_request.url.clone(),
-            headers: classification_request.headers.clone(),
-            frames: classification_request.frames.clone(),
-            window_start_sequence: classification_request.window_start_sequence,
-            window_frame_count: classification_request.window_frame_count,
-            expected_ack_sequence: classification_request.expected_ack_sequence,
-            retransmit_budget: classification_request.retransmit_budget,
-            timeout_ms: classification_request.timeout_ms,
-            profile: classification_request.profile.clone(),
-            transport_mode: classification_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest {
+                method: classification_request.method,
+                url: classification_request.url.clone(),
+                headers: classification_request.headers.clone(),
+                frames: classification_request.frames.clone(),
+                window_start_sequence: classification_request.window_start_sequence,
+                window_frame_count: classification_request.window_frame_count,
+                expected_ack_sequence: classification_request.expected_ack_sequence,
+                retransmit_budget: classification_request.retransmit_budget,
+                timeout_ms: classification_request.timeout_ms,
+                profile: classification_request.profile.clone(),
+                transport_mode: classification_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3676,20 +3775,23 @@ impl VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationLabelRequest {
-            method: category_request.method,
-            url: category_request.url.clone(),
-            headers: category_request.headers.clone(),
-            frames: category_request.frames.clone(),
-            window_start_sequence: category_request.window_start_sequence,
-            window_frame_count: category_request.window_frame_count,
-            expected_ack_sequence: category_request.expected_ack_sequence,
-            retransmit_budget: category_request.retransmit_budget,
-            timeout_ms: category_request.timeout_ms,
-            profile: category_request.profile.clone(),
-            transport_mode: category_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationLabelRequest {
+                method: category_request.method,
+                url: category_request.url.clone(),
+                headers: category_request.headers.clone(),
+                frames: category_request.frames.clone(),
+                window_start_sequence: category_request.window_start_sequence,
+                window_frame_count: category_request.window_frame_count,
+                expected_ack_sequence: category_request.expected_ack_sequence,
+                retransmit_budget: category_request.retransmit_budget,
+                timeout_ms: category_request.timeout_ms,
+                profile: category_request.profile.clone(),
+                transport_mode: category_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3728,7 +3830,10 @@ impl VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError> {
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        BackendExecutionError,
+    > {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
@@ -3912,20 +4017,23 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenRequest {
-            method: label_request.method,
-            url: label_request.url.clone(),
-            headers: label_request.headers.clone(),
-            frames: label_request.frames.clone(),
-            window_start_sequence: label_request.window_start_sequence,
-            window_frame_count: label_request.window_frame_count,
-            expected_ack_sequence: label_request.expected_ack_sequence,
-            retransmit_budget: label_request.retransmit_budget,
-            timeout_ms: label_request.timeout_ms,
-            profile: label_request.profile.clone(),
-            transport_mode: label_request.transport_mode.clone(),
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenRequest, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenRequest {
+                method: label_request.method,
+                url: label_request.url.clone(),
+                headers: label_request.headers.clone(),
+                frames: label_request.frames.clone(),
+                window_start_sequence: label_request.window_start_sequence,
+                window_frame_count: label_request.window_frame_count,
+                expected_ack_sequence: label_request.expected_ack_sequence,
+                retransmit_budget: label_request.retransmit_budget,
+                timeout_ms: label_request.timeout_ms,
+                profile: label_request.profile.clone(),
+                transport_mode: label_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -3965,7 +4073,8 @@ impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError>
+    {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
@@ -4038,7 +4147,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner: Sen
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4075,7 +4187,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange: Se
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4153,20 +4268,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest {
-            method: token_request.method,
-            url: token_request.url.clone(),
-            headers: token_request.headers.clone(),
-            frames: token_request.frames.clone(),
-            window_start_sequence: token_request.window_start_sequence,
-            window_frame_count: token_request.window_frame_count,
-            expected_ack_sequence: token_request.expected_ack_sequence,
-            retransmit_budget: token_request.retransmit_budget,
-            timeout_ms: token_request.timeout_ms,
-            profile: token_request.profile.clone(),
-            transport_mode: token_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest {
+                method: token_request.method,
+                url: token_request.url.clone(),
+                headers: token_request.headers.clone(),
+                frames: token_request.frames.clone(),
+                window_start_sequence: token_request.window_start_sequence,
+                window_frame_count: token_request.window_frame_count,
+                expected_ack_sequence: token_request.expected_ack_sequence,
+                retransmit_budget: token_request.retransmit_budget,
+                timeout_ms: token_request.timeout_ms,
+                profile: token_request.profile.clone(),
+                transport_mode: token_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -4233,7 +4353,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4271,7 +4394,10 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchang
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4310,7 +4436,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapte
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4351,20 +4480,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest {
-            method: fragment_request.method,
-            url: fragment_request.url.clone(),
-            headers: fragment_request.headers.clone(),
-            frames: fragment_request.frames.clone(),
-            window_start_sequence: fragment_request.window_start_sequence,
-            window_frame_count: fragment_request.window_frame_count,
-            expected_ack_sequence: fragment_request.expected_ack_sequence,
-            retransmit_budget: fragment_request.retransmit_budget,
-            timeout_ms: fragment_request.timeout_ms,
-            profile: fragment_request.profile.clone(),
-            transport_mode: fragment_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest {
+                method: fragment_request.method,
+                url: fragment_request.url.clone(),
+                headers: fragment_request.headers.clone(),
+                frames: fragment_request.frames.clone(),
+                window_start_sequence: fragment_request.window_start_sequence,
+                window_frame_count: fragment_request.window_frame_count,
+                expected_ack_sequence: fragment_request.expected_ack_sequence,
+                retransmit_budget: fragment_request.retransmit_budget,
+                timeout_ms: fragment_request.timeout_ms,
+                profile: fragment_request.profile.clone(),
+                transport_mode: fragment_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -4398,7 +4532,9 @@ struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardR
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner:
+    Send + Sync
+{
     fn plan_termination_token_fragment_slice_shard(
         &self,
         slice_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
@@ -4432,11 +4568,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPl
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange:
+    Send + Sync
+{
     fn exchange_termination_token_fragment_slice_shard(
         &self,
         shard_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
@@ -4471,11 +4612,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardEx
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter:
+    Send + Sync
+{
     fn adapt_projection_resolution_shard(
         &self,
         shard_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
@@ -4511,7 +4657,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdap
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4553,20 +4702,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPla
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest {
-            method: slice_request.method,
-            url: slice_request.url.clone(),
-            headers: slice_request.headers.clone(),
-            frames: slice_request.frames.clone(),
-            window_start_sequence: slice_request.window_start_sequence,
-            window_frame_count: slice_request.window_frame_count,
-            expected_ack_sequence: slice_request.expected_ack_sequence,
-            retransmit_budget: slice_request.retransmit_budget,
-            timeout_ms: slice_request.timeout_ms,
-            profile: slice_request.profile.clone(),
-            transport_mode: slice_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest {
+                method: slice_request.method,
+                url: slice_request.url.clone(),
+                headers: slice_request.headers.clone(),
+                frames: slice_request.frames.clone(),
+                window_start_sequence: slice_request.window_start_sequence,
+                window_frame_count: slice_request.window_frame_count,
+                expected_ack_sequence: slice_request.expected_ack_sequence,
+                retransmit_budget: slice_request.retransmit_budget,
+                timeout_ms: slice_request.timeout_ms,
+                profile: slice_request.profile.clone(),
+                transport_mode: slice_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -4600,7 +4754,9 @@ struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardU
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner:
+    Send + Sync
+{
     fn plan_termination_token_fragment_slice_shard_unit(
         &self,
         shard_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
@@ -4635,11 +4791,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange:
+    Send + Sync
+{
     fn exchange_termination_token_fragment_slice_shard_unit(
         &self,
         unit_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
@@ -4675,11 +4836,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter:
+    Send + Sync
+{
     fn adapt_projection_normalization_shard(
         &self,
         unit_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
@@ -4716,7 +4882,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardA
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -4759,20 +4928,25 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUni
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest {
-            method: shard_request.method,
-            url: shard_request.url.clone(),
-            headers: shard_request.headers.clone(),
-            frames: shard_request.frames.clone(),
-            window_start_sequence: shard_request.window_start_sequence,
-            window_frame_count: shard_request.window_frame_count,
-            expected_ack_sequence: shard_request.expected_ack_sequence,
-            retransmit_budget: shard_request.retransmit_budget,
-            timeout_ms: shard_request.timeout_ms,
-            profile: shard_request.profile.clone(),
-            transport_mode: shard_request.transport_mode.clone(),
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest {
+                method: shard_request.method,
+                url: shard_request.url.clone(),
+                headers: shard_request.headers.clone(),
+                frames: shard_request.frames.clone(),
+                window_start_sequence: shard_request.window_start_sequence,
+                window_frame_count: shard_request.window_frame_count,
+                expected_ack_sequence: shard_request.expected_ack_sequence,
+                retransmit_budget: shard_request.retransmit_budget,
+                timeout_ms: shard_request.timeout_ms,
+                profile: shard_request.profile.clone(),
+                transport_mode: shard_request.transport_mode.clone(),
+            },
+        )
     }
 }
 
@@ -4858,7 +5032,9 @@ struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardU
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner:
+    Send + Sync
+{
     fn plan_termination_token_fragment_slice_shard_unit_cell(
         &self,
         unit_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
@@ -4894,11 +5070,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellExchange: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellExchange:
+    Send + Sync
+{
     fn exchange_termination_token_fragment_slice_shard_unit_cell(
         &self,
         cell_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest,
@@ -4935,11 +5116,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter:
+    Send + Sync
+{
     fn adapt_projection_resolution_unit(
         &self,
         cell_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
@@ -4977,7 +5163,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapt
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -5109,7 +5298,8 @@ struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardU
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse {
+struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse
+{
     status_code: u16,
     headers: BTreeMap<String, String>,
     frames: Vec<Vec<u8>>,
@@ -5121,7 +5311,9 @@ struct VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardU
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomPlanner: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomPlanner:
+    Send + Sync
+{
     fn plan_termination_token_fragment_slice_shard_unit_cell_atom(
         &self,
         cell_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest,
@@ -5158,11 +5350,16 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomRequest, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomRequest,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomExchange: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomExchange:
+    Send + Sync
+{
     fn exchange_termination_token_fragment_slice_shard_unit_cell_atom(
         &self,
         atom_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomRequest,
@@ -5204,7 +5401,9 @@ trait VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUn
 }
 
 #[allow(dead_code)]
-trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter: Send + Sync {
+trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter:
+    Send + Sync
+{
     fn adapt_projection_normalization_unit(
         &self,
         atom_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse,
@@ -5243,7 +5442,10 @@ trait VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAd
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError>;
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
+        BackendExecutionError,
+    >;
 }
 
 #[allow(dead_code)]
@@ -5403,7 +5605,10 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAda
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError> {
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
+        BackendExecutionError,
+    > {
         Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse {
             status_code: atom_response.status_code,
             headers: atom_response.headers,
@@ -5651,17 +5856,22 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapte
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse {
-            status_code: cell_response.status_code,
-            headers: cell_response.headers,
-            frames: cell_response.frames,
-            window_start_sequence: cell_response.window_start_sequence,
-            window_frame_count: cell_response.window_frame_count,
-            acked_through_sequence: cell_response.acked_through_sequence,
-            retransmit_count: cell_response.retransmit_count,
-            budget_remaining: cell_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse {
+                status_code: cell_response.status_code,
+                headers: cell_response.headers,
+                frames: cell_response.frames,
+                window_start_sequence: cell_response.window_start_sequence,
+                window_frame_count: cell_response.window_frame_count,
+                acked_through_sequence: cell_response.acked_through_sequence,
+                retransmit_count: cell_response.retransmit_count,
+                budget_remaining: cell_response.budget_remaining,
+            },
+        )
     }
 }
 
@@ -5673,7 +5883,9 @@ struct CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragment
 }
 
 #[allow(dead_code)]
-impl CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange {
+impl
+    CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange
+{
     fn new() -> Self {
         Self {
             termination_token_fragment_slice_shard_unit_cell_planner: Arc::new(
@@ -5692,7 +5904,9 @@ impl CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSl
     fn with_components(
         termination_token_fragment_slice_shard_unit_cell_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner>,
         termination_token_fragment_slice_shard_unit_cell_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellExchange>,
-        verdict_projection_resolution_unit_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter>,
+        verdict_projection_resolution_unit_adapter: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter,
+        >,
     ) -> Self {
         Self {
             termination_token_fragment_slice_shard_unit_cell_planner,
@@ -5894,25 +6108,35 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAd
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
-            status_code: unit_response.status_code,
-            headers: unit_response.headers,
-            frames: unit_response.frames,
-            window_start_sequence: unit_response.window_start_sequence,
-            window_frame_count: unit_response.window_frame_count,
-            acked_through_sequence: unit_response.acked_through_sequence,
-            retransmit_count: unit_response.retransmit_count,
-            budget_remaining: unit_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
+                status_code: unit_response.status_code,
+                headers: unit_response.headers,
+                frames: unit_response.frames,
+                window_start_sequence: unit_response.window_start_sequence,
+                window_frame_count: unit_response.window_frame_count,
+                acked_through_sequence: unit_response.acked_through_sequence,
+                retransmit_count: unit_response.retransmit_count,
+                budget_remaining: unit_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct UnitAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange {
-    termination_token_fragment_slice_shard_unit_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner>,
-    termination_token_fragment_slice_shard_unit_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange>,
-    verdict_projection_normalization_shard_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter>,
+    termination_token_fragment_slice_shard_unit_planner: Arc<
+        dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner,
+    >,
+    termination_token_fragment_slice_shard_unit_exchange: Arc<
+        dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange,
+    >,
+    verdict_projection_normalization_shard_adapter:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter>,
 }
 
 #[allow(dead_code)]
@@ -5933,9 +6157,13 @@ impl UnitAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSl
 
     #[cfg(test)]
     fn with_components(
-        termination_token_fragment_slice_shard_unit_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner>,
+        termination_token_fragment_slice_shard_unit_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner,
+        >,
         termination_token_fragment_slice_shard_unit_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange>,
-        verdict_projection_normalization_shard_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter>,
+        verdict_projection_normalization_shard_adapter: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter,
+        >,
     ) -> Self {
         Self {
             termination_token_fragment_slice_shard_unit_planner,
@@ -5982,112 +6210,120 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExc
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
-        let unit_request = self.termination_token_fragment_slice_shard_unit_planner.plan_termination_token_fragment_slice_shard_unit(
-            shard_request,
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        let unit_response = self.termination_token_fragment_slice_shard_unit_exchange.exchange_termination_token_fragment_slice_shard_unit(
-            &unit_request,
-            shard_request,
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        self.verdict_projection_normalization_shard_adapter.adapt_projection_normalization_shard(
-            unit_response,
-            &unit_request,
-            shard_request,
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+        BackendExecutionError,
+    > {
+        let unit_request = self
+            .termination_token_fragment_slice_shard_unit_planner
+            .plan_termination_token_fragment_slice_shard_unit(
+                shard_request,
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        let unit_response = self
+            .termination_token_fragment_slice_shard_unit_exchange
+            .exchange_termination_token_fragment_slice_shard_unit(
+                &unit_request,
+                shard_request,
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        self.verdict_projection_normalization_shard_adapter
+            .adapt_projection_normalization_shard(
+                unit_response,
+                &unit_request,
+                shard_request,
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )
     }
 }
 
@@ -6132,25 +6368,33 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapt
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
-            status_code: shard_response.status_code,
-            headers: shard_response.headers,
-            frames: shard_response.frames,
-            window_start_sequence: shard_response.window_start_sequence,
-            window_frame_count: shard_response.window_frame_count,
-            acked_through_sequence: shard_response.acked_through_sequence,
-            retransmit_count: shard_response.retransmit_count,
-            budget_remaining: shard_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
+                status_code: shard_response.status_code,
+                headers: shard_response.headers,
+                frames: shard_response.frames,
+                window_start_sequence: shard_response.window_start_sequence,
+                window_frame_count: shard_response.window_frame_count,
+                acked_through_sequence: shard_response.acked_through_sequence,
+                retransmit_count: shard_response.retransmit_count,
+                budget_remaining: shard_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct ShardAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange {
-    termination_token_fragment_slice_shard_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner>,
-    termination_token_fragment_slice_shard_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange>,
-    verdict_projection_resolution_shard_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter>,
+    termination_token_fragment_slice_shard_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner>,
+    termination_token_fragment_slice_shard_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange>,
+    verdict_projection_resolution_shard_adapter:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter>,
 }
 
 #[allow(dead_code)]
@@ -6171,9 +6415,15 @@ impl ShardAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentS
 
     #[cfg(test)]
     fn with_components(
-        termination_token_fragment_slice_shard_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner>,
-        termination_token_fragment_slice_shard_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange>,
-        verdict_projection_resolution_shard_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter>,
+        termination_token_fragment_slice_shard_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner,
+        >,
+        termination_token_fragment_slice_shard_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange,
+        >,
+        verdict_projection_resolution_shard_adapter: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter,
+        >,
     ) -> Self {
         Self {
             termination_token_fragment_slice_shard_planner,
@@ -6219,109 +6469,117 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
-        let shard_request = self.termination_token_fragment_slice_shard_planner.plan_termination_token_fragment_slice_shard(
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        let shard_response = self.termination_token_fragment_slice_shard_exchange.exchange_termination_token_fragment_slice_shard(
-            &shard_request,
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        self.verdict_projection_resolution_shard_adapter.adapt_projection_resolution_shard(
-            shard_response,
-            &shard_request,
-            slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+        BackendExecutionError,
+    > {
+        let shard_request = self
+            .termination_token_fragment_slice_shard_planner
+            .plan_termination_token_fragment_slice_shard(
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        let shard_response = self
+            .termination_token_fragment_slice_shard_exchange
+            .exchange_termination_token_fragment_slice_shard(
+                &shard_request,
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        self.verdict_projection_resolution_shard_adapter
+            .adapt_projection_resolution_shard(
+                shard_response,
+                &shard_request,
+                slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )
     }
 }
 
@@ -6365,25 +6623,33 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
-            status_code: slice_response.status_code,
-            headers: slice_response.headers,
-            frames: slice_response.frames,
-            window_start_sequence: slice_response.window_start_sequence,
-            window_frame_count: slice_response.window_frame_count,
-            acked_through_sequence: slice_response.acked_through_sequence,
-            retransmit_count: slice_response.retransmit_count,
-            budget_remaining: slice_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
+                status_code: slice_response.status_code,
+                headers: slice_response.headers,
+                frames: slice_response.frames,
+                window_start_sequence: slice_response.window_start_sequence,
+                window_frame_count: slice_response.window_frame_count,
+                acked_through_sequence: slice_response.acked_through_sequence,
+                retransmit_count: slice_response.retransmit_count,
+                budget_remaining: slice_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct SliceAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange {
-    termination_token_fragment_slice_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner>,
-    termination_token_fragment_slice_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange>,
-    verdict_projection_normalization_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter>,
+    termination_token_fragment_slice_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner>,
+    termination_token_fragment_slice_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange>,
+    verdict_projection_normalization_adapter:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter>,
 }
 
 #[allow(dead_code)]
@@ -6404,9 +6670,15 @@ impl SliceAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentE
 
     #[cfg(test)]
     fn with_components(
-        termination_token_fragment_slice_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner>,
-        termination_token_fragment_slice_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange>,
-        verdict_projection_normalization_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter>,
+        termination_token_fragment_slice_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner,
+        >,
+        termination_token_fragment_slice_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange,
+        >,
+        verdict_projection_normalization_adapter: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter,
+        >,
     ) -> Self {
         Self {
             termination_token_fragment_slice_planner,
@@ -6451,106 +6723,114 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
-        let slice_request = self.termination_token_fragment_slice_planner.plan_termination_token_fragment_slice(
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        let slice_response = self.termination_token_fragment_slice_exchange.exchange_termination_token_fragment_slice(
-            &slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        self.verdict_projection_normalization_adapter.adapt_projection_normalization(
-            slice_response,
-            &slice_request,
-            fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+        BackendExecutionError,
+    > {
+        let slice_request = self
+            .termination_token_fragment_slice_planner
+            .plan_termination_token_fragment_slice(
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        let slice_response = self
+            .termination_token_fragment_slice_exchange
+            .exchange_termination_token_fragment_slice(
+                &slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        self.verdict_projection_normalization_adapter
+            .adapt_projection_normalization(
+                slice_response,
+                &slice_request,
+                fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )
     }
 }
 
@@ -6593,25 +6873,31 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
-            status_code: fragment_response.status_code,
-            headers: fragment_response.headers,
-            frames: fragment_response.frames,
-            window_start_sequence: fragment_response.window_start_sequence,
-            window_frame_count: fragment_response.window_frame_count,
-            acked_through_sequence: fragment_response.acked_through_sequence,
-            retransmit_count: fragment_response.retransmit_count,
-            budget_remaining: fragment_response.budget_remaining,
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
+                status_code: fragment_response.status_code,
+                headers: fragment_response.headers,
+                frames: fragment_response.frames,
+                window_start_sequence: fragment_response.window_start_sequence,
+                window_frame_count: fragment_response.window_frame_count,
+                acked_through_sequence: fragment_response.acked_through_sequence,
+                retransmit_count: fragment_response.retransmit_count,
+                budget_remaining: fragment_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct FragmentAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenExchange {
-    termination_token_fragment_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner>,
-    termination_token_fragment_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange>,
-    verdict_projection_resolution_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter>,
+    termination_token_fragment_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner>,
+    termination_token_fragment_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange>,
+    verdict_projection_resolution_adapter:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter>,
 }
 
 #[allow(dead_code)]
@@ -6632,9 +6918,15 @@ impl FragmentAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenExchan
 
     #[cfg(test)]
     fn with_components(
-        termination_token_fragment_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner>,
-        termination_token_fragment_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange>,
-        verdict_projection_resolution_adapter: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter>,
+        termination_token_fragment_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner,
+        >,
+        termination_token_fragment_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange,
+        >,
+        verdict_projection_resolution_adapter: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter,
+        >,
     ) -> Self {
         Self {
             termination_token_fragment_planner,
@@ -6678,103 +6970,109 @@ impl VerifierHttpClientSessionProtocolChunkTerminationTokenExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
-        let fragment_request = self.termination_token_fragment_planner.plan_termination_token_fragment(
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        let fragment_response = self.termination_token_fragment_exchange.exchange_termination_token_fragment(
-            &fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
-        self.verdict_projection_resolution_adapter.adapt_projection_resolution(
-            fragment_response,
-            &fragment_request,
-            token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError>
+    {
+        let fragment_request = self
+            .termination_token_fragment_planner
+            .plan_termination_token_fragment(
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        let fragment_response = self
+            .termination_token_fragment_exchange
+            .exchange_termination_token_fragment(
+                &fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
+        self.verdict_projection_resolution_adapter
+            .adapt_projection_resolution(
+                fragment_response,
+                &fragment_request,
+                token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )
     }
 }
 
@@ -6816,25 +7114,31 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
-            status_code: token_response.status_code,
-            headers: token_response.headers,
-            frames: token_response.frames,
-            window_start_sequence: token_response.window_start_sequence,
-            window_frame_count: token_response.window_frame_count,
-            acked_through_sequence: token_response.acked_through_sequence,
-            retransmit_count: token_response.retransmit_count,
-            budget_remaining: token_response.budget_remaining,
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
+                status_code: token_response.status_code,
+                headers: token_response.headers,
+                frames: token_response.frames,
+                window_start_sequence: token_response.window_start_sequence,
+                window_frame_count: token_response.window_frame_count,
+                acked_through_sequence: token_response.acked_through_sequence,
+                retransmit_count: token_response.retransmit_count,
+                budget_remaining: token_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchange {
-    termination_token_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner>,
-    termination_token_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenExchange>,
-    verdict_projection_normalizer: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer>,
+    termination_token_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner>,
+    termination_token_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenExchange>,
+    verdict_projection_normalizer:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer>,
 }
 
 #[allow(dead_code)]
@@ -6845,7 +7149,8 @@ impl TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchan
                 DirectVerifierHttpClientSessionProtocolChunkTerminationTokenPlanner,
             ),
             termination_token_exchange: Arc::new(
-                FragmentAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenExchange::new(),
+                FragmentAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenExchange::new(
+                ),
             ),
             verdict_projection_normalizer: Arc::new(
                 PassthroughVerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer,
@@ -6855,9 +7160,15 @@ impl TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchan
 
     #[cfg(test)]
     fn with_components(
-        termination_token_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner>,
-        termination_token_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationTokenExchange>,
-        verdict_projection_normalizer: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer>,
+        termination_token_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner,
+        >,
+        termination_token_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationTokenExchange,
+        >,
+        verdict_projection_normalizer: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer,
+        >,
     ) -> Self {
         Self {
             termination_token_planner,
@@ -6900,7 +7211,8 @@ impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError>
+    {
         let token_request = self.termination_token_planner.plan_termination_token(
             label_request,
             category_request,
@@ -6962,38 +7274,39 @@ impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange
             http_request,
             request,
         )?;
-        self.verdict_projection_normalizer.normalize_verdict_projection(
-            token_response,
-            &token_request,
-            label_request,
-            category_request,
-            classification_request,
-            status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )
+        self.verdict_projection_normalizer
+            .normalize_verdict_projection(
+                token_response,
+                &token_request,
+                label_request,
+                category_request,
+                classification_request,
+                status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )
     }
 }
 
@@ -7034,17 +7347,22 @@ impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse {
-            status_code: label_response.status_code,
-            headers: label_response.headers,
-            frames: label_response.frames,
-            window_start_sequence: label_response.window_start_sequence,
-            window_frame_count: label_response.window_frame_count,
-            acked_through_sequence: label_response.acked_through_sequence,
-            retransmit_count: label_response.retransmit_count,
-            budget_remaining: label_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse {
+                status_code: label_response.status_code,
+                headers: label_response.headers,
+                frames: label_response.frames,
+                window_start_sequence: label_response.window_start_sequence,
+                window_frame_count: label_response.window_frame_count,
+                acked_through_sequence: label_response.acked_through_sequence,
+                retransmit_count: label_response.retransmit_count,
+                budget_remaining: label_response.budget_remaining,
+            },
+        )
     }
 }
 
@@ -7084,36 +7402,48 @@ impl VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse {
-            status_code: category_response.status_code,
-            headers: category_response.headers,
-            frames: category_response.frames,
-            window_start_sequence: category_response.window_start_sequence,
-            window_frame_count: category_response.window_frame_count,
-            acked_through_sequence: category_response.acked_through_sequence,
-            retransmit_count: category_response.retransmit_count,
-            budget_remaining: category_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse {
+                status_code: category_response.status_code,
+                headers: category_response.headers,
+                frames: category_response.frames,
+                window_start_sequence: category_response.window_start_sequence,
+                window_frame_count: category_response.window_frame_count,
+                acked_through_sequence: category_response.acked_through_sequence,
+                retransmit_count: category_response.retransmit_count,
+                budget_remaining: category_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
-struct LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange {
-    termination_label_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner>,
-    termination_label_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelExchange>,
-    verdict_projection_resolver: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver>,
+struct LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
+{
+    termination_label_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner>,
+    termination_label_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelExchange>,
+    verdict_projection_resolver:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver>,
 }
 
 #[allow(dead_code)]
-impl LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange {
+impl
+    LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
+{
     fn new() -> Self {
         Self {
             termination_label_planner: Arc::new(
                 DirectVerifierHttpClientSessionProtocolChunkTerminationLabelPlanner,
             ),
             termination_label_exchange: Arc::new(
-                TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchange::new(),
+                TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchange::new(
+                ),
             ),
             verdict_projection_resolver: Arc::new(
                 PassthroughVerifierHttpClientSessionProtocolChunkVerdictProjectionResolver,
@@ -7123,9 +7453,15 @@ impl LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTermin
 
     #[cfg(test)]
     fn with_components(
-        termination_label_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner>,
-        termination_label_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationLabelExchange>,
-        verdict_projection_resolver: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver>,
+        termination_label_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner,
+        >,
+        termination_label_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationLabelExchange,
+        >,
+        verdict_projection_resolver: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver,
+        >,
     ) -> Self {
         Self {
             termination_label_planner,
@@ -7262,10 +7598,14 @@ impl VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange
 }
 
 #[allow(dead_code)]
-struct CategorizedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange {
-    termination_category_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner>,
-    termination_category_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange>,
-    normalized_verdict_projection: Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection>,
+struct CategorizedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
+{
+    termination_category_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryPlanner>,
+    termination_category_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationCategoryExchange>,
+    normalized_verdict_projection:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedVerdictProjection>,
 }
 
 #[allow(dead_code)]
@@ -7455,29 +7795,40 @@ impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
-            status_code: classification_response.status_code,
-            headers: classification_response.headers,
-            frames: classification_response.frames,
-            window_start_sequence: classification_response.window_start_sequence,
-            window_frame_count: classification_response.window_frame_count,
-            acked_through_sequence: classification_response.acked_through_sequence,
-            retransmit_count: classification_response.retransmit_count,
-            budget_remaining: classification_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
+                status_code: classification_response.status_code,
+                headers: classification_response.headers,
+                frames: classification_response.frames,
+                window_start_sequence: classification_response.window_start_sequence,
+                window_frame_count: classification_response.window_frame_count,
+                acked_through_sequence: classification_response.acked_through_sequence,
+                retransmit_count: classification_response.retransmit_count,
+                budget_remaining: classification_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
-struct ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange {
-    termination_classification_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner>,
-    termination_classification_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange>,
-    normalized_outcome_mapper: Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper>,
+struct ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange
+{
+    termination_classification_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner>,
+    termination_classification_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange>,
+    normalized_outcome_mapper:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper>,
 }
 
 #[allow(dead_code)]
-impl ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange {
+impl
+    ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange
+{
     fn new() -> Self {
         Self {
             termination_classification_planner: Arc::new(
@@ -7494,9 +7845,15 @@ impl ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerm
 
     #[cfg(test)]
     fn with_components(
-        termination_classification_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner>,
-        termination_classification_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange>,
-        normalized_outcome_mapper: Arc<dyn VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper>,
+        termination_classification_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner,
+        >,
+        termination_classification_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange,
+        >,
+        normalized_outcome_mapper: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper,
+        >,
     ) -> Self {
         Self {
             termination_classification_planner,
@@ -7658,24 +8015,31 @@ impl VerifierHttpClientSessionProtocolChunkVerdictNormalizer
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
-            status_code: status_response.status_code,
-            headers: status_response.headers,
-            frames: status_response.frames,
-            window_start_sequence: status_response.window_start_sequence,
-            window_frame_count: status_response.window_frame_count,
-            acked_through_sequence: status_response.acked_through_sequence,
-            retransmit_count: status_response.retransmit_count,
-            budget_remaining: status_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
+                status_code: status_response.status_code,
+                headers: status_response.headers,
+                frames: status_response.frames,
+                window_start_sequence: status_response.window_start_sequence,
+                window_frame_count: status_response.window_frame_count,
+                acked_through_sequence: status_response.acked_through_sequence,
+                retransmit_count: status_response.retransmit_count,
+                budget_remaining: status_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct StatusNormalizedVerifierHttpClientSessionProtocolChunkTerminationVerdictExchange {
-    termination_status_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner>,
-    termination_status_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusExchange>,
+    termination_status_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner>,
+    termination_status_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusExchange>,
     verdict_normalizer: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictNormalizer>,
 }
 
@@ -7697,8 +8061,12 @@ impl StatusNormalizedVerifierHttpClientSessionProtocolChunkTerminationVerdictExc
 
     #[cfg(test)]
     fn with_components(
-        termination_status_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner>,
-        termination_status_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationStatusExchange>,
+        termination_status_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner,
+        >,
+        termination_status_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationStatusExchange,
+        >,
         verdict_normalizer: Arc<dyn VerifierHttpClientSessionProtocolChunkVerdictNormalizer>,
     ) -> Self {
         Self {
@@ -7738,7 +8106,10 @@ impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+        BackendExecutionError,
+    > {
         let status_request = self.termination_status_planner.plan_termination_status(
             verdict_request,
             outcome_request,
@@ -7765,33 +8136,35 @@ impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange
             http_request,
             request,
         )?;
-        let status_response = self.termination_status_exchange.exchange_termination_status(
-            &status_request,
-            verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
+        let status_response = self
+            .termination_status_exchange
+            .exchange_termination_status(
+                &status_request,
+                verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
         self.verdict_normalizer.normalize_verdict(
             status_response,
             &status_request,
@@ -7856,24 +8229,31 @@ impl VerifierHttpClientSessionProtocolChunkOutcomeMaterializer
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
-            status_code: verdict_response.status_code,
-            headers: verdict_response.headers,
-            frames: verdict_response.frames,
-            window_start_sequence: verdict_response.window_start_sequence,
-            window_frame_count: verdict_response.window_frame_count,
-            acked_through_sequence: verdict_response.acked_through_sequence,
-            retransmit_count: verdict_response.retransmit_count,
-            budget_remaining: verdict_response.budget_remaining,
-        })
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+        BackendExecutionError,
+    > {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
+                status_code: verdict_response.status_code,
+                headers: verdict_response.headers,
+                frames: verdict_response.frames,
+                window_start_sequence: verdict_response.window_start_sequence,
+                window_frame_count: verdict_response.window_frame_count,
+                acked_through_sequence: verdict_response.acked_through_sequence,
+                retransmit_count: verdict_response.retransmit_count,
+                budget_remaining: verdict_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange {
-    termination_verdict_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner>,
-    termination_verdict_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange>,
+    termination_verdict_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner>,
+    termination_verdict_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange>,
     outcome_materializer: Arc<dyn VerifierHttpClientSessionProtocolChunkOutcomeMaterializer>,
 }
 
@@ -7895,8 +8275,12 @@ impl VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchan
 
     #[cfg(test)]
     fn with_components(
-        termination_verdict_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner>,
-        termination_verdict_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange>,
+        termination_verdict_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner,
+        >,
+        termination_verdict_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange,
+        >,
         outcome_materializer: Arc<dyn VerifierHttpClientSessionProtocolChunkOutcomeMaterializer>,
     ) -> Self {
         Self {
@@ -7935,7 +8319,10 @@ impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
+    ) -> Result<
+        VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+        BackendExecutionError,
+    > {
         let verdict_request = self.termination_verdict_planner.plan_termination_verdict(
             outcome_request,
             convergence_request,
@@ -7961,32 +8348,34 @@ impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange
             http_request,
             request,
         )?;
-        let verdict_response = self.termination_verdict_exchange.exchange_termination_verdict(
-            &verdict_request,
-            outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
+        let verdict_response = self
+            .termination_verdict_exchange
+            .exchange_termination_verdict(
+                &verdict_request,
+                outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
         self.outcome_materializer.materialize_outcome(
             verdict_response,
             &verdict_request,
@@ -8049,24 +8438,29 @@ impl VerifierHttpClientSessionProtocolChunkSettlementProjection
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
-            status_code: outcome_response.status_code,
-            headers: outcome_response.headers,
-            frames: outcome_response.frames,
-            window_start_sequence: outcome_response.window_start_sequence,
-            window_frame_count: outcome_response.window_frame_count,
-            acked_through_sequence: outcome_response.acked_through_sequence,
-            retransmit_count: outcome_response.retransmit_count,
-            budget_remaining: outcome_response.budget_remaining,
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
+                status_code: outcome_response.status_code,
+                headers: outcome_response.headers,
+                frames: outcome_response.frames,
+                window_start_sequence: outcome_response.window_start_sequence,
+                window_frame_count: outcome_response.window_frame_count,
+                acked_through_sequence: outcome_response.acked_through_sequence,
+                retransmit_count: outcome_response.retransmit_count,
+                budget_remaining: outcome_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct OutcomeProjectedVerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange {
-    termination_outcome_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner>,
-    termination_outcome_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange>,
+    termination_outcome_planner:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner>,
+    termination_outcome_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange>,
     settlement_projection: Arc<dyn VerifierHttpClientSessionProtocolChunkSettlementProjection>,
 }
 
@@ -8078,7 +8472,8 @@ impl OutcomeProjectedVerifierHttpClientSessionProtocolChunkRetransmitTermination
                 DirectVerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner,
             ),
             termination_outcome_exchange: Arc::new(
-                VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange::new(),
+                VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange::new(
+                ),
             ),
             settlement_projection: Arc::new(
                 PassthroughVerifierHttpClientSessionProtocolChunkSettlementProjection,
@@ -8088,8 +8483,12 @@ impl OutcomeProjectedVerifierHttpClientSessionProtocolChunkRetransmitTermination
 
     #[cfg(test)]
     fn with_components(
-        termination_outcome_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner>,
-        termination_outcome_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange>,
+        termination_outcome_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner,
+        >,
+        termination_outcome_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange,
+        >,
         settlement_projection: Arc<dyn VerifierHttpClientSessionProtocolChunkSettlementProjection>,
     ) -> Self {
         Self {
@@ -8127,7 +8526,8 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError>
+    {
         let outcome_request = self.termination_outcome_planner.plan_termination_outcome(
             convergence_request,
             budget_request,
@@ -8152,31 +8552,33 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange
             http_request,
             request,
         )?;
-        let outcome_response = self.termination_outcome_exchange.exchange_termination_outcome(
-            &outcome_request,
-            convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
+        let outcome_response = self
+            .termination_outcome_exchange
+            .exchange_termination_outcome(
+                &outcome_request,
+                convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
         self.settlement_projection.project_settlement(
             outcome_response,
             &outcome_request,
@@ -8237,24 +8639,28 @@ impl VerifierHttpClientSessionProtocolChunkTerminationValidator
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
-            status_code: convergence_response.status_code,
-            headers: convergence_response.headers,
-            frames: convergence_response.frames,
-            window_start_sequence: convergence_response.window_start_sequence,
-            window_frame_count: convergence_response.window_frame_count,
-            acked_through_sequence: convergence_response.acked_through_sequence,
-            retransmit_count: convergence_response.retransmit_count,
-            budget_remaining: convergence_response.budget_remaining,
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
+                status_code: convergence_response.status_code,
+                headers: convergence_response.headers,
+                frames: convergence_response.frames,
+                window_start_sequence: convergence_response.window_start_sequence,
+                window_frame_count: convergence_response.window_frame_count,
+                acked_through_sequence: convergence_response.acked_through_sequence,
+                retransmit_count: convergence_response.retransmit_count,
+                budget_remaining: convergence_response.budget_remaining,
+            },
+        )
     }
 }
 
 #[allow(dead_code)]
 struct ConvergingAckBackedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange {
     ack_convergence_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkAckConvergencePlanner>,
-    retransmit_termination_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange>,
+    retransmit_termination_exchange:
+        Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange>,
     termination_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationValidator>,
 }
 
@@ -8276,8 +8682,12 @@ impl ConvergingAckBackedVerifierHttpClientSessionProtocolChunkRetransmitBudgetEx
 
     #[cfg(test)]
     fn with_components(
-        ack_convergence_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkAckConvergencePlanner>,
-        retransmit_termination_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange>,
+        ack_convergence_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkAckConvergencePlanner,
+        >,
+        retransmit_termination_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange,
+        >,
         termination_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkTerminationValidator>,
     ) -> Self {
         Self {
@@ -8314,7 +8724,8 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError>
+    {
         let convergence_request = self.ack_convergence_planner.plan_ack_convergence(
             budget_request,
             ack_request,
@@ -8338,30 +8749,32 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
             http_request,
             request,
         )?;
-        let convergence_response = self.retransmit_termination_exchange.exchange_retransmit_termination(
-            &convergence_request,
-            budget_request,
-            ack_request,
-            window_request,
-            frames_request,
-            chunked_request,
-            framed_request,
-            bytes_request,
-            protocol_request,
-            frame_request,
-            connection_config,
-            socket_request,
-            transport_request,
-            call_request,
-            wire_request,
-            session_request,
-            session_config,
-            runtime_request,
-            config,
-            client_request,
-            http_request,
-            request,
-        )?;
+        let convergence_response = self
+            .retransmit_termination_exchange
+            .exchange_retransmit_termination(
+                &convergence_request,
+                budget_request,
+                ack_request,
+                window_request,
+                frames_request,
+                chunked_request,
+                framed_request,
+                bytes_request,
+                protocol_request,
+                frame_request,
+                connection_config,
+                socket_request,
+                transport_request,
+                call_request,
+                wire_request,
+                session_request,
+                session_config,
+                runtime_request,
+                config,
+                client_request,
+                http_request,
+                request,
+            )?;
         self.termination_validator.validate_termination(
             convergence_response,
             &convergence_request,
@@ -8458,7 +8871,9 @@ impl BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExc
     fn with_components(
         budget_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner>,
         budget_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange>,
-        ack_settlement_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkAckSettlementValidator>,
+        ack_settlement_validator: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkAckSettlementValidator,
+        >,
     ) -> Self {
         Self {
             budget_planner,
@@ -8595,14 +9010,17 @@ impl VerifierHttpClientSessionProtocolChunkAckValidator
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
-        Ok(VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
-            status_code: ack_response.status_code,
-            headers: ack_response.headers,
-            frames: ack_response.frames,
-            window_start_sequence: ack_response.window_start_sequence,
-            window_frame_count: ack_response.window_frame_count,
-        })
+    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError>
+    {
+        Ok(
+            VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
+                status_code: ack_response.status_code,
+                headers: ack_response.headers,
+                frames: ack_response.frames,
+                window_start_sequence: ack_response.window_start_sequence,
+                window_frame_count: ack_response.window_frame_count,
+            },
+        )
     }
 }
 
@@ -8663,7 +9081,8 @@ impl VerifierHttpClientSessionProtocolChunkSequenceWindowExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError>
+    {
         let ack_request = self.ack_policy.plan_ack_request(
             window_request,
             frames_request,
@@ -8784,7 +9203,8 @@ impl WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange {
                 DirectVerifierHttpClientSessionProtocolChunkSequenceWindowPlanner,
             ),
             sequence_window_exchange: Arc::new(
-                AckedWindowBackedVerifierHttpClientSessionProtocolChunkSequenceWindowExchange::new(),
+                AckedWindowBackedVerifierHttpClientSessionProtocolChunkSequenceWindowExchange::new(
+                ),
             ),
             integrity_validator: Arc::new(
                 PassthroughVerifierHttpClientSessionProtocolChunkIntegrityValidator,
@@ -8794,8 +9214,12 @@ impl WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange {
 
     #[cfg(test)]
     fn with_components(
-        sequence_window_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkSequenceWindowPlanner>,
-        sequence_window_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkSequenceWindowExchange>,
+        sequence_window_planner: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkSequenceWindowPlanner,
+        >,
+        sequence_window_exchange: Arc<
+            dyn VerifierHttpClientSessionProtocolChunkSequenceWindowExchange,
+        >,
         integrity_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkIntegrityValidator>,
     ) -> Self {
         Self {
@@ -9075,7 +9499,8 @@ impl VerifierHttpClientSessionProtocolByteStreamAssembler
         _client_request: &VerifierHttpClientRequest,
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+    {
         Ok(VerifierHttpClientSessionProtocolByteStreamFrameResponse {
             status_code: chunked_response.status_code,
             headers: chunked_response.headers,
@@ -9138,7 +9563,8 @@ impl VerifierHttpClientSessionProtocolByteStreamExchange
         client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+    {
         let chunked_request = self.chunker.chunk_request(
             framed_request,
             bytes_request,
@@ -9246,7 +9672,9 @@ impl FramedBytesBackedVerifierHttpClientSessionProtocolBytesTransportExchange {
             byte_stream_exchange: Arc::new(
                 ChunkedByteStreamBackedVerifierHttpClientSessionProtocolByteStreamExchange::new(),
             ),
-            envelope_normalizer: Arc::new(PassthroughVerifierHttpClientSessionProtocolEnvelopeNormalizer),
+            envelope_normalizer: Arc::new(
+                PassthroughVerifierHttpClientSessionProtocolEnvelopeNormalizer,
+            ),
         }
     }
 
@@ -9482,7 +9910,9 @@ impl VerifierHttpClientSessionProtocolTransportExchange
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionProtocolResponseCodec;
 
-impl VerifierHttpClientSessionProtocolResponseCodec for PassthroughVerifierHttpClientSessionProtocolResponseCodec {
+impl VerifierHttpClientSessionProtocolResponseCodec
+    for PassthroughVerifierHttpClientSessionProtocolResponseCodec
+{
     fn decode_protocol_response(
         &self,
         protocol_response: VerifierHttpClientSessionProtocolResponse,
@@ -9523,7 +9953,9 @@ impl CodecBackedVerifierHttpClientSessionFrameIoAdapter {
             protocol_transport_exchange: Arc::new(
                 BytesBackedVerifierHttpClientSessionProtocolTransportExchange::new(),
             ),
-            protocol_response_codec: Arc::new(PassthroughVerifierHttpClientSessionProtocolResponseCodec),
+            protocol_response_codec: Arc::new(
+                PassthroughVerifierHttpClientSessionProtocolResponseCodec,
+            ),
         }
     }
 
@@ -9541,7 +9973,9 @@ impl CodecBackedVerifierHttpClientSessionFrameIoAdapter {
     }
 }
 
-impl VerifierHttpClientSessionFrameIoAdapter for CodecBackedVerifierHttpClientSessionFrameIoAdapter {
+impl VerifierHttpClientSessionFrameIoAdapter
+    for CodecBackedVerifierHttpClientSessionFrameIoAdapter
+{
     fn exchange_frame(
         &self,
         frame_request: &VerifierHttpClientSessionFrameRequest,
@@ -9667,7 +10101,9 @@ impl FrameBackedVerifierHttpClientSessionSocketByteChannel {
     }
 }
 
-impl VerifierHttpClientSessionSocketByteChannel for FrameBackedVerifierHttpClientSessionSocketByteChannel {
+impl VerifierHttpClientSessionSocketByteChannel
+    for FrameBackedVerifierHttpClientSessionSocketByteChannel
+{
     fn exchange_bytes(
         &self,
         connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -9733,7 +10169,9 @@ impl VerifierHttpClientSessionSocketByteChannel for FrameBackedVerifierHttpClien
 #[allow(dead_code)]
 struct FailClosedVerifierHttpClientSessionSocketConnectionOpener;
 
-impl VerifierHttpClientSessionSocketConnectionOpener for FailClosedVerifierHttpClientSessionSocketConnectionOpener {
+impl VerifierHttpClientSessionSocketConnectionOpener
+    for FailClosedVerifierHttpClientSessionSocketConnectionOpener
+{
     fn open_connection(
         &self,
         _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -9762,7 +10200,9 @@ impl VerifierHttpClientSessionSocketConnectionOpener for FailClosedVerifierHttpC
 #[allow(dead_code)]
 struct StaticVerifierHttpClientSessionSocketConnectionOpener;
 
-impl VerifierHttpClientSessionSocketConnectionOpener for StaticVerifierHttpClientSessionSocketConnectionOpener {
+impl VerifierHttpClientSessionSocketConnectionOpener
+    for StaticVerifierHttpClientSessionSocketConnectionOpener
+{
     fn open_connection(
         &self,
         _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -9778,7 +10218,9 @@ impl VerifierHttpClientSessionSocketConnectionOpener for StaticVerifierHttpClien
         _http_request: &HttpVerifierRequest,
         _request: &BackendVerificationRequest<'_>,
     ) -> Result<Box<dyn VerifierHttpClientSessionSocketByteChannel>, BackendExecutionError> {
-        Ok(Box::new(FrameBackedVerifierHttpClientSessionSocketByteChannel::new()))
+        Ok(Box::new(
+            FrameBackedVerifierHttpClientSessionSocketByteChannel::new(),
+        ))
     }
 }
 
@@ -9803,7 +10245,9 @@ impl ConnectionBackedVerifierHttpClientSessionSocketAdapter {
     }
 }
 
-impl VerifierHttpClientSessionSocketAdapter for ConnectionBackedVerifierHttpClientSessionSocketAdapter {
+impl VerifierHttpClientSessionSocketAdapter
+    for ConnectionBackedVerifierHttpClientSessionSocketAdapter
+{
     fn execute_socket(
         &self,
         socket_request: &VerifierHttpClientSessionSocketRequest,
@@ -9857,7 +10301,9 @@ impl VerifierHttpClientSessionSocketAdapter for ConnectionBackedVerifierHttpClie
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionByteStreamResponseParser;
 
-impl VerifierHttpClientSessionByteStreamResponseParser for PassthroughVerifierHttpClientSessionByteStreamResponseParser {
+impl VerifierHttpClientSessionByteStreamResponseParser
+    for PassthroughVerifierHttpClientSessionByteStreamResponseParser
+{
     fn parse_byte_stream(
         &self,
         socket_response: VerifierHttpClientSessionSocketByteStreamResponse,
@@ -9893,7 +10339,9 @@ impl SocketBackedVerifierHttpClientSessionTransportAdapter {
         Self {
             socket_request_builder: Arc::new(DirectVerifierHttpClientSessionSocketRequestBuilder),
             socket_adapter: Arc::new(ConnectionBackedVerifierHttpClientSessionSocketAdapter::new()),
-            byte_stream_parser: Arc::new(PassthroughVerifierHttpClientSessionByteStreamResponseParser),
+            byte_stream_parser: Arc::new(
+                PassthroughVerifierHttpClientSessionByteStreamResponseParser,
+            ),
         }
     }
 
@@ -9911,7 +10359,9 @@ impl SocketBackedVerifierHttpClientSessionTransportAdapter {
     }
 }
 
-impl VerifierHttpClientSessionTransportAdapter for SocketBackedVerifierHttpClientSessionTransportAdapter {
+impl VerifierHttpClientSessionTransportAdapter
+    for SocketBackedVerifierHttpClientSessionTransportAdapter
+{
     fn send_transport(
         &self,
         transport_request: &VerifierHttpClientSessionTransportRequest,
@@ -9969,7 +10419,9 @@ impl VerifierHttpClientSessionTransportAdapter for SocketBackedVerifierHttpClien
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionRawIoResponseParser;
 
-impl VerifierHttpClientSessionRawIoResponseParser for PassthroughVerifierHttpClientSessionRawIoResponseParser {
+impl VerifierHttpClientSessionRawIoResponseParser
+    for PassthroughVerifierHttpClientSessionRawIoResponseParser
+{
     fn parse_raw_response(
         &self,
         raw_response: VerifierHttpClientSessionTransportRawResponse,
@@ -10002,8 +10454,12 @@ struct TransportBackedVerifierHttpClientSessionCallExecutor {
 impl TransportBackedVerifierHttpClientSessionCallExecutor {
     fn new() -> Self {
         Self {
-            transport_request_builder: Arc::new(DirectVerifierHttpClientSessionTransportRequestBuilder),
-            transport_adapter: Arc::new(SocketBackedVerifierHttpClientSessionTransportAdapter::new()),
+            transport_request_builder: Arc::new(
+                DirectVerifierHttpClientSessionTransportRequestBuilder,
+            ),
+            transport_adapter: Arc::new(
+                SocketBackedVerifierHttpClientSessionTransportAdapter::new(),
+            ),
             raw_response_parser: Arc::new(PassthroughVerifierHttpClientSessionRawIoResponseParser),
         }
     }
@@ -10022,7 +10478,9 @@ impl TransportBackedVerifierHttpClientSessionCallExecutor {
     }
 }
 
-impl VerifierHttpClientSessionCallExecutor for TransportBackedVerifierHttpClientSessionCallExecutor {
+impl VerifierHttpClientSessionCallExecutor
+    for TransportBackedVerifierHttpClientSessionCallExecutor
+{
     fn execute_call(
         &self,
         call_request: &VerifierHttpClientSessionCallRequest,
@@ -10076,7 +10534,9 @@ impl VerifierHttpClientSessionCallExecutor for TransportBackedVerifierHttpClient
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionCallResponseParser;
 
-impl VerifierHttpClientSessionCallResponseParser for PassthroughVerifierHttpClientSessionCallResponseParser {
+impl VerifierHttpClientSessionCallResponseParser
+    for PassthroughVerifierHttpClientSessionCallResponseParser
+{
     fn parse_call_response(
         &self,
         call_response: VerifierHttpClientSessionCallResponse,
@@ -10178,7 +10638,9 @@ impl VerifierHttpClientSessionWireExecutor for CallBackedVerifierHttpClientSessi
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionWireResponseParser;
 
-impl VerifierHttpClientSessionWireResponseParser for PassthroughVerifierHttpClientSessionWireResponseParser {
+impl VerifierHttpClientSessionWireResponseParser
+    for PassthroughVerifierHttpClientSessionWireResponseParser
+{
     fn parse_wire_response(
         &self,
         wire_response: VerifierHttpClientSessionWireResponse,
@@ -10229,7 +10691,9 @@ impl WireBackedVerifierHttpClientSessionRequestExecutor {
     }
 }
 
-impl VerifierHttpClientSessionRequestExecutor for WireBackedVerifierHttpClientSessionRequestExecutor {
+impl VerifierHttpClientSessionRequestExecutor
+    for WireBackedVerifierHttpClientSessionRequestExecutor
+{
     fn execute_request(
         &self,
         session_request: &VerifierHttpClientSessionRequest,
@@ -10275,7 +10739,9 @@ impl VerifierHttpClientSessionRequestExecutor for WireBackedVerifierHttpClientSe
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientSessionResponseReader;
 
-impl VerifierHttpClientSessionResponseReader for PassthroughVerifierHttpClientSessionResponseReader {
+impl VerifierHttpClientSessionResponseReader
+    for PassthroughVerifierHttpClientSessionResponseReader
+{
     fn read_response(
         &self,
         session_response: VerifierHttpClientSessionResponse,
@@ -10445,7 +10911,9 @@ trait VerifierHttpClientRuntimeResponseAdapter: Send + Sync {
 #[allow(dead_code)]
 struct PassthroughVerifierHttpClientRuntimeResponseAdapter;
 
-impl VerifierHttpClientRuntimeResponseAdapter for PassthroughVerifierHttpClientRuntimeResponseAdapter {
+impl VerifierHttpClientRuntimeResponseAdapter
+    for PassthroughVerifierHttpClientRuntimeResponseAdapter
+{
     fn adapt_response(
         &self,
         runtime_response: VerifierHttpClientRuntimeResponse,
@@ -10501,12 +10969,16 @@ impl VerifierHttpClientHandle for RuntimeBackedVerifierHttpClientHandle {
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
-        let runtime_request = self
-            .request_builder
-            .build_request(config, client_request, http_request, request)?;
-        let runtime_response = self
-            .runtime
-            .execute_runtime(&runtime_request, config, client_request, http_request, request)?;
+        let runtime_request =
+            self.request_builder
+                .build_request(config, client_request, http_request, request)?;
+        let runtime_response = self.runtime.execute_runtime(
+            &runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
         self.response_adapter.adapt_response(
             runtime_response,
             config,
@@ -10608,9 +11080,11 @@ impl VerifierHttpResponseBodyReader for Utf8HttpResponseBodyReader {
         _http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<HttpVerifierResponse, BackendExecutionError> {
-        let body = String::from_utf8(raw_response.body).map_err(|err| BackendExecutionError::MalformedProof {
-            backend: request.backend_label(RealTeeBackend::backend_id_static()),
-            reason: format!("http transport returned non-utf8 body: {err}"),
+        let body = String::from_utf8(raw_response.body).map_err(|err| {
+            BackendExecutionError::MalformedProof {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!("http transport returned non-utf8 body: {err}"),
+            }
         })?;
         Ok(HttpVerifierResponse {
             status_code: raw_response.status_code,
@@ -10684,7 +11158,8 @@ impl VerifierHttpTransport for RealVerifierHttpTransport {
             .execute_request(http_request, request)?;
         self.timeout_hook
             .after_response(http_request, &raw_response, request)?;
-        self.body_reader.read_body(raw_response, http_request, request)
+        self.body_reader
+            .read_body(raw_response, http_request, request)
     }
 }
 
@@ -10731,17 +11206,21 @@ impl VerifierHttpRetryExecutor for PolicyAwareHttpRetryExecutor {
                     })
                 }
                 Err(err @ BackendExecutionError::Unavailable { .. })
-                | Err(err @ BackendExecutionError::Internal { .. }) if attempt < max_attempts => {
+                | Err(err @ BackendExecutionError::Internal { .. })
+                    if attempt < max_attempts =>
+                {
                     last_retryable_error = Some(err);
                     continue;
                 }
                 Err(err) => return Err(err),
             }
         }
-        Err(last_retryable_error.unwrap_or_else(|| BackendExecutionError::Unavailable {
-            backend: request.backend_label(RealTeeBackend::backend_id_static()),
-            reason: "http retry executor exhausted all attempts".to_string(),
-        }))
+        Err(
+            last_retryable_error.unwrap_or_else(|| BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "http retry executor exhausted all attempts".to_string(),
+            }),
+        )
     }
 }
 
@@ -10806,8 +11285,11 @@ impl JsonlTelemetryRecorder {
 
 impl VerifierTelemetryRecorder for JsonlTelemetryRecorder {
     fn record(&self, encoded_event: String) {
-        self.writer.write_record(&(encoded_event + "
-"));
+        self.writer.write_record(
+            &(encoded_event
+                + "
+"),
+        );
     }
 }
 
@@ -10920,14 +11402,16 @@ impl TeeVerifierHandoff {
         payload: &ParsedTeeProofPayload,
         request: Option<&BackendVerificationRequest<'_>>,
     ) -> Result<Self, BackendExecutionError> {
-        let evidence = payload.evidence().ok_or_else(|| malformed_payload_err(
-            request,
-            format!(
-                "invalid tee receipt: target '{}' requires {} evidence",
-                payload.attestation_target,
-                payload.evidence_kind.as_str()
-            ),
-        ))?;
+        let evidence = payload.evidence().ok_or_else(|| {
+            malformed_payload_err(
+                request,
+                format!(
+                    "invalid tee receipt: target '{}' requires {} evidence",
+                    payload.attestation_target,
+                    payload.evidence_kind.as_str()
+                ),
+            )
+        })?;
 
         Ok(Self {
             attestation_target: payload.attestation_target.clone(),
@@ -11245,15 +11729,15 @@ fn required_metadata(
     attestation_target: &str,
     request: Option<&BackendVerificationRequest<'_>>,
 ) -> Result<String, BackendExecutionError> {
-    value
-        .map(str::to_string)
-        .ok_or_else(|| invalid_backend_input_err(
+    value.map(str::to_string).ok_or_else(|| {
+        invalid_backend_input_err(
             request,
             format!(
                 "tee attestation target '{}' requires {} metadata",
                 attestation_target, field
             ),
-        ))
+        )
+    })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -11272,7 +11756,11 @@ impl VerifierTransportTemplate {
         VerifierTransportConfig {
             mode: self.mode.clone(),
             profile: self.profile.clone(),
-            endpoint: format!("{}/{}", self.endpoint_base.trim_end_matches('/'), attestation_target),
+            endpoint: format!(
+                "{}/{}",
+                self.endpoint_base.trim_end_matches('/'),
+                attestation_target
+            ),
             timeout_ms: self.timeout_ms,
             auth_scheme: self.auth_scheme.clone(),
             auth_ref: self
@@ -11385,7 +11873,10 @@ impl EnvVerifierTransportConfigSource {
     }
 
     #[cfg(test)]
-    fn from_vars(defaults: StaticVerifierTransportConfigSource, vars: BTreeMap<String, String>) -> Self {
+    fn from_vars(
+        defaults: StaticVerifierTransportConfigSource,
+        vars: BTreeMap<String, String>,
+    ) -> Self {
         Self { defaults, vars }
     }
 
@@ -11460,7 +11951,11 @@ impl EnvVerifierTransportConfigSource {
 
 impl VerifierTransportConfigSource for EnvVerifierTransportConfigSource {
     fn intel_quote_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig {
-        self.render_profile("INTEL_QUOTE", &self.defaults.intel_quote, attestation_target)
+        self.render_profile(
+            "INTEL_QUOTE",
+            &self.defaults.intel_quote,
+            attestation_target,
+        )
     }
 
     fn amd_report_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig {
@@ -11603,7 +12098,8 @@ fn validate_response_telemetry_event(
             reason: "verifier response missing telemetry event".to_string(),
         });
     };
-    if event.request_id != metadata.request_id || event.telemetry_scope != metadata.telemetry_scope {
+    if event.request_id != metadata.request_id || event.telemetry_scope != metadata.telemetry_scope
+    {
         return Err(BackendExecutionError::MalformedProof {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: "verifier response telemetry does not match request metadata".to_string(),
@@ -11627,9 +12123,7 @@ fn build_external_call_metadata(
     ExternalCallMetadata {
         request_id: format!(
             "tee:{}:{}:task-{}:attempt-1",
-            verifier_kind,
-            attestation_target,
-            request.task.task_id
+            verifier_kind, attestation_target, request.task.task_id
         ),
         telemetry_scope: format!(
             "trnm.pouw.tee.{}.{}",
@@ -11710,10 +12204,7 @@ fn map_mock_verifier_response(
         }),
         MockVerifierResponseStatus::Internal => Err(BackendExecutionError::Internal {
             backend: backend_label_from_response(&response, request),
-            reason: response_detail_or_default(
-                &response,
-                "external verifier failed internally",
-            ),
+            reason: response_detail_or_default(&response, "external verifier failed internally"),
         }),
     }
 }
@@ -11990,8 +12481,7 @@ fn verify_fixture_intel_client_request(
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
                 "tee attestation target '{}' requires {} handoff",
-                input.attestation_target,
-                expected.verifier_kind
+                input.attestation_target, expected.verifier_kind
             ),
         }),
     }
@@ -12073,8 +12563,7 @@ fn verify_fixture_amd_client_request(
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
                 "tee attestation target '{}' requires {} handoff",
-                input.attestation_target,
-                expected.verifier_kind
+                input.attestation_target, expected.verifier_kind
             ),
         }),
     }
@@ -12102,7 +12591,9 @@ impl HttpBackedIntelQuoteVerifierClient {
         Self {
             transport,
             retry_executor,
-            profile_resolver: Arc::new(RegistryBackedVerifierProfileResolver::with_builtin_defaults()),
+            profile_resolver: Arc::new(
+                RegistryBackedVerifierProfileResolver::with_builtin_defaults(),
+            ),
             auth_injector: Arc::new(HeaderVerifierAuthInjector),
         }
     }
@@ -12130,14 +12621,16 @@ impl IntelQuoteVerifierClient for HttpBackedIntelQuoteVerifierClient {
         request_input: &IntelQuoteVerifierClientRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
-        let profile = self.profile_resolver.resolve(&request_input.transport, request)?;
+        let profile = self
+            .profile_resolver
+            .resolve(&request_input.transport, request)?;
         let mut headers = build_http_headers(&profile, &request_input.call_metadata);
         self.auth_injector
             .inject(&request_input.transport, &mut headers, request)?;
         let http_request = build_intel_quote_http_request(request_input, &profile, headers)?;
-        let execution = self
-            .retry_executor
-            .execute(self.transport.as_ref(), &http_request, request)?;
+        let execution =
+            self.retry_executor
+                .execute(self.transport.as_ref(), &http_request, request)?;
         decode_http_verifier_response(&execution.response, request)
     }
 }
@@ -12164,7 +12657,9 @@ impl HttpBackedAmdReportVerifierClient {
         Self {
             transport,
             retry_executor,
-            profile_resolver: Arc::new(RegistryBackedVerifierProfileResolver::with_builtin_defaults()),
+            profile_resolver: Arc::new(
+                RegistryBackedVerifierProfileResolver::with_builtin_defaults(),
+            ),
             auth_injector: Arc::new(HeaderVerifierAuthInjector),
         }
     }
@@ -12192,14 +12687,16 @@ impl AmdReportVerifierClient for HttpBackedAmdReportVerifierClient {
         request_input: &AmdReportVerifierClientRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
-        let profile = self.profile_resolver.resolve(&request_input.transport, request)?;
+        let profile = self
+            .profile_resolver
+            .resolve(&request_input.transport, request)?;
         let mut headers = build_http_headers(&profile, &request_input.call_metadata);
         self.auth_injector
             .inject(&request_input.transport, &mut headers, request)?;
         let http_request = build_amd_report_http_request(request_input, &profile, headers)?;
-        let execution = self
-            .retry_executor
-            .execute(self.transport.as_ref(), &http_request, request)?;
+        let execution =
+            self.retry_executor
+                .execute(self.transport.as_ref(), &http_request, request)?;
         decode_http_verifier_response(&execution.response, request)
     }
 }
@@ -12361,12 +12858,18 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
             quote: input.quote.clone(),
             intel_collateral: input.intel_collateral.clone(),
         };
-        let response = self.client.verify_intel_quote_request(&client_request, request)?;
+        let response = self
+            .client
+            .verify_intel_quote_request(&client_request, request)?;
         validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
         if let Some(event) = response.telemetry_event.clone() {
             self.telemetry_sink.emit(event);
         }
-        let mapped_event = build_mapped_telemetry_event(&client_request.call_metadata, &client_request.transport, &response);
+        let mapped_event = build_mapped_telemetry_event(
+            &client_request.call_metadata,
+            &client_request.transport,
+            &response,
+        );
         self.telemetry_sink.emit(mapped_event);
         map_mock_verifier_response(response, request)
     }
@@ -12433,12 +12936,18 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
             report: input.report.clone(),
             amd_signer: input.amd_signer.clone(),
         };
-        let response = self.client.verify_amd_report_request(&client_request, request)?;
+        let response = self
+            .client
+            .verify_amd_report_request(&client_request, request)?;
         validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
         if let Some(event) = response.telemetry_event.clone() {
             self.telemetry_sink.emit(event);
         }
-        let mapped_event = build_mapped_telemetry_event(&client_request.call_metadata, &client_request.transport, &response);
+        let mapped_event = build_mapped_telemetry_event(
+            &client_request.call_metadata,
+            &client_request.transport,
+            &response,
+        );
         self.telemetry_sink.emit(mapped_event);
         map_mock_verifier_response(response, request)
     }
@@ -12510,7 +13019,9 @@ impl Default for RealTeeBackend {
 
 impl RealTeeBackend {
     pub fn new() -> Self {
-        Self::with_executor(Arc::new(ProviderBackedVendorVerifierExecutor::fixture_backed()))
+        Self::with_executor(Arc::new(
+            ProviderBackedVendorVerifierExecutor::fixture_backed(),
+        ))
     }
 
     fn with_executor(executor: Arc<dyn VendorVerifierExecutor>) -> Self {
@@ -12758,12 +13269,18 @@ mod tests {
     #[test]
     fn env_transport_config_source_overrides_mock_defaults() {
         let mut vars = BTreeMap::new();
-        vars.insert("TRNM_TEE_INTEL_QUOTE_MODE".to_string(), "external".to_string());
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_MODE".to_string(),
+            "external".to_string(),
+        );
         vars.insert(
             "TRNM_TEE_INTEL_QUOTE_ENDPOINT_BASE".to_string(),
             "https://override.intel.example/v2/quote".to_string(),
         );
-        vars.insert("TRNM_TEE_INTEL_QUOTE_TIMEOUT_MS".to_string(), "7000".to_string());
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_TIMEOUT_MS".to_string(),
+            "7000".to_string(),
+        );
         vars.insert(
             "TRNM_TEE_INTEL_QUOTE_PROFILE".to_string(),
             "intel-dcap-override-profile".to_string(),
@@ -12786,10 +13303,16 @@ mod tests {
         );
         let intel = source.intel_quote_transport_config("sgx-dcap");
         assert_eq!(intel.mode, VerifierTransportMode::External);
-        assert_eq!(intel.endpoint, "https://override.intel.example/v2/quote/sgx-dcap");
+        assert_eq!(
+            intel.endpoint,
+            "https://override.intel.example/v2/quote/sgx-dcap"
+        );
         assert_eq!(intel.timeout_ms, 7_000);
         assert_eq!(intel.profile, "intel-dcap-override-profile");
-        assert_eq!(intel.auth_ref.as_deref(), Some("tee.intel.override-token.sgx-dcap"));
+        assert_eq!(
+            intel.auth_ref.as_deref(),
+            Some("tee.intel.override-token.sgx-dcap")
+        );
         assert_eq!(intel.retry_policy.max_attempts, 4);
         assert_eq!(intel.retry_policy.backoff_ms, 900);
         assert_eq!(intel.retry_policy.strategy, RetryBackoffStrategy::Fixed);
@@ -12800,22 +13323,37 @@ mod tests {
         let source = StaticVerifierTransportConfigSource::external_defaults();
         let intel = source.intel_quote_transport_config("sgx-dcap");
         assert_eq!(intel.mode, VerifierTransportMode::External);
-        assert_eq!(intel.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+        assert_eq!(
+            intel.endpoint,
+            "https://intel-verifier.invalid/v1/quote/sgx-dcap"
+        );
         assert_eq!(intel.timeout_ms, 5_000);
         assert_eq!(intel.profile, "intel-dcap-external-default");
         assert_eq!(intel.auth_scheme.as_deref(), Some("bearer"));
-        assert_eq!(intel.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
+        assert_eq!(
+            intel.auth_ref.as_deref(),
+            Some("tee.intel.external-token.sgx-dcap")
+        );
         assert_eq!(intel.retry_policy.max_attempts, 3);
         assert_eq!(intel.retry_policy.backoff_ms, 250);
-        assert_eq!(intel.retry_policy.strategy, RetryBackoffStrategy::Exponential);
+        assert_eq!(
+            intel.retry_policy.strategy,
+            RetryBackoffStrategy::Exponential
+        );
 
         let amd = source.amd_report_transport_config("sev-snp");
         assert_eq!(amd.mode, VerifierTransportMode::External);
-        assert_eq!(amd.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
+        assert_eq!(
+            amd.endpoint,
+            "https://amd-verifier.invalid/v1/report/sev-snp"
+        );
         assert_eq!(amd.timeout_ms, 5_000);
         assert_eq!(amd.profile, "amd-sev-snp-external-default");
         assert_eq!(amd.auth_scheme.as_deref(), Some("bearer"));
-        assert_eq!(amd.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
+        assert_eq!(
+            amd.auth_ref.as_deref(),
+            Some("tee.amd.external-token.sev-snp")
+        );
         assert_eq!(amd.retry_policy.max_attempts, 3);
         assert_eq!(amd.retry_policy.backoff_ms, 250);
         assert_eq!(amd.retry_policy.strategy, RetryBackoffStrategy::Exponential);
@@ -12850,7 +13388,10 @@ mod tests {
             })
             .unwrap();
         let entry = registry.resolve("intel-dcap-external-default").unwrap();
-        assert_eq!(entry.endpoint_prefix, "https://override.intel.example/v9/quote/");
+        assert_eq!(
+            entry.endpoint_prefix,
+            "https://override.intel.example/v9/quote/"
+        );
         assert!(entry.auth_required);
     }
 
@@ -12904,7 +13445,10 @@ mod tests {
             .unwrap();
         let _ = std::fs::remove_file(&path);
         let entry = registry.resolve("intel-dcap-external-default").unwrap();
-        assert_eq!(entry.endpoint_prefix, "https://file.intel.example/v4/quote/");
+        assert_eq!(
+            entry.endpoint_prefix,
+            "https://file.intel.example/v4/quote/"
+        );
     }
 
     #[test]
@@ -12950,7 +13494,10 @@ mod tests {
             .unwrap();
         let _ = std::fs::remove_file(&path);
         let entry = registry.resolve("intel-dcap-external-default").unwrap();
-        assert_eq!(entry.endpoint_prefix, "https://json.intel.example/v5/quote/");
+        assert_eq!(
+            entry.endpoint_prefix,
+            "https://json.intel.example/v5/quote/"
+        );
     }
 
     #[test]
@@ -13002,7 +13549,9 @@ mod tests {
             },
         )
         .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("invalid verifier response payload")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("invalid verifier response payload"))
+        );
     }
 
     struct PanicIntelQuoteClient;
@@ -13066,13 +13615,35 @@ mod tests {
             assert_eq!(http_request.method, HttpMethod::Post);
             assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
             assert_eq!(http_request.profile, "intel-dcap-external-default");
-            assert_eq!(http_request.url, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+            assert_eq!(
+                http_request.url,
+                "https://intel-verifier.invalid/v1/quote/sgx-dcap"
+            );
             assert_eq!(http_request.timeout_ms, 5_000);
-            assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
-            assert_eq!(http_request.headers.get("x-request-id").map(String::as_str), Some("tee:quote-verifier:sgx-dcap:task-42:attempt-1"));
-            assert_eq!(http_request.headers.get("x-transport-profile").map(String::as_str), Some("intel-dcap-external-default"));
-            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.intel.external-token.sgx-dcap"));
-            let payload: IntelQuoteVerifierHttpPayload = serde_json::from_str(&http_request.body).unwrap();
+            assert_eq!(
+                http_request.headers.get("content-type").map(String::as_str),
+                Some("application/json")
+            );
+            assert_eq!(
+                http_request.headers.get("x-request-id").map(String::as_str),
+                Some("tee:quote-verifier:sgx-dcap:task-42:attempt-1")
+            );
+            assert_eq!(
+                http_request
+                    .headers
+                    .get("x-transport-profile")
+                    .map(String::as_str),
+                Some("intel-dcap-external-default")
+            );
+            assert_eq!(
+                http_request
+                    .headers
+                    .get("authorization")
+                    .map(String::as_str),
+                Some("bearer tee.intel.external-token.sgx-dcap")
+            );
+            let payload: IntelQuoteVerifierHttpPayload =
+                serde_json::from_str(&http_request.body).unwrap();
             assert_eq!(payload.attestation_target, "sgx-dcap");
             assert_eq!(payload.measurement_field, "mrenclave");
             assert_eq!(payload.measurement, "mrenclave:demo-sgx-v1");
@@ -13111,13 +13682,35 @@ mod tests {
             assert_eq!(http_request.method, HttpMethod::Post);
             assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
             assert_eq!(http_request.profile, "amd-sev-snp-external-default");
-            assert_eq!(http_request.url, "https://amd-verifier.invalid/v1/report/sev-snp");
+            assert_eq!(
+                http_request.url,
+                "https://amd-verifier.invalid/v1/report/sev-snp"
+            );
             assert_eq!(http_request.timeout_ms, 5_000);
-            assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
-            assert_eq!(http_request.headers.get("x-request-id").map(String::as_str), Some("tee:report-verifier:sev-snp:task-42:attempt-1"));
-            assert_eq!(http_request.headers.get("x-transport-profile").map(String::as_str), Some("amd-sev-snp-external-default"));
-            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.amd.external-token.sev-snp"));
-            let payload: AmdReportVerifierHttpPayload = serde_json::from_str(&http_request.body).unwrap();
+            assert_eq!(
+                http_request.headers.get("content-type").map(String::as_str),
+                Some("application/json")
+            );
+            assert_eq!(
+                http_request.headers.get("x-request-id").map(String::as_str),
+                Some("tee:report-verifier:sev-snp:task-42:attempt-1")
+            );
+            assert_eq!(
+                http_request
+                    .headers
+                    .get("x-transport-profile")
+                    .map(String::as_str),
+                Some("amd-sev-snp-external-default")
+            );
+            assert_eq!(
+                http_request
+                    .headers
+                    .get("authorization")
+                    .map(String::as_str),
+                Some("bearer tee.amd.external-token.sev-snp")
+            );
+            let payload: AmdReportVerifierHttpPayload =
+                serde_json::from_str(&http_request.body).unwrap();
             assert_eq!(payload.attestation_target, "sev-snp");
             assert_eq!(payload.measurement_field, "measurement");
             assert_eq!(payload.measurement, "measurement:demo-snp-v1");
@@ -13252,7 +13845,13 @@ mod tests {
             self.urls.lock().unwrap().push(http_request.url.clone());
             assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
             assert_eq!(http_request.profile, "intel-dcap-external-default");
-            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.intel.external-token.sgx-dcap"));
+            assert_eq!(
+                http_request
+                    .headers
+                    .get("authorization")
+                    .map(String::as_str),
+                Some("bearer tee.intel.external-token.sgx-dcap")
+            );
             Ok(RawHttpVerifierResponse {
                 status_code: 200,
                 headers: BTreeMap::new(),
@@ -13485,7 +14084,10 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(runtime_response.clone());
+            self.responses
+                .lock()
+                .unwrap()
+                .push(runtime_response.clone());
             Ok(RawHttpVerifierResponse {
                 status_code: runtime_response.status_code,
                 headers: runtime_response.headers,
@@ -13515,11 +14117,25 @@ mod tests {
     #[derive(Default)]
     struct RecordingHttpClientSessionFactory {
         opened: Mutex<Vec<ResolvedVerifierHttpClientSessionConfig>>,
-        executed: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionConfig, VerifierHttpClientRuntimeRequest)>>>,
+        executed: Arc<
+            Mutex<
+                Vec<(
+                    ResolvedVerifierHttpClientSessionConfig,
+                    VerifierHttpClientRuntimeRequest,
+                )>,
+            >,
+        >,
     }
 
     struct RecordingHttpClientSession {
-        executed: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionConfig, VerifierHttpClientRuntimeRequest)>>>,
+        executed: Arc<
+            Mutex<
+                Vec<(
+                    ResolvedVerifierHttpClientSessionConfig,
+                    VerifierHttpClientRuntimeRequest,
+                )>,
+            >,
+        >,
     }
 
     impl VerifierHttpClientSessionFactory for RecordingHttpClientSessionFactory {
@@ -13602,7 +14218,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolBytesRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolBytesEncoder for RecordingHttpClientSessionProtocolBytesEncoder {
+    impl VerifierHttpClientSessionProtocolBytesEncoder
+        for RecordingHttpClientSessionProtocolBytesEncoder
+    {
         fn encode_bytes_request(
             &self,
             protocol_request: &VerifierHttpClientSessionProtocolRequest,
@@ -13639,7 +14257,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolBytesRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolBytesTransportExchange for RecordingHttpClientSessionProtocolBytesTransportExchange {
+    impl VerifierHttpClientSessionProtocolBytesTransportExchange
+        for RecordingHttpClientSessionProtocolBytesTransportExchange
+    {
         fn exchange_bytes(
             &self,
             bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
@@ -13657,10 +14277,14 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(bytes_request.clone());
             assert_eq!(bytes_request.profile, connection_config.profile);
-            assert_eq!(bytes_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                bytes_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(bytes_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolEnvelopeResponse {
                 status_code: 218,
@@ -13675,7 +14299,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolEnvelopeResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolEnvelopeParser for RecordingHttpClientSessionProtocolEnvelopeParser {
+    impl VerifierHttpClientSessionProtocolEnvelopeParser
+        for RecordingHttpClientSessionProtocolEnvelopeParser
+    {
         fn parse_envelope_response(
             &self,
             envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
@@ -13694,7 +14320,10 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(envelope_response.clone());
+            self.responses
+                .lock()
+                .unwrap()
+                .push(envelope_response.clone());
             Ok(VerifierHttpClientSessionProtocolResponse {
                 status_code: envelope_response.status_code,
                 headers: envelope_response.headers,
@@ -13705,7 +14334,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolBytesTransportExchange;
 
-    impl VerifierHttpClientSessionProtocolBytesTransportExchange for RejectingHttpClientSessionProtocolBytesTransportExchange {
+    impl VerifierHttpClientSessionProtocolBytesTransportExchange
+        for RejectingHttpClientSessionProtocolBytesTransportExchange
+    {
         fn exchange_bytes(
             &self,
             _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
@@ -13723,17 +14354,21 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: "client session protocol bytes transport exchange rejected protocol bytes".into(),
+                reason: "client session protocol bytes transport exchange rejected protocol bytes"
+                    .into(),
             })
         }
     }
 
     struct PanicHttpClientSessionProtocolEnvelopeParser;
 
-    impl VerifierHttpClientSessionProtocolEnvelopeParser for PanicHttpClientSessionProtocolEnvelopeParser {
+    impl VerifierHttpClientSessionProtocolEnvelopeParser
+        for PanicHttpClientSessionProtocolEnvelopeParser
+    {
         fn parse_envelope_response(
             &self,
             _envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
@@ -13752,7 +14387,9 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
-            panic!("protocol envelope parser should not be called when bytes transport exchange fails")
+            panic!(
+                "protocol envelope parser should not be called when bytes transport exchange fails"
+            )
         }
     }
 
@@ -13761,7 +14398,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolByteStreamFrameRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolByteStreamFramer for RecordingHttpClientSessionProtocolByteStreamFramer {
+    impl VerifierHttpClientSessionProtocolByteStreamFramer
+        for RecordingHttpClientSessionProtocolByteStreamFramer
+    {
         fn frame_bytes_request(
             &self,
             bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
@@ -13779,7 +14418,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameRequest, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameRequest, BackendExecutionError>
+        {
             let framed = VerifierHttpClientSessionProtocolByteStreamFrameRequest {
                 method: bytes_request.method,
                 url: bytes_request.url.clone(),
@@ -13799,7 +14439,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolByteStreamFrameRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolByteStreamExchange for RecordingHttpClientSessionProtocolByteStreamExchange {
+    impl VerifierHttpClientSessionProtocolByteStreamExchange
+        for RecordingHttpClientSessionProtocolByteStreamExchange
+    {
         fn exchange_framed_bytes(
             &self,
             framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
@@ -13818,10 +14460,14 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(framed_request.clone());
             assert_eq!(framed_request.profile, connection_config.profile);
-            assert_eq!(framed_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                framed_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(framed_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolByteStreamFrameResponse {
                 status_code: 219,
@@ -13836,7 +14482,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolByteStreamFrameResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolEnvelopeNormalizer for RecordingHttpClientSessionProtocolEnvelopeNormalizer {
+    impl VerifierHttpClientSessionProtocolEnvelopeNormalizer
+        for RecordingHttpClientSessionProtocolEnvelopeNormalizer
+    {
         fn normalize_envelope(
             &self,
             framed_response: VerifierHttpClientSessionProtocolByteStreamFrameResponse,
@@ -13855,7 +14503,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError>
+        {
             self.responses.lock().unwrap().push(framed_response.clone());
             Ok(VerifierHttpClientSessionProtocolEnvelopeResponse {
                 status_code: framed_response.status_code,
@@ -13867,7 +14516,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolByteStreamExchange;
 
-    impl VerifierHttpClientSessionProtocolByteStreamExchange for RejectingHttpClientSessionProtocolByteStreamExchange {
+    impl VerifierHttpClientSessionProtocolByteStreamExchange
+        for RejectingHttpClientSessionProtocolByteStreamExchange
+    {
         fn exchange_framed_bytes(
             &self,
             _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
@@ -13886,7 +14537,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol byte stream exchange rejected framed bytes".into(),
@@ -13896,7 +14548,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolEnvelopeNormalizer;
 
-    impl VerifierHttpClientSessionProtocolEnvelopeNormalizer for PanicHttpClientSessionProtocolEnvelopeNormalizer {
+    impl VerifierHttpClientSessionProtocolEnvelopeNormalizer
+        for PanicHttpClientSessionProtocolEnvelopeNormalizer
+    {
         fn normalize_envelope(
             &self,
             _framed_response: VerifierHttpClientSessionProtocolByteStreamFrameResponse,
@@ -13915,8 +14569,11 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
-            panic!("protocol envelope normalizer should not be called when byte stream exchange fails")
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError>
+        {
+            panic!(
+                "protocol envelope normalizer should not be called when byte stream exchange fails"
+            )
         }
     }
 
@@ -13925,7 +14582,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolByteChunksRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolByteStreamChunker for RecordingHttpClientSessionProtocolByteStreamChunker {
+    impl VerifierHttpClientSessionProtocolByteStreamChunker
+        for RecordingHttpClientSessionProtocolByteStreamChunker
+    {
         fn chunk_request(
             &self,
             framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
@@ -13944,7 +14603,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteChunksRequest, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteChunksRequest, BackendExecutionError>
+        {
             let chunked = VerifierHttpClientSessionProtocolByteChunksRequest {
                 method: framed_request.method,
                 url: framed_request.url.clone(),
@@ -13964,7 +14624,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolByteChunksRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTransportExchange for RecordingHttpClientSessionProtocolChunkTransportExchange {
+    impl VerifierHttpClientSessionProtocolChunkTransportExchange
+        for RecordingHttpClientSessionProtocolChunkTransportExchange
+    {
         fn exchange_chunks(
             &self,
             chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
@@ -13984,10 +14646,14 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(chunked_request.clone());
             assert_eq!(chunked_request.profile, connection_config.profile);
-            assert_eq!(chunked_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                chunked_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(chunked_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolByteChunksResponse {
                 status_code: 220,
@@ -14002,7 +14668,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolByteChunksResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolByteStreamAssembler for RecordingHttpClientSessionProtocolByteStreamAssembler {
+    impl VerifierHttpClientSessionProtocolByteStreamAssembler
+        for RecordingHttpClientSessionProtocolByteStreamAssembler
+    {
         fn assemble_response(
             &self,
             chunked_response: VerifierHttpClientSessionProtocolByteChunksResponse,
@@ -14022,8 +14690,12 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(chunked_response.clone());
+        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+        {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(chunked_response.clone());
             Ok(VerifierHttpClientSessionProtocolByteStreamFrameResponse {
                 status_code: chunked_response.status_code,
                 headers: chunked_response.headers,
@@ -14034,7 +14706,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolChunkTransportExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTransportExchange for RejectingHttpClientSessionProtocolChunkTransportExchange {
+    impl VerifierHttpClientSessionProtocolChunkTransportExchange
+        for RejectingHttpClientSessionProtocolChunkTransportExchange
+    {
         fn exchange_chunks(
             &self,
             _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
@@ -14054,17 +14728,21 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: "client session protocol chunk transport exchange rejected chunked request".into(),
+                reason: "client session protocol chunk transport exchange rejected chunked request"
+                    .into(),
             })
         }
     }
 
     struct PanicHttpClientSessionProtocolByteStreamAssembler;
 
-    impl VerifierHttpClientSessionProtocolByteStreamAssembler for PanicHttpClientSessionProtocolByteStreamAssembler {
+    impl VerifierHttpClientSessionProtocolByteStreamAssembler
+        for PanicHttpClientSessionProtocolByteStreamAssembler
+    {
         fn assemble_response(
             &self,
             _chunked_response: VerifierHttpClientSessionProtocolByteChunksResponse,
@@ -14084,7 +14762,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteStreamFrameResponse, BackendExecutionError>
+        {
             panic!("byte stream assembler should not be called when chunk transport exchange fails")
         }
     }
@@ -14094,7 +14773,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkFramesRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkFramingPolicy for RecordingHttpClientSessionProtocolChunkFramingPolicy {
+    impl VerifierHttpClientSessionProtocolChunkFramingPolicy
+        for RecordingHttpClientSessionProtocolChunkFramingPolicy
+    {
         fn frame_chunks(
             &self,
             chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
@@ -14114,7 +14795,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesRequest, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesRequest, BackendExecutionError>
+        {
             let framed = VerifierHttpClientSessionProtocolChunkFramesRequest {
                 method: chunked_request.method,
                 url: chunked_request.url.clone(),
@@ -14134,7 +14816,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkFramesRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkFrameExchange for RecordingHttpClientSessionProtocolChunkFrameExchange {
+    impl VerifierHttpClientSessionProtocolChunkFrameExchange
+        for RecordingHttpClientSessionProtocolChunkFrameExchange
+    {
         fn exchange_chunk_frames(
             &self,
             frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
@@ -14155,10 +14839,14 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(frames_request.clone());
             assert_eq!(frames_request.profile, connection_config.profile);
-            assert_eq!(frames_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                frames_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(frames_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolChunkFramesResponse {
                 status_code: 221,
@@ -14173,7 +14861,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkFramesResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolStreamReassemblyValidator for RecordingHttpClientSessionProtocolStreamReassemblyValidator {
+    impl VerifierHttpClientSessionProtocolStreamReassemblyValidator
+        for RecordingHttpClientSessionProtocolStreamReassemblyValidator
+    {
         fn validate_and_reassemble(
             &self,
             frames_response: VerifierHttpClientSessionProtocolChunkFramesResponse,
@@ -14194,7 +14884,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError>
+        {
             self.responses.lock().unwrap().push(frames_response.clone());
             Ok(VerifierHttpClientSessionProtocolByteChunksResponse {
                 status_code: frames_response.status_code,
@@ -14206,7 +14897,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolChunkFrameExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkFrameExchange for RejectingHttpClientSessionProtocolChunkFrameExchange {
+    impl VerifierHttpClientSessionProtocolChunkFrameExchange
+        for RejectingHttpClientSessionProtocolChunkFrameExchange
+    {
         fn exchange_chunk_frames(
             &self,
             _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
@@ -14227,17 +14920,21 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: "client session protocol chunk frame exchange rejected framed chunks".into(),
+                reason: "client session protocol chunk frame exchange rejected framed chunks"
+                    .into(),
             })
         }
     }
 
     struct PanicHttpClientSessionProtocolStreamReassemblyValidator;
 
-    impl VerifierHttpClientSessionProtocolStreamReassemblyValidator for PanicHttpClientSessionProtocolStreamReassemblyValidator {
+    impl VerifierHttpClientSessionProtocolStreamReassemblyValidator
+        for PanicHttpClientSessionProtocolStreamReassemblyValidator
+    {
         fn validate_and_reassemble(
             &self,
             _frames_response: VerifierHttpClientSessionProtocolChunkFramesResponse,
@@ -14258,8 +14955,11 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError> {
-            panic!("stream reassembly validator should not be called when chunk frame exchange fails")
+        ) -> Result<VerifierHttpClientSessionProtocolByteChunksResponse, BackendExecutionError>
+        {
+            panic!(
+                "stream reassembly validator should not be called when chunk frame exchange fails"
+            )
         }
     }
 
@@ -14268,7 +14968,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkSequenceWindowRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkSequenceWindowPlanner for RecordingHttpClientSessionProtocolChunkSequenceWindowPlanner {
+    impl VerifierHttpClientSessionProtocolChunkSequenceWindowPlanner
+        for RecordingHttpClientSessionProtocolChunkSequenceWindowPlanner
+    {
         fn plan_sequence_window(
             &self,
             frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
@@ -14289,7 +14991,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            BackendExecutionError,
+        > {
             let windowed = VerifierHttpClientSessionProtocolChunkSequenceWindowRequest {
                 method: frames_request.method,
                 url: frames_request.url.clone(),
@@ -14311,7 +15016,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkSequenceWindowRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkSequenceWindowExchange for RecordingHttpClientSessionProtocolChunkSequenceWindowExchange {
+    impl VerifierHttpClientSessionProtocolChunkSequenceWindowExchange
+        for RecordingHttpClientSessionProtocolChunkSequenceWindowExchange
+    {
         fn exchange_sequence_window(
             &self,
             window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
@@ -14333,18 +15040,26 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(window_request.clone());
             assert_eq!(window_request.profile, connection_config.profile);
-            assert_eq!(window_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                window_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(window_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
-                status_code: 222,
-                headers: BTreeMap::from([("x-window".to_string(), "ok".to_string())]),
-                frames: vec![b"windowed-".to_vec(), b"frames-ok".to_vec()],
-                window_start_sequence: window_request.window_start_sequence,
-                window_frame_count: window_request.window_frame_count,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
+                    status_code: 222,
+                    headers: BTreeMap::from([("x-window".to_string(), "ok".to_string())]),
+                    frames: vec![b"windowed-".to_vec(), b"frames-ok".to_vec()],
+                    window_start_sequence: window_request.window_start_sequence,
+                    window_frame_count: window_request.window_frame_count,
+                },
+            )
         }
     }
 
@@ -14353,7 +15068,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkIntegrityValidator for RecordingHttpClientSessionProtocolChunkIntegrityValidator {
+    impl VerifierHttpClientSessionProtocolChunkIntegrityValidator
+        for RecordingHttpClientSessionProtocolChunkIntegrityValidator
+    {
         fn validate_chunk_integrity(
             &self,
             window_response: VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
@@ -14375,7 +15092,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError>
+        {
             self.responses.lock().unwrap().push(window_response.clone());
             Ok(VerifierHttpClientSessionProtocolChunkFramesResponse {
                 status_code: window_response.status_code,
@@ -14387,7 +15105,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolChunkSequenceWindowExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkSequenceWindowExchange for RejectingHttpClientSessionProtocolChunkSequenceWindowExchange {
+    impl VerifierHttpClientSessionProtocolChunkSequenceWindowExchange
+        for RejectingHttpClientSessionProtocolChunkSequenceWindowExchange
+    {
         fn exchange_sequence_window(
             &self,
             _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
@@ -14409,7 +15129,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk sequence window exchange rejected windowed frames".into(),
@@ -14419,7 +15142,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkIntegrityValidator;
 
-    impl VerifierHttpClientSessionProtocolChunkIntegrityValidator for PanicHttpClientSessionProtocolChunkIntegrityValidator {
+    impl VerifierHttpClientSessionProtocolChunkIntegrityValidator
+        for PanicHttpClientSessionProtocolChunkIntegrityValidator
+    {
         fn validate_chunk_integrity(
             &self,
             _window_response: VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
@@ -14441,7 +15166,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkFramesResponse, BackendExecutionError>
+        {
             panic!("chunk integrity validator should not be called when sequence window exchange fails")
         }
     }
@@ -14451,7 +15177,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkAckPolicy for RecordingHttpClientSessionProtocolChunkAckPolicy {
+    impl VerifierHttpClientSessionProtocolChunkAckPolicy
+        for RecordingHttpClientSessionProtocolChunkAckPolicy
+    {
         fn plan_ack_request(
             &self,
             window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
@@ -14473,7 +15201,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckRequest, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckRequest, BackendExecutionError>
+        {
             let ack = VerifierHttpClientSessionProtocolChunkAckRequest {
                 method: window_request.method,
                 url: window_request.url.clone(),
@@ -14497,7 +15226,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitExchange for RecordingHttpClientSessionProtocolChunkRetransmitExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitExchange
+        for RecordingHttpClientSessionProtocolChunkRetransmitExchange
+    {
         fn exchange_retransmit(
             &self,
             ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
@@ -14520,7 +15251,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(ack_request.clone());
             assert_eq!(ack_request.profile, connection_config.profile);
             assert_eq!(ack_request.transport_mode, connection_config.transport_mode);
@@ -14542,7 +15274,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkAckValidator for RecordingHttpClientSessionProtocolChunkAckValidator {
+    impl VerifierHttpClientSessionProtocolChunkAckValidator
+        for RecordingHttpClientSessionProtocolChunkAckValidator
+    {
         fn validate_ack_response(
             &self,
             ack_response: VerifierHttpClientSessionProtocolChunkAckResponse,
@@ -14566,21 +15300,28 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(ack_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
-                status_code: ack_response.status_code,
-                headers: ack_response.headers,
-                frames: ack_response.frames,
-                window_start_sequence: ack_response.window_start_sequence,
-                window_frame_count: ack_response.window_frame_count,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkSequenceWindowResponse {
+                    status_code: ack_response.status_code,
+                    headers: ack_response.headers,
+                    frames: ack_response.frames,
+                    window_start_sequence: ack_response.window_start_sequence,
+                    window_frame_count: ack_response.window_frame_count,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkRetransmitExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitExchange for RejectingHttpClientSessionProtocolChunkRetransmitExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitExchange
+        for RejectingHttpClientSessionProtocolChunkRetransmitExchange
+    {
         fn exchange_retransmit(
             &self,
             _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
@@ -14603,17 +15344,21 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: "client session protocol chunk retransmit exchange rejected acked window".into(),
+                reason: "client session protocol chunk retransmit exchange rejected acked window"
+                    .into(),
             })
         }
     }
 
     struct PanicHttpClientSessionProtocolChunkAckValidator;
 
-    impl VerifierHttpClientSessionProtocolChunkAckValidator for PanicHttpClientSessionProtocolChunkAckValidator {
+    impl VerifierHttpClientSessionProtocolChunkAckValidator
+        for PanicHttpClientSessionProtocolChunkAckValidator
+    {
         fn validate_ack_response(
             &self,
             _ack_response: VerifierHttpClientSessionProtocolChunkAckResponse,
@@ -14637,7 +15382,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkSequenceWindowResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkSequenceWindowResponse,
+            BackendExecutionError,
+        > {
             panic!("chunk ack validator should not be called when retransmit exchange fails")
         }
     }
@@ -14647,7 +15395,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner for RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner
+        for RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner
+    {
         fn plan_retransmit_budget(
             &self,
             ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
@@ -14670,7 +15420,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+            BackendExecutionError,
+        > {
             let budget = VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
                 method: ack_request.method,
                 url: ack_request.url.clone(),
@@ -14694,7 +15447,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange for RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
+        for RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange
+    {
         fn exchange_retransmit_budget(
             &self,
             budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
@@ -14718,21 +15473,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(budget_request.clone());
             assert_eq!(budget_request.profile, connection_config.profile);
-            assert_eq!(budget_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                budget_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(budget_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
-                status_code: 224,
-                headers: BTreeMap::from([("x-budget".to_string(), "ok".to_string())]),
-                frames: vec![b"settled-".to_vec(), b"ack-ok".to_vec()],
-                window_start_sequence: budget_request.window_start_sequence,
-                window_frame_count: budget_request.window_frame_count,
-                acked_through_sequence: budget_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: budget_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
+                    status_code: 224,
+                    headers: BTreeMap::from([("x-budget".to_string(), "ok".to_string())]),
+                    frames: vec![b"settled-".to_vec(), b"ack-ok".to_vec()],
+                    window_start_sequence: budget_request.window_start_sequence,
+                    window_frame_count: budget_request.window_frame_count,
+                    acked_through_sequence: budget_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: budget_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -14741,7 +15504,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator for RecordingHttpClientSessionProtocolChunkAckSettlementValidator {
+    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator
+        for RecordingHttpClientSessionProtocolChunkAckSettlementValidator
+    {
         fn validate_ack_settlement(
             &self,
             budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
@@ -14766,7 +15531,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError>
+        {
             self.responses.lock().unwrap().push(budget_response.clone());
             Ok(VerifierHttpClientSessionProtocolChunkAckResponse {
                 status_code: budget_response.status_code,
@@ -14782,7 +15548,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange for RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
+        for RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange
+    {
         fn exchange_retransmit_budget(
             &self,
             _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
@@ -14806,7 +15574,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk retransmit budget exchange rejected retransmit budget".into(),
@@ -14816,7 +15587,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkAckSettlementValidator;
 
-    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator for PanicHttpClientSessionProtocolChunkAckSettlementValidator {
+    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator
+        for PanicHttpClientSessionProtocolChunkAckSettlementValidator
+    {
         fn validate_ack_settlement(
             &self,
             _budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
@@ -14841,7 +15614,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError>
+        {
             panic!("chunk ack settlement validator should not be called when retransmit budget exchange fails")
         }
     }
@@ -14851,7 +15625,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckConvergenceRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkAckConvergencePlanner for RecordingHttpClientSessionProtocolChunkAckConvergencePlanner {
+    impl VerifierHttpClientSessionProtocolChunkAckConvergencePlanner
+        for RecordingHttpClientSessionProtocolChunkAckConvergencePlanner
+    {
         fn plan_ack_convergence(
             &self,
             budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
@@ -14875,7 +15651,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
+            BackendExecutionError,
+        > {
             let convergence = VerifierHttpClientSessionProtocolChunkAckConvergenceRequest {
                 method: budget_request.method,
                 url: budget_request.url.clone(),
@@ -14899,7 +15678,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckConvergenceRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange for RecordingHttpClientSessionProtocolChunkRetransmitTerminationExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange
+        for RecordingHttpClientSessionProtocolChunkRetransmitTerminationExchange
+    {
         fn exchange_retransmit_termination(
             &self,
             convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
@@ -14924,21 +15705,32 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
-            self.requests.lock().unwrap().push(convergence_request.clone());
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
+            BackendExecutionError,
+        > {
+            self.requests
+                .lock()
+                .unwrap()
+                .push(convergence_request.clone());
             assert_eq!(convergence_request.profile, connection_config.profile);
-            assert_eq!(convergence_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                convergence_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(convergence_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
-                status_code: 225,
-                headers: BTreeMap::from([("x-convergence".to_string(), "ok".to_string())]),
-                frames: vec![b"terminated-".to_vec(), b"acks-ok".to_vec()],
-                window_start_sequence: convergence_request.window_start_sequence,
-                window_frame_count: convergence_request.window_frame_count,
-                acked_through_sequence: convergence_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: convergence_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
+                    status_code: 225,
+                    headers: BTreeMap::from([("x-convergence".to_string(), "ok".to_string())]),
+                    frames: vec![b"terminated-".to_vec(), b"acks-ok".to_vec()],
+                    window_start_sequence: convergence_request.window_start_sequence,
+                    window_frame_count: convergence_request.window_frame_count,
+                    acked_through_sequence: convergence_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: convergence_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -14947,7 +15739,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationValidator for RecordingHttpClientSessionProtocolChunkTerminationValidator {
+    impl VerifierHttpClientSessionProtocolChunkTerminationValidator
+        for RecordingHttpClientSessionProtocolChunkTerminationValidator
+    {
         fn validate_termination(
             &self,
             convergence_response: VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
@@ -14973,24 +15767,34 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(convergence_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
-                status_code: convergence_response.status_code,
-                headers: convergence_response.headers,
-                frames: convergence_response.frames,
-                window_start_sequence: convergence_response.window_start_sequence,
-                window_frame_count: convergence_response.window_frame_count,
-                acked_through_sequence: convergence_response.acked_through_sequence,
-                retransmit_count: convergence_response.retransmit_count,
-                budget_remaining: convergence_response.budget_remaining,
-            })
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(convergence_response.clone());
+            Ok(
+                VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
+                    status_code: convergence_response.status_code,
+                    headers: convergence_response.headers,
+                    frames: convergence_response.frames,
+                    window_start_sequence: convergence_response.window_start_sequence,
+                    window_frame_count: convergence_response.window_frame_count,
+                    acked_through_sequence: convergence_response.acked_through_sequence,
+                    retransmit_count: convergence_response.retransmit_count,
+                    budget_remaining: convergence_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkRetransmitTerminationExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange for RejectingHttpClientSessionProtocolChunkRetransmitTerminationExchange {
+    impl VerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange
+        for RejectingHttpClientSessionProtocolChunkRetransmitTerminationExchange
+    {
         fn exchange_retransmit_termination(
             &self,
             _convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
@@ -15015,7 +15819,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk retransmit termination exchange rejected converged ack budget".into(),
@@ -15025,7 +15832,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkTerminationValidator;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationValidator for PanicHttpClientSessionProtocolChunkTerminationValidator {
+    impl VerifierHttpClientSessionProtocolChunkTerminationValidator
+        for PanicHttpClientSessionProtocolChunkTerminationValidator
+    {
         fn validate_termination(
             &self,
             _convergence_response: VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
@@ -15051,7 +15860,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            BackendExecutionError,
+        > {
             panic!("chunk termination validator should not be called when retransmit termination exchange fails")
         }
     }
@@ -15061,7 +15873,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner for RecordingHttpClientSessionProtocolChunkTerminationOutcomePlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationOutcomePlanner
+    {
         fn plan_termination_outcome(
             &self,
             convergence_request: &VerifierHttpClientSessionProtocolChunkAckConvergenceRequest,
@@ -15086,7 +15900,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
+            BackendExecutionError,
+        > {
             let outcome = VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest {
                 method: convergence_request.method,
                 url: convergence_request.url.clone(),
@@ -15110,7 +15927,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange for RecordingHttpClientSessionProtocolChunkTerminationOutcomeExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationOutcomeExchange
+    {
         fn exchange_termination_outcome(
             &self,
             outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
@@ -15136,21 +15955,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(outcome_request.clone());
             assert_eq!(outcome_request.profile, connection_config.profile);
-            assert_eq!(outcome_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                outcome_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(outcome_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
-                status_code: 226,
-                headers: BTreeMap::from([("x-termination".to_string(), "ok".to_string())]),
-                frames: vec![b"projected-".to_vec(), b"settlement-ok".to_vec()],
-                window_start_sequence: outcome_request.window_start_sequence,
-                window_frame_count: outcome_request.window_frame_count,
-                acked_through_sequence: outcome_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: outcome_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
+                    status_code: 226,
+                    headers: BTreeMap::from([("x-termination".to_string(), "ok".to_string())]),
+                    frames: vec![b"projected-".to_vec(), b"settlement-ok".to_vec()],
+                    window_start_sequence: outcome_request.window_start_sequence,
+                    window_frame_count: outcome_request.window_frame_count,
+                    acked_through_sequence: outcome_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: outcome_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -15159,7 +15986,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkSettlementProjection for RecordingHttpClientSessionProtocolChunkSettlementProjection {
+    impl VerifierHttpClientSessionProtocolChunkSettlementProjection
+        for RecordingHttpClientSessionProtocolChunkSettlementProjection
+    {
         fn project_settlement(
             &self,
             outcome_response: VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
@@ -15186,24 +16015,34 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(outcome_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
-                status_code: outcome_response.status_code,
-                headers: outcome_response.headers,
-                frames: outcome_response.frames,
-                window_start_sequence: outcome_response.window_start_sequence,
-                window_frame_count: outcome_response.window_frame_count,
-                acked_through_sequence: outcome_response.acked_through_sequence,
-                retransmit_count: outcome_response.retransmit_count,
-                budget_remaining: outcome_response.budget_remaining,
-            })
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(outcome_response.clone());
+            Ok(
+                VerifierHttpClientSessionProtocolChunkAckConvergenceResponse {
+                    status_code: outcome_response.status_code,
+                    headers: outcome_response.headers,
+                    frames: outcome_response.frames,
+                    window_start_sequence: outcome_response.window_start_sequence,
+                    window_frame_count: outcome_response.window_frame_count,
+                    acked_through_sequence: outcome_response.acked_through_sequence,
+                    retransmit_count: outcome_response.retransmit_count,
+                    budget_remaining: outcome_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationOutcomeExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange for RejectingHttpClientSessionProtocolChunkTerminationOutcomeExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationOutcomeExchange
+    {
         fn exchange_termination_outcome(
             &self,
             _outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
@@ -15229,7 +16068,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination outcome exchange rejected termination outcome".into(),
@@ -15239,7 +16081,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkSettlementProjection;
 
-    impl VerifierHttpClientSessionProtocolChunkSettlementProjection for PanicHttpClientSessionProtocolChunkSettlementProjection {
+    impl VerifierHttpClientSessionProtocolChunkSettlementProjection
+        for PanicHttpClientSessionProtocolChunkSettlementProjection
+    {
         fn project_settlement(
             &self,
             _outcome_response: VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
@@ -15266,7 +16110,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkAckConvergenceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkAckConvergenceResponse,
+            BackendExecutionError,
+        > {
             panic!("settlement projection should not be called when termination outcome exchange fails")
         }
     }
@@ -15276,7 +16123,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner for RecordingHttpClientSessionProtocolChunkTerminationVerdictPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationVerdictPlanner
+    {
         fn plan_termination_verdict(
             &self,
             outcome_request: &VerifierHttpClientSessionProtocolChunkTerminationOutcomeRequest,
@@ -15302,7 +16151,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
+            BackendExecutionError,
+        > {
             let verdict = VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest {
                 method: outcome_request.method,
                 url: outcome_request.url.clone(),
@@ -15326,7 +16178,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange for RecordingHttpClientSessionProtocolChunkTerminationVerdictExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationVerdictExchange
+    {
         fn exchange_termination_verdict(
             &self,
             verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
@@ -15353,21 +16207,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(verdict_request.clone());
             assert_eq!(verdict_request.profile, connection_config.profile);
-            assert_eq!(verdict_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                verdict_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(verdict_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
-                status_code: 227,
-                headers: BTreeMap::from([("x-verdict".to_string(), "ok".to_string())]),
-                frames: vec![b"verdict-".to_vec(), b"materialized-ok".to_vec()],
-                window_start_sequence: verdict_request.window_start_sequence,
-                window_frame_count: verdict_request.window_frame_count,
-                acked_through_sequence: verdict_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: verdict_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
+                    status_code: 227,
+                    headers: BTreeMap::from([("x-verdict".to_string(), "ok".to_string())]),
+                    frames: vec![b"verdict-".to_vec(), b"materialized-ok".to_vec()],
+                    window_start_sequence: verdict_request.window_start_sequence,
+                    window_frame_count: verdict_request.window_frame_count,
+                    acked_through_sequence: verdict_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: verdict_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -15376,7 +16238,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkOutcomeMaterializer for RecordingHttpClientSessionProtocolChunkOutcomeMaterializer {
+    impl VerifierHttpClientSessionProtocolChunkOutcomeMaterializer
+        for RecordingHttpClientSessionProtocolChunkOutcomeMaterializer
+    {
         fn materialize_outcome(
             &self,
             verdict_response: VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
@@ -15404,24 +16268,34 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(verdict_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
-                status_code: verdict_response.status_code,
-                headers: verdict_response.headers,
-                frames: verdict_response.frames,
-                window_start_sequence: verdict_response.window_start_sequence,
-                window_frame_count: verdict_response.window_frame_count,
-                acked_through_sequence: verdict_response.acked_through_sequence,
-                retransmit_count: verdict_response.retransmit_count,
-                budget_remaining: verdict_response.budget_remaining,
-            })
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(verdict_response.clone());
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse {
+                    status_code: verdict_response.status_code,
+                    headers: verdict_response.headers,
+                    frames: verdict_response.frames,
+                    window_start_sequence: verdict_response.window_start_sequence,
+                    window_frame_count: verdict_response.window_frame_count,
+                    acked_through_sequence: verdict_response.acked_through_sequence,
+                    retransmit_count: verdict_response.retransmit_count,
+                    budget_remaining: verdict_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationVerdictExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange for RejectingHttpClientSessionProtocolChunkTerminationVerdictExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationVerdictExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationVerdictExchange
+    {
         fn exchange_termination_verdict(
             &self,
             _verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
@@ -15448,7 +16322,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination verdict exchange rejected termination verdict".into(),
@@ -15458,7 +16335,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkOutcomeMaterializer;
 
-    impl VerifierHttpClientSessionProtocolChunkOutcomeMaterializer for PanicHttpClientSessionProtocolChunkOutcomeMaterializer {
+    impl VerifierHttpClientSessionProtocolChunkOutcomeMaterializer
+        for PanicHttpClientSessionProtocolChunkOutcomeMaterializer
+    {
         fn materialize_outcome(
             &self,
             _verdict_response: VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
@@ -15486,8 +16365,13 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse, BackendExecutionError> {
-            panic!("outcome materializer should not be called when termination verdict exchange fails")
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationOutcomeResponse,
+            BackendExecutionError,
+        > {
+            panic!(
+                "outcome materializer should not be called when termination verdict exchange fails"
+            )
         }
     }
 
@@ -15496,7 +16380,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationStatusRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner for RecordingHttpClientSessionProtocolChunkTerminationStatusPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationStatusPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationStatusPlanner
+    {
         fn plan_termination_status(
             &self,
             verdict_request: &VerifierHttpClientSessionProtocolChunkTerminationVerdictRequest,
@@ -15523,7 +16409,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
+            BackendExecutionError,
+        > {
             let status = VerifierHttpClientSessionProtocolChunkTerminationStatusRequest {
                 method: verdict_request.method,
                 url: verdict_request.url.clone(),
@@ -15547,7 +16436,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationStatusRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationStatusExchange for RecordingHttpClientSessionProtocolChunkTerminationStatusExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationStatusExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationStatusExchange
+    {
         fn exchange_termination_status(
             &self,
             status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
@@ -15575,21 +16466,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(status_request.clone());
             assert_eq!(status_request.profile, connection_config.profile);
-            assert_eq!(status_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                status_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(status_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
-                status_code: 228,
-                headers: BTreeMap::from([("x-status".to_string(), "ok".to_string())]),
-                frames: vec![b"status-".to_vec(), b"normalized-ok".to_vec()],
-                window_start_sequence: status_request.window_start_sequence,
-                window_frame_count: status_request.window_frame_count,
-                acked_through_sequence: status_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: status_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
+                    status_code: 228,
+                    headers: BTreeMap::from([("x-status".to_string(), "ok".to_string())]),
+                    frames: vec![b"status-".to_vec(), b"normalized-ok".to_vec()],
+                    window_start_sequence: status_request.window_start_sequence,
+                    window_frame_count: status_request.window_frame_count,
+                    acked_through_sequence: status_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: status_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -15598,7 +16497,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictNormalizer for RecordingHttpClientSessionProtocolChunkVerdictNormalizer {
+    impl VerifierHttpClientSessionProtocolChunkVerdictNormalizer
+        for RecordingHttpClientSessionProtocolChunkVerdictNormalizer
+    {
         fn normalize_verdict(
             &self,
             status_response: VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
@@ -15627,24 +16528,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(status_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
-                status_code: status_response.status_code,
-                headers: status_response.headers,
-                frames: status_response.frames,
-                window_start_sequence: status_response.window_start_sequence,
-                window_frame_count: status_response.window_frame_count,
-                acked_through_sequence: status_response.acked_through_sequence,
-                retransmit_count: status_response.retransmit_count,
-                budget_remaining: status_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse {
+                    status_code: status_response.status_code,
+                    headers: status_response.headers,
+                    frames: status_response.frames,
+                    window_start_sequence: status_response.window_start_sequence,
+                    window_frame_count: status_response.window_frame_count,
+                    acked_through_sequence: status_response.acked_through_sequence,
+                    retransmit_count: status_response.retransmit_count,
+                    budget_remaining: status_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationStatusExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationStatusExchange for RejectingHttpClientSessionProtocolChunkTerminationStatusExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationStatusExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationStatusExchange
+    {
         fn exchange_termination_status(
             &self,
             _status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
@@ -15672,7 +16580,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination status exchange rejected termination status".into(),
@@ -15682,7 +16593,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictNormalizer;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictNormalizer for PanicHttpClientSessionProtocolChunkVerdictNormalizer {
+    impl VerifierHttpClientSessionProtocolChunkVerdictNormalizer
+        for PanicHttpClientSessionProtocolChunkVerdictNormalizer
+    {
         fn normalize_verdict(
             &self,
             _status_response: VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
@@ -15711,17 +16624,23 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationVerdictResponse,
+            BackendExecutionError,
+        > {
             panic!("verdict normalizer should not be called when termination status exchange fails")
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationClassificationPlanner {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest>>,
+        requests:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner for RecordingHttpClientSessionProtocolChunkTerminationClassificationPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationClassificationPlanner
+    {
         fn plan_termination_classification(
             &self,
             status_request: &VerifierHttpClientSessionProtocolChunkTerminationStatusRequest,
@@ -15749,20 +16668,24 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest, BackendExecutionError> {
-            let classification = VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest {
-                method: status_request.method,
-                url: status_request.url.clone(),
-                headers: status_request.headers.clone(),
-                frames: status_request.frames.clone(),
-                window_start_sequence: status_request.window_start_sequence,
-                window_frame_count: status_request.window_frame_count,
-                expected_ack_sequence: status_request.expected_ack_sequence,
-                retransmit_budget: status_request.retransmit_budget,
-                timeout_ms: status_request.timeout_ms,
-                profile: status_request.profile.clone(),
-                transport_mode: status_request.transport_mode.clone(),
-            };
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
+            BackendExecutionError,
+        > {
+            let classification =
+                VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest {
+                    method: status_request.method,
+                    url: status_request.url.clone(),
+                    headers: status_request.headers.clone(),
+                    frames: status_request.frames.clone(),
+                    window_start_sequence: status_request.window_start_sequence,
+                    window_frame_count: status_request.window_frame_count,
+                    expected_ack_sequence: status_request.expected_ack_sequence,
+                    retransmit_budget: status_request.retransmit_budget,
+                    timeout_ms: status_request.timeout_ms,
+                    profile: status_request.profile.clone(),
+                    transport_mode: status_request.transport_mode.clone(),
+                };
             self.requests.lock().unwrap().push(classification.clone());
             Ok(classification)
         }
@@ -15770,10 +16693,13 @@ mod tests {
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationClassificationExchange {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest>>,
+        requests:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange for RecordingHttpClientSessionProtocolChunkTerminationClassificationExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationClassificationExchange
+    {
         fn exchange_termination_classification(
             &self,
             classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
@@ -15802,30 +16728,47 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
-            self.requests.lock().unwrap().push(classification_request.clone());
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+            BackendExecutionError,
+        > {
+            self.requests
+                .lock()
+                .unwrap()
+                .push(classification_request.clone());
             assert_eq!(classification_request.profile, connection_config.profile);
-            assert_eq!(classification_request.transport_mode, connection_config.transport_mode);
-            assert_eq!(classification_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse {
-                status_code: 229,
-                headers: BTreeMap::from([("x-classification".to_string(), "ok".to_string())]),
-                frames: vec![b"classified-".to_vec(), b"outcome-ok".to_vec()],
-                window_start_sequence: classification_request.window_start_sequence,
-                window_frame_count: classification_request.window_frame_count,
-                acked_through_sequence: classification_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: classification_request.retransmit_budget,
-            })
+            assert_eq!(
+                classification_request.transport_mode,
+                connection_config.transport_mode
+            );
+            assert_eq!(
+                classification_request.timeout_ms,
+                connection_config.timeout_ms
+            );
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse {
+                    status_code: 229,
+                    headers: BTreeMap::from([("x-classification".to_string(), "ok".to_string())]),
+                    frames: vec![b"classified-".to_vec(), b"outcome-ok".to_vec()],
+                    window_start_sequence: classification_request.window_start_sequence,
+                    window_frame_count: classification_request.window_frame_count,
+                    acked_through_sequence: classification_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: classification_request.retransmit_budget,
+                },
+            )
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkNormalizedOutcomeMapper {
-        responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse>>,
+        responses:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper for RecordingHttpClientSessionProtocolChunkNormalizedOutcomeMapper {
+    impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
+        for RecordingHttpClientSessionProtocolChunkNormalizedOutcomeMapper
+    {
         fn map_normalized_outcome(
             &self,
             classification_response: VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
@@ -15855,24 +16798,34 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(classification_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
-                status_code: classification_response.status_code,
-                headers: classification_response.headers,
-                frames: classification_response.frames,
-                window_start_sequence: classification_response.window_start_sequence,
-                window_frame_count: classification_response.window_frame_count,
-                acked_through_sequence: classification_response.acked_through_sequence,
-                retransmit_count: classification_response.retransmit_count,
-                budget_remaining: classification_response.budget_remaining,
-            })
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(classification_response.clone());
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationStatusResponse {
+                    status_code: classification_response.status_code,
+                    headers: classification_response.headers,
+                    frames: classification_response.frames,
+                    window_start_sequence: classification_response.window_start_sequence,
+                    window_frame_count: classification_response.window_frame_count,
+                    acked_through_sequence: classification_response.acked_through_sequence,
+                    retransmit_count: classification_response.retransmit_count,
+                    budget_remaining: classification_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationClassificationExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange for RejectingHttpClientSessionProtocolChunkTerminationClassificationExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationClassificationExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationClassificationExchange
+    {
         fn exchange_termination_classification(
             &self,
             _classification_request: &VerifierHttpClientSessionProtocolChunkTerminationClassificationRequest,
@@ -15901,7 +16854,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination classification exchange rejected termination classification".into(),
@@ -15911,7 +16867,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkNormalizedOutcomeMapper;
 
-    impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper for PanicHttpClientSessionProtocolChunkNormalizedOutcomeMapper {
+    impl VerifierHttpClientSessionProtocolChunkNormalizedOutcomeMapper
+        for PanicHttpClientSessionProtocolChunkNormalizedOutcomeMapper
+    {
         fn map_normalized_outcome(
             &self,
             _classification_response: VerifierHttpClientSessionProtocolChunkTerminationClassificationResponse,
@@ -15941,7 +16899,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationStatusResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationStatusResponse,
+            BackendExecutionError,
+        > {
             panic!("normalized outcome mapper should not be called when termination classification exchange fails")
         }
     }
@@ -15951,7 +16912,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationLabelRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner for RecordingHttpClientSessionProtocolChunkTerminationLabelPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationLabelPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationLabelPlanner
+    {
         fn plan_termination_label(
             &self,
             category_request: &VerifierHttpClientSessionProtocolChunkTerminationCategoryRequest,
@@ -15981,7 +16944,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationLabelRequest,
+            BackendExecutionError,
+        > {
             let label = VerifierHttpClientSessionProtocolChunkTerminationLabelRequest {
                 method: category_request.method,
                 url: category_request.url.clone(),
@@ -16005,7 +16971,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationLabelRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange for RecordingHttpClientSessionProtocolChunkTerminationLabelExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationLabelExchange
+    {
         fn exchange_termination_label(
             &self,
             label_request: &VerifierHttpClientSessionProtocolChunkTerminationLabelRequest,
@@ -16036,21 +17004,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(label_request.clone());
             assert_eq!(label_request.profile, connection_config.profile);
-            assert_eq!(label_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                label_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(label_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
-                status_code: 231,
-                headers: BTreeMap::from([("x-label".to_string(), "ok".to_string())]),
-                frames: vec![b"labeled-".to_vec(), b"projection-ok".to_vec()],
-                window_start_sequence: label_request.window_start_sequence,
-                window_frame_count: label_request.window_frame_count,
-                acked_through_sequence: label_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: label_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
+                    status_code: 231,
+                    headers: BTreeMap::from([("x-label".to_string(), "ok".to_string())]),
+                    frames: vec![b"labeled-".to_vec(), b"projection-ok".to_vec()],
+                    window_start_sequence: label_request.window_start_sequence,
+                    window_frame_count: label_request.window_frame_count,
+                    acked_through_sequence: label_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: label_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -16059,7 +17035,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolver {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolver
+    {
         fn resolve_verdict_projection(
             &self,
             label_response: VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
@@ -16091,24 +17069,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(label_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse {
-                status_code: label_response.status_code,
-                headers: label_response.headers,
-                frames: label_response.frames,
-                window_start_sequence: label_response.window_start_sequence,
-                window_frame_count: label_response.window_frame_count,
-                acked_through_sequence: label_response.acked_through_sequence,
-                retransmit_count: label_response.retransmit_count,
-                budget_remaining: label_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse {
+                    status_code: label_response.status_code,
+                    headers: label_response.headers,
+                    frames: label_response.frames,
+                    window_start_sequence: label_response.window_start_sequence,
+                    window_frame_count: label_response.window_frame_count,
+                    acked_through_sequence: label_response.acked_through_sequence,
+                    retransmit_count: label_response.retransmit_count,
+                    budget_remaining: label_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationLabelExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange for RejectingHttpClientSessionProtocolChunkTerminationLabelExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationLabelExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationLabelExchange
+    {
         fn exchange_termination_label(
             &self,
             _label_request: &VerifierHttpClientSessionProtocolChunkTerminationLabelRequest,
@@ -16139,7 +17124,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination label exchange rejected termination label".into(),
@@ -16149,7 +17137,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionResolver;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver for PanicHttpClientSessionProtocolChunkVerdictProjectionResolver {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolver
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionResolver
+    {
         fn resolve_verdict_projection(
             &self,
             _label_response: VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
@@ -16181,7 +17171,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationCategoryResponse,
+            BackendExecutionError,
+        > {
             panic!("verdict projection resolver should not be called when termination label exchange fails")
         }
     }
@@ -16191,7 +17184,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenPlanner
+    {
         fn plan_termination_token(
             &self,
             label_request: &VerifierHttpClientSessionProtocolChunkTerminationLabelRequest,
@@ -16222,7 +17217,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenRequest,
+            BackendExecutionError,
+        > {
             let token = VerifierHttpClientSessionProtocolChunkTerminationTokenRequest {
                 method: label_request.method,
                 url: label_request.url.clone(),
@@ -16246,7 +17244,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenExchange for RecordingHttpClientSessionProtocolChunkTerminationTokenExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenExchange
+    {
         fn exchange_termination_token(
             &self,
             token_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenRequest,
@@ -16278,21 +17278,29 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(token_request.clone());
             assert_eq!(token_request.profile, connection_config.profile);
-            assert_eq!(token_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                token_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(token_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
-                status_code: 233,
-                headers: BTreeMap::from([("x-token".to_string(), "ok".to_string())]),
-                frames: vec![b"token-".to_vec(), b"normalized-ok".to_vec()],
-                window_start_sequence: token_request.window_start_sequence,
-                window_frame_count: token_request.window_frame_count,
-                acked_through_sequence: token_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: token_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
+                    status_code: 233,
+                    headers: BTreeMap::from([("x-token".to_string(), "ok".to_string())]),
+                    frames: vec![b"token-".to_vec(), b"normalized-ok".to_vec()],
+                    window_start_sequence: token_request.window_start_sequence,
+                    window_frame_count: token_request.window_frame_count,
+                    acked_through_sequence: token_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: token_request.retransmit_budget,
+                },
+            )
         }
     }
 
@@ -16301,7 +17309,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizer {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizer
+    {
         fn normalize_verdict_projection(
             &self,
             token_response: VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
@@ -16334,24 +17344,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(token_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
-                status_code: token_response.status_code,
-                headers: token_response.headers,
-                frames: token_response.frames,
-                window_start_sequence: token_response.window_start_sequence,
-                window_frame_count: token_response.window_frame_count,
-                acked_through_sequence: token_response.acked_through_sequence,
-                retransmit_count: token_response.retransmit_count,
-                budget_remaining: token_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationLabelResponse {
+                    status_code: token_response.status_code,
+                    headers: token_response.headers,
+                    frames: token_response.frames,
+                    window_start_sequence: token_response.window_start_sequence,
+                    window_frame_count: token_response.window_frame_count,
+                    acked_through_sequence: token_response.acked_through_sequence,
+                    retransmit_count: token_response.retransmit_count,
+                    budget_remaining: token_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationTokenExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenExchange for RejectingHttpClientSessionProtocolChunkTerminationTokenExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationTokenExchange
+    {
         fn exchange_termination_token(
             &self,
             _token_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenRequest,
@@ -16383,7 +17400,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination token exchange rejected termination token".into(),
@@ -16393,7 +17413,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizer;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizer {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizer
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizer
+    {
         fn normalize_verdict_projection(
             &self,
             _token_response: VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
@@ -16426,7 +17448,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationLabelResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationLabelResponse,
+            BackendExecutionError,
+        > {
             panic!("verdict projection normalizer should not be called when termination token exchange fails")
         }
     }
@@ -16436,7 +17461,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner
+    {
         fn plan_termination_token_fragment(
             &self,
             token_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenRequest,
@@ -16468,7 +17495,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
+            BackendExecutionError,
+        > {
             let fragment = VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest {
                 method: token_request.method,
                 url: token_request.url.clone(),
@@ -16492,7 +17522,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange
+    {
         fn exchange_termination_token_fragment(
             &self,
             fragment_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
@@ -16525,30 +17557,41 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(fragment_request.clone());
             assert_eq!(fragment_request.profile, connection_config.profile);
-            assert_eq!(fragment_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                fragment_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(fragment_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
-                status_code: 235,
-                headers: BTreeMap::from([("x-fragment".to_string(), "ok".to_string())]),
-                frames: vec![b"fragment-".to_vec(), b"adapted-ok".to_vec()],
-                window_start_sequence: fragment_request.window_start_sequence,
-                window_frame_count: fragment_request.window_frame_count,
-                acked_through_sequence: fragment_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: fragment_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
+                    status_code: 235,
+                    headers: BTreeMap::from([("x-fragment".to_string(), "ok".to_string())]),
+                    frames: vec![b"fragment-".to_vec(), b"adapted-ok".to_vec()],
+                    window_start_sequence: fragment_request.window_start_sequence,
+                    window_frame_count: fragment_request.window_frame_count,
+                    acked_through_sequence: fragment_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: fragment_request.retransmit_budget,
+                },
+            )
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter {
-        responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse>>,
+        responses:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter
+    {
         fn adapt_projection_resolution(
             &self,
             fragment_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
@@ -16582,24 +17625,34 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(fragment_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
-                status_code: fragment_response.status_code,
-                headers: fragment_response.headers,
-                frames: fragment_response.frames,
-                window_start_sequence: fragment_response.window_start_sequence,
-                window_frame_count: fragment_response.window_frame_count,
-                acked_through_sequence: fragment_response.acked_through_sequence,
-                retransmit_count: fragment_response.retransmit_count,
-                budget_remaining: fragment_response.budget_remaining,
-            })
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(fragment_response.clone());
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenResponse {
+                    status_code: fragment_response.status_code,
+                    headers: fragment_response.headers,
+                    frames: fragment_response.frames,
+                    window_start_sequence: fragment_response.window_start_sequence,
+                    window_frame_count: fragment_response.window_frame_count,
+                    acked_through_sequence: fragment_response.acked_through_sequence,
+                    retransmit_count: fragment_response.retransmit_count,
+                    budget_remaining: fragment_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange
+    {
         fn exchange_termination_token_fragment(
             &self,
             _fragment_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
@@ -16632,7 +17685,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination token fragment exchange rejected termination token fragment".into(),
@@ -16642,7 +17698,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter
+    {
         fn adapt_projection_resolution(
             &self,
             _fragment_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
@@ -16676,17 +17734,23 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenResponse,
+            BackendExecutionError,
+        > {
             panic!("projection resolution adapter should not be called when termination token fragment exchange fails")
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest>>,
+        requests:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner
+    {
         fn plan_termination_token_fragment_slice(
             &self,
             fragment_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentRequest,
@@ -16719,20 +17783,24 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest, BackendExecutionError> {
-            let slice = VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest {
-                method: fragment_request.method,
-                url: fragment_request.url.clone(),
-                headers: fragment_request.headers.clone(),
-                frames: fragment_request.frames.clone(),
-                window_start_sequence: fragment_request.window_start_sequence,
-                window_frame_count: fragment_request.window_frame_count,
-                expected_ack_sequence: fragment_request.expected_ack_sequence,
-                retransmit_budget: fragment_request.retransmit_budget,
-                timeout_ms: fragment_request.timeout_ms,
-                profile: fragment_request.profile.clone(),
-                transport_mode: fragment_request.transport_mode.clone(),
-            };
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
+            BackendExecutionError,
+        > {
+            let slice =
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest {
+                    method: fragment_request.method,
+                    url: fragment_request.url.clone(),
+                    headers: fragment_request.headers.clone(),
+                    frames: fragment_request.frames.clone(),
+                    window_start_sequence: fragment_request.window_start_sequence,
+                    window_frame_count: fragment_request.window_frame_count,
+                    expected_ack_sequence: fragment_request.expected_ack_sequence,
+                    retransmit_budget: fragment_request.retransmit_budget,
+                    timeout_ms: fragment_request.timeout_ms,
+                    profile: fragment_request.profile.clone(),
+                    transport_mode: fragment_request.transport_mode.clone(),
+                };
             self.requests.lock().unwrap().push(slice.clone());
             Ok(slice)
         }
@@ -16740,10 +17808,13 @@ mod tests {
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest>>,
+        requests:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange
+    {
         fn exchange_termination_token_fragment_slice(
             &self,
             slice_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
@@ -16777,30 +17848,41 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(slice_request.clone());
             assert_eq!(slice_request.profile, connection_config.profile);
-            assert_eq!(slice_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                slice_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(slice_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
-                status_code: 237,
-                headers: BTreeMap::from([("x-slice".to_string(), "ok".to_string())]),
-                frames: vec![b"slice-".to_vec(), b"normalization-adapted-ok".to_vec()],
-                window_start_sequence: slice_request.window_start_sequence,
-                window_frame_count: slice_request.window_frame_count,
-                acked_through_sequence: slice_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: slice_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
+                    status_code: 237,
+                    headers: BTreeMap::from([("x-slice".to_string(), "ok".to_string())]),
+                    frames: vec![b"slice-".to_vec(), b"normalization-adapted-ok".to_vec()],
+                    window_start_sequence: slice_request.window_start_sequence,
+                    window_frame_count: slice_request.window_frame_count,
+                    acked_through_sequence: slice_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: slice_request.retransmit_budget,
+                },
+            )
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter {
-        responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse>>,
+        responses:
+            Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter
+    {
         fn adapt_projection_normalization(
             &self,
             slice_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
@@ -16835,24 +17917,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(slice_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
-                status_code: slice_response.status_code,
-                headers: slice_response.headers,
-                frames: slice_response.frames,
-                window_start_sequence: slice_response.window_start_sequence,
-                window_frame_count: slice_response.window_frame_count,
-                acked_through_sequence: slice_response.acked_through_sequence,
-                retransmit_count: slice_response.retransmit_count,
-                budget_remaining: slice_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse {
+                    status_code: slice_response.status_code,
+                    headers: slice_response.headers,
+                    frames: slice_response.frames,
+                    window_start_sequence: slice_response.window_start_sequence,
+                    window_frame_count: slice_response.window_frame_count,
+                    acked_through_sequence: slice_response.acked_through_sequence,
+                    retransmit_count: slice_response.retransmit_count,
+                    budget_remaining: slice_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange
+    {
         fn exchange_termination_token_fragment_slice(
             &self,
             _slice_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
@@ -16886,7 +17975,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination token fragment slice exchange rejected termination token fragment slice".into(),
@@ -16896,7 +17988,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter
+    {
         fn adapt_projection_normalization(
             &self,
             _slice_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
@@ -16931,17 +18025,24 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentResponse,
+            BackendExecutionError,
+        > {
             panic!("projection normalization adapter should not be called when termination token fragment slice exchange fails")
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest>>,
+        requests: Mutex<
+            Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest>,
+        >,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner
+    {
         fn plan_termination_token_fragment_slice_shard(
             &self,
             slice_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceRequest,
@@ -16975,20 +18076,24 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest, BackendExecutionError> {
-            let shard = VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest {
-                method: slice_request.method,
-                url: slice_request.url.clone(),
-                headers: slice_request.headers.clone(),
-                frames: slice_request.frames.clone(),
-                window_start_sequence: slice_request.window_start_sequence,
-                window_frame_count: slice_request.window_frame_count,
-                expected_ack_sequence: slice_request.expected_ack_sequence,
-                retransmit_budget: slice_request.retransmit_budget,
-                timeout_ms: slice_request.timeout_ms,
-                profile: slice_request.profile.clone(),
-                transport_mode: slice_request.transport_mode.clone(),
-            };
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
+            BackendExecutionError,
+        > {
+            let shard =
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest {
+                    method: slice_request.method,
+                    url: slice_request.url.clone(),
+                    headers: slice_request.headers.clone(),
+                    frames: slice_request.frames.clone(),
+                    window_start_sequence: slice_request.window_start_sequence,
+                    window_frame_count: slice_request.window_frame_count,
+                    expected_ack_sequence: slice_request.expected_ack_sequence,
+                    retransmit_budget: slice_request.retransmit_budget,
+                    timeout_ms: slice_request.timeout_ms,
+                    profile: slice_request.profile.clone(),
+                    transport_mode: slice_request.transport_mode.clone(),
+                };
             self.requests.lock().unwrap().push(shard.clone());
             Ok(shard)
         }
@@ -16996,10 +18101,14 @@ mod tests {
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest>>,
+        requests: Mutex<
+            Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest>,
+        >,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange
+    {
         fn exchange_termination_token_fragment_slice_shard(
             &self,
             shard_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
@@ -17034,30 +18143,42 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(shard_request.clone());
             assert_eq!(shard_request.profile, connection_config.profile);
-            assert_eq!(shard_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                shard_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(shard_request.timeout_ms, connection_config.timeout_ms);
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
-                status_code: 239,
-                headers: BTreeMap::from([("x-shard".to_string(), "ok".to_string())]),
-                frames: vec![b"shard-".to_vec(), b"resolution-adapted-ok".to_vec()],
-                window_start_sequence: shard_request.window_start_sequence,
-                window_frame_count: shard_request.window_frame_count,
-                acked_through_sequence: shard_request.expected_ack_sequence,
-                retransmit_count: 0,
-                budget_remaining: shard_request.retransmit_budget,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
+                    status_code: 239,
+                    headers: BTreeMap::from([("x-shard".to_string(), "ok".to_string())]),
+                    frames: vec![b"shard-".to_vec(), b"resolution-adapted-ok".to_vec()],
+                    window_start_sequence: shard_request.window_start_sequence,
+                    window_frame_count: shard_request.window_frame_count,
+                    acked_through_sequence: shard_request.expected_ack_sequence,
+                    retransmit_count: 0,
+                    budget_remaining: shard_request.retransmit_budget,
+                },
+            )
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter {
-        responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse>>,
+        responses: Mutex<
+            Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse>,
+        >,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter
+    {
         fn adapt_projection_resolution_shard(
             &self,
             shard_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
@@ -17093,24 +18214,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(shard_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
-                status_code: shard_response.status_code,
-                headers: shard_response.headers,
-                frames: shard_response.frames,
-                window_start_sequence: shard_response.window_start_sequence,
-                window_frame_count: shard_response.window_frame_count,
-                acked_through_sequence: shard_response.acked_through_sequence,
-                retransmit_count: shard_response.retransmit_count,
-                budget_remaining: shard_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse {
+                    status_code: shard_response.status_code,
+                    headers: shard_response.headers,
+                    frames: shard_response.frames,
+                    window_start_sequence: shard_response.window_start_sequence,
+                    window_frame_count: shard_response.window_frame_count,
+                    acked_through_sequence: shard_response.acked_through_sequence,
+                    retransmit_count: shard_response.retransmit_count,
+                    budget_remaining: shard_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange
+    {
         fn exchange_termination_token_fragment_slice_shard(
             &self,
             _shard_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
@@ -17145,7 +18273,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination token fragment slice shard exchange rejected termination token fragment slice shard".into(),
@@ -17155,7 +18286,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter
+    {
         fn adapt_projection_resolution_shard(
             &self,
             _shard_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
@@ -17191,17 +18324,26 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceResponse,
+            BackendExecutionError,
+        > {
             panic!("projection resolution shard adapter should not be called when termination token fragment slice shard exchange fails")
         }
     }
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest>>,
+        requests: Mutex<
+            Vec<
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
+            >,
+        >,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner
+    {
         fn plan_termination_token_fragment_slice_shard_unit(
             &self,
             shard_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardRequest,
@@ -17236,7 +18378,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
+            BackendExecutionError,
+        > {
             let unit = VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest {
                 method: shard_request.method,
                 url: shard_request.url.clone(),
@@ -17257,10 +18402,16 @@ mod tests {
 
     #[derive(Default)]
     struct RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange {
-        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest>>,
+        requests: Mutex<
+            Vec<
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
+            >,
+        >,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange
+    {
         fn exchange_termination_token_fragment_slice_shard_unit(
             &self,
             unit_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
@@ -17296,10 +18447,16 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+            BackendExecutionError,
+        > {
             self.requests.lock().unwrap().push(unit_request.clone());
             assert_eq!(unit_request.profile, connection_config.profile);
-            assert_eq!(unit_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                unit_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(unit_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse {
                 status_code: 241,
@@ -17319,7 +18476,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter
+    {
         fn adapt_projection_normalization_shard(
             &self,
             unit_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
@@ -17356,24 +18515,31 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+            BackendExecutionError,
+        > {
             self.responses.lock().unwrap().push(unit_response.clone());
-            Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
-                status_code: unit_response.status_code,
-                headers: unit_response.headers,
-                frames: unit_response.frames,
-                window_start_sequence: unit_response.window_start_sequence,
-                window_frame_count: unit_response.window_frame_count,
-                acked_through_sequence: unit_response.acked_through_sequence,
-                retransmit_count: unit_response.retransmit_count,
-                budget_remaining: unit_response.budget_remaining,
-            })
+            Ok(
+                VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse {
+                    status_code: unit_response.status_code,
+                    headers: unit_response.headers,
+                    frames: unit_response.frames,
+                    window_start_sequence: unit_response.window_start_sequence,
+                    window_frame_count: unit_response.window_frame_count,
+                    acked_through_sequence: unit_response.acked_through_sequence,
+                    retransmit_count: unit_response.retransmit_count,
+                    budget_remaining: unit_response.budget_remaining,
+                },
+            )
         }
     }
 
     struct RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange;
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange
+        for RejectingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange
+    {
         fn exchange_termination_token_fragment_slice_shard_unit(
             &self,
             _unit_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
@@ -17409,7 +18575,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+            BackendExecutionError,
+        > {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session protocol chunk termination token fragment slice shard unit exchange rejected termination token fragment slice shard unit".into(),
@@ -17419,7 +18588,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationShardAdapter
+    {
         fn adapt_projection_normalization_shard(
             &self,
             _unit_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
@@ -17456,7 +18627,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardResponse,
+            BackendExecutionError,
+        > {
             panic!("projection normalization shard adapter should not be called when termination token fragment slice shard unit exchange fails")
         }
     }
@@ -17466,7 +18640,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner {
+    impl VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner
+        for RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner
+    {
         fn plan_termination_token_fragment_slice_shard_unit_cell(
             &self,
             unit_request: &VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitRequest,
@@ -17502,7 +18678,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest,
+            BackendExecutionError,
+        > {
             let cell = VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellRequest {
                 method: unit_request.method,
                 url: unit_request.url.clone(),
@@ -17586,7 +18765,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter
+    {
         fn adapt_projection_resolution_unit(
             &self,
             unit_cell_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
@@ -17624,8 +18805,14 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(unit_cell_response.clone());
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+            BackendExecutionError,
+        > {
+            self.responses
+                .lock()
+                .unwrap()
+                .push(unit_cell_response.clone());
             Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse {
                 status_code: unit_cell_response.status_code,
                 headers: unit_cell_response.headers,
@@ -17688,7 +18875,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter
+    {
         fn adapt_projection_resolution_unit(
             &self,
             _unit_cell_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse,
@@ -17726,7 +18915,10 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse, BackendExecutionError> {
+        ) -> Result<
+            VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitResponse,
+            BackendExecutionError,
+        > {
             panic!("projection resolution unit adapter should not be called when termination token fragment slice shard unit cell exchange fails")
         }
     }
@@ -17858,7 +19050,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter
+        for RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter
+    {
         fn adapt_projection_normalization_unit(
             &self,
             atom_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse,
@@ -17897,7 +19091,7 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError>{
             self.responses.lock().unwrap().push(atom_response.clone());
             Ok(VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse {
                 status_code: atom_response.status_code,
@@ -17962,7 +19156,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter;
 
-    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter {
+    impl VerifierHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter
+        for PanicHttpClientSessionProtocolChunkVerdictProjectionNormalizationUnitAdapter
+    {
         fn adapt_projection_normalization_unit(
             &self,
             _atom_response: VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomResponse,
@@ -18001,7 +19197,7 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellResponse, BackendExecutionError>{
             panic!("projection normalization unit adapter should not be called when termination token fragment slice shard unit cell atom exchange fails")
         }
     }
@@ -18011,7 +19207,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolRequestCodec for RecordingHttpClientSessionProtocolRequestCodec {
+    impl VerifierHttpClientSessionProtocolRequestCodec
+        for RecordingHttpClientSessionProtocolRequestCodec
+    {
         fn encode_protocol_request(
             &self,
             frame_request: &VerifierHttpClientSessionFrameRequest,
@@ -18047,7 +19245,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolRequest>>,
     }
 
-    impl VerifierHttpClientSessionProtocolTransportExchange for RecordingHttpClientSessionProtocolTransportExchange {
+    impl VerifierHttpClientSessionProtocolTransportExchange
+        for RecordingHttpClientSessionProtocolTransportExchange
+    {
         fn exchange_protocol(
             &self,
             protocol_request: &VerifierHttpClientSessionProtocolRequest,
@@ -18067,7 +19267,10 @@ mod tests {
         ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
             self.requests.lock().unwrap().push(protocol_request.clone());
             assert_eq!(protocol_request.profile, connection_config.profile);
-            assert_eq!(protocol_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                protocol_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(protocol_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionProtocolResponse {
                 status_code: 217,
@@ -18082,7 +19285,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionProtocolResponse>>,
     }
 
-    impl VerifierHttpClientSessionProtocolResponseCodec for RecordingHttpClientSessionProtocolResponseCodec {
+    impl VerifierHttpClientSessionProtocolResponseCodec
+        for RecordingHttpClientSessionProtocolResponseCodec
+    {
         fn decode_protocol_response(
             &self,
             protocol_response: VerifierHttpClientSessionProtocolResponse,
@@ -18100,7 +19305,10 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<VerifierHttpClientSessionFrameResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(protocol_response.clone());
+            self.responses
+                .lock()
+                .unwrap()
+                .push(protocol_response.clone());
             Ok(VerifierHttpClientSessionFrameResponse {
                 status_code: protocol_response.status_code,
                 headers: protocol_response.headers,
@@ -18111,7 +19319,9 @@ mod tests {
 
     struct RejectingHttpClientSessionProtocolTransportExchange;
 
-    impl VerifierHttpClientSessionProtocolTransportExchange for RejectingHttpClientSessionProtocolTransportExchange {
+    impl VerifierHttpClientSessionProtocolTransportExchange
+        for RejectingHttpClientSessionProtocolTransportExchange
+    {
         fn exchange_protocol(
             &self,
             _protocol_request: &VerifierHttpClientSessionProtocolRequest,
@@ -18138,7 +19348,9 @@ mod tests {
 
     struct PanicHttpClientSessionProtocolResponseCodec;
 
-    impl VerifierHttpClientSessionProtocolResponseCodec for PanicHttpClientSessionProtocolResponseCodec {
+    impl VerifierHttpClientSessionProtocolResponseCodec
+        for PanicHttpClientSessionProtocolResponseCodec
+    {
         fn decode_protocol_response(
             &self,
             _protocol_response: VerifierHttpClientSessionProtocolResponse,
@@ -18219,7 +19431,10 @@ mod tests {
         ) -> Result<VerifierHttpClientSessionFrameResponse, BackendExecutionError> {
             self.requests.lock().unwrap().push(frame_request.clone());
             assert_eq!(frame_request.profile, connection_config.profile);
-            assert_eq!(frame_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(
+                frame_request.transport_mode,
+                connection_config.transport_mode
+            );
             assert_eq!(frame_request.timeout_ms, connection_config.timeout_ms);
             Ok(VerifierHttpClientSessionFrameResponse {
                 status_code: 216,
@@ -18250,7 +19465,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError>
+        {
             self.responses.lock().unwrap().push(frame_response.clone());
             Ok(VerifierHttpClientSessionSocketByteStreamResponse {
                 status_code: frame_response.status_code,
@@ -18304,7 +19520,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError>
+        {
             panic!("frame decoder should not be called when frame io adapter fails")
         }
     }
@@ -18312,14 +19529,30 @@ mod tests {
     #[derive(Default)]
     struct RecordingHttpClientSessionSocketConnectionOpener {
         opened: Mutex<Vec<ResolvedVerifierHttpClientSessionSocketConnectionConfig>>,
-        exchanges: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionSocketConnectionConfig, VerifierHttpClientSessionSocketRequest)>>>,
+        exchanges: Arc<
+            Mutex<
+                Vec<(
+                    ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+                    VerifierHttpClientSessionSocketRequest,
+                )>,
+            >,
+        >,
     }
 
     struct RecordingHttpClientSessionSocketByteChannel {
-        exchanges: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionSocketConnectionConfig, VerifierHttpClientSessionSocketRequest)>>>,
+        exchanges: Arc<
+            Mutex<
+                Vec<(
+                    ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+                    VerifierHttpClientSessionSocketRequest,
+                )>,
+            >,
+        >,
     }
 
-    impl VerifierHttpClientSessionSocketConnectionOpener for RecordingHttpClientSessionSocketConnectionOpener {
+    impl VerifierHttpClientSessionSocketConnectionOpener
+        for RecordingHttpClientSessionSocketConnectionOpener
+    {
         fn open_connection(
             &self,
             connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -18334,7 +19567,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<Box<dyn VerifierHttpClientSessionSocketByteChannel>, BackendExecutionError> {
+        ) -> Result<Box<dyn VerifierHttpClientSessionSocketByteChannel>, BackendExecutionError>
+        {
             self.opened.lock().unwrap().push(connection_config.clone());
             Ok(Box::new(RecordingHttpClientSessionSocketByteChannel {
                 exchanges: self.exchanges.clone(),
@@ -18357,7 +19591,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError>
+        {
             self.exchanges
                 .lock()
                 .unwrap()
@@ -18372,7 +19607,9 @@ mod tests {
 
     struct RejectingHttpClientSessionSocketConnectionOpener;
 
-    impl VerifierHttpClientSessionSocketConnectionOpener for RejectingHttpClientSessionSocketConnectionOpener {
+    impl VerifierHttpClientSessionSocketConnectionOpener
+        for RejectingHttpClientSessionSocketConnectionOpener
+    {
         fn open_connection(
             &self,
             _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -18387,7 +19624,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<Box<dyn VerifierHttpClientSessionSocketByteChannel>, BackendExecutionError> {
+        ) -> Result<Box<dyn VerifierHttpClientSessionSocketByteChannel>, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session socket connection opener rejected socket request".into(),
@@ -18400,7 +19638,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionSocketRequest>>,
     }
 
-    impl VerifierHttpClientSessionSocketRequestBuilder for RecordingHttpClientSessionSocketRequestBuilder {
+    impl VerifierHttpClientSessionSocketRequestBuilder
+        for RecordingHttpClientSessionSocketRequestBuilder
+    {
         fn build_socket_request(
             &self,
             transport_request: &VerifierHttpClientSessionTransportRequest,
@@ -18447,7 +19687,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError>
+        {
             self.requests.lock().unwrap().push(socket_request.clone());
             assert_eq!(socket_request.profile, session_config.profile);
             assert_eq!(socket_request.transport_mode, session_config.transport_mode);
@@ -18465,7 +19706,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionSocketByteStreamResponse>>,
     }
 
-    impl VerifierHttpClientSessionByteStreamResponseParser for RecordingHttpClientSessionByteStreamResponseParser {
+    impl VerifierHttpClientSessionByteStreamResponseParser
+        for RecordingHttpClientSessionByteStreamResponseParser
+    {
         fn parse_byte_stream(
             &self,
             socket_response: VerifierHttpClientSessionSocketByteStreamResponse,
@@ -18505,7 +19748,8 @@ mod tests {
             _client_request: &VerifierHttpClientRequest,
             _http_request: &HttpVerifierRequest,
             request: &BackendVerificationRequest<'_>,
-        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError> {
+        ) -> Result<VerifierHttpClientSessionSocketByteStreamResponse, BackendExecutionError>
+        {
             Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(RealTeeBackend::backend_id_static()),
                 reason: "client session socket adapter rejected transport request".into(),
@@ -18515,7 +19759,9 @@ mod tests {
 
     struct PanicHttpClientSessionByteStreamResponseParser;
 
-    impl VerifierHttpClientSessionByteStreamResponseParser for PanicHttpClientSessionByteStreamResponseParser {
+    impl VerifierHttpClientSessionByteStreamResponseParser
+        for PanicHttpClientSessionByteStreamResponseParser
+    {
         fn parse_byte_stream(
             &self,
             _socket_response: VerifierHttpClientSessionSocketByteStreamResponse,
@@ -18539,7 +19785,9 @@ mod tests {
         requests: Mutex<Vec<VerifierHttpClientSessionTransportRequest>>,
     }
 
-    impl VerifierHttpClientSessionTransportRequestBuilder for RecordingHttpClientSessionTransportRequestBuilder {
+    impl VerifierHttpClientSessionTransportRequestBuilder
+        for RecordingHttpClientSessionTransportRequestBuilder
+    {
         fn build_transport_request(
             &self,
             call_request: &VerifierHttpClientSessionCallRequest,
@@ -18561,7 +19809,10 @@ mod tests {
                 profile: call_request.profile.clone(),
                 transport_mode: call_request.transport_mode.clone(),
             };
-            self.requests.lock().unwrap().push(transport_request.clone());
+            self.requests
+                .lock()
+                .unwrap()
+                .push(transport_request.clone());
             Ok(transport_request)
         }
     }
@@ -18585,9 +19836,15 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<VerifierHttpClientSessionTransportRawResponse, BackendExecutionError> {
-            self.requests.lock().unwrap().push(transport_request.clone());
+            self.requests
+                .lock()
+                .unwrap()
+                .push(transport_request.clone());
             assert_eq!(transport_request.profile, session_config.profile);
-            assert_eq!(transport_request.transport_mode, session_config.transport_mode);
+            assert_eq!(
+                transport_request.transport_mode,
+                session_config.transport_mode
+            );
             assert_eq!(transport_request.timeout_ms, session_config.timeout_ms);
             Ok(VerifierHttpClientSessionTransportRawResponse {
                 status_code: 213,
@@ -18602,7 +19859,9 @@ mod tests {
         responses: Mutex<Vec<VerifierHttpClientSessionTransportRawResponse>>,
     }
 
-    impl VerifierHttpClientSessionRawIoResponseParser for RecordingHttpClientSessionRawIoResponseParser {
+    impl VerifierHttpClientSessionRawIoResponseParser
+        for RecordingHttpClientSessionRawIoResponseParser
+    {
         fn parse_raw_response(
             &self,
             raw_response: VerifierHttpClientSessionTransportRawResponse,
@@ -18939,7 +20198,10 @@ mod tests {
         ) -> Result<VerifierHttpClientSessionResponse, BackendExecutionError> {
             self.requests.lock().unwrap().push(session_request.clone());
             assert_eq!(session_request.profile, session_config.profile);
-            assert_eq!(session_request.transport_mode, session_config.transport_mode);
+            assert_eq!(
+                session_request.transport_mode,
+                session_config.transport_mode
+            );
             assert_eq!(session_request.timeout_ms, session_config.timeout_ms);
             Ok(VerifierHttpClientSessionResponse {
                 status_code: 210,
@@ -18965,7 +20227,10 @@ mod tests {
             _http_request: &HttpVerifierRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
-            self.responses.lock().unwrap().push(session_response.clone());
+            self.responses
+                .lock()
+                .unwrap()
+                .push(session_response.clone());
             Ok(VerifierHttpClientRuntimeResponse {
                 status_code: session_response.status_code,
                 headers: session_response.headers,
@@ -19122,18 +20387,39 @@ mod tests {
             request_input: &IntelQuoteVerifierClientRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
-            assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
-            assert_eq!(request_input.transport.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
-            assert_eq!(request_input.transport.profile, "intel-dcap-external-default");
+            assert_eq!(
+                request_input.transport.mode,
+                VerifierTransportMode::External
+            );
+            assert_eq!(
+                request_input.transport.endpoint,
+                "https://intel-verifier.invalid/v1/quote/sgx-dcap"
+            );
+            assert_eq!(
+                request_input.transport.profile,
+                "intel-dcap-external-default"
+            );
             assert_eq!(request_input.transport.timeout_ms, 5_000);
             assert_eq!(request_input.transport.retry_policy.max_attempts, 3);
             assert_eq!(request_input.transport.retry_policy.backoff_ms, 250);
-            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Exponential);
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
+            assert_eq!(
+                request_input.transport.retry_policy.strategy,
+                RetryBackoffStrategy::Exponential
+            );
+            assert_eq!(
+                request_input.transport.auth_ref.as_deref(),
+                Some("tee.intel.external-token.sgx-dcap")
+            );
             assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 3);
             assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 250);
-            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
-            assert_eq!(request_input.request_event.profile, "intel-dcap-external-default");
+            assert_eq!(
+                request_input.request_event.kind,
+                VerifierTelemetryEventKind::RequestPrepared
+            );
+            assert_eq!(
+                request_input.request_event.profile,
+                "intel-dcap-external-default"
+            );
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "intel-external-mock-client".into(),
@@ -19160,18 +20446,39 @@ mod tests {
             request_input: &AmdReportVerifierClientRequest,
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
-            assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
-            assert_eq!(request_input.transport.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
-            assert_eq!(request_input.transport.profile, "amd-sev-snp-external-default");
+            assert_eq!(
+                request_input.transport.mode,
+                VerifierTransportMode::External
+            );
+            assert_eq!(
+                request_input.transport.endpoint,
+                "https://amd-verifier.invalid/v1/report/sev-snp"
+            );
+            assert_eq!(
+                request_input.transport.profile,
+                "amd-sev-snp-external-default"
+            );
             assert_eq!(request_input.transport.timeout_ms, 5_000);
             assert_eq!(request_input.transport.retry_policy.max_attempts, 3);
             assert_eq!(request_input.transport.retry_policy.backoff_ms, 250);
-            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Exponential);
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
+            assert_eq!(
+                request_input.transport.retry_policy.strategy,
+                RetryBackoffStrategy::Exponential
+            );
+            assert_eq!(
+                request_input.transport.auth_ref.as_deref(),
+                Some("tee.amd.external-token.sev-snp")
+            );
             assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 3);
             assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 250);
-            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
-            assert_eq!(request_input.request_event.profile, "amd-sev-snp-external-default");
+            assert_eq!(
+                request_input.request_event.kind,
+                VerifierTelemetryEventKind::RequestPrepared
+            );
+            assert_eq!(
+                request_input.request_event.profile,
+                "amd-sev-snp-external-default"
+            );
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "amd-external-mock-client".into(),
@@ -19199,27 +20506,57 @@ mod tests {
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::Mock);
-            assert_eq!(request_input.transport.endpoint, "mock://intel-quote-verifier/sgx-dcap");
+            assert_eq!(
+                request_input.transport.endpoint,
+                "mock://intel-quote-verifier/sgx-dcap"
+            );
             assert_eq!(request_input.transport.profile, "intel-dcap-mock-default");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
             assert_eq!(request_input.transport.retry_policy.max_attempts, 1);
             assert_eq!(request_input.transport.retry_policy.backoff_ms, 0);
-            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Fixed);
-            assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.mock-token.sgx-dcap"));
-            assert_eq!(request_input.call_metadata.request_id, "tee:quote-verifier:sgx-dcap:task-42:attempt-1");
-            assert_eq!(request_input.call_metadata.telemetry_scope, "trnm.pouw.tee.quote_verifier.sgx_dcap");
+            assert_eq!(
+                request_input.transport.retry_policy.strategy,
+                RetryBackoffStrategy::Fixed
+            );
+            assert_eq!(
+                request_input.transport.auth_scheme.as_deref(),
+                Some("bearer")
+            );
+            assert_eq!(
+                request_input.transport.auth_ref.as_deref(),
+                Some("tee.intel.mock-token.sgx-dcap")
+            );
+            assert_eq!(
+                request_input.call_metadata.request_id,
+                "tee:quote-verifier:sgx-dcap:task-42:attempt-1"
+            );
+            assert_eq!(
+                request_input.call_metadata.telemetry_scope,
+                "trnm.pouw.tee.quote_verifier.sgx_dcap"
+            );
             assert_eq!(request_input.call_metadata.attempt, 1);
             assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 1);
             assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 0);
-            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
-            assert_eq!(request_input.request_event.profile, "intel-dcap-mock-default");
+            assert_eq!(
+                request_input.request_event.kind,
+                VerifierTelemetryEventKind::RequestPrepared
+            );
+            assert_eq!(
+                request_input.request_event.profile,
+                "intel-dcap-mock-default"
+            );
             assert_eq!(request_input.attestation_target, "sgx-dcap");
             assert_eq!(request_input.measurement_field, "mrenclave");
             assert_eq!(request_input.measurement, "mrenclave:demo-sgx-v1");
             assert_eq!(request_input.quote, "quote-sgx-dcap-demo-v1");
-            assert_eq!(request_input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
-            assert_eq!(request_input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(
+                request_input.intel_collateral.collateral,
+                "intel-dcap-collateral-demo-v1"
+            );
+            assert_eq!(
+                request_input.intel_collateral.cert_chain,
+                "intel-dcap-cert-chain-demo-v1"
+            );
             assert_eq!(request_input.intel_collateral.issuer, "intel");
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
@@ -19248,27 +20585,54 @@ mod tests {
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::Mock);
-            assert_eq!(request_input.transport.endpoint, "mock://amd-report-verifier/sev-snp");
+            assert_eq!(
+                request_input.transport.endpoint,
+                "mock://amd-report-verifier/sev-snp"
+            );
             assert_eq!(request_input.transport.profile, "amd-sev-snp-mock-default");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
             assert_eq!(request_input.transport.retry_policy.max_attempts, 1);
             assert_eq!(request_input.transport.retry_policy.backoff_ms, 0);
-            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Fixed);
-            assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.mock-token.sev-snp"));
-            assert_eq!(request_input.call_metadata.request_id, "tee:report-verifier:sev-snp:task-42:attempt-1");
-            assert_eq!(request_input.call_metadata.telemetry_scope, "trnm.pouw.tee.report_verifier.sev_snp");
+            assert_eq!(
+                request_input.transport.retry_policy.strategy,
+                RetryBackoffStrategy::Fixed
+            );
+            assert_eq!(
+                request_input.transport.auth_scheme.as_deref(),
+                Some("bearer")
+            );
+            assert_eq!(
+                request_input.transport.auth_ref.as_deref(),
+                Some("tee.amd.mock-token.sev-snp")
+            );
+            assert_eq!(
+                request_input.call_metadata.request_id,
+                "tee:report-verifier:sev-snp:task-42:attempt-1"
+            );
+            assert_eq!(
+                request_input.call_metadata.telemetry_scope,
+                "trnm.pouw.tee.report_verifier.sev_snp"
+            );
             assert_eq!(request_input.call_metadata.attempt, 1);
             assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 1);
             assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 0);
-            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
-            assert_eq!(request_input.request_event.profile, "amd-sev-snp-mock-default");
+            assert_eq!(
+                request_input.request_event.kind,
+                VerifierTelemetryEventKind::RequestPrepared
+            );
+            assert_eq!(
+                request_input.request_event.profile,
+                "amd-sev-snp-mock-default"
+            );
             assert_eq!(request_input.attestation_target, "sev-snp");
             assert_eq!(request_input.measurement_field, "measurement");
             assert_eq!(request_input.measurement, "measurement:demo-snp-v1");
             assert_eq!(request_input.report, "report-sev-snp-demo-v1");
             assert_eq!(request_input.amd_signer.vcek, "amd-vcek-demo-v1");
-            assert_eq!(request_input.amd_signer.cert_chain, "amd-cert-chain-demo-v1");
+            assert_eq!(
+                request_input.amd_signer.cert_chain,
+                "amd-cert-chain-demo-v1"
+            );
             assert_eq!(request_input.amd_signer.report_signer, "amd");
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
@@ -19294,7 +20658,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -19327,7 +20694,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
@@ -19360,16 +20730,34 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
         let mut vars = BTreeMap::new();
-        vars.insert("TRNM_TEE_INTEL_QUOTE_MODE".to_string(), "external".to_string());
-        vars.insert("TRNM_TEE_INTEL_QUOTE_PROFILE".to_string(), "intel-dcap-external-override".to_string());
-        vars.insert("TRNM_TEE_INTEL_QUOTE_ENDPOINT_BASE".to_string(), "https://override.intel.example/v2/quote".to_string());
-        vars.insert("TRNM_TEE_INTEL_QUOTE_AUTH_SCHEME".to_string(), "".to_string());
-        vars.insert("TRNM_TEE_INTEL_QUOTE_AUTH_REF_PREFIX".to_string(), "".to_string());
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_MODE".to_string(),
+            "external".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_PROFILE".to_string(),
+            "intel-dcap-external-override".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_ENDPOINT_BASE".to_string(),
+            "https://override.intel.example/v2/quote".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_AUTH_SCHEME".to_string(),
+            "".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_AUTH_REF_PREFIX".to_string(),
+            "".to_string(),
+        );
         let provider = ClientBackedIntelQuoteVerifierProvider::new(
             Arc::new(PanicIntelQuoteClient),
             Arc::new(EnvVerifierTransportConfigSource::from_vars(
@@ -19388,7 +20776,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sgx-dcap") && backend.contains("quote-verifier")));
+        assert!(
+            matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sgx-dcap") && backend.contains("quote-verifier"))
+        );
     }
 
     #[test]
@@ -19397,16 +20787,31 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
         let mut vars = BTreeMap::new();
-        vars.insert("TRNM_TEE_AMD_REPORT_MODE".to_string(), "external".to_string());
+        vars.insert(
+            "TRNM_TEE_AMD_REPORT_MODE".to_string(),
+            "external".to_string(),
+        );
         vars.insert("TRNM_TEE_AMD_REPORT_PROFILE".to_string(), "".to_string());
-        vars.insert("TRNM_TEE_AMD_REPORT_ENDPOINT_BASE".to_string(), "https://override.amd.example/v2/report".to_string());
-        vars.insert("TRNM_TEE_AMD_REPORT_AUTH_REF_PREFIX".to_string(), "tee.amd.override-token".to_string());
-        vars.insert("TRNM_TEE_AMD_REPORT_AUTH_SCHEME".to_string(), "bearer".to_string());
+        vars.insert(
+            "TRNM_TEE_AMD_REPORT_ENDPOINT_BASE".to_string(),
+            "https://override.amd.example/v2/report".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_AMD_REPORT_AUTH_REF_PREFIX".to_string(),
+            "tee.amd.override-token".to_string(),
+        );
+        vars.insert(
+            "TRNM_TEE_AMD_REPORT_AUTH_SCHEME".to_string(),
+            "bearer".to_string(),
+        );
         let provider = ClientBackedAmdReportVerifierProvider::new(
             Arc::new(PanicAmdReportClient),
             Arc::new(EnvVerifierTransportConfigSource::from_vars(
@@ -19425,7 +20830,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sev-snp") && backend.contains("report-verifier")));
+        assert!(
+            matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sev-snp") && backend.contains("report-verifier"))
+        );
     }
 
     #[test]
@@ -19434,7 +20841,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -19453,7 +20863,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Err(BackendExecutionError::MalformedProof { reason, .. }) if reason.contains("telemetry does not match request metadata")));
+        assert!(
+            matches!(result, Err(BackendExecutionError::MalformedProof { reason, .. }) if reason.contains("telemetry does not match request metadata"))
+        );
     }
 
     #[test]
@@ -19462,17 +20874,24 @@ mod tests {
         let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel").unwrap();
         let calls = Arc::new(Mutex::new(Vec::new()));
         let client = HttpBackedIntelQuoteVerifierClient::with_retry_executor(
-            Arc::new(FlakyIntelHttpTransport { calls: calls.clone() }),
+            Arc::new(FlakyIntelHttpTransport {
+                calls: calls.clone(),
+            }),
             Arc::new(PolicyAwareHttpRetryExecutor),
         );
         let result = client.verify_intel_quote_request(
             &IntelQuoteVerifierClientRequest {
-                transport: StaticVerifierTransportConfigSource::external_defaults().intel_quote_transport_config("sgx-dcap"),
+                transport: StaticVerifierTransportConfigSource::external_defaults()
+                    .intel_quote_transport_config("sgx-dcap"),
                 call_metadata: ExternalCallMetadata {
                     request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
                     telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
                     attempt: 1,
-                    retry_policy: RetryBackoffPolicy { max_attempts: 3, backoff_ms: 250, strategy: RetryBackoffStrategy::Exponential },
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
                 },
                 request_event: VerifierTelemetryEvent {
                     kind: VerifierTelemetryEventKind::RequestPrepared,
@@ -19504,7 +20923,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(MockVerifierResponse { backend_id, .. }) if backend_id == "intel-http-retry"));
+        assert!(
+            matches!(result, Ok(MockVerifierResponse { backend_id, .. }) if backend_id == "intel-http-retry")
+        );
         assert_eq!(&*calls.lock().unwrap(), &["1".to_string(), "2".to_string()]);
     }
 
@@ -19544,7 +20965,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -19565,7 +20989,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client"));
+        assert!(
+            matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client")
+        );
         let events = sink.events.lock().unwrap().clone();
         assert_eq!(events.len(), 3);
         assert_eq!(events[0].kind, VerifierTelemetryEventKind::RequestPrepared);
@@ -19576,7 +21002,8 @@ mod tests {
     }
 
     #[test]
-    fn atom_adapted_termination_token_fragment_slice_shard_unit_cell_exchange_plans_unit_cell_atom_exchanges_and_adapts_projection_normalization() {
+    fn atom_adapted_termination_token_fragment_slice_shard_unit_cell_exchange_plans_unit_cell_atom_exchanges_and_adapts_projection_normalization(
+    ) {
         let task = mock_task();
         let termination_token_fragment_slice_shard_unit_cell_atom_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomPlanner::default());
         let termination_token_fragment_slice_shard_unit_cell_atom_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomExchange::default());
@@ -19949,14 +21376,29 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 245);
-        assert_eq!(response.frames, vec![b"atom-".to_vec(), b"normalization-unit-adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_slice_shard_unit_cell_atom_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"atom-".to_vec(), b"normalization-unit-adapted-ok".to_vec()]
+        );
+        let planned = termination_token_fragment_slice_shard_unit_cell_atom_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 830);
-        let exchanged = termination_token_fragment_slice_shard_unit_cell_atom_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_slice_shard_unit_cell_atom_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_normalization_unit_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_normalization_unit_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 245);
         assert_eq!(adapted[0].acked_through_sequence, 830);
@@ -19964,7 +21406,8 @@ mod tests {
     }
 
     #[test]
-    fn atom_adapted_termination_token_fragment_slice_shard_unit_cell_exchange_fails_closed_when_unit_cell_atom_exchange_rejects() {
+    fn atom_adapted_termination_token_fragment_slice_shard_unit_cell_exchange_fails_closed_when_unit_cell_atom_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = AtomAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellAtomPlanner),
@@ -20333,15 +21776,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit cell atom exchange rejected termination token fragment slice shard unit cell atom")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit cell atom exchange rejected termination token fragment slice shard unit cell atom"))
+        );
     }
 
     #[test]
-    fn cell_adapted_termination_token_fragment_slice_shard_unit_exchange_plans_unit_cell_exchanges_and_adapts_projection_resolution() {
+    fn cell_adapted_termination_token_fragment_slice_shard_unit_exchange_plans_unit_cell_exchanges_and_adapts_projection_resolution(
+    ) {
         let task = mock_task();
         let termination_token_fragment_slice_shard_unit_cell_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner::default());
         let termination_token_fragment_slice_shard_unit_cell_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellExchange::default());
-        let verdict_projection_resolution_unit_adapter = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter::default());
+        let verdict_projection_resolution_unit_adapter = Arc::new(
+            RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionUnitAdapter::default(
+            ),
+        );
         let exchange = CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange::with_components(
             termination_token_fragment_slice_shard_unit_cell_planner.clone(),
             termination_token_fragment_slice_shard_unit_cell_exchange.clone(),
@@ -20697,14 +22146,29 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 243);
-        assert_eq!(response.frames, vec![b"cell-".to_vec(), b"resolution-unit-adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_slice_shard_unit_cell_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"cell-".to_vec(), b"resolution-unit-adapted-ok".to_vec()]
+        );
+        let planned = termination_token_fragment_slice_shard_unit_cell_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 732);
-        let exchanged = termination_token_fragment_slice_shard_unit_cell_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_slice_shard_unit_cell_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_resolution_unit_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_resolution_unit_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 243);
         assert_eq!(adapted[0].acked_through_sequence, 732);
@@ -20712,7 +22176,8 @@ mod tests {
     }
 
     #[test]
-    fn cell_adapted_termination_token_fragment_slice_shard_unit_exchange_fails_closed_when_unit_cell_exchange_rejects() {
+    fn cell_adapted_termination_token_fragment_slice_shard_unit_exchange_fails_closed_when_unit_cell_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = CellAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitCellPlanner),
@@ -21068,11 +22533,14 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit cell exchange rejected termination token fragment slice shard unit cell")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit cell exchange rejected termination token fragment slice shard unit cell"))
+        );
     }
 
     #[test]
-    fn unit_adapted_termination_token_fragment_slice_shard_exchange_plans_slice_shard_unit_exchanges_and_adapts_projection_normalization() {
+    fn unit_adapted_termination_token_fragment_slice_shard_exchange_plans_slice_shard_unit_exchanges_and_adapts_projection_normalization(
+    ) {
         let task = mock_task();
         let termination_token_fragment_slice_shard_unit_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner::default());
         let termination_token_fragment_slice_shard_unit_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitExchange::default());
@@ -21419,14 +22887,32 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 241);
-        assert_eq!(response.frames, vec![b"unit-".to_vec(), b"normalization-shard-adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_slice_shard_unit_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![
+                b"unit-".to_vec(),
+                b"normalization-shard-adapted-ok".to_vec()
+            ]
+        );
+        let planned = termination_token_fragment_slice_shard_unit_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 632);
-        let exchanged = termination_token_fragment_slice_shard_unit_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_slice_shard_unit_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_normalization_shard_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_normalization_shard_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 241);
         assert_eq!(adapted[0].acked_through_sequence, 632);
@@ -21434,7 +22920,8 @@ mod tests {
     }
 
     #[test]
-    fn unit_adapted_termination_token_fragment_slice_shard_exchange_fails_closed_when_slice_shard_unit_exchange_rejects() {
+    fn unit_adapted_termination_token_fragment_slice_shard_exchange_fails_closed_when_slice_shard_unit_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = UnitAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardUnitPlanner),
@@ -21777,15 +23264,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit exchange rejected termination token fragment slice shard unit")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard unit exchange rejected termination token fragment slice shard unit"))
+        );
     }
 
     #[test]
-    fn shard_adapted_termination_token_fragment_slice_exchange_plans_slice_shard_exchanges_and_adapts_projection_resolution() {
+    fn shard_adapted_termination_token_fragment_slice_exchange_plans_slice_shard_exchanges_and_adapts_projection_resolution(
+    ) {
         let task = mock_task();
         let termination_token_fragment_slice_shard_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner::default());
         let termination_token_fragment_slice_shard_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardExchange::default());
-        let verdict_projection_resolution_shard_adapter = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter::default());
+        let verdict_projection_resolution_shard_adapter = Arc::new(
+            RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionShardAdapter::default(
+            ),
+        );
         let exchange = ShardAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange::with_components(
             termination_token_fragment_slice_shard_planner.clone(),
             termination_token_fragment_slice_shard_exchange.clone(),
@@ -22115,14 +23608,29 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 239);
-        assert_eq!(response.frames, vec![b"shard-".to_vec(), b"resolution-adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_slice_shard_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"shard-".to_vec(), b"resolution-adapted-ok".to_vec()]
+        );
+        let planned = termination_token_fragment_slice_shard_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 532);
-        let exchanged = termination_token_fragment_slice_shard_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_slice_shard_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_resolution_shard_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_resolution_shard_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 239);
         assert_eq!(adapted[0].acked_through_sequence, 532);
@@ -22130,7 +23638,8 @@ mod tests {
     }
 
     #[test]
-    fn shard_adapted_termination_token_fragment_slice_exchange_fails_closed_when_slice_shard_exchange_rejects() {
+    fn shard_adapted_termination_token_fragment_slice_exchange_fails_closed_when_slice_shard_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = ShardAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSliceShardPlanner),
@@ -22460,15 +23969,24 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard exchange rejected termination token fragment slice shard")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice shard exchange rejected termination token fragment slice shard"))
+        );
     }
 
     #[test]
-    fn slice_adapted_termination_token_fragment_exchange_plans_fragment_slice_exchanges_and_adapts_projection_normalization() {
+    fn slice_adapted_termination_token_fragment_exchange_plans_fragment_slice_exchanges_and_adapts_projection_normalization(
+    ) {
         let task = mock_task();
-        let termination_token_fragment_slice_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner::default());
-        let termination_token_fragment_slice_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange::default());
-        let verdict_projection_normalization_adapter = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter::default());
+        let termination_token_fragment_slice_planner = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner::default(),
+        );
+        let termination_token_fragment_slice_exchange = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentSliceExchange::default(),
+        );
+        let verdict_projection_normalization_adapter = Arc::new(
+            RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizationAdapter::default(),
+        );
         let exchange = SliceAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange::with_components(
             termination_token_fragment_slice_planner.clone(),
             termination_token_fragment_slice_exchange.clone(),
@@ -22785,14 +24303,29 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 237);
-        assert_eq!(response.frames, vec![b"slice-".to_vec(), b"normalization-adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_slice_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"slice-".to_vec(), b"normalization-adapted-ok".to_vec()]
+        );
+        let planned = termination_token_fragment_slice_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 432);
-        let exchanged = termination_token_fragment_slice_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_slice_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_normalization_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_normalization_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 237);
         assert_eq!(adapted[0].acked_through_sequence, 432);
@@ -22800,7 +24333,8 @@ mod tests {
     }
 
     #[test]
-    fn slice_adapted_termination_token_fragment_exchange_fails_closed_when_fragment_slice_exchange_rejects() {
+    fn slice_adapted_termination_token_fragment_exchange_fails_closed_when_fragment_slice_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = SliceAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationTokenFragmentSlicePlanner),
@@ -23117,15 +24651,24 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice exchange rejected termination token fragment slice")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment slice exchange rejected termination token fragment slice"))
+        );
     }
 
     #[test]
-    fn fragment_adapted_termination_token_exchange_plans_fragment_exchanges_and_adapts_projection_resolution() {
+    fn fragment_adapted_termination_token_exchange_plans_fragment_exchanges_and_adapts_projection_resolution(
+    ) {
         let task = mock_task();
-        let termination_token_fragment_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner::default());
-        let termination_token_fragment_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange::default());
-        let verdict_projection_resolution_adapter = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter::default());
+        let termination_token_fragment_planner = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentPlanner::default(),
+        );
+        let termination_token_fragment_exchange = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationTokenFragmentExchange::default(),
+        );
+        let verdict_projection_resolution_adapter = Arc::new(
+            RecordingHttpClientSessionProtocolChunkVerdictProjectionResolutionAdapter::default(),
+        );
         let exchange = FragmentAdaptedVerifierHttpClientSessionProtocolChunkTerminationTokenExchange::with_components(
             termination_token_fragment_planner.clone(),
             termination_token_fragment_exchange.clone(),
@@ -23429,14 +24972,29 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 235);
-        assert_eq!(response.frames, vec![b"fragment-".to_vec(), b"adapted-ok".to_vec()]);
-        let planned = termination_token_fragment_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"fragment-".to_vec(), b"adapted-ok".to_vec()]
+        );
+        let planned = termination_token_fragment_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 332);
-        let exchanged = termination_token_fragment_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_token_fragment_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let adapted = verdict_projection_resolution_adapter.responses.lock().unwrap().clone();
+        let adapted = verdict_projection_resolution_adapter
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(adapted.len(), 1);
         assert_eq!(adapted[0].status_code, 235);
         assert_eq!(adapted[0].acked_through_sequence, 332);
@@ -23748,15 +25306,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment exchange rejected termination token fragment")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token fragment exchange rejected termination token fragment"))
+        );
     }
 
     #[test]
-    fn token_normalized_termination_label_exchange_plans_token_exchanges_and_normalizes_verdict_projection() {
+    fn token_normalized_termination_label_exchange_plans_token_exchanges_and_normalizes_verdict_projection(
+    ) {
         let task = mock_task();
-        let termination_token_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenPlanner::default());
-        let termination_token_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenExchange::default());
-        let verdict_projection_normalizer = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizer::default());
+        let termination_token_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenPlanner::default());
+        let termination_token_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationTokenExchange::default());
+        let verdict_projection_normalizer =
+            Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionNormalizer::default());
         let exchange = TokenNormalizedVerifierHttpClientSessionProtocolChunkTerminationLabelExchange::with_components(
             termination_token_planner.clone(),
             termination_token_exchange.clone(),
@@ -24047,14 +25611,21 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 233);
-        assert_eq!(response.frames, vec![b"token-".to_vec(), b"normalized-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"token-".to_vec(), b"normalized-ok".to_vec()]
+        );
         let planned = termination_token_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 230);
         let exchanged = termination_token_exchange.requests.lock().unwrap().clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let normalized = verdict_projection_normalizer.responses.lock().unwrap().clone();
+        let normalized = verdict_projection_normalizer
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(normalized.len(), 1);
         assert_eq!(normalized[0].status_code, 233);
         assert_eq!(normalized[0].acked_through_sequence, 230);
@@ -24353,15 +25924,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token exchange rejected termination token")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination token exchange rejected termination token"))
+        );
     }
 
     #[test]
-    fn label_projected_termination_classification_exchange_plans_labels_exchanges_and_resolves_verdict_projection() {
+    fn label_projected_termination_classification_exchange_plans_labels_exchanges_and_resolves_verdict_projection(
+    ) {
         let task = mock_task();
-        let termination_label_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationLabelPlanner::default());
-        let termination_label_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationLabelExchange::default());
-        let verdict_projection_resolver = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionResolver::default());
+        let termination_label_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationLabelPlanner::default());
+        let termination_label_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationLabelExchange::default());
+        let verdict_projection_resolver =
+            Arc::new(RecordingHttpClientSessionProtocolChunkVerdictProjectionResolver::default());
         let exchange = LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange::with_components(
             termination_label_planner.clone(),
             termination_label_exchange.clone(),
@@ -24639,14 +26216,21 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 231);
-        assert_eq!(response.frames, vec![b"labeled-".to_vec(), b"projection-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"labeled-".to_vec(), b"projection-ok".to_vec()]
+        );
         let planned = termination_label_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 132);
         let exchanged = termination_label_exchange.requests.lock().unwrap().clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
-        let resolved = verdict_projection_resolver.responses.lock().unwrap().clone();
+        let resolved = verdict_projection_resolver
+            .responses
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(resolved.len(), 1);
         assert_eq!(resolved[0].status_code, 231);
         assert_eq!(resolved[0].acked_through_sequence, 132);
@@ -24654,7 +26238,8 @@ mod tests {
     }
 
     #[test]
-    fn label_projected_termination_classification_exchange_fails_closed_when_label_exchange_rejects() {
+    fn label_projected_termination_classification_exchange_fails_closed_when_label_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = LabelProjectedTerminationBackedVerifierHttpClientSessionProtocolChunkTerminationCategoryExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationLabelPlanner),
@@ -24932,15 +26517,22 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination label exchange rejected termination label")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination label exchange rejected termination label"))
+        );
     }
 
     #[test]
     fn classified_termination_status_exchange_plans_classifies_and_maps_normalized_outcome() {
         let task = mock_task();
-        let termination_classification_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationClassificationPlanner::default());
-        let termination_classification_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationClassificationExchange::default());
-        let normalized_outcome_mapper = Arc::new(RecordingHttpClientSessionProtocolChunkNormalizedOutcomeMapper::default());
+        let termination_classification_planner = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationClassificationPlanner::default(),
+        );
+        let termination_classification_exchange = Arc::new(
+            RecordingHttpClientSessionProtocolChunkTerminationClassificationExchange::default(),
+        );
+        let normalized_outcome_mapper =
+            Arc::new(RecordingHttpClientSessionProtocolChunkNormalizedOutcomeMapper::default());
         let exchange = ClassifiedTerminationStatusBackedVerifierHttpClientSessionProtocolChunkTerminationStatusExchange::with_components(
             termination_classification_planner.clone(),
             termination_classification_exchange.clone(),
@@ -25192,11 +26784,22 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 229);
-        assert_eq!(response.frames, vec![b"classified-".to_vec(), b"outcome-ok".to_vec()]);
-        let planned = termination_classification_planner.requests.lock().unwrap().clone();
+        assert_eq!(
+            response.frames,
+            vec![b"classified-".to_vec(), b"outcome-ok".to_vec()]
+        );
+        let planned = termination_classification_planner
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 112);
-        let exchanged = termination_classification_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_classification_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
         let mapped = normalized_outcome_mapper.responses.lock().unwrap().clone();
@@ -25459,15 +27062,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination classification exchange rejected termination classification")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination classification exchange rejected termination classification"))
+        );
     }
 
     #[test]
-    fn status_normalized_termination_verdict_exchange_plans_status_exchanges_and_normalizes_verdict() {
+    fn status_normalized_termination_verdict_exchange_plans_status_exchanges_and_normalizes_verdict(
+    ) {
         let task = mock_task();
-        let termination_status_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationStatusPlanner::default());
-        let termination_status_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationStatusExchange::default());
-        let verdict_normalizer = Arc::new(RecordingHttpClientSessionProtocolChunkVerdictNormalizer::default());
+        let termination_status_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationStatusPlanner::default());
+        let termination_status_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationStatusExchange::default());
+        let verdict_normalizer =
+            Arc::new(RecordingHttpClientSessionProtocolChunkVerdictNormalizer::default());
         let exchange = StatusNormalizedVerifierHttpClientSessionProtocolChunkTerminationVerdictExchange::with_components(
             termination_status_planner.clone(),
             termination_status_exchange.clone(),
@@ -25706,7 +27315,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 228);
-        assert_eq!(response.frames, vec![b"status-".to_vec(), b"normalized-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"status-".to_vec(), b"normalized-ok".to_vec()]
+        );
         let planned = termination_status_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 102);
@@ -25721,7 +27333,8 @@ mod tests {
     }
 
     #[test]
-    fn status_normalized_termination_verdict_exchange_fails_closed_when_termination_status_exchange_rejects() {
+    fn status_normalized_termination_verdict_exchange_fails_closed_when_termination_status_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = StatusNormalizedVerifierHttpClientSessionProtocolChunkTerminationVerdictExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationStatusPlanner),
@@ -25960,15 +27573,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination status exchange rejected termination status")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination status exchange rejected termination status"))
+        );
     }
 
     #[test]
-    fn verdict_backed_termination_outcome_exchange_plans_verdict_exchanges_and_materializes_outcome() {
+    fn verdict_backed_termination_outcome_exchange_plans_verdict_exchanges_and_materializes_outcome(
+    ) {
         let task = mock_task();
-        let termination_verdict_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationVerdictPlanner::default());
-        let termination_verdict_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationVerdictExchange::default());
-        let outcome_materializer = Arc::new(RecordingHttpClientSessionProtocolChunkOutcomeMaterializer::default());
+        let termination_verdict_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationVerdictPlanner::default());
+        let termination_verdict_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationVerdictExchange::default());
+        let outcome_materializer =
+            Arc::new(RecordingHttpClientSessionProtocolChunkOutcomeMaterializer::default());
         let exchange = VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange::with_components(
             termination_verdict_planner.clone(),
             termination_verdict_exchange.clone(),
@@ -26194,11 +27813,18 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 227);
-        assert_eq!(response.frames, vec![b"verdict-".to_vec(), b"materialized-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"verdict-".to_vec(), b"materialized-ok".to_vec()]
+        );
         let planned = termination_verdict_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 92);
-        let exchanged = termination_verdict_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_verdict_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
         let materialized = outcome_materializer.responses.lock().unwrap().clone();
@@ -26209,7 +27835,8 @@ mod tests {
     }
 
     #[test]
-    fn verdict_backed_termination_outcome_exchange_fails_closed_when_termination_verdict_exchange_rejects() {
+    fn verdict_backed_termination_outcome_exchange_fails_closed_when_termination_verdict_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = VerdictBackedVerifierHttpClientSessionProtocolChunkTerminationOutcomeExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationVerdictPlanner),
@@ -26435,15 +28062,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination verdict exchange rejected termination verdict")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination verdict exchange rejected termination verdict"))
+        );
     }
 
     #[test]
-    fn outcome_projected_retransmit_termination_exchange_plans_outcome_exchanges_and_projects_settlement() {
+    fn outcome_projected_retransmit_termination_exchange_plans_outcome_exchanges_and_projects_settlement(
+    ) {
         let task = mock_task();
-        let termination_outcome_planner = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationOutcomePlanner::default());
-        let termination_outcome_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationOutcomeExchange::default());
-        let settlement_projection = Arc::new(RecordingHttpClientSessionProtocolChunkSettlementProjection::default());
+        let termination_outcome_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationOutcomePlanner::default());
+        let termination_outcome_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationOutcomeExchange::default());
+        let settlement_projection =
+            Arc::new(RecordingHttpClientSessionProtocolChunkSettlementProjection::default());
         let exchange = OutcomeProjectedVerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange::with_components(
             termination_outcome_planner.clone(),
             termination_outcome_exchange.clone(),
@@ -26656,11 +28289,18 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 226);
-        assert_eq!(response.frames, vec![b"projected-".to_vec(), b"settlement-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"projected-".to_vec(), b"settlement-ok".to_vec()]
+        );
         let planned = termination_outcome_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 82);
-        let exchanged = termination_outcome_exchange.requests.lock().unwrap().clone();
+        let exchanged = termination_outcome_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
         let projected = settlement_projection.responses.lock().unwrap().clone();
@@ -26671,7 +28311,8 @@ mod tests {
     }
 
     #[test]
-    fn outcome_projected_retransmit_termination_exchange_fails_closed_when_termination_outcome_exchange_rejects() {
+    fn outcome_projected_retransmit_termination_exchange_fails_closed_when_termination_outcome_exchange_rejects(
+    ) {
         let task = mock_task();
         let exchange = OutcomeProjectedVerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange::with_components(
             Arc::new(DirectVerifierHttpClientSessionProtocolChunkTerminationOutcomePlanner),
@@ -26884,15 +28525,21 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination outcome exchange rejected termination outcome")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk termination outcome exchange rejected termination outcome"))
+        );
     }
 
     #[test]
     fn converging_ack_budget_exchange_plans_termination_and_validates_budget_response() {
         let task = mock_task();
-        let ack_convergence_planner = Arc::new(RecordingHttpClientSessionProtocolChunkAckConvergencePlanner::default());
-        let retransmit_termination_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitTerminationExchange::default());
-        let termination_validator = Arc::new(RecordingHttpClientSessionProtocolChunkTerminationValidator::default());
+        let ack_convergence_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkAckConvergencePlanner::default());
+        let retransmit_termination_exchange = Arc::new(
+            RecordingHttpClientSessionProtocolChunkRetransmitTerminationExchange::default(),
+        );
+        let termination_validator =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTerminationValidator::default());
         let exchange = ConvergingAckBackedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange::with_components(
             ack_convergence_planner.clone(),
             retransmit_termination_exchange.clone(),
@@ -27092,12 +28739,19 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 225);
-        assert_eq!(response.frames, vec![b"terminated-".to_vec(), b"acks-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"terminated-".to_vec(), b"acks-ok".to_vec()]
+        );
         let planned = ack_convergence_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 72);
         assert_eq!(planned[0].retransmit_budget, 1);
-        let exchanged = retransmit_termination_exchange.requests.lock().unwrap().clone();
+        let exchanged = retransmit_termination_exchange
+            .requests
+            .lock()
+            .unwrap()
+            .clone();
         assert_eq!(exchanged.len(), 1);
         assert_eq!(exchanged[0], planned[0]);
         let validated = termination_validator.responses.lock().unwrap().clone();
@@ -27308,15 +28962,20 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit termination exchange rejected converged ack budget")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit termination exchange rejected converged ack budget"))
+        );
     }
 
     #[test]
     fn budgeted_retransmit_exchange_plans_budget_exchanges_and_validates_ack_settlement() {
         let task = mock_task();
-        let budget_planner = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner::default());
-        let budget_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange::default());
-        let ack_settlement_validator = Arc::new(RecordingHttpClientSessionProtocolChunkAckSettlementValidator::default());
+        let budget_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner::default());
+        let budget_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange::default());
+        let ack_settlement_validator =
+            Arc::new(RecordingHttpClientSessionProtocolChunkAckSettlementValidator::default());
         let exchange = BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange::with_components(
             budget_planner.clone(),
             budget_exchange.clone(),
@@ -27503,7 +29162,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 224);
-        assert_eq!(response.frames, vec![b"settled-".to_vec(), b"ack-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"settled-".to_vec(), b"ack-ok".to_vec()]
+        );
         let planned = budget_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].expected_ack_sequence, 62);
@@ -27706,15 +29368,19 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit budget exchange rejected retransmit budget")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit budget exchange rejected retransmit budget"))
+        );
     }
 
     #[test]
     fn acked_window_sequence_exchange_plans_retransmits_and_validates_ack_response() {
         let task = mock_task();
         let ack_policy = Arc::new(RecordingHttpClientSessionProtocolChunkAckPolicy::default());
-        let retransmit_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitExchange::default());
-        let ack_validator = Arc::new(RecordingHttpClientSessionProtocolChunkAckValidator::default());
+        let retransmit_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitExchange::default());
+        let ack_validator =
+            Arc::new(RecordingHttpClientSessionProtocolChunkAckValidator::default());
         let exchange = AckedWindowBackedVerifierHttpClientSessionProtocolChunkSequenceWindowExchange::with_components(
             ack_policy.clone(),
             retransmit_exchange.clone(),
@@ -27888,7 +29554,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 223);
-        assert_eq!(response.frames, vec![b"acked-".to_vec(), b"frames-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"acked-".to_vec(), b"frames-ok".to_vec()]
+        );
         let planned = ack_policy.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].window_start_sequence, 51);
@@ -28078,20 +29747,26 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit exchange rejected acked window")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit exchange rejected acked window"))
+        );
     }
 
     #[test]
     fn windowed_chunk_frame_exchange_plans_exchanges_and_validates_chunk_frames() {
         let task = mock_task();
-        let sequence_window_planner = Arc::new(RecordingHttpClientSessionProtocolChunkSequenceWindowPlanner::default());
-        let sequence_window_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkSequenceWindowExchange::default());
-        let integrity_validator = Arc::new(RecordingHttpClientSessionProtocolChunkIntegrityValidator::default());
-        let exchange = WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange::with_components(
-            sequence_window_planner.clone(),
-            sequence_window_exchange.clone(),
-            integrity_validator.clone(),
-        );
+        let sequence_window_planner =
+            Arc::new(RecordingHttpClientSessionProtocolChunkSequenceWindowPlanner::default());
+        let sequence_window_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkSequenceWindowExchange::default());
+        let integrity_validator =
+            Arc::new(RecordingHttpClientSessionProtocolChunkIntegrityValidator::default());
+        let exchange =
+            WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange::with_components(
+                sequence_window_planner.clone(),
+                sequence_window_exchange.clone(),
+                integrity_validator.clone(),
+            );
         let response = exchange
             .exchange_chunk_frames(
                 &VerifierHttpClientSessionProtocolChunkFramesRequest {
@@ -28249,7 +29924,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 222);
-        assert_eq!(response.frames, vec![b"windowed-".to_vec(), b"frames-ok".to_vec()]);
+        assert_eq!(
+            response.frames,
+            vec![b"windowed-".to_vec(), b"frames-ok".to_vec()]
+        );
         let planned = sequence_window_planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
         assert_eq!(planned[0].window_start_sequence, 41);
@@ -28267,11 +29945,12 @@ mod tests {
     #[test]
     fn windowed_chunk_frame_exchange_fails_closed_when_sequence_window_exchange_rejects() {
         let task = mock_task();
-        let exchange = WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange::with_components(
-            Arc::new(DirectVerifierHttpClientSessionProtocolChunkSequenceWindowPlanner),
-            Arc::new(RejectingHttpClientSessionProtocolChunkSequenceWindowExchange),
-            Arc::new(PanicHttpClientSessionProtocolChunkIntegrityValidator),
-        );
+        let exchange =
+            WindowedChunkBackedVerifierHttpClientSessionProtocolChunkFrameExchange::with_components(
+                Arc::new(DirectVerifierHttpClientSessionProtocolChunkSequenceWindowPlanner),
+                Arc::new(RejectingHttpClientSessionProtocolChunkSequenceWindowExchange),
+                Arc::new(PanicHttpClientSessionProtocolChunkIntegrityValidator),
+            );
         let err = exchange
             .exchange_chunk_frames(
                 &VerifierHttpClientSessionProtocolChunkFramesRequest {
@@ -28428,15 +30107,20 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk sequence window exchange rejected windowed frames")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk sequence window exchange rejected windowed frames"))
+        );
     }
 
     #[test]
     fn framed_chunk_transport_exchange_frames_validates_and_reassembles_chunks() {
         let task = mock_task();
-        let framing_policy = Arc::new(RecordingHttpClientSessionProtocolChunkFramingPolicy::default());
-        let frame_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkFrameExchange::default());
-        let reassembly_validator = Arc::new(RecordingHttpClientSessionProtocolStreamReassemblyValidator::default());
+        let framing_policy =
+            Arc::new(RecordingHttpClientSessionProtocolChunkFramingPolicy::default());
+        let frame_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkFrameExchange::default());
+        let reassembly_validator =
+            Arc::new(RecordingHttpClientSessionProtocolStreamReassemblyValidator::default());
         let exchange = FramedChunkBackedVerifierHttpClientSessionProtocolChunkTransportExchange::with_components(
             framing_policy.clone(),
             frame_exchange.clone(),
@@ -28590,7 +30274,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(response.status_code, 221);
-        assert_eq!(response.chunks, vec![b"validated-".to_vec(), b"frames-ok".to_vec()]);
+        assert_eq!(
+            response.chunks,
+            vec![b"validated-".to_vec(), b"frames-ok".to_vec()]
+        );
         let framed = framing_policy.requests.lock().unwrap().clone();
         assert_eq!(framed.len(), 1);
         assert_eq!(framed[0].profile, "intel-dcap-external-default");
@@ -28600,7 +30287,10 @@ mod tests {
         let validated = reassembly_validator.responses.lock().unwrap().clone();
         assert_eq!(validated.len(), 1);
         assert_eq!(validated[0].status_code, 221);
-        assert_eq!(validated[0].frames, vec![b"validated-".to_vec(), b"frames-ok".to_vec()]);
+        assert_eq!(
+            validated[0].frames,
+            vec![b"validated-".to_vec(), b"frames-ok".to_vec()]
+        );
     }
 
     #[test]
@@ -28758,14 +30448,17 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk frame exchange rejected framed chunks")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk frame exchange rejected framed chunks"))
+        );
     }
 
     #[test]
     fn chunked_byte_stream_exchange_chunks_exchanges_and_assembles_frame_response() {
         let task = mock_task();
         let chunker = Arc::new(RecordingHttpClientSessionProtocolByteStreamChunker::default());
-        let chunk_transport_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkTransportExchange::default());
+        let chunk_transport_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolChunkTransportExchange::default());
         let assembler = Arc::new(RecordingHttpClientSessionProtocolByteStreamAssembler::default());
         let exchange = ChunkedByteStreamBackedVerifierHttpClientSessionProtocolByteStreamExchange::with_components(
             chunker.clone(),
@@ -28921,7 +30614,10 @@ mod tests {
         let assembled = assembler.responses.lock().unwrap().clone();
         assert_eq!(assembled.len(), 1);
         assert_eq!(assembled[0].status_code, 220);
-        assert_eq!(assembled[0].chunks, vec![b"chunked-".to_vec(), b"stream-ok".to_vec()]);
+        assert_eq!(
+            assembled[0].chunks,
+            vec![b"chunked-".to_vec(), b"stream-ok".to_vec()]
+        );
     }
 
     #[test]
@@ -29070,15 +30766,20 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk transport exchange rejected chunked request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk transport exchange rejected chunked request"))
+        );
     }
 
     #[test]
     fn framed_bytes_protocol_transport_exchange_frames_exchanges_and_normalizes_envelope() {
         let task = mock_task();
-        let byte_stream_framer = Arc::new(RecordingHttpClientSessionProtocolByteStreamFramer::default());
-        let byte_stream_exchange = Arc::new(RecordingHttpClientSessionProtocolByteStreamExchange::default());
-        let envelope_normalizer = Arc::new(RecordingHttpClientSessionProtocolEnvelopeNormalizer::default());
+        let byte_stream_framer =
+            Arc::new(RecordingHttpClientSessionProtocolByteStreamFramer::default());
+        let byte_stream_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolByteStreamExchange::default());
+        let envelope_normalizer =
+            Arc::new(RecordingHttpClientSessionProtocolEnvelopeNormalizer::default());
         let exchange = FramedBytesBackedVerifierHttpClientSessionProtocolBytesTransportExchange::with_components(
             byte_stream_framer.clone(),
             byte_stream_exchange.clone(),
@@ -29364,20 +31065,24 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol byte stream exchange rejected framed bytes")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol byte stream exchange rejected framed bytes"))
+        );
     }
 
     #[test]
     fn bytes_backed_protocol_transport_exchange_encodes_exchanges_and_parses_envelope_response() {
         let task = mock_task();
         let bytes_encoder = Arc::new(RecordingHttpClientSessionProtocolBytesEncoder::default());
-        let bytes_transport_exchange = Arc::new(RecordingHttpClientSessionProtocolBytesTransportExchange::default());
+        let bytes_transport_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolBytesTransportExchange::default());
         let envelope_parser = Arc::new(RecordingHttpClientSessionProtocolEnvelopeParser::default());
-        let exchange = BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
-            bytes_encoder.clone(),
-            bytes_transport_exchange.clone(),
-            envelope_parser.clone(),
-        );
+        let exchange =
+            BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
+                bytes_encoder.clone(),
+                bytes_transport_exchange.clone(),
+                envelope_parser.clone(),
+            );
         let response = exchange
             .exchange_protocol(
                 &VerifierHttpClientSessionProtocolRequest {
@@ -29515,11 +31220,12 @@ mod tests {
     #[test]
     fn bytes_backed_protocol_transport_exchange_fails_closed_when_bytes_exchange_rejects() {
         let task = mock_task();
-        let exchange = BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
-            Arc::new(DirectVerifierHttpClientSessionProtocolBytesEncoder),
-            Arc::new(RejectingHttpClientSessionProtocolBytesTransportExchange),
-            Arc::new(PanicHttpClientSessionProtocolEnvelopeParser),
-        );
+        let exchange =
+            BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
+                Arc::new(DirectVerifierHttpClientSessionProtocolBytesEncoder),
+                Arc::new(RejectingHttpClientSessionProtocolBytesTransportExchange),
+                Arc::new(PanicHttpClientSessionProtocolEnvelopeParser),
+            );
         let err = exchange
             .exchange_protocol(
                 &VerifierHttpClientSessionProtocolRequest {
@@ -29640,15 +31346,20 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol bytes transport exchange rejected protocol bytes")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol bytes transport exchange rejected protocol bytes"))
+        );
     }
 
     #[test]
     fn codec_backed_frame_io_adapter_encodes_exchanges_and_decodes_protocol_response() {
         let task = mock_task();
-        let protocol_request_codec = Arc::new(RecordingHttpClientSessionProtocolRequestCodec::default());
-        let protocol_transport_exchange = Arc::new(RecordingHttpClientSessionProtocolTransportExchange::default());
-        let protocol_response_codec = Arc::new(RecordingHttpClientSessionProtocolResponseCodec::default());
+        let protocol_request_codec =
+            Arc::new(RecordingHttpClientSessionProtocolRequestCodec::default());
+        let protocol_transport_exchange =
+            Arc::new(RecordingHttpClientSessionProtocolTransportExchange::default());
+        let protocol_response_codec =
+            Arc::new(RecordingHttpClientSessionProtocolResponseCodec::default());
         let adapter = CodecBackedVerifierHttpClientSessionFrameIoAdapter::with_components(
             protocol_request_codec.clone(),
             protocol_transport_exchange.clone(),
@@ -29898,7 +31609,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol transport exchange rejected frame request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol transport exchange rejected frame request"))
+        );
     }
 
     #[test]
@@ -30138,14 +31851,19 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session frame io adapter rejected byte exchange")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session frame io adapter rejected byte exchange"))
+        );
     }
 
     #[test]
     fn connection_backed_socket_adapter_opens_connection_and_exchanges_bytes() {
         let task = mock_task();
         let opener = Arc::new(RecordingHttpClientSessionSocketConnectionOpener::default());
-        let adapter = ConnectionBackedVerifierHttpClientSessionSocketAdapter::with_connection_opener(opener.clone());
+        let adapter =
+            ConnectionBackedVerifierHttpClientSessionSocketAdapter::with_connection_opener(
+                opener.clone(),
+            );
         let response = adapter
             .execute_socket(
                 &VerifierHttpClientSessionSocketRequest {
@@ -30257,9 +31975,10 @@ mod tests {
     #[test]
     fn connection_backed_socket_adapter_fails_closed_when_connection_opener_rejects() {
         let task = mock_task();
-        let adapter = ConnectionBackedVerifierHttpClientSessionSocketAdapter::with_connection_opener(
-            Arc::new(RejectingHttpClientSessionSocketConnectionOpener),
-        );
+        let adapter =
+            ConnectionBackedVerifierHttpClientSessionSocketAdapter::with_connection_opener(
+                Arc::new(RejectingHttpClientSessionSocketConnectionOpener),
+            );
         let err = adapter
             .execute_socket(
                 &VerifierHttpClientSessionSocketRequest {
@@ -30357,15 +32076,19 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session socket connection opener rejected socket request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session socket connection opener rejected socket request"))
+        );
     }
 
     #[test]
     fn socket_backed_transport_adapter_builds_sends_and_parses_byte_stream_response() {
         let task = mock_task();
-        let socket_request_builder = Arc::new(RecordingHttpClientSessionSocketRequestBuilder::default());
+        let socket_request_builder =
+            Arc::new(RecordingHttpClientSessionSocketRequestBuilder::default());
         let socket_adapter = Arc::new(RecordingHttpClientSessionSocketAdapter::default());
-        let byte_stream_parser = Arc::new(RecordingHttpClientSessionByteStreamResponseParser::default());
+        let byte_stream_parser =
+            Arc::new(RecordingHttpClientSessionByteStreamResponseParser::default());
         let adapter = SocketBackedVerifierHttpClientSessionTransportAdapter::with_components(
             socket_request_builder.clone(),
             socket_adapter.clone(),
@@ -30569,15 +32292,19 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session socket adapter rejected transport request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session socket adapter rejected transport request"))
+        );
     }
 
     #[test]
     fn transport_backed_call_executor_builds_sends_and_parses_raw_io_response() {
         let task = mock_task();
-        let transport_request_builder = Arc::new(RecordingHttpClientSessionTransportRequestBuilder::default());
+        let transport_request_builder =
+            Arc::new(RecordingHttpClientSessionTransportRequestBuilder::default());
         let transport_adapter = Arc::new(RecordingHttpClientSessionTransportAdapter::default());
-        let raw_response_parser = Arc::new(RecordingHttpClientSessionRawIoResponseParser::default());
+        let raw_response_parser =
+            Arc::new(RecordingHttpClientSessionRawIoResponseParser::default());
         let executor = TransportBackedVerifierHttpClientSessionCallExecutor::with_components(
             transport_request_builder.clone(),
             transport_adapter.clone(),
@@ -30763,7 +32490,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session transport adapter rejected call request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session transport adapter rejected call request"))
+        );
     }
 
     #[test]
@@ -30939,7 +32668,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session call executor rejected wire request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session call executor rejected wire request"))
+        );
     }
 
     #[test]
@@ -31097,7 +32828,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session wire executor rejected session")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session wire executor rejected session"))
+        );
     }
 
     #[test]
@@ -31232,14 +32965,17 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session request executor rejected session")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session request executor rejected session"))
+        );
     }
 
     #[test]
     fn session_backed_runtime_opens_session_and_executes_request() {
         let task = mock_task();
         let session_factory = Arc::new(RecordingHttpClientSessionFactory::default());
-        let runtime = SessionBackedVerifierHttpClientRuntime::with_session_factory(session_factory.clone());
+        let runtime =
+            SessionBackedVerifierHttpClientRuntime::with_session_factory(session_factory.clone());
         let response = runtime
             .execute_runtime(
                 &VerifierHttpClientRuntimeRequest {
@@ -31301,7 +33037,9 @@ mod tests {
     #[test]
     fn session_backed_runtime_fails_closed_when_session_factory_rejects() {
         let task = mock_task();
-        let runtime = SessionBackedVerifierHttpClientRuntime::with_session_factory(Arc::new(RejectingHttpClientSessionFactory));
+        let runtime = SessionBackedVerifierHttpClientRuntime::with_session_factory(Arc::new(
+            RejectingHttpClientSessionFactory,
+        ));
         let err = runtime
             .execute_runtime(
                 &VerifierHttpClientRuntimeRequest {
@@ -31349,7 +33087,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session factory rejected runtime")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session factory rejected runtime"))
+        );
     }
 
     #[test]
@@ -31468,7 +33208,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client runtime rejected http handle")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client runtime rejected http handle"))
+        );
     }
 
     #[test]
@@ -31570,7 +33312,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client config resolver rejected http adapter")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client config resolver rejected http adapter"))
+        );
     }
 
     #[test]
@@ -31615,7 +33359,10 @@ mod tests {
         assert_eq!(response.body, b"adapter-ok".to_vec());
         let planned = planner.requests.lock().unwrap().clone();
         assert_eq!(planned.len(), 1);
-        assert_eq!(planned[0].url, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+        assert_eq!(
+            planned[0].url,
+            "https://intel-verifier.invalid/v1/quote/sgx-dcap"
+        );
         assert_eq!(planned[0].body, b"{\"hello\":\"world\"}".to_vec());
         let executed = client_adapter.requests.lock().unwrap().clone();
         assert_eq!(executed.len(), 1);
@@ -31655,7 +33402,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("request planner rejected http request")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("request planner rejected http request"))
+        );
     }
 
     #[test]
@@ -31700,12 +33449,21 @@ mod tests {
             .unwrap();
         assert_eq!(response.status_code, 200);
         assert_eq!(response.body, "{\"transport\":\"ok\"}");
-        assert_eq!(request_executor.urls.lock().unwrap().clone(), vec!["https://intel-verifier.invalid/v1/quote/sgx-dcap".to_string()]);
-        assert_eq!(body_reader.bodies.lock().unwrap().clone(), vec![b"{\"transport\":\"ok\"}".to_vec()]);
-        assert_eq!(timeout_hook.calls.lock().unwrap().clone(), vec![
-            "before:intel-dcap-external-default:5000".to_string(),
-            "after:intel-dcap-external-default:200".to_string(),
-        ]);
+        assert_eq!(
+            request_executor.urls.lock().unwrap().clone(),
+            vec!["https://intel-verifier.invalid/v1/quote/sgx-dcap".to_string()]
+        );
+        assert_eq!(
+            body_reader.bodies.lock().unwrap().clone(),
+            vec![b"{\"transport\":\"ok\"}".to_vec()]
+        );
+        assert_eq!(
+            timeout_hook.calls.lock().unwrap().clone(),
+            vec![
+                "before:intel-dcap-external-default:5000".to_string(),
+                "after:intel-dcap-external-default:200".to_string(),
+            ]
+        );
     }
 
     #[test]
@@ -31742,7 +33500,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("timeout hook rejected transport execution")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("timeout hook rejected transport execution"))
+        );
     }
 
     #[test]
@@ -31774,7 +33534,9 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol chunk termination token fragment slice shard unit cell atom exchange")));
+        assert!(
+            matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol chunk termination token fragment slice shard unit cell atom exchange"))
+        );
     }
 
     #[test]
@@ -31783,12 +33545,17 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
         let provider = ClientBackedIntelQuoteVerifierProvider::new(
-            Arc::new(HttpBackedIntelQuoteVerifierClient::new(Arc::new(AssertingIntelHttpTransport))),
+            Arc::new(HttpBackedIntelQuoteVerifierClient::new(Arc::new(
+                AssertingIntelHttpTransport,
+            ))),
             Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
         );
         let result = provider.verify_intel_quote_bundle(
@@ -31802,7 +33569,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-http-transport"));
+        assert!(
+            matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-http-transport")
+        );
     }
 
     #[test]
@@ -31811,12 +33580,17 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
         let provider = ClientBackedAmdReportVerifierProvider::new(
-            Arc::new(HttpBackedAmdReportVerifierClient::new(Arc::new(AssertingAmdHttpTransport))),
+            Arc::new(HttpBackedAmdReportVerifierClient::new(Arc::new(
+                AssertingAmdHttpTransport,
+            ))),
             Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
         );
         let result = provider.verify_amd_report_bundle(
@@ -31830,7 +33604,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-http-transport"));
+        assert!(
+            matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-http-transport")
+        );
     }
 
     #[test]
@@ -31840,12 +33616,17 @@ mod tests {
         let client = HttpBackedIntelQuoteVerifierClient::new(Arc::new(Http503IntelTransport));
         let result = client.verify_intel_quote_request(
             &IntelQuoteVerifierClientRequest {
-                transport: StaticVerifierTransportConfigSource::external_defaults().intel_quote_transport_config("sgx-dcap"),
+                transport: StaticVerifierTransportConfigSource::external_defaults()
+                    .intel_quote_transport_config("sgx-dcap"),
                 call_metadata: ExternalCallMetadata {
                     request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
                     telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
                     attempt: 1,
-                    retry_policy: RetryBackoffPolicy { max_attempts: 3, backoff_ms: 250, strategy: RetryBackoffStrategy::Exponential },
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
                 },
                 request_event: VerifierTelemetryEvent {
                     kind: VerifierTelemetryEventKind::RequestPrepared,
@@ -31877,7 +33658,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Err(BackendExecutionError::Unavailable { reason, .. }) if reason.contains("status 503")));
+        assert!(
+            matches!(result, Err(BackendExecutionError::Unavailable { reason, .. }) if reason.contains("status 503"))
+        );
     }
 
     #[test]
@@ -31886,7 +33669,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -31905,7 +33691,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client"));
+        assert!(
+            matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client")
+        );
     }
 
     #[test]
@@ -31914,7 +33702,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
@@ -31933,7 +33724,9 @@ mod tests {
                 resolved_vk_ref: None,
             },
         );
-        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-external-mock-client"));
+        assert!(
+            matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-external-mock-client")
+        );
     }
 
     struct InvalidIntelQuoteClientResponse;
@@ -32000,8 +33793,14 @@ mod tests {
             assert_eq!(input.verifier_kind, "quote-verifier");
             assert_eq!(input.measurement_field, "mrenclave");
             assert_eq!(input.quote, "quote-sgx-dcap-demo-v1");
-            assert_eq!(input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
-            assert_eq!(input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(
+                input.intel_collateral.collateral,
+                "intel-dcap-collateral-demo-v1"
+            );
+            assert_eq!(
+                input.intel_collateral.cert_chain,
+                "intel-dcap-cert-chain-demo-v1"
+            );
             assert_eq!(input.intel_collateral.issuer, "intel");
             Ok(BackendVerificationSuccess {
                 backend_id: "intel-mock-provider".into(),
@@ -32066,7 +33865,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -32100,7 +33902,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
@@ -32134,7 +33939,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SGX_DCAP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
@@ -32167,7 +33975,10 @@ mod tests {
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
         let payload = parse_tee_attestation_payload(proof_data).unwrap();
         let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
-        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+        let input = match SEV_SNP_ADAPTER
+            .build_verifier_input(&handoff, None)
+            .unwrap()
+        {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
@@ -32206,8 +34017,14 @@ mod tests {
             assert_eq!(input.verifier_kind, "quote-verifier");
             assert_eq!(input.measurement_field, "mrenclave");
             assert_eq!(input.quote, "quote-sgx-dcap-demo-v1");
-            assert_eq!(input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
-            assert_eq!(input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(
+                input.intel_collateral.collateral,
+                "intel-dcap-collateral-demo-v1"
+            );
+            assert_eq!(
+                input.intel_collateral.cert_chain,
+                "intel-dcap-cert-chain-demo-v1"
+            );
             assert_eq!(input.intel_collateral.issuer, "intel");
             Ok(BackendVerificationSuccess {
                 backend_id: "intel-mock-executor".into(),

@@ -6,8 +6,8 @@ use trnm_types::TaskObject;
 use super::verify_bound_envelope;
 use crate::verification::backend::{
     parse_tee_attestation_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily,
-    ZkBackendKind, ZkBackendRegistry,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily, ZkBackendKind,
+    ZkBackendRegistry,
 };
 
 pub struct TeeVerifier {
@@ -156,14 +156,25 @@ mod tests {
         ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
             assert_eq!(request.family, VerificationBackendFamily::Tee);
             assert_eq!(request.task.task_id, 42);
-            let tee_payload = request.tee_payload.expect("tee handoff payload must be present");
+            let tee_payload = request
+                .tee_payload
+                .expect("tee handoff payload must be present");
             assert_eq!(tee_payload.attestation_target, "sgx-dcap");
             assert_eq!(tee_payload.verifier_kind, "quote-verifier");
             assert_eq!(tee_payload.measurement_field, "mrenclave");
             assert_eq!(tee_payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
-            assert_eq!(tee_payload.verifier_metadata.collateral.as_deref(), Some("intel-dcap-collateral-demo-v1"));
-            assert_eq!(tee_payload.verifier_metadata.cert_chain.as_deref(), Some("intel-dcap-cert-chain-demo-v1"));
-            assert_eq!(tee_payload.verifier_metadata.issuer.as_deref(), Some("intel"));
+            assert_eq!(
+                tee_payload.verifier_metadata.collateral.as_deref(),
+                Some("intel-dcap-collateral-demo-v1")
+            );
+            assert_eq!(
+                tee_payload.verifier_metadata.cert_chain.as_deref(),
+                Some("intel-dcap-cert-chain-demo-v1")
+            );
+            assert_eq!(
+                tee_payload.verifier_metadata.issuer.as_deref(),
+                Some("intel")
+            );
             assert!(request.zk_payload.is_none());
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),
@@ -267,10 +278,7 @@ mod tests {
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                mock_attested_receipt()
-            ),
+            verifier.verify_proof(&task, mock_attested_receipt()),
             VerificationResult::Valid
         ));
     }

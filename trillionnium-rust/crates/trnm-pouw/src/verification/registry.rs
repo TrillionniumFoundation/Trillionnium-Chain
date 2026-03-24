@@ -53,7 +53,9 @@ impl VerifierRegistry {
 
         #[cfg(feature = "real-zk-backend")]
         if let Some(registry) = Arc::get_mut(&mut backends) {
-            registry.register(Arc::new(crate::verification::real_zk_backend::RealZkBackend::default()));
+            registry.register(Arc::new(
+                crate::verification::real_zk_backend::RealZkBackend::default(),
+            ));
         }
 
         let mut registry = Self::new();
@@ -245,15 +247,9 @@ impl VerifierRegistry {
             "zk receipt v3" | "zkreceiptv3" | "zk receipt v 3" | "zk receiptv3" => "zk",
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
-            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => {
-                "zk"
-            }
-            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => {
-                "zk"
-            }
-            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => {
-                "zk"
-            }
+            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => "zk",
+            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => "zk",
+            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
             "zero knowledge receipt v1"
             | "zeroknowledgereceiptv1"

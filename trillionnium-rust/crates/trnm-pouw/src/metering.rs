@@ -35,9 +35,15 @@ pub enum LlmTokenMeterError {
     #[error("missing field: {0}")]
     MissingField(&'static str),
     #[error("invalid workload class: expected {expected}, got {actual}")]
-    InvalidWorkloadClass { expected: &'static str, actual: String },
+    InvalidWorkloadClass {
+        expected: &'static str,
+        actual: String,
+    },
     #[error("invalid metering schema: expected {expected}, got {actual}")]
-    InvalidMeteringSchema { expected: &'static str, actual: String },
+    InvalidMeteringSchema {
+        expected: &'static str,
+        actual: String,
+    },
     #[error("invalid counter: {0}")]
     InvalidCounter(&'static str),
     #[error("invalid timing: {0}")]
@@ -262,8 +268,14 @@ impl LlmTokenMeterV1Receipt {
         require_non_empty(&self.runtime_name, "runtime_name")?;
         require_non_empty(&self.runtime_version, "runtime_version")?;
         require_non_empty(&self.tee_attestation.attester, "tee_attestation.attester")?;
-        require_non_empty(&self.tee_attestation.quote_hash, "tee_attestation.quote_hash")?;
-        require_non_empty(&self.tee_attestation.measurement, "tee_attestation.measurement")?;
+        require_non_empty(
+            &self.tee_attestation.quote_hash,
+            "tee_attestation.quote_hash",
+        )?;
+        require_non_empty(
+            &self.tee_attestation.measurement,
+            "tee_attestation.measurement",
+        )?;
 
         if self.generated_tokens > 0 && self.decode_steps == 0 {
             return Err(LlmTokenMeterError::InvalidCounter(
@@ -454,6 +466,9 @@ mod tests {
         let err = receipt
             .validate(DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS)
             .unwrap_err();
-        assert!(matches!(err, LlmTokenMeterError::ReceiptHashMismatch { .. }));
+        assert!(matches!(
+            err,
+            LlmTokenMeterError::ReceiptHashMismatch { .. }
+        ));
     }
 }

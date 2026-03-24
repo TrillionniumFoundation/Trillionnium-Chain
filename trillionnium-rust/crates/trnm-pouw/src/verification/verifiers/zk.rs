@@ -3,9 +3,9 @@ use std::sync::Arc;
 use crate::verification::backend::{
     backend_token_family_hint, backend_token_zk_system_hints,
     contains_forbidden_opaque_token_chars, normalize_backend_token, normalize_zk_system,
-    parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
-    BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
-    VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
+    parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError, BackendVerificationRequest,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily, VkRefRegistry,
+    ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -288,9 +288,9 @@ impl ZkVerifier {
                     return Err(BackendExecutionError::MalformedProof {
                         backend: "zk:payload".to_string(),
                         reason: format!(
-                            "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
-                            resolved.vk_ref
-                        ),
+                        "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
+                        resolved.vk_ref
+                    ),
                     }
                     .into())
                 }
@@ -348,8 +348,7 @@ impl ZkVerifier {
                             backend: "zk:payload".to_string(),
                             reason: format!(
                                 "invalid zk payload: backend_id '{}' does not match vk_ref '{}'",
-                                payload_backend_id,
-                                resolved.vk_ref
+                                payload_backend_id, resolved.vk_ref
                             ),
                         }
                         .into());
@@ -889,7 +888,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_treats_noop_backend_id_with_backend_version_as_malformed_when_explicit_backend_is_required() {
+    fn zk_verifier_treats_noop_backend_id_with_backend_version_as_malformed_when_explicit_backend_is_required(
+    ) {
         let mut config = router_config();
         config.zk_features.zk_explicit_backend_required = true;
         let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
@@ -902,7 +902,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_treats_noop_backend_id_as_explicit_unavailable_selector_when_explicit_backend_is_required() {
+    fn zk_verifier_treats_noop_backend_id_as_explicit_unavailable_selector_when_explicit_backend_is_required(
+    ) {
         let mut config = router_config();
         config.zk_features.zk_explicit_backend_required = true;
         config.zk_backend = ZkBackendKind::Custom("mock-zk".into());
@@ -934,7 +935,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_explicit_noop_payload_backend_remains_authoritative_without_falling_back_to_configured_backend() {
+    fn zk_verifier_explicit_noop_payload_backend_remains_authoritative_without_falling_back_to_configured_backend(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "groth16-demo",
@@ -958,7 +960,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_treats_noop_backend_id_with_backend_version_as_malformed_for_backend_selection() {
+    fn zk_verifier_treats_noop_backend_id_with_backend_version_as_malformed_for_backend_selection()
+    {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
 
@@ -1069,7 +1072,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_rejects_payload_backend_with_explicit_zk_family_prefix_and_multiple_system_hints() {
+    fn zk_verifier_rejects_payload_backend_with_explicit_zk_family_prefix_and_multiple_system_hints(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "zk groth16 plonk demo",
@@ -1468,7 +1472,10 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -1483,7 +1490,10 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"zk-groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -1498,7 +1508,10 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"zk-groth16","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -1510,11 +1523,15 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
-    fn zk_verifier_accepts_payload_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint() {
+    fn zk_verifier_accepts_payload_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "zk groth16 groth16 demo",
@@ -1525,11 +1542,15 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"zk-groth16-groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
-    fn zk_verifier_accepts_payload_backend_with_case_drifted_explicit_zk_family_prefix_and_repeated_same_system_hint() {
+    fn zk_verifier_accepts_payload_backend_with_case_drifted_explicit_zk_family_prefix_and_repeated_same_system_hint(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "zk groth16 groth16 demo",
@@ -1540,11 +1561,15 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"ZK-GROTH16-GROTH16-DEMO","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
-    fn zk_verifier_accepts_selected_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint() {
+    fn zk_verifier_accepts_selected_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "zk groth16 groth16 demo",
@@ -1557,11 +1582,15 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
-    fn zk_verifier_accepts_selected_backend_with_case_drifted_explicit_zk_family_prefix_and_repeated_same_system_hint() {
+    fn zk_verifier_accepts_selected_backend_with_case_drifted_explicit_zk_family_prefix_and_repeated_same_system_hint(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "zk groth16 groth16 demo",
@@ -1574,11 +1603,15 @@ mod tests {
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
-        assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
-    fn zk_verifier_accepts_selected_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint_even_without_json_payload() {
+    fn zk_verifier_accepts_selected_backend_with_explicit_zk_family_prefix_and_repeated_same_system_hint_even_without_json_payload(
+    ) {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockLegacySuccessBackend {
             backend_id: "zk groth16 groth16 demo",
@@ -1776,7 +1809,8 @@ mod tests {
 
     #[test]
     fn zk_verifier_treats_json_shaped_payload_without_vk_ref_as_malformed_contract_error() {
-        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let verifier =
+            ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","proof_encoding":"hex","proof":"01020304"}"#;
 
@@ -1789,7 +1823,8 @@ mod tests {
 
     #[test]
     fn zk_verifier_treats_json_shaped_payload_without_public_inputs_as_malformed_contract_error() {
-        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let verifier =
+            ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304"}"#;
 

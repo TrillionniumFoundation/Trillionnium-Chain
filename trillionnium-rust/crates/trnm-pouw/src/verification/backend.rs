@@ -256,12 +256,12 @@ impl ParsedZkProofPayload {
                     reason,
                 })
             }
-            ProofBytesEncoding::Hex => {
-                hex::decode(self.proof.as_str()).map_err(|_| BackendExecutionError::MalformedProof {
+            ProofBytesEncoding::Hex => hex::decode(self.proof.as_str()).map_err(|_| {
+                BackendExecutionError::MalformedProof {
                     backend: "zk:payload".to_string(),
                     reason: "invalid zk payload: proof is not valid hex".to_string(),
-                })
-            }
+                }
+            }),
         }
     }
 }
@@ -683,7 +683,10 @@ fn parse_tee_kv_fields(body: &str) -> Result<HashMap<String, String>, BackendExe
     Ok(fields)
 }
 
-fn required_tee_field<'a>(fields: &'a HashMap<String, String>, key: &str) -> Result<&'a str, BackendExecutionError> {
+fn required_tee_field<'a>(
+    fields: &'a HashMap<String, String>,
+    key: &str,
+) -> Result<&'a str, BackendExecutionError> {
     fields
         .get(key)
         .map(String::as_str)
@@ -696,10 +699,11 @@ fn required_tee_field<'a>(fields: &'a HashMap<String, String>, key: &str) -> Res
 pub fn parse_tee_attestation_payload(
     proof_data: &[u8],
 ) -> Result<ParsedTeeProofPayload, BackendExecutionError> {
-    let raw = std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::MalformedProof {
-        backend: "tee:payload".to_string(),
-        reason: "tee receipt must be valid utf-8".to_string(),
-    })?;
+    let raw =
+        std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::MalformedProof {
+            backend: "tee:payload".to_string(),
+            reason: "tee receipt must be valid utf-8".to_string(),
+        })?;
     let body = raw
         .strip_prefix("TEE:")
         .or_else(|| raw.strip_prefix("tee:"))
@@ -927,12 +931,14 @@ pub fn parse_zk_proof_payload(
             reason,
         });
     }
-    let raw_zk_system = payload.zk_system.as_deref().ok_or_else(|| {
-        BackendExecutionError::MalformedProof {
-            backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: zk_system is required".to_string(),
-        }
-    })?;
+    let raw_zk_system =
+        payload
+            .zk_system
+            .as_deref()
+            .ok_or_else(|| BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: zk_system is required".to_string(),
+            })?;
     let normalized_zk_system = normalize_zk_system(raw_zk_system).ok_or_else(|| {
         BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
@@ -1056,8 +1062,7 @@ pub fn parse_zk_proof_payload(
         {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
-                reason: "invalid zk payload: backend_version requires backend_id"
-                    .to_string(),
+                reason: "invalid zk payload: backend_version requires backend_id".to_string(),
             });
         }
     }
@@ -1070,8 +1075,7 @@ pub fn parse_zk_proof_payload(
     if payload.proof != payload.proof.trim() {
         return Err(BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: proof must not contain surrounding whitespace"
-                .to_string(),
+            reason: "invalid zk payload: proof must not contain surrounding whitespace".to_string(),
         });
     }
     if payload
@@ -1313,8 +1317,14 @@ mod tests {
         assert_eq!(payload.measurement_field, "mrenclave");
         assert_eq!(payload.evidence_kind, TeeEvidenceKind::Quote);
         assert_eq!(payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
-        assert_eq!(payload.verifier_metadata.collateral.as_deref(), Some("intel-dcap-collateral-demo-v1"));
-        assert_eq!(payload.verifier_metadata.cert_chain.as_deref(), Some("intel-dcap-cert-chain-demo-v1"));
+        assert_eq!(
+            payload.verifier_metadata.collateral.as_deref(),
+            Some("intel-dcap-collateral-demo-v1")
+        );
+        assert_eq!(
+            payload.verifier_metadata.cert_chain.as_deref(),
+            Some("intel-dcap-cert-chain-demo-v1")
+        );
         assert_eq!(payload.verifier_metadata.issuer.as_deref(), Some("intel"));
     }
 
@@ -1330,9 +1340,18 @@ mod tests {
         assert_eq!(payload.measurement_field, "measurement");
         assert_eq!(payload.evidence_kind, TeeEvidenceKind::Report);
         assert_eq!(payload.evidence(), Some("report-sev-snp-demo-v1"));
-        assert_eq!(payload.verifier_metadata.vcek.as_deref(), Some("amd-vcek-demo-v1"));
-        assert_eq!(payload.verifier_metadata.cert_chain.as_deref(), Some("amd-cert-chain-demo-v1"));
-        assert_eq!(payload.verifier_metadata.report_signer.as_deref(), Some("amd"));
+        assert_eq!(
+            payload.verifier_metadata.vcek.as_deref(),
+            Some("amd-vcek-demo-v1")
+        );
+        assert_eq!(
+            payload.verifier_metadata.cert_chain.as_deref(),
+            Some("amd-cert-chain-demo-v1")
+        );
+        assert_eq!(
+            payload.verifier_metadata.report_signer.as_deref(),
+            Some("amd")
+        );
     }
 
     #[test]
@@ -1342,17 +1361,22 @@ mod tests {
         )
         .unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires quote evidence")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires quote evidence"))
+        );
     }
 
     #[test]
-    fn parse_tee_attestation_payload_rejects_quote_target_without_collateral_metadata_fail_closed() {
+    fn parse_tee_attestation_payload_rejects_quote_target_without_collateral_metadata_fail_closed()
+    {
         let err = parse_tee_attestation_payload(
             b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel"
         )
         .unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires collateral metadata")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires collateral metadata"))
+        );
     }
 
     #[test]
@@ -1362,7 +1386,9 @@ mod tests {
         )
         .unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("does not accept quote verifier metadata")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("does not accept quote verifier metadata"))
+        );
     }
 
     #[test]
@@ -1372,7 +1398,9 @@ mod tests {
         )
         .unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires measurement prefix 'mrtd:'")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires measurement prefix 'mrtd:'"))
+        );
     }
 
     #[test]
@@ -1391,7 +1419,9 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":" Groth-16 ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system must use canonical token 'groth16'")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system must use canonical token 'groth16'"))
+        );
     }
 
     #[test]
@@ -1399,7 +1429,9 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"\u{2003}groth16\u{2003}\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
 
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system must use canonical token 'groth16'")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system must use canonical token 'groth16'"))
+        );
     }
 
     #[test]
@@ -1567,116 +1599,149 @@ mod tests {
     fn parse_zk_proof_payload_rejects_missing_proof_encoding_per_protocol_v0() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof_encoding is required")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof_encoding is required"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_proof_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":" 01020304 ","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_proof_with_embedded_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"0102\u{2003}0304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must be encoded as a single token without embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must be encoded as a single token without embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_vk_ref_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"  vk://trnm/dev/mock-groth16/v1  ","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("vk_ref must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("vk_ref must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_vk_ref_with_embedded_whitespace_or_control_chars() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/line\nbreak","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_vk_ref_with_embedded_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/line\u{2003}break\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_id_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"  groth16-demo  ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_id_with_surrounding_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"\u{2003}groth16-demo\u{2003}\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_id_with_embedded_whitespace_or_control_chars() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo\talt","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must be a single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_id_with_embedded_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"groth16-demo\u{2003}alt\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must be a single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_version_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"  v1  ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_version_with_surrounding_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"groth16-demo\",\"backend_version\":\"\u{2003}v1\u{2003}\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not contain surrounding whitespace")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not contain surrounding whitespace"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_version_with_embedded_whitespace_or_control_chars() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1\nnext","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_version_with_embedded_unicode_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"groth16-demo\",\"backend_version\":\"v1\u{2003}next\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_empty_backend_id_when_provided() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not be empty when provided")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not be empty when provided"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_id_without_visible_canonical_token_segments() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"---","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id '---'") && reason.contains("visible canonical backend token segment")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id '---'") && reason.contains("visible canonical backend token segment"))
+        );
     }
 
     #[test]
-    fn parse_zk_proof_payload_still_allows_noop_backend_id_as_explicit_legacy_no_backend_selector() {
+    fn parse_zk_proof_payload_still_allows_noop_backend_id_as_explicit_legacy_no_backend_selector()
+    {
         let task = mock_task();
         let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"noop","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
         assert_eq!(payload.backend_id.as_deref(), Some("noop"));
@@ -1686,21 +1751,27 @@ mod tests {
     fn parse_zk_proof_payload_rejects_empty_backend_version_when_provided() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not be empty when provided")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not be empty when provided"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_backend_version_without_backend_id() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version requires backend_id")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version requires backend_id"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_missing_zk_system_per_protocol_v0() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system is required")));
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system is required"))
+        );
     }
 
     #[test]
@@ -1733,8 +1804,7 @@ mod tests {
             err,
             BackendExecutionError::InvalidProof {
                 backend: "zk:payload".into(),
-                reason: "invalid zk payload: unknown vk_ref 'VK://TRNM/DEV/MOCK-GROTH16/V1'"
-                    .into(),
+                reason: "invalid zk payload: unknown vk_ref 'VK://TRNM/DEV/MOCK-GROTH16/V1'".into(),
             }
         );
     }
@@ -1931,12 +2001,18 @@ mod tests {
         assert_eq!(normalize_backend_token("noop"), None);
         assert_eq!(normalize_backend_token(" NOOP "), None);
         assert_eq!(normalize_backend_token("noop!!!"), None);
-        assert_eq!(normalize_backend_token("groth16-demo"), Some("groth16 demo".into()));
+        assert_eq!(
+            normalize_backend_token("groth16-demo"),
+            Some("groth16 demo".into())
+        );
     }
 
     #[test]
     fn backend_token_zk_system_hints_extracts_all_canonical_system_hints() {
-        assert_eq!(backend_token_zk_system_hints("groth16-demo"), vec!["groth16"]);
+        assert_eq!(
+            backend_token_zk_system_hints("groth16-demo"),
+            vec!["groth16"]
+        );
         assert_eq!(
             backend_token_zk_system_hints("groth16-plonk-demo"),
             vec!["groth16", "plonk"]
