@@ -3612,11 +3612,20 @@ fn main() -> Result<()> {
             let Some(p) = st.gov_param_snapshot(&key) else {
                 bail!("param not found: {}", key);
             };
+            let pending_update = st.pending_gov_update(&key).map(|pending| {
+                trnm_rpc::PendingGovParamUpdateQueryResponse {
+                    key_id: pending.key_id,
+                    key: pending.key,
+                    value: pending.value,
+                    activate_at_height: pending.activate_at_height,
+                }
+            });
             let out = GovParamQueryResponse {
                 key_id: p.key_id,
                 key: p.key,
                 value: p.value,
                 version: p.version,
+                pending_update,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }

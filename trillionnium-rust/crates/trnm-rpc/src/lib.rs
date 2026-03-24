@@ -77,12 +77,22 @@ pub struct GovProposalQueryResponse {
     pub version: u64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PendingGovParamUpdateQueryResponse {
+    pub key_id: u64,
+    pub key: String,
+    pub value: String,
+    pub activate_at_height: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GovParamQueryResponse {
     pub key_id: u64,
     pub key: String,
     pub value: String,
     pub version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pending_update: Option<PendingGovParamUpdateQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -388,6 +398,40 @@ mod tests {
         };
         let v = serde_json::to_value(task).unwrap();
         assert!(v.get("metering").is_none());
+    }
+
+    #[test]
+    fn rpc_gov_param_query_omits_pending_update_when_absent() {
+        let response = GovParamQueryResponse {
+            key_id: 7,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            version: 3,
+            pending_update: None,
+        };
+        let v = serde_json::to_value(response).unwrap();
+        assert!(v.get("pending_update").is_none());
+    }
+
+    #[test]
+    fn rpc_gov_param_query_includes_pending_update_when_present() {
+        let response = GovParamQueryResponse {
+            key_id: 12,
+            key: "runtime_metadata_schema".into(),
+            value: "v2".into(),
+            version: 8,
+            pending_update: Some(PendingGovParamUpdateQueryResponse {
+                key_id: 12,
+                key: "runtime_metadata_schema".into(),
+                value: "v3".into(),
+                activate_at_height: 4_096,
+            }),
+        };
+        let v = serde_json::to_value(response).unwrap();
+        assert_eq!(v["pending_update"]["key_id"], json!(12));
+        assert_eq!(v["pending_update"]["key"], json!("runtime_metadata_schema"));
+        assert_eq!(v["pending_update"]["value"], json!("v3"));
+        assert_eq!(v["pending_update"]["activate_at_height"], json!(4_096));
     }
 
     #[test]
