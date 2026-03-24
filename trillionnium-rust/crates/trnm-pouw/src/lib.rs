@@ -12317,10 +12317,20 @@ mod tests {
         )
         .unwrap();
 
+        let challenged = st.get_task(r5.id).unwrap();
+        let expected_window = challenged.challenge_window_blocks_snapshot;
+        let expected_challenged_at = challenged.challenged_at_height;
+        let expected_challenge_deadline = challenged.challenge_deadline_height;
+        let expected_resolve_deadline = challenged.resolve_deadline_height;
+
         let next = apply_timeout(&mut st, r5, 221).unwrap();
         let task = st.get_task(next.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(task.challenge_window_blocks_snapshot, expected_window);
+        assert_eq!(task.challenged_at_height, expected_challenged_at);
+        assert_eq!(task.challenge_deadline_height, expected_challenge_deadline);
+        assert_eq!(task.resolve_deadline_height, expected_resolve_deadline);
         assert_eq!(st.balance_of("challenger"), 100);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 0);
