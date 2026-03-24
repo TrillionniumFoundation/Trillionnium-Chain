@@ -254,6 +254,25 @@ fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
     );
 }
 #[test]
+fn governance_resolve_authority_unchecked_path_rejects_reserved_emergency_pause_key_id_alias() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param_unchecked(
+            7_999,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect_err("reserved emergency_pause key id must stay pinned on unchecked path");
+
+    assert!(
+        err.contains("governance key id mismatch for id 7999: expected_key=emergency_pause, attempted_key=resolve_authority"),
+        "{err}"
+    );
+    assert_eq!(st.gov_param_string("resolve_authority"), None);
+    assert!(!st.is_emergency_paused());
+}
+#[test]
 fn governance_resolve_authority_checked_path_rejects_key_id_shadowing_without_state_mutation() {
     let mut st = StateStore::new();
     st.set_gov_param_unchecked(
