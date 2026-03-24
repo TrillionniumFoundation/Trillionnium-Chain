@@ -72,7 +72,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
-    if rest.is_empty() || !rest.starts_with("HTTP/") {
+    if rest.is_empty() || rest.contains([' ', '\t']) || !rest.starts_with("HTTP/") {
         return None;
     }
 

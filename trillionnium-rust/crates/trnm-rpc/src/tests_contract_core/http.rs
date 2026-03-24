@@ -221,6 +221,11 @@ fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("GET /health"), None);
     assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    assert_eq!(parse_http_get_path("GET /health HTTP/1.1 junk"), None);
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.1\ttrail"),
+        None
+    );
 }
 
 #[test]
