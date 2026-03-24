@@ -127,6 +127,13 @@ pub struct TaskMeteringSnapshot {
     pub worker_slash_rebate_per_work_unit_den: u128,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct TaskMetadataCompatibility {
+    pub legacy_note_only: bool,
+    pub canonical_core_fields: bool,
+    pub complete_metering_snapshot: bool,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -141,6 +148,105 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
+}
+
+fn has_canonical_metadata_atom(value: &str) -> bool {
+    let trimmed = value.trim();
+    !trimmed.is_empty() && trimmed == value
+}
+
+impl TaskMeteringSnapshot {
+    pub fn has_complete_core_fields(&self) -> bool {
+        has_canonical_metadata_atom(&self.workload_class)
+            && has_canonical_metadata_atom(&self.metering_schema)
+            && has_canonical_metadata_atom(&self.receipt_hash)
+    }
+}
+
+impl TaskMetadata {
+    pub fn compatibility_profile(&self) -> TaskMetadataCompatibility {
+        let legacy_note_only = self.note.is_some()
+            && self.task_type.is_none()
+            && self.input_hash.is_none()
+            && self.model.is_none()
+            && self.provenance.is_none()
+            && self.metering.is_none();
+
+        let canonical_core_fields = self
+            .note
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(true)
+            && self
+                .task_type
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .input_hash
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .model
+                .as_ref()
+                .map(|model| {
+                    model
+                        .model_id
+                        .as_deref()
+                        .map(has_canonical_metadata_atom)
+                        .unwrap_or(true)
+                        && model
+                            .model_digest
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                        && model
+                            .version
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                })
+                .unwrap_or(true)
+            && self
+                .provenance
+                .as_ref()
+                .map(|provenance| {
+                    provenance
+                        .producer_did
+                        .as_deref()
+                        .map(has_canonical_metadata_atom)
+                        .unwrap_or(true)
+                        && provenance
+                            .produced_at
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                        && provenance
+                            .provenance_index
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                })
+                .unwrap_or(true)
+            && self
+                .metering
+                .as_ref()
+                .map(TaskMeteringSnapshot::has_complete_core_fields)
+                .unwrap_or(true);
+
+        let complete_metering_snapshot = self
+            .metering
+            .as_ref()
+            .map(TaskMeteringSnapshot::has_complete_core_fields)
+            .unwrap_or(true);
+
+        TaskMetadataCompatibility {
+            legacy_note_only,
+            canonical_core_fields,
+            complete_metering_snapshot,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -283,6 +389,56 @@ mod tests {
         let raw = serde_json::to_string(&metadata).expect("serialize metadata");
         let decoded: TaskMetadata = serde_json::from_str(&raw).expect("deserialize metadata");
         assert_eq!(decoded, metadata);
+
+        let compatibility = decoded.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_marks_legacy_note_only_payload() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        let compatibility = metadata.compatibility_profile();
+        assert!(compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_rejects_non_canonical_metering_core_fields() {
+        let metadata = TaskMetadata {
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: " llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: " ".into(),
+                prompt_tokens: 1,
+                generated_tokens: 1,
+                decode_steps: 1,
+                kv_bytes_moved: 1,
+                normalized_work_units: 1,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 1,
+                min_accept_work_units: 0,
+                challenge_success_bounty_base: 0,
+                challenge_success_bounty_per_work_unit_num: 0,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 0,
+                worker_completion_bonus_per_work_unit_den: 1,
+                worker_slash_rebate_per_work_unit_num: 0,
+                worker_slash_rebate_per_work_unit_den: 1,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(!compatibility.complete_metering_snapshot);
     }
 
     #[test]
