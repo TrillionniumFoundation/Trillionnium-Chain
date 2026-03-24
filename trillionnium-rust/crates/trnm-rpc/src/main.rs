@@ -4218,6 +4218,11 @@ fn main() -> Result<()> {
             } else {
                 0
             };
+            let reputation_score_delta = if winner_reputation_effective >= 0 {
+                -(reputation_weight as i128)
+            } else {
+                penalty as i128
+            };
             let winner_score = if winner_reputation_effective >= 0 {
                 base_score.saturating_sub(reputation_weight)
             } else {
@@ -4239,6 +4244,7 @@ fn main() -> Result<()> {
                 "base_score": base_score,
                 "reputation_weight": reputation_weight,
                 "penalty": penalty,
+                "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
                 "effective_score": winner_score,
                 "match_config": MarketScoreConfigOutput::from(score_cfg),
