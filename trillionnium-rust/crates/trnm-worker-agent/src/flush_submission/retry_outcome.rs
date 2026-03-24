@@ -249,4 +249,88 @@ mod tests {
 
         let _ = std::fs::remove_file(&ack_log);
     }
+
+    #[test]
+    fn classify_flush_ack_keeps_duplicate_resume_fail_closed_when_only_one_stage_has_receipt_evidence() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            78,
+            "failed",
+            Some("commit-old".to_string()),
+            None,
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with only commit receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 78);
+        assert_eq!(decision.ack_status, "failed");
+        assert_eq!(decision.reason_code, "missing_tx_hash_receipt");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-old"));
+        assert_eq!(decision.reveal_tx_hash_for_ack, None);
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn classify_flush_ack_accepts_mixed_observed_and_persisted_receipt_evidence() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            79,
+            "failed",
+            Some("commit-old".to_string()),
+            None,
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with persisted commit receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("reveal-new".to_string()),
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 79);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-old"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-new"));
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
 }
