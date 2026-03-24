@@ -1611,6 +1611,16 @@ struct MarketScoreConfigOutput {
     reputation_clamp: i64,
 }
 
+#[derive(Debug, Clone, Copy)]
+struct MarketScoreBreakdown {
+    effective_reputation: i64,
+    base_score: u128,
+    reputation_reward: u128,
+    penalty: u128,
+    effective_score: u128,
+    score_floor_applied: bool,
+}
+
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
         Self {
@@ -1648,18 +1658,44 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
     reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
 }
 
+fn market_score_breakdown(
+    price: u128,
+    reputation: i64,
+    cfg: MarketScoreConfig,
+) -> MarketScoreBreakdown {
+    let effective_reputation = clamp_reputation_for_market(reputation, cfg);
+    let base_score = price.saturating_mul(cfg.price_weight);
+    if effective_reputation >= 0 {
+        let reputation_reward = (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
+        let score_floor_applied = reputation_reward > base_score;
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward,
+            penalty: 0,
+            effective_score: base_score.saturating_sub(reputation_reward),
+            score_floor_applied,
+        }
+    } else {
+        let penalty = (effective_reputation.unsigned_abs() as u128)
+            .saturating_mul(cfg.reputation_weight);
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward: 0,
+            penalty,
+            effective_score: base_score.saturating_add(penalty),
+            score_floor_applied: false,
+        }
+    }
+}
+
 fn market_effective_score_with_config(
     price: u128,
     reputation: i64,
     cfg: MarketScoreConfig,
 ) -> u128 {
-    let rep = clamp_reputation_for_market(reputation, cfg);
-    let base = price.saturating_mul(cfg.price_weight);
-    if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
-    } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
-    }
+    market_score_breakdown(price, reputation, cfg).effective_score
 }
 
 #[cfg(test)]
@@ -4206,30 +4242,17 @@ fn main() -> Result<()> {
             let winner_reputation = normalize_market_worker_key(&winner.worker)
                 .and_then(|k| reputation.get(&k).copied())
                 .unwrap_or(0);
-            let winner_reputation_effective =
-                clamp_reputation_for_market(winner_reputation, score_cfg);
-            let base_score = winner.price.saturating_mul(score_cfg.price_weight);
-            let reputation_weight = if winner_reputation_effective > 0 {
-                (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
-            } else {
-                0
-            };
-            let penalty = if winner_reputation_effective < 0 {
-                (winner_reputation_effective.unsigned_abs() as u128)
-                    .saturating_mul(score_cfg.reputation_weight)
-            } else {
-                0
-            };
+            let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
+            let winner_reputation_effective = breakdown.effective_reputation;
+            let base_score = breakdown.base_score;
+            let reputation_weight = breakdown.reputation_reward;
+            let penalty = breakdown.penalty;
             let reputation_score_delta = if winner_reputation_effective >= 0 {
                 -(reputation_weight as i128)
             } else {
                 penalty as i128
             };
-            let winner_score = if winner_reputation_effective >= 0 {
-                base_score.saturating_sub(reputation_weight)
-            } else {
-                base_score.saturating_add(penalty)
-            };
+            let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
@@ -4244,6 +4267,7 @@ fn main() -> Result<()> {
                 "winner_reputation": winner_reputation,
                 "winner_reputation_effective": winner_reputation_effective,
                 "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
+                "score_floor_applied": breakdown.score_floor_applied,
                 "base_score": base_score,
                 "reputation_weight": reputation_weight,
                 "penalty": penalty,

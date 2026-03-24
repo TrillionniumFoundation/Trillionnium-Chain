@@ -164,29 +164,17 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
     let winner_reputation = normalize_market_worker_key(&winner.worker)
         .and_then(|k| reputation.get(&k).copied())
         .unwrap_or(0);
-    let winner_reputation_effective = clamp_reputation_for_market(winner_reputation, score_cfg);
-    let base_score = winner.price.saturating_mul(score_cfg.price_weight);
-    let reputation_weight = if winner_reputation_effective > 0 {
-        (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
-    } else {
-        0
-    };
-    let penalty = if winner_reputation_effective < 0 {
-        (winner_reputation_effective.unsigned_abs() as u128)
-            .saturating_mul(score_cfg.reputation_weight)
-    } else {
-        0
-    };
+    let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
+    let winner_reputation_effective = breakdown.effective_reputation;
+    let base_score = breakdown.base_score;
+    let reputation_weight = breakdown.reputation_reward;
+    let penalty = breakdown.penalty;
     let reputation_score_delta = if winner_reputation_effective >= 0 {
         -(reputation_weight as i128)
     } else {
         penalty as i128
     };
-    let winner_score = if winner_reputation_effective >= 0 {
-        base_score.saturating_sub(reputation_weight)
-    } else {
-        base_score.saturating_add(penalty)
-    };
+    let winner_score = breakdown.effective_score;
 
     task.status = "matched".into();
     save_market_tasks(&tasks)?;
@@ -201,6 +189,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "winner_reputation": winner_reputation,
         "winner_reputation_effective": winner_reputation_effective,
         "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
+        "score_floor_applied": breakdown.score_floor_applied,
         "base_score": base_score,
         "reputation_weight": reputation_weight,
         "penalty": penalty,
