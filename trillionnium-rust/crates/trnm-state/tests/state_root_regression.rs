@@ -3811,6 +3811,71 @@ fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
 }
 
 #[test]
+fn restore_pending_resolve_outer_object_version_drift_is_state_root_noop() {
+    let mut state = StateStore::new();
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 5_199,
+            creator: "state-root-regression".into(),
+            bounty: 1,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-root".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(9),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+    let mut challenged = state.get_task(5_199).expect("task should exist");
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenged_at_height = Some(25);
+    challenged.resolve_deadline_height = Some(40);
+    challenged.challenge_bond = Some(5);
+    challenged.challenger = Some("challenger-root".into());
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+    let drifted_root = state.state_root();
+
+    state.restore_pending_resolve_approval(
+        5_199,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_199).is_none(),
+        "pending resolve restore must fail closed when the outer object version has drifted away from the snapshot's task_version"
+    );
+    assert_eq!(
+        state.get_ref(5_199).map(|reference| reference.version),
+        Some(challenged_ref.version),
+        "rejecting the stale pending restore must not silently rewrite the drifted outer object version"
+    );
+    assert_eq!(
+        state.state_root(),
+        drifted_root,
+        "rejecting pending resolve restore across an outer object-version drift must remain a state-root no-op"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
