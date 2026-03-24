@@ -214,7 +214,29 @@ fn main() {
         } else {
             profile.conflict_hits as f64 / profile.conflict_checks as f64
         };
+        let conflict_hits_per_tx = if profile.tx_count == 0 {
+            0.0
+        } else {
+            profile.conflict_hits as f64 / profile.tx_count as f64
+        };
+        let candidate_groups_per_tx = if profile.tx_count == 0 {
+            0.0
+        } else {
+            profile.candidate_groups_scanned as f64 / profile.tx_count as f64
+        };
+        let retry_pressure = if profile.group_count == 0 {
+            0.0
+        } else {
+            profile.conflict_hits as f64 / profile.group_count as f64
+        };
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
+        // Block-STM-style speculative tuning cares less about raw conflicts alone
+        // than about how much retry pressure and candidate-lane scanning each tx
+        // induces. Keep these as derived telemetry only so scheduler semantics stay
+        // deterministic and benchmark output remains backward-compatible.
+        lines.push(format!("profile.conflict_hits_per_tx={:.4}", conflict_hits_per_tx));
+        lines.push(format!("profile.candidate_groups_per_tx={:.4}", candidate_groups_per_tx));
+        lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
             let d = auto_adaptive_decision(&txs);
