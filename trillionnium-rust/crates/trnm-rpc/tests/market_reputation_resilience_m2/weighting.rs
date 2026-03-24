@@ -239,6 +239,15 @@ fn market_match_respects_reputation_clamp_for_m2_score_stability() {
     assert_eq!(matched["winner_reputation"], 0);
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
 
+    let cfg = matched["match_config"]
+        .as_object()
+        .expect("match_config object");
+    assert_eq!(
+        cfg.get("reputation_clamp").and_then(Value::as_i64),
+        Some(2),
+        "match output should expose the clamp that kept price dominant"
+    );
+
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
     let _ = fs::remove_file(reputation);
