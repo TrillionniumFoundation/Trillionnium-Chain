@@ -19,7 +19,14 @@ use crate::NodeEventScanMode;
 fn is_health_probe_path(path: &str) -> bool {
     matches!(
         path,
-        "/health" | "/health/" | "/livez" | "/livez/" | "/readyz" | "/readyz/"
+        "/health"
+            | "/health/"
+            | "/healthz"
+            | "/healthz/"
+            | "/livez"
+            | "/livez/"
+            | "/readyz"
+            | "/readyz/"
     )
 }
 
@@ -165,10 +172,12 @@ mod tests {
     fn accepts_health_probe_aliases() {
         assert!(is_health_probe_path("/health"));
         assert!(is_health_probe_path("/health/"));
+        assert!(is_health_probe_path("/healthz"));
+        assert!(is_health_probe_path("/healthz/"));
         assert!(is_health_probe_path("/livez"));
         assert!(is_health_probe_path("/livez/"));
         assert!(is_health_probe_path("/readyz"));
         assert!(is_health_probe_path("/readyz/"));
-        assert!(!is_health_probe_path("/healthz"));
+        assert!(!is_health_probe_path("/healthcheck"));
     }
 }

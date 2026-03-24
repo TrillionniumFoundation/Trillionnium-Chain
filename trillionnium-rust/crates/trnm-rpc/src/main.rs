@@ -2590,7 +2590,14 @@ fn summarize_challenge_treasury(
 fn is_health_probe_path(path: &str) -> bool {
     matches!(
         path,
-        "/health" | "/health/" | "/livez" | "/livez/" | "/readyz" | "/readyz/"
+        "/health"
+            | "/health/"
+            | "/healthz"
+            | "/healthz/"
+            | "/livez"
+            | "/livez/"
+            | "/readyz"
+            | "/readyz/"
     )
 }
 
