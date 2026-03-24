@@ -1517,6 +1517,38 @@ fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_w
 }
 
 #[test]
+fn x3_prep_manual_degraded_heartbeat_saturated_source_surfaces_max_invalid_height_without_state_drift()
+{
+    let mut request = SettlementRequest::new(1, "0xmanual-hbmetrics-saturated-source".to_string());
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: u64::MAX,
+            target_height: 0,
+            latency_ms: 91,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "target relay timeout".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: u64::MAX },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: u64::MAX }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_confirm_failure_reason_sanitizes_invisible_controls_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xconfirm-sanitize".to_string());
     let token = operator_token();
