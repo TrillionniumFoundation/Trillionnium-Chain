@@ -73,6 +73,17 @@ fn submission_args(rec: &SubmissionRecord) -> (Vec<String>, Vec<String>) {
 /// current adapter response or from a previously persisted ack record for the
 /// same task. This keeps duplicate resumes idempotent without silently
 /// accepting terminal outcomes that never produced auditable receipts.
+fn normalize_adapter_tx_hash(tx_hash: Option<&str>) -> Option<String> {
+    tx_hash.and_then(|hash| {
+        let trimmed = hash.trim();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed.to_string())
+        }
+    })
+}
+
 pub(crate) fn classify_flush_ack(
     commit_res: &AdapterExecResult,
     reveal_res: &AdapterExecResult,
@@ -82,6 +93,8 @@ pub(crate) fn classify_flush_ack(
     let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id);
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
+    let observed_commit_tx_hash = normalize_adapter_tx_hash(commit_res.tx_hash.as_deref());
+    let observed_reveal_tx_hash = normalize_adapter_tx_hash(reveal_res.tx_hash.as_deref());
 
     let commit_idempotent_ok = should_execute_reveal(commit_res);
     let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
@@ -89,13 +102,13 @@ pub(crate) fn classify_flush_ack(
     // Duplicate receipts are only replay-safe when we can point to the original
     // on-chain evidence recorded for that stage. A bare duplicate without the
     // persisted hash stays fail-closed as missing receipt evidence.
-    let commit_hash_observed = commit_res.tx_hash.is_some()
+    let commit_hash_observed = observed_commit_tx_hash.is_some()
         || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
-    let reveal_hash_observed = reveal_res.tx_hash.is_some()
+    let reveal_hash_observed = observed_reveal_tx_hash.is_some()
         || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
 
-    let commit_tx_hash_for_ack = commit_res.tx_hash.clone().or(previous_commit_tx_hash);
-    let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+    let commit_tx_hash_for_ack = observed_commit_tx_hash.or(previous_commit_tx_hash);
+    let reveal_tx_hash_for_ack = observed_reveal_tx_hash.or(previous_reveal_tx_hash);
 
     let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
         && reveal_idempotent_ok
@@ -374,5 +387,51 @@ mod tests {
         assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-old"));
 
         let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn classify_flush_ack_treats_blank_live_receipt_hashes_as_missing_evidence() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("  \n\t ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("   ".to_string()),
+            terminal: true,
+        };
+
+        let decision =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81);
+        assert_eq!(decision.ack_status, "failed");
+        assert_eq!(decision.reason_code, "missing_tx_hash_receipt");
+        assert_eq!(decision.commit_tx_hash_for_ack, None);
+        assert_eq!(decision.reveal_tx_hash_for_ack, None);
+    }
+
+    #[test]
+    fn classify_flush_ack_trims_live_receipt_hashes_before_persisting_ack() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("  commit-live  ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\nreveal-live\t".to_string()),
+            terminal: true,
+        };
+
+        let decision =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 82);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-live"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-live"));
     }
 }
