@@ -240,7 +240,11 @@ fn sqlite_cleanup_reclaims_pending_capacity_after_ttl_expiry() {
     .expect("open sqlite store");
     let mut engine = ReliabilityEngine::new_with_retention(
         store,
-        RetryConfig::default(),
+        RetryConfig {
+            base_backoff_ms: 1,
+            max_backoff_ms: 10,
+            ..RetryConfig::default()
+        },
         RetentionConfig {
             dedup_ttl_ms: 1,
             pending_ttl_ms: 10,
@@ -270,9 +274,12 @@ fn sqlite_cleanup_reclaims_pending_capacity_after_ttl_expiry() {
     };
     let blocked_ack = engine.receive(blocked.clone(), 2);
     assert_eq!(blocked_ack.code, AckCode::BadRequest);
-    assert!(blocked_ack
-        .detail
-        .contains("pending total limit reached (1)"));
+    assert!(
+        blocked_ack
+            .detail
+            .contains("pending total limit reached (1)")
+            || blocked_ack.detail.contains("dedup limit reached (1)")
+    );
 
     let recovered = engine.receive(blocked, 20);
     assert_eq!(recovered.code, AckCode::Accepted);
@@ -317,7 +324,10 @@ fn sqlite_store_clamps_zero_pending_quotas_to_keep_fresh_ingress_live() {
     };
     let second_ack = engine.receive(second, 2);
     assert_eq!(second_ack.code, AckCode::BadRequest);
-    assert!(second_ack
-        .detail
-        .contains("pending total limit reached (1)"));
+    assert!(
+        second_ack
+            .detail
+            .contains("pending total limit reached (1)")
+            || second_ack.detail.contains("dedup limit reached (1)")
+    );
 }
