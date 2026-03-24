@@ -87,3 +87,25 @@ fn draining_last_known_retry_clears_stale_fairness_reservations() {
     let m = gate.metrics();
     assert_eq!(m.fairness_deferrals, 0);
 }
+
+#[test]
+fn admitting_last_known_retry_clears_stale_retry_fifo_markers_immediately() {
+    let mut gate = AdmissionGate::new(2);
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+    // Simulate stale FIFO marker buildup around the one real retry id.
+    gate.backpressured_fifo.extend([999, 9, 999]);
+    assert!(gate.backpressured_fifo.len() > gate.backpressured_ids.len());
+
+    assert_eq!(gate.pop_ready(), Some(1));
+    assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+    assert!(gate.backpressured_ids.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert!(
+        gate.backpressured_fifo.is_empty(),
+        "accepting the last known retry should cold-reset stale retry FIFO markers"
+    );
+}
