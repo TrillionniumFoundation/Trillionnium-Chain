@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
-use trnm_state::{CheckpointMeta, WalMeta};
+use trnm_state::{checkpoint_evidence_surface_is_canonical, CheckpointMeta, WalMeta};
 
 use crate::types::ConsensusWal;
 use crate::wal::{persist_checkpoint_meta, persist_consensus_wal, persist_wal_meta_entries};
@@ -58,16 +58,24 @@ pub(crate) fn persist_committed_height(
     persist_wal_meta_entries(wal_dir, wal_entries)?;
 
     if checkpoint_interval > 0 && height % checkpoint_interval == 0 {
-        checkpoints.push(CheckpointMeta {
+        let checkpoint = CheckpointMeta {
             height,
             state_root_hex: state_root_hex.to_string(),
             wal_entry_hash_hex: wal_hash.clone(),
-        });
-        persist_checkpoint_meta(wal_dir, checkpoints)?;
-        println!(
-            "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
-            height, state_root_hex, wal_hash, proposal_hash
-        );
+        };
+        if checkpoint_evidence_surface_is_canonical(
+            &checkpoint,
+            wal_entries
+                .last()
+                .expect("just-pushed committed WAL entry must exist"),
+        ) {
+            checkpoints.push(checkpoint);
+            persist_checkpoint_meta(wal_dir, checkpoints)?;
+            println!(
+                "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
+                height, state_root_hex, wal_hash, proposal_hash
+            );
+        }
     }
 
     persist_consensus_wal(
