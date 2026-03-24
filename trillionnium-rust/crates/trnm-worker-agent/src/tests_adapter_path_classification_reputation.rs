@@ -187,6 +187,27 @@ fn canonical_reputation_signal_order_matches_descending_tier_and_delta() {
 }
 
 #[test]
+fn canonical_reputation_impact_table_matches_signal_order_and_mapping_helpers() {
+    assert_eq!(
+        CANONICAL_REPUTATION_IMPACTS.len(),
+        CANONICAL_REPUTATION_SIGNAL_ORDER.len(),
+        "canonical impact table must stay in lockstep with the signal ordering"
+    );
+
+    for ((signal, impact), ordered_signal) in CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .zip(CANONICAL_REPUTATION_SIGNAL_ORDER.iter())
+    {
+        assert_eq!(signal, ordered_signal);
+        assert_eq!(reputation_impact(*signal), *impact);
+        assert_eq!(reputation_score_impact(*signal), (impact.label, impact.delta));
+        assert_eq!(reputation_tier(*signal), impact.tier);
+        assert_eq!(reputation_signal_from_delta(impact.delta), Some(*signal));
+        assert_eq!(reputation_impact_from_delta(impact.delta), Some(*impact));
+    }
+}
+
+#[test]
 fn reputation_delta_round_trips_back_to_canonical_signal_and_impact() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);

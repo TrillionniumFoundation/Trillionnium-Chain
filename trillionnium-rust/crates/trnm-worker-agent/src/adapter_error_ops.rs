@@ -54,29 +54,46 @@ pub(crate) const CANONICAL_REPUTATION_SIGNAL_ORDER: [ReputationSignal; 4] = [
     ReputationSignal::AdapterNonRetriable,
 ];
 
-pub(crate) fn reputation_impact(signal: ReputationSignal) -> ReputationImpact {
-    match signal {
-        ReputationSignal::Accepted => ReputationImpact {
+pub(crate) const CANONICAL_REPUTATION_IMPACTS: [(ReputationSignal, ReputationImpact); 4] = [
+    (
+        ReputationSignal::Accepted,
+        ReputationImpact {
             label: "accepted",
             delta: 3,
             tier: 3,
         },
-        ReputationSignal::AdapterRetryExhausted => ReputationImpact {
+    ),
+    (
+        ReputationSignal::AdapterRetryExhausted,
+        ReputationImpact {
             label: "adapter_retry_exhausted",
             delta: -1,
             tier: 2,
         },
-        ReputationSignal::VerifierRejected => ReputationImpact {
+    ),
+    (
+        ReputationSignal::VerifierRejected,
+        ReputationImpact {
             label: "verifier_rejected",
             delta: -2,
             tier: 1,
         },
-        ReputationSignal::AdapterNonRetriable => ReputationImpact {
+    ),
+    (
+        ReputationSignal::AdapterNonRetriable,
+        ReputationImpact {
             label: "adapter_non_retriable",
             delta: -3,
             tier: 0,
         },
-    }
+    ),
+];
+
+pub(crate) fn reputation_impact(signal: ReputationSignal) -> ReputationImpact {
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(candidate, impact)| (*candidate == signal).then_some(*impact))
+        .expect("canonical reputation mapping must cover all reputation signals")
 }
 
 pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str, i32) {
