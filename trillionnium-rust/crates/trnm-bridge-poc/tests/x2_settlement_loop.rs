@@ -1479,7 +1479,7 @@ fn x3_prep_manual_degraded_heartbeat_invalid_embedded_metrics_fail_closed_withou
 
     assert_eq!(
         err,
-        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 807 }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }

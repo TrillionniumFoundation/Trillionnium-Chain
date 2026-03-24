@@ -63,13 +63,7 @@ fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
 fn invalid_heartbeat_embedded_height(heartbeat: &HeartbeatOutcome) -> u64 {
     heartbeat
         .heartbeat
-        .map(|h| {
-            if h.source_height == 0 {
-                0
-            } else {
-                h.target_height
-            }
-        })
+        .map(|h| h.source_height.max(h.target_height))
         .unwrap_or(0)
 }
 
