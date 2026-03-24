@@ -81,7 +81,7 @@ impl OracleSnapshot {
         if sample_count == 0 {
             return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
         }
-        if sample_count < 2 && sources.len() > 1 {
+        if sample_count < sources.len() as u32 {
             return Err(OracleError::InconsistentSampleCount {
                 sample_count,
                 actual_sources: sources.len() as u32,
@@ -695,8 +695,7 @@ mod tests {
 
     #[test]
     fn rejects_sample_count_below_source_cardinality() {
-        let p = policy();
-        let snap = OracleSnapshot::new(
+        let err = OracleSnapshot::new(
             "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink"), source("pyth")],
@@ -707,11 +706,8 @@ mod tests {
             2_000,
             10_000,
         )
-        .expect("snapshot build");
+        .expect_err("snapshot should fail inconsistent accounting guardrail");
 
-        let err = p
-            .validate_snapshot(&snap, 10_100)
-            .expect_err("snapshot should fail inconsistent accounting guardrail");
         assert!(matches!(
             err,
             OracleError::InconsistentSampleCount {
@@ -934,11 +930,11 @@ mod tests {
     #[test]
     fn observed_report_maps_inconsistent_sample_count_to_quorum_error_label() {
         let p = policy();
-        let snap = OracleSnapshot::new(
+        let mut snap = OracleSnapshot::new(
             "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink"), source("pyth")],
-            2,
+            3,
             Some(100_000),
             Some(120),
             1_000,
@@ -946,6 +942,8 @@ mod tests {
             10_000,
         )
         .expect("snapshot build");
+        snap.sample_count = 2;
+        snap.snapshot_hash = snap.compute_hash();
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
         assert!(!report.ok);
