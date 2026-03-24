@@ -314,6 +314,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.candidate_groups_per_tx(), 0.0);
     assert_eq!(profile.retry_pressure(), 0.0);
     assert_eq!(profile.dominant_retry_stage(), "none");
+    assert_eq!(profile.dominant_retry_share(), 0.0);
 }
 
 #[test]
@@ -341,6 +342,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
     assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);
     assert_eq!(profile.dominant_retry_stage(), "wr");
+    assert!((profile.dominant_retry_share() - (4.0 / 6.0)).abs() < f64::EPSILON);
 }
 
 #[test]

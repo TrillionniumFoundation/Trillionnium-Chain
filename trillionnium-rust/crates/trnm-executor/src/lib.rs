@@ -91,6 +91,15 @@ impl GroupingProfile {
                 .unwrap_or("none")
         }
     }
+
+    #[inline]
+    pub fn dominant_retry_share(&self) -> f64 {
+        let dominant_hits = [self.stage_ww_hits, self.stage_wr_hits, self.stage_rw_hits]
+            .into_iter()
+            .max()
+            .unwrap_or(0);
+        ratio_usize(dominant_hits, self.conflict_hits)
+    }
 }
 
 #[derive(Debug, Clone)]

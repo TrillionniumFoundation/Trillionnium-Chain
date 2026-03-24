@@ -220,6 +220,7 @@ fn main() {
         let stage_wr_hits_per_tx = ratio(profile.stage_wr_hits, profile.tx_count);
         let stage_rw_hits_per_tx = ratio(profile.stage_rw_hits, profile.tx_count);
         let dominant_retry_stage = profile.dominant_retry_stage();
+        let dominant_retry_share = profile.dominant_retry_share();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
         // than about how much retry pressure and candidate-lane scanning each tx
@@ -261,6 +262,10 @@ fn main() {
         lines.push(format!(
             "profile.dominant_retry_stage={}",
             dominant_retry_stage
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_share={:.4}",
+            dominant_retry_share
         ));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
