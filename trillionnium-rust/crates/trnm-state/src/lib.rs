@@ -124,6 +124,16 @@ impl CheckpointMeta {
         hash_len_prefixed_str(&mut hasher, &self.wal_entry_hash_hex);
         hex::encode(hasher.finalize())
     }
+
+    pub fn evidence_summary(&self) -> String {
+        format!(
+            "checkpoint_height={} state_root={} wal_entry_hash={} checkpoint_commitment={}",
+            self.height,
+            self.state_root_hex,
+            self.wal_entry_hash_hex,
+            self.commitment_hex()
+        )
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -4118,6 +4128,34 @@ mod tests {
         let mut changed_wal_hash = checkpoint.clone();
         changed_wal_hash.wal_entry_hash_hex = "01".repeat(32);
         assert_ne!(baseline, changed_wal_hash.commitment_hex());
+    }
+
+    #[test]
+    fn checkpoint_evidence_summary_is_deterministic_and_commitment_backed() {
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: "ab".repeat(32),
+            wal_entry_hash_hex: "cd".repeat(32),
+        };
+
+        let summary = checkpoint.evidence_summary();
+        assert_eq!(
+            summary,
+            format!(
+                "checkpoint_height=7 state_root={} wal_entry_hash={} checkpoint_commitment={}",
+                checkpoint.state_root_hex,
+                checkpoint.wal_entry_hash_hex,
+                checkpoint.commitment_hex()
+            )
+        );
+
+        let mut changed_wal_hash = checkpoint.clone();
+        changed_wal_hash.wal_entry_hash_hex = "01".repeat(32);
+        assert_ne!(
+            summary,
+            changed_wal_hash.evidence_summary(),
+            "checkpoint evidence summary must change when the DA-relevant WAL hash changes"
+        );
     }
 
     #[test]
