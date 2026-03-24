@@ -696,6 +696,10 @@ fn required_tee_field<'a>(
         })
 }
 
+fn has_visible_tee_metadata(value: Option<&str>) -> bool {
+    value.is_some_and(|raw| !raw.trim().is_empty())
+}
+
 pub fn parse_tee_attestation_payload(
     proof_data: &[u8],
 ) -> Result<ParsedTeeProofPayload, BackendExecutionError> {
@@ -776,7 +780,7 @@ pub fn parse_tee_attestation_payload(
 
     match target.evidence_kind {
         TeeEvidenceKind::Quote => {
-            if verifier_metadata.collateral.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.collateral.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
@@ -785,7 +789,7 @@ pub fn parse_tee_attestation_payload(
                     ),
                 });
             }
-            if verifier_metadata.cert_chain.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.cert_chain.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
@@ -794,7 +798,7 @@ pub fn parse_tee_attestation_payload(
                     ),
                 });
             }
-            if verifier_metadata.issuer.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.issuer.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
@@ -814,7 +818,7 @@ pub fn parse_tee_attestation_payload(
             }
         }
         TeeEvidenceKind::Report => {
-            if verifier_metadata.vcek.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.vcek.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
@@ -823,7 +827,7 @@ pub fn parse_tee_attestation_payload(
                     ),
                 });
             }
-            if verifier_metadata.cert_chain.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.cert_chain.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
@@ -832,7 +836,7 @@ pub fn parse_tee_attestation_payload(
                     ),
                 });
             }
-            if verifier_metadata.report_signer.is_none() {
+            if !has_visible_tee_metadata(verifier_metadata.report_signer.as_deref()) {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "tee:payload".to_string(),
                     reason: format!(
