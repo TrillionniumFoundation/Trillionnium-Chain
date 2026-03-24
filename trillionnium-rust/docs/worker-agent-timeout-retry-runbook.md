@@ -1,5 +1,32 @@
 # trnm-worker-agent timeout/retry 参数口径（Runbook）
 
+## 0) devnet / smoke 最小前置条件（run-assigned）
+
+`trnm-worker-agent run-assigned` **只会处理** ingress 中同时满足以下条件的记录：
+
+- `status == "assigned"`
+- `assigned_worker == <当前 --worker>`
+
+如果 devnet smoke 输入还是 `open` / `queued`，或者没有写入 `assigned_worker`，worker 会跳过该记录，不会生成 submission。这是当前约定行为，不是链路故障。
+
+### 最小可处理样例
+
+```jsonl
+{"request_id":"req-devnet-1","task_id":4242,"channel":"telegram","user_id":"u1","session_id":"s1","text":"Return JSON with result field only","idempotency_key":"idem-1","status":"assigned","created_at_unix_ms":1700000000000,"assigned_worker":"worker-a","assigned_at_unix_ms":1700000001000}
+```
+
+### 诊断口径
+
+`run-assigned` 结束时会输出 `skipped=` 汇总，常见值：
+
+- `status_not_assigned`
+- `assigned_worker_missing`
+- `assigned_worker_mismatch`
+
+这几个计数优先用于定位 devnet/operator smoke 输入问题。
+
+---
+
 ## 1) 统一参数与优先级
 
 本次将 `timeout/max_retries/backoff_ms` 统一为“**CLI > ENV > 内置默认值**”的读取顺序，并集中在 `crates/trnm-worker-agent/src/main.rs` 的配置解析函数中。

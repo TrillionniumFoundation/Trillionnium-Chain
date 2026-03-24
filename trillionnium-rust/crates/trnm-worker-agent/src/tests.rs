@@ -1,5 +1,56 @@
     use super::*;
-    use crate::proof_adapter::StandardProofAdapter;
+    use crate::{assigned::assigned_skip_reason, proof_adapter::StandardProofAdapter};
+
+    #[test]
+    fn assigned_skip_reason_reports_devnet_smoke_gating_causes() {
+        let base = MessageIngressRecord {
+            request_id: "req-skip".to_string(),
+            task_id: 42,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik1".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-a".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        assert_eq!(assigned_skip_reason(&base, "worker-a"), None);
+
+        let mut wrong_status = base.clone();
+        wrong_status.status = RequestStatus::Open.as_str().to_string();
+        assert_eq!(
+            assigned_skip_reason(&wrong_status, "worker-a"),
+            Some("status_not_assigned")
+        );
+
+        let mut wrong_worker = base.clone();
+        wrong_worker.assigned_worker = Some("worker-b".to_string());
+        assert_eq!(
+            assigned_skip_reason(&wrong_worker, "worker-a"),
+            Some("assigned_worker_mismatch")
+        );
+
+        let mut missing_worker = base;
+        missing_worker.assigned_worker = None;
+        assert_eq!(
+            assigned_skip_reason(&missing_worker, "worker-a"),
+            Some("assigned_worker_missing")
+        );
+    }
 
     #[test]
     fn transition_request_status_accepts_benign_formatting_variants() {

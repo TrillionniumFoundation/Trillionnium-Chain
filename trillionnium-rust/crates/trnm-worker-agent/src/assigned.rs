@@ -1,15 +1,30 @@
 use anyhow::{anyhow, Result};
-use std::{env, path::PathBuf, time::Duration};
+use std::{collections::BTreeMap, env, path::PathBuf, time::Duration};
 
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
     adapter_error_signal, append_submission, attach_llm_provenance, classify_adapter_error,
     commitment, execute_payload, load_ingress_records, reputation_delta,
     resolve_llm_adapter_policy, run_llm_adapter_with_retry, save_ingress_records,
-    transition_request_status, AdapterErrorKind, LlmAdapterPolicy, PROOF_ADAPTER_ENV,
-    ReputationSignal,
+    transition_request_status, AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
+    PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
+
+pub(crate) fn assigned_skip_reason(
+    rec: &crate::MessageIngressRecord,
+    worker: &str,
+) -> Option<&'static str> {
+    match RequestStatus::parse(&rec.status) {
+        Ok(RequestStatus::Assigned) => {}
+        _ => return Some("status_not_assigned"),
+    }
+    match rec.assigned_worker.as_deref() {
+        Some(current) if current == worker => None,
+        Some(_) => Some("assigned_worker_mismatch"),
+        None => Some("assigned_worker_missing"),
+    }
+}
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn handle_run_assigned(
@@ -40,14 +55,13 @@ pub(crate) fn handle_run_assigned(
     })?;
     let mut records = load_ingress_records(&ingress_file)?;
     let mut n = 0usize;
+    let mut skipped: BTreeMap<&'static str, usize> = BTreeMap::new();
     for rec in records.iter_mut() {
         if n >= limit {
             break;
         }
-        if rec.status != RequestStatus::Assigned.as_str() {
-            continue;
-        }
-        if rec.assigned_worker.as_deref() != Some(worker.as_str()) {
+        if let Some(reason) = assigned_skip_reason(rec, &worker) {
+            *skipped.entry(reason).or_default() += 1;
             continue;
         }
 
@@ -126,9 +140,19 @@ pub(crate) fn handle_run_assigned(
         );
     }
     save_ingress_records(&ingress_file, &records)?;
+    let skip_summary = if skipped.is_empty() {
+        "none".to_string()
+    } else {
+        skipped
+            .iter()
+            .map(|(reason, count)| format!("{}={}", reason, count))
+            .collect::<Vec<_>>()
+            .join(",")
+    };
     println!(
-        "[agent] run-assigned processed={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
+        "[agent] run-assigned processed={} skipped={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
         n,
+        skip_summary,
         ingress_file.display(),
         submit_log.display(),
         llm_adapter_cmd,
