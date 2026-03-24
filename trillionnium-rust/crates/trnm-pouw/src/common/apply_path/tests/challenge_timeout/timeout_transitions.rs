@@ -65,6 +65,28 @@ fn challenged_timeout_transitions_to_completed() {
     let task = st.get_task(r6.id).unwrap();
     assert_eq!(task.status, TaskStatus::Completed);
     assert_eq!(task.challenge_bond_forfeited, Some(false));
+    assert_eq!(
+        task.challenge_window_blocks_snapshot,
+        Some(100),
+        "terminal challenged tasks should retain the challenge-window snapshot for later collateral/proof audits"
+    );
+    assert_eq!(
+        task.challenged_at_height,
+        Some(30),
+        "terminal challenged tasks should retain the original challenge height"
+    );
+    assert_eq!(
+        task.challenge_deadline_height,
+        Some(130),
+        "terminal challenged tasks should retain the original challenge deadline"
+    );
+    assert_eq!(
+        task.resolve_deadline_height,
+        Some(230),
+        "terminal challenged tasks should retain the resolve deadline that governed timeout settlement"
+    );
+    assert_eq!(task.challenge_bond, Some(10));
+    assert_eq!(task.challenger.as_deref(), Some("challenger"));
     assert_eq!(st.balance_of("challenger"), 100);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
