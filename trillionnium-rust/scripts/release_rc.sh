@@ -33,6 +33,13 @@ RC_OUT_DIR="$OUT"
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || echo unknown)"
+GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
+if [ -z "$GIT_STATUS_SHORT" ]; then
+  GIT_STATUS_SUMMARY="clean"
+else
+  GIT_STATUS_SUMMARY="dirty"
+fi
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
 EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
@@ -136,8 +143,13 @@ release_id=rc-$TS
 generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 workspace=$ROOT
 rc_out_dir=$RC_OUT_DIR
+git_toplevel=$GIT_TOPLEVEL
 git_branch=$GIT_BRANCH
 git_head=$GIT_HEAD
+git_status_summary=$GIT_STATUS_SUMMARY
+git_status_short_begin
+$GIT_STATUS_SHORT
+git_status_short_end
 truth_source=$TRUTH_SOURCE
 historical_evidence_only=true
 evidence_scope=$EVIDENCE_SCOPE

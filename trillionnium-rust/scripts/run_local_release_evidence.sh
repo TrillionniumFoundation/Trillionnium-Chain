@@ -24,6 +24,13 @@ export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || echo unknown)"
+GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
+if [[ -z "$GIT_STATUS_SHORT" ]]; then
+  GIT_STATUS_SUMMARY="clean"
+else
+  GIT_STATUS_SUMMARY="dirty"
+fi
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT_INPUT="${OUT_DIR:-$ROOT/run/health}"
@@ -113,8 +120,15 @@ find_challenge_reexec_entry() {
   echo "local_release_evidence=evidence-$TS"
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
+  echo "git_toplevel=$GIT_TOPLEVEL"
   echo "git_branch=$GIT_BRANCH"
   echo "git_head=$GIT_HEAD"
+  echo "git_status_summary=$GIT_STATUS_SUMMARY"
+  echo "git_status_short_begin"
+  if [[ -n "$GIT_STATUS_SHORT" ]]; then
+    printf '%s\n' "$GIT_STATUS_SHORT"
+  fi
+  echo "git_status_short_end"
   echo "evidence_dir=$EVIDENCE_DIR"
   echo "replay_out_dir=$BASE_OUT"
   echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"

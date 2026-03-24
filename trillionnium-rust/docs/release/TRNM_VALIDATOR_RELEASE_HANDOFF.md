@@ -65,6 +65,7 @@ Minimum evidence files to preserve:
 
 Interpretation rule:
 - `summary.txt` must end with `result=PASS`
+- `git_status_summary=clean` must be present before anyone treats the evidence as handoff-grade
 - if `challenge_reexec=FAIL(entry_not_found)`, treat the rehearsal as incomplete rather than silently acceptable
 
 ### 3. RC gate rehearsal
@@ -90,6 +91,12 @@ Minimum artifacts to preserve:
 - `bench-mixed-matrix.log`
 - `threshold-enforcement.log`
 - `cargo-build.log`
+
+Manifest/evidence identity fields to verify before handoff:
+- `git_toplevel=` matches the intended repo root
+- `git_branch=` and `git_head=` match the branch/commit under review
+- `git_status_summary=clean`
+- `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals
 
 ## Go / No-Go decision rule
 
