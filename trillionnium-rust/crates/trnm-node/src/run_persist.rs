@@ -1,7 +1,10 @@
 use std::path::Path;
 
 use anyhow::Result;
-use trnm_state::{checkpoint_evidence_surface_is_canonical, CheckpointMeta, WalMeta};
+use trnm_state::{
+    checkpoint_da_light_verifier_summary, checkpoint_evidence_surface_is_canonical, CheckpointMeta,
+    WalMeta,
+};
 
 use crate::types::ConsensusWal;
 use crate::wal::{persist_checkpoint_meta, persist_consensus_wal, persist_wal_meta_entries};
@@ -69,14 +72,19 @@ pub(crate) fn persist_committed_height(
                 .last()
                 .expect("just-pushed committed WAL entry must exist"),
         ) {
-            let checkpoint_summary = checkpoint.evidence_summary();
-            let wal_summary = wal_entries
+            let wal_entry = wal_entries
                 .last()
-                .expect("just-pushed committed WAL entry must exist")
-                .evidence_summary();
+                .expect("just-pushed committed WAL entry must exist");
+            let checkpoint_summary = checkpoint.evidence_summary();
+            let wal_summary = wal_entry.evidence_summary();
+            let da_summary = checkpoint_da_light_verifier_summary(&checkpoint, wal_entry)
+                .expect("canonical checkpoint evidence must produce a DA/light-verifier summary");
             checkpoints.push(checkpoint);
             persist_checkpoint_meta(wal_dir, checkpoints)?;
-            println!("[bft-checkpoint] {} {}", checkpoint_summary, wal_summary);
+            println!(
+                "[bft-checkpoint] {} {} da_light_summary={}",
+                checkpoint_summary, wal_summary, da_summary
+            );
         }
     }
 

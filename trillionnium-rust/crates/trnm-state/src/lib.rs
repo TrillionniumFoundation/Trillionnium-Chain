@@ -3724,6 +3724,26 @@ pub fn checkpoint_evidence_surface_is_canonical(
         && checkpoint_binds_to_canonical_wal_entry(checkpoint, wal_entry)
 }
 
+pub fn checkpoint_da_light_verifier_summary(
+    checkpoint: &CheckpointMeta,
+    wal_entry: &WalMeta,
+) -> Option<String> {
+    if !checkpoint_evidence_surface_is_canonical(checkpoint, wal_entry) {
+        return None;
+    }
+
+    Some(format!(
+        "checkpoint_commitment={} checkpoint_height={} checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash={} wal_round={} wal_proposal_hash={}",
+        checkpoint.commitment_hex(),
+        checkpoint.height,
+        checkpoint.state_root_hex,
+        checkpoint.wal_entry_hash_hex,
+        wal_entry.prev_hash_hex.as_deref().unwrap_or("none"),
+        wal_entry.round,
+        wal_entry.proposal_hash,
+    ))
+}
+
 fn checkpoint_matches_wal_entry_for_recovery(
     checkpoint: &CheckpointMeta,
     wal_entry: &WalMeta,
@@ -4168,6 +4188,44 @@ mod tests {
             summary,
             changed_wal_hash.evidence_summary(),
             "checkpoint evidence summary must change when the DA-relevant WAL hash changes"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+            .expect("canonical checkpoint/wal pair should surface a DA summary");
+        assert_eq!(
+            summary,
+            format!(
+                "checkpoint_commitment={} checkpoint_height=7 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash={} wal_round=3 wal_proposal_hash=proposal-7",
+                checkpoint.commitment_hex(),
+                checkpoint.state_root_hex,
+                checkpoint.wal_entry_hash_hex,
+                wal.prev_hash_hex.as_deref().unwrap(),
+            )
+        );
+
+        let mut changed_prev = wal.clone();
+        changed_prev.prev_hash_hex = Some("01".repeat(32));
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &changed_prev),
+            None,
+            "DA summary must fail closed when WAL linkage no longer matches canonical evidence"
         );
     }
 
