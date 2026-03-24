@@ -142,12 +142,7 @@ fn main() {
         };
         let workload_signature = format!(
             "{:?}/txs={}/keys={}/reads={}/write_ratio={:.4}/strategy={:?}",
-            args.workload,
-            n,
-            keys,
-            effective_read_fanout,
-            effective_write_ratio,
-            args.strategy
+            args.workload, n, keys, effective_read_fanout, effective_write_ratio, args.strategy
         );
         lines.extend([
             format!("profile.report.workload={:?}", args.workload),
@@ -156,8 +151,14 @@ fn main() {
             format!("profile.report.keys={}", keys),
             format!("profile.report.read_fanout={}", args.read_fanout.max(1)),
             format!("profile.report.write_every={}", args.write_every.max(1)),
-            format!("profile.report.effective_read_fanout={}", effective_read_fanout),
-            format!("profile.report.effective_write_ratio={:.4}", effective_write_ratio),
+            format!(
+                "profile.report.effective_read_fanout={}",
+                effective_read_fanout
+            ),
+            format!(
+                "profile.report.effective_write_ratio={:.4}",
+                effective_write_ratio
+            ),
             format!("profile.report.workload_signature={}", workload_signature),
             format!("profile.report.persist_profile={}", args.persist_profile),
             format!(
