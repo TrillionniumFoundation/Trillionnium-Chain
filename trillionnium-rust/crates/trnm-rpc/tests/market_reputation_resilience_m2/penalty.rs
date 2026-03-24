@@ -76,6 +76,7 @@ fn market_match_clamps_negative_reputation_penalty_explainability_to_configured_
     assert_eq!(matched["winner"], "worker-low");
     assert_eq!(matched["winner_reputation"], -30);
     assert_eq!(matched["winner_reputation_effective"], -4);
+    assert_eq!(matched["winner_reputation_clamped"], true);
 
     let cfg = matched["match_config"]
         .as_object()
@@ -103,6 +104,7 @@ fn market_match_clamps_negative_reputation_penalty_explainability_to_configured_
     assert_eq!(base_score, 80);
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 4u128 * reputation_weight_unit);
+    assert_eq!(matched["reputation_score_delta"], 8);
     assert_eq!(final_score, base_score + penalty);
     assert_eq!(effective_score, final_score);
 
@@ -186,6 +188,7 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(matched["winner"], "worker-low");
     assert_eq!(matched["winner_reputation"], -3);
     assert_eq!(matched["winner_reputation_effective"], -3);
+    assert_eq!(matched["winner_reputation_clamped"], false);
 
     let cfg = matched["match_config"]
         .as_object()
@@ -215,6 +218,7 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(base_score, 80);
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 3u128 * reputation_weight_unit);
+    assert_eq!(matched["reputation_score_delta"], 6);
     assert_eq!(final_score, base_score + penalty);
     assert_eq!(effective_score, final_score);
 
