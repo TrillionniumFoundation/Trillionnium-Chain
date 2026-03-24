@@ -3733,11 +3733,13 @@ pub fn checkpoint_da_light_verifier_summary(
     }
 
     Some(format!(
-        "checkpoint_commitment={} checkpoint_height={} checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash={} wal_round={} wal_proposal_hash={}",
+        "checkpoint_commitment={} checkpoint_height={} checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_height={} wal_committed={} wal_prev_hash={} wal_round={} wal_proposal_hash={}",
         checkpoint.commitment_hex(),
         checkpoint.height,
         checkpoint.state_root_hex,
         checkpoint.wal_entry_hash_hex,
+        wal_entry.height,
+        wal_entry.committed,
         wal_entry.prev_hash_hex.as_deref().unwrap_or("none"),
         wal_entry.round,
         wal_entry.proposal_hash,
@@ -4212,7 +4214,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_commitment={} checkpoint_height=7 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash={} wal_round=3 wal_proposal_hash=proposal-7",
+                "checkpoint_commitment={} checkpoint_height=7 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_height=7 wal_committed=true wal_prev_hash={} wal_round=3 wal_proposal_hash=proposal-7",
                 checkpoint.commitment_hex(),
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
@@ -4250,7 +4252,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_commitment={} checkpoint_height=1 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash=none wal_round=0 wal_proposal_hash=proposal-genesis",
+                "checkpoint_commitment={} checkpoint_height=1 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_height=1 wal_committed=true wal_prev_hash=none wal_round=0 wal_proposal_hash=proposal-genesis",
                 checkpoint.commitment_hex(),
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
