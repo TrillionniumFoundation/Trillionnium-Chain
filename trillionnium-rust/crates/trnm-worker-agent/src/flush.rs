@@ -6,10 +6,9 @@ use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
     load_acked, load_ingress_records, now_ms, persisted_ack_hashes_for_task,
     resolve_path_arg_from_env, resolve_tx_retry_policy, run_adapter_with_retry,
-    save_ingress_records, should_execute_reveal, transition_request_status,
-    try_acquire_task_lock, AdapterExecResult, ProgressRecord, RC_SKIPPED, SubmissionRecord,
-    WorkerEvent, WORKER_EVENT_LOG_ENV,
-    WORKER_PROGRESS_LOG_ENV,
+    save_ingress_records, should_execute_reveal, transition_request_status, try_acquire_task_lock,
+    AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent, RC_SKIPPED,
+    WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -197,8 +196,7 @@ pub(crate) fn handle_flush_submissions(
             let commit_hash_observed = commit_res.tx_hash.is_some()
                 || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
             let reveal_hash_observed = reveal_res.tx_hash.is_some()
-                || (is_idempotent_duplicate_ok(reveal_res.rc)
-                    && previous_reveal_tx_hash.is_some());
+                || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
 
             let commit_tx_hash_for_ack = commit_res.tx_hash.clone().or(previous_commit_tx_hash);
             let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);

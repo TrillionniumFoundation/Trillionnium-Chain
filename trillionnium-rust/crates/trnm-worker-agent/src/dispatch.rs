@@ -3,9 +3,7 @@ use anyhow::Result;
 use crate::assigned::handle_run_assigned;
 use crate::cli::Command;
 use crate::flush::handle_flush_submissions;
-use crate::workflow::{
-    handle_commit_reveal, handle_execute, handle_pull_task, handle_run_once,
-};
+use crate::workflow::{handle_commit_reveal, handle_execute, handle_pull_task, handle_run_once};
 use crate::*;
 
 pub(crate) fn dispatch_command(cmd: Command) -> Result<()> {

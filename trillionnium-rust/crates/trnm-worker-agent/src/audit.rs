@@ -10,7 +10,7 @@ use std::{
 
 use crate::{
     load_ingress_records, normalized_agent_protocol, normalized_compliance_profile,
-    normalized_optional_field, normalized_provider_request_id, normalized_provenance_label,
+    normalized_optional_field, normalized_provenance_label, normalized_provider_request_id,
     trim_boundary_audit_fillers, MessageIngressRecord,
 };
 
@@ -393,9 +393,7 @@ pub(crate) fn markdown_escape(value: Option<&str>) -> String {
         .replace('|', "\\|")
 }
 
-pub(crate) fn render_enterprise_audit_markdown(
-    exports: &[EnterpriseAuditExportRecord],
-) -> String {
+pub(crate) fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> String {
     let mut out = String::from(
         "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
     );
@@ -509,10 +507,11 @@ pub(crate) fn handle_query_audit(
     let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
         let key = task_id.to_string();
         let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();
-        let rows: Vec<EnterpriseAuditExportRecord> = query_audit_export_by_task_id(&exports, &index, task_id)
-            .into_iter()
-            .cloned()
-            .collect();
+        let rows: Vec<EnterpriseAuditExportRecord> =
+            query_audit_export_by_task_id(&exports, &index, task_id)
+                .into_iter()
+                .cloned()
+                .collect();
         (hits, rows, None)
     } else {
         let raw = provenance_fingerprint.expect("checked above");

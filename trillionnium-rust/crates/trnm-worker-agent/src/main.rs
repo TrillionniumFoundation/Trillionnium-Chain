@@ -2,6 +2,8 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+#[cfg(test)]
+use std::collections::BTreeMap;
 use std::{
     collections::HashSet,
     env,
@@ -12,8 +14,6 @@ use std::{
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
-#[cfg(test)]
-use std::collections::BTreeMap;
 mod assigned;
 mod audit;
 mod cli;
@@ -22,20 +22,20 @@ mod flush;
 mod proof_adapter;
 mod workflow;
 
-use audit::{handle_export_audit, handle_query_audit};
-use cli::Args;
-use dispatch::dispatch_command;
 #[cfg(test)]
 pub(crate) use audit::{
     audit_export_index_path, build_audit_export_index, build_provenance_fingerprint,
     detect_audit_export_format, query_audit_export_by_provenance_fingerprint,
     query_audit_export_by_task_id, render_enterprise_audit_markdown, to_enterprise_audit_export,
-    validate_audit_export_index, AuditExportFormat, AuditExportIndex,
-    EnterpriseAuditExportRecord, QueryAuditOutput,
+    validate_audit_export_index, AuditExportFormat, AuditExportIndex, EnterpriseAuditExportRecord,
+    QueryAuditOutput,
 };
-use proof_adapter::ProofAdapter;
+use audit::{handle_export_audit, handle_query_audit};
+use cli::Args;
+use dispatch::dispatch_command;
 #[cfg(test)]
 use proof_adapter::build_proof_adapter;
+use proof_adapter::ProofAdapter;
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -188,7 +188,12 @@ pub(crate) struct LlmAdapterPolicy {
     pub(crate) timeout_ms: u64,
 }
 
-pub(crate) fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
+pub(crate) fn commitment(
+    task_id: u64,
+    result_hash_hex: &str,
+    salt_hex: &str,
+    worker: &str,
+) -> String {
     let payload = format!("{}|{}|{}|{}", task_id, result_hash_hex, salt_hex, worker);
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
@@ -309,7 +314,10 @@ fn task_lock_path(ack_log: &PathBuf, task_id: u64) -> PathBuf {
     parent.join(format!(".{base}.task-{task_id}.lock"))
 }
 
-pub(crate) fn try_acquire_task_lock(ack_log: &PathBuf, task_id: u64) -> Result<Option<TaskExecutionLock>> {
+pub(crate) fn try_acquire_task_lock(
+    ack_log: &PathBuf,
+    task_id: u64,
+) -> Result<Option<TaskExecutionLock>> {
     let path = task_lock_path(ack_log, task_id);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -388,7 +396,11 @@ pub(crate) fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> R
     append_json_line(progress_log, &line)
 }
 
-pub(crate) fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) -> PathBuf {
+pub(crate) fn resolve_path_arg_from_env(
+    path: PathBuf,
+    env_name: &str,
+    default_path: &str,
+) -> PathBuf {
     if path == PathBuf::from(default_path) {
         if let Some(value) = env::var_os(env_name) {
             if !value.is_empty() {
@@ -623,11 +635,7 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                     || matches!(ch, '(' | '[' | '{' | '<')
             });
             if let Some(rest) = candidate.strip_prefix('\\') {
-                if rest
-                    .chars()
-                    .next()
-                    .is_some_and(is_receipt_quote_wrapper)
-                {
+                if rest.chars().next().is_some_and(is_receipt_quote_wrapper) {
                     candidate = rest;
                     continue;
                 }
