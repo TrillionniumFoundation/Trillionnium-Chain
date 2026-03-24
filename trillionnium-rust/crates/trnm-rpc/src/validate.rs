@@ -75,8 +75,8 @@ fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
 
 pub(crate) fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
     if let Some(task_type) = metadata.task_type.as_deref() {
-        if task_type.is_empty() {
-            bail!("metadata.task_type must not be empty");
+        if !is_nonempty_no_whitespace(task_type) {
+            bail!("metadata.task_type must be non-empty and whitespace-free");
         }
     }
 
