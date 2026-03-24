@@ -49,3 +49,47 @@ fn oracle_validate_snapshot_response_reports_drift_rejection() {
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
 }
+
+#[test]
+fn oracle_validate_snapshot_response_uses_canonical_source_cardinality_for_duplicate_source_ids() {
+    let policy_path = write_json_fixture("oracle-policy-duplicate-sources", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-duplicate-sources",
+        &serde_json::json!({
+            "observed_at_ms": 10_000,
+            "aggregate_price": 100_000,
+            "reference_price": 100_000,
+            "feed_id": "btc/usd",
+            "sources": [
+                {
+                    "source_id": "binance",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "source_id": "BINANCE",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "source_id": "coinbase",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                }
+            ]
+        }),
+    );
+
+    let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect("duplicate-source oracle validation response");
+
+    assert!(out.ok);
+    assert_eq!(out.observation.outcome, "accepted");
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert_eq!(out.metrics.accepted_total, 1);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert!(out.error.is_none());
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}

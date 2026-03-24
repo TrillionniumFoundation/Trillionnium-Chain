@@ -2,7 +2,7 @@ pub(crate) use super::*;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
 
@@ -213,6 +213,17 @@ fn compute_deviation_bps(aggregate: u64, reference: u64) -> u64 {
     ((diff as u128 * 10_000) / (reference as u128)) as u64
 }
 
+fn canonical_source_cardinality(sources: &[Value]) -> u32 {
+    let mut unique = HashSet::new();
+    for source in sources {
+        let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
+            return sources.len() as u32;
+        };
+        unique.insert(source_id.to_ascii_lowercase());
+    }
+    unique.len() as u32
+}
+
 pub(crate) fn oracle_validate_snapshot_response(
     snapshot_path: &Path,
     policy_path: &Path,
@@ -226,7 +237,7 @@ pub(crate) fn oracle_validate_snapshot_response(
     let policy_val: PolicyFile = serde_json::from_str(&policy_text).map_err(|e| e.to_string())?;
 
     let source_count = snapshot_val.sources.len() as u32;
-    let cardinality = source_count;
+    let cardinality = canonical_source_cardinality(&snapshot_val.sources);
 
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
