@@ -15,7 +15,7 @@
 
 ## Stage-1 的最小通过定义
 
-内部 devnet-ready 的最低门槛建议收敛为以下 6 项：
+内部 devnet-ready 的最低门槛建议收敛为以下 7 项：
 
 1. **工作区身份固定**
    - 记录 `git branch --show-current`
@@ -40,9 +40,36 @@
    - 至少为 `trnm-state` / `trnm-rpc` / `trnm-node` / `trnm-pouw` / `trnm-worker-agent` / `trnm-cli` 刷新 test inventory；
    - 用来防止“测试条目在漂移，但门禁只记得旧名字”。
 
-6. **repo hygiene blocker 单独挂牌**
+6. **运维预检 / 回滚锚点固定**
+   - 记录本次 smoke / rehearsal 使用的分支名、提交短 SHA、构建时间与产物位置；
+   - 若使用本地二进制，至少记录 `sha256sum`（或平台等价命令）与生成命令；
+   - 明确上一稳定锚点（上一个已知可恢复的 commit/tag）与回滚入口脚本；
+   - 目的：避免出现“跑的是哪一个二进制”和“回退到哪里”说不清。
+
+7. **repo hygiene blocker 单独挂牌**
    - dirty tree、历史文档漂移、未归档的大批新增文件，必须单列为 blocker；
    - 不允许因为 smoke 通过，就把整个仓库描述成“release-ready”。
+
+## 操作员预检记录模板（建议每次 rehearsal 都填写）
+
+在执行 bring-up / smoke 前，先固定以下信息：
+
+```text
+operator_id=
+branch=
+commit_short=
+worktree_status=clean|dirty
+binary_path=
+binary_sha256=
+build_command=
+previous_stable_anchor=
+rollback_entrypoint=
+```
+
+最少要求：
+- `branch` 与 `commit_short` 可直接映射到本次证据；
+- `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个构建”；
+- `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
 
 ## 最小 bring-up 路径
 
