@@ -370,7 +370,8 @@ fn x3_prep_degraded_over_cap_reason_replay_keeps_truncated_reason_stable() {
 
 #[test]
 fn x3_prep_confirm_failed_unicode_controls_replay_keeps_first_sanitized_reason_stable() {
-    let mut request = SettlementRequest::new(15, "0xreplay-confirm-failed-unicode-controls".to_string());
+    let mut request =
+        SettlementRequest::new(15, "0xreplay-confirm-failed-unicode-controls".to_string());
     let token = operator_token();
 
     let healthy = HeartbeatOutcome {

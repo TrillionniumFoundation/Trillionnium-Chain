@@ -283,7 +283,9 @@ fn relay_heartbeat_failure_reason_collapses_figure_and_narrow_nbsp_for_replay_st
 fn relay_heartbeat_failure_reason_with_only_invisible_unicode_falls_back_to_stable_message() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
 
-    let out = hb.record_failure("\u{2061}\u{2062}\u{2063}\u{2064}\u{FE0F}\u{E0100}\u{FFF9}\u{FFFA}\u{FFFB}");
+    let out = hb.record_failure(
+        "\u{2061}\u{2062}\u{2063}\u{2064}\u{FE0F}\u{E0100}\u{FFF9}\u{FFFA}\u{FFFB}",
+    );
     assert_eq!(out.message, "unknown heartbeat failure");
 }
 

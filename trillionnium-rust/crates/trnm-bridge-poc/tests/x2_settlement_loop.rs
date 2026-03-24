@@ -401,8 +401,8 @@ fn x3_prep_confirm_failure_with_non_canonical_operator_subject_fails_closed_with
 }
 
 #[test]
-fn x3_prep_degraded_heartbeat_with_non_canonical_operator_subject_fails_closed_without_state_change()
-{
+fn x3_prep_degraded_heartbeat_with_non_canonical_operator_subject_fails_closed_without_state_change(
+) {
     let mut request = SettlementRequest::new(1, "0xdegraded-malformed-subject".to_string());
     let token = CapabilityToken {
         subject: "did:trn:settlement\u{200B}-operator".to_string(),
@@ -1178,7 +1178,8 @@ fn x3_prep_confirm_failure_reason_collapses_nbsp_family_for_replay_stability() {
 }
 
 #[test]
-fn x3_prep_confirm_failure_reason_collapses_medium_math_and_ideographic_spaces_for_replay_stability() {
+fn x3_prep_confirm_failure_reason_collapses_medium_math_and_ideographic_spaces_for_replay_stability(
+) {
     let mut request = SettlementRequest::new(736, "0xconfirm-unicode-wide-space".to_string());
     let token = operator_token();
 
@@ -1205,9 +1206,7 @@ fn x3_prep_confirm_failure_reason_collapses_medium_math_and_ideographic_spaces_f
                 heartbeat_target_height: Some(736),
                 heartbeat_latency_ms: Some(17),
                 confirm_height: None,
-                confirm_reason: Some(
-                    "settlement confirm failed: target relay timeout".to_string(),
-                ),
+                confirm_reason: Some("settlement confirm failed: target relay timeout".to_string(),),
             },
         }
     );
@@ -1478,12 +1477,16 @@ fn x3_prep_manual_degraded_heartbeat_invalid_embedded_metrics_fail_closed_withou
     )
     .unwrap_err();
 
-    assert_eq!(err, trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 });
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
 
 #[test]
-fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_without_state_drift() {
+fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_without_state_drift()
+{
     let mut request = SettlementRequest::new(1, "0xmanual-hbmetrics-target-ahead".to_string());
     let token = operator_token();
 
@@ -1506,7 +1509,10 @@ fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_w
     )
     .unwrap_err();
 
-    assert_eq!(err, trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 808 });
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 808 }
+    );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
 

@@ -615,8 +615,10 @@ fn x3_prep_stale_pending_degraded_reason_collapses_non_breaking_spaces_for_repla
 }
 
 #[test]
-fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_markers_for_replay_stability() {
-    let mut request = SettlementRequest::new(23, "0xmatrix-sanitize-interlinear-markers".to_string());
+fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_markers_for_replay_stability(
+) {
+    let mut request =
+        SettlementRequest::new(23, "0xmatrix-sanitize-interlinear-markers".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
@@ -895,8 +897,10 @@ fn x3_prep_stale_pending_degraded_reason_strips_invisible_separator_for_replay_s
 }
 
 #[test]
-fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_controls_for_replay_stability() {
-    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-interlinear-controls".to_string());
+fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_controls_for_replay_stability(
+) {
+    let mut request =
+        SettlementRequest::new(22, "0xmatrix-sanitize-interlinear-controls".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
