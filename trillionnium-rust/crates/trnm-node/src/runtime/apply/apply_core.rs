@@ -6,11 +6,40 @@ pub(crate) fn hash32_hex(data: &[u8]) -> String {
     hex::encode(hasher.finalize())
 }
 
+fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
+    let node_id = cfg.node_id.trim();
+    anyhow::ensure!(
+        !node_id.is_empty(),
+        "invalid node config {}: node_id must not be empty",
+        path
+    );
+
+    let rpc_addr = cfg.rpc_addr.trim();
+    anyhow::ensure!(
+        !rpc_addr.is_empty(),
+        "invalid node config {}: rpc_addr must not be empty",
+        path
+    );
+
+    let p2p_addr = cfg.p2p_addr.trim();
+    anyhow::ensure!(
+        !p2p_addr.is_empty(),
+        "invalid node config {}: p2p_addr must not be empty",
+        path
+    );
+
+    Ok(NodeConfig {
+        node_id: node_id.to_string(),
+        rpc_addr: rpc_addr.to_string(),
+        p2p_addr: p2p_addr.to_string(),
+    })
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
     let cfg: NodeConfig =
         toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    Ok(cfg)
+    validate_node_config(cfg, path)
 }
 
 pub(crate) fn compute_commitment(
