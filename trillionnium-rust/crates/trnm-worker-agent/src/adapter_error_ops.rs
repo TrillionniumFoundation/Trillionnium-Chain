@@ -47,6 +47,13 @@ pub(crate) struct ReputationImpact {
     pub(crate) tier: u8,
 }
 
+pub(crate) const CANONICAL_REPUTATION_SIGNAL_ORDER: [ReputationSignal; 4] = [
+    ReputationSignal::Accepted,
+    ReputationSignal::AdapterRetryExhausted,
+    ReputationSignal::VerifierRejected,
+    ReputationSignal::AdapterNonRetriable,
+];
+
 pub(crate) fn reputation_impact(signal: ReputationSignal) -> ReputationImpact {
     match signal {
         ReputationSignal::Accepted => ReputationImpact {

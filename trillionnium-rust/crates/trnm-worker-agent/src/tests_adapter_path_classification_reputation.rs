@@ -135,15 +135,8 @@ fn reputation_score_impact_remains_one_to_one_across_signals() {
 
 #[test]
 fn reputation_tier_delta_and_label_ordering_stay_monotonic() {
-    let ordered = [
-        ReputationSignal::Accepted,
-        ReputationSignal::AdapterRetryExhausted,
-        ReputationSignal::VerifierRejected,
-        ReputationSignal::AdapterNonRetriable,
-    ];
-
     let mut previous: Option<ReputationImpact> = None;
-    for signal in ordered {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);
         assert_eq!(
             reputation_score_impact(signal),
@@ -167,6 +160,28 @@ fn reputation_tier_delta_and_label_ordering_stay_monotonic() {
             );
         }
 
+        previous = Some(impact);
+    }
+}
+
+#[test]
+fn canonical_reputation_signal_order_matches_descending_tier_and_delta() {
+    let canonical = CANONICAL_REPUTATION_SIGNAL_ORDER;
+    assert_eq!(canonical.len(), 4);
+
+    let mut previous: Option<ReputationImpact> = None;
+    for signal in canonical {
+        let impact = reputation_impact(signal);
+        if let Some(prev) = previous {
+            assert!(
+                prev.tier > impact.tier,
+                "canonical signal order must remain strictly descending by tier"
+            );
+            assert!(
+                prev.delta > impact.delta,
+                "canonical signal order must remain strictly descending by delta"
+            );
+        }
         previous = Some(impact);
     }
 }
