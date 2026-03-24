@@ -181,6 +181,22 @@ cd trillionnium-rust
    - `./scripts/release_rc.sh`
 4. 最后更新 `RELEASE_READINESS.md` 结论段，而不是反过来。
 
+## 操作员命令口径（避免路径歧义）
+
+为避免在仓库根目录与 `trillionnium-rust/` 工作区之间切换时误跑命令，建议固定如下口径：
+
+- 若当前目录是仓库根：
+
+```bash
+cd trillionnium-rust
+cargo test -p trnm-node -- --test-threads=1
+cargo test -p trnm-cli -- --test-threads=1
+```
+
+- 若当前目录已经是 `trillionnium-rust/`：直接执行同样的 `cargo test -p ...` 命令即可。
+
+- 在证据或 runbook 中记录命令时，优先保留**执行目录 + 原始命令**，避免事后无法判断 `cargo` 是在哪个 workspace 下运行。
+
 ## 回滚
 
 本轮仅新增文档/工件索引；若需回滚：
