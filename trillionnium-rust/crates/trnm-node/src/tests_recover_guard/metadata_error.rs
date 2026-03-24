@@ -1,0 +1,100 @@
+use super::*;
+
+#[test]
+fn recover_metadata_only_error_reports_retained_wal_entries() {
+    let wal_dir = temp_wal_dir("recover-metadata-only-error");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "h1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+    persist_checkpoint_meta(
+        &wal_dir,
+        &[CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: h1,
+        }],
+    )
+    .unwrap();
+
+    let recovered = recover_wal_state(&wal_dir).unwrap();
+    assert!(!recovered.metadata_only_recovery);
+    assert_eq!(recovered.wal_entries_retained, 1);
+    assert_eq!(recovered.checkpoint_height_retained, Some(1));
+    assert_eq!(recovered.next_height, 2);
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+    assert!(err.contains("retained 1 committed WAL entry through height 1"));
+    assert!(err.contains("last retained checkpoint: 1"));
+
+    let would_require_snapshot_restore = recovered
+        .checkpoint_height_retained
+        .map(|checkpoint_height| checkpoint_height < recovered.next_height.saturating_sub(1))
+        .unwrap_or(recovered.wal_entries_retained > 0);
+    assert!(
+        !would_require_snapshot_restore,
+        "fully checkpointed WAL metadata must not be escalated to metadata-only recovery misuse"
+    );
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn recover_metadata_only_error_reports_absent_checkpoint() {
+    let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 1,
+        restored_lock: None,
+        last_checkpoint: None,
+        truncated: false,
+        metadata_only_recovery: true,
+        wal_entries_retained: 0,
+        checkpoint_height_retained: None,
+    };
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+    assert!(err.contains("last retained checkpoint: none"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
+    let wal_dir = temp_wal_dir("recover-metadata-only-error-plural");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 3,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: "h1".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(1),
+    };
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+    assert!(err.contains("retained 2 committed WAL entries through height 2"));
+    assert!(err.contains("last retained checkpoint: 1"));
+    assert!(err.contains(
+        "does not yet restore application StateStore snapshots or replay committed blocks"
+    ));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
