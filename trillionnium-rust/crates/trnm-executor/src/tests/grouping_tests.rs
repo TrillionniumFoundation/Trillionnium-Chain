@@ -290,6 +290,60 @@ fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
 }
 
 #[test]
+fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() {
+    let profile = GroupingProfile {
+        tx_count: 0,
+        group_count: 0,
+        grouped_count: 0,
+        max_group_size: 0,
+        min_group_size: 0,
+        avg_group_size: 0.0,
+        hot_object_share: 0.0,
+        conflict_checks: 0,
+        conflict_hits: 3,
+        candidate_groups_scanned: 7,
+        stage_ww_checks: 0,
+        stage_ww_hits: 0,
+        stage_wr_checks: 0,
+        stage_wr_hits: 0,
+        stage_rw_checks: 0,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.conflict_hits_per_tx(), 0.0);
+    assert_eq!(profile.candidate_groups_per_tx(), 0.0);
+    assert_eq!(profile.retry_pressure(), 0.0);
+    assert_eq!(profile.dominant_retry_stage(), "none");
+}
+
+#[test]
+fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 2,
+        grouped_count: 8,
+        max_group_size: 4,
+        min_group_size: 4,
+        avg_group_size: 4.0,
+        hot_object_share: 0.5,
+        conflict_checks: 12,
+        conflict_hits: 6,
+        candidate_groups_scanned: 10,
+        stage_ww_checks: 3,
+        stage_ww_hits: 1,
+        stage_wr_checks: 5,
+        stage_wr_hits: 4,
+        stage_rw_checks: 4,
+        stage_rw_hits: 2,
+    };
+
+    assert!((profile.conflict_hits_per_tx() - 0.75).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
+    assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);
+    assert_eq!(profile.dominant_retry_stage(), "wr");
+}
+
+#[test]
 fn empty_batch_fast_path_is_profile_stable_across_strategies() {
     let strategies = [
         GroupingStrategy::Original,

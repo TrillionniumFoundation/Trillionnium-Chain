@@ -210,31 +210,58 @@ fn main() {
             format!("profile.stage_rw_hits={}", profile.stage_rw_hits),
         ]);
         let hit_rate = ratio(profile.conflict_hits, profile.conflict_checks);
-        let conflict_hits_per_tx = ratio(profile.conflict_hits, profile.tx_count);
-        let candidate_groups_per_tx = ratio(profile.candidate_groups_scanned, profile.tx_count);
-        let retry_pressure = ratio(profile.conflict_hits, profile.group_count);
+        let conflict_hits_per_tx = profile.conflict_hits_per_tx();
+        let candidate_groups_per_tx = profile.candidate_groups_per_tx();
+        let retry_pressure = profile.retry_pressure();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
         let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
         let stage_rw_hit_rate = ratio(profile.stage_rw_hits, profile.stage_rw_checks);
         let stage_ww_hits_per_tx = ratio(profile.stage_ww_hits, profile.tx_count);
         let stage_wr_hits_per_tx = ratio(profile.stage_wr_hits, profile.tx_count);
         let stage_rw_hits_per_tx = ratio(profile.stage_rw_hits, profile.tx_count);
-        let dominant_retry_stage = dominant_retry_stage(&profile);
+        let dominant_retry_stage = profile.dominant_retry_stage();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
         // than about how much retry pressure and candidate-lane scanning each tx
         // induces. Keep these as derived telemetry only so scheduler semantics stay
         // deterministic and benchmark output remains backward-compatible.
-        lines.push(format!("profile.conflict_hits_per_tx={:.4}", conflict_hits_per_tx));
-        lines.push(format!("profile.candidate_groups_per_tx={:.4}", candidate_groups_per_tx));
+        lines.push(format!(
+            "profile.conflict_hits_per_tx={:.4}",
+            conflict_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.candidate_groups_per_tx={:.4}",
+            candidate_groups_per_tx
+        ));
         lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
-        lines.push(format!("profile.stage_ww_hit_rate={:.4}", stage_ww_hit_rate));
-        lines.push(format!("profile.stage_wr_hit_rate={:.4}", stage_wr_hit_rate));
-        lines.push(format!("profile.stage_rw_hit_rate={:.4}", stage_rw_hit_rate));
-        lines.push(format!("profile.stage_ww_hits_per_tx={:.4}", stage_ww_hits_per_tx));
-        lines.push(format!("profile.stage_wr_hits_per_tx={:.4}", stage_wr_hits_per_tx));
-        lines.push(format!("profile.stage_rw_hits_per_tx={:.4}", stage_rw_hits_per_tx));
-        lines.push(format!("profile.dominant_retry_stage={}", dominant_retry_stage));
+        lines.push(format!(
+            "profile.stage_ww_hit_rate={:.4}",
+            stage_ww_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_wr_hit_rate={:.4}",
+            stage_wr_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_rw_hit_rate={:.4}",
+            stage_rw_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_ww_hits_per_tx={:.4}",
+            stage_ww_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_wr_hits_per_tx={:.4}",
+            stage_wr_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_rw_hits_per_tx={:.4}",
+            stage_rw_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_stage={}",
+            dominant_retry_stage
+        ));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
             let d = auto_adaptive_decision(&txs);
@@ -277,21 +304,6 @@ fn ratio(numerator: usize, denominator: usize) -> f64 {
     } else {
         numerator as f64 / denominator as f64
     }
-}
-
-fn dominant_retry_stage(profile: &trnm_executor::GroupingProfile) -> &'static str {
-    let ranking = [
-        ("ww", profile.stage_ww_hits),
-        ("wr", profile.stage_wr_hits),
-        ("rw", profile.stage_rw_hits),
-    ];
-
-    let (label, hits) = ranking
-        .into_iter()
-        .max_by_key(|(_, hits)| *hits)
-        .unwrap_or(("none", 0));
-
-    if hits == 0 { "none" } else { label }
 }
 
 fn persist_profile_report(

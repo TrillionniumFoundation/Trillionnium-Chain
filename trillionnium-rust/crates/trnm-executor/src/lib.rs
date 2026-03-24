@@ -33,6 +33,52 @@ pub struct GroupingProfile {
     pub stage_rw_hits: usize,
 }
 
+#[inline]
+fn ratio_usize(numerator: usize, denominator: usize) -> f64 {
+    if denominator == 0 {
+        0.0
+    } else {
+        numerator as f64 / denominator as f64
+    }
+}
+
+impl GroupingProfile {
+    #[inline]
+    pub fn conflict_hits_per_tx(&self) -> f64 {
+        ratio_usize(self.conflict_hits, self.tx_count)
+    }
+
+    #[inline]
+    pub fn candidate_groups_per_tx(&self) -> f64 {
+        ratio_usize(self.candidate_groups_scanned, self.tx_count)
+    }
+
+    #[inline]
+    pub fn retry_pressure(&self) -> f64 {
+        ratio_usize(self.conflict_hits, self.group_count)
+    }
+
+    #[inline]
+    pub fn dominant_retry_stage(&self) -> &'static str {
+        let ranking = [
+            ("ww", self.stage_ww_hits),
+            ("wr", self.stage_wr_hits),
+            ("rw", self.stage_rw_hits),
+        ];
+
+        let (label, hits) = ranking
+            .into_iter()
+            .max_by_key(|(_, hits)| *hits)
+            .unwrap_or(("none", 0));
+
+        if hits == 0 {
+            "none"
+        } else {
+            label
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AutoAdaptiveDecision {
     pub use_hot_bucket: bool,
