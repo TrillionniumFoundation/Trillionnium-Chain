@@ -220,6 +220,18 @@ fn reputation_delta_round_trips_back_to_canonical_signal_and_impact() {
 }
 
 #[test]
+fn reputation_label_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let impact = reputation_impact(signal);
+        assert_eq!(reputation_signal_from_label(impact.label), Some(signal));
+        assert_eq!(reputation_impact_from_label(impact.label), Some(impact));
+    }
+
+    assert_eq!(reputation_signal_from_label("unknown"), None);
+    assert_eq!(reputation_impact_from_label("unknown"), None);
+}
+
+#[test]
 fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     let mut rec = MessageIngressRecord {
         request_id: "req-reputation-apply".to_string(),

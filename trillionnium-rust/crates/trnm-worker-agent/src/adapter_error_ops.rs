@@ -101,6 +101,16 @@ pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str
     (impact.label, impact.delta)
 }
 
+pub(crate) fn reputation_signal_from_label(label: &str) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(signal, impact)| (impact.label == label).then_some(*signal))
+}
+
+pub(crate) fn reputation_impact_from_label(label: &str) -> Option<ReputationImpact> {
+    reputation_signal_from_label(label).map(reputation_impact)
+}
+
 pub(crate) fn reputation_signal_from_delta(delta: i32) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_IMPACTS
         .iter()
