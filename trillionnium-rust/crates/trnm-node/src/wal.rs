@@ -108,8 +108,8 @@ fn canonicalize_checkpoint_meta(checkpoints: &mut [CheckpointMeta]) {
     checkpoints.sort_by(|a, b| {
         a.height
             .cmp(&b.height)
-            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
             .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
     });
 }
 
@@ -223,6 +223,63 @@ mod tests {
         assert_eq!(checkpoints[1].state_root_hex, "bb".repeat(32));
         assert_eq!(checkpoints[2].height, 3);
         assert_eq!(checkpoints[2].state_root_hex, "cc".repeat(32));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn equal_height_checkpoint_entries_canonicalize_for_auditable_proof_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ]
+        );
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let first = raw.find("root-a").unwrap();
+        let second = raw.rfind("root-b").unwrap();
+        assert!(first < second);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
