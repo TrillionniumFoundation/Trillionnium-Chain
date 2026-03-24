@@ -407,6 +407,29 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_profile_rejects_non_canonical_model_and_provenance_fields() {
+        let metadata = TaskMetadata {
+            model: Some(TaskModelMetadata {
+                model_id: Some(" trnm-vision-base".into()),
+                model_digest: Some("b".repeat(64)),
+                version: Some("v1.0.0 ".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:org:lane-dae".into()),
+                produced_at: Some("2026-03-01T01:00:00Z".into()),
+                provenance_index: Some(" prov:lane-dae:task-20260301-0001".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+    }
+
+    #[test]
     fn task_metadata_compatibility_profile_rejects_non_canonical_metering_core_fields() {
         let metadata = TaskMetadata {
             metering: Some(TaskMeteringSnapshot {
