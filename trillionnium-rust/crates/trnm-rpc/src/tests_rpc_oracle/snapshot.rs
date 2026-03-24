@@ -142,10 +142,32 @@ fn decode_url_component(input: &str) -> Option<String> {
 
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
+    if query.is_empty()
+        || query.contains('?')
+        || query.contains('#')
+        || query.chars().any(|ch| ch.is_control())
+    {
+        return None;
+    }
+    let normalized_query = query.to_ascii_lowercase();
+    if normalized_query.contains("%26")
+        || normalized_query.contains("%3d")
+        || normalized_query.contains("%23")
+        || normalized_query.contains("%3f")
+        || normalized_query.contains("%0d")
+        || normalized_query.contains("%0a")
+        || normalized_query.contains("%09")
+        || normalized_query.contains("%0b")
+        || normalized_query.contains("%0c")
+        || normalized_query.contains("%20")
+    {
+        return None;
+    }
+
     let mut out = HashMap::new();
     for pair in query.split('&') {
         if pair.is_empty() {
-            continue;
+            return None;
         }
         let (raw_k, raw_v) = pair.split_once('=')?;
         let key = decode_url_component(raw_k)?;

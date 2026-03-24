@@ -29,6 +29,22 @@ fn parse_http_query_params_rejects_duplicate_keys() {
             "duplicate query keys must fail closed"
         );
 }
+
+#[test]
+fn parse_http_query_params_rejects_query_smuggling_and_fragments() {
+    for target in [
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&&policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&policy=/tmp/p.json#tail",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json%26policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&policy=/tmp/p.json%23tail",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&policy=/tmp/p.json%0D%0Aextra",
+    ] {
+        assert!(
+            parse_http_query_params(target).is_none(),
+            "target must fail closed: {target}"
+        );
+    }
+}
 #[test]
 fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
     let request = parse_oracle_validate_snapshot_target(
@@ -88,4 +104,17 @@ fn parse_oracle_validate_snapshot_target_rejects_policy_path_above_bound() {
         .expect_err("oversized policy path must fail closed");
 
     assert_eq!(err, "policy path too long");
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_fragment_and_encoded_query_smuggling() {
+    for target in [
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json#tail",
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json%26policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json%0d%0aextra",
+    ] {
+        let err = parse_oracle_validate_snapshot_target(target)
+            .expect_err("smuggled oracle query must fail closed");
+        assert_eq!(err, "invalid query params", "target={target}");
+    }
 }
