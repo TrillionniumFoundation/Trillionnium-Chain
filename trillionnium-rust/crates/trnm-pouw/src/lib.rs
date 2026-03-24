@@ -5765,6 +5765,15 @@ mod tests {
         let r6 = apply_timeout(&mut st, r5, 131).unwrap();
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(
+            task.challenge_window_blocks_snapshot,
+            Some(DEFAULT_CHALLENGE_WINDOW_BLOCKS)
+        );
+        assert_eq!(task.challenge_deadline_height, Some(120));
+        assert_eq!(task.challenged_at_height, Some(30));
+        assert_eq!(task.resolve_deadline_height, Some(130));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.balance_of("challenger"), 100);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
