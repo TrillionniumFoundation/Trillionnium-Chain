@@ -65,6 +65,14 @@ fn submission_args(rec: &SubmissionRecord) -> (Vec<String>, Vec<String>) {
     (commit_args, reveal_args)
 }
 
+/// Classify the final ack for the commit→reveal receipt chain.
+///
+/// NEAR-style async task flows may resume after one stage already reached a
+/// terminal duplicate receipt on chain. In that replay-safe path we only accept
+/// the task when each stage has an observable receipt hash, either from the
+/// current adapter response or from a previously persisted ack record for the
+/// same task. This keeps duplicate resumes idempotent without silently
+/// accepting terminal outcomes that never produced auditable receipts.
 pub(crate) fn classify_flush_ack(
     commit_res: &AdapterExecResult,
     reveal_res: &AdapterExecResult,
@@ -78,6 +86,9 @@ pub(crate) fn classify_flush_ack(
     let commit_idempotent_ok = should_execute_reveal(commit_res);
     let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
+    // Duplicate receipts are only replay-safe when we can point to the original
+    // on-chain evidence recorded for that stage. A bare duplicate without the
+    // persisted hash stays fail-closed as missing receipt evidence.
     let commit_hash_observed = commit_res.tx_hash.is_some()
         || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
     let reveal_hash_observed = reveal_res.tx_hash.is_some()
