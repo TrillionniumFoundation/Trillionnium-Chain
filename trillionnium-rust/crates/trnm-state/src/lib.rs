@@ -4058,6 +4058,13 @@ mod tests {
             &wal_entry
         ));
 
+        let mut uncommitted_wal = wal_entry.clone();
+        uncommitted_wal.committed = false;
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &uncommitted_wal),
+            "checkpoint evidence must fail closed when the referenced WAL entry was never committed"
+        );
+
         let mut noncanonical_checkpoint = checkpoint.clone();
         noncanonical_checkpoint.state_root_hex = "not-hex".into();
         assert!(
