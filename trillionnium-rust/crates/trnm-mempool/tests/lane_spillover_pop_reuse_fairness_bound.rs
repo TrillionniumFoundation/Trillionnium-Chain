@@ -6,8 +6,14 @@ fn popped_spillover_id_can_reenter_without_cooling_warm_fairness() {
 
     // Fill the dedicated critical reserve, then spill one critical tx into the
     // normal lane. This path warms fairness under active dual backlog.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
 
@@ -18,7 +24,10 @@ fn popped_spillover_id_can_reenter_without_cooling_warm_fairness() {
     // Once dequeued, the same id must immediately become fresh again. Re-entering
     // it via critical ingress must not inherit stale duplicate state, and must not
     // cool the bounded fairness contract for the older real normal backlog.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Critical reserve backlog still gets its turn next.
     assert_eq!(gate.pop_ready(), Some(10));

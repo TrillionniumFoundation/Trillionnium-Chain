@@ -171,8 +171,6 @@ fn full_drain_resets_fairness_streak_so_next_critical_is_not_delayed() {
     assert_eq!(gate.pop_ready(), Some(200));
 }
 
-
-
 #[test]
 fn fairness_warmup_serves_oldest_normal_first_under_active_critical_backlog() {
     let mut gate = LaneAdmissionGate::new(8, 3);

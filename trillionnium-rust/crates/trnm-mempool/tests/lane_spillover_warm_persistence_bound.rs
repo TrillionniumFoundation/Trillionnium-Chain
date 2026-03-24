@@ -6,15 +6,27 @@ fn spillover_warm_fairness_stays_live_after_first_spillover_turn_with_refill_and
 
     // Fill dedicated critical reserve, then spill critical work into the normal
     // lane so the spillover path warms fairness under active dual backlog.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Build real normal backlog behind the spillovered critical item and refill
     // one more critical tx so the lane reaches global saturation.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(103, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (4, 2, 6));
 
     // Warm fairness may serve the spillovered critical item first because it is
@@ -23,10 +35,19 @@ fn spillover_warm_fairness_stays_live_after_first_spillover_turn_with_refill_and
 
     // Refill critical pressure immediately, then inject duplicate/fresh probe
     // noise while the lane is saturated again.
-    assert_eq!(gate.admit(104, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(104, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (4, 2, 6));
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(999, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 
     // Contract guard: once spillover has warmed fairness, serving the spillovered
     // head item must not cool the anti-starvation state. Even after immediate

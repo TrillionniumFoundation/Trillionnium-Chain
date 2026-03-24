@@ -101,8 +101,14 @@ fn active_critical_backlog_blocks_normal_from_borrowing_last_reserved_slot() {
 
     // Fresh normal retries must stay backpressured and keep queue accounting flat
     // instead of borrowing the final reserved critical slot.
-    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(4, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        g.admit(4, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.queued_counts(), (2, 2, 4));
 }
 
@@ -117,13 +123,19 @@ fn active_critical_backlog_reopens_normal_retry_only_after_reserved_slot_is_trul
     assert_eq!(g.queued_counts(), (3, 1, 4));
 
     // The last free slot is reserved for critical ingress while critical backlog is active.
-    assert_eq!(g.admit(45, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(45, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.admit(45, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(g.queued_counts(), (3, 2, 5));
 
     // One critical dequeue is not enough if another critical tx still occupies the reserve.
     assert!(matches!(g.pop_ready(), Some(90) | Some(45)));
-    assert_eq!(g.admit(46, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(46, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 
     // Once the remaining critical backlog clears, the reopened reserve is immediately
     // borrowable again for a previously backpressured normal retry, which then dedupes.

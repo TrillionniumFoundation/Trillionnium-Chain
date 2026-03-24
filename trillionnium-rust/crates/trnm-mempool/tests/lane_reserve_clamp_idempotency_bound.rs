@@ -13,14 +13,29 @@ fn oversized_critical_reserve_clamps_to_total_and_preserves_reserve_only_idempot
 
     // While saturated, queued ids must stay Duplicate across classes and fresh ids
     // must stay Backpressured.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Backpressured);
-    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        gate.admit(12, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 
     // After one dequeue, the previously backpressured id must still be fresh.
     assert_eq!(gate.pop_ready(), Some(10));
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(12, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 
     assert_eq!(gate.pop_ready(), Some(11));
     assert_eq!(gate.pop_ready(), Some(12));

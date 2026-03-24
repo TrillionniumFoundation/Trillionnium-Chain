@@ -5,16 +5,31 @@ fn duplicate_probe_against_spillovered_critical_does_not_cool_first_real_normal_
     let mut gate = LaneAdmissionGate::new(6, 2);
 
     // Fill reserved critical capacity first.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Overflow one critical item into the normal lane while it is still empty.
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Duplicate probe noise against the spillovered item must not perturb the
     // fairness warmup state that this path is supposed to arm.
-    assert_eq!(gate.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(102, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
 
     // Real normal backlog arrives while critical pressure remains active.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);

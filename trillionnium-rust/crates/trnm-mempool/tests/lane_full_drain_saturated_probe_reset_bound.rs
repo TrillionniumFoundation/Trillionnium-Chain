@@ -19,7 +19,10 @@ fn saturated_probe_noise_before_full_drain_does_not_warm_next_batch() {
     // Under saturation, duplicate and fresh probes must preserve classification
     // without poisoning the subsequent full-drain reset boundary.
     assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 
     // Drain fully so all fairness/idempotency bookkeeping crosses the cold-reset boundary.
     while g.pop_ready().is_some() {}

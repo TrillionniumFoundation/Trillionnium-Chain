@@ -15,11 +15,20 @@ fn borrowed_duplicate_probe_noise_does_not_poison_cross_class_reuse_after_full_d
 
     // Cross-class duplicate probe noise against the borrowed id must stay
     // Duplicate while queued and must not poison later reuse.
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(12, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 
     // Fresh ids remain plain backpressure while the lane is saturated.
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
 
     // Drain fully so idle/full-drain self-heal paths clear any stale lane-local,
     // lane-wide, and fairness bookkeeping left behind by the duplicate probes.
@@ -31,8 +40,14 @@ fn borrowed_duplicate_probe_noise_does_not_poison_cross_class_reuse_after_full_d
 
     // After the full drain boundary, the previously borrowed + probed id must be
     // reusable as fresh ingress through the opposite class.
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(12, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.pop_ready(), Some(12));
     assert_eq!(gate.pop_ready(), None);
 }

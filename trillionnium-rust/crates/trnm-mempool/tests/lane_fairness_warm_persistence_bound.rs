@@ -5,16 +5,31 @@ fn fairness_stays_warm_after_serving_one_normal_while_dual_backlog_remains() {
     let mut gate = LaneAdmissionGate::new(8, 3);
 
     // Build sustained critical pressure, then introduce normal backlog so fairness warms.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.pop_ready(), Some(100));
     assert_eq!(gate.pop_ready(), Some(101));
 
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(104, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(103, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(104, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Warm fairness grants the first normal anti-starvation turn.
     assert_eq!(gate.pop_ready(), Some(1));

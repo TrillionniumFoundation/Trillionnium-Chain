@@ -14,8 +14,14 @@ fn borrowed_duplicate_probe_full_drain_does_not_poison_next_mixed_batch_fairness
     // Duplicate probe noise against the borrowed id must stay Duplicate while the
     // lane is saturated and must not leave stale fairness/idempotency state after
     // a full drain.
-    assert_eq!(gate.admit(13, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(13, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(13, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(13, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 
     // Drain completely so the idle/full-drain self-heal path clears borrowed-lane
     // duplicate markers and any stale fairness bookkeeping.
@@ -30,8 +36,14 @@ fn borrowed_duplicate_probe_full_drain_does_not_poison_next_mixed_batch_fairness
     // normal item should still receive its bounded fairness turn instead of being
     // delayed by stale borrowed-duplicate state from the previous batch.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(201, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(200, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(201, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let first = gate.pop_ready();
     let second = gate.pop_ready();
@@ -48,6 +60,9 @@ fn borrowed_duplicate_probe_full_drain_does_not_poison_next_mixed_batch_fairness
         "expected the remaining critical item after the fairness turn, got {:?}",
         third
     );
-    assert_ne!(first, third, "expected the two critical dequeues to be distinct");
+    assert_ne!(
+        first, third,
+        "expected the two critical dequeues to be distinct"
+    );
     assert_eq!(gate.pop_ready(), None);
 }

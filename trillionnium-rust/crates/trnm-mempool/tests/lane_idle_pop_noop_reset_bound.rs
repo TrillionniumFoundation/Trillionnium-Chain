@@ -5,8 +5,14 @@ fn repeated_empty_pop_after_full_drain_does_not_poison_next_batch_fairness_or_re
     let mut gate = LaneAdmissionGate::new(4, 1);
 
     // Warm fairness with an active mixed backlog first.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
 
     // Tx 2 spills into the normal lane and sits at the normal-queue head, so the
@@ -24,8 +30,14 @@ fn repeated_empty_pop_after_full_drain_does_not_poison_next_batch_fairness_or_re
 
     // The drained id should be immediately reusable across classes.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(21, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Fresh post-idle mixed ingress should start cold: first critical wins, then
     // normal gets its bounded anti-starvation turn.

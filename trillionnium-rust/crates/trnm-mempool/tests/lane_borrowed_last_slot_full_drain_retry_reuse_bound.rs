@@ -15,7 +15,10 @@ fn borrowed_last_critical_slot_reuse_stays_fresh_after_full_drain() {
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 
     // While globally full, the borrowed id must still dedupe across classes.
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
 
     // Drain the lane completely so the idle/full-drain self-heal paths run.
     assert_eq!(gate.pop_ready(), Some(12));
@@ -26,7 +29,10 @@ fn borrowed_last_critical_slot_reuse_stays_fresh_after_full_drain() {
 
     // After the full drain, the previously borrowed id must be treated as fresh
     // when it re-enters through the opposite class.
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.pop_ready(), Some(12));
     assert_eq!(gate.pop_ready(), None);
 }

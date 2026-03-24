@@ -1161,7 +1161,10 @@ mod tests {
 
         assert_eq!(gate.backpressured_ids.len(), 2);
         assert_eq!(gate.backpressured_fifo.len(), gate.backpressured_ids.len());
-        assert_eq!(gate.backpressured_fifo.iter().copied().collect::<Vec<_>>(), vec![43, 99]);
+        assert_eq!(
+            gate.backpressured_fifo.iter().copied().collect::<Vec<_>>(),
+            vec![43, 99]
+        );
     }
 
     #[test]

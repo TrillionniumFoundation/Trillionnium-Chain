@@ -332,9 +332,8 @@ impl LaneAdmissionGate {
         class: IngressClass,
         is_duplicate: bool,
     ) -> Option<AdmitOutcome> {
-        self.classify_pre_admission_probe(lane_total, is_duplicate).or_else(|| {
-            self.classify_reserved_slot_guard_probe(lane_total, class, is_duplicate)
-        })
+        self.classify_pre_admission_probe(lane_total, is_duplicate)
+            .or_else(|| self.classify_reserved_slot_guard_probe(lane_total, class, is_duplicate))
     }
 
     fn normal_queue_has_headroom(&self) -> bool {
@@ -1102,7 +1101,10 @@ mod tests {
         // perturb queue accounting until the critical backlog drains enough to
         // reopen borrowable headroom.
         for _ in 0..3 {
-            assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+            assert_eq!(
+                g.admit(70, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
             assert_eq!(g.queued_counts(), (3, 1, 4));
         }
 
@@ -1110,7 +1112,10 @@ mod tests {
         assert_eq!(g.queued_counts(), (3, 2, 5));
 
         assert!(matches!(g.pop_ready(), Some(4) | Some(5)));
-        assert_eq!(g.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(70, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.queued_counts(), (3, 1, 4));
 
         assert!(matches!(g.pop_ready(), Some(4) | Some(5)));

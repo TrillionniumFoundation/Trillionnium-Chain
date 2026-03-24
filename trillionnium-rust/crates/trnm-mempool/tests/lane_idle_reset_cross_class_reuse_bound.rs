@@ -6,8 +6,14 @@ fn drained_lane_allows_cross_class_reuse_without_stale_duplicate_or_fairness_bia
 
     // Build mixed backlog so fairness bookkeeping becomes non-zero before drain.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(21, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Exercise one critical dequeue first so the lane carries non-zero fairness state.
     assert_eq!(gate.pop_ready(), Some(20));
@@ -19,7 +25,10 @@ fn drained_lane_allows_cross_class_reuse_without_stale_duplicate_or_fairness_bia
 
     // Reuse a previously drained id through the opposite class. Full-drain reset
     // must treat it as fresh instead of preserving stale duplicate state.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     // Both fresh admissions should drain cleanly after the idle reset, regardless
