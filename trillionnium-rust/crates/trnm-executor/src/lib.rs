@@ -66,15 +66,29 @@ impl GroupingProfile {
             ("rw", self.stage_rw_hits),
         ];
 
-        let (label, hits) = ranking
-            .into_iter()
-            .max_by_key(|(_, hits)| *hits)
-            .unwrap_or(("none", 0));
+        let max_hits = ranking
+            .iter()
+            .map(|(_, hits)| *hits)
+            .max()
+            .unwrap_or(0);
 
-        if hits == 0 {
-            "none"
+        if max_hits == 0 {
+            return "none";
+        }
+
+        let leaders = ranking
+            .iter()
+            .filter(|(_, hits)| *hits == max_hits)
+            .count();
+
+        if leaders > 1 {
+            "mixed"
         } else {
-            label
+            ranking
+                .iter()
+                .find(|(_, hits)| *hits == max_hits)
+                .map(|(label, _)| *label)
+                .unwrap_or("none")
         }
     }
 }

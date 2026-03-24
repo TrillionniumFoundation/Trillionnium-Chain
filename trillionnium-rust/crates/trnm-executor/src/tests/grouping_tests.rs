@@ -344,6 +344,30 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
 }
 
 #[test]
+fn grouping_profile_retry_metrics_report_mixed_when_retry_stage_ties() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 2,
+        grouped_count: 8,
+        max_group_size: 4,
+        min_group_size: 4,
+        avg_group_size: 4.0,
+        hot_object_share: 0.5,
+        conflict_checks: 12,
+        conflict_hits: 6,
+        candidate_groups_scanned: 10,
+        stage_ww_checks: 4,
+        stage_ww_hits: 3,
+        stage_wr_checks: 5,
+        stage_wr_hits: 3,
+        stage_rw_checks: 3,
+        stage_rw_hits: 1,
+    };
+
+    assert_eq!(profile.dominant_retry_stage(), "mixed");
+}
+
+#[test]
 fn empty_batch_fast_path_is_profile_stable_across_strategies() {
     let strategies = [
         GroupingStrategy::Original,
