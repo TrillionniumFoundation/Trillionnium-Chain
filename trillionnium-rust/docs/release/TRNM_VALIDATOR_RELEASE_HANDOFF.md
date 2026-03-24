@@ -108,6 +108,28 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 | Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
 | RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_status_summary=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
+### Canonical path resolution commands
+
+When multiple timestamped evidence directories exist, resolve the artifact path from disk before quoting any field in chat, a ticket, or a handoff note.
+
+```bash
+# Latest local-evidence summary
+ls -dt run/health/evidence-* | head -n 1
+latest_evidence_dir="$(ls -dt run/health/evidence-* | head -n 1)"
+summary_path="$latest_evidence_dir/summary.txt"
+printf 'summary_path=%s\n' "$summary_path"
+
+# Latest RC rehearsal manifest
+ls -dt release/rc-* | head -n 1
+latest_rc_dir="$(ls -dt release/rc-* | head -n 1)"
+manifest_path="$latest_rc_dir/manifest.txt"
+printf 'manifest_path=%s\n' "$manifest_path"
+```
+
+Operator rule:
+- if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
+- quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
+
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
 - quote `manifest.txt` only for RC rehearsal conclusions
