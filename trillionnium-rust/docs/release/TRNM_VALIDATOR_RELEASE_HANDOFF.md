@@ -98,6 +98,21 @@ Manifest/evidence identity fields to verify before handoff:
 - `git_status_summary=clean`
 - `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals
 
+## Artifact ownership quick map
+
+Use the generated artifact as the source of truth for the step you just ran; do not cross-quote fields from memory or terminal scrollback.
+
+| Step | Primary artifact | Identity fields to verify first | Operator question it answers |
+| --- | --- | --- | --- |
+| Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
+| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
+| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_status_summary=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
+
+Operator discipline:
+- quote `summary.txt` only for local-evidence conclusions
+- quote `manifest.txt` only for RC rehearsal conclusions
+- if branch / commit / worktree identity differs across artifacts, stop and treat the handoff as **No-Go** until the mismatch is explained
+
 ## Go / No-Go decision rule
 
 ### GO only if all are true
