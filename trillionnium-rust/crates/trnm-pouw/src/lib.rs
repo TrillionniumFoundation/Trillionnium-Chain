@@ -5675,6 +5675,43 @@ mod tests {
     }
 
     #[test]
+    fn revealed_timeout_completes_and_retains_challenge_window_snapshot_evidence() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(9_101, "challenge_window_blocks".into(), "125".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 50_101, "alice".into(), 10).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(50_101, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+
+        let revealed = st.get_task(r4.id).unwrap();
+        assert_eq!(revealed.status, TaskStatus::Revealed);
+        assert_eq!(revealed.challenge_window_blocks_snapshot, Some(125));
+        assert_eq!(revealed.challenge_deadline_height, Some(235));
+
+        let before = apply_timeout(&mut st, r4.clone(), 235).unwrap_err();
+        assert!(matches!(before, PouwError::InvalidTransition));
+
+        let done = apply_timeout(&mut st, r4, 236).unwrap();
+        let task = st.get_task(done.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(125));
+        assert!(task.challenge_deadline_height.is_none());
+        assert!(task.challenged_at_height.is_none());
+        assert!(task.resolve_deadline_height.is_none());
+        assert!(task.challenge_bond.is_none());
+        assert!(task.challenger.is_none());
+        assert!(task.challenge_bond_forfeited.is_none());
+    }
+
+    #[test]
     fn timeout_rejects_committed_state_with_stale_challenge_window_snapshot() {
         let mut st = seeded_state();
 
