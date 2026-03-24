@@ -31,6 +31,19 @@ if [[ -z "$GIT_STATUS_SHORT" ]]; then
 else
   GIT_STATUS_SUMMARY="dirty"
 fi
+CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
+  BEGIN { in_match=0 }
+  /^worktree / {
+    in_match = ($2 == target)
+  }
+  in_match { print }
+  in_match && /^$/ { exit }
+' || true)"
+if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
+  CURRENT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
+else
+  CURRENT_WORKTREE_BRANCH_REF=""
+fi
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT_INPUT="${OUT_DIR:-$ROOT/run/health}"
@@ -124,6 +137,13 @@ find_challenge_reexec_entry() {
   echo "git_branch=$GIT_BRANCH"
   echo "git_head=$GIT_HEAD"
   echo "git_status_summary=$GIT_STATUS_SUMMARY"
+  echo "git_worktree_path=$GIT_TOPLEVEL"
+  echo "git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}"
+  echo "git_worktree_entry_begin"
+  if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
+    printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
+  fi
+  echo "git_worktree_entry_end"
   echo "git_status_short_begin"
   if [[ -n "$GIT_STATUS_SHORT" ]]; then
     printf '%s\n' "$GIT_STATUS_SHORT"

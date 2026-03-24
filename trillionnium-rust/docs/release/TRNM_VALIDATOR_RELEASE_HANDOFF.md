@@ -118,6 +118,9 @@ Minimum artifacts to preserve:
 Manifest/evidence identity fields to verify before handoff:
 - `git_toplevel=` matches the intended repo root
 - `git_branch=` and `git_head=` match the branch/commit under review
+- `git_worktree_path=` matches the exact worktree path you intended to run from
+- `git_worktree_branch_ref=` matches the branch binding shown by `git worktree list --porcelain`
+- `git_worktree_entry_begin` … `git_worktree_entry_end` contains the current worktree stanza, so path/branch binding can be audited from the artifact itself
 - `git_status_summary=clean`
 - `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals
 

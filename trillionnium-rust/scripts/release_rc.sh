@@ -40,6 +40,19 @@ if [ -z "$GIT_STATUS_SHORT" ]; then
 else
   GIT_STATUS_SUMMARY="dirty"
 fi
+CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
+  BEGIN { in_match=0 }
+  /^worktree / {
+    in_match = ($2 == target)
+  }
+  in_match { print }
+  in_match && /^$/ { exit }
+' || true)"
+if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
+  CURRENT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
+else
+  CURRENT_WORKTREE_BRANCH_REF=""
+fi
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
 EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
@@ -147,6 +160,11 @@ git_toplevel=$GIT_TOPLEVEL
 git_branch=$GIT_BRANCH
 git_head=$GIT_HEAD
 git_status_summary=$GIT_STATUS_SUMMARY
+git_worktree_path=$GIT_TOPLEVEL
+git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+git_worktree_entry_begin
+$CURRENT_WORKTREE_ENTRY
+git_worktree_entry_end
 git_status_short_begin
 $GIT_STATUS_SHORT
 git_status_short_end
