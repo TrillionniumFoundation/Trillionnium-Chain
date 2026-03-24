@@ -10423,6 +10423,27 @@ mod tests {
     }
 
     #[test]
+    fn governance_schema_invalid_sample_registry_rejects_explicit_value_rule_coverage_drift_fail_closed(
+    ) {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[("max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err(
+            "schema invalid-sample registry must fail closed when explicit value-rule coverage drifts",
+        );
+
+        assert!(
+            err.contains("explicit-validator complete for max_parallel_workers")
+                || err.contains("missing explicit value rule: max_parallel_workers")
+                || err.contains("explicit value-match coverage must derive from the explicit value-rule registry for max_parallel_workers"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_allowed_keys_schema_invalid_samples_merge_gate_is_explicit() {
         let allowed_unique: std::collections::BTreeSet<&str> =
             GOV_ALLOWED_KEYS.iter().copied().collect();
