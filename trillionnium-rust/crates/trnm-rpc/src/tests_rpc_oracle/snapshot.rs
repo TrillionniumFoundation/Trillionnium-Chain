@@ -6,6 +6,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
+const MAX_ORACLE_QUERY_PATH_LEN: usize = 4096;
+
 pub(crate) fn write_json_fixture<T: Serialize>(prefix: &str, value: &T) -> std::path::PathBuf {
     let path = unique_tmp_path(prefix, "json");
     let bytes = serde_json::to_vec_pretty(value).expect("serialize fixture");
@@ -180,6 +182,9 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
         return Err("empty snapshot".to_string());
     }
     let snapshot = snapshot.to_string();
+    if snapshot.len() > MAX_ORACLE_QUERY_PATH_LEN {
+        return Err("snapshot path too long".to_string());
+    }
 
     let policy = params
         .get("policy")
@@ -188,6 +193,9 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
         return Err("empty policy".to_string());
     }
     let policy = policy.to_string();
+    if policy.len() > MAX_ORACLE_QUERY_PATH_LEN {
+        return Err("policy path too long".to_string());
+    }
 
     let now_ts_ms = match params.get("now_ts_ms") {
         Some(v) if !v.is_empty() => Some(

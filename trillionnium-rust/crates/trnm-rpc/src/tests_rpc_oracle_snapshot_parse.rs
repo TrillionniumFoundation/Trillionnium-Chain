@@ -1,5 +1,7 @@
 use super::*;
 
+const MAX_ORACLE_QUERY_PATH_LEN: usize = 4096;
+
 #[test]
 fn parse_http_query_params_decodes_percent_and_plus() {
     let params = parse_http_query_params(
@@ -60,4 +62,30 @@ fn parse_oracle_validate_snapshot_target_rejects_empty_snapshot_or_policy() {
     )
     .expect_err("empty policy must fail closed");
     assert_eq!(policy_err, "empty policy");
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_snapshot_path_above_bound() {
+    let snapshot = format!("/tmp/{}", "a".repeat(MAX_ORACLE_QUERY_PATH_LEN + 1));
+    let target = format!(
+        "/oracle/validate_snapshot?snapshot={snapshot}&policy=/tmp/p.json"
+    );
+
+    let err = parse_oracle_validate_snapshot_target(&target)
+        .expect_err("oversized snapshot path must fail closed");
+
+    assert_eq!(err, "snapshot path too long");
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_policy_path_above_bound() {
+    let policy = format!("/tmp/{}", "b".repeat(MAX_ORACLE_QUERY_PATH_LEN + 1));
+    let target = format!(
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy={policy}"
+    );
+
+    let err = parse_oracle_validate_snapshot_target(&target)
+        .expect_err("oversized policy path must fail closed");
+
+    assert_eq!(err, "policy path too long");
 }
