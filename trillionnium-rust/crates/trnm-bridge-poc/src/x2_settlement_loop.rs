@@ -315,7 +315,10 @@ pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::{drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm};
+    use super::{
+        drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm,
+        SettlementEvent, SettlementStep,
+    };
     use crate::bridge_status::{
         BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
     };
@@ -492,6 +495,49 @@ mod tests {
 
         assert_eq!(err, SettlementError::InvalidHeight { height: 702 });
         assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-max-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: u64::MAX,
+                target_height: u64::MAX,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: u64::MAX },
+        )
+        .expect("exact saturated finality boundary should remain confirmable");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(u64::MAX));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: u64::MAX,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: Some(u64::MAX),
+                    heartbeat_target_height: Some(u64::MAX),
+                    heartbeat_latency_ms: Some(19),
+                    confirm_height: Some(u64::MAX),
+                    confirm_reason: None,
+                },
+            }
+        );
     }
 
     #[test]
