@@ -9036,6 +9036,26 @@ mod tests {
     }
 
     #[test]
+    fn governance_reverse_lookup_prefers_allowlisted_canonical_key_over_foreign_alias_at_same_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            7_313,
+        );
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            Some("resolve_authority"),
+            "reverse lookup must keep the allowlisted canonical governance key when a foreign alias reuses the same mutable key id"
+        );
+        assert!(
+            validate_gov_param_registry_binding(&indexed, "resolve_authority", 7_313).is_ok(),
+            "foreign aliases outside the allowlist must not poison canonical registry validation for the real governance key"
+        );
+    }
+
+    #[test]
     fn governance_reverse_lookup_fails_closed_when_dynamic_registry_reuses_reserved_key_id() {
         let mut indexed = BTreeMap::new();
         indexed.insert("resolve_authority".to_string(), EMERGENCY_PAUSE_KEY_ID);
