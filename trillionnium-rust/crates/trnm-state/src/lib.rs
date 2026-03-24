@@ -4117,6 +4117,38 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_surface_rejects_mixed_case_digest_encodings() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
+            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint_wal_hash, &wal_entry),
+            "checkpoint wal_entry_hash_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case WAL digest encodings"
+        );
+
+        let mut uppercase_checkpoint = checkpoint.clone();
+        uppercase_checkpoint.state_root_hex = uppercase_checkpoint.state_root_hex.to_uppercase();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal_entry),
+            "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
