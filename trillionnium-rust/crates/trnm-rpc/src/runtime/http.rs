@@ -1,7 +1,10 @@
 use super::*;
 
 fn is_health_probe_path(path: &str) -> bool {
-    matches!(path, "/health" | "/livez" | "/readyz")
+    matches!(
+        path,
+        "/health" | "/health/" | "/livez" | "/livez/" | "/readyz" | "/readyz/"
+    )
 }
 
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
@@ -254,8 +257,11 @@ mod tests {
     #[test]
     fn accepts_health_probe_aliases() {
         assert!(is_health_probe_path("/health"));
+        assert!(is_health_probe_path("/health/"));
         assert!(is_health_probe_path("/livez"));
+        assert!(is_health_probe_path("/livez/"));
         assert!(is_health_probe_path("/readyz"));
+        assert!(is_health_probe_path("/readyz/"));
         assert!(!is_health_probe_path("/healthz"));
     }
 }

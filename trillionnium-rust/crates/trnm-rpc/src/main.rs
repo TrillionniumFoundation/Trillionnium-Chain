@@ -2588,7 +2588,10 @@ fn summarize_challenge_treasury(
 }
 
 fn is_health_probe_path(path: &str) -> bool {
-    matches!(path, "/health" | "/livez" | "/readyz")
+    matches!(
+        path,
+        "/health" | "/health/" | "/livez" | "/livez/" | "/readyz" | "/readyz/"
+    )
 }
 
 fn http_json_response(status_line: &str, body: &str) -> String {
