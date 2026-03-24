@@ -2311,7 +2311,7 @@ impl StateStore {
                 }
 
                 let snapshot_key = snapshot.key.clone();
-                if snapshot_key == "algorand_governance_key_id" {
+                if snapshot.version == 0 || snapshot_key == "algorand_governance_key_id" {
                     self.clear_pending_gov_update_bindings(&snapshot_key, None);
                     self.invalidate_state_root_cache();
                     return;
@@ -10441,6 +10441,24 @@ mod tests {
         );
 
         assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_version_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "max_block_ms".into(),
+                value: "1000".into(),
+                version: 0,
+            }),
+        );
+
+        assert!(st.get_param(7_001).is_none());
         assert!(st.gov_param_string("max_block_ms").is_none());
     }
 

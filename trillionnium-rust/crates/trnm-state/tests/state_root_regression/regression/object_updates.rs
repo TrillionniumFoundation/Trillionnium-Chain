@@ -295,3 +295,34 @@ fn restore_zero_version_task_snapshot_fails_closed_without_perturbing_empty_root
         "repeated reads after rejecting a zero-version restore snapshot should deterministically reuse the unchanged cached root"
     );
 }
+
+#[test]
+fn restore_zero_version_gov_param_snapshot_fails_closed_without_perturbing_empty_root() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_gov_param(
+        7_001,
+        Some(GovParamObject {
+            key_id: 7_001,
+            key: "max_block_ms".into(),
+            value: "1000".into(),
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_param(7_001).is_none(),
+        "zero-version governance restore snapshots must fail closed instead of materializing a gov param object"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-version governance restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-version governance restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
