@@ -2704,6 +2704,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_stay_stable_when_primary_echo_exists_in_both_domains() {
+        let baseline = tx(1, vec![o(13), o(17)], vec![o(5), o(13)]);
+        let permuted = tx(2, vec![o(17), o(5), o(17)], vec![o(13), o(5), o(13)]);
+
+        // If the smallest key is echoed across read/write domains, preserve the same
+        // two-key execution-domain hint instead of drifting toward a larger
+        // lane-local secondary just because role-local ordering changed.
+        assert_eq!(hot_bucket_keys(&baseline), (5, 13));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
