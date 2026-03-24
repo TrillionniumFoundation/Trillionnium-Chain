@@ -157,6 +157,37 @@ fn restore_pending_gov_update_rejects_zero_key_id_fail_closed() {
 }
 
 #[test]
+fn restore_pending_gov_update_rejects_zero_key_id_for_special_key_paths() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "emergency_pause".into(),
+            value: "true".into(),
+            activate_at_height: 1,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("emergency_pause").is_none(),
+        "zero-id pending governance snapshots must fail closed even on special-key restore paths"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-id special-key pending governance restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-id special-key restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_none_rewinds_state_root_after_removing_timelocked_update() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();

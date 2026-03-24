@@ -2976,6 +2976,14 @@ impl StateStore {
 
                 let snapshot_key_id = snapshot.key_id;
 
+                if snapshot_key_id == 0 {
+                    self.clear_pending_gov_update_bindings(key, None);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
+                    }
+                    return;
+                }
+
                 if key == "algorand_governance_key_id" {
                     self.clear_pending_gov_update_bindings(key, None);
                     self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
