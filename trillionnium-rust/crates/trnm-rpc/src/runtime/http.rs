@@ -1,17 +1,18 @@
 use super::*;
 
 fn is_health_probe_path(path: &str) -> bool {
-    matches!(
-        path,
-        "/health"
-            | "/health/"
-            | "/healthz"
-            | "/healthz/"
-            | "/livez"
-            | "/livez/"
-            | "/readyz"
-            | "/readyz/"
-    )
+    [
+        "/health",
+        "/health/",
+        "/healthz",
+        "/healthz/",
+        "/livez",
+        "/livez/",
+        "/readyz",
+        "/readyz/",
+    ]
+    .iter()
+    .any(|alias| path.eq_ignore_ascii_case(alias))
 }
 
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
@@ -289,6 +290,8 @@ mod tests {
         assert!(is_health_probe_path("/livez/"));
         assert!(is_health_probe_path("/readyz"));
         assert!(is_health_probe_path("/readyz/"));
+        assert!(is_health_probe_path("/HEALTHZ"));
+        assert!(is_health_probe_path("/ReadyZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
     }
 }

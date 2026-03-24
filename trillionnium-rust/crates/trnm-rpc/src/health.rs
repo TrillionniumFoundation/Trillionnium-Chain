@@ -17,17 +17,18 @@ use crate::taskview::{query_events_response, query_task_response};
 use crate::NodeEventScanMode;
 
 fn is_health_probe_path(path: &str) -> bool {
-    matches!(
-        path,
-        "/health"
-            | "/health/"
-            | "/healthz"
-            | "/healthz/"
-            | "/livez"
-            | "/livez/"
-            | "/readyz"
-            | "/readyz/"
-    )
+    [
+        "/health",
+        "/health/",
+        "/healthz",
+        "/healthz/",
+        "/livez",
+        "/livez/",
+        "/readyz",
+        "/readyz/",
+    ]
+    .iter()
+    .any(|alias| path.eq_ignore_ascii_case(alias))
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -178,6 +179,8 @@ mod tests {
         assert!(is_health_probe_path("/livez/"));
         assert!(is_health_probe_path("/readyz"));
         assert!(is_health_probe_path("/readyz/"));
+        assert!(is_health_probe_path("/HEALTHZ"));
+        assert!(is_health_probe_path("/ReadyZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
     }
 }
