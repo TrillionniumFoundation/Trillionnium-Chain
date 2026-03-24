@@ -15,6 +15,12 @@ pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     )
 }
 
+pub(crate) fn http_json_head_response(status_line: &str, body_len: usize) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+    )
+}
+
 pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
@@ -43,7 +49,7 @@ pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<
     Ok(buf)
 }
 
-pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
+pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
         return None;
@@ -51,7 +57,7 @@ pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
 
     let first_sp = line.find(' ')?;
     let method = &line[..first_sp];
-    if method != "GET" {
+    if method != "GET" && method != "HEAD" {
         return None;
     }
 
@@ -98,7 +104,14 @@ pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path)
+    Some((method, path))
+}
+
+pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
+    match parse_http_request_target(first_line) {
+        Some(("GET", path)) => Some(path),
+        _ => None,
+    }
 }
 
 #[cfg(test)]

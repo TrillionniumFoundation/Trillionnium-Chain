@@ -13,6 +13,15 @@ fn parse_http_get_path_accepts_canonical_request_line() {
 }
 
 #[test]
+fn parse_http_request_target_accepts_head_health_probe() {
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.1"),
+        Some(("HEAD", "/readyz"))
+    );
+    assert_eq!(parse_http_get_path("HEAD /readyz HTTP/1.1"), None);
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health"), None);

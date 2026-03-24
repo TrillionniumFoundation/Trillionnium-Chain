@@ -2602,6 +2602,12 @@ fn http_json_response(status_line: &str, body: &str) -> String {
     )
 }
 
+fn http_json_head_response(status_line: &str, body_len: usize) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+    )
+}
+
 fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
@@ -2630,7 +2636,7 @@ fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     Ok(buf)
 }
 
-fn parse_http_get_target(first_line: &str) -> Option<&str> {
+fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
         return None;
@@ -2638,7 +2644,7 @@ fn parse_http_get_target(first_line: &str) -> Option<&str> {
 
     let first_sp = line.find(' ')?;
     let method = &line[..first_sp];
-    if method != "GET" {
+    if method != "GET" && method != "HEAD" {
         return None;
     }
 
@@ -2685,7 +2691,14 @@ fn parse_http_get_target(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path)
+    Some((method, path))
+}
+
+fn parse_http_get_target(first_line: &str) -> Option<&str> {
+    match parse_http_request_target(first_line) {
+        Some(("GET", path)) => Some(path),
+        _ => None,
+    }
 }
 
 #[cfg(test)]
@@ -3065,11 +3078,12 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
         };
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
+        let request = parse_http_request_target(first);
         let target = parse_http_get_target(first);
-        let path = target.map(|raw| raw.split('?').next().unwrap_or(raw));
+        let path = request.map(|(_, raw)| raw.split('?').next().unwrap_or(raw));
 
-        let response = match (path, target) {
-            (Some(path), _) if is_health_probe_path(path) => {
+        let response = match (request, path, target) {
+            (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
                 let body = serde_json::json!({
                     "ok": true,
                     "service": "trnm-rpc",
@@ -3077,9 +3091,13 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     "version": 1
                 })
                 .to_string();
-                http_json_response("200 OK", &body)
+                if method == "HEAD" {
+                    http_json_head_response("200 OK", body.len())
+                } else {
+                    http_json_response("200 OK", &body)
+                }
             }
-            (Some(path), _) if path.starts_with("/query-task/") => {
+            (_, Some(path), Some(_)) if path.starts_with("/query-task/") => {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
@@ -3104,7 +3122,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some(path), Some(target)) if path.starts_with("/query-events/") => {
+            (_, Some(path), Some(target)) if path.starts_with("/query-events/") => {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
@@ -3131,7 +3149,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
+            (_, Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
                 let query = parse_query_normalized_audit_events_query_from_path(target);
                 match query {
                     Ok(query) => {
@@ -3146,7 +3164,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
 
-            (Some(path), _) if path.starts_with("/query-capability-audit/") => {
+            (_, Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =

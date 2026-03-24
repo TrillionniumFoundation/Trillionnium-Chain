@@ -6,8 +6,9 @@ use crate::capability::{
 };
 use crate::envpaths::identity_registry_file;
 use crate::http::{
-    configure_health_stream, http_json_response, parse_http_get_target,
-    parse_query_events_limit_from_path, read_http_request_head,
+    configure_health_stream, http_json_head_response, http_json_response,
+    parse_http_get_target, parse_http_request_target, parse_query_events_limit_from_path,
+    read_http_request_head,
 };
 use crate::node_events::load_node_events;
 use crate::runtime::now_ms;
@@ -50,11 +51,12 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
         };
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
+        let request = parse_http_request_target(first);
         let target = parse_http_get_target(first);
-        let path = target.map(|raw| raw.split('?').next().unwrap_or(raw));
+        let path = request.map(|(_, raw)| raw.split('?').next().unwrap_or(raw));
 
-        let response = match (path, target) {
-            (Some(path), _) if is_health_probe_path(path) => {
+        let response = match (request, path, target) {
+            (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
                 let body = serde_json::json!({
                     "ok": true,
                     "service": "trnm-rpc",
@@ -62,9 +64,13 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     "version": 1
                 })
                 .to_string();
-                http_json_response("200 OK", &body)
+                if method == "HEAD" {
+                    http_json_head_response("200 OK", body.len())
+                } else {
+                    http_json_response("200 OK", &body)
+                }
             }
-            (Some(path), _) if path.starts_with("/query-task/") => {
+            (_, Some(path), Some(_)) if path.starts_with("/query-task/") => {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
@@ -89,7 +95,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some(path), Some(target)) if path.starts_with("/query-events/") => {
+            (_, Some(path), Some(target)) if path.starts_with("/query-events/") => {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
@@ -116,7 +122,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some(path), _) if path.starts_with("/query-capability-audit/") => {
+            (_, Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
