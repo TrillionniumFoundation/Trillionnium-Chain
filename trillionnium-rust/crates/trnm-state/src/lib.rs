@@ -874,7 +874,9 @@ fn task_snapshot_metadata_is_complete(task: &TaskObject) -> bool {
     let has_canonical_note_metadata = |value: Option<&str>| {
         value
             .map(|value| {
-                !value.trim().is_empty() && value.trim() == value && !value.chars().any(|c| c.is_control())
+                !value.trim().is_empty()
+                    && value.trim() == value
+                    && !value.chars().any(|c| c.is_control())
             })
             .unwrap_or(true)
     };
@@ -1052,7 +1054,6 @@ fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
     Ok(seen_members.into_iter().collect::<Vec<_>>().join(","))
 }
 
-
 fn ensure_effective_resolve_authority_match(
     st: &StateStore,
     authority_set: &str,
@@ -1139,9 +1140,11 @@ fn validated_restorable_pending_resolve_snapshot(
                         && existing.slash_worker == snapshot.slash_worker
                         && existing.task_version == snapshot.task_version
                         && validate_resolve_approver_token(&existing.first_approver)
-                            .map(|existing_first| existing_first == first_approver_canonical).unwrap_or(false)
+                            .map(|existing_first| existing_first == first_approver_canonical)
+                            .unwrap_or(false)
                         && canonicalize_resolve_authority_set(&existing.authority_set)
-                            .map(|existing_authority| existing_authority == authority_canonical).unwrap_or(false)
+                            .map(|existing_authority| existing_authority == authority_canonical)
+                            .unwrap_or(false)
                 })
             {
                 return None;
@@ -2123,7 +2126,10 @@ impl StateStore {
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         if let Some(task) = snapshot.as_ref() {
             if task.task_id == id
-                && self.gov_param_key_index.values().any(|mapped_id| *mapped_id == id)
+                && self
+                    .gov_param_key_index
+                    .values()
+                    .any(|mapped_id| *mapped_id == id)
                 && !self.objects.contains_key(&id)
             {
                 if self.pending_resolve_approvals.remove(&id).is_some() {
@@ -2259,8 +2265,8 @@ impl StateStore {
                     _ => {}
                 }
                 let existing_task_matches = self.matches_task_restore_reentry_snapshot(id, &task);
-                let should_preserve = self
-                    .should_preserve_pending_resolve_on_task_restore(id, &task);
+                let should_preserve =
+                    self.should_preserve_pending_resolve_on_task_restore(id, &task);
                 let stale_pending_resolve = !should_preserve && !self.is_emergency_paused();
 
                 self.objects.insert(
@@ -2337,7 +2343,8 @@ impl StateStore {
                         return;
                     }
 
-                    if let Some(existing_key_id) = self.gov_param_key_index.get(&snapshot_key).copied()
+                    if let Some(existing_key_id) =
+                        self.gov_param_key_index.get(&snapshot_key).copied()
                     {
                         if existing_key_id != snapshot.key_id {
                             self.clear_pending_gov_update_bindings(&snapshot_key, None);
@@ -2987,7 +2994,6 @@ impl StateStore {
                     return;
                 }
 
-
                 if GOV_ALLOWED_KEYS.contains(&key)
                     && validate_pending_gov_param_snapshot_binding(
                         &self.gov_param_key_index,
@@ -3002,7 +3008,6 @@ impl StateStore {
                     }
                     return;
                 }
-
 
                 if let Some(existing) = self.objects.get(&snapshot_key_id) {
                     match &existing.value {
@@ -3037,7 +3042,9 @@ impl StateStore {
                 if key != "resolve_authority"
                     && key != "emergency_pause"
                     && GOV_ALLOWED_KEYS.contains(&key)
-                    && self.validated_gov_param_object_at_id(snapshot_key_id).is_none()
+                    && self
+                        .validated_gov_param_object_at_id(snapshot_key_id)
+                        .is_none()
                     && alias_keys.is_empty()
                 {
                     self.clear_pending_gov_update_bindings(key, None);

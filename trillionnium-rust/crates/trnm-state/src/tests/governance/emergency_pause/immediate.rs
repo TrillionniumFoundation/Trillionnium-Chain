@@ -1,0 +1,245 @@
+use super::*;
+
+#[test]
+fn emergency_pause_requires_strict_bool_literal() {
+    let mut st = StateStore::new();
+
+    for bad in [
+        "TRUE", "False", "1", "yes", " true", "false ", "	true", "
+true", "false
+",
+    ] {
+        let err = st
+            .set_gov_param_unchecked(7999, "emergency_pause".into(), bad.into())
+            .unwrap_err();
+        assert!(err.contains("strict bool"));
+    }
+
+    st.set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+        .unwrap();
+    assert!(st.is_emergency_paused());
+
+    st.set_gov_param_unchecked(7999, "emergency_pause".into(), "false".into())
+        .unwrap();
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
+fn emergency_pause_flag_works() {
+    let mut st = StateStore::new();
+    assert!(!st.is_emergency_paused());
+
+    st.set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
+        .unwrap();
+    assert!(st.is_emergency_paused());
+
+    st.set_gov_param_unchecked(7999, "emergency_pause".into(), "false".into())
+        .unwrap();
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
+fn emergency_pause_checked_path_is_immediate_and_non_cancellable() {
+    let mut st = StateStore::new();
+
+    let applied = st
+        .set_gov_param(8_000, 7999, "emergency_pause".into(), "true".into())
+        .unwrap();
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+
+    let cancel_err = st
+        .set_gov_param_with_action(
+            8_001,
+            7999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .unwrap_err();
+    assert!(cancel_err.contains("cancel not supported for non-sensitive key"));
+    // Failed cancel must be side-effect free on pause state and pending queues.
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+
+    let applied_unpause = st
+        .set_gov_param(8_002, 7999, "emergency_pause".into(), "false".into())
+        .unwrap();
+    assert!(matches!(applied_unpause, GovParamUpdateOutcome::Applied(_)));
+    assert!(!st.is_emergency_paused());
+}
+
+#[test]
+fn emergency_pause_checked_noop_update_is_idempotent_after_pause() {
+    // Merge-gate guard: repeated identical emergency_pause writes should be side-effect free.
+    let mut st = StateStore::new();
+
+    let first = st
+        .set_gov_param(8_010, 7_999, "emergency_pause".into(), "true".into())
+        .expect("initial pause=true write must succeed");
+    let first_ref = match first {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    let second = st
+        .set_gov_param(8_011, 7_999, "emergency_pause".into(), "true".into())
+        .expect("noop pause=true write must succeed");
+    let second_ref = match second {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    assert_eq!(first_ref, second_ref, "noop must not churn object version");
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
+
+#[test]
+fn emergency_pause_replace_action_remains_immediate_without_pending_state() {
+    let mut st = StateStore::new();
+
+    let applied = st
+        .set_gov_param_with_action(
+            9_000,
+            7999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .unwrap();
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+
+    // Replace action must remain immediate and non-scheduling in both directions.
+    let unapplied = st
+        .set_gov_param_with_action(
+            9_001,
+            7999,
+            "emergency_pause".into(),
+            "false".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .unwrap();
+    assert!(matches!(unapplied, GovParamUpdateOutcome::Applied(_)));
+    assert!(!st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
+
+#[test]
+fn emergency_pause_replace_noop_is_idempotent_and_non_scheduling() {
+    // Merge-gate guard: Replace noop must stay immediate and avoid object-version churn.
+    let mut st = StateStore::new();
+
+    let first = st
+        .set_gov_param_with_action(
+            9_006,
+            7_999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("initial replace pause=true must apply immediately");
+    let first_ref = match first {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    let second = st
+        .set_gov_param_with_action(
+            9_007,
+            7_999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("replace noop pause=true must remain immediate and idempotent");
+    let second_ref = match second {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    assert_eq!(
+        first_ref, second_ref,
+        "replace noop must not churn object version"
+    );
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
+
+#[test]
+fn emergency_pause_enforce_action_remains_immediate_without_pending_state() {
+    // Merge-gate guard: explicit Enforce action must stay on the immediate path for
+    // emergency pause and never route through timelock scheduling.
+    let mut st = StateStore::new();
+
+    let applied = st
+        .set_gov_param_with_action(
+            9_010,
+            7999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .unwrap();
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+
+    let unapplied = st
+        .set_gov_param_with_action(
+            9_011,
+            7999,
+            "emergency_pause".into(),
+            "false".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .unwrap();
+    assert!(matches!(unapplied, GovParamUpdateOutcome::Applied(_)));
+    assert!(!st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
+
+#[test]
+fn emergency_pause_enforce_noop_is_idempotent_and_non_scheduling() {
+    // Merge-gate guard: explicit Enforce noop must keep immediate semantics and avoid
+    // object-version churn for emergency_pause.
+    let mut st = StateStore::new();
+
+    let first = st
+        .set_gov_param_with_action(
+            9_011,
+            7_999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect("initial enforce pause=true must apply immediately");
+    let first_ref = match first {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    let second = st
+        .set_gov_param_with_action(
+            9_012,
+            7_999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect("enforce noop pause=true must remain immediate and idempotent");
+    let second_ref = match second {
+        GovParamUpdateOutcome::Applied(r) => r,
+        _ => panic!("expected immediate apply"),
+    };
+
+    assert_eq!(
+        first_ref, second_ref,
+        "enforce noop must not churn object version"
+    );
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}

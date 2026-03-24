@@ -1,0 +1,96 @@
+use super::*;
+
+#[test]
+fn state_root_changes_when_task_security_fields_change() {
+    let mut st = StateStore::new();
+    let task = TaskObject {
+        task_id: 42,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Challenged,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-1".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(40),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(35),
+        challenge_bond: Some(500),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    };
+
+    st.put_task_new(task.clone()).unwrap();
+    let root_before = st.state_root();
+
+    let mut changed = task;
+    changed.challenge_bond_forfeited = Some(true);
+    let current_ref = st.get_ref(42).unwrap();
+    st.update_task(current_ref, changed).unwrap();
+    let root_after = st.state_root();
+
+    assert_ne!(root_before, root_after);
+}
+
+#[test]
+fn state_root_changes_when_pending_resolve_first_approver_changes() {
+    let mut st_a = StateStore::new();
+    st_a.stage_or_confirm_resolve_approval(500, 1, true, "authority-a", "authority-a,authority-b")
+        .unwrap();
+
+    let mut st_b = StateStore::new();
+    st_b.stage_or_confirm_resolve_approval(500, 1, true, "authority-b", "authority-a,authority-b")
+        .unwrap();
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "pending resolve first approver must contribute to state root"
+    );
+}
+
+#[test]
+fn state_root_changes_when_pending_resolve_task_version_changes() {
+    let mut st_a = StateStore::new();
+    st_a.stage_or_confirm_resolve_approval(501, 1, true, "authority-a", "authority-a,authority-b")
+        .unwrap();
+
+    let mut st_b = StateStore::new();
+    st_b.stage_or_confirm_resolve_approval(501, 2, true, "authority-a", "authority-a,authority-b")
+        .unwrap();
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "pending resolve task version snapshot must contribute to state root"
+    );
+}
+
+#[test]
+fn state_root_changes_when_pending_resolve_authority_set_changes() {
+    let mut st_a = StateStore::new();
+    st_a.stage_or_confirm_resolve_approval(501, 1, true, "authority-a", "authority-a,authority-b")
+        .unwrap();
+
+    let mut st_b = StateStore::new();
+    st_b.stage_or_confirm_resolve_approval(
+        501,
+        1,
+        true,
+        "authority-a",
+        "authority-a,authority-b,authority-c",
+    )
+    .unwrap();
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "pending resolve authority set must contribute to state root"
+    );
+}

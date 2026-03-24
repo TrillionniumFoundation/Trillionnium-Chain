@@ -5295,7 +5295,11 @@ fn pending_gov_restore_key_mismatch_clears_only_targeted_stale_slot_and_preserve
 
     let mut expected = StateStore::new();
     install_pending_gov_base(&mut expected, 7_302, "max_block_ms");
-    restore_pending_gov_update_with_base(&mut expected, "challenge_min_bond", canonical_other_snapshot);
+    restore_pending_gov_update_with_base(
+        &mut expected,
+        "challenge_min_bond",
+        canonical_other_snapshot,
+    );
 
     assert_ne!(
         state.state_root(),
