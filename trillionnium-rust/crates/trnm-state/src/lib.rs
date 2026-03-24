@@ -116,6 +116,16 @@ pub struct CheckpointMeta {
     pub wal_entry_hash_hex: String,
 }
 
+impl CheckpointMeta {
+    pub fn commitment_hex(&self) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(self.height.to_le_bytes());
+        hash_len_prefixed_str(&mut hasher, &self.state_root_hex);
+        hash_len_prefixed_str(&mut hasher, &self.wal_entry_hash_hex);
+        hex::encode(hasher.finalize())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WalMeta {
     pub height: u64,
@@ -4084,6 +4094,30 @@ mod tests {
             !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
             "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
         );
+    }
+
+    #[test]
+    fn checkpoint_commitment_binds_height_root_and_wal_hash() {
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: "ab".repeat(32),
+            wal_entry_hash_hex: "cd".repeat(32),
+        };
+        let baseline = checkpoint.commitment_hex();
+
+        assert!(is_canonical_hex_digest(&baseline));
+
+        let mut changed_height = checkpoint.clone();
+        changed_height.height += 1;
+        assert_ne!(baseline, changed_height.commitment_hex());
+
+        let mut changed_root = checkpoint.clone();
+        changed_root.state_root_hex = "ef".repeat(32);
+        assert_ne!(baseline, changed_root.commitment_hex());
+
+        let mut changed_wal_hash = checkpoint.clone();
+        changed_wal_hash.wal_entry_hash_hex = "01".repeat(32);
+        assert_ne!(baseline, changed_wal_hash.commitment_hex());
     }
 
     #[test]

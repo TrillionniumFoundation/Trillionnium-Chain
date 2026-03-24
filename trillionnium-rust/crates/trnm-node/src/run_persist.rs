@@ -69,11 +69,12 @@ pub(crate) fn persist_committed_height(
                 .last()
                 .expect("just-pushed committed WAL entry must exist"),
         ) {
+            let checkpoint_commitment = checkpoint.commitment_hex();
             checkpoints.push(checkpoint);
             persist_checkpoint_meta(wal_dir, checkpoints)?;
             println!(
-                "[bft-checkpoint] height={} state_root={} wal_entry_hash={} proposal_hash={}",
-                height, state_root_hex, wal_hash, proposal_hash
+                "[bft-checkpoint] height={} state_root={} wal_entry_hash={} checkpoint_commitment={} proposal_hash={}",
+                height, state_root_hex, wal_hash, checkpoint_commitment, proposal_hash
             );
         }
     }
