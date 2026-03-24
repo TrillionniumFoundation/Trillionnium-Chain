@@ -1516,6 +1516,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteFirst => {
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -1527,6 +1530,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteLast => {
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -4554,6 +4560,35 @@ mod tests {
     }
 
     #[test]
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn write_first_rejects_cross_domain_version_skew_for_same_object_id() {
+        let mut txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn write_last_rejects_cross_domain_version_skew_for_same_object_id() {
+        let mut txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 9, version: 3 }],
+            vec![ObjectRef { id: 9, version: 1 }],
+        )];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteLast);
+    }
+
+    #[test]
     fn auto_adaptive_canonicalizes_primary_access_key_across_equivalent_domain_orderings() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
@@ -4838,12 +4873,12 @@ mod tests {
     }
 
     #[test]
-    fn write_first_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+    fn write_first_reorder_uses_object_scoped_domains_not_raw_entry_counts() {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -4851,17 +4886,17 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
 
         // WriteFirst should rank by deduped object-scoped write/read domains so
-        // duplicate/version-heavy footprints do not outrank genuinely wider work.
+        // duplicate-heavy footprints do not outrank genuinely wider work.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
     }
 
     #[test]
-    fn write_last_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+    fn write_last_reorder_uses_object_scoped_domains_not_raw_entry_counts() {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -4869,7 +4904,7 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::WriteLast);
 
         // WriteLast should also follow deduped object-scoped domains so
-        // version-heavy footprints do not drift from the executor's scheduler.
+        // duplicate-heavy footprints do not drift from the executor's scheduler.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
     }
 
