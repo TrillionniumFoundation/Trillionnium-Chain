@@ -551,45 +551,13 @@ impl LaneAdmissionGate {
         };
         self.finish_admission(tx_id, out)
     }
-    pub fn queued_counts(&self) -> (usize, usize, usize) {
-        let normal = self.normal.queue.len();
-        let critical = self.critical.queue.len();
-        (normal, critical, self.lane_total())
+    fn prefer_normal_on_pop(&self) -> bool {
+        self.normal_has_dedicated_capacity
+            && self.critical_served_streak >= self.critical_burst_limit
+            && !self.normal.queue.is_empty()
     }
 
-    pub fn pop_ready(&mut self) -> Option<u64> {
-        if self.lane_is_idle() {
-            // Idle dequeue polls are common in long-lived schedulers. Treat them as a
-            // self-heal boundary too so restored-state ghost caches/fairness state do
-            // not survive indefinitely when no fresh admit() arrives to reset them.
-            //
-            // Exception: zero-capacity hard-stop mode intentionally preserves restored
-            // duplicate knowledge even though no queue slots exist, so repeated idle
-            // polls must not erase that recovery metadata.
-            self.reset_idle_state(true);
-            return None;
-        }
-
-        let prefer_normal = self.normal_has_dedicated_capacity
-            && self.critical_served_streak >= self.critical_burst_limit
-            && !self.normal.queue.is_empty();
-
-        let (id, served_critical) = if prefer_normal {
-            // prefer_normal is only true when normal queue is known non-empty.
-            // In restored-state edge cases, degrade gracefully instead of panicking.
-            if let Some(id) = self.normal.pop_ready() {
-                (id, false)
-            } else if let Some(id) = self.critical.pop_ready() {
-                (id, true)
-            } else {
-                return None;
-            }
-        } else if let Some(id) = self.critical.pop_ready() {
-            (id, true)
-        } else {
-            (self.normal.pop_ready()?, false)
-        };
-
+    fn record_pop_fairness(&mut self, served_critical: bool) {
         if self.normal_has_dedicated_capacity {
             if served_critical {
                 // Keep streak bounded to the fairness threshold. This preserves
@@ -612,6 +580,46 @@ impl LaneAdmissionGate {
             // prolonged spillover drains.
             self.critical_served_streak = 0;
         }
+    }
+
+    pub fn queued_counts(&self) -> (usize, usize, usize) {
+        let normal = self.normal.queue.len();
+        let critical = self.critical.queue.len();
+        (normal, critical, self.lane_total())
+    }
+
+    pub fn pop_ready(&mut self) -> Option<u64> {
+        if self.lane_is_idle() {
+            // Idle dequeue polls are common in long-lived schedulers. Treat them as a
+            // self-heal boundary too so restored-state ghost caches/fairness state do
+            // not survive indefinitely when no fresh admit() arrives to reset them.
+            //
+            // Exception: zero-capacity hard-stop mode intentionally preserves restored
+            // duplicate knowledge even though no queue slots exist, so repeated idle
+            // polls must not erase that recovery metadata.
+            self.reset_idle_state(true);
+            return None;
+        }
+
+        let prefer_normal = self.prefer_normal_on_pop();
+
+        let (id, served_critical) = if prefer_normal {
+            // prefer_normal is only true when normal queue is known non-empty.
+            // In restored-state edge cases, degrade gracefully instead of panicking.
+            if let Some(id) = self.normal.pop_ready() {
+                (id, false)
+            } else if let Some(id) = self.critical.pop_ready() {
+                (id, true)
+            } else {
+                return None;
+            }
+        } else if let Some(id) = self.critical.pop_ready() {
+            (id, true)
+        } else {
+            (self.normal.pop_ready()?, false)
+        };
+
+        self.record_pop_fairness(served_critical);
 
         self.repair_global_seen_after_pop(id);
 
