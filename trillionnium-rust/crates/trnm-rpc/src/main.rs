@@ -4243,6 +4243,7 @@ fn main() -> Result<()> {
                 "matched_bid_count": matched_bid_count,
                 "winner_reputation": winner_reputation,
                 "winner_reputation_effective": winner_reputation_effective,
+                "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
                 "base_score": base_score,
                 "reputation_weight": reputation_weight,
                 "penalty": penalty,
