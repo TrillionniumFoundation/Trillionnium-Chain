@@ -169,3 +169,66 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
         "repeated reads after clearing the mismatched task slot should deterministically reuse the canonical cached root"
     );
 }
+
+#[test]
+fn restore_zero_version_task_snapshot_fails_closed_without_perturbing_empty_root() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_task(
+        10_303,
+        Some(TaskObject {
+            task_id: 10_303,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("invalid replay snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:30:00Z".into()),
+                    provenance_index: Some("prov-task-10303".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x31; 32]),
+            result_hash: Some([0x41; 32]),
+            reveal_salt: Some([0x51; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(28),
+            resolve_deadline_height: Some(52),
+            challenge_bond: Some(17),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_task(10_303).is_none(),
+        "zero-version restore snapshots must fail closed instead of materializing a task object"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-version restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-version restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
