@@ -826,6 +826,29 @@ mod tests {
     }
 
     #[test]
+    fn foreign_algorand_governance_key_stays_outside_explicit_registry() {
+        const FOREIGN_ALGORAND_KEY: &str = "algorand_governance_key_id";
+
+        assert!(
+            !GOV_ALLOWED_KEYS.contains(&FOREIGN_ALGORAND_KEY),
+            "foreign algorand governance key must stay outside the allowlist"
+        );
+        assert!(
+            !has_explicit_gov_param_validator(FOREIGN_ALGORAND_KEY),
+            "foreign algorand governance key must not gain an explicit validator"
+        );
+        assert_eq!(
+            governance_pinned_key_id(FOREIGN_ALGORAND_KEY),
+            None,
+            "foreign algorand governance key must not acquire a reserved pinned id"
+        );
+
+        let err = validate_gov_param_value(FOREIGN_ALGORAND_KEY, "7999")
+            .expect_err("foreign algorand governance key must fail closed at validator boundary");
+        assert!(err.contains("no explicit validator registered"), "{err}");
+    }
+
+    #[test]
     fn governance_schema_invalid_samples_cover_allowed_keys_once() {
         let allowed_unique: std::collections::BTreeSet<&str> =
             GOV_ALLOWED_KEYS.iter().copied().collect();
