@@ -2332,6 +2332,7 @@ fn timeout_skip_reason(status: &TaskStatus, emergency_paused: bool) -> Option<&'
     None
 }
 
+#[cfg(test)]
 fn should_scan_timeout(status: &TaskStatus, emergency_paused: bool) -> bool {
     timeout_skip_reason(status, emergency_paused).is_none()
 }
@@ -2377,16 +2378,19 @@ fn timeout_event_surface_metadata(
     (tx_id, tx_ordinal, tx_id_overflowed, tx_ordinal_overflowed)
 }
 
+#[cfg(test)]
 fn timeout_event_tx_metadata(tx_id_seed: u64, migrated_before_emit: u64) -> (u64, bool) {
     let (tx_id, _, tx_id_overflowed, tx_ordinal_overflowed) =
         timeout_event_surface_metadata(tx_id_seed, migrated_before_emit);
     (tx_id, tx_id_overflowed || tx_ordinal_overflowed)
 }
 
+#[cfg(test)]
 fn timeout_event_tx_id(tx_id_seed: u64, migrated_before_emit: u64) -> u64 {
     timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).0
 }
 
+#[cfg(test)]
 fn timeout_event_tx_overflowed(tx_id_seed: u64, migrated_before_emit: u64) -> bool {
     timeout_event_tx_metadata(tx_id_seed, migrated_before_emit).1
 }
