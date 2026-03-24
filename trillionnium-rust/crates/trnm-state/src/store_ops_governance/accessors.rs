@@ -42,6 +42,11 @@ impl StateStore {
         Some(self.gov_param_value(key)?.to_string())
     }
 
+    pub fn gov_param_snapshot(&self, key: &str) -> Option<GovParamObject> {
+        let (_, param) = self.gov_param_ref_for_key(key)?;
+        Some(param.clone())
+    }
+
     pub fn monetary_state(&self) -> &MonetaryState {
         &self.monetary_state
     }

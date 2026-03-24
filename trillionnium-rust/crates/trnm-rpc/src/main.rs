@@ -22,9 +22,9 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
-    TaskStatus, TransferTx,
+    AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
+    PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
+    TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -3609,17 +3609,7 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryParam { key } => {
-            let ids = [7001u64, 7999u64];
-            let mut found: Option<GovParamObject> = None;
-            for id in ids {
-                if let Some(p) = st.get_param(id) {
-                    if p.key == key {
-                        found = Some(p);
-                        break;
-                    }
-                }
-            }
-            let Some(p) = found else {
+            let Some(p) = st.gov_param_snapshot(&key) else {
                 bail!("param not found: {}", key);
             };
             let out = GovParamQueryResponse {

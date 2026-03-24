@@ -34,17 +34,7 @@ pub(crate) fn handle_query_proposal(proposal_id: u64) -> Result<()> {
 
 pub(crate) fn handle_query_param(key: &str) -> Result<()> {
     let st = governance_state();
-    let ids = [7001u64, 7999u64];
-    let mut found = None;
-    for id in ids {
-        if let Some(p) = st.get_param(id) {
-            if p.key == key {
-                found = Some(p);
-                break;
-            }
-        }
-    }
-    let Some(p) = found else {
+    let Some(p) = st.gov_param_snapshot(key) else {
         bail!("param not found: {}", key);
     };
     let out = GovParamQueryResponse {
