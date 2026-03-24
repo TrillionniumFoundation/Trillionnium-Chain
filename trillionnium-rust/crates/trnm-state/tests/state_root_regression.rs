@@ -3109,6 +3109,62 @@ fn restore_task_none_on_non_task_slot_fails_closed_and_preserves_canonical_appli
 }
 
 #[test]
+fn restore_task_zero_version_fails_closed_and_rewinds_staged_pending_root() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+    install_pending_resolve_root_task(&mut state, 10_304, 7);
+    state
+        .stage_or_confirm_resolve_approval(10_304, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("canonical staged resolve approval should succeed");
+
+    let staged_root = state.state_root();
+    let mut zero_version_snapshot = state
+        .get_task(10_304)
+        .expect("canonical challenged task snapshot should exist");
+    zero_version_snapshot.version = 0;
+
+    let mut expected = StateStore::new();
+    expected.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    state.restore_task(10_304, Some(zero_version_snapshot));
+
+    assert!(
+        state.get_task(10_304).is_none(),
+        "restore_task should fail closed by dropping a zero-version task snapshot instead of materializing it"
+    );
+    assert!(
+        state.pending_resolve_approval(10_304).is_none(),
+        "restore_task should scrub staged pending resolve metadata when the replayed task snapshot carries version zero"
+    );
+    assert_ne!(
+        state.state_root(),
+        staged_root,
+        "a zero-version replay must not preserve the staged challenged-task state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "dropping the invalid task snapshot and its staged approval should rewind state_root to the canonical governance-only baseline"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
