@@ -7439,9 +7439,16 @@ mod tests {
         let r5 = apply_timeout(&mut st, r4, 211).unwrap();
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: once revealed, the policy snapshot stays
+        // attached for later bookkeeping/audit clarity even if the task clears without
+        // an actual challenge. Only live timing fields are dropped on terminalization.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
         assert_eq!(task.challenged_at_height, None);
         assert_eq!(task.challenge_deadline_height, None);
         assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.challenger, None);
     }
 
     #[test]
@@ -19854,6 +19861,15 @@ mod tests {
         let task = st.get_task(done.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
+        // Filecoin-like proof/collateral bookkeeping: terminalized challenged tasks
+        // retain the resolved challenge provenance so later audits can see which
+        // retention policy snapshot and collateral path governed settlement.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.challenged_at_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(310));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
         assert_eq!(st.pending_resolve_approval(task_id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
         assert_eq!(st.balance_of("challenger"), before_challenger + 10);
