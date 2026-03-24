@@ -507,6 +507,18 @@ fn validate_governance_key_id_from_lists(
             ));
         }
     }
+    if let Some((expected_key, _)) = pinned_key_ids
+        .iter()
+        .copied()
+        .find(|(_, pinned_key_id)| *pinned_key_id == key_id)
+    {
+        if key != expected_key {
+            return Err(format!(
+                "governance key id mismatch for id {}: expected_key={}, attempted_key={}",
+                key_id, expected_key, key
+            ));
+        }
+    }
     Ok(())
 }
 
@@ -6763,6 +6775,26 @@ mod tests {
 
         assert!(
             err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_reserved_id_alias_reuse_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "resolve_authority",
+            EMERGENCY_PAUSE_KEY_ID,
+            &["emergency_pause", "resolve_authority"],
+            &[],
+            &["emergency_pause", "resolve_authority"],
+            &["emergency_pause", "resolve_authority"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("registration helper must fail closed when another governance key attempts to reuse a reserved id");
+
+        assert!(
+            err.contains("governance key id mismatch for id 7999: expected_key=emergency_pause, attempted_key=resolve_authority"),
             "{err}"
         );
     }
