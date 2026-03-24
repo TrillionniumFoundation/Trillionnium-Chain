@@ -1438,9 +1438,11 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
 
     // Canonicalize access-domain buckets by deduping object ids independently of
     // version. Use the smallest combined key as primary to preserve mixed-domain
-    // role-flip stability, while choosing secondary by deterministic domain family:
-    // when primary is write-dominant, prefer the next write key; otherwise prefer
-    // read-local secondary before write spillover.
+    // role-flip stability, then keep the secondary key deterministic without
+    // drifting when read/write roles flip: if the primary comes from writes,
+    // prefer the next write key before falling back to reads; otherwise anchor to
+    // the smallest distinct write key so mixed domains keep the same global two-
+    // key hint across equivalent role permutations.
     let mut write_keys = dedup_access_keys_no_version(&tx.write_set);
     let mut read_keys = dedup_access_keys_no_version(&tx.read_set);
     write_keys.sort_unstable();
