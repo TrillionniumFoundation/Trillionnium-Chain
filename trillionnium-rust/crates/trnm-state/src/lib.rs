@@ -4230,6 +4230,35 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_marks_genesis_wal_prev_hash_as_none() {
+        let wal = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "12".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: 1,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+            .expect("genesis checkpoint should still expose a canonical DA summary");
+        assert_eq!(
+            summary,
+            format!(
+                "checkpoint_commitment={} checkpoint_height=1 checkpoint_state_root={} checkpoint_wal_entry_hash={} wal_prev_hash=none wal_round=0 wal_proposal_hash=proposal-genesis",
+                checkpoint.commitment_hex(),
+                checkpoint.state_root_hex,
+                checkpoint.wal_entry_hash_hex,
+            )
+        );
+    }
+
+    #[test]
     fn wal_evidence_summary_is_deterministic_and_hash_backed() {
         let wal = WalMeta {
             height: 7,
