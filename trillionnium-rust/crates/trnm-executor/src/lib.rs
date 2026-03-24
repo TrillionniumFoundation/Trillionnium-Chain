@@ -2079,6 +2079,24 @@ mod tests {
     }
 
     #[test]
+    fn combined_access_domain_versions_small_mixed_domain_rejects_late_cross_domain_version_skew_at_tiny_boundary() {
+        assert!(!combined_access_domain_versions_are_consistent(
+            &[
+                o(7),
+                ObjectRef { id: 42, version: 1 },
+                o(8),
+                ObjectRef { id: 42, version: 1 },
+            ],
+            &[
+                o(9),
+                o(10),
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
+        ));
+    }
+
+    #[test]
     fn combined_access_domain_versions_are_inconsistent_when_writes_are_empty() {
         assert!(!combined_access_domain_versions_are_consistent(
             &[
@@ -4594,7 +4612,6 @@ mod tests {
         let _ = primary_access_domain_key(&t);
     }
 
-    #[test]
     #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
