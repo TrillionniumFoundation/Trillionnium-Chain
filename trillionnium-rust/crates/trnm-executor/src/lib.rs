@@ -77,6 +77,14 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_scan_misses_per_tx(&self) -> f64 {
+        ratio_usize(
+            self.candidate_groups_scanned.saturating_sub(self.conflict_hits),
+            self.tx_count,
+        )
+    }
+
+    #[inline]
     pub fn ww_retry_hit_rate(&self) -> f64 {
         ratio_usize(self.stage_ww_hits, self.stage_ww_checks)
     }
