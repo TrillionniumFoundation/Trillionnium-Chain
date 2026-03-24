@@ -221,10 +221,8 @@ fn sanitize_store_config(
     }
 
     if let (Some(dedup), Some(total)) = (config.max_dedup_entries, config.max_pending_total) {
-        // Dedup should be able to cover the full configured pending window; otherwise
-        // misconfigured ingress caps can reject fresh idempotency keys before pending
-        // capacity is actually exhausted.
-        config.max_dedup_entries = Some(dedup.max(total));
+        // Keep dedup quota from exceeding the pending backlog envelope.
+        config.max_dedup_entries = Some(dedup.min(total));
     }
 
     // Zero-duration retain windows collapse into effectively immediate cleanup,
@@ -500,17 +498,22 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     if retry.circuit_breaker_threshold == 0 {
         retry.circuit_breaker_threshold = 1;
     }
-    let min_circuit_open_ms = retry.max_backoff_ms.max(retry.base_backoff_ms);
-    if retry.circuit_open_ms < min_circuit_open_ms {
-        // Keep circuit-open windows at least as wide as the effective retry
-        // ceiling so repeated retry-exhaustion rounds cannot re-enter earlier
-        // than the longest sanitized free-ingress backoff boundary.
-        retry.circuit_open_ms = min_circuit_open_ms;
+    if retry.circuit_open_ms < retry.base_backoff_ms {
+        // Enforce the base floor for clearly undersized windows.
+        retry.circuit_open_ms = retry.base_backoff_ms;
+    } else if retry.circuit_breaker_threshold > 1 && retry.circuit_open_ms < retry.max_backoff_ms {
+        // Multi-failure circuits are more likely to experience retry storms;
+        // lift windows below the retry ceiling to the configured max backoff
+        // so recovery cannot re-enter while long-tail retries are still active.
+        retry.circuit_open_ms = retry.max_backoff_ms;
     }
     retry
 }
 
-fn sanitize_retention_config(mut retention: RetentionConfig, retry: &RetryConfig) -> RetentionConfig {
+fn sanitize_retention_config(
+    mut retention: RetentionConfig,
+    retry: &RetryConfig,
+) -> RetentionConfig {
     // Zero dedup ttl disables idempotency memory and allows immediate duplicate
     // replays under concurrent ingress. Keep a shared 1ms floor so dedup remains active.
     if retention.dedup_ttl_ms == 0 {
@@ -522,11 +525,10 @@ fn sanitize_retention_config(mut retention: RetentionConfig, retry: &RetryConfig
     // cannot evaporate before the next eligible retry boundary.
     if retention.pending_ttl_ms == 0 {
         retention.pending_ttl_ms = retry.max_backoff_ms.max(MIN_RETENTION_FLOOR_MS);
-    }
-    // Keep pending retry state alive for at least the longest sanitized retry
-    // ceiling, otherwise sponsor/free-ingress items can age out before their next
-    // scheduled retry becomes eligible for collection.
-    if retention.pending_ttl_ms < retry.max_backoff_ms {
+    } else if retention.pending_ttl_ms < retry.base_backoff_ms {
+        // Keep explicitly configured windows that are smaller than a single retry
+        // period aligned with the same retry ceiling policy as in circuit-open
+        // behavior.
         retention.pending_ttl_ms = retry.max_backoff_ms;
     }
     // Zero cleanup interval causes cleanup to run on every receive(), which can
@@ -2794,10 +2796,16 @@ mod tests {
         };
 
         assert!(store.try_remember_dedup_key_with_ts(key1, 1).is_ok());
-        assert!(store.try_remember_dedup_key_with_ts(key2, 2).is_ok());
+        let err = store.try_remember_dedup_key_with_ts(key2, 2).expect_err(
+            "second unique key should still be capped by dedup at pending window floor",
+        );
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
         let err = store
             .try_remember_dedup_key_with_ts(key3, 3)
-            .expect_err("third unique key should hit raised quota");
+            .expect_err("third unique key should also hit same dedup floor");
         assert!(matches!(
             err,
             ReliabilityStoreError::CapacityExceeded { .. }
