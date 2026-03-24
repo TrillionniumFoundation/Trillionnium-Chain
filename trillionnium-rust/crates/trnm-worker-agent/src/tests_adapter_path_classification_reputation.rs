@@ -11,6 +11,49 @@ fn reputation_delta_maps_market_penalty_and_reward_signals() {
 }
 
 #[test]
+fn reputation_impact_exposes_stable_labels_deltas_and_tiers() {
+    assert_eq!(
+        reputation_impact(ReputationSignal::Accepted),
+        ReputationImpact {
+            label: "accepted",
+            delta: 3,
+            tier: 3,
+        }
+    );
+    assert_eq!(
+        reputation_impact(ReputationSignal::AdapterRetryExhausted),
+        ReputationImpact {
+            label: "adapter_retry_exhausted",
+            delta: -1,
+            tier: 2,
+        }
+    );
+    assert_eq!(
+        reputation_impact(ReputationSignal::VerifierRejected),
+        ReputationImpact {
+            label: "verifier_rejected",
+            delta: -2,
+            tier: 1,
+        }
+    );
+    assert_eq!(
+        reputation_impact(ReputationSignal::AdapterNonRetriable),
+        ReputationImpact {
+            label: "adapter_non_retriable",
+            delta: -3,
+            tier: 0,
+        }
+    );
+}
+
+#[test]
+fn reputation_tiers_match_score_ordering() {
+    assert!(reputation_tier(ReputationSignal::Accepted) > reputation_tier(ReputationSignal::AdapterRetryExhausted));
+    assert!(reputation_tier(ReputationSignal::AdapterRetryExhausted) > reputation_tier(ReputationSignal::VerifierRejected));
+    assert!(reputation_tier(ReputationSignal::VerifierRejected) > reputation_tier(ReputationSignal::AdapterNonRetriable));
+}
+
+#[test]
 fn reputation_score_impact_exposes_stable_labels_and_deltas() {
     assert_eq!(
         reputation_score_impact(ReputationSignal::Accepted),
@@ -117,11 +160,15 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
         reputation_delta: None,
     };
 
-    let (label, delta) = apply_reputation_signal(&mut rec, ReputationSignal::VerifierRejected);
-    assert_eq!((label, delta), ("verifier_rejected", -2));
+    let impact = apply_reputation_signal(&mut rec, ReputationSignal::VerifierRejected);
+    assert_eq!(impact.label, "verifier_rejected");
+    assert_eq!(impact.delta, -2);
+    assert_eq!(impact.tier, 1);
     assert_eq!(rec.reputation_delta, Some(-2));
 
-    let (label, delta) = apply_reputation_signal(&mut rec, ReputationSignal::Accepted);
-    assert_eq!((label, delta), ("accepted", 3));
+    let impact = apply_reputation_signal(&mut rec, ReputationSignal::Accepted);
+    assert_eq!(impact.label, "accepted");
+    assert_eq!(impact.delta, 3);
+    assert_eq!(impact.tier, 3);
     assert_eq!(rec.reputation_delta, Some(3));
 }

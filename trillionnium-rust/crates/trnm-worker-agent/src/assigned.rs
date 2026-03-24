@@ -76,22 +76,22 @@ pub(crate) fn handle_run_assigned(
             Err(e) => {
                 let (resolution_code, failure_tag) = classify_adapter_error(&e);
                 let reputation_signal = adapter_error_signal(e.kind);
-                let (reputation_label, reputation_delta) =
-                    apply_reputation_signal(rec, reputation_signal);
+                let reputation_impact = apply_reputation_signal(rec, reputation_signal);
                 rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
                 rec.verifier_status = Some("rejected".to_string());
                 rec.resolution_code = Some(resolution_code.to_string());
                 rec.adapter_error = Some(e.context.clone());
                 n += 1;
                 println!(
-                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} error={}",
+                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} error={}",
                     rec.request_id,
                     rec.task_id,
                     worker,
                     failure_tag,
                     matches!(e.kind, AdapterErrorKind::Retriable),
-                    reputation_label,
-                    reputation_delta,
+                    reputation_impact.label,
+                    reputation_impact.delta,
+                    reputation_impact.tier,
                     e.context
                 );
                 continue;
@@ -106,19 +106,20 @@ pub(crate) fn handle_run_assigned(
         rec.resolution_code = Some(resolution_code.to_string());
 
         if v_status != "accepted" {
-            let (reputation_label, reputation_delta) =
+            let reputation_impact =
                 apply_reputation_signal(rec, ReputationSignal::VerifierRejected);
             rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
             n += 1;
             println!(
-                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={}",
+                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
                 v_status,
                 resolution_code,
-                reputation_label,
-                reputation_delta
+                reputation_impact.label,
+                reputation_impact.delta,
+                reputation_impact.tier
             );
             continue;
         }
@@ -137,20 +138,20 @@ pub(crate) fn handle_run_assigned(
                 &salt_hex,
             )?;
         }
-        let (reputation_label, reputation_delta) =
-            apply_reputation_signal(rec, ReputationSignal::Accepted);
+        let reputation_impact = apply_reputation_signal(rec, ReputationSignal::Accepted);
         rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
         n += 1;
         println!(
-            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={}",
+            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={}",
             rec.request_id,
             rec.task_id,
             worker,
             result_hash,
             submit,
             rec.provider_request_id.as_deref().unwrap_or("-"),
-            reputation_label,
-            reputation_delta
+            reputation_impact.label,
+            reputation_impact.delta,
+            reputation_impact.tier
         );
     }
     save_ingress_records(&ingress_file, &records)?;

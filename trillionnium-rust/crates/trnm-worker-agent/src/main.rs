@@ -1741,26 +1741,58 @@ pub(crate) enum ReputationSignal {
     AdapterNonRetriable,
 }
 
-pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str, i32) {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct ReputationImpact {
+    pub(crate) label: &'static str,
+    pub(crate) delta: i32,
+    pub(crate) tier: u8,
+}
+
+pub(crate) fn reputation_impact(signal: ReputationSignal) -> ReputationImpact {
     match signal {
-        ReputationSignal::Accepted => ("accepted", 3),
-        ReputationSignal::VerifierRejected => ("verifier_rejected", -2),
-        ReputationSignal::AdapterRetryExhausted => ("adapter_retry_exhausted", -1),
-        ReputationSignal::AdapterNonRetriable => ("adapter_non_retriable", -3),
+        ReputationSignal::Accepted => ReputationImpact {
+            label: "accepted",
+            delta: 3,
+            tier: 3,
+        },
+        ReputationSignal::AdapterRetryExhausted => ReputationImpact {
+            label: "adapter_retry_exhausted",
+            delta: -1,
+            tier: 2,
+        },
+        ReputationSignal::VerifierRejected => ReputationImpact {
+            label: "verifier_rejected",
+            delta: -2,
+            tier: 1,
+        },
+        ReputationSignal::AdapterNonRetriable => ReputationImpact {
+            label: "adapter_non_retriable",
+            delta: -3,
+            tier: 0,
+        },
     }
 }
 
+pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str, i32) {
+    let impact = reputation_impact(signal);
+    (impact.label, impact.delta)
+}
+
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
-    reputation_score_impact(signal).1
+    reputation_impact(signal).delta
+}
+
+pub(crate) fn reputation_tier(signal: ReputationSignal) -> u8 {
+    reputation_impact(signal).tier
 }
 
 pub(crate) fn apply_reputation_signal(
     rec: &mut MessageIngressRecord,
     signal: ReputationSignal,
-) -> (&'static str, i32) {
-    let (label, delta) = reputation_score_impact(signal);
-    rec.reputation_delta = Some(delta);
-    (label, delta)
+) -> ReputationImpact {
+    let impact = reputation_impact(signal);
+    rec.reputation_delta = Some(impact.delta);
+    impact
 }
 
 pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
