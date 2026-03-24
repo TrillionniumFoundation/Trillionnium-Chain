@@ -2769,9 +2769,7 @@ impl StateStore {
                 self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(GovParamUpdateOutcome::Applied(existing_ref));
@@ -2788,9 +2786,7 @@ impl StateStore {
                 && self.gov_param_value(&key) == Some(value.as_str())
             {
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(GovParamUpdateOutcome::Applied(existing_ref));
@@ -4040,7 +4036,7 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::TaskStatus;
+    use trnm_types::{ProofType, TaskStatus};
 
     #[test]
     fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
@@ -9260,6 +9256,61 @@ mod tests {
                 .map(|param| (param.version, param.key_id, param.key, param.value)),
             Some((1, 7_999, "emergency_pause".into(), "false".into())),
             "idempotent replay must not churn version/state when the pinned key is recoverable from the shared single-source binding"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_checked_idempotent_apply_returns_canonical_ref_under_registry_drift() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("canonical emergency_pause bootstrap should succeed");
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 4,
+                value: ObjectValue::Task(TaskObject {
+                    task_id: 8_000,
+                    creator: "registry-drift".into(),
+                    bounty: 1,
+                    status: TaskStatus::Open,
+                    proof_type: ProofType::Fraud,
+                    metadata: None,
+                    worker: None,
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: None,
+                    resolve_deadline_height: None,
+                    challenge_bond: None,
+                    challenger: None,
+                    challenge_bond_forfeited: None,
+                    version: 4,
+                }),
+            },
+        );
+        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+
+        let applied = st
+            .set_gov_param(8_100, 7_999, "emergency_pause".into(), "true".into())
+            .expect("idempotent checked apply should reuse the canonical pinned object ref");
+
+        assert_eq!(
+            applied,
+            GovParamUpdateOutcome::Applied(ObjectRef {
+                id: 7_999,
+                version: 1,
+            }),
+            "checked idempotent apply must not leak a foreign object ref when mutable registry drift points at another object"
+        );
+        assert!(st.is_emergency_paused());
+        assert_eq!(
+            st.objects.get(&7_999).map(|object| object.version),
+            Some(1),
+            "checked idempotent apply must remain version-stable on the canonical pinned object"
         );
     }
 
