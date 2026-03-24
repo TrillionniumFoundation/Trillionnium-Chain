@@ -478,6 +478,11 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
 
 #[inline]
 fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
+    // Fail-closed at the helper boundary as well: internal callers should not be
+    // able to derive a canonical execution-domain keyset from a tx that mixes the
+    // same object id across read/write sets with mismatched versions.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
     // Keep telemetry/object-domain reporting aligned with scheduler hotspot
     // selection: writes carry the stronger conflict signal, while reads extend the
     // object scope only when they introduce additional keys. Reuse the same
@@ -2137,6 +2142,20 @@ mod tests {
 
         assert_eq!(keys, vec![7, 9, 30, 40, 50]);
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn tx_access_domain_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = tx_access_domain_keys(&tx);
     }
 
     #[test]
