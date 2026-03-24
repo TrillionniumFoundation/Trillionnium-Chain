@@ -219,6 +219,9 @@ fn main() {
         let stage_ww_hits_per_tx = ratio(profile.stage_ww_hits, profile.tx_count);
         let stage_wr_hits_per_tx = ratio(profile.stage_wr_hits, profile.tx_count);
         let stage_rw_hits_per_tx = ratio(profile.stage_rw_hits, profile.tx_count);
+        let stage_ww_retry_share = profile.ww_retry_share();
+        let stage_wr_retry_share = profile.wr_retry_share();
+        let stage_rw_retry_share = profile.rw_retry_share();
         let dominant_retry_stage = profile.dominant_retry_stage();
         let dominant_retry_share = profile.dominant_retry_share();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
@@ -258,6 +261,18 @@ fn main() {
         lines.push(format!(
             "profile.stage_rw_hits_per_tx={:.4}",
             stage_rw_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_ww_retry_share={:.4}",
+            stage_ww_retry_share
+        ));
+        lines.push(format!(
+            "profile.stage_wr_retry_share={:.4}",
+            stage_wr_retry_share
+        ));
+        lines.push(format!(
+            "profile.stage_rw_retry_share={:.4}",
+            stage_rw_retry_share
         ));
         lines.push(format!(
             "profile.dominant_retry_stage={}",

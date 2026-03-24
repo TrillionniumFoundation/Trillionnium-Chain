@@ -74,6 +74,21 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn ww_retry_share(&self) -> f64 {
+        ratio_usize(self.stage_ww_hits, self.conflict_hits)
+    }
+
+    #[inline]
+    pub fn wr_retry_share(&self) -> f64 {
+        ratio_usize(self.stage_wr_hits, self.conflict_hits)
+    }
+
+    #[inline]
+    pub fn rw_retry_share(&self) -> f64 {
+        ratio_usize(self.stage_rw_hits, self.conflict_hits)
+    }
+
+    #[inline]
     pub fn dominant_retry_stage(&self) -> &'static str {
         let ranking = [
             ("ww", self.stage_ww_hits),
@@ -81,20 +96,13 @@ impl GroupingProfile {
             ("rw", self.stage_rw_hits),
         ];
 
-        let max_hits = ranking
-            .iter()
-            .map(|(_, hits)| *hits)
-            .max()
-            .unwrap_or(0);
+        let max_hits = ranking.iter().map(|(_, hits)| *hits).max().unwrap_or(0);
 
         if max_hits == 0 {
             return "none";
         }
 
-        let leaders = ranking
-            .iter()
-            .filter(|(_, hits)| *hits == max_hits)
-            .count();
+        let leaders = ranking.iter().filter(|(_, hits)| *hits == max_hits).count();
 
         if leaders > 1 {
             "mixed"
