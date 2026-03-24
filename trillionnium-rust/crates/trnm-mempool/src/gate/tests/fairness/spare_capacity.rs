@@ -109,3 +109,28 @@ fn admitting_last_known_retry_clears_stale_retry_fifo_markers_immediately() {
         "accepting the last known retry should cold-reset stale retry FIFO markers"
     );
 }
+
+#[test]
+fn admitting_last_known_retry_does_not_leave_fresh_ingress_stuck_behind_stale_fairness_marker() {
+    let mut gate = AdmissionGate::new(2);
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+    // Open one slot, then fairness-defer a fresh tx while the known retry still has priority.
+    assert_eq!(gate.pop_ready(), Some(1));
+    assert_eq!(gate.admit(20), AdmitOutcome::Backpressured);
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, Some(20));
+
+    // Once the final known retry is accepted, the next fresh ingress should not be poisoned
+    // by the stale fairness marker from the earlier deferral.
+    assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    assert!(gate.backpressured_ids.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.admit(21), AdmitOutcome::Backpressured);
+
+    let m = gate.metrics();
+    assert_eq!(m.fairness_deferrals, 2);
+    assert_eq!(m.backpressure_duplicates, 0);
+}
