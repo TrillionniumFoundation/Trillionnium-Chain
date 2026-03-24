@@ -2674,6 +2674,17 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_global_two_key_mixed_domain_hint_when_read_domain_is_primary() {
+        let tx = tx(3, vec![o(5), o(13), o(11), o(13)], vec![o(7), o(19), o(19)]);
+
+        // Even when the canonical primary key comes from the read domain, keep the
+        // mixed-domain hint anchored to the two smallest distinct access keys across
+        // the whole tx. That preserves stable Avalanche-style lane classification
+        // instead of drifting toward a larger read-local secondary.
+        assert_eq!(hot_bucket_keys(&tx), (5, 7));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
