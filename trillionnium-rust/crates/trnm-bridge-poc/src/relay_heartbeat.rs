@@ -139,6 +139,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{180C}'
             | '\u{180D}'
             | '\u{180E}'
+            | '\u{180F}'
             | '\u{2800}'
             | '\u{3164}'
             | '\u{2000}'

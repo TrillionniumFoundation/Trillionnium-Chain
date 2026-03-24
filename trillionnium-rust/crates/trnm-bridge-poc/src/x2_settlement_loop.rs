@@ -147,8 +147,11 @@ pub fn drive_minimal_settlement(
     }
 
     if heartbeat.should_retry {
-        return Err(SettlementError::RetryPending {
-            phase: "relay_heartbeat",
+        return Err(SettlementError::HeartbeatRetryPending {
+            reason: normalize_compensation_reason(
+                &heartbeat.message,
+                "relay heartbeat retry pending",
+            ),
         });
     }
 
@@ -229,6 +232,7 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{180C}'
                 | '\u{180D}'
                 | '\u{180E}'
+                | '\u{180F}'
                 | '\u{2800}'
                 | '\u{3164}'
                 | '\u{2007}'
@@ -256,7 +260,6 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{2009}'
                 | '\u{200A}'
                 | '\u{205F}'
-                | '\u{2800}'
                 | '\u{3000}'
                 | '\u{2060}'
                 | '\u{2061}'
