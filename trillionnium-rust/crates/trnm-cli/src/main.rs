@@ -186,6 +186,86 @@ struct TxQueryResponse {
     error: Option<String>,
 }
 
+fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Result<()> {
+    let Some(compatibility) = parsed.get("metadata_compatibility") else {
+        return Ok(());
+    };
+
+    let Some(compatibility_obj) = compatibility.as_object() else {
+        bail!("task query response metadata_compatibility must be a json object");
+    };
+    let Some(legacy_note_only) = compatibility_obj
+        .get("legacy_note_only")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!("task query response metadata_compatibility missing boolean legacy_note_only");
+    };
+    let Some(canonical_core_fields) = compatibility_obj
+        .get("canonical_core_fields")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!("task query response metadata_compatibility missing boolean canonical_core_fields");
+    };
+    let Some(complete_metering_snapshot) = compatibility_obj
+        .get("complete_metering_snapshot")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!(
+            "task query response metadata_compatibility missing boolean complete_metering_snapshot"
+        );
+    };
+
+    let expected_requires_governance_upgrade =
+        legacy_note_only || !(canonical_core_fields && complete_metering_snapshot);
+    if let Some(reported) = parsed
+        .get("metadata_requires_governance_upgrade")
+        .and_then(|v| v.as_bool())
+    {
+        if reported != expected_requires_governance_upgrade {
+            bail!(
+                "task query response metadata_requires_governance_upgrade mismatch: expected={}, got={}",
+                expected_requires_governance_upgrade,
+                reported
+            );
+        }
+    }
+
+    if let Some(findings) = parsed.get("metadata_compatibility_findings") {
+        let Some(findings) = findings.as_array() else {
+            bail!("task query response metadata_compatibility_findings must be a json array");
+        };
+        let mut expected = Vec::new();
+        if legacy_note_only {
+            expected.push("legacy_note_only_payload");
+        }
+        if !canonical_core_fields {
+            expected.push("non_canonical_core_fields");
+        }
+        if !complete_metering_snapshot {
+            expected.push("incomplete_metering_snapshot");
+        }
+        let actual = findings
+            .iter()
+            .map(|value| {
+                value.as_str().ok_or_else(|| {
+                    anyhow!(
+                        "task query response metadata_compatibility_findings must contain strings"
+                    )
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        if actual != expected {
+            bail!(
+                "task query response metadata_compatibility_findings mismatch: expected={:?}, got={:?}",
+                expected,
+                actual
+            );
+        }
+    }
+
+    Ok(())
+}
+
 fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse task query response as json: {err}"))?;
@@ -199,6 +279,7 @@ fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_
             task_id
         );
     }
+    validate_task_query_metadata_compatibility(&parsed)?;
     Ok(parsed)
 }
 
@@ -2106,6 +2187,38 @@ mod tests {
             parsed["metering"]["policy"]["snapshot_version"],
             serde_json::json!(1)
         );
+    }
+
+    #[test]
+    fn task_query_accepts_consistent_metadata_compatibility_signals() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let parsed = parse_task_query_response(raw, 42).unwrap();
+        assert_eq!(
+            parsed["metadata_requires_governance_upgrade"],
+            serde_json::json!(true)
+        );
+        assert_eq!(
+            parsed["metadata_compatibility_findings"],
+            serde_json::json!(["legacy_note_only_payload"])
+        );
+    }
+
+    #[test]
+    fn task_query_rejects_inconsistent_metadata_upgrade_signal() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_requires_governance_upgrade mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_inconsistent_metadata_findings() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility_findings mismatch"));
     }
 
     #[test]
