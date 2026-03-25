@@ -67,6 +67,7 @@ fn recover_metadata_only_error_reports_absent_checkpoint() {
 
     assert!(err.contains("retained no committed WAL entries"));
     assert!(!err.contains("through height 0"));
+    assert!(!err.contains("no retained checkpoint metadata"));
     assert!(err.contains("last retained checkpoint: none"));
     assert!(err.contains("next startup height: 1"));
 
@@ -95,6 +96,7 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
     assert!(err.contains("retained 2 committed WAL entries through height 2"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
     assert!(err.contains("last retained checkpoint: 1"));
     assert!(err.contains("next startup height: 3"));
     assert!(err.contains(
