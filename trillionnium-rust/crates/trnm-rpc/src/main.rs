@@ -1288,6 +1288,11 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .metadata
             .as_ref()
             .map(|metadata| metadata.compatibility_profile()),
+        metadata_compatibility_findings: task
+            .metadata
+            .as_ref()
+            .map(|metadata| metadata.compatibility_findings())
+            .filter(|findings| !findings.is_empty()),
         metering: task
             .metadata
             .as_ref()
@@ -3271,6 +3276,7 @@ fn query_task_from_node_events(
         result_hash_hex: None,
         version,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }
@@ -3328,6 +3334,7 @@ fn query_task_response(
         result_hash_hex,
         version: task_recs.len() as u64,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }

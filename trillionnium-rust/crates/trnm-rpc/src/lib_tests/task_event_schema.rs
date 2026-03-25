@@ -1,4 +1,5 @@
 use super::*;
+use trnm_types::TaskMetadataCompatibilityFinding;
 
 #[test]
 fn rpc_schema_smoke_task_fields_stable() {
@@ -10,6 +11,7 @@ fn rpc_schema_smoke_task_fields_stable() {
         result_hash_hex: None,
         version: 1,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
@@ -36,6 +38,7 @@ fn rpc_task_query_omits_metering_when_absent() {
         result_hash_hex: None,
         version: 1,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
@@ -56,6 +59,7 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
             canonical_core_fields: true,
             complete_metering_snapshot: true,
         }),
+        metadata_compatibility_findings: None,
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
@@ -71,6 +75,33 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
 }
 
 #[test]
+fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
+    let task = TaskQueryResponse {
+        task_id: 9,
+        status: TaskStatus::Revealed,
+        worker: Some("worker-1".into()),
+        bounty: 100,
+        result_hash_hex: Some("abcd".into()),
+        version: 3,
+        metadata_compatibility: Some(TaskMetadataCompatibility {
+            legacy_note_only: false,
+            canonical_core_fields: false,
+            complete_metering_snapshot: false,
+        }),
+        metadata_compatibility_findings: Some(vec![
+            TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+        ]),
+        metering: None,
+    };
+    let v = serde_json::to_value(task).unwrap();
+    assert_eq!(
+        v["metadata_compatibility_findings"],
+        json!(["non_canonical_core_fields", "incomplete_metering_snapshot"])
+    );
+}
+
+#[test]
 fn rpc_task_query_includes_metering_when_present() {
     let task = TaskQueryResponse {
         task_id: 1,
@@ -80,6 +111,7 @@ fn rpc_task_query_includes_metering_when_present() {
         result_hash_hex: Some("abcd".into()),
         version: 3,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: Some(TaskMeteringQueryResponse {
             workload_class: "llm_inference".into(),
             metering_schema: "llm_token_meter_v1".into(),

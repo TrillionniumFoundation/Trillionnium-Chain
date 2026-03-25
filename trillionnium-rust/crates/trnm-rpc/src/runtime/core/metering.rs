@@ -253,6 +253,11 @@ pub(crate) fn query_task_from_state_snapshot(
             .metadata
             .as_ref()
             .map(|metadata| metadata.compatibility_profile()),
+        metadata_compatibility_findings: task
+            .metadata
+            .as_ref()
+            .map(|metadata| metadata.compatibility_findings())
+            .filter(|findings| !findings.is_empty()),
         metering: task
             .metadata
             .as_ref()

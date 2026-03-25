@@ -106,6 +106,7 @@ pub(crate) fn query_task_from_node_events(
         result_hash_hex: None,
         version,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }
@@ -163,6 +164,7 @@ pub(crate) fn query_task_response(
         result_hash_hex,
         version: task_recs.len() as u64,
         metadata_compatibility: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }
