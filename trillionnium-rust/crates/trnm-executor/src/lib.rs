@@ -223,6 +223,18 @@ impl GroupingProfile {
     pub fn retry_stage_overlap_share(&self) -> f64 {
         ratio_usize(self.retry_stage_overlap_hits(), self.conflict_hits)
     }
+
+    #[inline]
+    pub fn retry_stage_concentration(&self) -> f64 {
+        if self.conflict_hits == 0 {
+            return 0.0;
+        }
+
+        let ww = self.ww_retry_share();
+        let wr = self.wr_retry_share();
+        let rw = self.rw_retry_share();
+        (ww * ww) + (wr * wr) + (rw * rw)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -1953,6 +1965,27 @@ mod tests {
         assert_eq!(profile.dominant_retry_stage(), "none");
         assert_eq!(profile.dominant_retry_lead_hits(), 0);
         assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+    }
+
+    #[test]
+    fn retry_stage_concentration_peaks_for_single_stage_retries() {
+        let profile = profile_with_stage_hits(10, 0, 0, 10);
+
+        assert!((profile.retry_stage_concentration() - 1.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn retry_stage_concentration_drops_for_evenly_mixed_retries() {
+        let profile = profile_with_stage_hits(3, 3, 3, 9);
+
+        assert!((profile.retry_stage_concentration() - (1.0 / 3.0)).abs() < 1e-12);
+    }
+
+    #[test]
+    fn retry_stage_concentration_stays_zero_without_conflicts() {
+        let profile = profile_with_stage_hits(0, 0, 0, 0);
+
+        assert_eq!(profile.retry_stage_concentration(), 0.0);
     }
 
     #[test]

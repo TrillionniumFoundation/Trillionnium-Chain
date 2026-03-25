@@ -240,6 +240,7 @@ fn main() {
         let unattributed_retry_share = profile.unattributed_retry_share();
         let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
+        let retry_stage_concentration = profile.retry_stage_concentration();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
         // than about how much retry pressure and candidate-lane scanning each tx
@@ -358,6 +359,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_stage_overlap_share={:.4}",
             retry_stage_overlap_share
+        ));
+        lines.push(format!(
+            "profile.retry_stage_concentration={:.4}",
+            retry_stage_concentration
         ));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
