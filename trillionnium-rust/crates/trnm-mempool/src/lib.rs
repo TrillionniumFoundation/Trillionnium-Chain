@@ -21,6 +21,8 @@ pub struct LaneQosSnapshot {
     pub normal_headroom: usize,
     pub critical_headroom: usize,
     pub total_headroom: usize,
+    pub fresh_normal_admissible: bool,
+    pub fresh_critical_admissible: bool,
 }
 
 #[derive(Debug)]
@@ -609,6 +611,9 @@ impl LaneAdmissionGate {
         let normal_headroom = self.normal.capacity.saturating_sub(normal_queued);
         let critical_headroom = self.critical.capacity.saturating_sub(critical_queued);
         let total_headroom = self.total_capacity.saturating_sub(total_queued);
+        let fresh_normal_admissible = total_headroom > 0 && self.normal_has_admission_headroom();
+        let fresh_critical_admissible =
+            total_headroom > 0 && self.critical_has_admission_headroom();
 
         debug_assert_eq!(normal_queued.saturating_add(critical_queued), total_queued);
 
@@ -619,6 +624,8 @@ impl LaneAdmissionGate {
             normal_headroom,
             critical_headroom,
             total_headroom,
+            fresh_normal_admissible,
+            fresh_critical_admissible,
         }
     }
 
@@ -711,6 +718,8 @@ mod tests {
                 normal_headroom: 3,
                 critical_headroom: 2,
                 total_headroom: 5,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
             }
         );
 
@@ -727,6 +736,8 @@ mod tests {
                 normal_headroom: 2,
                 critical_headroom: 0,
                 total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
             }
         );
     }
@@ -745,6 +756,35 @@ mod tests {
                 normal_headroom: 1,
                 critical_headroom: 0,
                 total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity, then activate critical backlog while one
+        // aggregate slot still remains reserved for fresh critical ingress.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 1,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
             }
         );
     }
@@ -962,7 +1002,10 @@ mod tests {
 
         // Even though tx 102 spilled into normal capacity, duplicate probes from
         // either class must remain Duplicate until the queued copy drains.
-        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(
+            g.admit(102, IngressClass::Critical),
+            AdmitOutcome::Duplicate
+        );
         assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.queued_counts(), (1, 2, 3));
 
