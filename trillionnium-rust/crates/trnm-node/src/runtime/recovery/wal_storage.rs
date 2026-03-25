@@ -150,4 +150,54 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn load_wal_meta_rejects_unknown_top_level_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            r#"
+                entries = []
+                forged = true
+            "#,
+        )
+        .unwrap();
+
+        let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_rejects_unknown_entry_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-unknown-entry-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            r#"
+                [[entries]]
+                height = 7
+                round = 1
+                proposal_hash = "proposal-7"
+                committed = true
+                state_root_hex = "aa"
+                prev_hash_hex = "bb"
+                forged = true
+            "#,
+        )
+        .unwrap();
+
+        let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
