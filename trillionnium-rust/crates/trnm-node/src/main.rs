@@ -2701,16 +2701,14 @@ impl PreExecPool {
                         for id in job.ids {
                             let result =
                                 std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                                    let idx = id.checked_sub(1).ok_or_else(|| {
-                                        format!(
-                                            "preexec invalid tx id {} (tx ids are 1-based)",
-                                            id
-                                        )
-                                    })? as usize;
+                                    let idx = id
+                                        .checked_sub(1)
+                                        .ok_or_else(|| invalid_preexec_tx_id(id))?
+                                        as usize;
                                     let tx = picked_cloned
                                         .get(idx)
                                         .cloned()
-                                        .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
+                                        .ok_or_else(|| invalid_preexec_tx_id(id))?;
                                     let mut local_state = snapshot_cloned.as_ref().clone();
                                     apply_one(&mut local_state, tx, candidate_height)
                                         .map(|_| ())
@@ -2813,6 +2811,10 @@ impl Drop for PreExecPool {
             let _ = handle.join();
         }
     }
+}
+
+fn invalid_preexec_tx_id(id: u64) -> String {
+    format!("preexec invalid tx id {} (tx ids are 1-based)", id)
 }
 
 fn pre_execute_group_parallel(pool: &PreExecPool, group_ids: Vec<u64>) -> (Vec<u64>, u64) {

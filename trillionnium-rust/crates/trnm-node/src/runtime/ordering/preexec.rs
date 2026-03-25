@@ -22,6 +22,10 @@ pub(crate) struct PreExecPool {
     pub(crate) width: usize,
 }
 
+fn invalid_preexec_tx_id(id: u64) -> String {
+    format!("preexec invalid tx id {} (tx ids are 1-based)", id)
+}
+
 impl PreExecPool {
     pub(crate) fn new(
         snapshot: Arc<StateStore>,
@@ -109,11 +113,11 @@ fn run_job(
             let idx = id
                 .checked_sub(1)
                 .map(|raw| raw as usize)
-                .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
+                .ok_or_else(|| invalid_preexec_tx_id(*id))?;
             let tx = picked
                 .get(idx)
                 .cloned()
-                .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
+                .ok_or_else(|| invalid_preexec_tx_id(*id))?;
             let mut local_state = snapshot.as_ref().clone();
             apply_one(&mut local_state, tx, candidate_height)
                 .map(|_| ())
