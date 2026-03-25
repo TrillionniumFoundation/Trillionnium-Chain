@@ -4266,6 +4266,54 @@ mod tests {
     }
 
     #[test]
+    fn completed_challenged_collateral_retention_changes_state_root() {
+        let mut without_collateral_retention = StateStore::new();
+        let mut with_collateral_retention = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 405,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(100),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut retained_task = base_task.clone();
+        retained_task.resolve_deadline_height = Some(40);
+        retained_task.challenge_bond = Some(7);
+        retained_task.challenger = Some("bob".into());
+        retained_task.challenge_bond_forfeited = Some(false);
+
+        without_collateral_retention
+            .put_task_new(base_task)
+            .unwrap();
+        with_collateral_retention
+            .put_task_new(retained_task)
+            .unwrap();
+
+        assert_ne!(
+            without_collateral_retention.state_root(),
+            with_collateral_retention.state_root(),
+            "state_root must include retained challenged-task collateral metadata so later proof audits can distinguish terminal states that preserved the actual slash/refund settlement trail"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_incomplete_metering_proof_metadata() {
         let mut st = StateStore::new();
 
@@ -11707,6 +11755,50 @@ mod tests {
         assert!(
             st.pending_resolve_approval(902).is_none(),
             "restore must fail closed when challenged task snapshot zeroes the resolve deadline that bounded collateral settlement and proof retention"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_zeroed_challenge_bond_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(0),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should still insert for zeroed challenge bond regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task snapshot zeroes the challenge bond that anchors collateral/proof retention"
         );
     }
 
