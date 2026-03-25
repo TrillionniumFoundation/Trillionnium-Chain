@@ -32,7 +32,14 @@ mkdir -p "$OUT"
 RC_OUT_DIR="$OUT"
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
-GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+if [ "$GIT_BRANCH_RAW" = "HEAD" ]; then
+  GIT_BRANCH="<detached-HEAD>"
+  GIT_HEAD_STATE="detached"
+else
+  GIT_BRANCH="$GIT_BRANCH_RAW"
+  GIT_HEAD_STATE="attached"
+fi
 GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || echo unknown)"
 GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
 if [ -z "$GIT_STATUS_SHORT" ]; then
@@ -159,6 +166,7 @@ rc_out_dir=$RC_OUT_DIR
 git_toplevel=$GIT_TOPLEVEL
 git_branch=$GIT_BRANCH
 git_head=$GIT_HEAD
+git_head_state=$GIT_HEAD_STATE
 git_status_summary=$GIT_STATUS_SUMMARY
 git_worktree_path=$GIT_TOPLEVEL
 git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}

@@ -40,6 +40,7 @@ Interpretation rule:
 - `git rev-parse --show-toplevel` must match the intended repo root for the rehearsal
 - `git branch --show-current` must return the release/rehearsal branch name; if it is empty, treat the run as detached-HEAD and **No-Go** until explicitly explained
 - `git rev-parse HEAD` must be copied into the ticket / handoff note together with the branch name
+- generated artifacts should normalize detached-HEAD runs as `git_branch=<detached-HEAD>` plus `git_head_state=detached`; never treat literal `HEAD` as a valid branch name in a handoff note
 - `git status --short` must be empty for clean-tree release rehearsals
 - `git worktree list --porcelain` should show the current path attached to the branch you intend to rehearse; if branch/path pairing is different from expectation, stop instead of "fixing it later"
 
@@ -117,7 +118,7 @@ Minimum artifacts to preserve:
 
 Manifest/evidence identity fields to verify before handoff:
 - `git_toplevel=` matches the intended repo root
-- `git_branch=` and `git_head=` match the branch/commit under review
+- `git_branch=`, `git_head=`, and `git_head_state=` match the branch/commit attachment state under review
 - `git_worktree_path=` matches the exact worktree path you intended to run from
 - `git_worktree_branch_ref=` matches the branch binding shown by `git worktree list --porcelain`
 - `git_worktree_entry_begin` … `git_worktree_entry_end` contains the current worktree stanza, so path/branch binding can be audited from the artifact itself
@@ -131,8 +132,8 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
 | Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
-| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `git_status_summary=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
-| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
+| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `git_head_state=`, `git_status_summary=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
+| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
 ### Canonical path resolution commands
 
@@ -178,13 +179,13 @@ manifest_path="$latest_rc_dir/manifest.txt"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_branch|git_head|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
-awk -F= '/^(git_branch|git_head|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
+awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
+awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_branch=`, `git_head=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- if `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Go / No-Go decision rule
