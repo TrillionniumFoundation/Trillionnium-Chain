@@ -678,9 +678,28 @@ fn retained_checkpoint_surface(recovered: &RecoveredWalState) -> String {
     }
 }
 
+fn retained_checkpoint_da_surface(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
+    let Some(checkpoint) = &recovered.last_checkpoint else {
+        return "none".into();
+    };
+
+    let Ok(entries) = load_wal_meta_entries(wal_dir) else {
+        return "none".into();
+    };
+
+    entries
+        .iter()
+        .find(|entry| {
+            entry.height == checkpoint.height
+                && entry.content_hash_hex() == checkpoint.wal_entry_hash_hex
+        })
+        .and_then(|entry| trnm_state::checkpoint_da_light_verifier_summary(checkpoint, entry))
+        .unwrap_or_else(|| "none".into())
+}
+
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}; checkpoint_evidence: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}; checkpoint_evidence: {}; checkpoint_da_surface: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         recovered.wal_entries_retained,
         if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
@@ -689,7 +708,8 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
-        retained_checkpoint_surface(recovered)
+        retained_checkpoint_surface(recovered),
+        retained_checkpoint_da_surface(wal_dir, recovered)
     )
 }
 

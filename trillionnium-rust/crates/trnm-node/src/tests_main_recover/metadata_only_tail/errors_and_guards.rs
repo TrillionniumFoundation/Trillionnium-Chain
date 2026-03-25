@@ -35,6 +35,7 @@ fn recover_metadata_only_error_reports_retained_wal_entries() {
     assert!(err.contains("retained 1 committed WAL entry through height 1"));
     assert!(err.contains("last retained checkpoint: 1"));
     assert!(err.contains("checkpoint_evidence: checkpoint_height=1 state_root=r1 wal_entry_hash="));
+    assert!(err.contains("checkpoint_da_surface: da_light_surface=checkpoint-wal-v1"));
 
     let would_require_snapshot_restore = recovered
         .checkpoint_height_retained
