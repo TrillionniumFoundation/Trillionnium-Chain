@@ -1530,9 +1530,16 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Keep hash mixing deterministic across targets (32/64-bit) by using a
-    // fixed-width integer domain before reducing to bucket count.
-    let (key_a, key_b) = hot_bucket_keys(tx);
+    // Derive the bucket hint from the canonical object-scoped domain rather than
+    // a role-local secondary choice. Once the smallest key is fixed, hash over the
+    // two smallest distinct access keys so equivalent read/write role flips stay on
+    // the same Avalanche-style execution lane even when writes carry a larger local
+    // secondary than reads.
+    let mut domain_keys = tx_access_domain_keys(tx);
+    domain_keys.sort_unstable();
+    domain_keys.dedup();
+    let key_a = domain_keys.first().copied().unwrap_or(0);
+    let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
@@ -2719,6 +2726,24 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&baseline, buckets_n),
             ((7u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_keeps_stable_secondary_when_primary_echo_roles_flip_with_wide_domains() {
+        let buckets_n = 97usize;
+        let write_heavy = tx(1, vec![o(5), o(13), o(19)], vec![o(5), o(17), o(23)]);
+        let read_heavy = tx(2, vec![o(5), o(17), o(23)], vec![o(5), o(13), o(19)]);
+
+        // Equivalent mixed domains should stay on the same bucket even when the
+        // smaller secondary keys migrate between read/write ownership.
+        assert_eq!(
+            hot_bucket_hint(&write_heavy, buckets_n),
+            hot_bucket_hint(&read_heavy, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_heavy, buckets_n),
+            ((5u64 ^ 13u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
