@@ -8787,6 +8787,79 @@ mod tests {
     }
 
     #[test]
+    fn resolve_slash_terminal_state_retains_challenge_audit_metadata_for_collateral_proof_accounting() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8901, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8901, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+            200,
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            true,
+            "authority2".into(),
+            "authority2".into(),
+            200,
+        )
+        .unwrap();
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(resolved.challenge_bond_forfeited, Some(false));
+        assert_eq!(
+            resolved.challenge_window_blocks_snapshot,
+            Some(100),
+            "slashed challenged tasks should retain the challenge-window snapshot for later collateral/proof audits"
+        );
+        assert_eq!(
+            resolved.challenged_at_height,
+            Some(120),
+            "slashed challenged tasks should retain the original challenge height"
+        );
+        assert_eq!(
+            resolved.challenge_deadline_height,
+            Some(210),
+            "slashed challenged tasks should retain the original challenge deadline"
+        );
+        assert_eq!(
+            resolved.resolve_deadline_height,
+            Some(220),
+            "slashed challenged tasks should retain the resolve deadline that governed collateral settlement"
+        );
+        assert_eq!(resolved.challenge_bond, Some(10));
+        assert_eq!(resolved.challenger.as_deref(), Some("challenger"));
+    }
+
+    #[test]
     fn resolve_success_gives_challenger_more_than_bond_refund_baseline() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
