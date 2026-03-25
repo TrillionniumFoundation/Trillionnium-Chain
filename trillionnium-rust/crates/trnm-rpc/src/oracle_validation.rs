@@ -12,6 +12,18 @@ pub struct OracleValidateSnapshotResponse {
 }
 
 impl OracleValidateSnapshotResponse {
+    /// Transport-facing helper for the oracle validation envelope.
+    ///
+    /// Layering contract:
+    /// - this RPC response mirrors oracle-side acceptance/accounting only;
+    ///   it does not reinterpret those counters into bridge settlement meaning.
+    /// - callers must keep replay/finality guards in bridge settlement code and
+    ///   must fail closed before settlement when oracle validation is not
+    ///   canonical or confidence/accounting is inconsistent.
+    /// - unclassified oracle failures (for example hash/policy/schema issues)
+    ///   intentionally remain outside the classified reject counters so higher
+    ///   layers do not accidentally treat transport success as oracle
+    ///   confidence.
     pub fn classified_reject_total(&self) -> u32 {
         self.metrics.classified_reject_total()
     }
