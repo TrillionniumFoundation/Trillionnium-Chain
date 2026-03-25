@@ -179,6 +179,7 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
 const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
 fn governance_pinned_binding(
@@ -2329,7 +2330,7 @@ impl StateStore {
                 }
 
                 let snapshot_key = snapshot.key.clone();
-                if snapshot_key == "algorand_governance_key_id" {
+                if snapshot_key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID {
                     self.clear_pending_gov_update_bindings(&snapshot_key, None);
                     self.remove_gov_param_key_index_for_id(key_id);
                     self.objects.remove(&key_id);
@@ -2992,7 +2993,7 @@ impl StateStore {
 
                 let snapshot_key_id = snapshot.key_id;
 
-                if key == "algorand_governance_key_id" {
+                if key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID {
                     self.clear_pending_gov_update_bindings(key, None);
                     self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
                     if scrubs_resolve_quorum {
@@ -8017,8 +8018,6 @@ mod tests {
             "restore must not leave a resolvable ref for a non-canonical emergency_pause slot"
         );
     }
-
-    const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
 
     #[test]
     fn governance_expected_pinned_binding_is_single_source_for_reserved_key_and_id() {
