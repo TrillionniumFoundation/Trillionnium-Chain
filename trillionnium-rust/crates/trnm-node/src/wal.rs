@@ -307,5 +307,30 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn load_checkpoint_meta_rejects_unknown_entry_fields_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-unknown-entry-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "aa"
+                wal_entry_hash_hex = "bb"
+                forged = true
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
 
