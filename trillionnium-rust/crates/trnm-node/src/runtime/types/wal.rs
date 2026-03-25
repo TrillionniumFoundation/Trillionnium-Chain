@@ -31,11 +31,13 @@ pub(crate) struct RecoveredWalState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct WalMetaList {
     pub(crate) entries: Vec<WalMeta>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct CheckpointMetaList {
     pub(crate) checkpoints: Vec<CheckpointMeta>,
 }

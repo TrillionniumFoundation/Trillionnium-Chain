@@ -251,11 +251,13 @@ struct RecoveredWalState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 struct WalMetaList {
     entries: Vec<WalMeta>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 struct CheckpointMetaList {
     checkpoints: Vec<CheckpointMeta>,
 }
@@ -615,12 +617,12 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        let restored_round = if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded
-        {
-            0
-        } else {
-            last.round
-        };
+        let restored_round =
+            if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded {
+                0
+            } else {
+                last.round
+            };
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
@@ -2689,10 +2691,7 @@ impl PreExecPool {
                             let result =
                                 std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                                     let idx = id.checked_sub(1).ok_or_else(|| {
-                                        format!(
-                                            "preexec invalid tx id {} (tx ids are 1-based)",
-                                            id
-                                        )
+                                        format!("preexec invalid tx id {} (tx ids are 1-based)", id)
                                     })? as usize;
                                     let tx = picked_cloned
                                         .get(idx)

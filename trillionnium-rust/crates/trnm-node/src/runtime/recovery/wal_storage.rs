@@ -128,4 +128,26 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                checkpoints = []
+                forged = true
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
