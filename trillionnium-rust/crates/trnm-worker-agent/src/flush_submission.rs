@@ -514,4 +514,44 @@ mod tests {
 
         let _ = std::fs::remove_file(&ack_log);
     }
+
+    #[test]
+    fn classify_flush_ack_does_not_reuse_persisted_reveal_hash_without_duplicate_receipt() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-nonduplicate-reveal-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            84,
+            "accepted",
+            Some("commit-old".to_string()),
+            Some("reveal-old".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with persisted reveal receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("commit-new".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
 }
