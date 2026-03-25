@@ -68,6 +68,12 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::Task(_)) {
+            return Err("object type mismatch".into());
+        }
+        if task.task_id != expected.id {
+            return Err("task id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
         }
@@ -116,6 +122,12 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::GovProposal(_)) {
+            return Err("object type mismatch".into());
+        }
+        if proposal.proposal_id != expected.id {
+            return Err("proposal id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
         }

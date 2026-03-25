@@ -64,3 +64,68 @@ fn version_conflict() {
     let err = st.update_task(r1, t).unwrap_err();
     assert!(err.contains("version conflict"));
 }
+
+#[test]
+fn update_task_rejects_embedded_task_id_mismatch() {
+    let mut st = StateStore::new();
+    let t = TaskObject {
+        task_id: 11,
+        creator: "alice".into(),
+        bounty: 1,
+        status: TaskStatus::Open,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+    let task_ref = st.put_task_new(t.clone()).unwrap();
+    let original = st.get_task(task_ref.id).unwrap();
+
+    let mut mismatched = original.clone();
+    mismatched.task_id += 1;
+    mismatched.status = TaskStatus::Assigned;
+
+    let err = st.update_task(task_ref, mismatched).unwrap_err();
+    assert!(err.contains("task id mismatch"));
+    assert_eq!(st.get_task(original.task_id).unwrap(), original);
+    assert!(st.get_task(original.task_id + 1).is_none());
+}
+
+#[test]
+fn update_proposal_rejects_embedded_proposal_id_mismatch() {
+    let mut st = StateStore::new();
+    let proposal = GovProposalObject {
+        proposal_id: 21,
+        proposer: "alice".into(),
+        title: "p".into(),
+        description: "d".into(),
+        status: GovProposalStatus::Draft,
+        yes_votes: 0,
+        no_votes: 0,
+        created_at_height: 1,
+        version: 1,
+    };
+    let proposal_ref = st.put_proposal_new(proposal.clone()).unwrap();
+    let original = st.get_proposal(proposal_ref.id).unwrap();
+
+    let mut mismatched = original.clone();
+    mismatched.proposal_id += 1;
+    mismatched.status = GovProposalStatus::Voting;
+
+    let err = st.update_proposal(proposal_ref, mismatched).unwrap_err();
+    assert!(err.contains("proposal id mismatch"));
+    assert_eq!(st.get_proposal(original.proposal_id).unwrap(), original);
+    assert!(st.get_proposal(original.proposal_id + 1).is_none());
+}
