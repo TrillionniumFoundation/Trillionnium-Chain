@@ -220,6 +220,18 @@ fn reputation_delta_round_trips_back_to_canonical_signal_and_impact() {
 }
 
 #[test]
+fn reputation_tier_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let impact = reputation_impact(signal);
+        assert_eq!(reputation_signal_from_tier(impact.tier), Some(signal));
+        assert_eq!(reputation_impact_from_tier(impact.tier), Some(impact));
+    }
+
+    assert_eq!(reputation_signal_from_tier(u8::MAX), None);
+    assert_eq!(reputation_impact_from_tier(u8::MAX), None);
+}
+
+#[test]
 fn reputation_label_round_trips_back_to_canonical_signal_and_impact() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);

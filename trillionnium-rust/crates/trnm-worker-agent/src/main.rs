@@ -1748,6 +1748,13 @@ pub(crate) struct ReputationImpact {
     pub(crate) tier: u8,
 }
 
+pub(crate) const CANONICAL_REPUTATION_SIGNAL_ORDER: [ReputationSignal; 4] = [
+    ReputationSignal::Accepted,
+    ReputationSignal::AdapterRetryExhausted,
+    ReputationSignal::VerifierRejected,
+    ReputationSignal::AdapterNonRetriable,
+];
+
 pub(crate) const CANONICAL_REPUTATION_IMPACTS: [(ReputationSignal, ReputationImpact); 4] = [
     (
         ReputationSignal::Accepted,
@@ -1803,6 +1810,16 @@ pub(crate) fn reputation_signal_from_delta(delta: i32) -> Option<ReputationSigna
 
 pub(crate) fn reputation_impact_from_delta(delta: i32) -> Option<ReputationImpact> {
     reputation_signal_from_delta(delta).map(reputation_impact)
+}
+
+pub(crate) fn reputation_signal_from_tier(tier: u8) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(signal, impact)| (impact.tier == tier).then_some(*signal))
+}
+
+pub(crate) fn reputation_impact_from_tier(tier: u8) -> Option<ReputationImpact> {
+    reputation_signal_from_tier(tier).map(reputation_impact)
 }
 
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {

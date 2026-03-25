@@ -121,6 +121,16 @@ pub(crate) fn reputation_impact_from_delta(delta: i32) -> Option<ReputationImpac
     reputation_signal_from_delta(delta).map(reputation_impact)
 }
 
+pub(crate) fn reputation_signal_from_tier(tier: u8) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(signal, impact)| (impact.tier == tier).then_some(*signal))
+}
+
+pub(crate) fn reputation_impact_from_tier(tier: u8) -> Option<ReputationImpact> {
+    reputation_signal_from_tier(tier).map(reputation_impact)
+}
+
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_impact(signal).delta
 }
