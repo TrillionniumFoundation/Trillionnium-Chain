@@ -35,6 +35,35 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
 }
 
 #[test]
+fn market_report_normalizes_nested_wrapped_below_floor_clamp_in_output_config() {
+    let _guard = lock_test_guard();
+
+    let tasks = unique_market_fixture_path("market_report_wrapped_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_wrapped_bids", "jsonl");
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", " '7' "),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", " \"11\" "),
+        ("TRNM_RPC_MARKET_REPUTATION_CLAMP", " ' \"-2\" ' "),
+    ];
+
+    let out = run_ok_with_env(&["market.report"], &envs);
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["match_config"]["price_weight"], 7);
+    assert_eq!(report["match_config"]["reputation_weight"], 11);
+    assert_eq!(report["match_config"]["reputation_clamp"], 1);
+    assert_eq!(report["task_count"], 0);
+    assert_eq!(report["bid_count"], 0);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
+
+#[test]
 fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     let _guard = lock_test_guard();
 
