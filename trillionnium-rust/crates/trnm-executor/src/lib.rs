@@ -2080,6 +2080,25 @@ mod tests {
     }
 
     #[test]
+    fn combined_access_domain_versions_large_mixed_domain_accepts_late_same_version_echo() {
+        assert!(combined_access_domain_versions_are_consistent(
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 1 },
+                o(7),
+                o(8),
+                o(9),
+            ],
+            &[
+                o(10),
+                o(11),
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 1 },
+            ],
+        ));
+    }
+
+    #[test]
     fn combined_access_domain_versions_large_mixed_domain_rejects_late_cross_domain_version_skew() {
         assert!(!combined_access_domain_versions_are_consistent(
             &[
