@@ -2603,6 +2603,8 @@ fn is_health_probe_path(path: &str) -> bool {
         "/readyz/",
         "/status",
         "/status/",
+        "/statusz",
+        "/statusz/",
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
