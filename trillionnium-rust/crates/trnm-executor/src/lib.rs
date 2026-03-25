@@ -2410,6 +2410,24 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_keys_rejects_write_only_version_skew_for_same_object_id() {
+        let skewed = tx(
+            1,
+            vec![],
+            vec![
+                ObjectRef { id: 8, version: 1 },
+                o(40),
+                ObjectRef { id: 8, version: 2 },
+            ],
+        );
+
+        let _ = hot_bucket_keys(&skewed);
+    }
+
+    #[test]
     fn overlapping_read_write_domains_do_not_double_count_shared_object_conflicts() {
         let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
 
