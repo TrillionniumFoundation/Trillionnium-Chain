@@ -97,7 +97,7 @@ impl OracleSnapshot {
         if sample_count == 0 {
             return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
         }
-        if sample_count < 2 && sources.len() > 1 {
+        if sample_count < sources.len() as u32 {
             return Err(OracleError::InconsistentSampleCount {
                 sample_count,
                 actual_sources: sources.len() as u32,
@@ -301,7 +301,8 @@ impl OraclePolicy {
 }
 
 fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
-    deviation_bps > max_deviation_bps || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
+    deviation_bps > max_deviation_bps
+        || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
 }
 
 fn deviation_bps(value: i128, baseline: i128) -> u32 {
@@ -312,7 +313,9 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
+    let numerator = value
+        .abs_diff(baseline)
+        .saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
     let scaled = numerator / denominator;
     scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
@@ -536,10 +539,7 @@ pub enum OracleError {
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
     #[error("future snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}")]
-    FutureSnapshot {
-        snapshot_ts_ms: u64,
-        now_ts_ms: u64,
-    },
+    FutureSnapshot { snapshot_ts_ms: u64, now_ts_ms: u64 },
     #[error(
         "stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}"
     )]
@@ -561,9 +561,7 @@ pub enum OracleError {
         deviation_bps: u32,
         max_deviation_bps: u32,
     },
-    #[error(
-        "inconsistent sample count: sources={actual_sources}, sample_count={sample_count}"
-    )]
+    #[error("inconsistent sample count: sources={actual_sources}, sample_count={sample_count}")]
     InconsistentSampleCount {
         actual_sources: u32,
         sample_count: u32,
@@ -701,7 +699,10 @@ mod tests {
         )
         .expect_err("snapshot should reject zero sample accounting");
 
-        assert!(matches!(err, OracleError::InvalidPolicy("sample_count must be > 0")));
+        assert!(matches!(
+            err,
+            OracleError::InvalidPolicy("sample_count must be > 0")
+        ));
     }
 
     #[test]
@@ -752,8 +753,7 @@ mod tests {
 
     #[test]
     fn rejects_sample_count_below_source_cardinality() {
-        let p = policy();
-        let snap = OracleSnapshot::new(
+        let err = OracleSnapshot::new(
             "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink"), source("pyth")],
@@ -764,11 +764,8 @@ mod tests {
             2_000,
             10_000,
         )
-        .expect("snapshot build");
+        .expect_err("snapshot should fail inconsistent accounting guardrail");
 
-        let err = p
-            .validate_snapshot(&snap, 10_100)
-            .expect_err("snapshot should fail inconsistent accounting guardrail");
         assert!(matches!(
             err,
             OracleError::InconsistentSampleCount {
@@ -991,11 +988,11 @@ mod tests {
     #[test]
     fn observed_report_maps_inconsistent_sample_count_to_quorum_error_label() {
         let p = policy();
-        let snap = OracleSnapshot::new(
+        let mut snap = OracleSnapshot::new(
             "btc/usd",
             100_000,
             vec![source("coingecko"), source("chainlink"), source("pyth")],
-            2,
+            3,
             Some(100_000),
             Some(120),
             1_000,
@@ -1003,6 +1000,8 @@ mod tests {
             10_000,
         )
         .expect("snapshot build");
+        snap.sample_count = 2;
+        snap.snapshot_hash = snap.compute_hash();
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
         assert!(!report.ok);
@@ -1289,7 +1288,10 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
+        assert_eq!(
+            report.error.as_deref(),
+            Some("duplicate source ids are not allowed")
+        );
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
     }
 
