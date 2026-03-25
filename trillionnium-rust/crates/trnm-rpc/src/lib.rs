@@ -1359,6 +1359,39 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality() {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 794,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 3,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 3,
+                sample_count: 3,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.observation_classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 3);
+        assert_eq!(out.observation_classified_outcome_total(), 3);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(out.bridge_contract_consistent());
+    }
+
+    #[test]
     fn oracle_validation_response_bridge_contract_consistent_rejects_zero_source_cardinality() {
         let out: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
