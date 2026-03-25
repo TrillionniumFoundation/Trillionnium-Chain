@@ -1211,6 +1211,13 @@ fn validated_restorable_pending_resolve_snapshot(
             return None;
         }
 
+        // Finalized paused snapshots must still carry the full slash/forfeit evidence anchor;
+        // otherwise replay can retain a two-party resolve decision without the terminal
+        // challenge outcome metadata it is supposed to justify.
+        if snapshot.confirmations == 2 && !task_supports_pending_resolve_snapshot_restore(&task) {
+            return None;
+        }
+
         // Avoid admitting finalized two-party snapshots while a pending resolve-authority
         // replacement is still in-flight; without an explicit second approver encoding this path
         // is ambiguous under replacement semantics.
@@ -4035,7 +4042,7 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::TaskStatus;
+    use trnm_types::{TaskMetadata, TaskMeteringSnapshot, TaskStatus};
 
     #[test]
     fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
@@ -6088,6 +6095,79 @@ mod tests {
             None,
             "replaying the same finalized snapshot should remain fail-closed after the first scrub"
         );
+    }
+
+    #[test]
+    fn paused_restore_pending_resolve_rejects_finalized_snapshot_without_forfeit_evidence() {
+        let mut st = StateStore::new();
+        st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+            .expect("bootstrap resolve_authority write should succeed");
+        st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+            .expect("bootstrap resolve_authority should apply after timelock");
+
+        let task = TaskObject {
+            task_id: 9_932,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-paused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(98_271),
+            challenge_window_blocks_snapshot: Some(11),
+            challenged_at_height: Some(98_260),
+            resolve_deadline_height: Some(98_282),
+            challenge_bond: Some(7),
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+        st.restore_task(task.task_id, Some(task));
+
+        st.restore_pending_resolve_approval(
+            9_932,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-b".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 2,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_932), None);
+        assert_eq!(st.pending_resolve_first_approver(9_932), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(9_932), None);
     }
 
     #[test]
