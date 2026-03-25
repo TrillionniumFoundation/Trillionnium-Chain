@@ -59,6 +59,39 @@ pub struct OracleSnapshotAuditView {
     pub snapshot_hash: String,
 }
 
+impl OracleSnapshotAuditView {
+    pub fn source_contract_consistent(&self) -> bool {
+        let canonical_source_count = self
+            .source_ids
+            .iter()
+            .map(|source| source.trim().to_ascii_lowercase())
+            .collect::<BTreeSet<_>>()
+            .len() as u32;
+
+        self.source_count > 0
+            && self.sample_count > 0
+            && self.source_count == self.source_ids.len() as u32
+            && canonical_source_count == self.source_count
+            && self.source_count <= self.sample_count
+    }
+
+    pub fn window_contract_consistent(&self) -> bool {
+        self.window_end_ms >= self.window_start_ms
+            && self.window_span_ms == self.window_end_ms - self.window_start_ms
+            && self.snapshot_ts_ms >= self.window_end_ms
+    }
+
+    pub fn proof_contract_consistent(&self) -> bool {
+        let canonical_feed_id = self.feed_id.trim().to_ascii_lowercase();
+
+        !self.snapshot_hash.trim().is_empty()
+            && !canonical_feed_id.is_empty()
+            && canonical_feed_id == self.feed_id
+            && self.source_contract_consistent()
+            && self.window_contract_consistent()
+    }
+}
+
 impl OracleSnapshot {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
@@ -649,6 +682,79 @@ mod tests {
         assert_eq!(audit.window_span_ms, 1_000);
         assert_eq!(audit.snapshot_ts_ms, 10_000);
         assert_eq!(audit.snapshot_hash, snap.snapshot_hash);
+        assert!(audit.source_contract_consistent());
+        assert!(audit.window_contract_consistent());
+        assert!(audit.proof_contract_consistent());
+    }
+
+    #[test]
+    fn snapshot_audit_view_contract_rejects_non_canonical_or_unbounded_payloads() {
+        let bad_feed = OracleSnapshotAuditView {
+            feed_id: " BTC/USD ".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!bad_feed.proof_contract_consistent());
+
+        let duplicate_sources = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "chainlink".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!duplicate_sources.source_contract_consistent());
+        assert!(!duplicate_sources.proof_contract_consistent());
+
+        let bad_window = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 2_000,
+            window_end_ms: 1_000,
+            window_span_ms: 0,
+            snapshot_ts_ms: 999,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!bad_window.window_contract_consistent());
+        assert!(!bad_window.proof_contract_consistent());
+
+        let undercounted_sample = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 1,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!undercounted_sample.source_contract_consistent());
+        assert!(!undercounted_sample.proof_contract_consistent());
     }
 
     #[test]
