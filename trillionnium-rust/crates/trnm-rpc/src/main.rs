@@ -1646,7 +1646,7 @@ impl From<MarketScoreConfig> for MarketScoreConfigOutput {
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
-            reputation_clamp: value.reputation_clamp,
+            reputation_clamp: normalized_reputation_clamp(value.reputation_clamp),
         }
     }
 }
@@ -4295,7 +4295,7 @@ fn main() -> Result<()> {
                 "winner_reputation": winner_reputation,
                 "winner_reputation_lookup_key": winner_reputation_lookup_key,
                 "winner_reputation_effective": winner_reputation_effective,
-                "winner_reputation_clamp_limit": score_cfg.reputation_clamp,
+                "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
                 "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
                 "score_floor_applied": breakdown.score_floor_applied,
                 "price_weight_unit": score_cfg.price_weight,
@@ -5772,6 +5772,19 @@ mod tests {
         assert_eq!(breakdown.effective_score, 143);
         assert_eq!(breakdown.penalty, 0);
         assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
+    fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        });
+
+        assert_eq!(output.price_weight, 3);
+        assert_eq!(output.reputation_weight, 7);
+        assert_eq!(output.reputation_clamp, 1);
     }
 
     #[test]

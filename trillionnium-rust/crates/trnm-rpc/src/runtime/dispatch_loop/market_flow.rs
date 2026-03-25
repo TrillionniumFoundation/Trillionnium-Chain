@@ -191,7 +191,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "winner_reputation": winner_reputation,
         "winner_reputation_lookup_key": winner_reputation_lookup_key,
         "winner_reputation_effective": winner_reputation_effective,
-        "winner_reputation_clamp_limit": score_cfg.reputation_clamp,
+        "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
         "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
         "score_floor_applied": breakdown.score_floor_applied,
         "price_weight_unit": score_cfg.price_weight,

@@ -223,6 +223,19 @@ fn market_score_breakdown_normalizes_negative_manual_clamp_without_panic() {
 }
 
 #[test]
+fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+    let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+        price_weight: 3,
+        reputation_weight: 7,
+        reputation_clamp: -10,
+    });
+
+    assert_eq!(output.price_weight, 3);
+    assert_eq!(output.reputation_weight, 7);
+    assert_eq!(output.reputation_clamp, 1);
+}
+
+#[test]
 fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
     let breakdown = market_score_breakdown(
         50,

@@ -36,7 +36,7 @@ impl From<MarketScoreConfig> for MarketScoreConfigOutput {
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
-            reputation_clamp: value.reputation_clamp,
+            reputation_clamp: normalized_reputation_clamp(value.reputation_clamp),
         }
     }
 }
