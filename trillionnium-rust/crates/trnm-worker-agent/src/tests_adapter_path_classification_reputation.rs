@@ -208,6 +208,31 @@ fn canonical_reputation_impact_table_matches_signal_order_and_mapping_helpers() 
 }
 
 #[test]
+fn canonical_reputation_table_keeps_dense_tiers_and_unit_penalty_steps() {
+    for (idx, (_, impact)) in CANONICAL_REPUTATION_IMPACTS.iter().enumerate() {
+        let expected_tier = (CANONICAL_REPUTATION_IMPACTS.len() - 1 - idx) as u8;
+        assert_eq!(
+            impact.tier, expected_tier,
+            "canonical tiers must remain dense and gap-free for deterministic ranking"
+        );
+
+        if idx > 0 {
+            let previous = CANONICAL_REPUTATION_IMPACTS[idx - 1].1;
+            assert_eq!(
+                previous.delta - impact.delta,
+                1,
+                "adjacent canonical impacts must remain spaced by exactly one score point"
+            );
+            assert_eq!(
+                previous.tier - impact.tier,
+                1,
+                "adjacent canonical tiers must remain spaced by exactly one tier"
+            );
+        }
+    }
+}
+
+#[test]
 fn reputation_delta_round_trips_back_to_canonical_signal_and_impact() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);
