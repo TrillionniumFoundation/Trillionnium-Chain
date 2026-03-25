@@ -30,6 +30,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: p2p_addr must not be empty",
         path
     );
+    anyhow::ensure!(
+        rpc_addr != p2p_addr,
+        "invalid node config {}: rpc_addr and p2p_addr must differ",
+        path
+    );
 
     Ok(NodeConfig {
         node_id: node_id.to_string(),
@@ -83,5 +88,21 @@ mod tests {
         );
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn validate_node_config_rejects_shared_rpc_and_p2p_addr() {
+        let cfg = NodeConfig {
+            node_id: "node-a".into(),
+            rpc_addr: "127.0.0.1:7000".into(),
+            p2p_addr: "127.0.0.1:7000".into(),
+        };
+
+        let err = validate_node_config(cfg, "inline").expect_err("shared listen addr must fail");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must differ"),
+            "unexpected error: {err:#}"
+        );
     }
 }
