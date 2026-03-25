@@ -63,6 +63,13 @@ impl OraclePolicy {
             });
         }
 
+        if snapshot.sample_count < snapshot.sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
+                actual_sources: snapshot.sources.len() as u32,
+                sample_count: snapshot.sample_count,
+            });
+        }
+
         if snapshot.sample_count > self.max_update_rate_per_window {
             return Err(OracleError::UpdateRateExceeded {
                 sample_count: snapshot.sample_count,
@@ -94,7 +101,10 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline) as u128 * 10_000;
+    let numerator = value
+        .abs_diff(baseline)
+        .saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    (numerator / denominator) as u32
+    let scaled = numerator / denominator;
+    scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }
