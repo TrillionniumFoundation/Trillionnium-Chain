@@ -991,6 +991,44 @@
     }
 
     #[test]
+    fn reputation_label_round_trips_back_to_canonical_signal_and_impact() {
+        for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+            let impact = reputation_impact(signal);
+            assert_eq!(reputation_signal_from_label(impact.label), Some(signal));
+            assert_eq!(reputation_impact_from_label(impact.label), Some(impact));
+        }
+
+        assert_eq!(reputation_signal_from_label("unknown"), None);
+        assert_eq!(reputation_impact_from_label("unknown"), None);
+    }
+
+    #[test]
+    fn reputation_score_impact_pair_round_trips_fail_closed_on_hybrid_tuples() {
+        for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+            let impact = reputation_impact(signal);
+            assert_eq!(
+                reputation_signal_from_score_impact(impact.label, impact.delta),
+                Some(signal)
+            );
+            assert_eq!(
+                reputation_impact_from_score_impact(impact.label, impact.delta),
+                Some(impact)
+            );
+        }
+
+        assert_eq!(
+            reputation_signal_from_score_impact("accepted", -1),
+            None,
+            "mixed label+delta tuples must fail closed"
+        );
+        assert_eq!(
+            reputation_impact_from_score_impact("verifier_rejected", 3),
+            None,
+            "score-impact lookup must reject cross-signal hybrids"
+        );
+    }
+
+    #[test]
     fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
         assert_eq!(
             verify_model_output("   \n\t", 8),
