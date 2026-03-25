@@ -1856,6 +1856,19 @@ pub(crate) fn reputation_tier(signal: ReputationSignal) -> u8 {
     reputation_impact(signal).tier
 }
 
+pub(crate) fn reputation_weight_bps(signal: ReputationSignal) -> u16 {
+    let impact = reputation_impact(signal);
+    let max_tier = CANONICAL_REPUTATION_IMPACTS
+        .first()
+        .map(|(_, impact)| impact.tier)
+        .unwrap_or(0);
+    if max_tier == 0 {
+        return 10_000;
+    }
+
+    ((u32::from(impact.tier) * 10_000) / u32::from(max_tier)) as u16
+}
+
 pub(crate) fn apply_reputation_signal(
     rec: &mut MessageIngressRecord,
     signal: ReputationSignal,

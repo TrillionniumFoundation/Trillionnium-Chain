@@ -5,9 +5,9 @@ use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
     adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
     classify_adapter_error, commitment, execute_payload, load_ingress_records,
-    resolve_llm_adapter_policy, run_llm_adapter_with_retry, save_ingress_records,
-    transition_request_status, AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
-    PROOF_ADAPTER_ENV,
+    reputation_weight_bps, resolve_llm_adapter_policy, run_llm_adapter_with_retry,
+    save_ingress_records, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
+    ReputationSignal, PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
 
@@ -83,7 +83,7 @@ pub(crate) fn handle_run_assigned(
                 rec.adapter_error = Some(e.context.clone());
                 n += 1;
                 println!(
-                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} error={}",
+                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} error={}",
                     rec.request_id,
                     rec.task_id,
                     worker,
@@ -92,6 +92,7 @@ pub(crate) fn handle_run_assigned(
                     reputation_impact.label,
                     reputation_impact.delta,
                     reputation_impact.tier,
+                    reputation_weight_bps(reputation_signal),
                     e.context
                 );
                 continue;
@@ -111,7 +112,7 @@ pub(crate) fn handle_run_assigned(
             rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
             n += 1;
             println!(
-                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={}",
+                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
@@ -119,7 +120,8 @@ pub(crate) fn handle_run_assigned(
                 resolution_code,
                 reputation_impact.label,
                 reputation_impact.delta,
-                reputation_impact.tier
+                reputation_impact.tier,
+                reputation_weight_bps(ReputationSignal::VerifierRejected)
             );
             continue;
         }
@@ -142,7 +144,7 @@ pub(crate) fn handle_run_assigned(
         rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
         n += 1;
         println!(
-            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={}",
+            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={}",
             rec.request_id,
             rec.task_id,
             worker,
@@ -151,7 +153,8 @@ pub(crate) fn handle_run_assigned(
             rec.provider_request_id.as_deref().unwrap_or("-"),
             reputation_impact.label,
             reputation_impact.delta,
-            reputation_impact.tier
+            reputation_impact.tier,
+            reputation_weight_bps(ReputationSignal::Accepted)
         );
     }
     save_ingress_records(&ingress_file, &records)?;

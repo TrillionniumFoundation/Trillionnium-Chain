@@ -7,4 +7,5 @@ pub(crate) use adapter_error_models::{AdapterError, AdapterErrorKind, Reputation
 pub(crate) use adapter_error_ops::{
     adapter_error_signal, apply_reputation_signal, classify_adapter_error,
     is_deterministic_rejection, is_idempotent_duplicate_ok, reputation_delta,
+    reputation_weight_bps,
 };

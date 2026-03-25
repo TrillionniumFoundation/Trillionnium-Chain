@@ -54,6 +54,14 @@ fn reputation_tiers_match_score_ordering() {
 }
 
 #[test]
+fn reputation_weight_bps_exposes_dense_deterministic_rank_surface() {
+    assert_eq!(reputation_weight_bps(ReputationSignal::Accepted), 10_000);
+    assert_eq!(reputation_weight_bps(ReputationSignal::AdapterRetryExhausted), 6_666);
+    assert_eq!(reputation_weight_bps(ReputationSignal::VerifierRejected), 3_333);
+    assert_eq!(reputation_weight_bps(ReputationSignal::AdapterNonRetriable), 0);
+}
+
+#[test]
 fn reputation_score_impact_exposes_stable_labels_and_deltas() {
     assert_eq!(
         reputation_score_impact(ReputationSignal::Accepted),
@@ -229,6 +237,21 @@ fn canonical_reputation_table_keeps_dense_tiers_and_unit_penalty_steps() {
                 "adjacent canonical tiers must remain spaced by exactly one tier"
             );
         }
+    }
+}
+
+#[test]
+fn canonical_reputation_weight_bps_descends_monotonically_with_tiers() {
+    let mut previous: Option<u16> = None;
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let weight_bps = reputation_weight_bps(signal);
+        if let Some(prev) = previous {
+            assert!(
+                prev > weight_bps,
+                "canonical weight surface must remain strictly descending for deterministic ranking"
+            );
+        }
+        previous = Some(weight_bps);
     }
 }
 
