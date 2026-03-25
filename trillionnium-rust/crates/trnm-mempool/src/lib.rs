@@ -13,6 +13,16 @@ pub enum IngressClass {
     Critical,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LaneQosSnapshot {
+    pub normal_queued: usize,
+    pub critical_queued: usize,
+    pub total_queued: usize,
+    pub normal_headroom: usize,
+    pub critical_headroom: usize,
+    pub total_headroom: usize,
+}
+
 #[derive(Debug)]
 pub struct AdmissionGate {
     capacity: usize,
@@ -592,6 +602,26 @@ impl LaneAdmissionGate {
         (normal, critical, total)
     }
 
+    pub fn qos_snapshot(&self) -> LaneQosSnapshot {
+        let normal_queued = self.normal.queue.len();
+        let critical_queued = self.critical.queue.len();
+        let total_queued = self.lane_total();
+        let normal_headroom = self.normal.capacity.saturating_sub(normal_queued);
+        let critical_headroom = self.critical.capacity.saturating_sub(critical_queued);
+        let total_headroom = self.total_capacity.saturating_sub(total_queued);
+
+        debug_assert_eq!(normal_queued.saturating_add(critical_queued), total_queued);
+
+        LaneQosSnapshot {
+            normal_queued,
+            critical_queued,
+            total_queued,
+            normal_headroom,
+            critical_headroom,
+            total_headroom,
+        }
+    }
+
     pub fn pop_ready(&mut self) -> Option<u64> {
         if self.lane_is_idle() {
             // Idle dequeue polls are common in long-lived schedulers. Treat them as a
@@ -667,6 +697,56 @@ mod tests {
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.pop_ready(), Some(7));
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn qos_snapshot_reports_lane_and_global_headroom() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 3,
+                critical_headroom: 2,
+                total_headroom: 5,
+            }
+        );
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 2,
+                total_queued: 3,
+                normal_headroom: 2,
+                critical_headroom: 0,
+                total_headroom: 2,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_tracks_zero_reserve_spillover_headroom() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 0,
+                total_queued: 1,
+                normal_headroom: 1,
+                critical_headroom: 0,
+                total_headroom: 1,
+            }
+        );
     }
 
     #[test]
