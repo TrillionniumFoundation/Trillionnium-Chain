@@ -9629,6 +9629,77 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_zero_key_id_resolve_authority_and_scrubs_pending_resolve()
+    {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("seed resolve_authority");
+
+        let task = TaskObject {
+            task_id: 7_702,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(20),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task));
+        st.restore_pending_resolve_approval(
+            7_702,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "resolver-v1".into(),
+                authority_set: "resolver-v1,resolver-v2".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(7_702), Some((true, 1)));
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 0,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "zero-id resolve_authority restore snapshots must fail closed instead of materializing a queued update"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into()),
+            "rejecting a zero-id resolve_authority snapshot must preserve the live canonical governance value"
+        );
+        assert!(
+            st.pending_resolve_approval(7_702).is_none(),
+            "zero-id resolve_authority restore snapshots must still scrub staged pending resolve metadata"
+        );
+    }
+
+    #[test]
     fn emergency_pause_unchecked_path_clears_stale_pending_entry_if_present() {
         let mut st = StateStore::new();
 
