@@ -2494,6 +2494,12 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::Task(_)) {
+            return Err("object type mismatch".into());
+        }
+        if task.task_id != expected.id {
+            return Err("task id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
         }
@@ -2546,6 +2552,12 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::GovProposal(_)) {
+            return Err("object type mismatch".into());
+        }
+        if proposal.proposal_id != expected.id {
+            return Err("proposal id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
         }
@@ -4394,6 +4406,65 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn update_task_rejects_payload_task_id_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 7,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let initial_ref = st.put_task_new(task.clone()).unwrap();
+        let mut mismatched = task;
+        mismatched.task_id = 8;
+        mismatched.status = TaskStatus::Assigned;
+
+        let err = st.update_task(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("task id mismatch"));
+        assert_eq!(st.get_ref(7).unwrap().version, 1);
+        assert_eq!(st.get_task(7).unwrap().task_id, 7);
+        assert!(st.get_task(8).is_none());
+    }
+
+    #[test]
+    fn update_proposal_rejects_payload_proposal_id_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let proposal = GovProposalObject {
+            proposal_id: 9,
+            title: "update param x".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let initial_ref = st.put_proposal_new(proposal.clone()).unwrap();
+        let mut mismatched = proposal;
+        mismatched.proposal_id = 10;
+        mismatched.status = GovProposalStatus::Voting;
+
+        let err = st.update_proposal(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("proposal id mismatch"));
+        assert_eq!(st.get_ref(9).unwrap().version, 1);
+        assert_eq!(st.get_proposal(9).unwrap().proposal_id, 9);
+        assert!(st.get_proposal(10).is_none());
     }
 
     #[test]
