@@ -64,8 +64,13 @@ pub(crate) fn market_score_config() -> MarketScoreConfig {
     }
 }
 
+fn normalized_reputation_clamp(clamp: i64) -> i64 {
+    clamp.max(MARKET_REPUTATION_CLAMP_MIN)
+}
+
 pub(crate) fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
-    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+    let clamp = normalized_reputation_clamp(cfg.reputation_clamp);
+    reputation.clamp(-clamp, clamp)
 }
 
 pub(crate) fn market_score_breakdown(
