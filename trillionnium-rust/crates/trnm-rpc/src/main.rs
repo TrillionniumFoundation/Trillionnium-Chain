@@ -1291,8 +1291,7 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         metadata_compatibility_findings: task
             .metadata
             .as_ref()
-            .map(|metadata| metadata.compatibility_findings())
-            .filter(|findings| !findings.is_empty()),
+            .and_then(|metadata| metadata.compatibility_findings_nonempty()),
         metering: task
             .metadata
             .as_ref()

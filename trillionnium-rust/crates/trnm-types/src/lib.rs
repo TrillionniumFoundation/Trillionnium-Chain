@@ -270,6 +270,11 @@ impl TaskMetadata {
         }
         findings
     }
+
+    pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        let findings = self.compatibility_findings();
+        (!findings.is_empty()).then_some(findings)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -417,6 +422,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert_eq!(decoded.compatibility_findings_nonempty(), None);
     }
 
     #[test]
@@ -430,6 +436,10 @@ mod tests {
         assert_eq!(
             metadata.compatibility_findings(),
             vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload])
         );
     }
 
