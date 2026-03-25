@@ -70,6 +70,19 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_source_valu
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls() {
+    for path in [
+        "/query-normalized-audit-events?source=trnm.task%00shadow",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("encoded controls should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn query_normalized_audit_events_supports_pagination_and_event_filters() {
     let events = vec![
         NodeEventRecord {
