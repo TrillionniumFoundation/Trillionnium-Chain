@@ -2989,6 +2989,30 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_share_dedups_same_version_cross_domain_echoes() {
+        let echoed = vec![
+            tx(
+                1,
+                vec![ObjectRef { id: 7, version: 3 }],
+                vec![ObjectRef { id: 7, version: 3 }],
+            ),
+            tx(2, vec![ObjectRef { id: 7, version: 3 }], vec![]),
+            tx(3, vec![], vec![ObjectRef { id: 11, version: 1 }]),
+        ];
+        let canonical = vec![
+            tx(1, vec![ObjectRef { id: 7, version: 3 }], vec![]),
+            tx(2, vec![ObjectRef { id: 7, version: 3 }], vec![]),
+            tx(3, vec![], vec![ObjectRef { id: 11, version: 1 }]),
+        ];
+
+        // Same-version read/write echoes should collapse to one object-scoped
+        // access domain per tx so hotspot scoring stays aligned with the
+        // scheduler's deterministic conflict domains.
+        assert_eq!(hot_object_share(&echoed), 2.0 / 3.0);
+        assert_eq!(hot_object_share(&echoed), hot_object_share(&canonical));
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
