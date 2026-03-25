@@ -256,6 +256,19 @@ fn canonical_reputation_weight_bps_descends_monotonically_with_tiers() {
 }
 
 #[test]
+fn reputation_weight_bps_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let weight_bps = reputation_weight_bps(signal);
+        let impact = reputation_impact(signal);
+        assert_eq!(reputation_signal_from_weight_bps(weight_bps), Some(signal));
+        assert_eq!(reputation_impact_from_weight_bps(weight_bps), Some(impact));
+    }
+
+    assert_eq!(reputation_signal_from_weight_bps(9_999), None);
+    assert_eq!(reputation_impact_from_weight_bps(9_999), None);
+}
+
+#[test]
 fn reputation_delta_round_trips_back_to_canonical_signal_and_impact() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);
