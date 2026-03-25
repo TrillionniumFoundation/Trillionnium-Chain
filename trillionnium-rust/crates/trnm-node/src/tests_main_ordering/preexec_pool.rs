@@ -112,3 +112,30 @@ fn preexec_pool_rejects_zero_tx_id_without_worker_panic_or_loss() {
     assert_eq!(followup.0, vec![1]);
     assert_eq!(followup.1, 0);
 }
+
+#[test]
+fn preexec_pool_clamps_zero_workers_to_a_single_safe_worker() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![
+        MockTx::CreateTask {
+            task_id: 4701,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::CreateTask {
+            task_id: 4702,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+    ]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 0, 1);
+    let first = pre_execute_group_parallel(&pool, vec![1, 2]);
+    let second = pre_execute_group_parallel(&pool, vec![2, 1, 2]);
+
+    assert_eq!(pool.width, 1);
+    assert_eq!(first.0, vec![1, 2]);
+    assert_eq!(first.1, 0);
+    assert_eq!(second.0, vec![2, 1]);
+    assert_eq!(second.1, 0);
+}
