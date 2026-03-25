@@ -2260,6 +2260,57 @@ mod tests {
     }
 
     #[test]
+    fn reveal_replay_rejects_alternate_receipt_without_replacing_snapshot() {
+        let mut st = seeded_state();
+        let task_id = 1_002;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let before = st.get_task(r4.id).unwrap();
+        let before_metering = before.metadata.as_ref().and_then(|meta| meta.metering.clone());
+
+        let alternate_result_hash = [8u8; 32];
+        let alternate_proof = sample_llm_token_meter_receipt_json(task_id, &worker, alternate_result_hash);
+        let replay_err = apply_reveal_result(
+            &mut st,
+            r4,
+            alternate_result_hash,
+            reveal_salt,
+            Some(alternate_proof),
+        )
+        .expect_err("replayed reveal must be rejected before any alternate receipt can be persisted");
+        assert!(matches!(replay_err, PouwError::InvalidTransition));
+
+        let after = st.get_task(task_id).unwrap();
+        assert_eq!(after.status, before.status);
+        assert_eq!(after.result_hash, before.result_hash);
+        assert_eq!(after.reveal_salt, before.reveal_salt);
+        assert_eq!(
+            after.challenge_deadline_height,
+            before.challenge_deadline_height,
+            "alternate receipt replay must not re-arm or shift the async challenge window"
+        );
+        assert_eq!(
+            after.challenge_window_blocks_snapshot,
+            before.challenge_window_blocks_snapshot
+        );
+        assert_eq!(
+            after.metadata.as_ref().and_then(|meta| meta.metering.clone()),
+            before_metering,
+            "alternate receipt replay must not replace the persisted metering snapshot"
+        );
+    }
+
+    #[test]
     fn challenge_requires_revealed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 9, "alice".into(), 10).unwrap();
