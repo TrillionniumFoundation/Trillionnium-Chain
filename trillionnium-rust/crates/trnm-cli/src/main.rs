@@ -231,31 +231,37 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
     };
 
     let expected_runtime_compatible = canonical_core_fields && complete_metering_snapshot;
-    if let Some(reported) = parsed
+    let Some(reported_runtime_compatible) = parsed
         .get("metadata_runtime_compatible")
         .and_then(|v| v.as_bool())
-    {
-        if reported != expected_runtime_compatible {
-            bail!(
-                "task query response metadata_runtime_compatible mismatch: expected={}, got={}",
-                expected_runtime_compatible,
-                reported
-            );
-        }
+    else {
+        bail!(
+            "task query response metadata_compatibility requires boolean metadata_runtime_compatible"
+        );
+    };
+    if reported_runtime_compatible != expected_runtime_compatible {
+        bail!(
+            "task query response metadata_runtime_compatible mismatch: expected={}, got={}",
+            expected_runtime_compatible,
+            reported_runtime_compatible
+        );
     }
 
     let expected_requires_governance_upgrade = legacy_note_only || !expected_runtime_compatible;
-    if let Some(reported) = parsed
+    let Some(reported_requires_governance_upgrade) = parsed
         .get("metadata_requires_governance_upgrade")
         .and_then(|v| v.as_bool())
-    {
-        if reported != expected_requires_governance_upgrade {
-            bail!(
-                "task query response metadata_requires_governance_upgrade mismatch: expected={}, got={}",
-                expected_requires_governance_upgrade,
-                reported
-            );
-        }
+    else {
+        bail!(
+            "task query response metadata_compatibility requires boolean metadata_requires_governance_upgrade"
+        );
+    };
+    if reported_requires_governance_upgrade != expected_requires_governance_upgrade {
+        bail!(
+            "task query response metadata_requires_governance_upgrade mismatch: expected={}, got={}",
+            expected_requires_governance_upgrade,
+            reported_requires_governance_upgrade
+        );
     }
 
     if let Some(findings) = parsed.get("metadata_compatibility_findings") {
@@ -2246,11 +2252,29 @@ mod tests {
 
     #[test]
     fn task_query_rejects_inconsistent_metadata_findings() {
-        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
         assert!(err
             .to_string()
             .contains("metadata_compatibility_findings mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_runtime_compatible_when_metadata_compatibility_present() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":false}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility requires boolean metadata_runtime_compatible"
+        ));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_governance_upgrade_when_metadata_compatibility_present() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility requires boolean metadata_requires_governance_upgrade"
+        ));
     }
 
     #[test]
