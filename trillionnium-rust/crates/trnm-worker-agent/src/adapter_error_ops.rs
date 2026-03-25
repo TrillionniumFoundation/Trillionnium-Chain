@@ -155,6 +155,24 @@ pub(crate) fn reputation_impact_from_tier(tier: u8) -> Option<ReputationImpact> 
     reputation_signal_from_tier(tier).map(reputation_impact)
 }
 
+pub(crate) fn reputation_rank_ordinal(signal: ReputationSignal) -> u8 {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .iter()
+        .position(|candidate| *candidate == signal)
+        .map(|idx| idx as u8)
+        .expect("canonical reputation signal order must cover all reputation signals")
+}
+
+pub(crate) fn reputation_signal_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .get(rank_ordinal as usize)
+        .copied()
+}
+
+pub(crate) fn reputation_impact_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationImpact> {
+    reputation_signal_from_rank_ordinal(rank_ordinal).map(reputation_impact)
+}
+
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_impact(signal).delta
 }

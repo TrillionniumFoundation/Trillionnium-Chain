@@ -296,6 +296,32 @@ fn canonical_reputation_weight_bps_descends_monotonically_with_tiers() {
 }
 
 #[test]
+fn reputation_rank_ordinal_matches_canonical_signal_order() {
+    for (expected_rank, signal) in CANONICAL_REPUTATION_SIGNAL_ORDER.iter().enumerate() {
+        assert_eq!(reputation_rank_ordinal(*signal), expected_rank as u8);
+        assert_eq!(
+            reputation_signal_from_rank_ordinal(expected_rank as u8),
+            Some(*signal)
+        );
+        assert_eq!(
+            reputation_impact_from_rank_ordinal(expected_rank as u8),
+            Some(reputation_impact(*signal))
+        );
+    }
+
+    assert_eq!(
+        reputation_signal_from_rank_ordinal(CANONICAL_REPUTATION_SIGNAL_ORDER.len() as u8),
+        None,
+        "rank lookup must fail closed past the canonical table"
+    );
+    assert_eq!(
+        reputation_impact_from_rank_ordinal(CANONICAL_REPUTATION_SIGNAL_ORDER.len() as u8),
+        None,
+        "impact lookup must fail closed past the canonical table"
+    );
+}
+
+#[test]
 fn reputation_weight_bps_round_trips_back_to_canonical_signal_and_impact() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let weight_bps = reputation_weight_bps(signal);
