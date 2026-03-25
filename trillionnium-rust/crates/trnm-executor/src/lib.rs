@@ -2334,6 +2334,23 @@ mod tests {
     }
 
     #[test]
+    fn tx_access_domain_keys_canonicalize_duplicate_heavy_same_version_cross_domain_echoes() {
+        let echoed = tx(
+            1,
+            vec![o(11), o(11), o(22), o(44), o(55), o(44)],
+            vec![o(55), o(33), o(33), o(22), o(22), o(66), o(11)],
+        );
+        let canonical = tx(2, vec![o(44)], vec![o(55), o(33), o(22), o(66), o(11)]);
+
+        // Same-version cross-domain echoes should not change the canonical
+        // write-first object scope. This keeps telemetry, hot-bucket selection,
+        // and conflict classification aligned even when Sui-style shared-object
+        // footprints repeat the same object ids across both domains.
+        assert_eq!(tx_access_domain_keys(&echoed), vec![55, 33, 22, 66, 11, 44]);
+        assert_eq!(tx_access_domain_keys(&echoed), tx_access_domain_keys(&canonical));
+    }
+
+    #[test]
     fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
         let tx = tx(
             1,
