@@ -189,6 +189,19 @@ Interpretation rule:
 - if `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
+## Forbidden operator shortcuts
+
+Treat each of the following as a release-discipline violation, not a harmless convenience:
+- rerunning only the final script after switching branches or worktrees without regenerating the full evidence chain
+- copying `git_branch=`, `git_head=`, or `rollback_command=` from terminal scrollback instead of the generated artifact
+- presenting a `CONDITIONAL GO` rehearsal as if it were `GO`
+- deleting a failed evidence directory before another operator can inspect the first failing artifact
+- claiming the nightly gate is the blocker when `nightly-streak.log` is missing, skipped, or locally overridden
+- hand-editing `summary.txt` / `manifest.txt` to "clean up" wording before handoff
+
+Operator rule:
+- if any shortcut above occurred, rerun the affected step from a clean operator state and attach the new artifact path; do not try to patch the handoff note retroactively.
+
 ## Go / No-Go decision rule
 
 ### GO only if all are true
