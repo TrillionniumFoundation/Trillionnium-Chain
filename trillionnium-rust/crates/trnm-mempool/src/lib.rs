@@ -814,6 +814,47 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_reports_borrowed_last_critical_slot_as_consumed() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity first.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                // With the critical lane idle, normal ingress may still borrow the
+                // final reserved slot for free-ingress throughput.
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Borrow the last reserved critical slot. Observability must stop advertising
+        // fresh critical headroom once that slot is actually consumed by borrowed work.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
