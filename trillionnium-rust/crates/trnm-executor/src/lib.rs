@@ -1470,6 +1470,34 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     }
 
     let primary = all_keys[0];
+    let primary_is_echoed_across_domains = write_keys.binary_search(&primary).is_ok()
+        && read_keys.binary_search(&primary).is_ok();
+    if primary_is_echoed_across_domains {
+        let write_only_secondary = write_keys.iter().copied().find(|k| *k != primary);
+        let read_only_secondary = read_keys.iter().copied().find(|k| *k != primary);
+        let has_single_write_only_secondary = write_keys
+            .iter()
+            .copied()
+            .filter(|k| *k != primary)
+            .nth(1)
+            .is_none();
+        let has_single_read_only_secondary = read_keys
+            .iter()
+            .copied()
+            .filter(|k| *k != primary)
+            .nth(1)
+            .is_none();
+        if has_single_write_only_secondary && has_single_read_only_secondary {
+            let secondary = match (write_only_secondary, read_only_secondary) {
+                (Some(write_key), Some(read_key)) => write_key.min(read_key),
+                (Some(write_key), None) => write_key,
+                (None, Some(read_key)) => read_key,
+                (None, None) => 0,
+            };
+            return (primary, secondary);
+        }
+    }
+
     if write_keys[0] == primary {
         let secondary = write_keys
             .iter()
@@ -2715,6 +2743,18 @@ mod tests {
         // lane-local secondary just because role-local ordering changed.
         assert_eq!(hot_bucket_keys(&baseline), (5, 13));
         assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_global_secondary_when_primary_echo_roles_flip() {
+        let write_heavy = tx(1, vec![o(7), o(9)], vec![o(7), o(11)]);
+        let read_heavy = tx(2, vec![o(7), o(11)], vec![o(7), o(9)]);
+
+        // If the canonical primary key is echoed in both domains, lane selection
+        // must anchor to the same global secondary key regardless of whether the
+        // smaller non-primary key happens to live in reads or writes.
+        assert_eq!(hot_bucket_keys(&write_heavy), (7, 9));
+        assert_eq!(hot_bucket_keys(&write_heavy), hot_bucket_keys(&read_heavy));
     }
 
     #[test]
