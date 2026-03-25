@@ -194,8 +194,10 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
             )
         })
         .expect("non-empty bids");
-    let winner_reputation = normalize_market_worker_key(&winner.worker)
-        .and_then(|k| reputation.get(&k).copied())
+    let winner_reputation_lookup_key = normalize_market_worker_key(&winner.worker);
+    let winner_reputation = winner_reputation_lookup_key
+        .as_ref()
+        .and_then(|k| reputation.get(k).copied())
         .unwrap_or(0);
     let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
     let winner_reputation_effective = breakdown.effective_reputation;
@@ -220,6 +222,7 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "match_policy": "price_reputation_weighted",
         "matched_bid_count": matched_bid_count,
         "winner_reputation": winner_reputation,
+        "winner_reputation_lookup_key": winner_reputation_lookup_key,
         "winner_reputation_effective": winner_reputation_effective,
         "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
         "score_floor_applied": breakdown.score_floor_applied,

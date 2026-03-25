@@ -141,8 +141,10 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
     ]);
 
     let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
-    assert!(match_out.contains("\"winner\":\"worker-high\""));
-    assert!(match_out.contains("\"winner_reputation\":200"));
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+    assert_eq!(matched["winner"], "worker-high");
+    assert_eq!(matched["winner_reputation"], 200);
+    assert_eq!(matched["winner_reputation_lookup_key"], "worker-high");
 }
 
 #[test]
@@ -188,8 +190,10 @@ fn market_match_reputation_alias_collision_uses_max_signal() {
     ]);
 
     let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
-    assert!(match_out.contains("\"winner\":\"worker-high\""));
-    assert!(match_out.contains("\"winner_reputation\":220"));
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+    assert_eq!(matched["winner"], "worker-high");
+    assert_eq!(matched["winner_reputation"], 220);
+    assert_eq!(matched["winner_reputation_lookup_key"], "worker-high");
 }
 
 #[test]
