@@ -1,4 +1,8 @@
 use super::*;
+use crate::governance_ops::{
+    gov_param_registry_entry, GovParamKind, GovParamUpdateOutcome, GovParamValueValidator,
+    EMERGENCY_PAUSE_KEY_ID,
+};
 
 #[test]
 fn governance_sensitive_update_excessive_step_change_rejected() {
@@ -100,6 +104,28 @@ fn non_sensitive_governance_noop_rejects_mismatched_key_id() {
     assert_eq!(preserved.value, "500");
     assert!(st.pending_gov_update("max_block_ms").is_none());
 }
+#[test]
+fn governance_emergency_pause_registry_entry_stays_canonical_and_typed() {
+    // Merge-gate guard: the Algorand-style governance registry must keep the reserved
+    // emergency_pause entry bound to one canonical key spelling, reserved key id, and strict
+    // bool value rule. Drift in any of the three should fail loudly here.
+    let entry = gov_param_registry_entry("emergency_pause")
+        .expect("emergency_pause must stay present in the canonical governance schema");
+    assert_eq!(entry.key, "emergency_pause");
+    assert_eq!(entry.kind, GovParamKind::Immediate);
+    assert_eq!(entry.validator, GovParamValueValidator::StrictBool);
+    assert_eq!(EMERGENCY_PAUSE_KEY_ID, 7_999);
+    assert!(gov_param_registry_entry("Emergency_Pause").is_none());
+
+    let mut st = StateStore::new();
+    let applied = st
+        .set_gov_param(12_345, EMERGENCY_PAUSE_KEY_ID, entry.key.into(), "true".into())
+        .expect("canonical emergency_pause binding must remain writable");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update(entry.key).is_none());
+}
+
 #[test]
 fn governance_allowed_keys_schema_merge_gate_is_explicit() {
     // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
