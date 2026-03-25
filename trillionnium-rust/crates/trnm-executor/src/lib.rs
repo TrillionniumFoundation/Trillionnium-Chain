@@ -2758,6 +2758,21 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_preserve_write_priority_under_duplicate_heavy_primary_echo() {
+        let baseline = tx(1, vec![o(8), o(8), o(9), o(10)], vec![o(8), o(8), o(40), o(50)]);
+        let permuted = tx(
+            2,
+            vec![o(10), o(8), o(9), o(8), o(10)],
+            vec![o(50), o(8), o(40), o(8), o(40)],
+        );
+
+        // Once the shared primary is fixed, duplicate-heavy permutations must keep
+        // the same write-first secondary lane signal instead of drifting with local order.
+        assert_eq!(hot_bucket_keys(&baseline), (8, 40));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
