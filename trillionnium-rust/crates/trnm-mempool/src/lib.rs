@@ -814,6 +814,55 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Critical reserve full; tx 51 spills into borrowed normal capacity.
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 1,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(51));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // Idle dequeue polls are the self-heal boundary for long-lived schedulers;
+        // observability should also cold-reset here instead of reporting stale
+        // spillover occupancy or blocked class headroom.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 3,
+                critical_headroom: 1,
+                total_headroom: 4,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
     fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
