@@ -31,7 +31,12 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
-    list.checkpoints.sort_by_key(|cp| cp.height);
+    list.checkpoints.sort_by(|a, b| {
+        a.height
+            .cmp(&b.height)
+            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
+            .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+    });
     Ok(list.checkpoints)
 }
 
@@ -41,9 +46,14 @@ pub(crate) fn persist_checkpoint_meta(
 ) -> Result<()> {
     fs::create_dir_all(wal_dir)?;
     let f = checkpoint_file(wal_dir);
-    let raw = toml::to_string(&CheckpointMetaList {
-        checkpoints: checkpoints.to_vec(),
-    })?;
+    let mut checkpoints = checkpoints.to_vec();
+    checkpoints.sort_by(|a, b| {
+        a.height
+            .cmp(&b.height)
+            .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
+            .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+    });
+    let raw = toml::to_string(&CheckpointMetaList { checkpoints })?;
     fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
     Ok(())
 }
