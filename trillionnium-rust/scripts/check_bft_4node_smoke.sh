@@ -44,10 +44,15 @@ done
 report="$OUT_DIR/bft4-smoke-${TS}.txt"
 {
   echo "bft4_smoke_ts=$TS"
+  echo "branch=$(git branch --show-current)"
+  echo "commit_short=$(git rev-parse --short HEAD)"
+  echo "worktree_status=$(test -z "$(git status --short)" && echo clean || echo dirty)"
   for n in 1 2 3 4; do
     log="$OUT_DIR/bft4-node${n}-${TS}.log"
+    cfg="configs/node${n}.toml"
     c=$(grep -c '^\[bft\].*step=Commit' "$log" || true)
-    echo "node${n}_commit_events=$c log=$log"
+    cfg_sha=$(shasum -a 256 "$cfg" | awk '{print $1}')
+    echo "node${n}_commit_events=$c log=$log config=$cfg config_sha256=$cfg_sha"
   done
   echo "status=PASS"
 } > "$report"
