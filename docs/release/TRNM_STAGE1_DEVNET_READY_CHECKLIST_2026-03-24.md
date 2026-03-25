@@ -66,6 +66,8 @@ operator_id=
 worktree_root=
 workspace_root=
 branch=
+branch_ref=
+head_sha=
 commit_short=
 worktree_status=clean|dirty
 binary_path=
@@ -80,7 +82,7 @@ rollback_entrypoint=
 
 最少要求：
 - `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
-- `branch` 与 `commit_short` 可直接映射到本次证据；
+- `branch` / `branch_ref` / `head_sha` 与 `commit_short` 共同固定这次证据绑定的是哪一条 lane 引用与哪一个精确提交，避免只记录短 branch 名后在多 worktree 并行时发生同名误判；
 - `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个 `trnm-node` 构建”；
 - 若本轮使用 `trnm-cli` 做查询 / handoff / 预检，则 `cli_binary_sha256` 与 `cli_build_command` 必须能回答“操作员看到的结果来自哪一个 CLI 构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
@@ -94,8 +96,13 @@ WORKSPACE_ROOT="$(pwd)"
 printf 'operator_id=%s\n' "${OPERATOR_ID:-<fill-me>}"
 printf 'worktree_root=%s\n' "$WORKTREE_ROOT"
 printf 'workspace_root=%s\n' "$WORKSPACE_ROOT"
-printf 'branch=%s\n' "$(git branch --show-current)"
-printf 'commit_short=%s\n' "$(git rev-parse --short HEAD)"
+CURRENT_BRANCH="$(git branch --show-current)"
+CURRENT_HEAD="$(git rev-parse HEAD)"
+test -n "$CURRENT_BRANCH"
+printf 'branch=%s\n' "$CURRENT_BRANCH"
+printf 'branch_ref=%s\n' "refs/heads/$CURRENT_BRANCH"
+printf 'head_sha=%s\n' "$CURRENT_HEAD"
+printf 'commit_short=%s\n' "${CURRENT_HEAD:0:9}"
 printf 'worktree_status=%s\n' "$(test -z "$(git status --short)" && echo clean || echo dirty)"
 printf 'binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-node"
 printf 'build_command=%s\n' 'cargo build -p trnm-node'
