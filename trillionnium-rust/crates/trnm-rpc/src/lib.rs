@@ -1410,4 +1410,36 @@ mod tests {
         assert!(out.observation_classified_outcome_conserves_sample_count());
         assert!(!out.bridge_contract_consistent());
     }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_unclassified_failure_without_source_cardinality(
+    ) {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 800,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 0,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("rate".into()),
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert_eq!(out.observation_classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        assert!(!out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
 }
