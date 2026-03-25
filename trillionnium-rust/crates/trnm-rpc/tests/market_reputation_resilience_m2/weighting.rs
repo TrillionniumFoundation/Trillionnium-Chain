@@ -295,6 +295,7 @@ fn market_match_exposes_when_winner_reputation_was_clamped() {
     assert_eq!(matched["winner"], "worker-high");
     assert_eq!(matched["winner_reputation"], 10);
     assert_eq!(matched["winner_reputation_effective"], 2);
+    assert_eq!(matched["winner_reputation_clamp_limit"], 2);
     assert_eq!(matched["winner_reputation_clamped"], true);
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
 

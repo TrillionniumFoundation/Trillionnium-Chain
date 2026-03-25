@@ -91,6 +91,7 @@ fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
     assert_eq!(matched["winner"], "worker-risk");
     assert_eq!(matched["winner_reputation"], -50);
     assert_eq!(matched["winner_reputation_effective"], -50);
+    assert_eq!(matched["winner_reputation_clamp_limit"], 1000);
     assert_eq!(matched["base_score"], 50000);
     assert_eq!(matched["reputation_weight_unit"], 100);
     assert_eq!(matched["reputation_weight"], 0);
