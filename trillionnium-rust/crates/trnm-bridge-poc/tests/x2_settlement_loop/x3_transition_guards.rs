@@ -492,6 +492,39 @@ fn x3_prep_accepts_confirm_height_at_source_plus_one_finality_boundary() {
 }
 
 #[test]
+fn x3_prep_accepts_saturated_finality_boundary_when_source_is_u64_max_and_target_lags() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-saturated-upper-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(u64::MAX, u64::MAX - 1, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: u64::MAX },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: u64::MAX,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(u64::MAX),
+                heartbeat_target_height: Some(u64::MAX - 1),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(u64::MAX),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(u64::MAX));
+}
+
+#[test]
 fn x3_prep_accepts_confirm_height_at_heartbeat_target_lower_boundary() {
     let mut request = SettlementRequest::new(1, "0xconfirm-lower-boundary".to_string());
     let token = operator_token();
