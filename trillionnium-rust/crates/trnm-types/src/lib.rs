@@ -134,6 +134,16 @@ pub struct TaskMetadataCompatibility {
     pub complete_metering_snapshot: bool,
 }
 
+impl TaskMetadataCompatibility {
+    pub fn is_runtime_compatible(&self) -> bool {
+        self.canonical_core_fields && self.complete_metering_snapshot
+    }
+
+    pub fn requires_governance_upgrade(&self) -> bool {
+        self.legacy_note_only || !self.is_runtime_compatible()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskMetadataCompatibilityFinding {
@@ -274,6 +284,10 @@ impl TaskMetadata {
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
         let findings = self.compatibility_findings();
         (!findings.is_empty()).then_some(findings)
+    }
+
+    pub fn requires_runtime_metadata_upgrade(&self) -> bool {
+        self.compatibility_profile().requires_governance_upgrade()
     }
 }
 
@@ -422,6 +436,9 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.is_runtime_compatible());
+        assert!(!compatibility.requires_governance_upgrade());
+        assert!(!decoded.requires_runtime_metadata_upgrade());
         assert_eq!(decoded.compatibility_findings_nonempty(), None);
     }
 
@@ -433,6 +450,9 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
         assert_eq!(
             metadata.compatibility_findings(),
             vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload]
@@ -464,6 +484,9 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
         assert_eq!(
             metadata.compatibility_findings(),
             vec![TaskMetadataCompatibilityFinding::NonCanonicalCoreFields]
@@ -503,6 +526,9 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
         assert_eq!(
             metadata.compatibility_findings(),
             vec![
