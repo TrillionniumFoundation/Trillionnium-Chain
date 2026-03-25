@@ -2593,10 +2593,16 @@ fn is_health_probe_path(path: &str) -> bool {
         "/health/",
         "/healthz",
         "/healthz/",
+        "/live",
+        "/live/",
         "/livez",
         "/livez/",
+        "/ready",
+        "/ready/",
         "/readyz",
         "/readyz/",
+        "/status",
+        "/status/",
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
@@ -3130,7 +3136,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                     Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        http_json_response("400 Bad Request", body)
+                        json_response_for_method(method, "400 Bad Request", body)
                     }
                 }
             }
@@ -3157,7 +3163,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     (_, Err(err)) => err,
                     (Err(_), _) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        http_json_response("400 Bad Request", body)
+                        json_response_for_method(method, "400 Bad Request", body)
                     }
                 }
             }
@@ -3196,12 +3202,15 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 } else {
                     let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
-                    http_json_response("404 Not Found", body)
+                    json_response_for_method(method, "404 Not Found", body)
                 }
             }
             _ => {
                 let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-                http_json_response("404 Not Found", body)
+                match request {
+                    Some((method, _)) => json_response_for_method(method, "404 Not Found", body),
+                    None => http_json_response("404 Not Found", body),
+                }
             }
         };
 
@@ -4960,6 +4969,21 @@ mod tests {
         assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
         assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
         assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+    }
+
+    #[test]
+    fn json_response_for_method_preserves_head_semantics_for_error_paths() {
+        let not_found = json_response_for_method("HEAD", "404 Not Found", "{\"ok\":false}");
+        assert!(not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(not_found.ends_with("\r\n\r\n"));
+        assert!(!not_found.ends_with("{\"ok\":false}"));
+        assert!(not_found.contains("Content-Length: 12\r\n"));
+
+        let bad_request =
+            json_response_for_method("HEAD", "400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
+        assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(bad_request.ends_with("\r\n\r\n"));
+        assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
     }
 
     #[test]
