@@ -1757,6 +1757,21 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn write_only_fast_path_still_rejects_same_object_version_skew() {
+        let skewed_write_only = tx(
+            1,
+            vec![],
+            vec![ObjectRef { id: 11, version: 1 }, ObjectRef { id: 11, version: 2 }],
+        );
+        let other_write_only = tx(2, vec![], vec![o(99)]);
+
+        let _ = detect_conflict(&skewed_write_only, &other_write_only);
+    }
+
+    #[test]
     fn no_conflict() {
         assert!(!detect_conflict(
             &tx(1, vec![o(1)], vec![]),
