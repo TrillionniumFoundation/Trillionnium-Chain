@@ -188,6 +188,16 @@ struct TxQueryResponse {
 
 fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Result<()> {
     let Some(compatibility) = parsed.get("metadata_compatibility") else {
+        if parsed.get("metadata_requires_governance_upgrade").is_some() {
+            bail!(
+                "task query response metadata_requires_governance_upgrade requires metadata_compatibility"
+            );
+        }
+        if parsed.get("metadata_compatibility_findings").is_some() {
+            bail!(
+                "task query response metadata_compatibility_findings requires metadata_compatibility"
+            );
+        }
         return Ok(());
     };
 
@@ -2219,6 +2229,24 @@ mod tests {
         assert!(err
             .to_string()
             .contains("metadata_compatibility_findings mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_upgrade_signal_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_requires_governance_upgrade":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_requires_governance_upgrade requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_findings_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility_findings requires metadata_compatibility"));
     }
 
     #[test]
