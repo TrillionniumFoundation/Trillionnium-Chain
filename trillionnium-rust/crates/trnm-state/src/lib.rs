@@ -4225,6 +4225,47 @@ mod tests {
     }
 
     #[test]
+    fn completed_unchallenged_retention_snapshot_changes_state_root() {
+        let mut without_retention = StateStore::new();
+        let mut with_retention = StateStore::new();
+
+        let mut base_task = TaskObject {
+            task_id: 404,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut retained_task = base_task.clone();
+        retained_task.challenge_window_blocks_snapshot = Some(100);
+
+        without_retention.put_task_new(base_task).unwrap();
+        with_retention.put_task_new(retained_task).unwrap();
+
+        assert_ne!(
+            without_retention.state_root(),
+            with_retention.state_root(),
+            "state_root must include retained reveal-time challenge-window snapshots for completed unchallenged tasks so later collateral/proof audits can distinguish retention-aware terminal state"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_incomplete_metering_proof_metadata() {
         let mut st = StateStore::new();
 
