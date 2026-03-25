@@ -3062,6 +3062,14 @@ fn resolve_capability_token_subject_or_token(
     subject_tokens.last().copied()
 }
 
+fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
+    if method == "HEAD" {
+        http_json_head_response(status_line, body.len())
+    } else {
+        http_json_response(status_line, body)
+    }
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -3091,7 +3099,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
         let request = parse_http_request_target(first);
-        let target = parse_http_get_target(first);
+        let target = request.map(|(_, raw)| raw);
         let path = request.map(|(_, raw)| raw.split('?').next().unwrap_or(raw));
 
         let response = match (request, path, target) {
@@ -3103,13 +3111,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     "version": 1
                 })
                 .to_string();
-                if method == "HEAD" {
-                    http_json_head_response("200 OK", body.len())
-                } else {
-                    http_json_response("200 OK", &body)
-                }
+                json_response_for_method(method, "200 OK", &body)
             }
-            (_, Some(path), Some(_)) if path.starts_with("/query-task/") => {
+            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
@@ -3120,11 +3124,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                                 });
-                                http_json_response("200 OK", &body)
+                                json_response_for_method(method, "200 OK", &body)
                             }
                             Err(err) => {
                                 let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
+                                json_response_for_method(method, "404 Not Found", &body)
                             }
                         }
                     }
@@ -3134,7 +3138,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (_, Some(path), Some(target)) if path.starts_with("/query-events/") => {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
@@ -3146,11 +3150,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 let body = serde_json::to_string(&events).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                                 });
-                                http_json_response("200 OK", &body)
+                                json_response_for_method(method, "200 OK", &body)
                             }
                             Err(err) => {
                                 let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
+                                json_response_for_method(method, "404 Not Found", &body)
                             }
                         }
                     }
@@ -3161,7 +3165,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (_, Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
+            (Some((method, _)), Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
                 let query = parse_query_normalized_audit_events_query_from_path(target);
                 match query {
                     Ok(query) => {
@@ -3170,13 +3174,13 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                         let out = query_normalized_audit_events(&node_events.events, &recs, &query);
                         let body = serde_json::to_string(&out)
                             .unwrap_or_else(|_| r#"{"ok":false,"code":"SERDE_ERROR"}"#.to_string());
-                        http_json_response("200 OK", &body)
+                        json_response_for_method(method, "200 OK", &body)
                     }
                     Err(err) => err,
                 }
             }
 
-            (_, Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
+            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
@@ -3187,11 +3191,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                 "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                             });
-                            http_json_response("200 OK", &body)
+                            json_response_for_method(method, "200 OK", &body)
                         }
                         Err(err) => {
                             let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            http_json_response("404 Not Found", &body)
+                            json_response_for_method(method, "404 Not Found", &body)
                         }
                     }
                 } else {

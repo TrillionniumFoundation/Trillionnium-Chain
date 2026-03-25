@@ -7,8 +7,7 @@ use crate::capability::{
 use crate::envpaths::identity_registry_file;
 use crate::http::{
     configure_health_stream, http_json_head_response, http_json_response,
-    parse_http_get_target, parse_http_request_target, parse_query_events_limit_from_path,
-    read_http_request_head,
+    parse_http_request_target, parse_query_events_limit_from_path, read_http_request_head,
 };
 use crate::node_events::load_node_events;
 use crate::runtime::now_ms;
@@ -31,6 +30,14 @@ fn is_health_probe_path(path: &str) -> bool {
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
+}
+
+fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
+    if method == "HEAD" {
+        http_json_head_response(status_line, body.len())
+    } else {
+        http_json_response(status_line, body)
+    }
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -62,7 +69,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
         let request = parse_http_request_target(first);
-        let target = parse_http_get_target(first);
+        let target = request.map(|(_, raw)| raw);
         let path = request.map(|(_, raw)| raw.split('?').next().unwrap_or(raw));
 
         let response = match (request, path, target) {
@@ -74,13 +81,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     "version": 1
                 })
                 .to_string();
-                if method == "HEAD" {
-                    http_json_head_response("200 OK", body.len())
-                } else {
-                    http_json_response("200 OK", &body)
-                }
+                json_response_for_method(method, "200 OK", &body)
             }
-            (_, Some(path), Some(_)) if path.starts_with("/query-task/") => {
+            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
@@ -91,11 +94,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                                 let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                                 });
-                                http_json_response("200 OK", &body)
+                                json_response_for_method(method, "200 OK", &body)
                             }
                             Err(err) => {
                                 let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
+                                json_response_for_method(method, "404 Not Found", &body)
                             }
                         }
                     }
@@ -105,7 +108,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (_, Some(path), Some(target)) if path.starts_with("/query-events/") => {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
@@ -117,11 +120,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                                 let body = serde_json::to_string(&events).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                                 });
-                                http_json_response("200 OK", &body)
+                                json_response_for_method(method, "200 OK", &body)
                             }
                             Err(err) => {
                                 let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
+                                json_response_for_method(method, "404 Not Found", &body)
                             }
                         }
                     }
@@ -132,7 +135,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (_, Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
+            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
@@ -143,11 +146,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                 "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
                             });
-                            http_json_response("200 OK", &body)
+                            json_response_for_method(method, "200 OK", &body)
                         }
                         Err(err) => {
                             let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            http_json_response("404 Not Found", &body)
+                            json_response_for_method(method, "404 Not Found", &body)
                         }
                     }
                 } else {
@@ -169,7 +172,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::is_health_probe_path;
+    use super::{is_health_probe_path, json_response_for_method};
     use crate::http::parse_http_request_target;
 
     #[test]
@@ -188,5 +191,16 @@ mod tests {
         assert!(is_health_probe_path("/ReadyZ/"));
         assert!(is_health_probe_path("/STATUS"));
         assert!(!is_health_probe_path("/healthcheck"));
+    }
+
+    #[test]
+    fn json_response_for_method_uses_head_headers_without_body() {
+        let get = json_response_for_method("GET", "200 OK", "{\"ok\":true}");
+        assert!(get.ends_with("{\"ok\":true}"));
+
+        let head = json_response_for_method("HEAD", "200 OK", "{\"ok\":true}");
+        assert!(head.ends_with("\r\n\r\n"));
+        assert!(!head.ends_with("{\"ok\":true}"));
+        assert!(head.contains("Content-Length: 11\r\n"));
     }
 }
