@@ -78,6 +78,18 @@ fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
         .unwrap_or(false)
 }
 
+fn emit_settlement_event(event: &SettlementEvent) {
+    eprintln!(
+        "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
+        event.phase,
+        event.heartbeat_source_height,
+        event.heartbeat_target_height,
+        event.heartbeat_latency_ms,
+        event.confirm_height,
+        event.confirm_reason,
+    );
+}
+
 /// Drives the minimal settlement state transition after relay liveness has been
 /// sampled and a settlement confirmation result is available.
 ///
@@ -138,15 +150,7 @@ pub fn drive_minimal_settlement(
             confirm_height: None,
             confirm_reason: Some(reason.clone()),
         };
-        eprintln!(
-            "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-            event.phase,
-            event.heartbeat_source_height,
-            event.heartbeat_target_height,
-            event.heartbeat_latency_ms,
-            event.confirm_height,
-            event.confirm_reason,
-        );
+        emit_settlement_event(&event);
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
@@ -195,15 +199,7 @@ pub fn drive_minimal_settlement(
                 confirm_height: Some(height),
                 confirm_reason: None,
             };
-            eprintln!(
-                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-                event.phase,
-                event.heartbeat_source_height,
-                event.heartbeat_target_height,
-                event.heartbeat_latency_ms,
-                event.confirm_height,
-                event.confirm_reason,
-            );
+            emit_settlement_event(&event);
             Ok(SettlementStep::Finalized { height, event })
         }
         SettlementConfirm::Failed { reason } => {
@@ -218,15 +214,7 @@ pub fn drive_minimal_settlement(
                 confirm_height: None,
                 confirm_reason: Some(reason.clone()),
             };
-            eprintln!(
-                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-                event.phase,
-                event.heartbeat_source_height,
-                event.heartbeat_target_height,
-                event.heartbeat_latency_ms,
-                event.confirm_height,
-                event.confirm_reason,
-            );
+            emit_settlement_event(&event);
             Ok(SettlementStep::Compensated { reason, event })
         }
     }
