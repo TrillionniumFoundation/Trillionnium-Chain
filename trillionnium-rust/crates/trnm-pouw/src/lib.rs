@@ -2217,6 +2217,39 @@ mod tests {
     }
 
     #[test]
+    fn reveal_replay_is_rejected_without_mutating_receipt_state() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 1_001, "alice".into(), 10).unwrap();
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(1_001, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        let before = st.get_task(r4.id).unwrap();
+        let replay_err = apply_reveal_result(&mut st, r4, result_hash, reveal_salt, None)
+            .expect_err("second reveal attempt must be rejected as a replay");
+        assert!(matches!(replay_err, PouwError::InvalidTransition));
+
+        let after = st.get_task(1_001).unwrap();
+        assert_eq!(after.status, before.status);
+        assert_eq!(after.result_hash, before.result_hash);
+        assert_eq!(after.reveal_salt, before.reveal_salt);
+        assert_eq!(
+            after.challenge_deadline_height,
+            before.challenge_deadline_height,
+            "receipt replay must not re-arm or shift the async challenge window"
+        );
+        assert_eq!(
+            after.challenge_window_blocks_snapshot,
+            before.challenge_window_blocks_snapshot
+        );
+    }
+
+    #[test]
     fn challenge_requires_revealed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 9, "alice".into(), 10).unwrap();
