@@ -169,6 +169,10 @@ pub(crate) fn query_task_from_state_snapshot(
             .metadata
             .as_ref()
             .map(|metadata| metadata.compatibility_profile()),
+        metadata_requires_governance_upgrade: task
+            .metadata
+            .as_ref()
+            .map(|metadata| metadata.requires_runtime_metadata_upgrade()),
         metadata_compatibility_findings: task
             .metadata
             .as_ref()

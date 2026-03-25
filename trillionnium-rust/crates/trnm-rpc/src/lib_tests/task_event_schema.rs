@@ -11,6 +11,7 @@ fn rpc_schema_smoke_task_fields_stable() {
         result_hash_hex: None,
         version: 1,
         metadata_compatibility: None,
+        metadata_requires_governance_upgrade: None,
         metadata_compatibility_findings: None,
         metering: None,
     };
@@ -38,6 +39,7 @@ fn rpc_task_query_omits_metering_when_absent() {
         result_hash_hex: None,
         version: 1,
         metadata_compatibility: None,
+        metadata_requires_governance_upgrade: None,
         metadata_compatibility_findings: None,
         metering: None,
     };
@@ -59,6 +61,7 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
             canonical_core_fields: true,
             complete_metering_snapshot: true,
         }),
+        metadata_requires_governance_upgrade: Some(false),
         metadata_compatibility_findings: None,
         metering: None,
     };
@@ -72,6 +75,7 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
         v["metadata_compatibility"]["complete_metering_snapshot"],
         json!(true)
     );
+    assert_eq!(v["metadata_requires_governance_upgrade"], json!(false));
 }
 
 #[test]
@@ -88,6 +92,7 @@ fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
             canonical_core_fields: false,
             complete_metering_snapshot: false,
         }),
+        metadata_requires_governance_upgrade: Some(true),
         metadata_compatibility_findings: Some(vec![
             TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
             TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
@@ -95,6 +100,7 @@ fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
+    assert_eq!(v["metadata_requires_governance_upgrade"], json!(true));
     assert_eq!(
         v["metadata_compatibility_findings"],
         json!(["non_canonical_core_fields", "incomplete_metering_snapshot"])
@@ -111,6 +117,7 @@ fn rpc_task_query_includes_metering_when_present() {
         result_hash_hex: Some("abcd".into()),
         version: 3,
         metadata_compatibility: None,
+        metadata_requires_governance_upgrade: None,
         metadata_compatibility_findings: None,
         metering: Some(TaskMeteringQueryResponse {
             workload_class: "llm_inference".into(),
