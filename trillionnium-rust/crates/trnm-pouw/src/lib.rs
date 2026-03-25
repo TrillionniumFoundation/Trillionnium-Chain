@@ -935,6 +935,16 @@ fn preflight_resolve_transfers(
     Ok(())
 }
 
+fn scrub_immediate_verification_challenge_fields(task: &mut TaskObject) {
+    task.challenge_deadline_height = None;
+    task.challenge_window_blocks_snapshot = None;
+    task.challenged_at_height = None;
+    task.resolve_deadline_height = None;
+    task.challenge_bond = None;
+    task.challenger = None;
+    task.challenge_bond_forfeited = None;
+}
+
 fn finalize_verified_reveal_success(
     st: &mut StateStore,
     task_ref: ObjectRef,
@@ -1505,9 +1515,11 @@ pub fn apply_reveal_result_at_height(
                 task.status = TaskStatus::Completed;
                 task.result_hash = Some(result_hash);
                 task.reveal_salt = Some(reveal_salt);
-                // No challenge window needed.
-                task.challenge_deadline_height = None;
-                task.resolve_deadline_height = None;
+                // No challenge window/collateral lifecycle exists for immediately
+                // verified proofs. Scrub any legacy/stale challenge retention fields
+                // so completed TEE/ZK tasks cannot masquerade as having Filecoin-like
+                // collateral-proof history they never actually entered.
+                scrub_immediate_verification_challenge_fields(&mut task);
 
                 // Immediate finality remains atomic with stake settlement: preflight
                 // the unlock on a cloned state, then persist the task before touching balances.
@@ -7564,6 +7576,46 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
+    }
+
+    #[test]
+    fn verified_reveal_scrubs_legacy_challenge_retention_fields_before_immediate_completion() {
+        let mut task = TaskObject {
+            task_id: 198_913,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: Some([9u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(100),
+            reveal_deadline_height: Some(120),
+            challenge_deadline_height: Some(222),
+            challenge_window_blocks_snapshot: Some(1440),
+            challenged_at_height: Some(111),
+            resolve_deadline_height: Some(333),
+            challenge_bond: Some(44),
+            challenger: Some("legacy-challenger".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 1,
+        };
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+
+        assert_eq!(task.challenge_window_blocks_snapshot, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.committed_at_height, Some(100));
+        assert_eq!(task.reveal_deadline_height, Some(120));
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
     }
 
     #[test]
