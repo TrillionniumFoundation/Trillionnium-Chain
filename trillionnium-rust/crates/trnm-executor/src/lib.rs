@@ -85,6 +85,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_scan_misses_per_group(&self) -> f64 {
+        ratio_usize(self.retry_scan_misses(), self.group_count)
+    }
+
+    #[inline]
     pub fn retry_scan_overhang_per_hit(&self) -> f64 {
         ratio_usize(self.retry_scan_misses(), self.conflict_hits)
     }

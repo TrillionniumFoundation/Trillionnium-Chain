@@ -218,6 +218,7 @@ fn main() {
         let retry_scan_misses = profile.retry_scan_misses();
         let retry_scan_miss_rate = profile.retry_scan_miss_rate();
         let retry_scan_misses_per_tx = profile.retry_scan_misses_per_tx();
+        let retry_scan_misses_per_group = profile.retry_scan_misses_per_group();
         let retry_scan_overhang_per_hit = profile.retry_scan_overhang_per_hit();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
         let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
@@ -263,6 +264,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_scan_misses_per_tx={:.4}",
             retry_scan_misses_per_tx
+        ));
+        lines.push(format!(
+            "profile.retry_scan_misses_per_group={:.4}",
+            retry_scan_misses_per_group
         ));
         lines.push(format!(
             "profile.retry_scan_overhang_per_hit={:.4}",
