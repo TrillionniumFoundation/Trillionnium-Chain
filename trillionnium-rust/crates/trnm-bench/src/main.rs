@@ -238,6 +238,7 @@ fn main() {
         let attributed_retry_hits = profile.attributed_retry_hits();
         let unattributed_retry_hits = profile.unattributed_retry_hits();
         let unattributed_retry_share = profile.unattributed_retry_share();
+        let retry_attribution_coverage = profile.retry_attribution_coverage();
         let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
         let retry_stage_concentration = profile.retry_stage_concentration();
@@ -351,6 +352,10 @@ fn main() {
         lines.push(format!(
             "profile.unattributed_retry_share={:.4}",
             unattributed_retry_share
+        ));
+        lines.push(format!(
+            "profile.retry_attribution_coverage={:.4}",
+            retry_attribution_coverage
         ));
         lines.push(format!(
             "profile.retry_stage_overlap_hits={}",
@@ -594,6 +599,7 @@ mod tests {
         assert_eq!(profile.attributed_retry_hits(), 5);
         assert_eq!(profile.unattributed_retry_hits(), 0);
         assert_eq!(profile.unattributed_retry_share(), 0.0);
+        assert_eq!(profile.retry_attribution_coverage(), 1.0);
         assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);

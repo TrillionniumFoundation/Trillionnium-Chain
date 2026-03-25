@@ -214,6 +214,14 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_attribution_coverage(&self) -> f64 {
+        ratio_usize(
+            self.attributed_retry_hits().min(self.conflict_hits),
+            self.conflict_hits,
+        )
+    }
+
+    #[inline]
     pub fn retry_stage_overlap_hits(&self) -> usize {
         self.attributed_retry_hits()
             .saturating_sub(self.conflict_hits)
