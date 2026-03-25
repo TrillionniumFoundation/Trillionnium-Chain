@@ -197,6 +197,9 @@ impl TaskMetadata {
             && self.provenance.is_none()
             && self.metering.is_none();
 
+        // Keep top-level metadata canonicality distinct from the metering snapshot verdict.
+        // This makes governance-upgrade diagnostics clearer at query time: malformed
+        // metering no longer masquerades as a generic core-field failure.
         let canonical_core_fields = self
             .note
             .as_deref()
@@ -253,11 +256,6 @@ impl TaskMetadata {
                             .map(has_canonical_metadata_atom)
                             .unwrap_or(true)
                 })
-                .unwrap_or(true)
-            && self
-                .metering
-                .as_ref()
-                .map(TaskMeteringSnapshot::has_complete_core_fields)
                 .unwrap_or(true);
 
         let complete_metering_snapshot = self
@@ -592,17 +590,14 @@ mod tests {
 
         let compatibility = metadata.compatibility_profile();
         assert!(!compatibility.legacy_note_only);
-        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
         assert_eq!(
             metadata.compatibility_findings(),
-            vec![
-                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
-                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
-            ]
+            vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot]
         );
     }
 
@@ -641,24 +636,18 @@ mod tests {
 
         let compatibility = metadata.compatibility_profile();
         assert!(!compatibility.legacy_note_only);
-        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
         assert_eq!(
             metadata.compatibility_findings(),
-            vec![
-                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
-                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
-            ]
+            vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot]
         );
         assert_eq!(
             metadata.compatibility_findings_nonempty(),
-            Some(vec![
-                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
-                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
-            ])
+            Some(vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot])
         );
     }
 
