@@ -124,6 +124,7 @@ Manifest/evidence identity fields to verify before handoff:
 - `git_worktree_entry_begin` … `git_worktree_entry_end` contains the current worktree stanza, so path/branch binding can be audited from the artifact itself
 - `git_status_summary=clean`
 - `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals
+- `env_mvp_mode=` and any nightly-streak log lines are preserved so operators can distinguish a real external policy blocker from a locally skipped gate
 
 ## Artifact ownership quick map
 
@@ -201,6 +202,7 @@ Interpretation rule:
 ### CONDITIONAL GO
 - local code/tests/evidence are green
 - `release_rc.sh` is blocked only by an external policy gate such as insufficient nightly green streak
+- the nightly check actually ran, and `nightly-streak.log` shows an external-policy failure rather than a local skip/override
 
 This is **not** release-ready. It is only rehearsal-ready pending the external gate.
 
@@ -209,6 +211,7 @@ This is **not** release-ready. It is only rehearsal-ready pending the external g
 - branch/worktree identity is unclear
 - evidence directory is missing required files
 - the run depended on undocumented environment overrides
+- the nightly streak gate was skipped or locally overridden for a handoff being presented as release discipline evidence
 - artifacts were produced on a dirty tree
 
 ## Evidence handoff template
