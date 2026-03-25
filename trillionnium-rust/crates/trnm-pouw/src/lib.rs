@@ -13850,8 +13850,16 @@ mod tests {
             .get_task(next.id)
             .expect("revealed timeout completion must persist task object");
         assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention bookkeeping: unchallenged completion should keep the
+        // reveal-time retention policy snapshot for later audits, while clearing any
+        // live challenge/collateral timers that are no longer actionable.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert!(task.challenge_deadline_height.is_none());
+        assert!(task.challenged_at_height.is_none());
+        assert!(task.resolve_deadline_height.is_none());
         assert_eq!(task.challenge_bond, None);
         assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.challenger, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
