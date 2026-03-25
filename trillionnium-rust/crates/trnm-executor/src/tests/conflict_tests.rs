@@ -35,6 +35,25 @@ fn read_only_overlap_is_non_conflicting() {
 }
 
 #[test]
+fn read_only_same_object_different_versions_remains_non_conflicting() {
+    let older = tx(
+        1,
+        vec![ObjectRef { id: 77, version: 1 }],
+        vec![],
+    );
+    let newer = tx(
+        2,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![],
+    );
+
+    assert!(
+        !detect_conflict(&older, &newer),
+        "pure read/read access must remain non-conflicting even when equivalent Sui-style object refs carry different versions"
+    );
+}
+
+#[test]
 fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
     let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
     let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
