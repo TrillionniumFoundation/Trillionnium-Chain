@@ -60,6 +60,26 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_event_t
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_source() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source=trnm.task&source=trnm.adapter",
+    )
+    .expect_err("duplicate source should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("duplicate source"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_cursor() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?cursor=1&cursor=2",
+    )
+    .expect_err("duplicate cursor should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("duplicate cursor"));
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_rejects_empty_source_value() {
     let err = parse_query_normalized_audit_events_query_from_path(
         "/query-normalized-audit-events?source=",
@@ -67,6 +87,26 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_source_valu
     .expect_err("empty source should fail closed");
     assert!(err.contains("400 Bad Request"));
     assert!(err.contains("invalid source"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_empty_event_type_value() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?eventType=",
+    )
+    .expect_err("empty eventType should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid eventType"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_empty_cursor_value() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?cursor=",
+    )
+    .expect_err("empty cursor should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid cursor"));
 }
 
 #[test]
