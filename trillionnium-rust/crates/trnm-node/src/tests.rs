@@ -3023,6 +3023,40 @@
     }
 
     #[test]
+    fn critical_guard_single_slot_still_surfaces_tail_critical_domain_work() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 31,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 31,
+                worker: "w1".into(),
+            },
+            MockTx::CreateTask {
+                task_id: 32,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::Challenge {
+                task_id: 31,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 1);
+        assert_eq!(picked.len(), 1);
+        assert!(matches!(picked[0], MockTx::Challenge { task_id: 31, .. }));
+
+        assert_eq!(mempool.len(), 3);
+        assert!(matches!(mempool[0], MockTx::CreateTask { task_id: 31, .. }));
+        assert!(matches!(mempool[1], MockTx::AcceptTask { task_id: 31, .. }));
+        assert!(matches!(mempool[2], MockTx::CreateTask { task_id: 32, .. }));
+    }
+
+    #[test]
     fn backoff_is_capped() {
         assert_eq!(round_change_backoff_ms(0, 5, 40), 0);
         assert_eq!(round_change_backoff_ms(1, 5, 40), 5);
