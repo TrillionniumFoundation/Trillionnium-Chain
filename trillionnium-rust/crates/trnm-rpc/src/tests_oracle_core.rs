@@ -188,3 +188,76 @@ fn query_normalized_audit_events_supports_adapter_source_filter() {
     assert_eq!(out.events[0].note.as_deref(), Some("0xabc123"));
     assert_eq!(out.has_more, Some(false));
 }
+
+#[test]
+fn query_normalized_audit_events_bounds_node_reason_and_note_fields() {
+    let long_status = "A".repeat(120);
+    let long_resolution = "r".repeat(220);
+    let events = vec![NodeEventRecord {
+        event_type: "accept".into(),
+        task_id: 9,
+        from_status: long_status.clone(),
+        to_status: long_status,
+        actor: "worker-a".into(),
+        tx_id: 1,
+        block_height: 10,
+        state_root: "s1".into(),
+        ts_unix_ms: 100,
+        signer: Some("worker-a".into()),
+        challenger: None,
+        tx_hash: None,
+        resolution_code: Some(long_resolution),
+        treasury_delta: None,
+        challenger_delta: None,
+        bond_disposition: None,
+        metering: None,
+    }];
+
+    let out = query_normalized_audit_events(
+        &events,
+        &[],
+        &QueryNormalizedAuditEventsQuery {
+            source: Some("trnm.task".into()),
+            event_type: Some("trnm.task.accept".into()),
+            cursor: None,
+            limit: 10,
+        },
+    );
+    assert_eq!(out.total, Some(1));
+    assert_eq!(out.events.len(), 1);
+    let event = &out.events[0];
+    assert_eq!(event.reason.as_ref().unwrap().chars().count(), 160);
+    assert!(event.reason.as_ref().unwrap().ends_with('…'));
+    assert_eq!(event.note.as_ref().unwrap().chars().count(), 160);
+    assert!(event.note.as_ref().unwrap().ends_with('…'));
+}
+
+#[test]
+fn query_normalized_audit_events_bounds_adapter_note_field() {
+    let recs = vec![AdapterRecord {
+        ts: 300,
+        kind: "accept".into(),
+        task_id: 7,
+        worker: Some("worker-a".into()),
+        result_hash: Some("h".repeat(220)),
+        status: "accepted".into(),
+        tx_hash: None,
+    }];
+
+    let out = query_normalized_audit_events(
+        &[],
+        &recs,
+        &QueryNormalizedAuditEventsQuery {
+            source: Some("trnm.adapter".into()),
+            event_type: Some("trnm.adapter.accept".into()),
+            cursor: None,
+            limit: 10,
+        },
+    );
+    assert_eq!(out.total, Some(1));
+    assert_eq!(out.events.len(), 1);
+    let event = &out.events[0];
+    assert_eq!(event.reason.as_deref(), Some("adapter-event"));
+    assert_eq!(event.note.as_ref().unwrap().chars().count(), 160);
+    assert!(event.note.as_ref().unwrap().ends_with('…'));
+}
