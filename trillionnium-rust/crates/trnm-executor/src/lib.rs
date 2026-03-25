@@ -2193,6 +2193,38 @@ mod tests {
     }
 
     #[test]
+    fn original_free_ingress_fast_path_keeps_profile_stable_and_ordered() {
+        let txs = vec![
+            tx(31, vec![], vec![]),
+            tx(32, vec![], vec![]),
+            tx(33, vec![], vec![]),
+            tx(34, vec![], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![31, 32, 33, 34]);
+        assert_eq!(profile.tx_count, 4);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.grouped_count, 4);
+        assert_eq!(profile.max_group_size, 4);
+        assert_eq!(profile.min_group_size, 4);
+        assert_eq!(profile.avg_group_size, 4.0);
+        assert_eq!(profile.hot_object_share, 0.0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_ww_hits, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_wr_hits, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.stage_rw_hits, 0);
+    }
+
+    #[test]
     fn strategy_preserves_tx_count() {
         let txs = vec![
             tx(1, vec![o(1)], vec![o(2)]),
