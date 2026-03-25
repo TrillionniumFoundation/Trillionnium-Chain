@@ -66,9 +66,12 @@ pub(crate) fn pick_txs_with_critical_guard(
     selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
 
     for (idx, pos) in selected {
-        let tx = mempool
-            .remove(idx)
-            .expect("selected tx index must still exist during descending extraction");
+        let Some(tx) = mempool.remove(idx) else {
+            // Fail closed on any stale/duplicated admission output instead of
+            // panicking the node hot path. Deterministic callers still produce
+            // the same picked set on the happy path.
+            continue;
+        };
         picked_slots[pos] = Some(tx);
     }
 
