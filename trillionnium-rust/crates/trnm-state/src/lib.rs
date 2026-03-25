@@ -126,12 +126,16 @@ impl CheckpointMeta {
     }
 
     pub fn evidence_summary(&self) -> String {
+        let checkpoint_commitment = self.commitment_hex();
         format!(
-            "checkpoint_height={} state_root={} wal_entry_hash={} checkpoint_commitment={}",
+            "checkpoint_height={} checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes={} wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes={} checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes={}",
             self.height,
             self.state_root_hex,
+            self.state_root_hex.len() / 2,
             self.wal_entry_hash_hex,
-            self.commitment_hex()
+            self.wal_entry_hash_hex.len() / 2,
+            checkpoint_commitment,
+            checkpoint_commitment.len() / 2
         )
     }
 }
@@ -4229,7 +4233,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_height=7 state_root={} wal_entry_hash={} checkpoint_commitment={}",
+                "checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes=32 wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes=32 checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes=32",
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
                 checkpoint.commitment_hex()
