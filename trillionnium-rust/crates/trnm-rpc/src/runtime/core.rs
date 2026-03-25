@@ -309,6 +309,7 @@ pub(crate) struct MarketReport {
     pub(crate) bid_coverage_rate: f64,
     pub(crate) avg_bids_per_task: f64,
     pub(crate) match_rate: f64,
+    pub(crate) match_config: MarketScoreConfigOutput,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

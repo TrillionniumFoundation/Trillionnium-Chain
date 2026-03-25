@@ -268,6 +268,7 @@ pub(super) fn handle_market_report() -> Result<()> {
         bid_coverage_rate,
         avg_bids_per_task,
         match_rate,
+        match_config: MarketScoreConfigOutput::from(market_score_config()),
     };
     println!("{}", serde_json::to_string_pretty(&out)?);
     Ok(())

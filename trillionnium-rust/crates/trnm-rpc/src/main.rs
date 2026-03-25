@@ -256,6 +256,7 @@ struct MarketReport {
     bid_coverage_rate: f64,
     avg_bids_per_task: f64,
     match_rate: f64,
+    match_config: MarketScoreConfigOutput,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1604,7 +1605,7 @@ struct MarketScoreConfig {
     reputation_clamp: i64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 struct MarketScoreConfigOutput {
     price_weight: u128,
     reputation_weight: u128,
@@ -1666,7 +1667,8 @@ fn market_score_breakdown(
     let effective_reputation = clamp_reputation_for_market(reputation, cfg);
     let base_score = price.saturating_mul(cfg.price_weight);
     if effective_reputation >= 0 {
-        let reputation_reward = (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
+        let reputation_reward =
+            (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
         let score_floor_applied = reputation_reward > base_score;
         MarketScoreBreakdown {
             effective_reputation,
@@ -1677,8 +1679,8 @@ fn market_score_breakdown(
             score_floor_applied,
         }
     } else {
-        let penalty = (effective_reputation.unsigned_abs() as u128)
-            .saturating_mul(cfg.reputation_weight);
+        let penalty =
+            (effective_reputation.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight);
         MarketScoreBreakdown {
             effective_reputation,
             base_score,
@@ -4344,6 +4346,7 @@ fn main() -> Result<()> {
                 bid_coverage_rate,
                 avg_bids_per_task,
                 match_rate,
+                match_config: MarketScoreConfigOutput::from(market_score_config()),
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }

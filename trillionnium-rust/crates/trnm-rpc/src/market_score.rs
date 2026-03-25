@@ -15,7 +15,7 @@ pub(crate) struct MarketScoreConfig {
     pub(crate) reputation_clamp: i64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct MarketScoreConfigOutput {
     pub(crate) price_weight: u128,
     pub(crate) reputation_weight: u128,

@@ -27,6 +27,7 @@ struct MarketReport {
     bid_coverage_rate: f64,
     avg_bids_per_task: f64,
     match_rate: f64,
+    match_config: MarketScoreConfigOutput,
 }
 
 pub(crate) fn handle_market_create_task(
@@ -298,6 +299,7 @@ pub(crate) fn handle_market_report() -> Result<()> {
         bid_coverage_rate,
         avg_bids_per_task,
         match_rate,
+        match_config: MarketScoreConfigOutput::from(market_score_config()),
     };
     println!("{}", serde_json::to_string_pretty(&out)?);
     Ok(())
