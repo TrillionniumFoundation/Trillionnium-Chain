@@ -21,8 +21,12 @@ fn is_health_probe_path(path: &str) -> bool {
         "/health/",
         "/healthz",
         "/healthz/",
+        "/live",
+        "/live/",
         "/livez",
         "/livez/",
+        "/ready",
+        "/ready/",
         "/readyz",
         "/readyz/",
         "/status",
@@ -183,13 +187,19 @@ mod tests {
         assert!(is_health_probe_path("/health/"));
         assert!(is_health_probe_path("/healthz"));
         assert!(is_health_probe_path("/healthz/"));
+        assert!(is_health_probe_path("/live"));
+        assert!(is_health_probe_path("/live/"));
         assert!(is_health_probe_path("/livez"));
         assert!(is_health_probe_path("/livez/"));
+        assert!(is_health_probe_path("/ready"));
+        assert!(is_health_probe_path("/ready/"));
         assert!(is_health_probe_path("/readyz"));
         assert!(is_health_probe_path("/readyz/"));
         assert!(is_health_probe_path("/status"));
         assert!(is_health_probe_path("/status/"));
         assert!(is_health_probe_path("/HEALTHZ"));
+        assert!(is_health_probe_path("/LIVE"));
+        assert!(is_health_probe_path("/Ready/"));
         assert!(is_health_probe_path("/ReadyZ/"));
         assert!(is_health_probe_path("/STATUS"));
         assert!(!is_health_probe_path("/healthcheck"));
