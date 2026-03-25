@@ -171,6 +171,26 @@ fn market_score_breakdown_saturates_penalty_path_at_u128_max() {
 }
 
 #[test]
+fn market_score_breakdown_saturates_reward_path_at_zero_and_marks_floor() {
+    let breakdown = market_score_breakdown(
+        1,
+        2,
+        MarketScoreConfig {
+            price_weight: 1,
+            reputation_weight: u128::MAX,
+            reputation_clamp: 2,
+        },
+    );
+
+    assert_eq!(breakdown.effective_reputation, 2);
+    assert_eq!(breakdown.base_score, 1);
+    assert_eq!(breakdown.reputation_reward, u128::MAX);
+    assert_eq!(breakdown.penalty, 0);
+    assert_eq!(breakdown.effective_score, 0);
+    assert!(breakdown.score_floor_applied);
+}
+
+#[test]
 fn clamp_reputation_for_market_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
     let cfg = MarketScoreConfig {
         price_weight: 3,
