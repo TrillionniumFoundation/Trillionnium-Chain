@@ -196,6 +196,31 @@ pub(crate) fn reputation_impact_from_weight_bps(weight_bps: u16) -> Option<Reput
     reputation_signal_from_weight_bps(weight_bps).map(reputation_impact)
 }
 
+pub(crate) fn reputation_signal_from_surface(
+    label: &str,
+    delta: i32,
+    tier: u8,
+    weight_bps: u16,
+) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER.iter().find_map(|signal| {
+        let surface = reputation_surface(*signal);
+        (surface.label == label
+            && surface.delta == delta
+            && surface.tier == tier
+            && surface.weight_bps == weight_bps)
+            .then_some(*signal)
+    })
+}
+
+pub(crate) fn reputation_impact_from_surface(
+    label: &str,
+    delta: i32,
+    tier: u8,
+    weight_bps: u16,
+) -> Option<ReputationImpact> {
+    reputation_signal_from_surface(label, delta, tier, weight_bps).map(reputation_impact)
+}
+
 pub(crate) fn apply_reputation_signal(
     rec: &mut MessageIngressRecord,
     signal: ReputationSignal,

@@ -387,6 +387,48 @@ fn canonical_reputation_table_keeps_label_delta_and_tier_lookups_one_to_one() {
 }
 
 #[test]
+fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let surface = reputation_surface(signal);
+        let impact = reputation_impact(signal);
+        assert_eq!(
+            reputation_signal_from_surface(
+                surface.label,
+                surface.delta,
+                surface.tier,
+                surface.weight_bps,
+            ),
+            Some(signal)
+        );
+        assert_eq!(
+            reputation_impact_from_surface(
+                surface.label,
+                surface.delta,
+                surface.tier,
+                surface.weight_bps,
+            ),
+            Some(impact)
+        );
+    }
+
+    assert_eq!(
+        reputation_signal_from_surface("accepted", 3, 3, 9_999),
+        None,
+        "surface lookup must reject weight drift"
+    );
+    assert_eq!(
+        reputation_signal_from_surface("accepted", 3, 2, 10_000),
+        None,
+        "surface lookup must reject tier drift"
+    );
+    assert_eq!(
+        reputation_impact_from_surface("verifier_rejected", -2, 1, 10_000),
+        None,
+        "surface lookup must fail closed on cross-signal weight hybrids"
+    );
+}
+
+#[test]
 fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     let mut rec = MessageIngressRecord {
         request_id: "req-reputation-apply".to_string(),
