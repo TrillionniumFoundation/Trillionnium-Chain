@@ -2948,6 +2948,15 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_write_only_domain_uses_two_smallest_distinct_keys_despite_duplicates() {
+        let t = tx(1, vec![], vec![o(9), o(0), o(9), o(5), o(0), o(5)]);
+
+        // Write-only hot-bucket keys should be canonicalized from the object-scoped
+        // domain itself, ignoring duplicate echoes and original insertion order.
+        assert_eq!(hot_bucket_keys(&t), (0, 5));
+    }
+
+    #[test]
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
