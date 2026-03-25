@@ -348,6 +348,48 @@ mod tests {
     }
 
     #[test]
+    fn classify_flush_ack_prefers_live_receipt_hashes_over_stale_persisted_values() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-live-preferred-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            790,
+            "accepted",
+            Some("commit-old".to_string()),
+            Some("reveal-old".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with stale persisted receipt hashes");
+
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("  commit-live  ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\treveal-live\n".to_string()),
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 790);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-live"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-live"));
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
     fn classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume() {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-retry-outcome-blank-{}-{}.jsonl",
