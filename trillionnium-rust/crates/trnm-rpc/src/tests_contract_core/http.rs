@@ -18,6 +18,21 @@ fn parse_http_request_target_accepts_head_health_probe() {
 }
 
 #[test]
+fn parse_http_request_target_accepts_only_supported_http_versions() {
+    assert_eq!(
+        parse_http_request_target("GET /health HTTP/1.1"),
+        Some(("GET", "/health"))
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.0"),
+        Some(("HEAD", "/readyz"))
+    );
+    assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
+    assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
+    assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+}
+
+#[test]
 fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
     assert_eq!(parse_http_get_path("GET /health#bridge HTTP/1.1"), None);
     assert_eq!(

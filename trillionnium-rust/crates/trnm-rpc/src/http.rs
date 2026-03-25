@@ -7,6 +7,10 @@ use crate::{
     QUERY_EVENTS_LIMIT_DEFAULT, QUERY_EVENTS_LIMIT_MAX,
 };
 
+fn is_supported_http_version(version: &str) -> bool {
+    matches!(version, "HTTP/1.0" | "HTTP/1.1")
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -88,7 +92,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
-    if rest.is_empty() || rest.contains([' ', '\t']) || !rest.starts_with("HTTP/") {
+    if rest.is_empty() || rest.contains([' ', '\t']) || !is_supported_http_version(rest) {
         return None;
     }
 
