@@ -4236,6 +4236,67 @@ mod tests {
     }
 
     #[test]
+    fn task_challenge_evidence_affects_state_root() {
+        let mut baseline = StateStore::new();
+        let mut with_terminal_challenge_evidence = StateStore::new();
+        let mut with_different_terminal_outcome = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 406,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut challenged_terminal = base_task.clone();
+        challenged_terminal.challenge_deadline_height = Some(30);
+        challenged_terminal.challenge_window_blocks_snapshot = Some(12);
+        challenged_terminal.challenged_at_height = Some(24);
+        challenged_terminal.resolve_deadline_height = Some(40);
+        challenged_terminal.challenge_bond = Some(7);
+        challenged_terminal.challenger = Some("challenger-a".into());
+        challenged_terminal.challenge_bond_forfeited = Some(false);
+
+        let mut forfeited_terminal = challenged_terminal.clone();
+        forfeited_terminal.challenge_bond_forfeited = Some(true);
+
+        baseline.put_task_new(base_task).unwrap();
+        with_terminal_challenge_evidence
+            .put_task_new(challenged_terminal)
+            .unwrap();
+        with_different_terminal_outcome
+            .put_task_new(forfeited_terminal)
+            .unwrap();
+
+        assert_ne!(
+            baseline.state_root(),
+            with_terminal_challenge_evidence.state_root(),
+            "state_root must include retained challenge/slash evidence fields so terminal audit metadata cannot be silently omitted"
+        );
+        assert_ne!(
+            with_terminal_challenge_evidence.state_root(),
+            with_different_terminal_outcome.state_root(),
+            "state_root must distinguish refunded-vs-forfeited challenge evidence outcomes for terminal challenged tasks"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_incomplete_metering_proof_metadata() {
         let mut st = StateStore::new();
 
