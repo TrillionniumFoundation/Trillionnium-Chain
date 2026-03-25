@@ -1552,6 +1552,22 @@ fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
         .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
 }
 
+fn stronger_market_reputation_signal(existing: i64, candidate: i64) -> i64 {
+    let existing_abs = existing.unsigned_abs();
+    let candidate_abs = candidate.unsigned_abs();
+    match candidate_abs.cmp(&existing_abs) {
+        std::cmp::Ordering::Greater => candidate,
+        std::cmp::Ordering::Less => existing,
+        std::cmp::Ordering::Equal => {
+            if candidate < existing {
+                candidate
+            } else {
+                existing
+            }
+        }
+    }
+}
+
 fn load_market_reputation() -> BTreeMap<String, i64> {
     let path = market_reputation_file();
     let Ok(raw) = fs::read_to_string(path) else {
@@ -1574,8 +1590,11 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
             normalized
                 .entry(key)
                 // M2 hardening: if aliases normalize to the same worker key,
-                // keep the strongest reputation signal to avoid accidental downgrade.
-                .and_modify(|existing| *existing = (*existing).max(rep))
+                // keep the strongest absolute reputation signal; on equal
+                // magnitude prefer the more negative value to stay fail-closed.
+                .and_modify(|existing| {
+                    *existing = stronger_market_reputation_signal(*existing, rep)
+                })
                 .or_insert(rep);
         }
     }
@@ -5310,7 +5329,15 @@ mod tests {
     }
 
     #[test]
-    fn market_reputation_loader_uses_highest_value_when_aliases_collide() {
+    fn stronger_market_reputation_signal_prefers_larger_absolute_value_and_negative_ties() {
+        assert_eq!(stronger_market_reputation_signal(10, 200), 200);
+        assert_eq!(stronger_market_reputation_signal(-7, -2), -7);
+        assert_eq!(stronger_market_reputation_signal(12, -20), -20);
+        assert_eq!(stronger_market_reputation_signal(20, -20), -20);
+    }
+
+    #[test]
+    fn market_reputation_loader_uses_strongest_signal_when_aliases_collide() {
         let mut path = std::env::temp_dir();
         path.push(format!(
             "trnm_rpc_market_reputation_alias_collision_{}_{}.json",
@@ -5319,7 +5346,7 @@ mod tests {
         ));
         fs::write(
             &path,
-            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7}",
+            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7, \" worker-b \": -2, \"worker-c\": 20, \" WORKER-C \": -20}",
         )
         .expect("write alias-collision reputation fixture");
 
@@ -5332,7 +5359,8 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker-a"), Some(&200));
                 assert_eq!(rep.get("worker-b"), Some(&-7));
-                assert_eq!(rep.len(), 2);
+                assert_eq!(rep.get("worker-c"), Some(&-20));
+                assert_eq!(rep.len(), 3);
             },
         );
 
