@@ -130,6 +130,8 @@ mod tests {
             .expect("fixture should retain the committed WAL entry");
         let da_summary = checkpoint_da_light_verifier_summary(checkpoint, wal_entry)
             .expect("persisted checkpoint must keep a canonical DA/light-verifier summary");
+        assert!(da_summary.contains("da_light_surface=checkpoint-wal-v1"));
+        assert!(da_summary.contains("light_verifier_surface=checkpoint-wal-v1"));
         assert!(da_summary.contains("checkpoint_commitment="));
         assert!(da_summary.contains("wal_prev_hash_kind=linked"));
         assert!(da_summary.contains("wal_proposal_hash_present=true"));
