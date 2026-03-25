@@ -230,6 +230,8 @@ fn main() {
         let stage_rw_retry_share = profile.rw_retry_share();
         let dominant_retry_stage = profile.dominant_retry_stage();
         let dominant_retry_share = profile.dominant_retry_share();
+        let attributed_retry_hits = profile.attributed_retry_hits();
+        let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
@@ -309,6 +311,14 @@ fn main() {
         lines.push(format!(
             "profile.dominant_retry_share={:.4}",
             dominant_retry_share
+        ));
+        lines.push(format!(
+            "profile.attributed_retry_hits={}",
+            attributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.retry_stage_overlap_hits={}",
+            retry_stage_overlap_hits
         ));
         lines.push(format!(
             "profile.retry_stage_overlap_share={:.4}",
@@ -541,6 +551,8 @@ mod tests {
             stage_rw_hits: 1,
         };
 
+        assert_eq!(profile.attributed_retry_hits(), 5);
+        assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
     }
