@@ -855,6 +855,45 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_confirm_without_embedded_heartbeat_metrics_preserves_sparse_overlay_contract() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-sparse-overlay".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: false,
+            degraded: false,
+            message: "healthy overlay".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("healthy sparse overlay should remain confirmable");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(701));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: 701,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: Some(701),
+                    confirm_reason: None,
+                },
+            }
+        );
+    }
+
+    #[test]
     fn drive_minimal_settlement_degraded_heartbeat_overrides_retry_pending_to_preserve_terminal_compensation() {
         let mut request = SettlementRequest::new(1, "0xdegraded-retrying-heartbeat".to_string());
         let token = CapabilityToken {
