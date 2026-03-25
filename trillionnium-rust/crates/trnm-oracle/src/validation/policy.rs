@@ -38,6 +38,13 @@ impl OraclePolicy {
         self.validate()?;
         snapshot.validate_hash()?;
 
+        if snapshot.snapshot_ts_ms > now_ts_ms {
+            return Err(OracleError::FutureSnapshot {
+                snapshot_ts_ms: snapshot.snapshot_ts_ms,
+                now_ts_ms,
+            });
+        }
+
         if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
             return Err(OracleError::StaleSnapshot {
                 snapshot_ts_ms: snapshot.snapshot_ts_ms,

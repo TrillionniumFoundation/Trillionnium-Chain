@@ -121,3 +121,29 @@ fn observation_helpers_keep_unclassified_errors_out_of_classified_totals() {
         report.metrics.classified_outcome_total()
     );
 }
+
+#[test]
+fn observed_report_preserves_future_snapshot_as_unclassified_error_without_stale_counter_drift() {
+    let report = validate_snapshot_observed(
+        &policy(),
+        &snapshot_with(100_000, Some(100_100), 10_001),
+        10_000,
+    );
+
+    assert!(!report.ok);
+    assert_eq!(
+        report.error.as_deref(),
+        Some("future snapshot: ts=10001, now=10000")
+    );
+    assert_eq!(report.observation.stale_reject_total, 0);
+    assert_eq!(report.observation.quorum_reject_total, 0);
+    assert_eq!(report.observation.drift_reject_total, 0);
+    assert_eq!(report.observation.accepted_total, 0);
+    assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+    assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+    assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+    assert_eq!(report.metrics.accepted_total, 0);
+    assert_eq!(report.metrics.sample_count, 1);
+    assert_eq!(report.metrics.classified_reject_total(), 0);
+    assert_eq!(report.metrics.classified_outcome_total(), 0);
+}
