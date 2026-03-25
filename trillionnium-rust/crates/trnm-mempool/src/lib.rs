@@ -1283,7 +1283,19 @@ mod tests {
             g.admit(99, IngressClass::Critical),
             AdmitOutcome::Backpressured
         );
-        assert_eq!(g.pop_ready(), None);
+
+        // Long-lived schedulers may keep polling a hard-stopped lane before any
+        // new capacity appears. Those idle polls must preserve restored duplicate
+        // metadata instead of erasing it as if the lane had drained normally.
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+        }
     }
 
     #[test]
