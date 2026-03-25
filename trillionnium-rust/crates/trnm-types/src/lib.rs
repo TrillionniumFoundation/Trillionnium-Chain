@@ -152,6 +152,13 @@ pub enum TaskMetadataCompatibilityFinding {
     IncompleteMeteringSnapshot,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskMetadataCompatibilityReport {
+    pub compatibility: TaskMetadataCompatibility,
+    pub requires_governance_upgrade: bool,
+    pub findings: Vec<TaskMetadataCompatibilityFinding>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -182,7 +189,7 @@ impl TaskMeteringSnapshot {
 }
 
 impl TaskMetadata {
-    pub fn compatibility_profile(&self) -> TaskMetadataCompatibility {
+    pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
@@ -259,15 +266,12 @@ impl TaskMetadata {
             .map(TaskMeteringSnapshot::has_complete_core_fields)
             .unwrap_or(true);
 
-        TaskMetadataCompatibility {
+        let compatibility = TaskMetadataCompatibility {
             legacy_note_only,
             canonical_core_fields,
             complete_metering_snapshot,
-        }
-    }
+        };
 
-    pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
-        let compatibility = self.compatibility_profile();
         let mut findings = Vec::new();
         if compatibility.legacy_note_only {
             findings.push(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload);
@@ -278,7 +282,20 @@ impl TaskMetadata {
         if !compatibility.complete_metering_snapshot {
             findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
         }
-        findings
+
+        TaskMetadataCompatibilityReport {
+            requires_governance_upgrade: compatibility.requires_governance_upgrade(),
+            compatibility,
+            findings,
+        }
+    }
+
+    pub fn compatibility_profile(&self) -> TaskMetadataCompatibility {
+        self.compatibility_report().compatibility
+    }
+
+    pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report().findings
     }
 
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
@@ -287,7 +304,7 @@ impl TaskMetadata {
     }
 
     pub fn requires_runtime_metadata_upgrade(&self) -> bool {
-        self.compatibility_profile().requires_governance_upgrade()
+        self.compatibility_report().requires_governance_upgrade
     }
 }
 
@@ -443,6 +460,55 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_report_stays_consistent_with_helper_accessors() {
+        let metadata = TaskMetadata {
+            note: Some(" legacy ".into()),
+            task_type: None,
+            input_hash: None,
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                receipt_hash: "".into(),
+                prompt_tokens: 0,
+                generated_tokens: 0,
+                decode_steps: 0,
+                kv_bytes_moved: 0,
+                normalized_work_units: 0,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                policy_snapshot_version: 1,
+                min_accept_work_units: 0,
+                challenge_success_bounty_base: 0,
+                challenge_success_bounty_per_work_unit_num: 0,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 0,
+                worker_completion_bonus_per_work_unit_den: 1,
+                worker_slash_rebate_per_work_unit_num: 0,
+                worker_slash_rebate_per_work_unit_den: 1,
+            }),
+        };
+
+        let report = metadata.compatibility_report();
+        assert_eq!(report.compatibility, metadata.compatibility_profile());
+        assert_eq!(
+            report.requires_governance_upgrade,
+            metadata.requires_runtime_metadata_upgrade()
+        );
+        assert_eq!(report.findings, metadata.compatibility_findings());
+        assert_eq!(
+            report.findings,
+            vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_profile_marks_legacy_note_only_payload() {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
             .expect("legacy payload should deserialize");
@@ -541,7 +607,8 @@ mod tests {
     }
 
     #[test]
-    fn task_metadata_compatibility_profile_flags_incomplete_metering_even_when_other_fields_are_canonical() {
+    fn task_metadata_compatibility_profile_flags_incomplete_metering_even_when_other_fields_are_canonical(
+    ) {
         let metadata = TaskMetadata {
             note: Some("interop".into()),
             task_type: Some("inference".into()),
