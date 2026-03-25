@@ -125,26 +125,30 @@ done
 2. 实际启动的是哪一个 `trnm-node` 二进制；
 3. 参与 bring-up 的节点配置是否与证据记录一致。
 
-若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**：
+若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**，若本轮要固化证据，还应把预期 `HEAD` 一并钉住：
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
 EXPECTED_BRANCH="lane/refXX-scope-name"
-cd trillionnium-rust
-ACTUAL_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
-ACTUAL_BRANCH="$(git branch --show-current)"
-if [[ "$ACTUAL_WORKTREE_ROOT" != "$EXPECTED_WORKTREE_ROOT" ]]; then
-  echo "[FAIL] worktree mismatch: expected $EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
-  exit 1
-fi
-if [[ "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
-  echo "[FAIL] branch mismatch: expected $EXPECTED_BRANCH got $ACTUAL_BRANCH" >&2
-  exit 1
-fi
-printf '[OK] worktree_root=%s branch=%s\n' "$ACTUAL_WORKTREE_ROOT" "$ACTUAL_BRANCH"
+EXPECTED_HEAD="$(git -C "$EXPECTED_WORKTREE_ROOT" rev-parse HEAD)"
+cd "$EXPECTED_WORKTREE_ROOT"
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch "$EXPECTED_BRANCH" \
+  --expected-head "$EXPECTED_HEAD"
 ```
 
-对于 lane 化运行，建议把 `EXPECTED_WORKTREE_ROOT` 与 `EXPECTED_BRANCH` 作为 runbook 参数或环境变量显式传入，而不是依赖人工目测当前 shell 提示符；这样在多 worktree 并行时可以更稳地 fail-closed。
+脚本位置：`scripts/v2/verify_lane_worktree.sh`
+
+若只需要人工 spot-check，也至少保留以下原始命令输出到 evidence：
+
+```bash
+git rev-parse --show-toplevel
+git branch --show-current
+git rev-parse HEAD
+```
+
+对于 lane 化运行，建议把 `EXPECTED_WORKTREE_ROOT` / `EXPECTED_BRANCH` / `EXPECTED_HEAD` 作为 runbook 参数或环境变量显式传入，而不是依赖人工目测当前 shell 提示符；这样在多 worktree 并行时可以更稳地 fail-closed，也能避免把别的 worktree 的 commit 误记成当前 bring-up 证据。 
 
 ## 最小 bring-up 路径
 
