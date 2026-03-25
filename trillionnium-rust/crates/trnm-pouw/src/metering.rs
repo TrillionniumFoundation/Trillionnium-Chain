@@ -19,7 +19,11 @@ fn default_batch_size() -> u32 {
 }
 
 fn normalize_hex(raw: &str) -> &str {
-    raw.trim().strip_prefix("0x").unwrap_or(raw.trim())
+    let trimmed = raw.trim();
+    trimmed
+        .strip_prefix("0x")
+        .or_else(|| trimmed.strip_prefix("0X"))
+        .unwrap_or(trimmed)
 }
 
 fn require_non_empty(value: &str, field: &'static str) -> Result<(), LlmTokenMeterError> {
@@ -457,6 +461,15 @@ mod tests {
             .validate(DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS)
             .unwrap_err();
         assert!(matches!(err, LlmTokenMeterError::InvalidCounter(_)));
+    }
+
+    #[test]
+    fn llm_token_meter_receipt_accepts_uppercase_prefixed_receipt_hash() {
+        let mut receipt = sample_receipt().with_computed_receipt_hash().unwrap();
+        receipt.receipt_hash = format!("0X{}", receipt.receipt_hash.to_ascii_uppercase());
+        receipt
+            .validate(DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS)
+            .expect("uppercase 0X-prefixed receipt hashes should canonicalize");
     }
 
     #[test]
