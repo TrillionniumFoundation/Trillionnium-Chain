@@ -39,7 +39,7 @@ pub(crate) fn process_assigned_record(
             rec.adapter_error = Some(e.context.clone());
 
             println!(
-                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} error={}",
+                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} error={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
@@ -48,6 +48,7 @@ pub(crate) fn process_assigned_record(
                 reputation_impact.label,
                 reputation_impact.delta,
                 reputation_impact.tier,
+                reputation_impact.weight_bps,
                 e.context
             );
             return Ok(true);
@@ -68,7 +69,7 @@ pub(crate) fn process_assigned_record(
         rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
 
         println!(
-            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={}",
+            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={}",
             rec.request_id,
             rec.task_id,
             worker,
@@ -76,7 +77,8 @@ pub(crate) fn process_assigned_record(
             resolution_code,
             reputation_impact.label,
             reputation_impact.delta,
-            reputation_impact.tier
+            reputation_impact.tier,
+            reputation_impact.weight_bps
         );
         return Ok(true);
     }
@@ -102,7 +104,7 @@ pub(crate) fn process_assigned_record(
     rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
 
     println!(
-        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={}",
+        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={}",
         rec.request_id,
         rec.task_id,
         worker,
@@ -111,7 +113,8 @@ pub(crate) fn process_assigned_record(
         rec.provider_request_id.as_deref().unwrap_or("-"),
         reputation_impact.label,
         reputation_impact.delta,
-        reputation_impact.tier
+        reputation_impact.tier,
+        reputation_impact.weight_bps
     );
     Ok(true)
 }

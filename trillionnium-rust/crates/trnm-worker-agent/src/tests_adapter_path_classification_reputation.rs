@@ -62,6 +62,46 @@ fn reputation_weight_bps_exposes_dense_deterministic_rank_surface() {
 }
 
 #[test]
+fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_path() {
+    assert_eq!(
+        reputation_surface(ReputationSignal::Accepted),
+        ReputationSurface {
+            label: "accepted",
+            delta: 3,
+            tier: 3,
+            weight_bps: 10_000,
+        }
+    );
+    assert_eq!(
+        reputation_surface(ReputationSignal::AdapterRetryExhausted),
+        ReputationSurface {
+            label: "adapter_retry_exhausted",
+            delta: -1,
+            tier: 2,
+            weight_bps: 6_666,
+        }
+    );
+    assert_eq!(
+        reputation_surface(ReputationSignal::VerifierRejected),
+        ReputationSurface {
+            label: "verifier_rejected",
+            delta: -2,
+            tier: 1,
+            weight_bps: 3_333,
+        }
+    );
+    assert_eq!(
+        reputation_surface(ReputationSignal::AdapterNonRetriable),
+        ReputationSurface {
+            label: "adapter_non_retriable",
+            delta: -3,
+            tier: 0,
+            weight_bps: 0,
+        }
+    );
+}
+
+#[test]
 fn reputation_score_impact_exposes_stable_labels_and_deltas() {
     assert_eq!(
         reputation_score_impact(ReputationSignal::Accepted),
@@ -377,11 +417,13 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.label, "verifier_rejected");
     assert_eq!(impact.delta, -2);
     assert_eq!(impact.tier, 1);
+    assert_eq!(impact.weight_bps, 3_333);
     assert_eq!(rec.reputation_delta, Some(-2));
 
     let impact = apply_reputation_signal(&mut rec, ReputationSignal::Accepted);
     assert_eq!(impact.label, "accepted");
     assert_eq!(impact.delta, 3);
     assert_eq!(impact.tier, 3);
+    assert_eq!(impact.weight_bps, 10_000);
     assert_eq!(rec.reputation_delta, Some(3));
 }

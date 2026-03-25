@@ -1748,6 +1748,14 @@ pub(crate) struct ReputationImpact {
     pub(crate) tier: u8,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct ReputationSurface {
+    pub(crate) label: &'static str,
+    pub(crate) delta: i32,
+    pub(crate) tier: u8,
+    pub(crate) weight_bps: u16,
+}
+
 pub(crate) const CANONICAL_REPUTATION_SIGNAL_ORDER: [ReputationSignal; 4] = [
     ReputationSignal::Accepted,
     ReputationSignal::AdapterRetryExhausted,
@@ -1816,9 +1824,11 @@ pub(crate) fn reputation_signal_from_score_impact(
     label: &str,
     delta: i32,
 ) -> Option<ReputationSignal> {
-    CANONICAL_REPUTATION_IMPACTS.iter().find_map(|(signal, impact)| {
-        (impact.label == label && impact.delta == delta).then_some(*signal)
-    })
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(signal, impact)| {
+            (impact.label == label && impact.delta == delta).then_some(*signal)
+        })
 }
 
 pub(crate) fn reputation_impact_from_score_impact(
@@ -1869,6 +1879,16 @@ pub(crate) fn reputation_weight_bps(signal: ReputationSignal) -> u16 {
     ((u32::from(impact.tier) * 10_000) / u32::from(max_tier)) as u16
 }
 
+pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface {
+    let impact = reputation_impact(signal);
+    ReputationSurface {
+        label: impact.label,
+        delta: impact.delta,
+        tier: impact.tier,
+        weight_bps: reputation_weight_bps(signal),
+    }
+}
+
 pub(crate) fn reputation_signal_from_weight_bps(weight_bps: u16) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .iter()
@@ -1882,10 +1902,10 @@ pub(crate) fn reputation_impact_from_weight_bps(weight_bps: u16) -> Option<Reput
 pub(crate) fn apply_reputation_signal(
     rec: &mut MessageIngressRecord,
     signal: ReputationSignal,
-) -> ReputationImpact {
-    let impact = reputation_impact(signal);
-    rec.reputation_delta = Some(impact.delta);
-    impact
+) -> ReputationSurface {
+    let surface = reputation_surface(signal);
+    rec.reputation_delta = Some(surface.delta);
+    surface
 }
 
 pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
