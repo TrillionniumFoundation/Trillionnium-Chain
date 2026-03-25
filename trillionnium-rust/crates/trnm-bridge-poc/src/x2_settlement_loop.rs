@@ -98,6 +98,12 @@ fn emit_settlement_event(event: &SettlementEvent) {
 ///   settlement at all and provides bounded source/target height evidence.
 /// - this function consumes that evidence and performs the bridge-side terminal
 ///   transition only (`Pending -> Finalized` or `Pending -> Reverted`).
+/// - replay protection is evaluated against the already-materialized bridge
+///   state before any fresh confirmation detail is allowed to reinterpret a
+///   terminal outcome.
+/// - the finality boundary here is intentionally narrow: confirmation heights
+///   may prove `source + 1` progress for settlement, but they do not upgrade or
+///   downgrade oracle confidence on their own.
 /// - oracle confidence, snapshot freshness, and RPC parsing remain outside this
 ///   function; callers must fail closed before entering here when oracle data is
 ///   insufficient or non-canonical.

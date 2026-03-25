@@ -189,6 +189,9 @@ impl OraclePolicy {
     /// - the oracle crate only decides whether snapshot data is admissible;
     ///   it does not finalize bridge settlement or interpret replay/finality
     ///   outcomes.
+    /// - a successful validation result means “this evidence may be considered”,
+    ///   not “settlement is final”; downstream layers still own confirmation and
+    ///   replay boundaries.
     /// - downstream bridge/RPC code should treat a validation failure here as a
     ///   fail-closed signal and avoid manufacturing fallback settlement meaning
     ///   from malformed oracle payloads.

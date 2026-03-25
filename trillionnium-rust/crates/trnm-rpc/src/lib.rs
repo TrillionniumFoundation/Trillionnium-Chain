@@ -84,6 +84,12 @@ pub struct GovParamQueryResponse {
     pub version: u64,
 }
 
+/// RPC envelope for oracle admissibility checks.
+///
+/// This response mirrors oracle-layer confidence accounting for transport
+/// purposes only. `ok=true` means the snapshot passed oracle policy checks; it
+/// does not imply bridge settlement finality, nor does a structured reject here
+/// authorize replay reinterpretation of an already-terminal bridge outcome.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OracleValidateSnapshotResponse {
     pub ok: bool,
