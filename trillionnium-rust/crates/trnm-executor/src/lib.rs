@@ -1356,15 +1356,22 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = if tx.write_set.is_empty() || tx.read_set.is_empty() {
+        let key = {
             let (key_a, key_b) = hot_bucket_keys(tx);
             if key_a == 0 && key_b == 0 {
                 None
+            } else if tx.read_set.is_empty() || tx.write_set.is_empty() {
+                Some((key_a, key_b))
+            } else if primary_access_domain_key(tx) == Some(key_a) {
+                // Preserve the existing write-primary hotspot detector contract for
+                // mixed domains whose canonical lane anchor already matches the
+                // primary access key. Only fall through to the two-key hint when
+                // mixed-domain canonicalization would otherwise drift onto a
+                // different execution-domain lane than the write-primary fast path.
+                Some((key_a, 0))
             } else {
                 Some((key_a, key_b))
             }
-        } else {
-            primary_access_domain_key(tx).map(|key| (key, 0))
         };
         if let Some(k) = key {
             observed += 1;
@@ -3011,6 +3018,31 @@ mod tests {
         assert!(
             msg.contains("mixed access domain contains the same object id with multiple versions"),
             "unexpected panic: {msg}"
+        );
+    }
+
+    #[test]
+    fn auto_adaptive_mixed_domains_do_not_collapse_distinct_secondary_lane_hints() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "4");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "4");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs = vec![
+            tx(1, vec![o(7)], vec![o(5)]),
+            tx(2, vec![o(11)], vec![o(5)]),
+            tx(3, vec![o(7)], vec![o(5)]),
+            tx(4, vec![o(11)], vec![o(5)]),
+        ];
+
+        let decision = auto_adaptive_decision(&txs);
+
+        assert!(
+            !decision.use_hot_bucket,
+            "distinct mixed execution domains should not collapse onto one hotspot hint"
         );
     }
 
