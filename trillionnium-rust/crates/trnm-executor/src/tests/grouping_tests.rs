@@ -310,6 +310,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
         stage_rw_hits: 0,
     };
 
+    assert_eq!(profile.conflict_checks_per_tx(), 0.0);
     assert_eq!(profile.conflict_hits_per_tx(), 0.0);
     assert_eq!(profile.candidate_groups_per_tx(), 0.0);
     assert_eq!(profile.retry_pressure(), 0.0);
@@ -354,6 +355,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
         stage_rw_hits: 2,
     };
 
+    assert!((profile.conflict_checks_per_tx() - 1.5).abs() < f64::EPSILON);
     assert!((profile.conflict_hits_per_tx() - 0.75).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
     assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);

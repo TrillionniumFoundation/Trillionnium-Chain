@@ -210,6 +210,7 @@ fn main() {
             format!("profile.stage_rw_hits={}", profile.stage_rw_hits),
         ]);
         let hit_rate = ratio(profile.conflict_hits, profile.conflict_checks);
+        let conflict_checks_per_tx = profile.conflict_checks_per_tx();
         let conflict_hits_per_tx = profile.conflict_hits_per_tx();
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
         let retry_pressure = profile.retry_pressure();
@@ -241,6 +242,10 @@ fn main() {
         // than about how much retry pressure and candidate-lane scanning each tx
         // induces. Keep these as derived telemetry only so scheduler semantics stay
         // deterministic and benchmark output remains backward-compatible.
+        lines.push(format!(
+            "profile.conflict_checks_per_tx={:.4}",
+            conflict_checks_per_tx
+        ));
         lines.push(format!(
             "profile.conflict_hits_per_tx={:.4}",
             conflict_hits_per_tx

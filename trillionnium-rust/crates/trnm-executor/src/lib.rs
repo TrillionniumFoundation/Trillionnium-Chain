@@ -44,6 +44,11 @@ fn ratio_usize(numerator: usize, denominator: usize) -> f64 {
 
 impl GroupingProfile {
     #[inline]
+    pub fn conflict_checks_per_tx(&self) -> f64 {
+        ratio_usize(self.conflict_checks, self.tx_count)
+    }
+
+    #[inline]
     pub fn conflict_hits_per_tx(&self) -> f64 {
         ratio_usize(self.conflict_hits, self.tx_count)
     }
