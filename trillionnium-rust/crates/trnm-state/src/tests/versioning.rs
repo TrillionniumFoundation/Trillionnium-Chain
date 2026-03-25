@@ -182,3 +182,40 @@ fn put_proposal_new_rejects_zero_id() {
     assert!(err.contains("non-zero"));
     assert!(st.get_proposal(0).is_none());
 }
+
+#[test]
+fn restore_task_rejects_zero_version_fail_closed() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        17,
+        Some(TaskObject {
+            task_id: 17,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        }),
+    );
+
+    assert!(
+        st.get_task(17).is_none(),
+        "restore_task must fail closed when replay/restore input carries version 0"
+    );
+    assert!(st.get_ref(17).is_none());
+}
