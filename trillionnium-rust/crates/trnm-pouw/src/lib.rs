@@ -7709,6 +7709,43 @@ mod tests {
     }
 
     #[test]
+    fn zk_verified_reveal_completion_persists_scrubbed_legacy_challenge_retention_fields() {
+        let mut st = seeded_state();
+        let task_id = 198_916;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let mut task = st.get_task(r2.id).unwrap();
+        task.status = TaskStatus::Completed;
+        task.proof_type = ProofType::Zk;
+        task.result_hash = Some([2u8; 32]);
+        task.reveal_salt = Some([3u8; 32]);
+        task.challenge_window_blocks_snapshot = Some(1440);
+        task.challenge_deadline_height = Some(222);
+        task.challenged_at_height = Some(111);
+        task.resolve_deadline_height = Some(333);
+        task.challenge_bond = Some(44);
+        task.challenger = Some("legacy-challenger".into());
+        task.challenge_bond_forfeited = Some(true);
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+        let r3 = finalize_verified_reveal_success(&mut st, r2, task).unwrap();
+
+        let task = st.get_task(r3.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.proof_type, ProofType::Zk);
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_window_blocks_snapshot, None);
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_worker_stake_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
