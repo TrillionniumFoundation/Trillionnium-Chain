@@ -241,6 +241,8 @@ fn main() {
         let retry_attribution_coverage = profile.retry_attribution_coverage();
         let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
+        let retry_stage_overlap_share_of_attributed =
+            profile.retry_stage_overlap_share_of_attributed();
         let retry_stage_concentration = profile.retry_stage_concentration();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
@@ -364,6 +366,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_stage_overlap_share={:.4}",
             retry_stage_overlap_share
+        ));
+        lines.push(format!(
+            "profile.retry_stage_overlap_share_of_attributed={:.4}",
+            retry_stage_overlap_share_of_attributed
         ));
         lines.push(format!(
             "profile.retry_stage_concentration={:.4}",
@@ -602,6 +608,7 @@ mod tests {
         assert_eq!(profile.retry_attribution_coverage(), 1.0);
         assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_overlap_share_of_attributed() - 0.2).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
     }

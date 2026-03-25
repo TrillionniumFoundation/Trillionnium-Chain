@@ -233,6 +233,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_stage_overlap_share_of_attributed(&self) -> f64 {
+        ratio_usize(self.retry_stage_overlap_hits(), self.attributed_retry_hits())
+    }
+
+    #[inline]
     pub fn retry_stage_concentration(&self) -> f64 {
         if self.conflict_hits == 0 {
             return 0.0;

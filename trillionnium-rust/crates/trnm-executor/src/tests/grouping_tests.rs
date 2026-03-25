@@ -341,6 +341,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.retry_attribution_coverage(), 0.0);
     assert_eq!(profile.retry_stage_overlap_hits(), 0);
     assert_eq!(profile.retry_stage_overlap_share(), 0.0);
+    assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
 }
 
 #[test]
@@ -395,6 +396,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert_eq!(profile.retry_attribution_coverage(), 1.0);
     assert_eq!(profile.retry_stage_overlap_hits(), 1);
     assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_overlap_share_of_attributed() - (1.0 / 7.0)).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -432,6 +434,7 @@ fn grouping_profile_retry_metrics_report_mixed_when_retry_stage_ties() {
     assert_eq!(profile.unattributed_retry_share(), 0.0);
     assert_eq!(profile.retry_attribution_coverage(), 1.0);
     assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_overlap_share_of_attributed() - (1.0 / 7.0)).abs() < f64::EPSILON);
 }
 
 #[test]
