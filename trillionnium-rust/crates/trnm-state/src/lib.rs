@@ -4247,6 +4247,44 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_noncanonical_checkpoint_digest_surfaces() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let mut uppercase_state_root = checkpoint.clone();
+        uppercase_state_root.state_root_hex = uppercase_state_root.state_root_hex.to_uppercase();
+        let got = verify_wal_and_find_checkpoint_node_recovery(
+            &[uppercase_state_root],
+            std::slice::from_ref(&wal_entry),
+        )
+        .unwrap();
+        assert!(
+            got.is_none(),
+            "node recovery must reject mixed-case checkpoint state_root_hex even when WAL metadata stays canonical"
+        );
+
+        let mut uppercase_wal_hash = checkpoint.clone();
+        uppercase_wal_hash.wal_entry_hash_hex = uppercase_wal_hash.wal_entry_hash_hex.to_uppercase();
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[uppercase_wal_hash], &[wal_entry])
+            .unwrap();
+        assert!(
+            got.is_none(),
+            "node recovery must reject mixed-case checkpoint wal_entry_hash_hex so restart-time checkpoint proofs preserve canonical digest encodings"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
