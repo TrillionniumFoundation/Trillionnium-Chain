@@ -70,6 +70,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: 3,
             tier: 3,
             weight_bps: 10_000,
+            rank_ordinal: 0,
         }
     );
     assert_eq!(
@@ -79,6 +80,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -1,
             tier: 2,
             weight_bps: 6_666,
+            rank_ordinal: 1,
         }
     );
     assert_eq!(
@@ -88,6 +90,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -2,
             tier: 1,
             weight_bps: 3_333,
+            rank_ordinal: 2,
         }
     );
     assert_eq!(
@@ -97,6 +100,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -3,
             tier: 0,
             weight_bps: 0,
+            rank_ordinal: 3,
         }
     );
 }
@@ -423,6 +427,7 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.rank_ordinal,
             ),
             Some(signal)
         );
@@ -432,23 +437,29 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.rank_ordinal,
             ),
             Some(impact)
         );
     }
 
     assert_eq!(
-        reputation_signal_from_surface("accepted", 3, 3, 9_999),
+        reputation_signal_from_surface("accepted", 3, 3, 9_999, 0),
         None,
         "surface lookup must reject weight drift"
     );
     assert_eq!(
-        reputation_signal_from_surface("accepted", 3, 2, 10_000),
+        reputation_signal_from_surface("accepted", 3, 2, 10_000, 0),
         None,
         "surface lookup must reject tier drift"
     );
     assert_eq!(
-        reputation_impact_from_surface("verifier_rejected", -2, 1, 10_000),
+        reputation_signal_from_surface("accepted", 3, 3, 10_000, 1),
+        None,
+        "surface lookup must reject rank drift"
+    );
+    assert_eq!(
+        reputation_impact_from_surface("verifier_rejected", -2, 1, 10_000, 2),
         None,
         "surface lookup must fail closed on cross-signal weight hybrids"
     );
@@ -464,12 +475,14 @@ fn canonical_reputation_surfaces_export_single_deterministic_table() {
         assert_eq!(surface.delta, impact.delta);
         assert_eq!(surface.tier, impact.tier);
         assert_eq!(surface.weight_bps, reputation_weight_bps(*signal));
+        assert_eq!(surface.rank_ordinal, reputation_rank_ordinal(*signal));
         assert_eq!(
             reputation_signal_from_surface(
                 surface.label,
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.rank_ordinal,
             ),
             Some(*signal),
             "canonical surface export must stay aligned with reverse lookup helpers"
@@ -509,6 +522,7 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.delta, -2);
     assert_eq!(impact.tier, 1);
     assert_eq!(impact.weight_bps, 3_333);
+    assert_eq!(impact.rank_ordinal, 2);
     assert_eq!(rec.reputation_delta, Some(-2));
 
     let impact = apply_reputation_signal(&mut rec, ReputationSignal::Accepted);
@@ -516,5 +530,6 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.delta, 3);
     assert_eq!(impact.tier, 3);
     assert_eq!(impact.weight_bps, 10_000);
+    assert_eq!(impact.rank_ordinal, 0);
     assert_eq!(rec.reputation_delta, Some(3));
 }

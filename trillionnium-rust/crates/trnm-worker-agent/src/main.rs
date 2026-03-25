@@ -1754,6 +1754,7 @@ pub(crate) struct ReputationSurface {
     pub(crate) delta: i32,
     pub(crate) tier: u8,
     pub(crate) weight_bps: u16,
+    pub(crate) rank_ordinal: u8,
 }
 
 pub(crate) const CANONICAL_REPUTATION_SIGNAL_ORDER: [ReputationSignal; 4] = [
@@ -1866,6 +1867,24 @@ pub(crate) fn reputation_tier(signal: ReputationSignal) -> u8 {
     reputation_impact(signal).tier
 }
 
+pub(crate) fn reputation_rank_ordinal(signal: ReputationSignal) -> u8 {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .iter()
+        .position(|candidate| *candidate == signal)
+        .map(|idx| idx as u8)
+        .expect("canonical reputation signal order must cover all reputation signals")
+}
+
+pub(crate) fn reputation_signal_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .get(rank_ordinal as usize)
+        .copied()
+}
+
+pub(crate) fn reputation_impact_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationImpact> {
+    reputation_signal_from_rank_ordinal(rank_ordinal).map(reputation_impact)
+}
+
 pub(crate) fn reputation_weight_bps(signal: ReputationSignal) -> u16 {
     let impact = reputation_impact(signal);
     let max_tier = CANONICAL_REPUTATION_IMPACTS
@@ -1886,6 +1905,7 @@ pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface 
         delta: impact.delta,
         tier: impact.tier,
         weight_bps: reputation_weight_bps(signal),
+        rank_ordinal: reputation_rank_ordinal(signal),
     }
 }
 
