@@ -2327,6 +2327,22 @@ mod tests {
     }
 
     #[test]
+    fn tx_access_domain_keys_treat_object_zero_as_real_domain_member() {
+        let echoed = tx(
+            1,
+            vec![o(0), o(7), o(0), o(9)],
+            vec![o(5), o(0), o(5), o(11)],
+        );
+        let canonical = tx(2, vec![o(7), o(9)], vec![o(5), o(0), o(11)]);
+
+        // Object id 0 is a real access-domain key, not a sentinel. Same-version
+        // read/write echoes on object 0 must collapse exactly once and retain
+        // deterministic write-first ordering for downstream conflict reporting.
+        assert_eq!(tx_access_domain_keys(&echoed), vec![5, 0, 11, 7, 9]);
+        assert_eq!(tx_access_domain_keys(&echoed), tx_access_domain_keys(&canonical));
+    }
+
+    #[test]
     fn primary_access_domain_key_prefers_write_scope_and_stays_echo_insensitive() {
         let echoed = tx(
             1,
