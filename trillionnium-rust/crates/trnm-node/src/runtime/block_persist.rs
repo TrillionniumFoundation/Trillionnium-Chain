@@ -133,6 +133,11 @@ mod tests {
         assert!(da_summary.contains("da_light_surface=checkpoint-wal-v1"));
         assert!(da_summary.contains("light_verifier_surface=checkpoint-wal-v1"));
         assert!(da_summary.contains("checkpoint_commitment="));
+        assert!(da_summary.contains("checkpoint_commitment_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("checkpoint_wal_entry_hash_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("wal_state_root_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("wal_content_hash_kind=canonical-hex-32b"));
         assert!(da_summary.contains("wal_prev_hash_kind=linked"));
         assert!(da_summary.contains("wal_proposal_hash_present=true"));
         assert!(da_summary.contains("wal_proposal_hash_kind=opaque-ascii"));
