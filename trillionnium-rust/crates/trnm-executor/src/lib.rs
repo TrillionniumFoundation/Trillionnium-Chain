@@ -4712,6 +4712,52 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_keeps_duplicate_heavy_mixed_domains_on_same_write_lane_signal() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut baseline = Vec::with_capacity(64);
+        let mut echoed = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            baseline.push(tx(
+                160_000 + i,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(19), o(13), o(19), o(13), o(13)],
+            ));
+            echoed.push(tx(
+                170_000 + i,
+                vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+                vec![o(19), o(13), o(19), o(13)],
+            ));
+        }
+
+        // Avalanche-style mixed-domain lanes should stay anchored to the same
+        // canonical write-lane key even when duplicate-heavy read/write echoes
+        // arrive in different orders. Otherwise the adaptive hotspot probe can
+        // drift across equivalent execution domains and fragment lane isolation.
+        let baseline_decision = auto_adaptive_decision(&baseline);
+        let echoed_decision = auto_adaptive_decision(&echoed);
+
+        assert_eq!(baseline_decision.sample_len, 64);
+        assert_eq!(echoed_decision.sample_len, 64);
+        assert_eq!(baseline_decision.use_hot_bucket, echoed_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, echoed_decision.reason);
+        assert_eq!(baseline_decision.streak_ratio, echoed_decision.streak_ratio);
+        assert_eq!(baseline_decision.hot_key_share, echoed_decision.hot_key_share);
+        assert_eq!(
+            baseline_decision.expected_gain_score,
+            echoed_decision.expected_gain_score
+        );
+        assert!(baseline_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_prefers_write_hotspot_signal_over_shared_read_domains() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
