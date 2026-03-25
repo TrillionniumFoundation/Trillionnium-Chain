@@ -39,6 +39,45 @@ fn state_root_changes_when_task_security_fields_change() {
 }
 
 #[test]
+fn state_root_changes_when_terminal_challenge_retention_metadata_changes() {
+    let mut st_a = StateStore::new();
+    let terminal_task = TaskObject {
+        task_id: 420,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Completed,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-1".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(40),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(35),
+        challenge_bond: Some(500),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    };
+    st_a.put_task_new(terminal_task.clone()).unwrap();
+
+    let mut st_b = StateStore::new();
+    let mut changed = terminal_task;
+    changed.resolve_deadline_height = Some(36);
+    st_b.put_task_new(changed).unwrap();
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "terminal challenged-task retention metadata must contribute to state root"
+    );
+}
+
+#[test]
 fn state_root_changes_when_pending_resolve_first_approver_changes() {
     let mut st_a = StateStore::new();
     st_a.stage_or_confirm_resolve_approval(500, 1, true, "authority-a", "authority-a,authority-b")
