@@ -5776,6 +5776,28 @@ fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_m
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_non_ascii_proposal_hash_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "提案-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject non-ASCII WAL proposal identities so audit-ready checkpoint proofs cannot depend on locale-sensitive proposal encodings even when hashes otherwise match"
+    );
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_newline_even_when_hashes_match()
 {
     let wal = WalMeta {
