@@ -357,3 +357,45 @@ fn restore_zero_id_gov_param_snapshot_fails_closed_without_perturbing_empty_root
         "repeated reads after rejecting a zero-id governance restore snapshot should deterministically reuse the unchanged cached root"
     );
 }
+
+#[test]
+fn restore_zero_version_gov_param_snapshot_preserves_live_canonical_param_and_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_220, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let live_snapshot = state
+        .get_param(7_999)
+        .expect("live canonical emergency_pause object must exist");
+    let root_before = state.state_root();
+
+    state.restore_gov_param(
+        7_999,
+        Some(GovParamObject {
+            key_id: 7_999,
+            key: "emergency_pause".to_string(),
+            value: "false".to_string(),
+            version: 0,
+        }),
+    );
+
+    let after = state
+        .get_param(7_999)
+        .expect("zero-version restore must not delete the live canonical governance object");
+    assert_eq!(after, live_snapshot);
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "zero-version restore must preserve the canonical governance registry binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "rejecting a zero-version governance restore snapshot must preserve the prior deterministic root instead of disturbing the live canonical slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after rejecting a zero-version governance restore snapshot should deterministically reuse the preserved cached root"
+    );
+}
