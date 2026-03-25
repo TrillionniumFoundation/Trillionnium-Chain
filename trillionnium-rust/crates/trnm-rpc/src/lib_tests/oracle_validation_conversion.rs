@@ -165,6 +165,38 @@ fn oracle_validation_report_into_rpc_response_preserves_rate_error_label() {
 }
 
 #[test]
+fn oracle_validation_report_into_rpc_response_preserves_repeated_observation_cardinality_split() {
+    let report = OracleValidationReport {
+        ok: true,
+        now_ts_ms: 790,
+        observation: OracleValidationObservation {
+            stale_reject_total: 0,
+            quorum_reject_total: 0,
+            drift_reject_total: 0,
+            accepted_total: 3,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: 0,
+            oracle_quorum_reject_total: 0,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 2,
+            accepted_total: 3,
+            sample_count: 3,
+        },
+        error: None,
+    };
+
+    let out: OracleValidateSnapshotResponse = report.into();
+    assert!(out.bridge_contract_consistent());
+    assert_eq!(out.metrics.sample_count, 3);
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    let v = serde_json::to_value(out).unwrap();
+    assert_eq!(v["metrics"]["accepted_total"], 3);
+    assert_eq!(v["metrics"]["sample_count"], 3);
+    assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+}
+
+#[test]
 fn oracle_validation_report_into_rpc_response_preserves_unmapped_error_string() {
     let report = OracleValidationReport {
         ok: false,

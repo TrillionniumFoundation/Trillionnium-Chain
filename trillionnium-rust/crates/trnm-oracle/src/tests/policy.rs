@@ -55,6 +55,26 @@ fn accepts_sample_count_exactly_at_update_rate_cap() {
 }
 
 #[test]
+fn accepts_repeated_observations_when_sample_count_exceeds_unique_sources() {
+    let p = policy();
+    let snap = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        3,
+        Some(100_000),
+        Some(120),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("snapshot build");
+
+    p.validate_snapshot(&snap, 10_100)
+        .expect("aggregated repeated observations should remain admissible");
+}
+
+#[test]
 fn rejects_sample_count_above_update_rate_cap() {
     let p = policy();
     let snap = OracleSnapshot::new(
