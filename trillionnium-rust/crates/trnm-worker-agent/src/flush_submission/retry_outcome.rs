@@ -490,6 +490,48 @@ mod tests {
     }
 
     #[test]
+    fn classify_flush_ack_trims_persisted_receipt_hashes_before_duplicate_resume_acceptance() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-trimmed-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            805,
+            "failed",
+            Some("  commit-old  ".to_string()),
+            Some("\nreveal-old\t".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with padded persisted receipt hashes");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 805);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-old"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-old"));
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
     fn classify_flush_ack_treats_blank_live_receipt_hashes_as_missing_evidence() {
         let commit = AdapterExecResult {
             ok: true,
