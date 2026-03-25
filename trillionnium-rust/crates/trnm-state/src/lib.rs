@@ -4155,6 +4155,20 @@ mod tests {
             !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint, &wal_entry),
             "checkpoint state_root_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case digest encodings"
         );
+
+        let mut uppercase_prev_hash_wal = wal_entry.clone();
+        uppercase_prev_hash_wal.height = 8;
+        uppercase_prev_hash_wal.prev_hash_hex = Some("ab".repeat(32).to_uppercase());
+        let mut uppercase_prev_hash_checkpoint = checkpoint.clone();
+        uppercase_prev_hash_checkpoint.height = 8;
+        uppercase_prev_hash_checkpoint.wal_entry_hash_hex = uppercase_prev_hash_wal.content_hash_hex();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(
+                &uppercase_prev_hash_checkpoint,
+                &uppercase_prev_hash_wal,
+            ),
+            "non-genesis wal prev_hash_hex must stay lowercase canonical hex so checkpoint audit surfaces reject mixed-case predecessor digest encodings"
+        );
     }
 
     #[test]
