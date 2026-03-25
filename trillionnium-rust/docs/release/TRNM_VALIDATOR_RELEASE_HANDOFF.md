@@ -21,8 +21,30 @@ Before starting, confirm all of the following:
 - the branch tip is recorded in the ticket / release note
 - required config files exist: `configs/node1.toml`, `configs/node2.toml`, `configs/node3.toml`
 - no one is treating local evidence as a public release claim
+- exactly one validator signing context is active for the validator identity under rehearsal
 
 If any invariant fails, stop and fix the operator state first.
+
+### Single-signer / process exclusivity check
+
+Before swapping binaries, replaying evidence, or restarting a validator process, confirm the validator key is not active in two places at once.
+
+Minimum operator rule:
+- never let the same validator identity sign from two worktrees, two hosts, or two processes concurrently
+- if you cannot prove which process owns the validator identity right now, treat the release rehearsal as **No-Go** until clarified
+- if the release step is docs/evidence-only, still record that no background validator process from another worktree is assumed to be signing on behalf of this rehearsal
+
+Recommended fail-closed check before any restart / binary swap:
+
+```bash
+ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep
+lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'
+```
+
+Interpretation rule:
+- if you see an unexpected second validator process, stop before continuing
+- if the owning process / host / worktree cannot be named explicitly in the handoff note, stop before continuing
+- do not normalize "it was probably just the old process" into a GO decision; ambiguous signer ownership is an operator failure, not a cosmetic warning
 
 ### Canonical worktree / branch identity check
 
