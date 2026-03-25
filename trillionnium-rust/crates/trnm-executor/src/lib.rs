@@ -2260,6 +2260,35 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_large_duplicate_heavy_write_domain_filters_shared_reads_once() {
+        let write_keys = vec![
+            100, 200, 300, 100, 400, 500, 200, 600, 700, 800, 300, 900,
+        ];
+
+        let keys = read_domain_only_keys(
+            &[
+                o(200),
+                o(42),
+                o(500),
+                o(42),
+                o(77),
+                o(800),
+                o(77),
+                o(900),
+                o(123),
+                o(300),
+                o(123),
+            ],
+            &write_keys,
+        );
+
+        // The large write-domain HashSet path should stay insensitive to
+        // duplicate write-domain keys while preserving deterministic first-seen
+        // ordering for surviving read-only object domains.
+        assert_eq!(keys, vec![42, 77, 123]);
+    }
+
+    #[test]
     fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
         let tx = tx(
             1,
