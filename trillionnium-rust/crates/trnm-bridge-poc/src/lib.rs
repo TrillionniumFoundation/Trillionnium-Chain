@@ -280,7 +280,7 @@ pub mod bridge_status {
                     status: "reverted",
                     is_terminal: true,
                     finalized_height: None,
-                    revert_reason: Some(reason.clone()),
+                    revert_reason: normalize_revert_reason(reason),
                 },
             }
         }

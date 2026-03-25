@@ -69,6 +69,24 @@ fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
 }
 
 #[test]
+fn settlement_audit_view_normalizes_reverted_reason_from_legacy_state() {
+    let mut reverted = SettlementRequest::new(7, "0xlegacy".to_string());
+    reverted.status = BridgeStatus::Reverted("proof\u{1680}mismatch\ntrail".to_string());
+
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xlegacy".to_string(),
+            status: "reverted",
+            is_terminal: true,
+            finalized_height: None,
+            revert_reason: Some("proof mismatch trail".to_string()),
+        }
+    );
+}
+
+#[test]
 fn settlement_request_collapses_bom_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
