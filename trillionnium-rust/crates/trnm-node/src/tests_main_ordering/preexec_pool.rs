@@ -77,3 +77,19 @@ fn preexec_pool_preserves_first_seen_group_order_while_deduping_duplicates() {
     assert_eq!(ordered_ids, vec![2, 1]);
     assert_eq!(rejected, 0);
 }
+
+#[test]
+fn preexec_pool_dedups_repeated_invalid_ids_before_counting_rejections() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![MockTx::CreateTask {
+        task_id: 4501,
+        creator: "alice".into(),
+        bounty: 10,
+    }]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+    let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![2, 2, 2, 1, 1]);
+
+    assert_eq!(ordered_ids, vec![1]);
+    assert_eq!(rejected, 1);
+}
