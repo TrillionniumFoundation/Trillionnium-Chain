@@ -11431,6 +11431,94 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_rejects_missing_challenge_deadline_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should still insert for missing challenge deadline regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task snapshot omits the challenge deadline that bounded collateral/proof retention"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_rejects_zeroed_challenge_deadline_boundary_metadata() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 902,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(0),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should still insert for zeroed challenge deadline regression coverage");
+
+        st.restore_pending_resolve_approval(
+            902,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(902).is_none(),
+            "restore must fail closed when challenged task snapshot zeroes the challenge deadline that bounded collateral/proof retention"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_paused_replay_scrubs_stale_snapshot_on_incomplete_task_metadata(
     ) {
         let mut st = StateStore::new();
