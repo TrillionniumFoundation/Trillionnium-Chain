@@ -787,6 +787,46 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_stops_advertising_fresh_critical_after_reserve_only_normal_borrows_last_slot() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Reserve-only mode: normal ingress borrows from critical headroom because
+        // there is no dedicated normal capacity.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Once the last reserve-only slot is also borrowed by normal traffic,
+        // observability must stop advertising fresh critical headroom.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
