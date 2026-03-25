@@ -265,3 +265,47 @@ fn relay_session_proof_accepts_0x_prefixed_hash_hex() {
 
     verify_session_proof(&proof).unwrap();
 }
+
+#[test]
+fn relay_session_proof_rejects_tampered_explicit_count_fields() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp3-counts".into(),
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp3-counts".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 8,
+            session_id: "sp3-counts".into(),
+            from_seq: 1,
+            to_seq: 2,
+            source: None,
+        })
+        .unwrap();
+
+    let mut wrong_range_len = proof.clone();
+    wrong_range_len.range_len += 1;
+    assert!(verify_session_proof(&wrong_range_len).is_err());
+
+    let mut wrong_message_count = proof.clone();
+    wrong_message_count.message_count += 1;
+    assert!(verify_session_proof(&wrong_message_count).is_err());
+
+    let mut wrong_proof_count = proof;
+    wrong_proof_count.proof_count += 1;
+    assert!(verify_session_proof(&wrong_proof_count).is_err());
+}
