@@ -2219,22 +2219,27 @@ mod tests {
     #[test]
     fn reveal_replay_is_rejected_without_mutating_receipt_state() {
         let mut st = seeded_state();
-        let r1 = apply_create_task(&mut st, 1_001, "alice".into(), 10).unwrap();
+        let task_id = 1_001;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
 
         let result_hash = [7u8; 32];
         let reveal_salt = [9u8; 32];
-        let committed = compute_commitment(1_001, &result_hash, &reveal_salt, "worker1");
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
 
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof.clone()))
+            .unwrap();
 
         let before = st.get_task(r4.id).unwrap();
-        let replay_err = apply_reveal_result(&mut st, r4, result_hash, reveal_salt, None)
+        let before_metering = before.metadata.as_ref().and_then(|meta| meta.metering.clone());
+        let replay_err = apply_reveal_result(&mut st, r4, result_hash, reveal_salt, Some(proof))
             .expect_err("second reveal attempt must be rejected as a replay");
         assert!(matches!(replay_err, PouwError::InvalidTransition));
 
-        let after = st.get_task(1_001).unwrap();
+        let after = st.get_task(task_id).unwrap();
         assert_eq!(after.status, before.status);
         assert_eq!(after.result_hash, before.result_hash);
         assert_eq!(after.reveal_salt, before.reveal_salt);
@@ -2246,6 +2251,11 @@ mod tests {
         assert_eq!(
             after.challenge_window_blocks_snapshot,
             before.challenge_window_blocks_snapshot
+        );
+        assert_eq!(
+            after.metadata.as_ref().and_then(|meta| meta.metering.clone()),
+            before_metering,
+            "receipt replay must not overwrite or drift the persisted metering snapshot"
         );
     }
 
