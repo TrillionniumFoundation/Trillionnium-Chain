@@ -244,6 +244,22 @@ fn reputation_label_round_trips_back_to_canonical_signal_and_impact() {
 }
 
 #[test]
+fn canonical_reputation_table_keeps_label_delta_and_tier_lookups_one_to_one() {
+    for (idx, (signal, impact)) in CANONICAL_REPUTATION_IMPACTS.iter().enumerate() {
+        assert_eq!(reputation_signal_from_label(impact.label), Some(*signal));
+        assert_eq!(reputation_signal_from_delta(impact.delta), Some(*signal));
+        assert_eq!(reputation_signal_from_tier(impact.tier), Some(*signal));
+
+        for (other_signal, other_impact) in CANONICAL_REPUTATION_IMPACTS.iter().skip(idx + 1) {
+            assert_ne!(impact.label, other_impact.label);
+            assert_ne!(impact.delta, other_impact.delta);
+            assert_ne!(impact.tier, other_impact.tier);
+            assert_ne!(signal, other_signal);
+        }
+    }
+}
+
+#[test]
 fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     let mut rec = MessageIngressRecord {
         request_id: "req-reputation-apply".to_string(),
