@@ -1361,11 +1361,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         prev_idx = Some(idx);
         let tx = &txs[idx];
         let key = if tx.write_set.is_empty() || tx.read_set.is_empty() {
-            let (key_a, key_b) = hot_bucket_keys(tx);
-            if key_a == 0 && key_b == 0 {
+            if tx.write_set.is_empty() && tx.read_set.is_empty() {
                 None
             } else {
-                Some((key_a, key_b))
+                Some(hot_bucket_keys(tx))
             }
         } else {
             primary_access_domain_key(tx).map(|key| (key, 0))
@@ -4667,6 +4666,32 @@ mod tests {
         assert_eq!(d.hot_key_share, 0.0);
         assert_eq!(d.streak_ratio, 0.0);
         assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_treats_object_zero_as_real_single_domain_key() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.5");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Object id 0 is a valid access domain, not a keyless sentinel. A pure
+        // single-domain batch touching only object 0 should still register as a
+        // hotspot instead of being dropped as "insufficient_sample".
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(95_000 + i, vec![], vec![o(0)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.use_hot_bucket);
+        assert_eq!(d.hot_key_share, 1.0);
+        assert_eq!(d.streak_ratio, 1.0);
+        assert_eq!(d.expected_gain_score, 1.0);
     }
 
     #[test]
