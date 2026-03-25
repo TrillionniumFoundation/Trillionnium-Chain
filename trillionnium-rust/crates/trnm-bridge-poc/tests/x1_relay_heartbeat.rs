@@ -228,7 +228,7 @@ fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
     let long_reason = "x".repeat(220);
 
     let out = hb.record_failure(&long_reason);
-    assert_eq!(out.message.chars().count(), 161);
+    assert_eq!(out.message.chars().count(), 160);
     assert!(out.message.ends_with('…'));
 }
 
@@ -241,7 +241,7 @@ fn relay_heartbeat_failure_reason_unicode_over_cap_truncates_once_with_terminal_
     assert!(out.message.starts_with("目标中继超时"));
     assert!(out.message.ends_with('…'));
     assert_eq!(out.message.matches('…').count(), 1);
-    assert_eq!(out.message.chars().count(), 161);
+    assert_eq!(out.message.chars().count(), 160);
 }
 
 #[test]
