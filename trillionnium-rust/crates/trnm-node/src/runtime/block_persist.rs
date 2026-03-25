@@ -41,9 +41,14 @@ pub(crate) fn persist_checkpoint_if_needed(args: &Args, runtime: &mut RuntimeSta
         if checkpoint_evidence_surface_is_canonical(&checkpoint, wal_entry) {
             let checkpoint_summary = checkpoint.evidence_summary();
             let wal_summary = wal_entry.evidence_summary();
+            let da_summary = checkpoint_da_light_verifier_summary(&checkpoint, wal_entry)
+                .expect("canonical checkpoint evidence must produce a DA/light-verifier summary");
             runtime.checkpoints.push(checkpoint);
             persist_checkpoint_meta(&runtime.wal_dir, &runtime.checkpoints)?;
-            println!("[bft-checkpoint] {} {}", checkpoint_summary, wal_summary);
+            println!(
+                "[bft-checkpoint] {} {} da_light_summary={}",
+                checkpoint_summary, wal_summary, da_summary
+            );
         }
     }
     Ok(())
@@ -98,6 +103,37 @@ mod tests {
         persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
 
         assert!(runtime.checkpoints.is_empty());
+    }
+
+    #[test]
+    fn persist_checkpoint_if_needed_keeps_da_light_summary_surface_canonical() {
+        let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
+        let mut runtime = runtime_fixture("da-light-summary", 7);
+        runtime.wal_entries.push(WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("cd".repeat(32)),
+        });
+
+        persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
+
+        let checkpoint = runtime
+            .checkpoints
+            .last()
+            .expect("canonical committed WAL entry should produce a checkpoint");
+        let wal_entry = runtime
+            .wal_entries
+            .last()
+            .expect("fixture should retain the committed WAL entry");
+        let da_summary = checkpoint_da_light_verifier_summary(checkpoint, wal_entry)
+            .expect("persisted checkpoint must keep a canonical DA/light-verifier summary");
+        assert!(da_summary.contains("checkpoint_commitment="));
+        assert!(da_summary.contains("wal_prev_hash_kind=linked"));
+        assert!(da_summary.contains("checkpoint_state_root_matches_wal=true"));
+        assert!(da_summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
     }
 }
 
