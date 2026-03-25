@@ -5038,6 +5038,117 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority() {
+        let mut restored = StateStore::new();
+        restored.restore_gov_param(
+            700,
+            Some(GovParamObject {
+                key_id: 700,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        restored.restore_task(
+            9_905,
+            Some(TaskObject {
+                task_id: 9_905,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        restored.restore_pending_resolve_approval(
+            9_905,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,Authority-A".into(),
+                task_version: 3,
+            }),
+        );
+
+        let mut canonical = StateStore::new();
+        canonical.restore_gov_param(
+            700,
+            Some(GovParamObject {
+                key_id: 700,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        canonical.restore_task(
+            9_905,
+            Some(TaskObject {
+                task_id: 9_905,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        canonical.restore_pending_resolve_approval(
+            9_905,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-b".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_approval(9_905),
+            Some((true, 1)),
+            "configured resolve authority should accept canonical-equivalent restore snapshots"
+        );
+        assert_eq!(
+            restored.pending_resolve_approval_snapshot(9_905),
+            canonical.pending_resolve_approval_snapshot(9_905),
+            "configured authority matching should not distinguish case/order-equivalent restore snapshots"
+        );
+        assert_eq!(
+            restored.state_root(),
+            canonical.state_root(),
+            "configured authority matching must preserve canonical pending-approval state roots"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_scrubs_invalid_replacement_from_existing_state() {
         let mut st = StateStore::new();
         st.restore_task(
