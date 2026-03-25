@@ -163,6 +163,43 @@ fn governance_resolve_authority_registry_entry_stays_canonical_and_typed() {
 }
 
 #[test]
+fn governance_challenge_min_bond_bounty_bps_registry_entry_stays_canonical_and_typed() {
+    // Merge-gate guard: this Algorand-style registry row is a plain numeric timelocked policy.
+    // Keep its canonical spelling, sensitivity class, and numeric bounds derived from the shared
+    // typed schema instead of ad-hoc call sites.
+    let entry = gov_param_registry_entry("challenge_min_bond_bounty_bps")
+        .expect("challenge_min_bond_bounty_bps must stay present in the canonical governance schema");
+    assert_eq!(entry.key, "challenge_min_bond_bounty_bps");
+    assert_eq!(entry.kind, GovParamKind::Timelocked);
+    assert_eq!(
+        entry.validator,
+        GovParamValueValidator::U64Range {
+            min: 0,
+            max: 100_000,
+        }
+    );
+    assert!(gov_param_registry_entry("Challenge_Min_Bond_Bounty_Bps").is_none());
+
+    let mut st = StateStore::new();
+    let scheduled = st
+        .set_gov_param(24_000, 7_330, entry.key.into(), "2500".into())
+        .expect("canonical numeric governance binding must remain writable through the typed registry");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 24_020
+        }
+    ));
+
+    let pending = st
+        .pending_gov_update(entry.key)
+        .expect("timelocked numeric governance update must be staged");
+    assert_eq!(pending.key_id, 7_330);
+    assert_eq!(pending.value, "2500");
+    assert_eq!(pending.activate_at_height, 24_020);
+}
+
+#[test]
 fn governance_allowed_keys_schema_merge_gate_is_explicit() {
     // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
     // must update the static schema entry with an invalid sample that is expected to fail.
