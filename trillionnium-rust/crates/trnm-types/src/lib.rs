@@ -134,6 +134,14 @@ pub struct TaskMetadataCompatibility {
     pub complete_metering_snapshot: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskMetadataCompatibilityFinding {
+    LegacyNoteOnlyPayload,
+    NonCanonicalCoreFields,
+    IncompleteMeteringSnapshot,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -246,6 +254,21 @@ impl TaskMetadata {
             canonical_core_fields,
             complete_metering_snapshot,
         }
+    }
+
+    pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
+        let compatibility = self.compatibility_profile();
+        let mut findings = Vec::new();
+        if compatibility.legacy_note_only {
+            findings.push(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload);
+        }
+        if !compatibility.canonical_core_fields {
+            findings.push(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields);
+        }
+        if !compatibility.complete_metering_snapshot {
+            findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
+        }
+        findings
     }
 }
 
@@ -404,6 +427,10 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload]
+        );
     }
 
     #[test]
@@ -427,6 +454,10 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::NonCanonicalCoreFields]
+        );
     }
 
     #[test]
@@ -462,6 +493,13 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
     }
 
     #[test]
