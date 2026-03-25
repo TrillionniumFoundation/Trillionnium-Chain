@@ -114,6 +114,8 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_n
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
         "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+        "/query-normalized-audit-events%00shadow?source=trnm.task",
+        "/query-normalized-audit-events%7fshadow?source=trnm.task",
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)
             .expect_err("encoded controls should fail closed");
