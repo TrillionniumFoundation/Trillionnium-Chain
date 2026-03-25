@@ -20099,6 +20099,7 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.pending_resolve_approval(task_id), None);
+        assert_eq!(st.pending_resolve_first_approver(task_id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
         assert_eq!(st.balance_of("challenger"), before_challenger + 10);
         assert_eq!(
