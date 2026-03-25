@@ -5850,6 +5850,39 @@ mod tests {
     }
 
     #[test]
+    fn slashed_terminal_state_rejects_forfeited_challenge_outcome_metadata() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 7781, "alice".into(), 10).unwrap();
+        let result_hash = [8u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(7781, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 10).unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 20).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            30,
+        )
+        .unwrap();
+
+        let mut slashed = st.get_task(r5.id).unwrap();
+        slashed.status = TaskStatus::Slashed;
+        slashed.challenge_bond_forfeited = Some(true);
+        let err = validate_challenge_accounting_invariants(&slashed)
+            .expect_err("slashed terminal evidence must reject forfeited challenge outcome metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata")));
+    }
+
+    #[test]
     fn terminal_challenged_state_rejects_blank_challenger_identity() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
