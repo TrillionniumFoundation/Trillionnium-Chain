@@ -39,6 +39,14 @@ OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 
 在把本地证据包交给 validator/operator/release reviewer 之前，先按下面清单逐项确认：
 
+0. **先确认 worktree / branch / commit 身份，再引用任何 evidence 字段。**
+   - 运行：`git rev-parse --show-toplevel && git branch --show-current && git rev-parse HEAD && git status --short && git worktree list --porcelain`
+   - `git rev-parse --show-toplevel` 必须与本次演练目标 worktree 一致。
+   - `git branch --show-current` 不能为空；若为空，按 detached HEAD 处理，直接视为 **No-Go**，不要继续把 `summary.txt` 当成可交接证据。
+   - `summary.txt` 中的 `git_worktree_branch_ref=` 若为 `<detached-or-unbound>`，同样按 **No-Go** 处理；先解释 worktree 绑定异常，再讨论其他日志。
+   - `git status --short` 非空时，只能把本轮证据当作脏树留痕，不能口述成 clean-tree release evidence。
+
+
 1. **先看 `summary.txt` / `manifest.txt`，不要凭终端滚屏口述结论。**
    - local evidence 以 `summary.txt` 为唯一汇总入口。
    - RC rehearsal 以 `manifest.txt` 为审计入口；必要时再展开对应 `*.log`。
