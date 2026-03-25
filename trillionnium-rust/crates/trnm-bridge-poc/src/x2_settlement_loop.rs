@@ -135,7 +135,7 @@ pub fn drive_minimal_settlement(
         return Err(SettlementError::HeartbeatRetryPending {
             reason: normalize_compensation_reason(
                 &heartbeat.message,
-                "relay heartbeat retry pending",
+                "heartbeat retry pending",
             ),
         });
     }
