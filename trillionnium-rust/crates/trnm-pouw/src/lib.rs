@@ -7656,6 +7656,59 @@ mod tests {
     }
 
     #[test]
+    fn verified_reveal_completion_scrubbed_legacy_retention_state_root_matches_clean_terminal_task() {
+        let mut clean_state = seeded_state();
+        let mut legacy_state = seeded_state();
+        let task_id = 198_915;
+        let r1_clean = apply_create_task(&mut clean_state, task_id, "alice".into(), 10).unwrap();
+        let r1_legacy = apply_create_task(&mut legacy_state, task_id, "alice".into(), 10).unwrap();
+        let r2_clean = apply_accept_task(&mut clean_state, r1_clean, "worker1".into()).unwrap();
+        let r2_legacy = apply_accept_task(&mut legacy_state, r1_legacy, "worker1".into()).unwrap();
+
+        let mut clean_task = clean_state.get_task(r2_clean.id).unwrap();
+        clean_task.status = TaskStatus::Completed;
+        clean_task.proof_type = ProofType::Tee;
+        clean_task.result_hash = Some([2u8; 32]);
+        clean_task.reveal_salt = Some([3u8; 32]);
+
+        let mut legacy_task = clean_task.clone();
+        legacy_task.challenge_window_blocks_snapshot = Some(1440);
+        legacy_task.challenge_deadline_height = Some(222);
+        legacy_task.challenged_at_height = Some(111);
+        legacy_task.resolve_deadline_height = Some(333);
+        legacy_task.challenge_bond = Some(44);
+        legacy_task.challenger = Some("legacy-challenger".into());
+        legacy_task.challenge_bond_forfeited = Some(true);
+
+        let clean_ref = finalize_verified_reveal_success(&mut clean_state, r2_clean, clean_task).unwrap();
+        scrub_immediate_verification_challenge_fields(&mut legacy_task);
+        let legacy_ref =
+            finalize_verified_reveal_success(&mut legacy_state, r2_legacy, legacy_task).unwrap();
+
+        let clean_task = clean_state.get_task(clean_ref.id).unwrap();
+        let legacy_task = legacy_state.get_task(legacy_ref.id).unwrap();
+        assert_eq!(clean_task.challenge_window_blocks_snapshot, None);
+        assert_eq!(legacy_task.challenge_window_blocks_snapshot, None);
+        assert_eq!(clean_task.challenge_deadline_height, None);
+        assert_eq!(legacy_task.challenge_deadline_height, None);
+        assert_eq!(clean_task.challenged_at_height, None);
+        assert_eq!(legacy_task.challenged_at_height, None);
+        assert_eq!(clean_task.resolve_deadline_height, None);
+        assert_eq!(legacy_task.resolve_deadline_height, None);
+        assert_eq!(clean_task.challenge_bond, None);
+        assert_eq!(legacy_task.challenge_bond, None);
+        assert_eq!(clean_task.challenger, None);
+        assert_eq!(legacy_task.challenger, None);
+        assert_eq!(clean_task.challenge_bond_forfeited, None);
+        assert_eq!(legacy_task.challenge_bond_forfeited, None);
+        assert_eq!(
+            clean_state.state_root(),
+            legacy_state.state_root(),
+            "scrubbed verified-reveal completion must hash identically to a clean immediate-finality task so stale Filecoin-like collateral/proof retention cannot survive in terminal state"
+        );
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_worker_stake_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
