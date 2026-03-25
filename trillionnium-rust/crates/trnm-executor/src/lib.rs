@@ -161,6 +161,18 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn dominant_retry_lead_hits(&self) -> usize {
+        let mut ranking = [self.stage_ww_hits, self.stage_wr_hits, self.stage_rw_hits];
+        ranking.sort_unstable_by(|a, b| b.cmp(a));
+        ranking[0].saturating_sub(ranking[1])
+    }
+
+    #[inline]
+    pub fn dominant_retry_lead_share(&self) -> f64 {
+        ratio_usize(self.dominant_retry_lead_hits(), self.conflict_hits)
+    }
+
+    #[inline]
     pub fn attributed_retry_hits(&self) -> usize {
         self.stage_ww_hits + self.stage_wr_hits + self.stage_rw_hits
     }
@@ -1857,6 +1869,54 @@ mod tests {
             write_set: w,
             payload: vec![],
         }
+    }
+
+    fn profile_with_stage_hits(ww: usize, wr: usize, rw: usize, conflict_hits: usize) -> GroupingProfile {
+        GroupingProfile {
+            tx_count: 0,
+            group_count: 0,
+            grouped_count: 0,
+            max_group_size: 0,
+            min_group_size: 0,
+            avg_group_size: 0.0,
+            hot_object_share: 0.0,
+            conflict_checks: 0,
+            conflict_hits,
+            candidate_groups_scanned: 0,
+            stage_ww_checks: 0,
+            stage_ww_hits: ww,
+            stage_wr_checks: 0,
+            stage_wr_hits: wr,
+            stage_rw_checks: 0,
+            stage_rw_hits: rw,
+        }
+    }
+
+    #[test]
+    fn dominant_retry_lead_share_tracks_clear_stage_skew() {
+        let profile = profile_with_stage_hits(9, 3, 1, 10);
+
+        assert_eq!(profile.dominant_retry_stage(), "ww");
+        assert_eq!(profile.dominant_retry_lead_hits(), 6);
+        assert!((profile.dominant_retry_lead_share() - 0.6).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn dominant_retry_lead_share_collapses_for_mixed_stage_ties() {
+        let profile = profile_with_stage_hits(4, 4, 1, 8);
+
+        assert_eq!(profile.dominant_retry_stage(), "mixed");
+        assert_eq!(profile.dominant_retry_lead_hits(), 0);
+        assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+    }
+
+    #[test]
+    fn dominant_retry_lead_share_stays_zero_without_conflicts() {
+        let profile = profile_with_stage_hits(0, 0, 0, 0);
+
+        assert_eq!(profile.dominant_retry_stage(), "none");
+        assert_eq!(profile.dominant_retry_lead_hits(), 0);
+        assert_eq!(profile.dominant_retry_lead_share(), 0.0);
     }
 
     #[test]

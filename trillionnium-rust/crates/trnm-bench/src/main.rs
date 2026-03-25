@@ -231,6 +231,8 @@ fn main() {
         let stage_rw_retry_share = profile.rw_retry_share();
         let dominant_retry_stage = profile.dominant_retry_stage();
         let dominant_retry_share = profile.dominant_retry_share();
+        let dominant_retry_lead_hits = profile.dominant_retry_lead_hits();
+        let dominant_retry_lead_share = profile.dominant_retry_lead_share();
         let attributed_retry_hits = profile.attributed_retry_hits();
         let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
@@ -316,6 +318,14 @@ fn main() {
         lines.push(format!(
             "profile.dominant_retry_share={:.4}",
             dominant_retry_share
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_lead_hits={}",
+            dominant_retry_lead_hits
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_lead_share={:.4}",
+            dominant_retry_lead_share
         ));
         lines.push(format!(
             "profile.attributed_retry_hits={}",
