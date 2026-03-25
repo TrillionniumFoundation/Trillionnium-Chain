@@ -474,4 +474,44 @@ mod tests {
 
         let _ = std::fs::remove_file(&ack_log);
     }
+
+    #[test]
+    fn classify_flush_ack_keeps_blank_persisted_reveal_receipt_fail_closed_during_duplicate_resume() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-blank-reveal-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            83,
+            "failed",
+            Some("commit-old".to_string()),
+            Some(" \n\t ".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with blank reveal receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 83);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
 }
