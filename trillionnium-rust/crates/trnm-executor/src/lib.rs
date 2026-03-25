@@ -2334,6 +2334,26 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_prefers_write_scope_and_stays_echo_insensitive() {
+        let echoed = tx(
+            1,
+            vec![o(50), o(7), o(50), o(9)],
+            vec![o(11), o(11), o(50), o(30)],
+        );
+        let canonical = tx(2, vec![o(7), o(9)], vec![o(11), o(30), o(50)]);
+        let read_only = tx(3, vec![o(50), o(7), o(50), o(9)], vec![]);
+
+        // Scheduler primary-domain selection should keep the stronger write-domain
+        // signal, ignoring same-version read echoes for objects already written.
+        assert_eq!(primary_access_domain_key(&echoed), Some(11));
+        assert_eq!(primary_access_domain_key(&echoed), primary_access_domain_key(&canonical));
+
+        // Pure read domains should still canonicalize to the smallest surviving
+        // object key after dedup so fallback ordering remains deterministic.
+        assert_eq!(primary_access_domain_key(&read_only), Some(7));
+    }
+
+    #[test]
     fn tx_access_domain_keys_canonicalize_duplicate_heavy_same_version_cross_domain_echoes() {
         let echoed = tx(
             1,
