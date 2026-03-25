@@ -62,6 +62,8 @@
 
 ```text
 operator_id=
+worktree_root=
+workspace_root=
 branch=
 commit_short=
 worktree_status=clean|dirty
@@ -73,6 +75,7 @@ rollback_entrypoint=
 ```
 
 最少要求：
+- `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
 - `branch` 与 `commit_short` 可直接映射到本次证据；
 - `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
@@ -81,11 +84,15 @@ rollback_entrypoint=
 
 ```bash
 cd trillionnium-rust
+WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+WORKSPACE_ROOT="$(pwd)"
 printf 'operator_id=%s\n' "${OPERATOR_ID:-<fill-me>}"
+printf 'worktree_root=%s\n' "$WORKTREE_ROOT"
+printf 'workspace_root=%s\n' "$WORKSPACE_ROOT"
 printf 'branch=%s\n' "$(git branch --show-current)"
 printf 'commit_short=%s\n' "$(git rev-parse --short HEAD)"
 printf 'worktree_status=%s\n' "$(test -z "$(git status --short)" && echo clean || echo dirty)"
-printf 'binary_path=%s\n' "$(pwd)/target/debug/trnm-node"
+printf 'binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-node"
 printf 'build_command=%s\n' 'cargo build -p trnm-node'
 shasum -a 256 target/debug/trnm-node | awk '{printf "binary_sha256=%s\n", $1}'
 printf 'previous_stable_anchor=%s\n' "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}"
@@ -102,9 +109,23 @@ done
 ```
 
 建议把输出直接附到 rehearsal/evidence 记录中；这样至少能回答三件事：
-1. 本轮是哪个操作员、在哪个 worktree/branch/commit 上执行；
+1. 本轮是哪个操作员、在哪个 worktree/workspace/branch/commit 上执行；
 2. 实际启动的是哪一个 `trnm-node` 二进制；
 3. 参与 bring-up 的节点配置是否与证据记录一致。
+
+若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
+cd trillionnium-rust
+ACTUAL_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+ACTUAL_BRANCH="$(git branch --show-current)"
+if [[ "$ACTUAL_WORKTREE_ROOT" != "$EXPECTED_WORKTREE_ROOT" ]]; then
+  echo "[FAIL] worktree mismatch: expected $EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
+  exit 1
+fi
+printf '[OK] worktree_root=%s branch=%s\n' "$ACTUAL_WORKTREE_ROOT" "$ACTUAL_BRANCH"
+```
 
 ## 最小 bring-up 路径
 
