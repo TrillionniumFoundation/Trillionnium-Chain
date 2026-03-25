@@ -186,6 +186,10 @@ pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface 
     }
 }
 
+pub(crate) fn canonical_reputation_surfaces() -> [ReputationSurface; 4] {
+    CANONICAL_REPUTATION_SIGNAL_ORDER.map(reputation_surface)
+}
+
 pub(crate) fn reputation_signal_from_weight_bps(weight_bps: u16) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .iter()

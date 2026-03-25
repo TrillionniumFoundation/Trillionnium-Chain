@@ -429,6 +429,29 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
 }
 
 #[test]
+fn canonical_reputation_surfaces_export_single_deterministic_table() {
+    let surfaces = canonical_reputation_surfaces();
+    assert_eq!(surfaces.len(), CANONICAL_REPUTATION_SIGNAL_ORDER.len());
+
+    for ((signal, impact), surface) in CANONICAL_REPUTATION_IMPACTS.iter().zip(surfaces.iter()) {
+        assert_eq!(surface.label, impact.label);
+        assert_eq!(surface.delta, impact.delta);
+        assert_eq!(surface.tier, impact.tier);
+        assert_eq!(surface.weight_bps, reputation_weight_bps(*signal));
+        assert_eq!(
+            reputation_signal_from_surface(
+                surface.label,
+                surface.delta,
+                surface.tier,
+                surface.weight_bps,
+            ),
+            Some(*signal),
+            "canonical surface export must stay aligned with reverse lookup helpers"
+        );
+    }
+}
+
+#[test]
 fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     let mut rec = MessageIngressRecord {
         request_id: "req-reputation-apply".to_string(),
