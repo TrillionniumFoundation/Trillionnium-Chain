@@ -4293,6 +4293,7 @@ fn main() -> Result<()> {
                 "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
                 "score_floor_applied": breakdown.score_floor_applied,
                 "base_score": base_score,
+                "reputation_weight_unit": score_cfg.reputation_weight,
                 "reputation_weight": reputation_weight,
                 "penalty": penalty,
                 "reputation_score_delta": reputation_score_delta,

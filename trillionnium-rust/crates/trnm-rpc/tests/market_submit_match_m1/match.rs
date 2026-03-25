@@ -48,6 +48,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
     assert_eq!(matched["winner_reputation"], 200);
     assert_eq!(matched["base_score"], 101000);
+    assert_eq!(matched["reputation_weight_unit"], 100);
     assert_eq!(matched["reputation_weight"], 20000);
     assert_eq!(matched["penalty"], 0);
     assert_eq!(matched["reputation_score_delta"], -20000);
@@ -91,6 +92,7 @@ fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
     assert_eq!(matched["winner_reputation"], -50);
     assert_eq!(matched["winner_reputation_effective"], -50);
     assert_eq!(matched["base_score"], 50000);
+    assert_eq!(matched["reputation_weight_unit"], 100);
     assert_eq!(matched["reputation_weight"], 0);
     assert_eq!(matched["penalty"], 5000);
     assert_eq!(matched["reputation_score_delta"], 5000);
