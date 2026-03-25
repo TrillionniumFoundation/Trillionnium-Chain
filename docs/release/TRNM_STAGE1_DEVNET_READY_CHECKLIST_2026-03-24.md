@@ -143,10 +143,23 @@ cd "$EXPECTED_WORKTREE_ROOT"
 若只需要人工 spot-check，也至少保留以下原始命令输出到 evidence：
 
 ```bash
+pwd
 git rev-parse --show-toplevel
 git branch --show-current
 git rev-parse HEAD
 ```
+
+对 lane worktree，建议把**期望路径与期望分支**直接写进本轮命令，避免仅靠人工比对输出：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
+EXPECTED_BRANCH="lane/refXX-scope-name"
+test "$(pwd)" = "$EXPECTED_WORKTREE_ROOT"
+test "$(git rev-parse --show-toplevel)" = "$EXPECTED_WORKTREE_ROOT"
+test "$(git branch --show-current)" = "$EXPECTED_BRANCH"
+```
+
+只要任一比较失败，就应立即停止当前 bring-up / smoke / release 证据收集，并把这次运行标记为 **worktree mismatch**，不要继续补跑后续门禁。
 
 对于 lane 化运行，建议把 `EXPECTED_WORKTREE_ROOT` / `EXPECTED_BRANCH` / `EXPECTED_HEAD` 作为 runbook 参数或环境变量显式传入，而不是依赖人工目测当前 shell 提示符；这样在多 worktree 并行时可以更稳地 fail-closed，也能避免把别的 worktree 的 commit 误记成当前 bring-up 证据。 
 
