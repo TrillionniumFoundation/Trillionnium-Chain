@@ -22,8 +22,18 @@ pub(crate) struct PreExecPool {
     pub(crate) width: usize,
 }
 
-fn invalid_preexec_tx_id(id: u64) -> String {
-    format!("preexec invalid tx id {} (tx ids are 1-based)", id)
+pub(crate) fn invalid_preexec_tx_id(id: u64, candidate_height: u64) -> String {
+    format!(
+        "preexec invalid tx id {} at candidate_height={} (tx ids are 1-based)",
+        id, candidate_height
+    )
+}
+
+pub(crate) fn preexec_worker_panic(id: u64, candidate_height: u64) -> String {
+    format!(
+        "preexec worker panic while evaluating tx_id={} at candidate_height={}",
+        id, candidate_height
+    )
 }
 
 impl PreExecPool {
@@ -113,11 +123,11 @@ fn run_job(
             let idx = id
                 .checked_sub(1)
                 .map(|raw| raw as usize)
-                .ok_or_else(|| invalid_preexec_tx_id(*id))?;
+                .ok_or_else(|| invalid_preexec_tx_id(*id, candidate_height))?;
             let tx = picked
                 .get(idx)
                 .cloned()
-                .ok_or_else(|| invalid_preexec_tx_id(*id))?;
+                .ok_or_else(|| invalid_preexec_tx_id(*id, candidate_height))?;
             let mut local_state = snapshot.as_ref().clone();
             apply_one(&mut local_state, tx, candidate_height)
                 .map(|_| ())
@@ -131,11 +141,9 @@ fn run_job(
                 let _ = job.result_tx.send((*id, false, err));
             }
             Err(_) => {
-                let _ = job.result_tx.send((
-                    *id,
-                    false,
-                    format!("preexec worker panic while evaluating tx_id={}", id),
-                ));
+                let _ = job
+                    .result_tx
+                    .send((*id, false, preexec_worker_panic(*id, candidate_height)));
             }
         }
     }

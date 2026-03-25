@@ -1,6 +1,18 @@
 use super::*;
 
 #[test]
+fn preexec_error_strings_include_candidate_height_context() {
+    assert_eq!(
+        invalid_preexec_tx_id(9, 42),
+        "preexec invalid tx id 9 at candidate_height=42 (tx ids are 1-based)"
+    );
+    assert_eq!(
+        preexec_worker_panic(7, 99),
+        "preexec worker panic while evaluating tx_id=7 at candidate_height=99"
+    );
+}
+
+#[test]
 fn preexec_pool_reuses_workers_across_multiple_groups() {
     let state = Arc::new(StateStore::new());
     let picked = Arc::new(vec![
