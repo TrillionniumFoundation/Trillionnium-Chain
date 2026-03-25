@@ -4198,6 +4198,54 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "a".repeat(WAL_PROPOSAL_HASH_MAX_LEN + 1),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject overlong WAL proposal identities so restart-time checkpoint proofs keep the same audit-surface bounds as general checkpoint verification"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_proposal_hash_with_embedded_newline() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal\n1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject WAL proposal identities with embedded control/whitespace so checkpoint/proof audit surfaces cannot drift during restart"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
