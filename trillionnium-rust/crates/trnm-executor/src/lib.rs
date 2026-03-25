@@ -69,19 +69,19 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_scan_misses(&self) -> usize {
+        self.candidate_groups_scanned
+            .saturating_sub(self.conflict_hits)
+    }
+
+    #[inline]
     pub fn retry_scan_miss_rate(&self) -> f64 {
-        ratio_usize(
-            self.candidate_groups_scanned.saturating_sub(self.conflict_hits),
-            self.candidate_groups_scanned,
-        )
+        ratio_usize(self.retry_scan_misses(), self.candidate_groups_scanned)
     }
 
     #[inline]
     pub fn retry_scan_misses_per_tx(&self) -> f64 {
-        ratio_usize(
-            self.candidate_groups_scanned.saturating_sub(self.conflict_hits),
-            self.tx_count,
-        )
+        ratio_usize(self.retry_scan_misses(), self.tx_count)
     }
 
     #[inline]

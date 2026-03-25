@@ -215,6 +215,7 @@ fn main() {
         let retry_pressure = profile.retry_pressure();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
+        let retry_scan_misses = profile.retry_scan_misses();
         let retry_scan_miss_rate = profile.retry_scan_miss_rate();
         let retry_scan_misses_per_tx = profile.retry_scan_misses_per_tx();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
@@ -250,6 +251,7 @@ fn main() {
             "profile.retry_scan_hit_rate={:.4}",
             retry_scan_hit_rate
         ));
+        lines.push(format!("profile.retry_scan_misses={}", retry_scan_misses));
         lines.push(format!(
             "profile.retry_scan_miss_rate={:.4}",
             retry_scan_miss_rate
