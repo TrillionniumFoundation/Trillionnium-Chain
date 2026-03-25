@@ -71,6 +71,19 @@ fn parse_query_events_limit_from_path_rejects_invalid_limit() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_rejects_duplicate_limit_keys() {
+    for path in [
+        "/query-events/42?limit=7&limit=9",
+        "/query-events/42?limit=7&limit=7",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("duplicate limit keys must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("duplicate limit"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_rejects_uppercase_percent_encoded_query_delimiters() {
     for path in [
         "/query-events/42?limit=7%26limit=9",
