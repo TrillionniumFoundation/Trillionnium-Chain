@@ -139,6 +139,32 @@ fn preexec_pool_rejects_zero_tx_id_without_worker_panic_or_loss() {
 }
 
 #[test]
+fn preexec_pool_dedups_replayed_invalid_and_valid_ids_while_preserving_first_seen_order() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![
+        MockTx::CreateTask {
+            task_id: 4651,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::CreateTask {
+            task_id: 4652,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+    ]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+    let replayed = pre_execute_group_parallel(&pool, vec![2, 9, 2, 1, 9, 1, 2]);
+    let followup = pre_execute_group_parallel(&pool, vec![2, 1]);
+
+    assert_eq!(replayed.0, vec![2, 1]);
+    assert_eq!(replayed.1, 1);
+    assert_eq!(followup.0, vec![2, 1]);
+    assert_eq!(followup.1, 0);
+}
+
+#[test]
 fn preexec_pool_clamps_zero_workers_to_a_single_safe_worker() {
     let state = Arc::new(StateStore::new());
     let picked = Arc::new(vec![
