@@ -93,3 +93,22 @@ fn preexec_pool_dedups_repeated_invalid_ids_before_counting_rejections() {
     assert_eq!(ordered_ids, vec![1]);
     assert_eq!(rejected, 1);
 }
+
+#[test]
+fn preexec_pool_rejects_zero_tx_id_without_worker_panic_or_loss() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![MockTx::CreateTask {
+        task_id: 4601,
+        creator: "alice".into(),
+        bounty: 10,
+    }]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+    let malformed = pre_execute_group_parallel(&pool, vec![0, 1, 0]);
+    let followup = pre_execute_group_parallel(&pool, vec![1]);
+
+    assert_eq!(malformed.0, vec![1]);
+    assert_eq!(malformed.1, 1);
+    assert_eq!(followup.0, vec![1]);
+    assert_eq!(followup.1, 0);
+}

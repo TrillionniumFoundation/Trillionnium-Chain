@@ -106,7 +106,10 @@ fn run_job(
 ) {
     for id in &job.ids {
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            let idx = (*id - 1) as usize;
+            let idx = id
+                .checked_sub(1)
+                .map(|raw| raw as usize)
+                .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
             let tx = picked
                 .get(idx)
                 .cloned()
