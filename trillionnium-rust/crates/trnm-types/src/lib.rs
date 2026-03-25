@@ -459,7 +459,9 @@ mod tests {
         );
         assert_eq!(
             metadata.compatibility_findings_nonempty(),
-            Some(vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload])
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload
+            ])
         );
     }
 
@@ -535,6 +537,61 @@ mod tests {
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
             ]
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_flags_incomplete_metering_even_when_other_fields_are_canonical() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: " ".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: "abc123".into(),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 20,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 30,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 1,
+                challenge_success_bounty_per_work_unit_num: 1,
+                challenge_success_bounty_per_work_unit_den: 192,
+                worker_completion_bonus_per_work_unit_num: 1,
+                worker_completion_bonus_per_work_unit_den: 256,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 384,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(!compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ])
         );
     }
 
