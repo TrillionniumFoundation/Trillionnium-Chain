@@ -135,3 +135,49 @@ fn query_task_from_state_snapshot_exposes_metering_audit_fields() {
     assert_eq!(metering.derived.path, "Revealed");
     assert_eq!(metering.derived.challenge_bonus_total, 2);
 }
+
+#[test]
+fn query_task_from_state_snapshot_surfaces_metadata_governance_upgrade_signals() {
+    let tasks = vec![TaskObject {
+        task_id: 314,
+        creator: "alice".into(),
+        bounty: 500,
+        status: TaskStatus::Assigned,
+        proof_type: trnm_types::ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("legacy-only".into()),
+            task_type: None,
+            input_hash: None,
+            model: None,
+            provenance: None,
+            metering: None,
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 2,
+    }];
+
+    let out = query_task_from_state_snapshot(314, &tasks).expect("task expected");
+    let compatibility = out
+        .metadata_compatibility
+        .expect("metadata compatibility expected");
+    assert!(compatibility.legacy_note_only);
+    assert!(compatibility.canonical_core_fields);
+    assert!(compatibility.complete_metering_snapshot);
+    assert_eq!(out.metadata_requires_governance_upgrade, Some(true));
+    assert_eq!(
+        out.metadata_compatibility_findings,
+        Some(vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload])
+    );
+}
