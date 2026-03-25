@@ -207,6 +207,7 @@ mod tests {
         assert!(is_health_probe_path("/Ready/"));
         assert!(is_health_probe_path("/ReadyZ/"));
         assert!(is_health_probe_path("/STATUS"));
+        assert!(is_health_probe_path("/STATUSZ"));
         assert!(!is_health_probe_path("/healthcheck"));
     }
 
