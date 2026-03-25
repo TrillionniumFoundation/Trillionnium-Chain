@@ -45,7 +45,27 @@ OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
    - `git branch --show-current` 不能为空；若为空，按 detached HEAD 处理，直接视为 **No-Go**，不要继续把 `summary.txt` 当成可交接证据。
    - `summary.txt` 中的 `git_worktree_branch_ref=` 若为 `<detached-or-unbound>`，同样按 **No-Go** 处理；先解释 worktree 绑定异常，再讨论其他日志。
    - `git status --short` 非空时，只能把本轮证据当作脏树留痕，不能口述成 clean-tree release evidence。
+   - 若本轮由 lane/supervisor 指定了**固定 worktree 路径 + 固定 branch ref**，不要靠 shell prompt 目测；先执行一个 fail-closed 断言块，例如：
 
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket-or-lane"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+CURRENT_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+CURRENT_BRANCH_NAME="$(git branch --show-current)"
+CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
+
+[ -n "$CURRENT_BRANCH_NAME" ] || { echo "detached HEAD: no branch checked out" >&2; exit 1; }
+[ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
+  printf 'worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
+[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF" ] || {
+  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$CURRENT_BRANCH_REF" >&2
+  exit 1
+}
+```
+
+   - 只有在上述断言通过后，才开始 `./scripts/run_local_release_evidence.sh` / `./scripts/release_rc.sh`，避免把错误 worktree 上生成的 artifact 误交接给 validator/operator。
 
 1. **先看 `summary.txt` / `manifest.txt`，不要凭终端滚屏口述结论。**
    - local evidence 以 `summary.txt` 为唯一汇总入口。
