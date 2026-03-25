@@ -73,6 +73,12 @@ impl OracleSnapshot {
                 end_ms: window_end_ms,
             });
         }
+        if snapshot_ts_ms < window_end_ms {
+            return Err(OracleError::InvalidWindowTimestamp {
+                window_end_ms,
+                snapshot_ts_ms,
+            });
+        }
 
         sources.sort();
         if sources.windows(2).any(|w| w[0] == w[1]) {
@@ -203,6 +209,12 @@ impl OraclePolicy {
             return Err(OracleError::InvalidWindow {
                 start_ms: snapshot.window_start_ms,
                 end_ms: snapshot.window_end_ms,
+            });
+        }
+        if snapshot.snapshot_ts_ms < snapshot.window_end_ms {
+            return Err(OracleError::InvalidWindowTimestamp {
+                window_end_ms: snapshot.window_end_ms,
+                snapshot_ts_ms: snapshot.snapshot_ts_ms,
             });
         }
 
@@ -492,6 +504,11 @@ pub enum OracleError {
     NonCanonicalFeedId { raw: String, canonical: String },
     #[error("invalid window: start={start_ms}, end={end_ms}")]
     InvalidWindow { start_ms: u64, end_ms: u64 },
+    #[error("invalid window timestamp: window_end={window_end_ms}, snapshot_ts={snapshot_ts_ms}")]
+    InvalidWindowTimestamp {
+        window_end_ms: u64,
+        snapshot_ts_ms: u64,
+    },
     #[error("duplicate source ids are not allowed")]
     DuplicateSources,
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
@@ -597,6 +614,30 @@ mod tests {
     }
 
     #[test]
+    fn rejects_snapshot_timestamp_before_window_end_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            1_999,
+        )
+        .expect_err("snapshot build should reject timestamps that predate the window end");
+
+        assert_eq!(
+            err,
+            OracleError::InvalidWindowTimestamp {
+                window_end_ms: 2_000,
+                snapshot_ts_ms: 1_999,
+            }
+        );
+    }
+
+    #[test]
     fn rejects_stale_snapshot() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_000);
@@ -605,6 +646,26 @@ mod tests {
             .validate_snapshot(&snap, 16_000)
             .expect_err("snapshot should be stale");
         assert!(matches!(err, OracleError::StaleSnapshot { .. }));
+    }
+
+    #[test]
+    fn rejects_deserialized_snapshot_timestamp_before_window_end() {
+        let p = policy();
+        let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
+        snap.snapshot_ts_ms = 1_999;
+        snap.window_end_ms = 2_000;
+        snap.snapshot_hash = snap.compute_hash();
+
+        let err = p
+            .validate_snapshot(&snap, 10_000)
+            .expect_err("snapshot timestamp before window end should fail closed");
+        assert_eq!(
+            err,
+            OracleError::InvalidWindowTimestamp {
+                window_end_ms: 2_000,
+                snapshot_ts_ms: 1_999,
+            }
+        );
     }
 
     #[test]
