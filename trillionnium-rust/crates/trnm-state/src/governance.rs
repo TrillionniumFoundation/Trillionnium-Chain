@@ -780,8 +780,9 @@ mod tests {
         ensure_allowed_key_has_explicit_validator, governance_pinned_key_id,
         has_explicit_gov_param_validator, validate_gov_param_value,
         validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
+        GOV_SENSITIVE_KEYS,
     };
-    use crate::governance_ops::GOV_PARAM_SCHEMA;
+    use crate::governance_ops::{GovParamKind, GOV_PARAM_SCHEMA};
 
     #[test]
     fn governance_allowed_keys_have_explicit_value_validators() {
@@ -876,5 +877,15 @@ mod tests {
             .map(|entry| (entry.key, entry.invalid_merge_gate_sample))
             .collect();
         assert_eq!(legacy_samples, schema_samples);
+    }
+
+    #[test]
+    fn governance_legacy_sensitive_registry_matches_typed_schema_single_source() {
+        let schema_sensitive_keys: Vec<&str> = GOV_PARAM_SCHEMA
+            .iter()
+            .filter(|entry| matches!(entry.kind, GovParamKind::Timelocked))
+            .map(|entry| entry.key)
+            .collect();
+        assert_eq!(GOV_SENSITIVE_KEYS, schema_sensitive_keys.as_slice());
     }
 }
