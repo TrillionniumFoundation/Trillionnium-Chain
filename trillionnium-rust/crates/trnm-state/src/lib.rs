@@ -2969,15 +2969,15 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
+                let snapshot_key_id = snapshot.key_id;
                 if self
                     .pending_gov_updates
                     .get(key)
                     .is_some_and(|existing| existing == &snapshot)
+                    && !self.pending_gov_update_has_key_id_alias(key, snapshot_key_id)
                 {
                     return;
                 }
-
-                let snapshot_key_id = snapshot.key_id;
 
                 if snapshot_key_id == 0 {
                     self.clear_pending_gov_update_bindings(key, None);
