@@ -4230,6 +4230,30 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_non_ascii_proposal_hash() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-猫头鹰".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject non-ASCII WAL proposal identities so restart-time checkpoint proofs cannot accept locale-dependent proposal surfaces"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_proposal_hash_with_embedded_newline() {
         let wal_entry = WalMeta {
             height: 1,
