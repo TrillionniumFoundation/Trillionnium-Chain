@@ -492,7 +492,7 @@ fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str
 
 #[allow(dead_code)]
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
-    governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
+    governance_expected_key_id(key)
 }
 
 fn validate_governance_key_id_from_lists(
@@ -525,7 +525,7 @@ fn validate_governance_key_id_from_lists(
 
 #[allow(dead_code)]
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
-    validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
+    validate_gov_param_key_id_policy(key, key_id)
 }
 
 fn format_governance_registry_membership_drift(
@@ -10680,6 +10680,14 @@ mod tests {
             let err = validate_governance_key_id(key, expected_id + 1)
                 .expect_err("mismatched pinned governance key id must be rejected");
             assert!(err.contains("governance key id mismatch for"), "{err}");
+
+            let reverse_err = validate_governance_key_id("max_block_ms", expected_id)
+                .expect_err("reserved governance key ids must reject cross-key reuse");
+            assert!(
+                reverse_err.contains("governance key id mismatch for id"),
+                "{reverse_err}"
+            );
+
             validate_governance_key_id(key, expected_id)
                 .expect("canonical pinned governance key id must remain accepted");
         }
