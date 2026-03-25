@@ -1674,8 +1674,13 @@ fn market_score_config() -> MarketScoreConfig {
     }
 }
 
+fn normalized_reputation_clamp(clamp: i64) -> i64 {
+    clamp.max(MARKET_REPUTATION_CLAMP_MIN)
+}
+
 fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
-    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+    let clamp = normalized_reputation_clamp(cfg.reputation_clamp);
+    reputation.clamp(-clamp, clamp)
 }
 
 fn market_score_breakdown(
@@ -5734,6 +5739,38 @@ mod tests {
                 assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
             },
         );
+    }
+
+    #[test]
+    fn clamp_reputation_for_market_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let cfg = MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        };
+
+        assert_eq!(clamp_reputation_for_market(250, cfg), 1);
+        assert_eq!(clamp_reputation_for_market(-250, cfg), -1);
+    }
+
+    #[test]
+    fn market_score_breakdown_normalizes_negative_manual_clamp_without_panic() {
+        let breakdown = market_score_breakdown(
+            50,
+            250,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: -10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 1);
+        assert_eq!(breakdown.base_score, 150);
+        assert_eq!(breakdown.reputation_reward, 7);
+        assert_eq!(breakdown.effective_score, 143);
+        assert_eq!(breakdown.penalty, 0);
+        assert!(!breakdown.score_floor_applied);
     }
 
     #[test]
