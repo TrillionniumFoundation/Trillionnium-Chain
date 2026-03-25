@@ -314,6 +314,9 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.conflict_hits_per_tx(), 0.0);
     assert_eq!(profile.candidate_groups_per_tx(), 0.0);
     assert_eq!(profile.retry_pressure(), 0.0);
+    assert_eq!(profile.reused_group_placements(), 0);
+    assert_eq!(profile.reused_group_share(), 0.0);
+    assert_eq!(profile.new_group_share(), 0.0);
     assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
     assert_eq!(profile.retry_scan_hit_rate(), 0.0);
     assert_eq!(profile.retry_scan_misses(), 4);
@@ -363,6 +366,9 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert!((profile.conflict_hits_per_tx() - 0.75).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
     assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);
+    assert_eq!(profile.reused_group_placements(), 6);
+    assert!((profile.reused_group_share() - 0.75).abs() < f64::EPSILON);
+    assert!((profile.new_group_share() - 0.25).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_retry_hit() - (10.0 / 6.0)).abs() < f64::EPSILON);
     assert!((profile.retry_scan_hit_rate() - 0.6).abs() < f64::EPSILON);
     assert_eq!(profile.retry_scan_misses(), 4);

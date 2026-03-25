@@ -64,6 +64,21 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn reused_group_placements(&self) -> usize {
+        self.tx_count.saturating_sub(self.group_count)
+    }
+
+    #[inline]
+    pub fn reused_group_share(&self) -> f64 {
+        ratio_usize(self.reused_group_placements(), self.tx_count)
+    }
+
+    #[inline]
+    pub fn new_group_share(&self) -> f64 {
+        ratio_usize(self.group_count, self.tx_count)
+    }
+
+    #[inline]
     pub fn candidate_groups_per_retry_hit(&self) -> f64 {
         ratio_usize(self.candidate_groups_scanned, self.conflict_hits)
     }
