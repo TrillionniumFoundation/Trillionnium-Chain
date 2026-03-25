@@ -1606,6 +1606,48 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_stays_hard_stopped_while_restored_duplicate_metadata_survives_idle_polls() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by caches while the
+        // hard-stop lane remains empty.
+        g.seen_global.insert(41);
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+        g.critical_served_streak = 7;
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        assert_eq!(g.qos_snapshot(), expected);
+
+        // Idle scheduler polls must keep observability pinned to hard-stop semantics
+        // while preserved duplicate knowledge continues to classify restored ids.
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+        }
+
+        // Even though duplicate metadata is preserved, idle self-heal should still
+        // cold-reset fairness bookkeeping under hard-stop mode.
+        assert_eq!(g.critical_served_streak, 0);
+    }
+
+    #[test]
     fn duplicate_stays_duplicate_when_lane_is_globally_full() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
