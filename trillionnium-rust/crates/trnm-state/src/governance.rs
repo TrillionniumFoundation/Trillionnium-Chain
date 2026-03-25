@@ -781,6 +781,7 @@ mod tests {
         has_explicit_gov_param_validator, validate_gov_param_value,
         validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
     };
+    use crate::governance_ops::GOV_PARAM_SCHEMA;
 
     #[test]
     fn governance_allowed_keys_have_explicit_value_validators() {
@@ -861,5 +862,19 @@ mod tests {
 
         assert_eq!(sample_unique.len(), sample_keys.len());
         assert_eq!(allowed_unique, sample_unique);
+    }
+
+    #[test]
+    fn governance_legacy_registry_views_match_typed_schema_single_source() {
+        let schema_keys: Vec<&str> = GOV_PARAM_SCHEMA.iter().map(|entry| entry.key).collect();
+        assert_eq!(GOV_ALLOWED_KEYS, schema_keys.as_slice());
+
+        let legacy_samples: std::collections::BTreeMap<&str, &str> =
+            GOV_SCHEMA_INVALID_SAMPLES.iter().copied().collect();
+        let schema_samples: std::collections::BTreeMap<&str, &str> = GOV_PARAM_SCHEMA
+            .iter()
+            .map(|entry| (entry.key, entry.invalid_merge_gate_sample))
+            .collect();
+        assert_eq!(legacy_samples, schema_samples);
     }
 }
