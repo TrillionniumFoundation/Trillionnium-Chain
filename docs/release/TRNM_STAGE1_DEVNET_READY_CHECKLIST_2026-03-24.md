@@ -43,6 +43,7 @@
 6. **运维预检 / 回滚锚点固定**
    - 记录本次 smoke / rehearsal 使用的分支名、提交短 SHA、构建时间与产物位置；
    - 若使用本地二进制，至少记录 `sha256sum`（或平台等价命令）与生成命令；
+   - 若 bring-up / 巡检 / handoff 同时依赖 `trnm-node` 与 `trnm-cli`，两者都要单独记录二进制路径、hash 与 build command，避免“节点进程版本”和“操作员查询/发布工具版本”被误认为同一份构建；
    - 明确上一稳定锚点（上一个已知可恢复的 commit/tag）与回滚入口脚本；
    - 目的：避免出现“跑的是哪一个二进制”和“回退到哪里”说不清。
 
@@ -70,6 +71,9 @@ worktree_status=clean|dirty
 binary_path=
 binary_sha256=
 build_command=
+cli_binary_path=
+cli_binary_sha256=
+cli_build_command=
 previous_stable_anchor=
 rollback_entrypoint=
 ```
@@ -77,7 +81,8 @@ rollback_entrypoint=
 最少要求：
 - `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
 - `branch` 与 `commit_short` 可直接映射到本次证据；
-- `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个构建”；
+- `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个 `trnm-node` 构建”；
+- 若本轮使用 `trnm-cli` 做查询 / handoff / 预检，则 `cli_binary_sha256` 与 `cli_build_command` 必须能回答“操作员看到的结果来自哪一个 CLI 构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
 
 建议把上述字段做成一次性预检采集，避免手填时漏项或把不同 worktree 的值抄混：
@@ -95,6 +100,13 @@ printf 'worktree_status=%s\n' "$(test -z "$(git status --short)" && echo clean |
 printf 'binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-node"
 printf 'build_command=%s\n' 'cargo build -p trnm-node'
 shasum -a 256 target/debug/trnm-node | awk '{printf "binary_sha256=%s\n", $1}'
+printf 'cli_binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-cli"
+printf 'cli_build_command=%s\n' 'cargo build -p trnm-cli'
+if [[ -x target/debug/trnm-cli ]]; then
+  shasum -a 256 target/debug/trnm-cli | awk '{printf "cli_binary_sha256=%s\n", $1}'
+else
+  printf 'cli_binary_sha256=%s\n' '<not-built>'
+fi
 printf 'previous_stable_anchor=%s\n' "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}"
 printf 'rollback_entrypoint=%s\n' "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
 ```
