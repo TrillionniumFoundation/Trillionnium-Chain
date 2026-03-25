@@ -1,5 +1,6 @@
 use super::*;
 
+#[test]
 fn recover_discards_committed_duplicate_height_tail_without_restoring_stale_lock() {
     let wal_dir = temp_wal_dir("recover-committed-duplicate-height-tail-no-stale-lock");
     fs::create_dir_all(&wal_dir).unwrap();
