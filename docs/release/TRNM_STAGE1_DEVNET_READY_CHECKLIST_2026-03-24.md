@@ -46,7 +46,13 @@
    - 明确上一稳定锚点（上一个已知可恢复的 commit/tag）与回滚入口脚本；
    - 目的：避免出现“跑的是哪一个二进制”和“回退到哪里”说不清。
 
-7. **repo hygiene blocker 单独挂牌**
+7. **本地提交门禁与 handoff 口径固定**
+   - 对外发布、打 tag、生成 release note 之前，先把本轮证据收敛到一个**本地已提交**的 path-scoped commit；
+   - commit message 应明确作用域（例如 `docs(release): ...` / `trnm-node: ...` / `trnm-cli: ...`），避免把 unrelated dirty tree 混进 release 叙事；
+   - handoff 至少附上：`branch`、`commit_short`、`binary_sha256`、`previous_stable_anchor`、`rollback_entrypoint`；
+   - 若 required tests 未绿，则允许保留本地改动继续修复，但**不得**把该状态描述成 release candidate。
+
+8. **repo hygiene blocker 单独挂牌**
    - dirty tree、历史文档漂移、未归档的大批新增文件，必须单列为 blocker；
    - 不允许因为 smoke 通过，就把整个仓库描述成“release-ready”。
 
