@@ -763,6 +763,30 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_tracks_reserve_only_headroom_while_critical_backlog_is_active() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+
+        // Reserve-only mode has no dedicated normal queue, but fresh normal ingress
+        // should still be reported admissible while aggregate headroom remains.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 2,
+                total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
