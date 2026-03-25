@@ -132,6 +132,8 @@ mod tests {
             .expect("persisted checkpoint must keep a canonical DA/light-verifier summary");
         assert!(da_summary.contains("checkpoint_commitment="));
         assert!(da_summary.contains("wal_prev_hash_kind=linked"));
+        assert!(da_summary.contains("wal_proposal_hash_present=true"));
+        assert!(da_summary.contains("wal_proposal_hash_kind=opaque-ascii"));
         assert!(da_summary.contains("checkpoint_state_root_matches_wal=true"));
         assert!(da_summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
     }
