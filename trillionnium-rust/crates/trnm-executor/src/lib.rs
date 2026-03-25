@@ -2040,6 +2040,36 @@ mod tests {
     }
 
     #[test]
+    fn access_domain_versions_large_domain_accepts_late_same_version_echo() {
+        assert!(access_domain_versions_are_consistent(&[
+            o(7),
+            o(8),
+            o(9),
+            o(10),
+            ObjectRef { id: 42, version: 7 },
+            o(11),
+            o(12),
+            o(13),
+            ObjectRef { id: 42, version: 7 },
+        ]));
+    }
+
+    #[test]
+    fn access_domain_versions_large_domain_rejects_late_cross_version_skew() {
+        assert!(!access_domain_versions_are_consistent(&[
+            o(7),
+            o(8),
+            o(9),
+            o(10),
+            ObjectRef { id: 42, version: 7 },
+            o(11),
+            o(12),
+            o(13),
+            ObjectRef { id: 42, version: 8 },
+        ]));
+    }
+
+    #[test]
     fn combined_access_domain_versions_are_consistent_across_read_write_split() {
         assert!(combined_access_domain_versions_are_consistent(
             &[ObjectRef { id: 42, version: 1 }],
