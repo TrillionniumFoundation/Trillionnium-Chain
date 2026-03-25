@@ -161,6 +161,32 @@ Operator discipline:
 - quote `manifest.txt` only for RC rehearsal conclusions
 - if branch / commit / worktree identity differs across artifacts, stop and treat the handoff as **No-Go** until the mismatch is explained
 
+### Canonical handoff extraction block
+
+When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
+
+```bash
+latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
+latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
+
+[ -n "$latest_evidence_dir" ] || { echo "missing local evidence" >&2; exit 1; }
+[ -n "$latest_rc_dir" ] || { echo "missing rc manifest" >&2; exit 1; }
+
+summary_path="$latest_evidence_dir/summary.txt"
+manifest_path="$latest_rc_dir/manifest.txt"
+
+printf 'summary_path=%s\n' "$summary_path"
+printf 'manifest_path=%s\n' "$manifest_path"
+
+awk -F= '/^(git_branch|git_head|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
+awk -F= '/^(git_branch|git_head|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
+```
+
+Interpretation rule:
+- if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
+- if `git_branch=`, `git_head=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
+
 ## Go / No-Go decision rule
 
 ### GO only if all are true
