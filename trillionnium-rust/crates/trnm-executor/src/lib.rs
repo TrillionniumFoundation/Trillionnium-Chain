@@ -120,6 +120,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_scan_overhang_per_reused_placement(&self) -> f64 {
+        ratio_usize(self.retry_scan_misses(), self.reused_group_placements())
+    }
+
+    #[inline]
     pub fn ww_retry_hit_rate(&self) -> f64 {
         ratio_usize(self.stage_ww_hits, self.stage_ww_checks)
     }

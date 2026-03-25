@@ -222,6 +222,8 @@ fn main() {
         let retry_scan_misses_per_tx = profile.retry_scan_misses_per_tx();
         let retry_scan_misses_per_group = profile.retry_scan_misses_per_group();
         let retry_scan_overhang_per_hit = profile.retry_scan_overhang_per_hit();
+        let retry_scan_overhang_per_reused_placement =
+            profile.retry_scan_overhang_per_reused_placement();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
         let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
         let stage_rw_hit_rate = ratio(profile.stage_rw_hits, profile.stage_rw_checks);
@@ -290,6 +292,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_scan_overhang_per_hit={:.4}",
             retry_scan_overhang_per_hit
+        ));
+        lines.push(format!(
+            "profile.retry_scan_overhang_per_reused_placement={:.4}",
+            retry_scan_overhang_per_reused_placement
         ));
         lines.push(format!(
             "profile.stage_ww_hit_rate={:.4}",
@@ -611,6 +617,7 @@ mod tests {
         assert!((profile.retry_stage_overlap_share_of_attributed() - 0.2).abs() < f64::EPSILON);
         assert!((profile.retry_stage_concentration() - 0.5625).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
     }
 }
