@@ -64,3 +64,68 @@ pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Resul
     fs::write(&f, raw).with_context(|| format!("write wal failed: {}", f.display()))?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_wal_dir(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "trnm-node-runtime-recovery-wal-{}-{}",
+            name,
+            now_unix_ms()
+        ))
+    }
+
+    #[test]
+    fn load_checkpoint_meta_canonicalizes_equal_height_entries_for_recovery_audit_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&CheckpointMetaList {
+            checkpoints: vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), raw).unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ]
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+}
