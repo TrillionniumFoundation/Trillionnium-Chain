@@ -13,5 +13,9 @@ mod tests_adapter_path_classification_reputation;
 mod tests_adapter_path_classification_output;
 
 #[cfg(test)]
+#[path = "tests_adapter_path_classification_reputation_surface_export.rs"]
+mod tests_adapter_path_classification_reputation_surface_export;
+
+#[cfg(test)]
 #[path = "tests_adapter_path_classification_retry.rs"]
 mod tests_adapter_path_classification_retry;
