@@ -869,6 +869,41 @@ mod tests {
     }
 
     #[test]
+    fn critical_spillover_duplicate_probe_stays_globally_duplicate_until_spilled_copy_drains() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Fill free normal headroom via critical spillover while keeping one of the
+        // spilled tx ids live across both ingress classes.
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Even though tx 102 spilled into normal capacity, duplicate probes from
+        // either class must remain Duplicate until the queued copy drains.
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Re-admission stays blocked until the spilled copy itself leaves the queue,
+        // regardless of whether fairness pops it before or after the reserved
+        // critical backlog.
+        let first = g.pop_ready();
+        assert!(matches!(first, Some(100) | Some(101) | Some(102)));
+        if first != Some(102) {
+            assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+            let second = g.pop_ready();
+            assert!(matches!(second, Some(100) | Some(101) | Some(102)));
+            if second != Some(102) {
+                assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+                assert_eq!(g.pop_ready(), Some(102));
+            }
+        }
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn reserve_only_normal_borrowed_admission_is_globally_idempotent_until_drained() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
