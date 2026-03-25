@@ -235,6 +235,8 @@ fn main() {
         let dominant_retry_lead_hits = profile.dominant_retry_lead_hits();
         let dominant_retry_lead_share = profile.dominant_retry_lead_share();
         let attributed_retry_hits = profile.attributed_retry_hits();
+        let unattributed_retry_hits = profile.unattributed_retry_hits();
+        let unattributed_retry_share = profile.unattributed_retry_share();
         let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
@@ -335,6 +337,14 @@ fn main() {
         lines.push(format!(
             "profile.attributed_retry_hits={}",
             attributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.unattributed_retry_hits={}",
+            unattributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.unattributed_retry_share={:.4}",
+            unattributed_retry_share
         ));
         lines.push(format!(
             "profile.retry_stage_overlap_hits={}",
@@ -572,6 +582,8 @@ mod tests {
         };
 
         assert_eq!(profile.attributed_retry_hits(), 5);
+        assert_eq!(profile.unattributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_share(), 0.0);
         assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);

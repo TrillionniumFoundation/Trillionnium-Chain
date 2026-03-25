@@ -332,6 +332,8 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.dominant_retry_lead_hits(), 0);
     assert_eq!(profile.dominant_retry_lead_share(), 0.0);
     assert_eq!(profile.attributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_hits(), 3);
+    assert_eq!(profile.unattributed_retry_share(), 1.0);
     assert_eq!(profile.retry_stage_overlap_hits(), 0);
     assert_eq!(profile.retry_stage_overlap_share(), 0.0);
 }
@@ -379,6 +381,8 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert_eq!(profile.dominant_retry_lead_hits(), 2);
     assert!((profile.dominant_retry_lead_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
     assert_eq!(profile.attributed_retry_hits(), 7);
+    assert_eq!(profile.unattributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_share(), 0.0);
     assert_eq!(profile.retry_stage_overlap_hits(), 1);
     assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
 }
@@ -414,6 +418,8 @@ fn grouping_profile_retry_metrics_report_mixed_when_retry_stage_ties() {
     assert!((profile.dominant_retry_share() - 0.5).abs() < f64::EPSILON);
     assert_eq!(profile.dominant_retry_lead_hits(), 0);
     assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+    assert_eq!(profile.unattributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_share(), 0.0);
     assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
 }
 

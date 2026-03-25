@@ -183,6 +183,17 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn unattributed_retry_hits(&self) -> usize {
+        self.conflict_hits
+            .saturating_sub(self.attributed_retry_hits())
+    }
+
+    #[inline]
+    pub fn unattributed_retry_share(&self) -> f64 {
+        ratio_usize(self.unattributed_retry_hits(), self.conflict_hits)
+    }
+
+    #[inline]
     pub fn retry_stage_overlap_hits(&self) -> usize {
         self.attributed_retry_hits()
             .saturating_sub(self.conflict_hits)
