@@ -40,6 +40,36 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() 
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_limit() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?limit=3&limit=4",
+    )
+    .expect_err("duplicate limit should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("duplicate limit"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_event_type() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?eventType=trnm.task.accept&eventType=trnm.task.commit",
+    )
+    .expect_err("duplicate eventType should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("duplicate eventType"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_empty_source_value() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source=",
+    )
+    .expect_err("empty source should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid source"));
+}
+
+#[test]
 fn query_normalized_audit_events_supports_pagination_and_event_filters() {
     let events = vec![
         NodeEventRecord {
