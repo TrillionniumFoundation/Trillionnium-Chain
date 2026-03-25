@@ -171,6 +171,26 @@ fn market_score_breakdown_saturates_penalty_path_at_u128_max() {
 }
 
 #[test]
+fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
+    let breakdown = market_score_breakdown(
+        50,
+        -250,
+        MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: 10,
+        },
+    );
+
+    assert_eq!(breakdown.effective_reputation, -10);
+    assert_eq!(breakdown.base_score, 150);
+    assert_eq!(breakdown.penalty, 70);
+    assert_eq!(breakdown.effective_score, 220);
+    assert_eq!(breakdown.reputation_reward, 0);
+    assert!(!breakdown.score_floor_applied);
+}
+
+#[test]
 fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
     with_market_score_env(
         &[
