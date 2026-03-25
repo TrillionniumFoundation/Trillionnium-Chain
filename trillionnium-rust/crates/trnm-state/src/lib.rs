@@ -4285,6 +4285,66 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_forged_genesis_prev_hash() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject forged genesis prev_hash_hex so restart-time checkpoint proofs cannot smuggle predecessor links into height-1 audit surfaces"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_missing_non_genesis_prev_hash() {
+        let genesis = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let forged_successor = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: forged_successor.height,
+            state_root_hex: forged_successor.state_root_hex.clone(),
+            wal_entry_hash_hex: forged_successor.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(
+            &[checkpoint],
+            &[genesis, forged_successor],
+        )
+        .unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject non-genesis WAL metadata without prev_hash_hex so checkpoint/proof audit surfaces preserve the restart-time chain link"
+        );
+    }
+
+    #[test]
     fn put_and_version_update() {
         let mut st = StateStore::new();
         let t = TaskObject {
