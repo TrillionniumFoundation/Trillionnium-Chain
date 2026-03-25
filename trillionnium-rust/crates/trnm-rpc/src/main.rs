@@ -2706,16 +2706,12 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     Some((method, path))
 }
 
-fn parse_http_get_target(first_line: &str) -> Option<&str> {
-    match parse_http_request_target(first_line) {
-        Some(("GET", path)) => Some(path),
-        _ => None,
-    }
-}
-
 #[cfg(test)]
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
-    parse_http_get_target(first_line).map(|path| path.split('?').next().unwrap_or(path))
+    match parse_http_request_target(first_line) {
+        Some(("GET", path)) => Some(path.split('?').next().unwrap_or(path)),
+        _ => None,
+    }
 }
 
 fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
