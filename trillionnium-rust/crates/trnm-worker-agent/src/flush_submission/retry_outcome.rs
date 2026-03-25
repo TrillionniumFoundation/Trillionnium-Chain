@@ -84,6 +84,20 @@ fn normalize_adapter_tx_hash(tx_hash: Option<&str>) -> Option<String> {
     })
 }
 
+fn stage_tx_hash_for_ack(
+    observed_tx_hash: Option<String>,
+    previous_tx_hash: Option<String>,
+    rc: i32,
+) -> Option<String> {
+    observed_tx_hash.or_else(|| {
+        if is_idempotent_duplicate_ok(rc) {
+            previous_tx_hash
+        } else {
+            None
+        }
+    })
+}
+
 pub(crate) fn classify_flush_ack(
     commit_res: &AdapterExecResult,
     reveal_res: &AdapterExecResult,
@@ -107,8 +121,10 @@ pub(crate) fn classify_flush_ack(
     let reveal_hash_observed = observed_reveal_tx_hash.is_some()
         || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
 
-    let commit_tx_hash_for_ack = observed_commit_tx_hash.or(previous_commit_tx_hash);
-    let reveal_tx_hash_for_ack = observed_reveal_tx_hash.or(previous_reveal_tx_hash);
+    let commit_tx_hash_for_ack =
+        stage_tx_hash_for_ack(observed_commit_tx_hash, previous_commit_tx_hash, commit_res.rc);
+    let reveal_tx_hash_for_ack =
+        stage_tx_hash_for_ack(observed_reveal_tx_hash, previous_reveal_tx_hash, reveal_res.rc);
 
     let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
         && reveal_idempotent_ok
@@ -199,6 +215,48 @@ mod tests {
             classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
         assert_eq!(decision.ack_status, "rejected");
         assert_eq!(decision.reason_code, "commit_rejected_skip_reveal");
+    }
+
+    #[test]
+    fn classify_flush_ack_does_not_reuse_stale_receipts_for_non_duplicate_rejection() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-stale-rejection-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            76,
+            "accepted",
+            Some("commit-old".to_string()),
+            Some("reveal-old".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-0".to_string()),
+        )
+        .expect("write prior ack with stale persisted tx hashes");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_SKIPPED,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_SKIPPED,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 76);
+        assert_eq!(decision.ack_status, "rejected");
+        assert_eq!(decision.reason_code, "commit_rejected_skip_reveal");
+        assert_eq!(decision.commit_tx_hash_for_ack, None);
+        assert_eq!(decision.reveal_tx_hash_for_ack, None);
+
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
