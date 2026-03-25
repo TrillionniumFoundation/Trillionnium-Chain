@@ -2368,11 +2368,15 @@ impl StateStore {
                         self.gov_param_key_index.get(&snapshot_key).copied()
                     {
                         if existing_key_id != snapshot.key_id {
-                            self.clear_pending_gov_update_bindings(&snapshot_key, None);
-                            self.remove_gov_param_key_index_for_id(snapshot.key_id);
-                            self.objects.remove(&snapshot.key_id);
-                            self.invalidate_state_root_cache();
-                            return;
+                            if governance_expected_key_id(&snapshot_key) == Some(snapshot.key_id) {
+                                self.remove_gov_param_key_index_for_id(existing_key_id);
+                            } else {
+                                self.clear_pending_gov_update_bindings(&snapshot_key, None);
+                                self.remove_gov_param_key_index_for_id(snapshot.key_id);
+                                self.objects.remove(&snapshot.key_id);
+                                self.invalidate_state_root_cache();
+                                return;
+                            }
                         }
                     }
 
@@ -6614,7 +6618,10 @@ mod tests {
             err.contains("explicit-validator registry drifted from allowed-key registry"),
             "{err}"
         );
-        assert!(err.contains("missing_allowed_keys=[max_parallel_workers]"), "{err}");
+        assert!(
+            err.contains("missing_allowed_keys=[max_parallel_workers]"),
+            "{err}"
+        );
         assert!(err.contains("rogue_registry_keys=[]"), "{err}");
         assert!(err.contains("max_parallel_workers"), "{err}");
     }
@@ -6650,7 +6657,10 @@ mod tests {
                 err.contains("explicit-value-rule registry drifted from allowed-key registry"),
                 "{err}"
             );
-            assert!(err.contains("missing_allowed_keys=[max_parallel_workers]"), "{err}");
+            assert!(
+                err.contains("missing_allowed_keys=[max_parallel_workers]"),
+                "{err}"
+            );
             assert!(err.contains("rogue_registry_keys=[]"), "{err}");
             assert!(err.contains("max_parallel_workers"), "{err}");
         }
@@ -9025,7 +9035,8 @@ mod tests {
     }
 
     #[test]
-    fn governance_registry_lookup_id_for_key_keeps_reserved_binding_when_foreign_alias_reuses_reserved_id() {
+    fn governance_registry_lookup_id_for_key_keeps_reserved_binding_when_foreign_alias_reuses_reserved_id(
+    ) {
         let mut indexed = BTreeMap::new();
         indexed.insert(
             NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
@@ -9320,6 +9331,73 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_restore_repairs_same_key_registry_drift_via_single_source_binding() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 3,
+                value: ObjectValue::Task(TaskObject {
+                    task_id: 8_000,
+                    creator: "registry-drift".into(),
+                    bounty: 1,
+                    status: TaskStatus::Open,
+                    proof_type: ProofType::Fraud,
+                    metadata: None,
+                    worker: None,
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: None,
+                    resolve_deadline_height: None,
+                    challenge_bond: None,
+                    challenger: None,
+                    challenge_bond_forfeited: None,
+                    version: 3,
+                }),
+            },
+        );
+
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_key_index.get("emergency_pause").copied(),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "restore must repair same-key registry drift back to the reserved emergency_pause id"
+        );
+        assert_eq!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID)
+                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            Some((
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+                1,
+            )),
+            "restore must materialize the canonical emergency_pause object at the reserved slot"
+        );
+        assert!(
+            st.objects.get(&8_000).is_some(),
+            "repairing registry drift must not scrub unrelated foreign objects that happened to occupy the stale mutable slot"
+        );
+        assert!(st.is_emergency_paused());
+    }
+
+    #[test]
     fn emergency_pause_unchecked_idempotent_replay_uses_single_source_lookup_without_registry_entry(
     ) {
         let mut st = StateStore::new();
@@ -9374,7 +9452,8 @@ mod tests {
                 }),
             },
         );
-        st.gov_param_key_index.insert("emergency_pause".into(), 8_000);
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
 
         let applied = st
             .set_gov_param(8_100, 7_999, "emergency_pause".into(), "true".into())
