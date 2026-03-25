@@ -113,10 +113,11 @@ done
 2. 实际启动的是哪一个 `trnm-node` 二进制；
 3. 参与 bring-up 的节点配置是否与证据记录一致。
 
-若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据：
+若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**：
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
+EXPECTED_BRANCH="lane/refXX-scope-name"
 cd trillionnium-rust
 ACTUAL_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
 ACTUAL_BRANCH="$(git branch --show-current)"
@@ -124,8 +125,14 @@ if [[ "$ACTUAL_WORKTREE_ROOT" != "$EXPECTED_WORKTREE_ROOT" ]]; then
   echo "[FAIL] worktree mismatch: expected $EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
   exit 1
 fi
+if [[ "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
+  echo "[FAIL] branch mismatch: expected $EXPECTED_BRANCH got $ACTUAL_BRANCH" >&2
+  exit 1
+fi
 printf '[OK] worktree_root=%s branch=%s\n' "$ACTUAL_WORKTREE_ROOT" "$ACTUAL_BRANCH"
 ```
+
+对于 lane 化运行，建议把 `EXPECTED_WORKTREE_ROOT` 与 `EXPECTED_BRANCH` 作为 runbook 参数或环境变量显式传入，而不是依赖人工目测当前 shell 提示符；这样在多 worktree 并行时可以更稳地 fail-closed。
 
 ## 最小 bring-up 路径
 
