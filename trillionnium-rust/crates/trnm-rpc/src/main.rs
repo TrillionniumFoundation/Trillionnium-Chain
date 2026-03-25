@@ -2602,6 +2602,10 @@ fn is_health_probe_path(path: &str) -> bool {
     .any(|alias| path.eq_ignore_ascii_case(alias))
 }
 
+fn is_supported_http_version(version: &str) -> bool {
+    matches!(version, "HTTP/1.0" | "HTTP/1.1")
+}
+
 fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -2667,7 +2671,7 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
-    if rest.is_empty() || rest.contains([' ', '\t']) || !rest.starts_with("HTTP/") {
+    if rest.is_empty() || rest.contains([' ', '\t']) || !is_supported_http_version(rest) {
         return None;
     }
 
@@ -4941,6 +4945,21 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health"), None);
         assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_request_target_accepts_only_supported_http_versions() {
+        assert_eq!(
+            parse_http_request_target("GET /health HTTP/1.1"),
+            Some(("GET", "/health"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz HTTP/1.0"),
+            Some(("HEAD", "/readyz"))
+        );
+        assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
+        assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
+        assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
     }
 
     #[test]

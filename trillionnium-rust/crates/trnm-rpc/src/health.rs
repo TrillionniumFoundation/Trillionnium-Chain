@@ -168,6 +168,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::is_health_probe_path;
+    use crate::http::parse_http_request_target;
 
     #[test]
     fn accepts_health_probe_aliases() {
