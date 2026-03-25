@@ -78,6 +78,39 @@ fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
 }
 
 #[test]
+fn x3_prep_degraded_heartbeat_with_invalid_bounds_fails_closed_before_compensation() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-invalid-bounds".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 0,
+            target_height: 9,
+            latency_ms: 42,
+        }),
+        degraded: true,
+        should_retry: false,
+        message: "target relay timeout with malformed heights".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_degraded_retry_pending_prefers_compensation_revert_over_retry_pending() {
     let mut request = SettlementRequest::new(1, "0xdegraded-retry-pending".to_string());
     let token = operator_token();
