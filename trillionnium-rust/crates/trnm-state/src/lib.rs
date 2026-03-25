@@ -7207,6 +7207,41 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_zero_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_201,
+            Some(GovParamObject {
+                key_id: 7_201,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                version: 1,
+            }),
+        );
+
+        st.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 0,
+                key: "challenge_min_bond".into(),
+                value: "6500".into(),
+                activate_at_height: 1_020,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("challenge_min_bond"),
+            None,
+            "restore must fail closed when a pending governance snapshot targets the zero object id"
+        );
+        assert_eq!(
+            st.gov_param_string("challenge_min_bond"),
+            Some("6000".into()),
+            "rejecting a zero-id pending governance snapshot must preserve the live canonical parameter"
+        );
+    }
+
+    #[test]
     fn restore_pending_gov_update_rejects_zero_activate_height_fail_closed() {
         let mut st = StateStore::new();
 
