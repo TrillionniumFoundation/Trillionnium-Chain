@@ -44,8 +44,29 @@ Interpretation rule:
 - `git status --short` must be empty for clean-tree release rehearsals
 - `git worktree list --porcelain` should show the current path attached to the branch you intend to rehearse; if branch/path pairing is different from expectation, stop instead of "fixing it later"
 
+For multi-worktree validator rehearsals, prefer an explicit fail-closed assertion block instead of eyeballing the shell prompt:
+
+```bash
+EXPECTED_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+EXPECTED_BRANCH_REF="refs/heads/$(git branch --show-current)"
+CURRENT_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+CURRENT_BRANCH_NAME="$(git branch --show-current)"
+CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
+
+[ -n "$CURRENT_BRANCH_NAME" ] || { echo "detached HEAD: no branch checked out" >&2; exit 1; }
+[ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
+  printf 'worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
+[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF" ] || {
+  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$CURRENT_BRANCH_REF" >&2
+  exit 1
+}
+```
+
 Operator rule:
 - do not begin `testnet_preflight.sh`, `run_local_release_evidence.sh`, or `release_rc.sh` until the exact worktree path, branch, and commit are all recorded together
+- when the run is bound to a dedicated lane/worktree, replace the self-derived `EXPECTED_*` values above with the lane-assigned path/ref from the ticket or supervisor prompt, so the shell fails closed if the operator opened the wrong worktree
 - if an artifact later reports a different branch or commit than this pre-run identity block, treat the handoff as **No-Go** until reconciled
 
 ## Recommended execution order
