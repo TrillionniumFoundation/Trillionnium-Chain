@@ -7,7 +7,8 @@ use crate::capability::{
 use crate::envpaths::identity_registry_file;
 use crate::http::{
     configure_health_stream, http_json_head_response, http_json_response,
-    parse_http_request_target, parse_query_events_limit_from_path, read_http_request_head,
+    http_response_for_method, parse_http_request_target, parse_query_events_limit_from_path,
+    read_http_request_head,
 };
 use crate::node_events::load_node_events;
 use crate::runtime::now_ms;
@@ -134,7 +135,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             }
                         }
                     }
-                    (_, Err(err)) => err,
+                    (_, Err(err)) => http_response_for_method(method, &err),
                     (Err(_), _) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
                         json_response_for_method(method, "400 Bad Request", body)

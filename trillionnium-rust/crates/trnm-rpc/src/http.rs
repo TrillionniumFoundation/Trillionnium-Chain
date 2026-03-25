@@ -21,6 +21,22 @@ pub(crate) fn http_json_head_response(status_line: &str, body_len: usize) -> Str
     )
 }
 
+pub(crate) fn http_response_for_method(method: &str, response: &str) -> String {
+    if method != "HEAD" {
+        return response.to_string();
+    }
+
+    let Some((headers, body)) = response.split_once("\r\n\r\n") else {
+        return response.to_string();
+    };
+    let status_line = headers
+        .lines()
+        .next()
+        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
+        .unwrap_or("500 Internal Server Error");
+    http_json_head_response(status_line, body.len())
+}
+
 pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
@@ -228,4 +244,31 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
     }
 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{http_json_response, http_response_for_method};
+
+    #[test]
+    fn http_response_for_method_preserves_get_error_bodies() {
+        let response = http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\"}",
+        );
+        assert_eq!(http_response_for_method("GET", &response), response);
+    }
+
+    #[test]
+    fn http_response_for_method_strips_head_error_bodies() {
+        let response = http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\"}",
+        );
+        let head = http_response_for_method("HEAD", &response);
+        assert!(head.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(head.ends_with("\r\n\r\n"));
+        assert!(!head.ends_with("BAD_REQUEST\"}"));
+        assert!(head.contains("Content-Length: 33\r\n"));
+    }
 }

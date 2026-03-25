@@ -2628,6 +2628,22 @@ fn http_json_head_response(status_line: &str, body_len: usize) -> String {
     )
 }
 
+fn http_response_for_method(method: &str, response: &str) -> String {
+    if method != "HEAD" {
+        return response.to_string();
+    }
+
+    let Some((headers, body)) = response.split_once("\r\n\r\n") else {
+        return response.to_string();
+    };
+    let status_line = headers
+        .lines()
+        .next()
+        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
+        .unwrap_or("500 Internal Server Error");
+    http_json_head_response(status_line, body.len())
+}
+
 fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
@@ -3162,7 +3178,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             }
                         }
                     }
-                    (_, Err(err)) => err,
+                    (_, Err(err)) => http_response_for_method(method, &err),
                     (Err(_), _) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
                         json_response_for_method(method, "400 Bad Request", body)

@@ -235,7 +235,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             }
                         }
                     }
-                    (_, Err(err)) => err,
+                    (_, Err(err)) => http_response_for_method(method, &err),
                     (Err(_), _) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
                         json_response_for_method(method, "400 Bad Request", body)
