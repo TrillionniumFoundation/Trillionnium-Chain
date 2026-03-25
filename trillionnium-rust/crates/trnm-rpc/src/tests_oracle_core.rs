@@ -125,6 +125,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_n
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
+    for path in [
+        "/query-normalized-audit-events-shadow",
+        "/query-normalized-audit-events-shadow?source=trnm.task",
+        "/query-normalized-audit-events/extra",
+        "/query-normalized-audit-events/extra?limit=2",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("prefix-shadow paths should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn query_normalized_audit_events_supports_pagination_and_event_filters() {
     let events = vec![
         NodeEventRecord {

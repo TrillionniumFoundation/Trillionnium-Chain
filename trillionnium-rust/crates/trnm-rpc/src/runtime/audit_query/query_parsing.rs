@@ -137,7 +137,7 @@ fn validate_path_prefix<'a>(
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     let has_invalid_path = !path_without_query.starts_with('/')
-        || required_prefix.is_some_and(|prefix| !path_without_query.starts_with(prefix))
+        || required_prefix.is_some_and(|prefix| path_without_query != prefix)
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
         || normalized_path.contains("%5c")
