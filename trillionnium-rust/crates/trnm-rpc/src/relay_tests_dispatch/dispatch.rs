@@ -139,6 +139,54 @@ fn relay_session_proof_smoke_and_tamper_matrix() {
 }
 
 #[test]
+fn relay_session_proof_single_message_range_has_empty_merkle_path_and_verifies() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp-single".into(),
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp-single".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"solo".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 9,
+            session_id: "sp-single".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: None,
+        })
+        .unwrap();
+
+    assert_eq!(proof.range_len, 1);
+    assert_eq!(proof.message_count, 1);
+    assert_eq!(proof.proof_count, 1);
+    assert_eq!(proof.messages.len(), 1);
+    assert_eq!(proof.proofs.len(), 1);
+    assert_eq!(proof.messages[0].sequence, 1);
+    assert_eq!(proof.proofs[0].leaf_index, 0);
+    assert!(proof.proofs[0].proof.is_empty());
+    assert_eq!(proof.proofs[0].envelope, proof.messages[0]);
+    assert_eq!(
+        proof.segment_root_hex,
+        hex::encode(hash_envelope(&proof.messages[0]).unwrap())
+    );
+
+    verify_session_proof(&proof).unwrap();
+}
+
+#[test]
 fn relay_session_proof_accepts_uppercase_leaf_hash_hex() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);
