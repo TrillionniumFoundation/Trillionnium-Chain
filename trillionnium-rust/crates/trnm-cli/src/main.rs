@@ -188,6 +188,11 @@ struct TxQueryResponse {
 
 fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Result<()> {
     let Some(compatibility) = parsed.get("metadata_compatibility") else {
+        if parsed.get("metadata_runtime_compatible").is_some() {
+            bail!(
+                "task query response metadata_runtime_compatible requires metadata_compatibility"
+            );
+        }
         if parsed.get("metadata_requires_governance_upgrade").is_some() {
             bail!(
                 "task query response metadata_requires_governance_upgrade requires metadata_compatibility"
@@ -225,8 +230,21 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
         );
     };
 
-    let expected_requires_governance_upgrade =
-        legacy_note_only || !(canonical_core_fields && complete_metering_snapshot);
+    let expected_runtime_compatible = canonical_core_fields && complete_metering_snapshot;
+    if let Some(reported) = parsed
+        .get("metadata_runtime_compatible")
+        .and_then(|v| v.as_bool())
+    {
+        if reported != expected_runtime_compatible {
+            bail!(
+                "task query response metadata_runtime_compatible mismatch: expected={}, got={}",
+                expected_runtime_compatible,
+                reported
+            );
+        }
+    }
+
+    let expected_requires_governance_upgrade = legacy_note_only || !expected_runtime_compatible;
     if let Some(reported) = parsed
         .get("metadata_requires_governance_upgrade")
         .and_then(|v| v.as_bool())
@@ -2201,8 +2219,12 @@ mod tests {
 
     #[test]
     fn task_query_accepts_consistent_metadata_compatibility_signals() {
-        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
         let parsed = parse_task_query_response(raw, 42).unwrap();
+        assert_eq!(
+            parsed["metadata_runtime_compatible"],
+            serde_json::json!(true)
+        );
         assert_eq!(
             parsed["metadata_requires_governance_upgrade"],
             serde_json::json!(true)
@@ -2214,12 +2236,12 @@ mod tests {
     }
 
     #[test]
-    fn task_query_rejects_inconsistent_metadata_upgrade_signal() {
-        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":true}"#;
+    fn task_query_rejects_inconsistent_metadata_runtime_compatible_signal() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
         assert!(err
             .to_string()
-            .contains("metadata_requires_governance_upgrade mismatch"));
+            .contains("metadata_runtime_compatible mismatch"));
     }
 
     #[test]
@@ -2232,7 +2254,16 @@ mod tests {
     }
 
     #[test]
-    fn task_query_rejects_upgrade_signal_without_metadata_compatibility() {
+    fn task_query_rejects_runtime_compatible_signal_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_runtime_compatible":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_runtime_compatible requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_governance_upgrade_signal_without_metadata_compatibility() {
         let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_requires_governance_upgrade":true}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
         assert!(err

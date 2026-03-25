@@ -175,6 +175,7 @@ fn query_task_from_state_snapshot_surfaces_metadata_governance_upgrade_signals()
     assert!(compatibility.legacy_note_only);
     assert!(compatibility.canonical_core_fields);
     assert!(compatibility.complete_metering_snapshot);
+    assert_eq!(out.metadata_runtime_compatible, Some(true));
     assert_eq!(out.metadata_requires_governance_upgrade, Some(true));
     assert_eq!(
         out.metadata_compatibility_findings,
