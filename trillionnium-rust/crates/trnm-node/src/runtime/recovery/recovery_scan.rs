@@ -7,8 +7,8 @@ fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
 pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let mut last_checkpoint =
-        verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
+    let mut last_checkpoint = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &entries)
+        .map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
     if entries.is_empty()
@@ -64,9 +64,12 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             if idx + 1 < entries.len() {
                 let discarded_tail = &entries[idx + 1..];
                 metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
-                committed_tail_beyond_checkpoint_discarded = discarded_tail
-                    .iter()
-                    .any(|e| e.committed && e.height > cp.height);
+                let retained_tip_hash = entries[idx].content_hash_hex();
+                committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
+                    e.committed
+                        && e.height > cp.height
+                        && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
+                });
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
                 truncated = true;
@@ -128,12 +131,12 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        let restored_round = if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded
-        {
-            0
-        } else {
-            last.round
-        };
+        let restored_round =
+            if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded {
+                0
+            } else {
+                last.round
+            };
         let next_height = last.height.saturating_add(1);
         persist_consensus_wal(
             wal_dir,
