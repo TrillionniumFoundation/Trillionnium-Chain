@@ -3632,6 +3632,12 @@ fn wal_content_hash_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     is_canonical_hex_digest(&wal_entry.content_hash_hex())
 }
 
+fn wal_state_root_surface_has_forbidden_layout(value: &str) -> bool {
+    value.trim() != value
+        || !value.is_ascii()
+        || value.chars().any(|c| c.is_whitespace() || c.is_control())
+}
+
 fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     let state_root_hex = wal_entry.state_root_hex.as_str();
     let looks_like_digest_surface = state_root_hex.len() == 64
@@ -3640,7 +3646,8 @@ fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
             .iter()
             .all(|byte| byte.is_ascii_hexdigit());
 
-    !looks_like_digest_surface || is_canonical_hex_digest(state_root_hex)
+    !wal_state_root_surface_has_forbidden_layout(state_root_hex)
+        && (!looks_like_digest_surface || is_canonical_hex_digest(state_root_hex))
 }
 
 fn checkpoint_hash_surfaces_are_canonical(
@@ -4281,6 +4288,54 @@ mod tests {
         assert!(
             got.is_none(),
             "node recovery must reject mixed-case checkpoint wal_entry_hash_hex so restart-time checkpoint proofs preserve canonical digest encodings"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_wal_state_root_with_edge_whitespace() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: " state-root-1 ".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject WAL state_root_hex with edge whitespace so restart-time checkpoint proofs cannot hide layout drift inside legacy non-digest state-root surfaces"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_wal_state_root_with_embedded_newline() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "state-root\n1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject WAL state_root_hex with embedded control/whitespace so restart-time checkpoint proofs stay canonical even for legacy non-digest state-root surfaces"
         );
     }
 
