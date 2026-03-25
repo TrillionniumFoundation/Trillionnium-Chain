@@ -5812,10 +5812,17 @@ mod tests {
         validate_challenge_accounting_invariants(&slashed)
             .expect("slashed challenge path must retain auditable evidence metadata");
 
-        slashed.challenge_window_blocks_snapshot = None;
-        let err = validate_challenge_accounting_invariants(&slashed)
+        let mut missing_snapshot = slashed.clone();
+        missing_snapshot.challenge_window_blocks_snapshot = None;
+        let err = validate_challenge_accounting_invariants(&missing_snapshot)
             .expect_err("terminal slashed challenge state must fail closed without evidence snapshot");
         assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge_window_blocks_snapshot")));
+
+        let mut missing_timing = slashed;
+        missing_timing.challenge_deadline_height = None;
+        let err = validate_challenge_accounting_invariants(&missing_timing)
+            .expect_err("terminal slashed challenge state must fail closed without timing evidence");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge timing metadata")));
     }
 
     #[test]
