@@ -318,6 +318,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.reused_group_share(), 0.0);
     assert_eq!(profile.new_group_share(), 0.0);
     assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
+    assert_eq!(profile.candidate_groups_per_reused_placement(), 0.0);
     assert_eq!(profile.retry_scan_hit_rate(), 0.0);
     assert_eq!(profile.retry_scan_misses(), 4);
     assert_eq!(profile.retry_scan_miss_rate(), 4.0 / 7.0);
@@ -370,6 +371,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert!((profile.reused_group_share() - 0.75).abs() < f64::EPSILON);
     assert!((profile.new_group_share() - 0.25).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_retry_hit() - (10.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_reused_placement() - (10.0 / 6.0)).abs() < f64::EPSILON);
     assert!((profile.retry_scan_hit_rate() - 0.6).abs() < f64::EPSILON);
     assert_eq!(profile.retry_scan_misses(), 4);
     assert!((profile.retry_scan_miss_rate() - 0.4).abs() < f64::EPSILON);
@@ -427,6 +429,32 @@ fn grouping_profile_retry_metrics_report_mixed_when_retry_stage_ties() {
     assert_eq!(profile.unattributed_retry_hits(), 0);
     assert_eq!(profile.unattributed_retry_share(), 0.0);
     assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+}
+
+#[test]
+fn candidate_groups_per_reused_placement_tracks_speculative_retry_cost() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 3,
+        grouped_count: 8,
+        max_group_size: 3,
+        min_group_size: 2,
+        avg_group_size: 8.0 / 3.0,
+        hot_object_share: 0.5,
+        conflict_checks: 10,
+        conflict_hits: 2,
+        candidate_groups_scanned: 10,
+        stage_ww_checks: 3,
+        stage_ww_hits: 1,
+        stage_wr_checks: 4,
+        stage_wr_hits: 1,
+        stage_rw_checks: 3,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.reused_group_placements(), 5);
+    assert!((profile.candidate_groups_per_retry_hit() - 5.0).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_reused_placement() - 2.0).abs() < f64::EPSILON);
 }
 
 #[test]

@@ -215,6 +215,7 @@ fn main() {
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
         let retry_pressure = profile.retry_pressure();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
+        let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
         let retry_scan_misses = profile.retry_scan_misses();
         let retry_scan_miss_rate = profile.retry_scan_miss_rate();
@@ -260,6 +261,10 @@ fn main() {
         lines.push(format!(
             "profile.candidate_groups_per_retry_hit={:.4}",
             candidate_groups_per_retry_hit
+        ));
+        lines.push(format!(
+            "profile.candidate_groups_per_reused_placement={:.4}",
+            candidate_groups_per_reused_placement
         ));
         lines.push(format!(
             "profile.retry_scan_hit_rate={:.4}",
@@ -587,5 +592,6 @@ mod tests {
         assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
     }
 }
