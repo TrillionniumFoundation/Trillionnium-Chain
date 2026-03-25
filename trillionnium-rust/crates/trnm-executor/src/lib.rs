@@ -149,6 +149,12 @@ impl GroupingProfile {
             .unwrap_or(0);
         ratio_usize(dominant_hits, self.conflict_hits)
     }
+
+    #[inline]
+    pub fn retry_stage_overlap_share(&self) -> f64 {
+        let attributed_hits = self.stage_ww_hits + self.stage_wr_hits + self.stage_rw_hits;
+        ratio_usize(attributed_hits.saturating_sub(self.conflict_hits), self.conflict_hits)
+    }
 }
 
 #[derive(Debug, Clone)]
