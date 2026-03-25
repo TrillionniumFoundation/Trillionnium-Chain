@@ -119,31 +119,10 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
 
 #[inline]
 fn dedup_access_keys_no_version(objs: &[ObjectRef]) -> Vec<u64> {
-    debug_assert!(
-        access_domain_versions_are_consistent(objs),
-        "access domain contains the same object id with multiple versions"
-    );
-
-    if objs.len() <= 8 {
-        let mut out: Vec<u64> = Vec::with_capacity(objs.len());
-        for obj in objs {
-            let key = access_key(obj);
-            if !out.contains(&key) {
-                out.push(key);
-            }
-        }
-        return out;
-    }
-
-    let mut seen: HashSet<u64> = HashSet::with_capacity(objs.len());
-    let mut out: Vec<u64> = Vec::with_capacity(objs.len());
-    for obj in objs {
-        let key = access_key(obj);
-        if seen.insert(key) {
-            out.push(key);
-        }
-    }
-    out
+    // Keep the no-version helper on the same object-scoped canonicalization path
+    // as the main access-domain deduper so deterministic guard semantics cannot
+    // drift if the small/large footprint split changes later.
+    dedup_access_keys(objs)
 }
 
 #[inline]
