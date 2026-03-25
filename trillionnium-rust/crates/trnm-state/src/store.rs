@@ -151,6 +151,7 @@ impl StateStore {
                 value: ObjectValue::Task(task),
             },
         );
+        self.pending_resolve_approvals.remove(&expected.id);
         Ok(ObjectRef {
             id: expected.id,
             version: new_version,
