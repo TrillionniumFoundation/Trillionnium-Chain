@@ -2466,6 +2466,9 @@ impl StateStore {
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
+        if task.task_id == 0 {
+            return Err("task id must be non-zero".into());
+        }
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
@@ -2515,6 +2518,9 @@ impl StateStore {
         &mut self,
         mut proposal: GovProposalObject,
     ) -> Result<ObjectRef, String> {
+        if proposal.proposal_id == 0 {
+            return Err("proposal id must be non-zero".into());
+        }
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }

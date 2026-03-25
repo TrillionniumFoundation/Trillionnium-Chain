@@ -129,3 +129,56 @@ fn update_proposal_rejects_embedded_proposal_id_mismatch() {
     assert_eq!(st.get_proposal(original.proposal_id).unwrap(), original);
     assert!(st.get_proposal(original.proposal_id + 1).is_none());
 }
+
+#[test]
+fn put_task_new_rejects_zero_id() {
+    let mut st = StateStore::new();
+    let err = st
+        .put_task_new(TaskObject {
+            task_id: 0,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap_err();
+
+    assert!(err.contains("non-zero"));
+    assert!(st.get_task(0).is_none());
+}
+
+#[test]
+fn put_proposal_new_rejects_zero_id() {
+    let mut st = StateStore::new();
+    let err = st
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 0,
+            proposer: "alice".into(),
+            title: "p".into(),
+            description: "d".into(),
+            status: GovProposalStatus::Draft,
+            yes_votes: 0,
+            no_votes: 0,
+            created_at_height: 1,
+            version: 1,
+        })
+        .unwrap_err();
+
+    assert!(err.contains("non-zero"));
+    assert!(st.get_proposal(0).is_none());
+}
