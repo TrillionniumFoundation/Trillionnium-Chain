@@ -1172,6 +1172,13 @@ fn settle_worker_stake_for_terminal_state(
         ));
     }
 
+    // Fail closed before any terminal worker-stake movement when challenged-task
+    // evidence/settlement metadata is malformed or incomplete. Keep the scope
+    // narrow so uncontested timeout-completion paths do not inherit challenge-only
+    // metadata requirements.
+    if task.challenge_bond_forfeited.is_some() {
+        validate_challenge_accounting_invariants(task)?;
+    }
     let _ = validate_task_metering_snapshot(task)?;
 
     let lock_account = worker_stake_lock_account(task.task_id);
@@ -13303,6 +13310,51 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(st.balance_of("worker1"), before_worker);
         assert_eq!(st.balance_of(&worker_stake_lock_account(40_103_1)), before_lock);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+    }
+
+    #[test]
+    fn slashed_terminal_settlement_rejects_blank_challenger_metadata_without_moving_balances() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+
+        let r1 = apply_create_task(&mut st, 40_103_2, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_103_2, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(false);
+        malformed.challenger = Some(" \n\t ".into());
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_103_2));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = settle_worker_stake_for_terminal_state(&mut st, &task)
+            .expect_err("slashed settlement must fail closed when challenger evidence metadata is blank");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_103_2)), before_lock);
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
     }
 
