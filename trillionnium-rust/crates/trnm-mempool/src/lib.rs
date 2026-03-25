@@ -854,6 +854,41 @@ mod tests {
         );
     }
 
+
+    #[test]
+    fn qos_snapshot_reopens_borrowed_last_critical_slot_after_critical_lane_drains() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the final idle reserved slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // While the borrowed reserved slot is occupied, no class has fresh headroom.
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Once the borrowed critical-lane occupant drains and the critical lane goes
+        // idle again, observability must immediately advertise that the final reserved
+        // slot is borrowable for fresh normal ingress again.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
     #[test]
     fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
         let mut g = LaneAdmissionGate::new(4, 1);
