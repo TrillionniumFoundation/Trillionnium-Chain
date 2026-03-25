@@ -3733,6 +3733,7 @@ pub fn checkpoint_da_light_verifier_summary(
     }
 
     let checkpoint_commitment = checkpoint.commitment_hex();
+    let wal_content_hash = wal_entry.content_hash_hex();
     let wal_prev_hash = wal_entry.prev_hash_hex.as_deref().unwrap_or("none");
     let wal_prev_hash_present = wal_entry.prev_hash_hex.is_some();
     let wal_prev_hash_kind = if wal_prev_hash_present {
@@ -3749,7 +3750,7 @@ pub fn checkpoint_da_light_verifier_summary(
     let wal_proposal_hash_kind = "opaque-ascii";
 
     Some(format!(
-        "checkpoint_commitment={} checkpoint_commitment_bytes={} checkpoint_height={} checkpoint_state_root={} checkpoint_state_root_bytes={} checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes={} checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height={} wal_state_root={} wal_state_root_bytes={} wal_committed={} wal_prev_hash={} wal_prev_hash_present={} wal_prev_hash_kind={} wal_prev_hash_bytes={} wal_prev_hash_surface_canonical=true wal_round={} wal_proposal_hash={} wal_proposal_hash_present={} wal_proposal_hash_kind={} wal_proposal_hash_bytes={} wal_proposal_hash_surface_canonical=true",
+        "checkpoint_commitment={} checkpoint_commitment_bytes={} checkpoint_height={} checkpoint_state_root={} checkpoint_state_root_bytes={} checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes={} checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height={} wal_state_root={} wal_state_root_bytes={} wal_content_hash={} wal_content_hash_bytes={} wal_content_hash_matches_checkpoint=true wal_committed={} wal_prev_hash={} wal_prev_hash_present={} wal_prev_hash_kind={} wal_prev_hash_bytes={} wal_prev_hash_surface_canonical=true wal_round={} wal_proposal_hash={} wal_proposal_hash_present={} wal_proposal_hash_kind={} wal_proposal_hash_bytes={} wal_proposal_hash_surface_canonical=true",
         checkpoint_commitment,
         checkpoint_commitment.len() / 2,
         checkpoint.height,
@@ -3760,6 +3761,8 @@ pub fn checkpoint_da_light_verifier_summary(
         wal_entry.height,
         wal_entry.state_root_hex,
         wal_entry.state_root_hex.len() / 2,
+        wal_content_hash,
+        wal_content_hash.len() / 2,
         wal_entry.committed,
         wal_prev_hash,
         wal_prev_hash_present,
@@ -4241,11 +4244,12 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_commitment={} checkpoint_commitment_bytes=32 checkpoint_height=7 checkpoint_state_root={} checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height=7 wal_state_root={} wal_state_root_bytes=32 wal_committed=true wal_prev_hash={} wal_prev_hash_present=true wal_prev_hash_kind=linked wal_prev_hash_bytes=32 wal_prev_hash_surface_canonical=true wal_round=3 wal_proposal_hash=proposal-7 wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=10 wal_proposal_hash_surface_canonical=true",
+                "checkpoint_commitment={} checkpoint_commitment_bytes=32 checkpoint_height=7 checkpoint_state_root={} checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height=7 wal_state_root={} wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_bytes=32 wal_content_hash_matches_checkpoint=true wal_committed=true wal_prev_hash={} wal_prev_hash_present=true wal_prev_hash_kind=linked wal_prev_hash_bytes=32 wal_prev_hash_surface_canonical=true wal_round=3 wal_proposal_hash=proposal-7 wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=10 wal_proposal_hash_surface_canonical=true",
                 checkpoint.commitment_hex(),
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
                 wal.state_root_hex,
+                wal.content_hash_hex(),
                 wal.prev_hash_hex.as_deref().unwrap(),
             )
         );
@@ -4280,11 +4284,12 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_commitment={} checkpoint_commitment_bytes=32 checkpoint_height=1 checkpoint_state_root={} checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height=1 wal_state_root={} wal_state_root_bytes=32 wal_committed=true wal_prev_hash=none wal_prev_hash_present=false wal_prev_hash_kind=genesis wal_prev_hash_bytes=0 wal_prev_hash_surface_canonical=true wal_round=0 wal_proposal_hash=proposal-genesis wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=16 wal_proposal_hash_surface_canonical=true",
+                "checkpoint_commitment={} checkpoint_commitment_bytes=32 checkpoint_height=1 checkpoint_state_root={} checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_surface_canonical=true wal_height=1 wal_state_root={} wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_bytes=32 wal_content_hash_matches_checkpoint=true wal_committed=true wal_prev_hash=none wal_prev_hash_present=false wal_prev_hash_kind=genesis wal_prev_hash_bytes=0 wal_prev_hash_surface_canonical=true wal_round=0 wal_proposal_hash=proposal-genesis wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=16 wal_proposal_hash_surface_canonical=true",
                 checkpoint.commitment_hex(),
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
                 wal.state_root_hex,
+                wal.content_hash_hex(),
             )
         );
     }

@@ -137,6 +137,8 @@ mod tests {
         assert!(da_summary.contains("checkpoint_height_matches_wal=true"));
         assert!(da_summary.contains("checkpoint_state_root_matches_wal=true"));
         assert!(da_summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
+        assert!(da_summary.contains("wal_content_hash="));
+        assert!(da_summary.contains("wal_content_hash_matches_checkpoint=true"));
     }
 }
 
