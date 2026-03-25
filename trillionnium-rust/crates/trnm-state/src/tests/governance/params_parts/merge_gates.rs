@@ -127,6 +127,42 @@ fn governance_emergency_pause_registry_entry_stays_canonical_and_typed() {
 }
 
 #[test]
+fn governance_resolve_authority_registry_entry_stays_canonical_and_typed() {
+    // Merge-gate guard: resolve_authority must remain an explicitly-typed canonical registry
+    // entry. The key spelling, timelock classification, and authority-set validator must stay
+    // aligned so both schema lookup and runtime behavior share one source of truth.
+    let entry = gov_param_registry_entry("resolve_authority")
+        .expect("resolve_authority must stay present in the canonical governance schema");
+    assert_eq!(entry.key, "resolve_authority");
+    assert_eq!(entry.kind, GovParamKind::Timelocked);
+    assert_eq!(entry.validator, GovParamValueValidator::ResolveAuthoritySet);
+    assert!(gov_param_registry_entry("Resolve_Authority").is_none());
+
+    let mut st = StateStore::new();
+    let scheduled = st
+        .set_gov_param(
+            22_000,
+            7_312,
+            entry.key.into(),
+            "authority-b,authority-a".into(),
+        )
+        .expect("canonical resolve_authority binding must remain writable through the typed registry");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 22_020
+        }
+    ));
+
+    let pending = st
+        .pending_gov_update(entry.key)
+        .expect("timelocked resolve_authority update must be staged");
+    assert_eq!(pending.key_id, 7_312);
+    assert_eq!(pending.value, "authority-a,authority-b");
+    assert_eq!(pending.activate_at_height, 22_020);
+}
+
+#[test]
 fn governance_allowed_keys_schema_merge_gate_is_explicit() {
     // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
     // must update the static schema entry with an invalid sample that is expected to fail.
