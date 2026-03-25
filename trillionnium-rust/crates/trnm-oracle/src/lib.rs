@@ -931,6 +931,23 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_treats_exact_staleness_boundary_as_accepted_without_counter_drift() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 15_000);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_success_to_stable_metrics_contract() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_000);
