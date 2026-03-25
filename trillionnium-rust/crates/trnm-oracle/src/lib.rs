@@ -182,6 +182,19 @@ impl OraclePolicy {
         Ok(())
     }
 
+    /// Validates that a snapshot is canonical, fresh, and policy-compliant
+    /// enough to be consumed by higher layers.
+    ///
+    /// Layering contract:
+    /// - the oracle crate only decides whether snapshot data is admissible;
+    ///   it does not finalize bridge settlement or interpret replay/finality
+    ///   outcomes.
+    /// - downstream bridge/RPC code should treat a validation failure here as a
+    ///   fail-closed signal and avoid manufacturing fallback settlement meaning
+    ///   from malformed oracle payloads.
+    /// - `sample_count` may exceed the number of unique canonical sources when a
+    ///   report aggregates repeated observations inside one window; the opposite
+    ///   direction remains invalid and is rejected below.
     pub fn validate_snapshot(
         &self,
         snapshot: &OracleSnapshot,

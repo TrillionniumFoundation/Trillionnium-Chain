@@ -78,6 +78,21 @@ fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
         .unwrap_or(false)
 }
 
+/// Drives the minimal settlement state transition after relay liveness has been
+/// sampled and a settlement confirmation result is available.
+///
+/// Layering contract:
+/// - `relay_heartbeat` establishes whether the path is healthy enough to attempt
+///   settlement at all and provides bounded source/target height evidence.
+/// - this function consumes that evidence and performs the bridge-side terminal
+///   transition only (`Pending -> Finalized` or `Pending -> Reverted`).
+/// - oracle confidence, snapshot freshness, and RPC parsing remain outside this
+///   function; callers must fail closed before entering here when oracle data is
+///   insufficient or non-canonical.
+///
+/// The ordering is intentionally conservative: degraded or retry-pending
+/// heartbeat outcomes block finalization before confirmation details can weaken
+/// the fail-closed boundary.
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
     token: &CapabilityToken,
