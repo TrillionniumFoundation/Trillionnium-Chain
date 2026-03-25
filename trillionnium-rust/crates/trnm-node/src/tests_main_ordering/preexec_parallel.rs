@@ -31,6 +31,27 @@ fn preexec_parallel_workers_match_single_worker_results() {
 }
 
 #[test]
+fn preexec_parallel_dedupes_replayed_group_ids_before_worker_fanout() {
+    let state = StateStore::new();
+    let picked = vec![
+        MockTx::CreateTask {
+            task_id: 4151,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::AcceptTask {
+            task_id: 999_999,
+            worker: "worker4152".into(),
+        },
+    ];
+
+    let pool = PreExecPool::new(Arc::new(state), Arc::new(picked), 4, 1);
+    let replayed = pre_execute_group_parallel(&pool, vec![1, 2, 1, 2, 1]);
+
+    assert_eq!(replayed, (vec![1], 1));
+}
+
+#[test]
 fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
     let mut state = StateStore::new();
     state.set_balance("worker4100", 1_000);
