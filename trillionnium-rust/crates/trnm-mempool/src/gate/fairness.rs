@@ -156,6 +156,9 @@ impl AdmissionGate {
             // As soon as all known retries are drained, release any stale fairness reservations
             // so newly arriving free-ingress traffic is not pointlessly deferred.
             self.retry_reservations = 0;
+            // No known retries remain, so any earlier fairness-deferral marker is now stale too.
+            // Clear it immediately instead of carrying warm marker state until a later pop/admit.
+            self.last_fairness_deferred = None;
             // Also drop stale retry FIFO markers immediately instead of waiting for the next
             // admit()/pop_ready() boundary. This keeps retry bookkeeping cold after the last
             // recovered retry is accepted during low-churn recovery windows.

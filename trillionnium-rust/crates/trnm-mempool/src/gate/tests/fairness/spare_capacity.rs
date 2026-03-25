@@ -128,6 +128,7 @@ fn admitting_last_known_retry_does_not_leave_fresh_ingress_stuck_behind_stale_fa
     assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
     assert!(gate.backpressured_ids.is_empty());
     assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
     assert_eq!(gate.admit(21), AdmitOutcome::Backpressured);
 
     let m = gate.metrics();
