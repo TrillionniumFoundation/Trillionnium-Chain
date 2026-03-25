@@ -150,6 +150,65 @@ fn restore_gov_param_none_is_slot_scoped_even_with_multiple_applied_entries() {
     );
 }
 #[test]
+fn restore_gov_param_none_on_mismatched_slot_keeps_canonical_applied_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(0, 7_181, "max_block_ms".to_string(), "500".to_string())
+        .expect("canonical applied governance param should succeed");
+    let canonical_snapshot = state
+        .get_param(7_181)
+        .expect("canonical applied governance param snapshot should exist");
+    let canonical_root = state.state_root();
+
+    state
+        .set_gov_param(
+            0,
+            7_182,
+            "max_parallel_workers".to_string(),
+            "8".to_string(),
+        )
+        .expect("stale foreign applied governance param should succeed");
+    let root_with_stale_foreign_slot = state.state_root();
+    assert_ne!(
+        root_with_stale_foreign_slot, canonical_root,
+        "sanity: adding a foreign applied governance slot must perturb state_root"
+    );
+
+    state.restore_gov_param(7_182, None);
+
+    assert!(
+        state.get_param(7_182).is_none(),
+        "clearing a mismatched applied governance slot with None should remove only the targeted foreign slot"
+    );
+    assert_eq!(
+        state.get_param(7_181),
+        Some(canonical_snapshot),
+        "clearing a mismatched applied governance slot with None must preserve the canonical applied governance object"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "clearing a mismatched applied governance slot with None must preserve the canonical key-index mapping"
+    );
+    assert_eq!(
+        state.gov_param_string("max_parallel_workers"),
+        None,
+        "clearing a mismatched applied governance slot with None must not delete the canonical key by alias"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "clearing a mismatched applied governance slot with None must preserve the canonical deterministic applied-param root"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "repeated reads after clearing a mismatched applied governance slot with None should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
 fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
     let mut state = StateStore::new();
 
