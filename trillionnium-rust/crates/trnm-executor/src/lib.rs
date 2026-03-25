@@ -2957,6 +2957,16 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_preserve_leading_write_signal_when_read_domain_supplies_primary() {
+        let t = tx(1, vec![o(3), o(7), o(7)], vec![o(11), o(11), o(7)]);
+
+        // When the smallest access key is read-local, mixed domains should still carry
+        // the first write-domain key in the secondary slot even if that writer key also
+        // appears in the read set. This keeps the mixed-domain writer signal stable.
+        assert_eq!(hot_bucket_keys(&t), (3, 7));
+    }
+
+    #[test]
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
