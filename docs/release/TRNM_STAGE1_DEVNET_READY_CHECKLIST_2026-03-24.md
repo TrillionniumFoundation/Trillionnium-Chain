@@ -71,6 +71,35 @@ rollback_entrypoint=
 - `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
 
+建议把上述字段做成一次性预检采集，避免手填时漏项或把不同 worktree 的值抄混：
+
+```bash
+cd trillionnium-rust
+printf 'operator_id=%s\n' "${OPERATOR_ID:-<fill-me>}"
+printf 'branch=%s\n' "$(git branch --show-current)"
+printf 'commit_short=%s\n' "$(git rev-parse --short HEAD)"
+printf 'worktree_status=%s\n' "$(test -z "$(git status --short)" && echo clean || echo dirty)"
+printf 'binary_path=%s\n' "$(pwd)/target/debug/trnm-node"
+printf 'build_command=%s\n' 'cargo build -p trnm-node'
+shasum -a 256 target/debug/trnm-node | awk '{printf "binary_sha256=%s\n", $1}'
+printf 'previous_stable_anchor=%s\n' "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}"
+printf 'rollback_entrypoint=%s\n' "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
+```
+
+若本轮涉及 validator 配置或 peer 变更，额外固定配置指纹，避免 smoke 证据与实际 bring-up 配置脱钩：
+
+```bash
+cd trillionnium-rust
+for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml; do
+  shasum -a 256 "$f"
+done
+```
+
+建议把输出直接附到 rehearsal/evidence 记录中；这样至少能回答三件事：
+1. 本轮是哪个操作员、在哪个 worktree/branch/commit 上执行；
+2. 实际启动的是哪一个 `trnm-node` 二进制；
+3. 参与 bring-up 的节点配置是否与证据记录一致。
+
 ## 最小 bring-up 路径
 
 在仓库根目录下：
