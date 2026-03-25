@@ -140,14 +140,14 @@ When multiple timestamped evidence directories exist, resolve the artifact path 
 
 ```bash
 # Latest local-evidence summary
-ls -dt run/health/evidence-* | head -n 1
-latest_evidence_dir="$(ls -dt run/health/evidence-* | head -n 1)"
+latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
+[ -n "$latest_evidence_dir" ] || { echo "missing local evidence" >&2; exit 1; }
 summary_path="$latest_evidence_dir/summary.txt"
 printf 'summary_path=%s\n' "$summary_path"
 
 # Latest RC rehearsal manifest
-ls -dt release/rc-* | head -n 1
-latest_rc_dir="$(ls -dt release/rc-* | head -n 1)"
+latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
+[ -n "$latest_rc_dir" ] || { echo "missing rc manifest" >&2; exit 1; }
 manifest_path="$latest_rc_dir/manifest.txt"
 printf 'manifest_path=%s\n' "$manifest_path"
 ```
