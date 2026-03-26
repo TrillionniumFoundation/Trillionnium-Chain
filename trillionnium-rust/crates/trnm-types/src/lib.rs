@@ -554,6 +554,25 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_findings_serialize_with_stable_query_facing_names() {
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+                .expect("serialize finding"),
+            serde_json::json!("legacy_note_only_payload")
+        );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+                .expect("serialize finding"),
+            serde_json::json!("non_canonical_core_fields")
+        );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
+                .expect("serialize finding"),
+            serde_json::json!("incomplete_metering_snapshot")
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_profile_flags_non_canonical_legacy_note_only_payload() {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":" legacy "}"#)
             .expect("legacy payload should deserialize");
@@ -702,7 +721,9 @@ mod tests {
         );
         assert_eq!(
             metadata.compatibility_findings_nonempty(),
-            Some(vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot])
+            Some(vec![
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot
+            ])
         );
         assert_eq!(
             metadata.primary_compatibility_finding(),
