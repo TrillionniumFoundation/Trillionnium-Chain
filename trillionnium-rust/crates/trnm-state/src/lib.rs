@@ -4172,6 +4172,50 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_surface_rejects_forged_genesis_prev_hash() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry),
+            "checkpoint audit surfaces must reject forged genesis prev_hash_hex so height-1 proofs cannot smuggle a predecessor link"
+        );
+    }
+
+    #[test]
+    fn checkpoint_evidence_surface_rejects_missing_non_genesis_prev_hash() {
+        let wal_entry = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry),
+            "checkpoint audit surfaces must reject non-genesis WAL metadata without prev_hash_hex so the predecessor link cannot disappear from checkpoint proofs"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches(
     ) {
         let wal_entry = WalMeta {
