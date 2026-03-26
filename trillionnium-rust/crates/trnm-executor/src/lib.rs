@@ -1882,6 +1882,18 @@ mod tests {
     }
 
     #[test]
+    fn detect_conflict_preserves_same_version_cross_domain_echo_writer_signal() {
+        let echoed_writer = tx(1, vec![ov(42, 7), ov(7, 1)], vec![ov(42, 7), ov(9, 1)]);
+        let read_hit = tx(2, vec![ov(42, 7), ov(100, 1)], vec![]);
+        let read_miss = tx(3, vec![ov(99, 7)], vec![]);
+
+        assert!(detect_conflict(&echoed_writer, &read_hit));
+        assert!(detect_conflict(&read_hit, &echoed_writer));
+        assert!(!detect_conflict(&echoed_writer, &read_miss));
+        assert!(!detect_conflict(&read_miss, &echoed_writer));
+    }
+
+    #[test]
     fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
         let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
         let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
