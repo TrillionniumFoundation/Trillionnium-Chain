@@ -102,6 +102,57 @@ fn snapshot_hash_binds_checkpoint_window_and_timestamp_surface() {
 }
 
 #[test]
+fn snapshot_hash_binds_source_membership_and_sample_count_surface() {
+    let baseline = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        Some(99_900),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("baseline snapshot");
+
+    let shifted_source_set = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("pyth")],
+        2,
+        Some(99_900),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("shifted source-set snapshot");
+
+    let shifted_sample_count = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        3,
+        Some(99_900),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("shifted sample-count snapshot");
+
+    assert_ne!(
+        baseline.snapshot_hash, shifted_source_set.snapshot_hash,
+        "snapshot hash must bind canonical source membership so different attestation committees cannot share a proof surface"
+    );
+    assert_ne!(
+        baseline.snapshot_hash, shifted_sample_count.snapshot_hash,
+        "snapshot hash must bind sample_count so different quorum evidence cannot share a proof surface"
+    );
+}
+
+#[test]
 fn snapshot_hash_binds_optional_proof_statistics_surface() {
     let baseline = OracleSnapshot::new(
         "btc/usd",
