@@ -234,6 +234,7 @@ fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_mi
     assert_eq!(output.reputation_weight, 7);
     assert_eq!(output.reputation_clamp, 1);
     assert_eq!(output.max_reputation_score_delta, 7);
+    assert_eq!(output.min_reputation_score_delta, -7);
 }
 
 #[test]
@@ -248,6 +249,7 @@ fn market_score_config_output_saturates_max_reputation_score_delta_without_wrapp
     assert_eq!(output.reputation_weight, u128::MAX);
     assert_eq!(output.reputation_clamp, i64::MAX);
     assert_eq!(output.max_reputation_score_delta, u128::MAX);
+    assert_eq!(output.min_reputation_score_delta, i128::MIN);
 }
 
 #[test]
@@ -261,7 +263,7 @@ fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
         score_floor_applied: true,
     };
 
-    assert_eq!(market_reputation_score_delta(1, &breakdown), i128::MIN);
+    assert_eq!(market_reputation_score_delta(&breakdown), i128::MIN);
 }
 
 #[test]
@@ -275,7 +277,30 @@ fn market_reputation_score_delta_saturates_negative_penalty_at_i128_max() {
         score_floor_applied: false,
     };
 
-    assert_eq!(market_reputation_score_delta(-1, &breakdown), i128::MAX);
+    assert_eq!(market_reputation_score_delta(&breakdown), i128::MAX);
+}
+
+#[test]
+fn market_reputation_score_delta_uses_breakdown_effective_reputation_sign_fail_closed() {
+    let reward_breakdown = MarketScoreBreakdown {
+        effective_reputation: 3,
+        base_score: 100,
+        reputation_reward: 21,
+        penalty: 999,
+        effective_score: 79,
+        score_floor_applied: false,
+    };
+    assert_eq!(market_reputation_score_delta(&reward_breakdown), -21);
+
+    let penalty_breakdown = MarketScoreBreakdown {
+        effective_reputation: -3,
+        base_score: 100,
+        reputation_reward: 999,
+        penalty: 21,
+        effective_score: 121,
+        score_floor_applied: false,
+    };
+    assert_eq!(market_reputation_score_delta(&penalty_breakdown), 21);
 }
 
 #[test]

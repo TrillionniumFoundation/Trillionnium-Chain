@@ -48,6 +48,10 @@ fn market_score_config_output_normalizes_clamp_before_reporting_max_delta() {
                 output.max_reputation_score_delta,
                 (MARKET_REPUTATION_CLAMP_MIN as u128) * 11
             );
+            assert_eq!(
+                output.min_reputation_score_delta,
+                -(((MARKET_REPUTATION_CLAMP_MIN as u128) * 11) as i128)
+            );
         },
     );
 }

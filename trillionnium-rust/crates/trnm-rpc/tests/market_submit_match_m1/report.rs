@@ -33,6 +33,7 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["match_config"]["reputation_weight"], 100);
     assert_eq!(report["match_config"]["reputation_clamp"], 1000);
     assert_eq!(report["match_config"]["max_reputation_score_delta"], 100000);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -100000);
 }
 
 #[test]
@@ -58,6 +59,7 @@ fn market_report_normalizes_nested_wrapped_below_floor_clamp_in_output_config() 
     assert_eq!(report["match_config"]["reputation_weight"], 11);
     assert_eq!(report["match_config"]["reputation_clamp"], 1);
     assert_eq!(report["match_config"]["max_reputation_score_delta"], 11);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -11);
     assert_eq!(report["task_count"], 0);
     assert_eq!(report["bid_count"], 0);
 
@@ -168,6 +170,7 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["match_config"]["reputation_weight"], 11);
     assert_eq!(report["match_config"]["reputation_clamp"], 13);
     assert_eq!(report["match_config"]["max_reputation_score_delta"], 143);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -143);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);

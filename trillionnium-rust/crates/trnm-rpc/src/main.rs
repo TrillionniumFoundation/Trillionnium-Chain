@@ -1639,6 +1639,7 @@ struct MarketScoreConfigOutput {
     reputation_weight: u128,
     reputation_clamp: i64,
     max_reputation_score_delta: u128,
+    min_reputation_score_delta: i128,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -1654,12 +1655,14 @@ struct MarketScoreBreakdown {
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
         let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
+        let max_reputation_score_delta = (reputation_clamp as u128)
+            .saturating_mul(value.reputation_weight);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
             reputation_clamp,
-            max_reputation_score_delta: (reputation_clamp as u128)
-                .saturating_mul(value.reputation_weight),
+            max_reputation_score_delta,
+            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
         }
     }
 }
@@ -1696,8 +1699,8 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
     reputation.clamp(-clamp, clamp)
 }
 
-fn market_reputation_score_delta(effective_reputation: i64, breakdown: &MarketScoreBreakdown) -> i128 {
-    if effective_reputation >= 0 {
+fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
+    if breakdown.effective_reputation >= 0 {
         -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
     } else {
         breakdown.penalty.min(i128::MAX as u128) as i128
@@ -4296,8 +4299,7 @@ fn main() -> Result<()> {
             let base_score = breakdown.base_score;
             let reputation_weight = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
-            let reputation_score_delta =
-                market_reputation_score_delta(winner_reputation_effective, &breakdown);
+            let reputation_score_delta = market_reputation_score_delta(&breakdown);
             let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
