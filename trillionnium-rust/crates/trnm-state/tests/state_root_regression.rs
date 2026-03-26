@@ -5755,6 +5755,8 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("checkpoint_tuple_order=height,state_root,wal_entry_hash"));
     assert!(summary.contains("checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"));
     assert!(summary.contains("checkpoint_commitment_fields=height,state_root,wal_entry_hash"));
+    assert!(summary.contains("checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"));
+    assert!(summary.contains("checkpoint_commitment_binding_kind=tuple-hash"));
     assert!(summary.contains("checkpoint_commitment_kind=canonical-hex-32b"));
     assert!(summary.contains("checkpoint_commitment_bytes=32"));
     assert!(summary.contains("checkpoint_height=7"));
