@@ -1503,6 +1503,21 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
             };
             return (primary, secondary);
         }
+
+        if has_single_write_only_secondary || has_single_read_only_secondary {
+            // When the primary object key is echoed across read/write domains and
+            // one side contributes at most one distinct non-primary key, keep the
+            // secondary anchored to the smallest available global non-primary key.
+            // This prevents equivalent mixed domains from drifting execution lanes
+            // just because the narrower side flips between reads and writes.
+            let secondary = match (write_only_secondary, read_only_secondary) {
+                (Some(write_key), Some(read_key)) => write_key.min(read_key),
+                (Some(write_key), None) => write_key,
+                (None, Some(read_key)) => read_key,
+                (None, None) => 0,
+            };
+            return (primary, secondary);
+        }
     }
 
     if write_keys[0] == primary {
@@ -2837,6 +2852,18 @@ mod tests {
         // stable execution-lane hint.
         assert_eq!(hot_bucket_keys(&baseline), (5, 13));
         assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_global_secondary_when_primary_echo_role_flip_is_asymmetric() {
+        let write_wide = tx(1, vec![o(5), o(7)], vec![o(5), o(13), o(21)]);
+        let read_wide = tx(2, vec![o(5), o(13), o(21)], vec![o(5), o(7)]);
+
+        // If one side contributes only a single distinct non-primary key while the
+        // other side fans out wider, keep the mixed-domain lane hint anchored to the
+        // same smallest global secondary across read/write role flips.
+        assert_eq!(hot_bucket_keys(&write_wide), (5, 7));
+        assert_eq!(hot_bucket_keys(&write_wide), hot_bucket_keys(&read_wide));
     }
 
     #[test]
