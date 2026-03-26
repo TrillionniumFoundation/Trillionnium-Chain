@@ -8141,6 +8141,41 @@ mod tests {
     }
 
     #[test]
+    fn governance_restore_rejects_non_allowlisted_algorand_key_at_reserved_id_fail_closed() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "restore must not let a foreign Algorand governance key occupy the reserved emergency_pause id"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "reserved-id restore must fail closed instead of materializing a non-allowlisted object behind the canonical accessor"
+        );
+        assert!(
+            st.gov_param_key_index.get("emergency_pause").is_none(),
+            "reserved-id restore must not backfill the canonical registry index from a foreign key snapshot"
+        );
+        assert_eq!(
+            st.state_root(),
+            baseline,
+            "rejecting a foreign non-allowlisted snapshot at the reserved id must leave state_root unchanged"
+        );
+    }
+
+    #[test]
     fn governance_accessors_fail_closed_for_non_allowlisted_algorand_registry_injection() {
         let mut st = StateStore::new();
         st.objects.insert(
