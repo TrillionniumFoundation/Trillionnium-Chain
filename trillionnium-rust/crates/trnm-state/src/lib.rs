@@ -953,15 +953,12 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
     }
 
     let has_bond = task.challenge_bond.is_some_and(|bond| bond > 0);
-    let has_challenger = task.challenger.as_deref().is_some_and(|challenger| {
-        validate_resolve_approver_token(challenger).is_ok()
-    });
+    let has_challenger = task
+        .challenger
+        .as_deref()
+        .is_some_and(|challenger| validate_resolve_approver_token(challenger).is_ok());
 
     if has_bond != has_challenger {
-        return false;
-    }
-
-    if task.status == TaskStatus::Slashed && !has_bond {
         return false;
     }
 
@@ -990,12 +987,18 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
             && challenged_at_height <= challenge_deadline_height
             && challenge_deadline_height <= resolve_deadline_height
     } else {
+        let retained_window_is_consistent = if task.status == TaskStatus::Slashed {
+            task.challenge_window_blocks_snapshot
+                .is_some_and(|window| window > 0)
+        } else {
+            task.challenge_window_blocks_snapshot
+                .is_none_or(|window| window > 0)
+        };
+
         task.challenged_at_height.is_none()
             && task.challenge_deadline_height.is_none()
             && task.resolve_deadline_height.is_none()
-            && task
-                .challenge_window_blocks_snapshot
-                .is_none_or(|window| window > 0)
+            && retained_window_is_consistent
     }
 }
 
@@ -4664,7 +4667,7 @@ mod tests {
     }
 
     #[test]
-    fn restore_task_rejects_slashed_retention_without_challenge_settlement_metadata() {
+    fn restore_task_rejects_slashed_retention_without_proof_window_snapshot() {
         let mut st = StateStore::new();
 
         let task = TaskObject {
@@ -4701,8 +4704,47 @@ mod tests {
 
         assert!(
             st.get_task(410).is_none(),
-            "restore_task must fail closed when a slashed terminal task drops the retained challenge/collateral settlement metadata required to justify the slash"
+            "restore_task must fail closed when a slashed terminal task drops the retained proof-window snapshot needed to audit an unchallenged slash"
         );
+    }
+
+    #[test]
+    fn restore_task_allows_slashed_retention_with_proof_window_snapshot_only() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 411,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("slashed proof trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ff".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(411, Some(task.clone()));
+
+        assert_eq!(st.get_task(411), Some(task));
     }
 
     #[test]
@@ -11915,7 +11957,9 @@ mod tests {
             challenge_bond_forfeited: Some(false),
             version: 7,
         })
-        .expect("challenged task should still insert for zeroed challenge deadline regression coverage");
+        .expect(
+            "challenged task should still insert for zeroed challenge deadline regression coverage",
+        );
 
         st.restore_pending_resolve_approval(
             902,
@@ -12003,7 +12047,9 @@ mod tests {
             challenge_bond_forfeited: Some(false),
             version: 7,
         })
-        .expect("challenged task should still insert for zeroed resolve deadline regression coverage");
+        .expect(
+            "challenged task should still insert for zeroed resolve deadline regression coverage",
+        );
 
         st.restore_pending_resolve_approval(
             902,
@@ -12047,7 +12093,9 @@ mod tests {
             challenge_bond_forfeited: Some(false),
             version: 7,
         })
-        .expect("challenged task should still insert for zeroed challenge bond regression coverage");
+        .expect(
+            "challenged task should still insert for zeroed challenge bond regression coverage",
+        );
 
         st.restore_pending_resolve_approval(
             902,
