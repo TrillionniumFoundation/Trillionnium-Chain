@@ -89,7 +89,7 @@ fn access_key(obj: &ObjectRef) -> u64 {
 
 #[inline]
 fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
-    debug_assert!(
+    assert!(
         access_domain_versions_are_consistent(objs),
         "access domain contains the same object id with multiple versions"
     );
@@ -127,7 +127,7 @@ fn dedup_access_keys_no_version(objs: &[ObjectRef]) -> Vec<u64> {
 
 #[inline]
 fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
-    debug_assert!(
+    assert!(
         access_domain_versions_are_consistent(objs),
         "access domain contains the same object id with multiple versions"
     );
@@ -1784,11 +1784,33 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "access domain contains the same object id with multiple versions")]
+    fn dedup_access_keys_rejects_same_object_version_skew() {
+        let _ = dedup_access_keys(&[
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef { id: 42, version: 2 },
+        ]);
+    }
+
+    #[test]
+    #[should_panic(expected = "access domain contains the same object id with multiple versions")]
     fn dedup_access_keys_no_version_rejects_same_object_version_skew() {
         let _ = dedup_access_keys_no_version(&[
             ObjectRef { id: 42, version: 1 },
             ObjectRef { id: 42, version: 2 },
         ]);
+    }
+
+    #[test]
+    #[should_panic(expected = "access domain contains the same object id with multiple versions")]
+    fn extend_unique_access_keys_rejects_same_object_version_skew() {
+        let mut dst = vec![7, 8];
+        extend_unique_access_keys(
+            &mut dst,
+            &[
+                ObjectRef { id: 42, version: 1 },
+                ObjectRef { id: 42, version: 2 },
+            ],
+        );
     }
 
     #[test]
