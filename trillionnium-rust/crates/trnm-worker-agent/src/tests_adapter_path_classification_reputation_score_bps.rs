@@ -46,3 +46,35 @@ fn reputation_score_bps_stays_strictly_descending_across_canonical_order() {
         previous = Some(score_bps);
     }
 }
+
+#[test]
+fn reputation_gap_bps_from_best_exposes_deterministic_distance_from_accepted() {
+    assert_eq!(reputation_gap_bps_from_best(ReputationSignal::Accepted), 0);
+    assert_eq!(
+        reputation_gap_bps_from_best(ReputationSignal::AdapterRetryExhausted),
+        13_333
+    );
+    assert_eq!(
+        reputation_gap_bps_from_best(ReputationSignal::VerifierRejected),
+        16_666
+    );
+    assert_eq!(
+        reputation_gap_bps_from_best(ReputationSignal::AdapterNonRetriable),
+        20_000
+    );
+}
+
+#[test]
+fn reputation_gap_bps_from_best_stays_strictly_increasing_across_canonical_order() {
+    let mut previous: Option<i32> = None;
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let gap_bps = reputation_gap_bps_from_best(signal);
+        if let Some(prev) = previous {
+            assert!(
+                prev < gap_bps,
+                "gap from best must remain strictly increasing across canonical order"
+            );
+        }
+        previous = Some(gap_bps);
+    }
+}
