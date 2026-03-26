@@ -573,6 +573,41 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_report_serializes_with_stable_query_facing_shape() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: true,
+                canonical_core_fields: false,
+                complete_metering_snapshot: false,
+            },
+            requires_governance_upgrade: true,
+            findings: vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ],
+        };
+
+        assert_eq!(report.primary_finding(), Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload));
+        assert_eq!(
+            serde_json::to_value(&report).expect("serialize report"),
+            serde_json::json!({
+                "compatibility": {
+                    "legacy_note_only": true,
+                    "canonical_core_fields": false,
+                    "complete_metering_snapshot": false
+                },
+                "requires_governance_upgrade": true,
+                "findings": [
+                    "legacy_note_only_payload",
+                    "non_canonical_core_fields",
+                    "incomplete_metering_snapshot"
+                ]
+            })
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_profile_flags_non_canonical_legacy_note_only_payload() {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":" legacy "}"#)
             .expect("legacy payload should deserialize");
