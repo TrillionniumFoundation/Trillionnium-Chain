@@ -1276,6 +1276,10 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         .iter()
         .filter(|task| task.task_id == task_id)
         .max_by_key(|task| task.version)?;
+    let metadata_report = task
+        .metadata
+        .as_ref()
+        .map(|metadata| metadata.compatibility_report());
 
     Some(TaskQueryResponse {
         task_id: task.task_id,
@@ -1284,26 +1288,19 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         bounty: task.bounty,
         result_hash_hex: task.result_hash.map(hex::encode),
         version: task.version,
-        metadata_compatibility: task
-            .metadata
+        metadata_compatibility: metadata_report.as_ref().map(|report| report.compatibility),
+        metadata_runtime_compatible: metadata_report
             .as_ref()
-            .map(|metadata| metadata.compatibility_profile()),
-        metadata_runtime_compatible: task
-            .metadata
+            .map(|report| report.compatibility.is_runtime_compatible()),
+        metadata_requires_governance_upgrade: metadata_report
             .as_ref()
-            .map(|metadata| metadata.compatibility_profile().is_runtime_compatible()),
-        metadata_requires_governance_upgrade: task
-            .metadata
+            .map(|report| report.requires_governance_upgrade),
+        metadata_primary_compatibility_finding: metadata_report
             .as_ref()
-            .map(|metadata| metadata.requires_runtime_metadata_upgrade()),
-        metadata_primary_compatibility_finding: task
-            .metadata
+            .and_then(|report| report.primary_finding()),
+        metadata_compatibility_findings: metadata_report
             .as_ref()
-            .and_then(|metadata| metadata.primary_compatibility_finding()),
-        metadata_compatibility_findings: task
-            .metadata
-            .as_ref()
-            .and_then(|metadata| metadata.compatibility_findings_nonempty()),
+            .and_then(|report| (!report.findings.is_empty()).then_some(report.findings.clone())),
         metering: task
             .metadata
             .as_ref()
