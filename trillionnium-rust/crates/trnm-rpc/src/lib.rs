@@ -90,6 +90,14 @@ pub struct GovParamQueryResponse {
 /// purposes only. `ok=true` means the snapshot passed oracle policy checks; it
 /// does not imply bridge settlement finality, nor does a structured reject here
 /// authorize replay reinterpretation of an already-terminal bridge outcome.
+///
+/// Layering contract:
+/// - oracle validation answers only whether a snapshot is admissible enough to
+///   forward downstream;
+/// - RPC preserves that confidence accounting and shape-checks the envelope,
+///   but does not manufacture new settlement semantics from it;
+/// - bridge settlement/finality and replay boundaries remain owned by the
+///   bridge layer after heartbeat/finality checks have already passed.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OracleValidateSnapshotResponse {
     pub ok: bool,
@@ -140,6 +148,10 @@ impl OracleValidateSnapshotResponse {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    /// Some oracle failures are intentionally left unclassified by the oracle
+    /// layer (for example malformed payloads or transport/rate failures). RPC
+    /// may carry those through as explicit fail-closed errors, but they still
+    /// remain *admissibility* failures rather than settlement/finality signals.
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
             && self.has_non_empty_error_label()
@@ -149,6 +161,12 @@ impl OracleValidateSnapshotResponse {
             && self.metrics.sample_count > 0
     }
 
+    /// Verifies that the RPC payload is internally coherent as an oracle
+    /// validation envelope.
+    ///
+    /// This is intentionally narrower than any bridge-side decision: a payload
+    /// can be contract-consistent here and still be insufficient for settlement
+    /// finality, replay admission, or confirmation-window advancement.
     pub fn bridge_contract_consistent(&self) -> bool {
         let non_empty_sample = self.metrics.sample_count > 0;
         let result_label_consistent = if self.ok {
