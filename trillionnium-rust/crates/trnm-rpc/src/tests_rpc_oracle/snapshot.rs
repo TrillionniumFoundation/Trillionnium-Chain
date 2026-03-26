@@ -359,6 +359,10 @@ fn metrics_from_target(target: &str) -> String {
         "oracle_source_cardinality{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
         report.observation.feed_id, outcome, report.metrics.oracle_source_cardinality
     ));
+    text.push_str(&format!(
+        "oracle_sample_count{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
+        report.observation.feed_id, outcome, report.metrics.sample_count
+    ));
     text
 }
 

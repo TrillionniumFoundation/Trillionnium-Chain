@@ -37,6 +37,11 @@ fn http_service_response_for_oracle_metrics_returns_prometheus_text() {
         "unexpected response: {}",
         response
     );
+    assert!(
+        response.contains("oracle_sample_count{feed_id=\"btc/usd\",outcome=\"accepted\"} 1"),
+        "unexpected response: {}",
+        response
+    );
 
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
