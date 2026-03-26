@@ -403,3 +403,19 @@ fn governance_pinned_key_registry_merge_gate_is_unique_and_canonical() {
     assert_eq!(derived_pinned.get("emergency_pause"), Some(&EMERGENCY_PAUSE_KEY_ID));
     assert_eq!(derived_pinned.len(), 1, "unexpected extra reserved governance key binding");
 }
+
+#[test]
+fn governance_pinned_key_registry_exposes_only_canonical_allowlisted_bindings() {
+    // Merge-gate: the typed pinned-key registry must only expose canonical lowercase allowlisted
+    // keys. Foreign Algorand-style aliases or case variants must not acquire the reserved id.
+    let pinned_pairs: std::collections::BTreeMap<&str, u64> = gov_pinned_key_ids().collect();
+    assert_eq!(pinned_pairs.get("emergency_pause"), Some(&EMERGENCY_PAUSE_KEY_ID));
+    assert!(!pinned_pairs.contains_key("Emergency_Pause"));
+    assert!(!pinned_pairs.contains_key("algorand_governance_key_id"));
+
+    let emergency_pause_entry = gov_param_registry_entry("emergency_pause")
+        .expect("canonical emergency_pause entry must stay present in the typed governance schema");
+    assert_eq!(emergency_pause_entry.pinned_key_id, Some(EMERGENCY_PAUSE_KEY_ID));
+    assert!(gov_param_registry_entry("Emergency_Pause").is_none());
+    assert!(gov_param_registry_entry("algorand_governance_key_id").is_none());
+}
