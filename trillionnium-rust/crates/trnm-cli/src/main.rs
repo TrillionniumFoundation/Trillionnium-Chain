@@ -322,6 +322,10 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
                 actual
             );
         }
+    } else if !expected.is_empty() {
+        bail!(
+            "task query response metadata_compatibility_findings required when compatibility implies findings"
+        );
     }
 
     Ok(())
@@ -2360,6 +2364,15 @@ mod tests {
         assert!(err
             .to_string()
             .contains("metadata_compatibility_findings must be omitted when empty"));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_findings_when_compatibility_implies_them() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":true,"metadata_primary_compatibility_finding":"legacy_note_only_payload"}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility_findings required when compatibility implies findings"
+        ));
     }
 
     #[test]
