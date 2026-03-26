@@ -235,3 +235,32 @@ fn preexec_pool_keeps_deduped_first_seen_order_across_multi_worker_fanout() {
     assert_eq!(ordered_ids, vec![4, 2, 1, 3]);
     assert_eq!(rejected, 0);
 }
+
+#[test]
+fn preexec_group_normalization_preserves_first_seen_order_across_hashset_fallback() {
+    let (normalized, replayed) =
+        normalize_group_ids_for_preexec(&[11, 7, 11, 5, 7, 3, 11, 2, 5, 13, 3, 17]);
+
+    assert_eq!(normalized, vec![11, 7, 5, 3, 2, 13, 17]);
+    assert_eq!(replayed, 5);
+}
+
+#[test]
+fn preexec_pool_dedups_long_replayed_invalid_batches_before_counting_rejection() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![MockTx::CreateTask {
+        task_id: 4901,
+        creator: "alice".into(),
+        bounty: 10,
+    }]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 3, 77);
+    let (ordered_ids, rejected) =
+        pre_execute_group_parallel(&pool, vec![9, 1, 9, 9, 1, 9, 1, 9, 9, 1, 9]);
+    let followup = pre_execute_group_parallel(&pool, vec![1]);
+
+    assert_eq!(ordered_ids, vec![1]);
+    assert_eq!(rejected, 1);
+    assert_eq!(followup.0, vec![1]);
+    assert_eq!(followup.1, 0);
+}
