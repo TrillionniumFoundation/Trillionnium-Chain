@@ -2491,6 +2491,9 @@ impl StateStore {
         if current.version != expected.version {
             return Err("version conflict".into());
         }
+        if !matches!(current.value, ObjectValue::Task(_)) {
+            return Err("object type mismatch".into());
+        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
@@ -2539,6 +2542,9 @@ impl StateStore {
             .ok_or_else(|| "object not found".to_string())?;
         if current.version != expected.version {
             return Err("version conflict".into());
+        }
+        if !matches!(current.value, ObjectValue::GovProposal(_)) {
+            return Err("object type mismatch".into());
         }
         let new_version = current.version + 1;
         proposal.version = new_version;

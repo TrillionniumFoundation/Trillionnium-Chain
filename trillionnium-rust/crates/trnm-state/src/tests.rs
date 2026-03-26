@@ -144,6 +144,104 @@ fn version_conflict() {
 }
 
 #[test]
+fn update_task_rejects_cross_domain_object_slot_even_when_version_matches() {
+    let mut st = StateStore::new();
+    let proposal_ref = st
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 77,
+            title: "slot owner".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .expect("proposal insert should succeed");
+
+    let err = st
+        .update_task(
+            proposal_ref,
+            TaskObject {
+                task_id: 77,
+                creator: "mallory".into(),
+                bounty: 5,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: None,
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: 999,
+            },
+        )
+        .expect_err("task update must fail closed when the slot currently holds a proposal");
+
+    assert!(err.contains("object type mismatch"));
+    assert!(
+        matches!(st.get_proposal(77), Some(GovProposalObject { version: 1, .. })),
+        "failed cross-domain task update must preserve the original proposal slot"
+    );
+    assert_eq!(st.get_task(77), None);
+}
+
+#[test]
+fn update_proposal_rejects_cross_domain_object_slot_even_when_version_matches() {
+    let mut st = StateStore::new();
+    let task_ref = st
+        .put_task_new(TaskObject {
+            task_id: 88,
+            creator: "alice".into(),
+            bounty: 13,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insert should succeed");
+
+    let err = st
+        .update_proposal(
+            task_ref,
+            GovProposalObject {
+                proposal_id: 88,
+                title: "wrong domain".into(),
+                proposer: "mallory".into(),
+                status: GovProposalStatus::Voting,
+                version: 999,
+            },
+        )
+        .expect_err("proposal update must fail closed when the slot currently holds a task");
+
+    assert!(err.contains("object type mismatch"));
+    assert!(
+        matches!(st.get_task(88), Some(TaskObject { version: 1, .. })),
+        "failed cross-domain proposal update must preserve the original task slot"
+    );
+    assert_eq!(st.get_proposal(88), None);
+}
+
+#[test]
 fn governance_reads_fail_closed_on_key_id_index_drift() {
     let mut st = StateStore::new();
     let gov_ref = st
