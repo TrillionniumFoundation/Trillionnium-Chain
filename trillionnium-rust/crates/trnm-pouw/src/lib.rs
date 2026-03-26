@@ -889,6 +889,15 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     "terminal non-challenged task has stale challenge metadata".into(),
                 ));
             }
+            if !has_bond
+                && task.status == TaskStatus::Completed
+                && matches!(task.challenge_window_blocks_snapshot, Some(window) if window < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "completed terminal task has invalid retained challenge_window_blocks_snapshot evidence"
+                        .into(),
+                ));
+            }
         }
     }
 
@@ -5954,6 +5963,32 @@ mod tests {
         let err = validate_challenge_accounting_invariants(&stale_timing)
             .expect_err("completed uncontested terminal state must still reject stale challenge timing metadata");
         assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge metadata")));
+    }
+
+    #[test]
+    fn completed_uncontested_terminal_state_rejects_invalid_retained_snapshot_evidence() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(9_103, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 50_103, "alice".into(), 10).unwrap();
+        let result_hash = [9u8; 32];
+        let reveal_salt = [11u8; 32];
+        let committed = compute_commitment(50_103, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let done = apply_timeout(&mut st, r4, 211).unwrap();
+
+        let mut completed = st.get_task(done.id).unwrap();
+        completed.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS - 1);
+
+        let err = validate_challenge_accounting_invariants(&completed)
+            .expect_err("completed uncontested terminal state must fail closed on invalid retained challenge window evidence");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot evidence")));
     }
 
     #[test]
