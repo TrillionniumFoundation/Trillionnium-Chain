@@ -2,7 +2,8 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     normalized_agent_protocol, normalized_compliance_profile, normalized_optional_field,
-    normalized_provenance_label, normalized_provider_request_id, MessageIngressRecord,
+    normalized_provenance_label, normalized_provider_request_id, reputation_gap_bps_from_best,
+    reputation_surface, reputation_signal_from_delta, MessageIngressRecord,
 };
 
 use super::audit_export_types::EnterpriseAuditExportRecord;
@@ -80,6 +81,10 @@ pub(crate) fn to_enterprise_audit_export(
         compliance_profile.as_deref(),
     );
 
+    let reputation_signal = rec.reputation_delta.and_then(reputation_signal_from_delta);
+    let reputation_surface = reputation_signal.map(reputation_surface);
+    let reputation_gap_bps = reputation_signal.map(reputation_gap_bps_from_best);
+
     EnterpriseAuditExportRecord {
         request_id: rec.request_id.clone(),
         task_id: rec.task_id,
@@ -92,5 +97,12 @@ pub(crate) fn to_enterprise_audit_export(
         adapter,
         agent_protocol,
         compliance_profile,
+        reputation_label: reputation_surface.map(|surface| surface.label.to_string()),
+        reputation_delta: reputation_surface.map(|surface| surface.delta),
+        reputation_tier: reputation_surface.map(|surface| surface.tier),
+        reputation_weight_bps: reputation_surface.map(|surface| surface.weight_bps),
+        reputation_score_bps: reputation_surface.map(|surface| surface.score_bps),
+        reputation_rank_ordinal: reputation_surface.map(|surface| surface.rank_ordinal),
+        reputation_gap_bps_from_best: reputation_gap_bps,
     }
 }

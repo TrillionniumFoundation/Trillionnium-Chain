@@ -14,6 +14,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_bef
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -36,6 +43,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -58,6 +72,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_deeply_nested_quotes() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -81,6 +102,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_very_deep_quote_wrappers
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);

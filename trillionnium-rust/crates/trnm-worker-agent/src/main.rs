@@ -1913,6 +1913,15 @@ pub(crate) fn reputation_score_bps(signal: ReputationSignal) -> i32 {
     (impact.delta * 10_000) / max_abs_delta
 }
 
+pub(crate) fn reputation_gap_bps_from_best(signal: ReputationSignal) -> i32 {
+    let best_score_bps = CANONICAL_REPUTATION_SIGNAL_ORDER
+        .first()
+        .copied()
+        .map(reputation_score_bps)
+        .unwrap_or(0);
+    best_score_bps - reputation_score_bps(signal)
+}
+
 pub(crate) fn reputation_signal_from_score_bps(score_bps: i32) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .iter()

@@ -10,7 +10,7 @@ pub(crate) use adapter_error_ops::{
     reputation_delta, reputation_impact, reputation_impact_from_delta,
     reputation_impact_from_label, reputation_impact_from_rank_ordinal,
     reputation_impact_from_score_bps, reputation_impact_from_score_impact,
-    reputation_impact_from_surface, reputation_impact_from_tier,
+    reputation_gap_bps_from_best, reputation_impact_from_surface, reputation_impact_from_tier,
     reputation_impact_from_weight_bps, reputation_rank_ordinal, reputation_score_bps,
     reputation_score_impact, reputation_signal_from_delta, reputation_signal_from_label,
     reputation_signal_from_rank_ordinal, reputation_signal_from_score_bps,

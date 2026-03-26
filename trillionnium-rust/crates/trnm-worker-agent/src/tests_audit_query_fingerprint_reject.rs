@@ -14,6 +14,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_q
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -37,6 +44,13 @@ fn query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_looku
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);

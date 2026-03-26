@@ -2304,6 +2304,13 @@ fn export_audit_markdown_contains_provenance_fingerprint_fields() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-pii-restricted".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let md = render_enterprise_audit_markdown(&rows);
@@ -2325,6 +2332,13 @@ fn export_audit_markdown_normalizes_multiline_cells_to_single_line() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-pii-restricted".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let md = render_enterprise_audit_markdown(&rows);
@@ -2348,7 +2362,14 @@ fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys()
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7002,
@@ -2361,7 +2382,14 @@ fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys()
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2400,7 +2428,14 @@ fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7102,
@@ -2413,7 +2448,14 @@ fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2450,7 +2492,14 @@ fn export_audit_index_normalizes_uppercase_fingerprint_variants() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7202,
@@ -2463,7 +2512,14 @@ fn export_audit_index_normalizes_uppercase_fingerprint_variants() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2489,7 +2545,14 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("A2A-JSON-RPC-V2".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7252,
@@ -2502,7 +2565,14 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some(" model-context-protocol / stdio v1 ".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r3".to_string(),
             task_id: 7253,
@@ -2515,7 +2585,14 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("Google-Agent-to-Agent-Streamable-HTTP-v1".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2545,7 +2622,14 @@ fn export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys() 
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("CN_PII_RESTRICTED".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7282,
@@ -2558,7 +2642,14 @@ fn export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys() 
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some(" cn/pii/restricted ".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2589,7 +2680,14 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7302,
@@ -2602,7 +2700,14 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r3".to_string(),
             task_id: 7303,
@@ -2615,7 +2720,14 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2641,7 +2753,14 @@ fn query_audit_export_by_task_id_uses_index_offsets() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7002,
@@ -2654,7 +2773,14 @@ fn query_audit_export_by_task_id_uses_index_offsets() {
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
-        },
+            reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
+    },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -2680,6 +2806,13 @@ fn query_audit_export_by_provenance_fingerprint_normalizes_lookup() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2705,6 +2838,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_bef
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2727,6 +2867,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2749,6 +2896,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_deeply_nested_quotes() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2772,6 +2926,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_very_deep_quote_wrappers
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2799,6 +2960,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_repeated_nested_quote_wr
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2827,6 +2995,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_shell_escaped_outer_quot
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2849,6 +3024,13 @@ fn query_audit_export_by_provenance_fingerprint_trims_boundary_bom_before_lookup
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-pii-restricted".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2872,6 +3054,13 @@ fn query_audit_export_by_provenance_fingerprint_trims_fillers_after_quote_peelin
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-pii-restricted".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2898,6 +3087,13 @@ fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_q
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
@@ -2921,6 +3117,13 @@ fn query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_looku
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-moderate".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let index = build_audit_export_index(&rows);
