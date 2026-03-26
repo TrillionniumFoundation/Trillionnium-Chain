@@ -246,6 +246,7 @@ fn main() {
         let retry_stage_overlap_share_of_attributed =
             profile.retry_stage_overlap_share_of_attributed();
         let retry_stage_concentration = profile.retry_stage_concentration();
+        let retry_stage_mix_entropy = profile.retry_stage_mix_entropy();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
         // Block-STM-style speculative tuning cares less about raw conflicts alone
         // than about how much retry pressure and candidate-lane scanning each tx
@@ -380,6 +381,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_stage_concentration={:.4}",
             retry_stage_concentration
+        ));
+        lines.push(format!(
+            "profile.retry_stage_mix_entropy={:.4}",
+            retry_stage_mix_entropy
         ));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
@@ -616,6 +621,7 @@ mod tests {
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_stage_overlap_share_of_attributed() - 0.2).abs() < f64::EPSILON);
         assert!((profile.retry_stage_concentration() - 0.5625).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_mix_entropy() - 0.9602297178607612).abs() < 1e-12);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);

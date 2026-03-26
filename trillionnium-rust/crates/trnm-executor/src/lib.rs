@@ -85,7 +85,10 @@ impl GroupingProfile {
 
     #[inline]
     pub fn candidate_groups_per_reused_placement(&self) -> f64 {
-        ratio_usize(self.candidate_groups_scanned, self.reused_group_placements())
+        ratio_usize(
+            self.candidate_groups_scanned,
+            self.reused_group_placements(),
+        )
     }
 
     #[inline]
@@ -239,7 +242,10 @@ impl GroupingProfile {
 
     #[inline]
     pub fn retry_stage_overlap_share_of_attributed(&self) -> f64 {
-        ratio_usize(self.retry_stage_overlap_hits(), self.attributed_retry_hits())
+        ratio_usize(
+            self.retry_stage_overlap_hits(),
+            self.attributed_retry_hits(),
+        )
     }
 
     #[inline]
@@ -252,6 +258,26 @@ impl GroupingProfile {
         let wr = self.wr_retry_share();
         let rw = self.rw_retry_share();
         (ww * ww) + (wr * wr) + (rw * rw)
+    }
+
+    #[inline]
+    pub fn retry_stage_mix_entropy(&self) -> f64 {
+        let attributed_hits = self.attributed_retry_hits();
+        if attributed_hits == 0 {
+            return 0.0;
+        }
+
+        let weights = [self.stage_ww_hits, self.stage_wr_hits, self.stage_rw_hits];
+        let entropy = weights
+            .into_iter()
+            .filter(|hits| *hits > 0)
+            .map(|hits| {
+                let share = hits as f64 / attributed_hits as f64;
+                -share * share.ln()
+            })
+            .sum::<f64>();
+
+        entropy / 3.0f64.ln()
     }
 }
 
@@ -1937,7 +1963,12 @@ mod tests {
         }
     }
 
-    fn profile_with_stage_hits(ww: usize, wr: usize, rw: usize, conflict_hits: usize) -> GroupingProfile {
+    fn profile_with_stage_hits(
+        ww: usize,
+        wr: usize,
+        rw: usize,
+        conflict_hits: usize,
+    ) -> GroupingProfile {
         GroupingProfile {
             tx_count: 0,
             group_count: 0,
