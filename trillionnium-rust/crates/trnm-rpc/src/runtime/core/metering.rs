@@ -261,6 +261,10 @@ pub(crate) fn query_task_from_state_snapshot(
             .metadata
             .as_ref()
             .map(|metadata| metadata.requires_runtime_metadata_upgrade()),
+        metadata_primary_compatibility_finding: task
+            .metadata
+            .as_ref()
+            .and_then(|metadata| metadata.primary_compatibility_finding()),
         metadata_compatibility_findings: task
             .metadata
             .as_ref()

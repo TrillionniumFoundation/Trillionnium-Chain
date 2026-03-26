@@ -178,6 +178,10 @@ fn query_task_from_state_snapshot_surfaces_metadata_governance_upgrade_signals()
     assert_eq!(out.metadata_runtime_compatible, Some(true));
     assert_eq!(out.metadata_requires_governance_upgrade, Some(true));
     assert_eq!(
+        out.metadata_primary_compatibility_finding,
+        Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+    );
+    assert_eq!(
         out.metadata_compatibility_findings,
         Some(vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload])
     );

@@ -73,6 +73,8 @@ pub struct TaskQueryResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata_requires_governance_upgrade: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_primary_compatibility_finding: Option<TaskMetadataCompatibilityFinding>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,
@@ -382,6 +384,7 @@ mod tests {
             metadata_compatibility: None,
             metadata_runtime_compatible: None,
             metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
         };
@@ -411,6 +414,7 @@ mod tests {
             metadata_compatibility: None,
             metadata_runtime_compatible: None,
             metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
         };
@@ -464,6 +468,7 @@ mod tests {
             metadata_compatibility: None,
             metadata_runtime_compatible: None,
             metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: Some(TaskMeteringQueryResponse {
                 workload_class: "llm_inference".into(),

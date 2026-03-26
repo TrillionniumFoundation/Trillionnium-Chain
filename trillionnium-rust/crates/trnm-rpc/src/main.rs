@@ -1296,6 +1296,10 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .metadata
             .as_ref()
             .map(|metadata| metadata.requires_runtime_metadata_upgrade()),
+        metadata_primary_compatibility_finding: task
+            .metadata
+            .as_ref()
+            .and_then(|metadata| metadata.primary_compatibility_finding()),
         metadata_compatibility_findings: task
             .metadata
             .as_ref()
@@ -3285,6 +3289,7 @@ fn query_task_from_node_events(
         metadata_compatibility: None,
         metadata_runtime_compatible: None,
         metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
     })
@@ -3345,6 +3350,7 @@ fn query_task_response(
         metadata_compatibility: None,
         metadata_runtime_compatible: None,
         metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
     })
