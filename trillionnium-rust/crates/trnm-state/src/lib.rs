@@ -4147,6 +4147,62 @@ mod tests {
     }
 
     #[test]
+    fn wal_content_hash_committed_bit_must_affect_checkpoint_evidence_digest() {
+        let committed = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "proposal-12".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let mut uncommitted = committed.clone();
+        uncommitted.committed = false;
+
+        assert_ne!(
+            committed.content_hash_hex(),
+            uncommitted.content_hash_hex(),
+            "WAL checkpoint evidence digest must include the committed bit so proof-facing metadata cannot hash the same across committed and speculative entries"
+        );
+    }
+
+    #[test]
+    fn wal_content_hash_prev_hash_link_must_affect_checkpoint_evidence_digest() {
+        let canonical_prev = "01".repeat(32);
+        let wal_a = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "proposal-12".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some(canonical_prev.clone()),
+        };
+        let wal_b = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "proposal-12".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("02".repeat(32)),
+        };
+        let wal_missing_prev = WalMeta {
+            prev_hash_hex: None,
+            ..wal_a.clone()
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence digest must include prev_hash_hex so distinct predecessor links cannot collapse to the same proof surface"
+        );
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_missing_prev.content_hash_hex(),
+            "WAL checkpoint evidence digest must distinguish present-vs-missing prev_hash_hex so broken predecessor links cannot masquerade as canonical checkpoint evidence"
+        );
+    }
+
+    #[test]
     fn checkpoint_evidence_surface_rejects_mixed_case_digest_encodings() {
         let wal_entry = WalMeta {
             height: 7,
