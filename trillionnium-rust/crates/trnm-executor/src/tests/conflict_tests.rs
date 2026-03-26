@@ -201,19 +201,32 @@ fn mixed_read_write_echo_still_conflicts_with_same_object_version_update() {
 }
 
 #[test]
-fn dedup_access_keys_collapses_same_object_across_versions() {
-    let keys = dedup_access_keys(&[
+#[should_panic(expected = "access domain contains the same object id with multiple versions")]
+fn dedup_access_keys_rejects_same_object_version_skew() {
+    let _ = dedup_access_keys(&[
         ObjectRef { id: 100, version: 1 },
         ObjectRef { id: 200, version: 1 },
         ObjectRef { id: 100, version: 2 },
         ObjectRef { id: 300, version: 1 },
-        ObjectRef { id: 400, version: 1 },
-        ObjectRef { id: 300, version: 9 },
-        ObjectRef { id: 500, version: 1 },
-        ObjectRef { id: 600, version: 1 },
-        ObjectRef { id: 700, version: 1 },
-        ObjectRef { id: 600, version: 8 },
     ]);
+}
 
-    assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn hot_object_share_rejects_cross_domain_version_skew_for_same_object_id() {
+    let _ = hot_object_share(&[tx(
+        1,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    )]);
+}
+
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+    let _ = access_map_capacity_hint(&[tx(
+        1,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    )]);
 }

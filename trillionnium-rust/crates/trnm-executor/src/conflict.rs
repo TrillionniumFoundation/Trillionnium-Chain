@@ -125,7 +125,7 @@ pub(crate) fn access_key(obj: &ObjectRef) -> u64 {
 
 #[inline]
 pub(crate) fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
-    debug_assert!(
+    assert!(
         access_domain_versions_are_consistent(objs),
         "access domain contains the same object id with multiple versions"
     );
@@ -292,6 +292,7 @@ pub(crate) fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut total = 0usize;
 
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
         let mut keys = dedup_access_keys(&tx.read_set);
         for key in dedup_access_keys(&tx.write_set) {
             if !keys.contains(&key) {
@@ -319,6 +320,7 @@ pub(crate) fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     let mut footprint = 0usize;
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
         footprint = footprint
             .saturating_add(tx.read_set.len())
             .saturating_add(tx.write_set.len());
