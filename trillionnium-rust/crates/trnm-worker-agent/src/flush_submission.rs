@@ -602,6 +602,16 @@ mod tests {
     }
 
     #[test]
+    fn stage_tx_hash_for_ack_prefers_fresh_duplicate_receipt_over_persisted_hash() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("  fresh-commit-hash\n")),
+            Some("previous-commit".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("fresh-commit-hash"));
+    }
+
+    #[test]
     fn receipt_hash_observed_only_reuses_trimmed_previous_hash_for_duplicates() {
         assert!(super::receipt_hash_observed(
             None,
