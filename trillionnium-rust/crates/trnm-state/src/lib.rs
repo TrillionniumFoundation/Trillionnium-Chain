@@ -169,15 +169,51 @@ impl WalMeta {
     }
 
     pub fn evidence_summary(&self) -> String {
+        let wal_content_hash = self.content_hash_hex();
+        let wal_height_encoding = "le-u64";
+        let wal_round_encoding = "le-u64";
+        let wal_committed_encoding = "u8";
+        let wal_state_root_kind = "canonical-hex-32b";
+        let wal_prev_hash = self.prev_hash_hex.as_deref().unwrap_or("none");
+        let wal_prev_hash_present = self.prev_hash_hex.is_some();
+        let wal_prev_hash_kind = if wal_prev_hash_present {
+            "linked"
+        } else {
+            "genesis"
+        };
+        let wal_prev_hash_surface_policy = "canonical-hex-32b-or-none";
+        let wal_prev_hash_bytes = self
+            .prev_hash_hex
+            .as_ref()
+            .map(|prev| prev.len() / 2)
+            .unwrap_or(0);
+        let wal_proposal_hash_present = !self.proposal_hash.is_empty();
+        let wal_proposal_hash_kind = "opaque-ascii";
+        let wal_proposal_hash_surface_policy = "ascii-trimmed-no-ws-control-max128";
+
         format!(
-            "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height={} wal_round={} wal_proposal_hash={} wal_committed={} wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+            "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height={} wal_height_encoding={} wal_height_bytes=8 wal_round={} wal_round_encoding={} wal_round_bytes=8 wal_state_root={} wal_state_root_kind={} wal_state_root_bytes={} wal_proposal_hash={} wal_proposal_hash_present={} wal_proposal_hash_kind={} wal_proposal_hash_bytes={} wal_proposal_hash_surface_policy={} wal_committed={} wal_committed_encoding={} wal_committed_bytes=1 wal_prev_hash={} wal_prev_hash_present={} wal_prev_hash_kind={} wal_prev_hash_bytes={} wal_prev_hash_surface_policy={} wal_entry_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_bytes={}",
             self.height,
+            wal_height_encoding,
             self.round,
-            self.proposal_hash,
-            self.committed,
+            wal_round_encoding,
             self.state_root_hex,
-            self.prev_hash_hex.as_deref().unwrap_or("none"),
-            self.content_hash_hex()
+            wal_state_root_kind,
+            self.state_root_hex.len() / 2,
+            self.proposal_hash,
+            wal_proposal_hash_present,
+            wal_proposal_hash_kind,
+            self.proposal_hash.len(),
+            wal_proposal_hash_surface_policy,
+            self.committed,
+            wal_committed_encoding,
+            wal_prev_hash,
+            wal_prev_hash_present,
+            wal_prev_hash_kind,
+            wal_prev_hash_bytes,
+            wal_prev_hash_surface_policy,
+            wal_content_hash,
+            wal_content_hash.len() / 2,
         )
     }
 }
@@ -4335,7 +4371,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=7 wal_round=3 wal_proposal_hash=proposal-7 wal_committed=true wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+                "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=7 wal_height_encoding=le-u64 wal_height_bytes=8 wal_round=3 wal_round_encoding=le-u64 wal_round_bytes=8 wal_state_root={} wal_state_root_kind=canonical-hex-32b wal_state_root_bytes=32 wal_proposal_hash=proposal-7 wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=10 wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max128 wal_committed=true wal_committed_encoding=u8 wal_committed_bytes=1 wal_prev_hash={} wal_prev_hash_present=true wal_prev_hash_kind=linked wal_prev_hash_bytes=32 wal_prev_hash_surface_policy=canonical-hex-32b-or-none wal_entry_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_bytes=32",
                 wal.state_root_hex,
                 wal.prev_hash_hex.as_deref().unwrap(),
                 wal.content_hash_hex()
