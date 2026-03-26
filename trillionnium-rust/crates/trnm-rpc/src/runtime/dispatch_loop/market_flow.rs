@@ -171,11 +171,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
     let base_score = breakdown.base_score;
     let reputation_weight = breakdown.reputation_reward;
     let penalty = breakdown.penalty;
-    let reputation_score_delta = if winner_reputation_effective >= 0 {
-        -(reputation_weight as i128)
-    } else {
-        penalty as i128
-    };
+    let reputation_score_delta = market_reputation_score_delta(winner_reputation_effective, &breakdown);
     let winner_score = breakdown.effective_score;
 
     task.status = "matched".into();

@@ -1696,6 +1696,14 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
     reputation.clamp(-clamp, clamp)
 }
 
+fn market_reputation_score_delta(effective_reputation: i64, breakdown: &MarketScoreBreakdown) -> i128 {
+    if effective_reputation >= 0 {
+        -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
+    } else {
+        breakdown.penalty.min(i128::MAX as u128) as i128
+    }
+}
+
 fn market_score_breakdown(
     price: u128,
     reputation: i64,
@@ -4288,11 +4296,8 @@ fn main() -> Result<()> {
             let base_score = breakdown.base_score;
             let reputation_weight = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
-            let reputation_score_delta = if winner_reputation_effective >= 0 {
-                -(reputation_weight as i128)
-            } else {
-                penalty as i128
-            };
+            let reputation_score_delta =
+                market_reputation_score_delta(winner_reputation_effective, &breakdown);
             let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();

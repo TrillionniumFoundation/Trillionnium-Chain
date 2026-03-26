@@ -251,6 +251,34 @@ fn market_score_config_output_saturates_max_reputation_score_delta_without_wrapp
 }
 
 #[test]
+fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
+    let breakdown = MarketScoreBreakdown {
+        effective_reputation: 1,
+        base_score: 1,
+        reputation_reward: u128::MAX,
+        penalty: 0,
+        effective_score: 0,
+        score_floor_applied: true,
+    };
+
+    assert_eq!(market_reputation_score_delta(1, &breakdown), i128::MIN);
+}
+
+#[test]
+fn market_reputation_score_delta_saturates_negative_penalty_at_i128_max() {
+    let breakdown = MarketScoreBreakdown {
+        effective_reputation: -1,
+        base_score: 1,
+        reputation_reward: 0,
+        penalty: u128::MAX,
+        effective_score: u128::MAX,
+        score_floor_applied: false,
+    };
+
+    assert_eq!(market_reputation_score_delta(-1, &breakdown), i128::MAX);
+}
+
+#[test]
 fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
     let breakdown = market_score_breakdown(
         50,
