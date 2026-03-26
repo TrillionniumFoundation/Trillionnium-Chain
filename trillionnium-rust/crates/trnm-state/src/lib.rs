@@ -10732,6 +10732,22 @@ mod tests {
             );
         }
 
+        let pinned_keys: std::collections::BTreeSet<&str> =
+            GOV_PINNED_KEY_IDS.iter().map(|(key, _)| *key).collect();
+        assert_eq!(
+            pinned_keys.len(),
+            GOV_PINNED_KEY_IDS.len(),
+            "governance pinned key-id registry contains duplicate keys"
+        );
+
+        let pinned_ids: std::collections::BTreeSet<u64> =
+            GOV_PINNED_KEY_IDS.iter().map(|(_, key_id)| *key_id).collect();
+        assert_eq!(
+            pinned_ids.len(),
+            GOV_PINNED_KEY_IDS.len(),
+            "governance pinned key-id registry contains duplicate reserved ids"
+        );
+
         for (key, expected_id) in expected_pinned {
             let err = validate_governance_key_id(key, expected_id + 1)
                 .expect_err("mismatched pinned governance key id must be rejected");
