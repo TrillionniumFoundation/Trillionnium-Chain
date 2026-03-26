@@ -113,6 +113,49 @@ fn task_metering_snapshot_affects_state_root() {
 }
 
 #[test]
+fn restore_task_rejects_unchallenged_terminal_retention_with_resolve_deadline() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        407,
+        Some(TaskObject {
+            task_id: 407,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained proof-window snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(407).is_none(),
+        "restore_task must fail closed when an unchallenged terminal task keeps a resolve deadline even though only the proof-window snapshot should survive retention"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_zero_resolve_deadline() {
     let mut st = StateStore::new();
 
