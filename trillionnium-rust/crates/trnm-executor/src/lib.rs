@@ -2318,6 +2318,19 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_treats_object_zero_as_real_filtered_domain_member() {
+        let keys = read_domain_only_keys(
+            &[o(0), o(7), o(0), o(11), o(7), o(13)],
+            &[0, 0, 5, 0, 19],
+        );
+
+        // Object id 0 is a real access-domain key, not a sentinel. Filtering
+        // shared read domains must drop it exactly like any other write-domain
+        // member while preserving first-seen order for surviving read-only keys.
+        assert_eq!(keys, vec![7, 11, 13]);
+    }
+
+    #[test]
     fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
         let tx = tx(
             1,
