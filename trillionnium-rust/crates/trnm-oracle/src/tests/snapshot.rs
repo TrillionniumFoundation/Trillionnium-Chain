@@ -102,6 +102,91 @@ fn snapshot_hash_binds_checkpoint_window_and_timestamp_surface() {
 }
 
 #[test]
+fn snapshot_hash_binds_optional_proof_statistics_surface() {
+    let baseline = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        Some(99_900),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("baseline snapshot");
+
+    let shifted_median = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        Some(99_901),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("shifted median snapshot");
+
+    let missing_median = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        None,
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("missing median snapshot");
+
+    let shifted_mad = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        Some(99_900),
+        Some(11),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("shifted mad snapshot");
+
+    let missing_mad = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("coingecko"), source("chainlink")],
+        2,
+        Some(99_900),
+        None,
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect("missing mad snapshot");
+
+    assert_ne!(
+        baseline.snapshot_hash, shifted_median.snapshot_hash,
+        "snapshot hash must bind median values so different checkpoint proof statistics cannot share a proof surface"
+    );
+    assert_ne!(
+        baseline.snapshot_hash, missing_median.snapshot_hash,
+        "snapshot hash must bind median presence bits so optional proof statistics cannot disappear without changing the proof surface"
+    );
+    assert_ne!(
+        baseline.snapshot_hash, shifted_mad.snapshot_hash,
+        "snapshot hash must bind mad values so different checkpoint dispersion proofs cannot hash identically"
+    );
+    assert_ne!(
+        baseline.snapshot_hash, missing_mad.snapshot_hash,
+        "snapshot hash must bind mad presence bits so optional dispersion evidence cannot disappear without changing the proof surface"
+    );
+}
+
+#[test]
 fn policy_accepts_snapshot_exactly_at_staleness_boundary() {
     let p = super::shared::policy();
     let snap = snapshot_with(100_000, Some(100_100), 10_000);
