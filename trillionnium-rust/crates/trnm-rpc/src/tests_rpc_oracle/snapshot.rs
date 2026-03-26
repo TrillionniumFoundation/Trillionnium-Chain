@@ -140,6 +140,10 @@ fn decode_url_component(input: &str) -> Option<String> {
     String::from_utf8(out).ok()
 }
 
+fn is_non_canonical_query_key(key: &str) -> bool {
+    key.is_empty() || key.trim() != key || key.chars().any(|ch| ch.is_whitespace() || ch.is_control())
+}
+
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
     if query.is_empty()
@@ -171,6 +175,9 @@ pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, St
         }
         let (raw_k, raw_v) = pair.split_once('=')?;
         let key = decode_url_component(raw_k)?;
+        if is_non_canonical_query_key(&key) {
+            return None;
+        }
         let value = decode_url_component(raw_v)?;
         if out.insert(key, value).is_some() {
             return None;

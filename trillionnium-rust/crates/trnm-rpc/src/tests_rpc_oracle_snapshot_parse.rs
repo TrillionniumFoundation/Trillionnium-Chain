@@ -45,6 +45,21 @@ fn parse_http_query_params_rejects_query_smuggling_and_fragments() {
         );
     }
 }
+
+#[test]
+fn parse_http_query_params_rejects_non_canonical_query_keys() {
+    for target in [
+        "/oracle/validate_snapshot?=value&policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&+policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy+=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&po+licy=/tmp/p.json",
+    ] {
+        assert!(
+            parse_http_query_params(target).is_none(),
+            "non-canonical query key must fail closed: {target}"
+        );
+    }
+}
 #[test]
 fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
     let request = parse_oracle_validate_snapshot_target(
