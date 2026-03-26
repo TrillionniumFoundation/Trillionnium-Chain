@@ -87,7 +87,18 @@ rollback_entrypoint=
 - 若本轮使用 `trnm-cli` 做查询 / handoff / 预检，则 `cli_binary_sha256` 与 `cli_build_command` 必须能回答“操作员看到的结果来自哪一个 CLI 构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
 
-建议把上述字段做成一次性预检采集，避免手填时漏项或把不同 worktree 的值抄混：
+建议把上述字段做成一次性预检采集，避免手填时漏项或把不同 worktree 的值抄混。优先直接使用脚本：`scripts/v2/collect_release_operator_preflight.sh`
+
+```bash
+./scripts/v2/collect_release_operator_preflight.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch "$EXPECTED_BRANCH" \
+  --expected-head "$EXPECTED_HEAD" \
+  --previous-stable-anchor "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}" \
+  --rollback-entrypoint "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
+```
+
+若只想人工理解脚本采集了哪些字段，可参考它的等价展开：
 
 ```bash
 cd trillionnium-rust
