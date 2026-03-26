@@ -105,6 +105,33 @@ fn non_sensitive_governance_noop_rejects_mismatched_key_id() {
     assert!(st.pending_gov_update("max_block_ms").is_none());
 }
 #[test]
+fn governance_max_block_ms_registry_entry_stays_canonical_and_typed() {
+    // Merge-gate guard: immediate numeric governance rows should remain canonical too, not only
+    // the reserved/timelocked examples. Keep max_block_ms wired to one lowercase key spelling,
+    // immediate application, and the shared u64 bounds from the typed registry.
+    let entry = gov_param_registry_entry("max_block_ms")
+        .expect("max_block_ms must stay present in the canonical governance schema");
+    assert_eq!(entry.key, "max_block_ms");
+    assert_eq!(entry.kind, GovParamKind::Immediate);
+    assert_eq!(
+        entry.validator,
+        GovParamValueValidator::U64Range {
+            min: 10,
+            max: 120_000,
+        }
+    );
+    assert!(gov_param_registry_entry("Max_Block_Ms").is_none());
+
+    let mut st = StateStore::new();
+    let applied = st
+        .set_gov_param(9_400, 6_001, entry.key.into(), "500".into())
+        .expect("canonical immediate numeric governance binding must remain writable");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert_eq!(st.gov_param_u64(entry.key), Some(500));
+    assert!(st.pending_gov_update(entry.key).is_none());
+}
+
+#[test]
 fn governance_emergency_pause_registry_entry_stays_canonical_and_typed() {
     // Merge-gate guard: the Algorand-style governance registry must keep the reserved
     // emergency_pause entry bound to one canonical key spelling, reserved key id, and strict
