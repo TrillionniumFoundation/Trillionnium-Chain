@@ -24,6 +24,8 @@ EOF
 }
 
 ROOT="$(git rev-parse --show-toplevel)"
+CANONICAL_ROOT="$(cd "$ROOT" && pwd -P)"
+ROOT="$CANONICAL_ROOT"
 VERIFY_SCRIPT="$ROOT/scripts/v2/verify_lane_worktree.sh"
 DEFAULT_WORKSPACE_ROOT="$ROOT"
 if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
@@ -34,7 +36,6 @@ if [[ ! -d "$WORKSPACE_ROOT" ]]; then
   echo "[FAIL] workspace root does not exist: $WORKSPACE_ROOT" >&2
   exit 1
 fi
-CANONICAL_ROOT="$(cd "$ROOT" && pwd -P)"
 CANONICAL_WORKSPACE_ROOT="$(cd "$WORKSPACE_ROOT" && pwd -P)"
 case "$CANONICAL_WORKSPACE_ROOT" in
   "$CANONICAL_ROOT"|"$CANONICAL_ROOT"/*) ;;
