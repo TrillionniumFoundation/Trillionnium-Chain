@@ -2503,6 +2503,9 @@ impl StateStore {
         if current.version != expected.version {
             return Err("version conflict".into());
         }
+        if task.version != expected.version {
+            return Err("payload version mismatch".into());
+        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
@@ -2560,6 +2563,9 @@ impl StateStore {
         }
         if current.version != expected.version {
             return Err("version conflict".into());
+        }
+        if proposal.version != expected.version {
+            return Err("payload version mismatch".into());
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
@@ -4446,6 +4452,44 @@ mod tests {
     }
 
     #[test]
+    fn update_task_rejects_payload_version_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 12,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let initial_ref = st.put_task_new(task.clone()).unwrap();
+        let original = st.get_task(12).unwrap();
+
+        let mut mismatched = original.clone();
+        mismatched.status = TaskStatus::Assigned;
+        mismatched.version = initial_ref.version + 1;
+
+        let err = st.update_task(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("payload version mismatch"));
+        assert_eq!(st.get_ref(12).unwrap().version, original.version);
+        assert_eq!(st.get_task(12).unwrap(), original);
+    }
+
+    #[test]
     fn update_proposal_rejects_payload_proposal_id_mismatch_fail_closed() {
         let mut st = StateStore::new();
         let proposal = GovProposalObject {
@@ -4465,6 +4509,29 @@ mod tests {
         assert_eq!(st.get_ref(9).unwrap().version, 1);
         assert_eq!(st.get_proposal(9).unwrap().proposal_id, 9);
         assert!(st.get_proposal(10).is_none());
+    }
+
+    #[test]
+    fn update_proposal_rejects_payload_version_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let proposal = GovProposalObject {
+            proposal_id: 13,
+            title: "update param x".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let initial_ref = st.put_proposal_new(proposal.clone()).unwrap();
+        let original = st.get_proposal(13).unwrap();
+
+        let mut mismatched = original.clone();
+        mismatched.status = GovProposalStatus::Voting;
+        mismatched.version = initial_ref.version + 1;
+
+        let err = st.update_proposal(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("payload version mismatch"));
+        assert_eq!(st.get_ref(13).unwrap().version, original.version);
+        assert_eq!(st.get_proposal(13).unwrap(), original);
     }
 
     #[test]
