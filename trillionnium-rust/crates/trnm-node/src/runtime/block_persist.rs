@@ -194,6 +194,27 @@ mod tests {
     }
 
     #[test]
+    fn persist_checkpoint_if_needed_rejects_non_genesis_wal_without_prev_hash_surface() {
+        let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
+        let mut runtime = runtime_fixture("missing-prev-hash", 2);
+        runtime.wal_entries.push(WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "34".repeat(32),
+            prev_hash_hex: None,
+        });
+
+        persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
+
+        assert!(
+            runtime.checkpoints.is_empty(),
+            "non-genesis committed WAL without prev_hash must fail closed so checkpoint persistence never emits a DA/light-verifier surface that omits predecessor linkage"
+        );
+    }
+
+    #[test]
     fn persist_checkpoint_if_needed_rejects_blank_proposal_hash_surface() {
         let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
         let mut runtime = runtime_fixture("blank-proposal-hash", 1);
