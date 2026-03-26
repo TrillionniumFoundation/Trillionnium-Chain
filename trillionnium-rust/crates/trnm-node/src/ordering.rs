@@ -197,9 +197,10 @@ impl PreExecPool {
         let (unique_group_ids, replayed_ids) = normalize_group_ids_for_preexec(&group_ids);
         if replayed_ids > 0 {
             println!(
-                "[preexec] deduped_replayed_group_ids={} unique_group_ids={}",
+                "[preexec] deduped_replayed_group_ids={} unique_group_ids={} replay_sample={}",
                 replayed_ids,
-                unique_group_ids.len()
+                unique_group_ids.len(),
+                format_replayed_group_id_sample(&group_ids, 4)
             );
         }
 
@@ -245,6 +246,35 @@ impl PreExecPool {
             .filter(|id| ok_ids.contains(id))
             .collect();
         (ordered_ok_ids, rejected)
+    }
+}
+
+fn format_replayed_group_id_sample(group_ids: &[u64], limit: usize) -> String {
+    if limit == 0 || group_ids.len() <= 1 {
+        return "[]".to_string();
+    }
+
+    let mut seen_ids = HashSet::with_capacity(group_ids.len());
+    let mut replay_sample = Vec::with_capacity(limit.min(group_ids.len()));
+    let mut replayed_unique_total = 0usize;
+    for &id in group_ids {
+        if !seen_ids.insert(id) {
+            replayed_unique_total += 1;
+            if replay_sample.len() < limit {
+                replay_sample.push(id);
+            }
+        }
+    }
+
+    if replay_sample.is_empty() {
+        return "[]".to_string();
+    }
+
+    let omitted = replayed_unique_total.saturating_sub(replay_sample.len());
+    if omitted == 0 {
+        format!("{:?}", replay_sample)
+    } else {
+        format!("{:?}+{}more", replay_sample, omitted)
     }
 }
 

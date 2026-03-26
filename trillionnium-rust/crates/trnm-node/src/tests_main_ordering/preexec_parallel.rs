@@ -31,6 +31,22 @@ fn preexec_parallel_workers_match_single_worker_results() {
 }
 
 #[test]
+fn preexec_replay_sample_uses_duplicate_encounter_order() {
+    assert_eq!(
+        format_replayed_group_id_sample(&[4, 2, 4, 3, 2, 4], 4),
+        "[4, 2, 4]"
+    );
+}
+
+#[test]
+fn preexec_replay_sample_bounds_output_when_duplicates_are_noisy() {
+    assert_eq!(
+        format_replayed_group_id_sample(&[7, 3, 7, 5, 3, 9, 7, 11, 5, 13, 9, 15], 2),
+        "[7, 3]+3more"
+    );
+}
+
+#[test]
 fn preexec_group_normalization_preserves_first_seen_order_and_counts_replays() {
     let (normalized, replayed) = normalize_group_ids_for_preexec(&[4, 2, 4, 3, 2, 4]);
 

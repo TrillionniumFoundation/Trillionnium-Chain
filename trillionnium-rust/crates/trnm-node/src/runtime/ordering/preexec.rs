@@ -92,10 +92,11 @@ impl PreExecPool {
         let (unique_group_ids, replayed_ids) = normalize_group_ids_for_preexec(&group_ids);
         if replayed_ids > 0 {
             println!(
-                "[preexec] candidate_height={} deduped_replayed_group_ids={} unique_group_ids={}",
+                "[preexec] candidate_height={} deduped_replayed_group_ids={} unique_group_ids={} replay_sample={}",
                 self.candidate_height,
                 replayed_ids,
-                unique_group_ids.len()
+                unique_group_ids.len(),
+                format_replayed_group_id_sample(&group_ids, 4)
             );
         }
 
@@ -150,6 +151,35 @@ fn run_job(
                     .send((*id, false, preexec_worker_panic(*id, candidate_height)));
             }
         }
+    }
+}
+
+fn format_replayed_group_id_sample(group_ids: &[u64], limit: usize) -> String {
+    if limit == 0 || group_ids.len() <= 1 {
+        return "[]".to_string();
+    }
+
+    let mut seen_ids = HashSet::with_capacity(group_ids.len());
+    let mut replay_sample = Vec::with_capacity(limit.min(group_ids.len()));
+    let mut replayed_unique_total = 0usize;
+    for &id in group_ids {
+        if !seen_ids.insert(id) {
+            replayed_unique_total += 1;
+            if replay_sample.len() < limit {
+                replay_sample.push(id);
+            }
+        }
+    }
+
+    if replay_sample.is_empty() {
+        return "[]".to_string();
+    }
+
+    let omitted = replayed_unique_total.saturating_sub(replay_sample.len());
+    if omitted == 0 {
+        format!("{:?}", replay_sample)
+    } else {
+        format!("{:?}+{}more", replay_sample, omitted)
     }
 }
 
@@ -247,6 +277,22 @@ pub(crate) fn pre_execute_group_parallel(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn format_replayed_group_id_sample_uses_duplicate_encounter_order() {
+        assert_eq!(
+            format_replayed_group_id_sample(&[4, 2, 4, 3, 2, 4], 4),
+            "[4, 2, 4]"
+        );
+    }
+
+    #[test]
+    fn format_replayed_group_id_sample_bounds_output_when_duplicates_are_noisy() {
+        assert_eq!(
+            format_replayed_group_id_sample(&[7, 3, 7, 5, 3, 9, 7, 11, 5, 13, 9, 15], 2),
+            "[7, 3]+3more"
+        );
+    }
 
     #[test]
     fn normalize_group_ids_preserves_first_seen_order_for_short_replay_lists() {
