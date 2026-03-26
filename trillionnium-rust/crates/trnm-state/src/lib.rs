@@ -961,6 +961,10 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         return false;
     }
 
+    if task.status == TaskStatus::Slashed && !has_bond {
+        return false;
+    }
+
     if task.challenge_bond_forfeited.is_some() != has_bond {
         return false;
     }
@@ -4614,6 +4618,48 @@ mod tests {
         assert!(
             st.get_task(409).is_none(),
             "restore_task must fail closed when an unchallenged terminal task keeps a zeroed retained challenge-window snapshot that cannot support later proof-retention audits"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_slashed_retention_without_challenge_settlement_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 410,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("slashed proof trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ef".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(410, Some(task));
+
+        assert!(
+            st.get_task(410).is_none(),
+            "restore_task must fail closed when a slashed terminal task drops the retained challenge/collateral settlement metadata required to justify the slash"
         );
     }
 
