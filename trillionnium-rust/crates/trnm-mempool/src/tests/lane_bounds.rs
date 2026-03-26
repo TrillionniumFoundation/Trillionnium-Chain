@@ -127,6 +127,26 @@ fn normal_lane_can_borrow_last_critical_slot_when_critical_lane_idle() {
 }
 
 #[test]
+fn critical_refill_after_idle_last_slot_borrow_recloses_further_normal_spillover() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    // Fill dedicated normal capacity, then borrow the last free critical slot
+    // while the critical lane is still idle.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Once a critical tx refills the reserved lane, further normal spillover
+    // must close immediately to preserve an in-flight critical backlog bound.
+    assert_eq!(g.pop_ready(), Some(1));
+    assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        g.admit(4, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+}
+
+#[test]
 fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
     let mut g = LaneAdmissionGate::new(1, 1);
 
