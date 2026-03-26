@@ -264,7 +264,8 @@ impl OraclePolicy {
 }
 
 fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
-    deviation_bps > max_deviation_bps || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
+    deviation_bps > max_deviation_bps
+        || (max_deviation_bps != 0 && deviation_bps == max_deviation_bps)
 }
 
 fn deviation_bps(value: i128, baseline: i128) -> u32 {
@@ -275,7 +276,9 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline).saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
+    let numerator = value
+        .abs_diff(baseline)
+        .saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
     let scaled = numerator / denominator;
     scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
@@ -499,10 +502,7 @@ pub enum OracleError {
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
     #[error("future snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}")]
-    FutureSnapshot {
-        snapshot_ts_ms: u64,
-        now_ts_ms: u64,
-    },
+    FutureSnapshot { snapshot_ts_ms: u64, now_ts_ms: u64 },
     #[error(
         "stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}"
     )]
@@ -524,9 +524,7 @@ pub enum OracleError {
         deviation_bps: u32,
         max_deviation_bps: u32,
     },
-    #[error(
-        "inconsistent sample count: sources={actual_sources}, sample_count={sample_count}"
-    )]
+    #[error("inconsistent sample count: sources={actual_sources}, sample_count={sample_count}")]
     InconsistentSampleCount {
         actual_sources: u32,
         sample_count: u32,
@@ -644,7 +642,10 @@ mod tests {
         )
         .expect_err("snapshot should reject zero sample accounting");
 
-        assert!(matches!(err, OracleError::InvalidPolicy("sample_count must be > 0")));
+        assert!(matches!(
+            err,
+            OracleError::InvalidPolicy("sample_count must be > 0")
+        ));
     }
 
     #[test]
@@ -846,6 +847,29 @@ mod tests {
 
         assert_eq!(s1.snapshot_hash, s2.snapshot_hash);
         assert!(s1.validate_hash().is_ok());
+    }
+
+    #[test]
+    fn validate_hash_rejects_uppercase_snapshot_digest_surface() {
+        let mut snapshot = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(99_900),
+            Some(10),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot");
+
+        snapshot.snapshot_hash = snapshot.snapshot_hash.to_uppercase();
+
+        let err = snapshot
+            .validate_hash()
+            .expect_err("uppercase digest surface must fail closed");
+        assert!(matches!(err, OracleError::SnapshotHashMismatch { .. }));
     }
 
     #[test]
@@ -1232,7 +1256,10 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
+        assert_eq!(
+            report.error.as_deref(),
+            Some("duplicate source ids are not allowed")
+        );
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
     }
 
