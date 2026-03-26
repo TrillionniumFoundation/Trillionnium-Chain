@@ -223,6 +223,27 @@ fn governance_resolve_authority_registry_entry_uses_single_canonical_value_polic
 }
 
 #[test]
+fn governance_resolve_authority_invalid_merge_gate_sample_stays_fail_closed() {
+    // Merge-gate guard: keep the typed registry's explicit invalid sample aligned with the same
+    // runtime fail-closed value policy. If the canonical validator ever loosens whitespace-only
+    // authority sets, this lane should fail loudly.
+    let entry = gov_param_registry_entry("resolve_authority")
+        .expect("resolve_authority must stay present in the canonical governance schema");
+    assert_eq!(entry.invalid_merge_gate_sample, "   ");
+
+    let err = entry
+        .validator
+        .validate(entry.key, entry.invalid_merge_gate_sample)
+        .expect_err("whitespace-only resolve_authority sample must stay invalid in the typed registry");
+    assert!(err.contains("invalid governance value for resolve_authority"), "{err}");
+
+    assert!(
+        canonicalize_resolve_authority_set(entry.invalid_merge_gate_sample).is_err(),
+        "runtime canonicalizer must reject the same whitespace-only invalid sample"
+    );
+}
+
+#[test]
 fn governance_challenge_min_bond_bounty_bps_registry_entry_stays_canonical_and_typed() {
     // Merge-gate guard: this Algorand-style registry row is a plain numeric timelocked policy.
     // Keep its canonical spelling, sensitivity class, and numeric bounds derived from the shared
