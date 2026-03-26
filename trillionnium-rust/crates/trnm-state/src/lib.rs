@@ -8299,6 +8299,38 @@ mod tests {
     }
 
     #[test]
+    fn restore_gov_param_clears_reserved_emergency_pause_id_when_foreign_algorand_key_replays() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "algorand_governance_key_id".into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "restore must fail closed when emergency_pause reserved id replays under a foreign algorand registry key"
+        );
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "restore must not leave a foreign algorand registry binding behind on the reserved emergency_pause id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "restore must not let the reserved emergency_pause key resolve through a foreign algorand registry alias"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "foreign algorand restore on the reserved emergency_pause id must not surface as an active pause"
+        );
+    }
+
+    #[test]
     fn governance_get_param_fails_closed_for_non_allowlisted_algorand_registry_injection() {
         let mut st = StateStore::new();
         st.objects.insert(
