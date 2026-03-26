@@ -6,9 +6,8 @@ use crate::proof_adapter::ProofAdapter;
 use crate::state::MessageIngressRecord;
 use crate::{
     adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
-    classify_adapter_error, commitment, execute_payload, reputation_score_bps,
-    run_llm_adapter_with_retry, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
-    ReputationSignal,
+    classify_adapter_error, commitment, execute_payload, run_llm_adapter_with_retry,
+    transition_request_status, AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -33,7 +32,6 @@ pub(crate) fn process_assigned_record(
         Err(e) => {
             let (resolution_code, failure_tag): (&str, &str) = classify_adapter_error(&e);
             let reputation_signal = adapter_error_signal(e.kind);
-            let reputation_score_bps = reputation_score_bps(reputation_signal);
             let reputation_impact = apply_reputation_signal(rec, reputation_signal);
             rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
             rec.verifier_status = Some("rejected".to_string());
@@ -51,7 +49,7 @@ pub(crate) fn process_assigned_record(
                 reputation_impact.delta,
                 reputation_impact.tier,
                 reputation_impact.weight_bps,
-                reputation_score_bps,
+                reputation_impact.score_bps,
                 e.context
             );
             return Ok(true);
@@ -68,7 +66,6 @@ pub(crate) fn process_assigned_record(
 
     if v_status != "accepted" {
         let reputation_signal = ReputationSignal::VerifierRejected;
-        let reputation_score_bps = reputation_score_bps(reputation_signal);
         let reputation_impact = apply_reputation_signal(rec, reputation_signal);
         rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
 
@@ -83,7 +80,7 @@ pub(crate) fn process_assigned_record(
             reputation_impact.delta,
             reputation_impact.tier,
             reputation_impact.weight_bps,
-            reputation_score_bps
+            reputation_impact.score_bps
         );
         return Ok(true);
     }
@@ -105,7 +102,6 @@ pub(crate) fn process_assigned_record(
     }
 
     let reputation_signal = ReputationSignal::Accepted;
-    let reputation_score_bps = reputation_score_bps(reputation_signal);
     let reputation_impact = apply_reputation_signal(rec, reputation_signal);
     rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
 
@@ -121,7 +117,7 @@ pub(crate) fn process_assigned_record(
         reputation_impact.delta,
         reputation_impact.tier,
         reputation_impact.weight_bps,
-        reputation_score_bps
+        reputation_impact.score_bps
     );
     Ok(true)
 }

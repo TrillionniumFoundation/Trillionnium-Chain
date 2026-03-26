@@ -534,6 +534,7 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.delta, -2);
     assert_eq!(impact.tier, 1);
     assert_eq!(impact.weight_bps, 3_333);
+    assert_eq!(impact.score_bps, -6_666);
     assert_eq!(impact.rank_ordinal, 2);
     assert_eq!(rec.reputation_delta, Some(-2));
 
@@ -542,6 +543,7 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.delta, 3);
     assert_eq!(impact.tier, 3);
     assert_eq!(impact.weight_bps, 10_000);
+    assert_eq!(impact.score_bps, 10_000);
     assert_eq!(impact.rank_ordinal, 0);
     assert_eq!(rec.reputation_delta, Some(3));
 }
