@@ -53,6 +53,7 @@ pub(crate) struct ReputationSurface {
     pub(crate) delta: i32,
     pub(crate) tier: u8,
     pub(crate) weight_bps: u16,
+    pub(crate) score_bps: i32,
     pub(crate) rank_ordinal: u8,
 }
 
@@ -195,6 +196,20 @@ pub(crate) fn reputation_weight_bps(signal: ReputationSignal) -> u16 {
     ((u32::from(impact.tier) * 10_000) / u32::from(max_tier)) as u16
 }
 
+pub(crate) fn reputation_score_bps(signal: ReputationSignal) -> i32 {
+    let impact = reputation_impact(signal);
+    let max_abs_delta = CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .map(|(_, impact)| impact.delta.abs())
+        .max()
+        .unwrap_or(0);
+    if max_abs_delta == 0 {
+        return 0;
+    }
+
+    (impact.delta * 10_000) / max_abs_delta
+}
+
 pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface {
     let impact = reputation_impact(signal);
     ReputationSurface {
@@ -202,6 +217,7 @@ pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface 
         delta: impact.delta,
         tier: impact.tier,
         weight_bps: reputation_weight_bps(signal),
+        score_bps: reputation_score_bps(signal),
         rank_ordinal: reputation_rank_ordinal(signal),
     }
 }
@@ -220,11 +236,22 @@ pub(crate) fn reputation_impact_from_weight_bps(weight_bps: u16) -> Option<Reput
     reputation_signal_from_weight_bps(weight_bps).map(reputation_impact)
 }
 
+pub(crate) fn reputation_signal_from_score_bps(score_bps: i32) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .iter()
+        .find_map(|signal| (reputation_score_bps(*signal) == score_bps).then_some(*signal))
+}
+
+pub(crate) fn reputation_impact_from_score_bps(score_bps: i32) -> Option<ReputationImpact> {
+    reputation_signal_from_score_bps(score_bps).map(reputation_impact)
+}
+
 pub(crate) fn reputation_signal_from_surface(
     label: &str,
     delta: i32,
     tier: u8,
     weight_bps: u16,
+    score_bps: i32,
     rank_ordinal: u8,
 ) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER.iter().find_map(|signal| {
@@ -233,6 +260,7 @@ pub(crate) fn reputation_signal_from_surface(
             && surface.delta == delta
             && surface.tier == tier
             && surface.weight_bps == weight_bps
+            && surface.score_bps == score_bps
             && surface.rank_ordinal == rank_ordinal)
             .then_some(*signal)
     })
@@ -243,9 +271,10 @@ pub(crate) fn reputation_impact_from_surface(
     delta: i32,
     tier: u8,
     weight_bps: u16,
+    score_bps: i32,
     rank_ordinal: u8,
 ) -> Option<ReputationImpact> {
-    reputation_signal_from_surface(label, delta, tier, weight_bps, rank_ordinal)
+    reputation_signal_from_surface(label, delta, tier, weight_bps, score_bps, rank_ordinal)
         .map(reputation_impact)
 }
 

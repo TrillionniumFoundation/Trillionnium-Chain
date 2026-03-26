@@ -13,9 +13,11 @@ fn exported_canonical_reputation_surfaces_round_trip_through_all_helper_axes() {
         assert_eq!(surface.delta, impact.delta);
         assert_eq!(surface.tier, impact.tier);
         assert_eq!(surface.weight_bps, reputation_weight_bps(*signal));
+        assert_eq!(surface.score_bps, reputation_score_bps(*signal));
         assert_eq!(surface.rank_ordinal, expected_rank as u8);
 
         assert_eq!(reputation_score_impact(*signal), (surface.label, surface.delta));
+        assert_eq!(reputation_signal_from_score_bps(surface.score_bps), Some(*signal));
         assert_eq!(reputation_signal_from_label(surface.label), Some(*signal));
         assert_eq!(reputation_signal_from_delta(surface.delta), Some(*signal));
         assert_eq!(reputation_signal_from_tier(surface.tier), Some(*signal));
@@ -27,6 +29,7 @@ fn exported_canonical_reputation_surfaces_round_trip_through_all_helper_axes() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.score_bps,
                 surface.rank_ordinal,
             ),
             Some(*signal),
@@ -49,6 +52,7 @@ fn exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids() 
             accepted.delta,
             accepted.tier,
             retryable.weight_bps,
+            accepted.score_bps,
             accepted.rank_ordinal,
         ),
         None,
@@ -60,6 +64,7 @@ fn exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids() 
             accepted.delta,
             retryable.tier,
             accepted.weight_bps,
+            accepted.score_bps,
             accepted.rank_ordinal,
         ),
         None,
@@ -71,9 +76,22 @@ fn exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids() 
             retryable.delta,
             accepted.tier,
             accepted.weight_bps,
+            accepted.score_bps,
             accepted.rank_ordinal,
         ),
         None,
         "surface lookup must reject cross-signal delta hybrids"
+    );
+    assert_eq!(
+        reputation_signal_from_surface(
+            accepted.label,
+            accepted.delta,
+            accepted.tier,
+            accepted.weight_bps,
+            retryable.score_bps,
+            accepted.rank_ordinal,
+        ),
+        None,
+        "surface lookup must reject cross-signal normalized score hybrids"
     );
 }

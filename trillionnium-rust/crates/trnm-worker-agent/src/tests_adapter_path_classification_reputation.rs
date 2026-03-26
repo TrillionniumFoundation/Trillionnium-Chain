@@ -70,6 +70,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: 3,
             tier: 3,
             weight_bps: 10_000,
+            score_bps: 10_000,
             rank_ordinal: 0,
         }
     );
@@ -80,6 +81,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -1,
             tier: 2,
             weight_bps: 6_666,
+            score_bps: -3_333,
             rank_ordinal: 1,
         }
     );
@@ -90,6 +92,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -2,
             tier: 1,
             weight_bps: 3_333,
+            score_bps: -6_666,
             rank_ordinal: 2,
         }
     );
@@ -100,6 +103,7 @@ fn reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_pat
             delta: -3,
             tier: 0,
             weight_bps: 0,
+            score_bps: -10_000,
             rank_ordinal: 3,
         }
     );
@@ -532,4 +536,46 @@ fn apply_reputation_signal_updates_record_via_single_mapping_path() {
     assert_eq!(impact.weight_bps, 10_000);
     assert_eq!(impact.rank_ordinal, 0);
     assert_eq!(rec.reputation_delta, Some(3));
+}
+
+#[test]
+fn canonical_reputation_surfaces_keep_all_score_axes_unique_per_signal() {
+    let surfaces = canonical_reputation_surfaces();
+
+    for (idx, surface) in surfaces.iter().enumerate() {
+        for other in surfaces.iter().skip(idx + 1) {
+            assert_ne!(surface.label, other.label);
+            assert_ne!(surface.delta, other.delta);
+            assert_ne!(surface.tier, other.tier);
+            assert_ne!(surface.weight_bps, other.weight_bps);
+            assert_ne!(surface.rank_ordinal, other.rank_ordinal);
+        }
+    }
+}
+
+#[test]
+fn canonical_reputation_surfaces_form_a_strictly_descending_score_ladder() {
+    let surfaces = canonical_reputation_surfaces();
+
+    for window in surfaces.windows(2) {
+        let current = window[0];
+        let next = window[1];
+        assert!(
+            current.delta > next.delta,
+            "score deltas must stay strictly descending across canonical surfaces"
+        );
+        assert!(
+            current.tier > next.tier,
+            "tiers must stay strictly descending across canonical surfaces"
+        );
+        assert!(
+            current.weight_bps > next.weight_bps,
+            "weight_bps must stay strictly descending across canonical surfaces"
+        );
+        assert_eq!(
+            current.rank_ordinal + 1,
+            next.rank_ordinal,
+            "rank ordinals must remain dense and consecutive"
+        );
+    }
 }
