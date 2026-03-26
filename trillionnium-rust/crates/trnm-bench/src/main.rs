@@ -252,6 +252,7 @@ fn main() {
         let dominant_attributed_retry_share = profile.dominant_attributed_retry_share();
         let dominant_retry_lead_hits = profile.dominant_retry_lead_hits();
         let dominant_retry_lead_share = profile.dominant_retry_lead_share();
+        let dominant_attributed_retry_lead_share = profile.dominant_attributed_retry_lead_share();
         let attributed_retry_hits = profile.attributed_retry_hits();
         let unattributed_retry_hits = profile.unattributed_retry_hits();
         let unattributed_retry_share = profile.unattributed_retry_share();
@@ -398,6 +399,10 @@ fn main() {
         lines.push(format!(
             "profile.dominant_retry_lead_share={:.4}",
             dominant_retry_lead_share
+        ));
+        lines.push(format!(
+            "profile.dominant_attributed_retry_lead_share={:.4}",
+            dominant_attributed_retry_lead_share
         ));
         lines.push(format!(
             "profile.attributed_retry_hits={}",
@@ -765,6 +770,7 @@ mod tests {
         assert_eq!(profile.dominant_attributed_retry_share(), 0.0);
         assert_eq!(profile.dominant_retry_lead_hits(), 0);
         assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+        assert_eq!(profile.dominant_attributed_retry_lead_share(), 0.0);
         assert_eq!(profile.attributed_retry_hits(), 0);
         assert_eq!(profile.unattributed_retry_hits(), 0);
         assert_eq!(profile.unattributed_retry_share(), 0.0);

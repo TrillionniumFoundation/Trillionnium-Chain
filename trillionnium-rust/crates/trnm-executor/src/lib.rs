@@ -246,6 +246,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn dominant_attributed_retry_lead_share(&self) -> f64 {
+        ratio_usize(self.dominant_retry_lead_hits(), self.attributed_retry_hits())
+    }
+
+    #[inline]
     pub fn attributed_retry_hits(&self) -> usize {
         self.stage_ww_hits + self.stage_wr_hits + self.stage_rw_hits
     }
@@ -2077,6 +2082,10 @@ mod tests {
         assert_eq!(profile.dominant_retry_stage(), "ww");
         assert_eq!(profile.dominant_retry_lead_hits(), 6);
         assert!((profile.dominant_retry_lead_share() - 0.6).abs() < f64::EPSILON);
+        assert!(
+            (profile.dominant_attributed_retry_lead_share() - (6.0 / 13.0)).abs()
+                < 1e-12
+        );
     }
 
     #[test]
@@ -2086,6 +2095,7 @@ mod tests {
         assert_eq!(profile.dominant_retry_stage(), "mixed");
         assert_eq!(profile.dominant_retry_lead_hits(), 0);
         assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+        assert_eq!(profile.dominant_attributed_retry_lead_share(), 0.0);
     }
 
     #[test]
@@ -2095,6 +2105,7 @@ mod tests {
         assert_eq!(profile.dominant_retry_stage(), "none");
         assert_eq!(profile.dominant_retry_lead_hits(), 0);
         assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+        assert_eq!(profile.dominant_attributed_retry_lead_share(), 0.0);
     }
 
     #[test]
