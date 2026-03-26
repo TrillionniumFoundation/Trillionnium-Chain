@@ -159,7 +159,7 @@ mod tests {
         assert!(da_summary.contains("wal_proposal_hash_present=true"));
         assert!(da_summary.contains("wal_proposal_hash_kind=opaque-ascii"));
         assert!(da_summary.contains(
-            "wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max128"
+            "wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"
         ));
         assert!(da_summary.contains("checkpoint_height_matches_wal=true"));
         assert!(da_summary.contains("checkpoint_state_root_matches_wal=true"));

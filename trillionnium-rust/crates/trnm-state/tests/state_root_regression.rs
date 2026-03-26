@@ -5812,7 +5812,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_proposal_hash_present=true"));
     assert!(summary.contains("wal_proposal_hash_kind=opaque-ascii"));
     assert!(summary.contains("wal_proposal_hash_bytes=10"));
-    assert!(summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max128"));
+    assert!(summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
     assert!(summary.contains("wal_proposal_hash_surface_canonical=true"));
 }
 
