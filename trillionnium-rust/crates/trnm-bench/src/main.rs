@@ -202,6 +202,10 @@ fn main() {
                 "profile.candidate_groups_scanned={}",
                 profile.candidate_groups_scanned
             ),
+            format!(
+                "profile.retry_fallback_new_groups={}",
+                profile.retry_fallback_new_groups
+            ),
             format!("profile.stage_ww_checks={}", profile.stage_ww_checks),
             format!("profile.stage_ww_hits={}", profile.stage_ww_hits),
             format!("profile.stage_wr_checks={}", profile.stage_wr_checks),
@@ -214,6 +218,7 @@ fn main() {
         let conflict_hits_per_tx = profile.conflict_hits_per_tx();
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
         let retry_pressure = profile.retry_pressure();
+        let retry_fallback_new_group_share = profile.retry_fallback_new_group_share();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
@@ -265,6 +270,10 @@ fn main() {
             candidate_groups_per_tx
         ));
         lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
+        lines.push(format!(
+            "profile.retry_fallback_new_group_share={:.4}",
+            retry_fallback_new_group_share
+        ));
         lines.push(format!(
             "profile.candidate_groups_per_retry_hit={:.4}",
             candidate_groups_per_retry_hit
@@ -605,6 +614,7 @@ mod tests {
             conflict_checks: 9,
             conflict_hits: 4,
             candidate_groups_scanned: 6,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 4,
             stage_ww_hits: 2,
             stage_wr_checks: 3,
@@ -625,6 +635,33 @@ mod tests {
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
+        assert_eq!(profile.retry_fallback_new_groups, 0);
+        assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
+    }
+
+    #[test]
+    fn retry_fallback_new_group_share_tracks_scan_exhaustion_pressure() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 5,
+            grouped_count: 8,
+            max_group_size: 2,
+            min_group_size: 1,
+            avg_group_size: 1.6,
+            hot_object_share: 0.5,
+            conflict_checks: 9,
+            conflict_hits: 4,
+            candidate_groups_scanned: 6,
+            retry_fallback_new_groups: 2,
+            stage_ww_checks: 4,
+            stage_ww_hits: 2,
+            stage_wr_checks: 3,
+            stage_wr_hits: 1,
+            stage_rw_checks: 2,
+            stage_rw_hits: 1,
+        };
+
+        assert!((profile.retry_fallback_new_group_share() - 0.25).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -640,6 +677,7 @@ mod tests {
             conflict_checks: 0,
             conflict_hits: 0,
             candidate_groups_scanned: 0,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 0,
             stage_ww_hits: 0,
             stage_wr_checks: 0,

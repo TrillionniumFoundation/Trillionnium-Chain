@@ -24,6 +24,7 @@ pub struct GroupingProfile {
     pub conflict_checks: usize,
     pub conflict_hits: usize,
     pub candidate_groups_scanned: usize,
+    pub retry_fallback_new_groups: usize,
     // Aggressive-only stage attribution counters.
     pub stage_ww_checks: usize,
     pub stage_ww_hits: usize,
@@ -56,6 +57,11 @@ impl GroupingProfile {
     #[inline]
     pub fn candidate_groups_per_tx(&self) -> f64 {
         ratio_usize(self.candidate_groups_scanned, self.tx_count)
+    }
+
+    #[inline]
+    pub fn retry_fallback_new_group_share(&self) -> f64 {
+        ratio_usize(self.retry_fallback_new_groups, self.tx_count)
     }
 
     #[inline]
@@ -796,6 +802,7 @@ pub fn build_parallel_groups_profile_with_strategy(
                 conflict_checks: 0,
                 conflict_hits: 0,
                 candidate_groups_scanned: 0,
+                retry_fallback_new_groups: 0,
                 stage_ww_checks: 0,
                 stage_ww_hits: 0,
                 stage_wr_checks: 0,
@@ -843,6 +850,7 @@ pub fn build_parallel_groups_profile_with_strategy(
                 conflict_checks: 0,
                 conflict_hits: 0,
                 candidate_groups_scanned: 0,
+                retry_fallback_new_groups: 0,
                 stage_ww_checks: 0,
                 stage_ww_hits: 0,
                 stage_wr_checks: 0,
@@ -939,6 +947,7 @@ pub fn build_parallel_groups_profile_with_strategy(
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned: 0,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 0,
             stage_ww_hits: 0,
             stage_wr_checks: 0,
@@ -1026,6 +1035,7 @@ fn build_parallel_groups_aggressive_profile(
                 conflict_checks,
                 conflict_hits,
                 candidate_groups_scanned: 0,
+                retry_fallback_new_groups: 0,
                 stage_ww_checks: 0,
                 stage_ww_hits: 0,
                 stage_wr_checks: 0,
@@ -1048,6 +1058,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
     let mut candidate_groups_scanned = 0usize;
+    let mut retry_fallback_new_groups = 0usize;
     let mut stage_ww_checks = 0usize;
     let mut stage_ww_hits = 0usize;
     let mut stage_wr_checks = 0usize;
@@ -1153,6 +1164,9 @@ fn build_parallel_groups_aggressive_profile(
         }
 
         if !placed {
+            if candidate_span > 0 {
+                retry_fallback_new_groups += 1;
+            }
             let idx = groups.len();
             groups.push(vec![tx_slot.take().expect("tx already moved")]);
             group_read_keys.push(read_keys.iter().copied().collect());
@@ -1195,6 +1209,7 @@ fn build_parallel_groups_aggressive_profile(
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned,
+            retry_fallback_new_groups,
             stage_ww_checks,
             stage_ww_hits,
             stage_wr_checks,
@@ -1980,6 +1995,7 @@ mod tests {
             conflict_checks: 0,
             conflict_hits,
             candidate_groups_scanned: 0,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 0,
             stage_ww_hits: ww,
             stage_wr_checks: 0,
@@ -2010,6 +2026,7 @@ mod tests {
             conflict_checks: candidate_groups_scanned,
             conflict_hits,
             candidate_groups_scanned,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 0,
             stage_ww_hits: 0,
             stage_wr_checks: 0,
@@ -2103,6 +2120,7 @@ mod tests {
             conflict_checks: 0,
             conflict_hits: 5,
             candidate_groups_scanned: 7,
+            retry_fallback_new_groups: 0,
             stage_ww_checks: 0,
             stage_ww_hits: 3,
             stage_wr_checks: 0,
