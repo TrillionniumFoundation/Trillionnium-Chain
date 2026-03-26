@@ -241,6 +241,50 @@ fn critical_guard_only_reorders_scanned_prefix_and_leaves_suffix_fifo() {
 }
 
 #[test]
+fn critical_guard_budget_cutoff_keeps_later_critical_spillover_behind_selected_normal_prefix() {
+    let mut mempool = VecDeque::from(vec![
+        MockTx::CreateTask {
+            task_id: 51,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::Challenge {
+            task_id: 51,
+            challenger: "c1".into(),
+            bond: 10,
+        },
+        MockTx::AcceptTask {
+            task_id: 51,
+            worker: "w1".into(),
+        },
+        MockTx::Resolve {
+            task_id: 52,
+            slash_worker: false,
+            resolver: "gov".into(),
+        },
+        MockTx::CreateTask {
+            task_id: 52,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+    ]);
+
+    let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+    assert_eq!(picked.len(), 2);
+
+    // Once the earliest critical tx is surfaced, the next slot should still honor
+    // the warmed lane-fairness contract by admitting the pending normal prefix
+    // before a later critical spillover jumps ahead within the same block budget.
+    assert!(matches!(picked[0], MockTx::Challenge { task_id: 51, .. }));
+    assert!(matches!(picked[1], MockTx::CreateTask { task_id: 51, .. }));
+
+    assert_eq!(mempool.len(), 3);
+    assert!(matches!(mempool[0], MockTx::AcceptTask { task_id: 51, .. }));
+    assert!(matches!(mempool[1], MockTx::Resolve { task_id: 52, .. }));
+    assert!(matches!(mempool[2], MockTx::CreateTask { task_id: 52, .. }));
+}
+
+#[test]
 fn critical_guard_single_slot_still_surfaces_tail_critical_domain_work() {
     let mut mempool = VecDeque::from(vec![
         MockTx::CreateTask {
