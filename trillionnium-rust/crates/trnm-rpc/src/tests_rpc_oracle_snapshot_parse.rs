@@ -148,3 +148,16 @@ fn parse_oracle_validate_snapshot_target_rejects_fragment_and_encoded_query_smug
         assert_eq!(err, "invalid query params", "target={target}");
     }
 }
+
+#[test]
+fn parse_oracle_validate_snapshot_target_rejects_non_exact_path_prefixes() {
+    for target in [
+        "/oracle/validate_snapshot_extra?snapshot=/tmp/s.json&policy=/tmp/p.json",
+        "/oracle/metrics_extra?snapshot=/tmp/s.json&policy=/tmp/p.json",
+        "/metrics_extra?snapshot=/tmp/s.json&policy=/tmp/p.json",
+    ] {
+        let err = parse_oracle_validate_snapshot_target(target)
+            .expect_err("non-exact oracle path prefix must fail closed");
+        assert_eq!(err, "unexpected oracle target", "target={target}");
+    }
+}

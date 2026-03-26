@@ -190,12 +190,16 @@ pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, St
     Some(out)
 }
 
+fn matches_exact_target_path(target: &str, path: &str) -> bool {
+    target == path || target.strip_prefix(path).is_some_and(|suffix| suffix.starts_with('?'))
+}
+
 pub(crate) fn parse_oracle_validate_snapshot_target(
     target: &str,
 ) -> Result<OracleValidateSnapshotTarget, String> {
-    if !(target.starts_with("/oracle/validate_snapshot")
-        || target.starts_with("/oracle/metrics")
-        || target.starts_with("/metrics"))
+    if !(matches_exact_target_path(target, "/oracle/validate_snapshot")
+        || matches_exact_target_path(target, "/oracle/metrics")
+        || matches_exact_target_path(target, "/metrics"))
     {
         return Err("unexpected oracle target".to_string());
     }
@@ -393,7 +397,7 @@ fn error_response(message: &str) -> String {
 
 pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
     let target = target.unwrap_or("/metrics");
-    if target.starts_with("/oracle/validate_snapshot") {
+    if matches_exact_target_path(target, "/oracle/validate_snapshot") {
         let req = parse_oracle_validate_snapshot_target(target);
         match req {
             Ok(request) => {
@@ -409,7 +413,9 @@ pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
             }
             Err(err) => error_response(&err),
         }
-    } else if target.starts_with("/oracle/metrics") || target.starts_with("/metrics") {
+    } else if matches_exact_target_path(target, "/oracle/metrics")
+        || matches_exact_target_path(target, "/metrics")
+    {
         if !target.contains('?') {
             return format!(
                 "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n\r\n{}",
