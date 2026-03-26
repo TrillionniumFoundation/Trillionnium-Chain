@@ -2259,6 +2259,28 @@ mod tests {
     }
 
     #[test]
+    fn tx_access_domain_keys_treat_object_zero_as_real_write_domain_member() {
+        let tx = tx(1, vec![o(5), o(0), o(5)], vec![o(0), o(11), o(11)]);
+
+        // Object id 0 is a real execution-domain member, not a sentinel. When it
+        // participates in the write domain, write-first scope reporting should
+        // keep it as the leading canonical lane key.
+        assert_eq!(tx_access_domain_keys(&tx), vec![0, 11, 5]);
+    }
+
+    #[test]
+    fn primary_access_domain_key_treats_object_zero_as_real_key_for_write_and_read_fallback() {
+        let write_primary = tx(1, vec![o(5)], vec![o(0), o(11)]);
+        let read_only = tx(2, vec![o(0), o(11)], vec![]);
+
+        // The canonical primary execution-domain key should preserve object id 0
+        // both when it leads the write domain and when the helper falls back to a
+        // read-only domain.
+        assert_eq!(primary_access_domain_key(&write_primary), Some(0));
+        assert_eq!(primary_access_domain_key(&read_only), Some(0));
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
