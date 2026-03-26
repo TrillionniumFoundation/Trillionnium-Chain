@@ -47,6 +47,11 @@ pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()>
     Ok(())
 }
 
+fn has_complete_http_head(buf: &[u8]) -> bool {
+    buf.windows(4).any(|window| window == b"\r\n\r\n")
+        || buf.windows(2).any(|window| window == b"\n\n")
+}
+
 pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     let mut buf = Vec::with_capacity(512);
     let mut chunk = [0u8; 512];
@@ -59,11 +64,23 @@ pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<
             break;
         }
         buf.extend_from_slice(&chunk[..n]);
-        if buf.windows(4).any(|window| window == b"\r\n\r\n")
-            || buf.windows(2).any(|window| window == b"\n\n")
-        {
-            break;
+        if has_complete_http_head(&buf) {
+            return Ok(buf);
         }
+    }
+
+    if buf.len() >= HEALTH_REQUEST_HEADER_MAX_BYTES && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "http request header exceeded configured max bytes before terminator",
+        ));
+    }
+
+    if !buf.is_empty() && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::UnexpectedEof,
+            "http request header ended before terminator",
+        ));
     }
 
     Ok(buf)
@@ -317,9 +334,12 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        http_json_head_response, http_json_response, is_health_probe_path,
-        json_response_for_method, parse_nonempty_path_suffix,
+        configure_health_stream, http_json_head_response, http_json_response,
+        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
+        read_http_request_head, HEALTH_REQUEST_HEADER_MAX_BYTES,
     };
+    use std::io::Write;
+
 
     #[test]
     fn accepts_health_probe_aliases() {
@@ -418,5 +438,60 @@ mod tests {
             parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
             None
         );
+    }
+
+    #[test]
+    fn read_http_request_head_rejects_premature_eof_before_terminator() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(b"GET /health HTTP/1.1\r\nHost: localhost\r\n")
+                .expect("write unterminated request head");
+            let _ = client.shutdown(Shutdown::Write);
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err = read_http_request_head(&mut server_stream)
+            .expect_err("unterminated request head must fail closed on eof");
+        assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
+        assert!(err.to_string().contains("ended before terminator"));
+
+        client.join().expect("client thread join");
+    }
+
+    #[test]
+    fn read_http_request_head_rejects_oversized_header_without_terminator() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+        let oversized = vec![b'a'; HEALTH_REQUEST_HEADER_MAX_BYTES + 32];
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(&oversized)
+                .expect("write oversized partial request head");
+            let _ = client.shutdown(Shutdown::Write);
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err = read_http_request_head(&mut server_stream)
+            .expect_err("oversized unterminated request head must fail closed");
+        assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
+        assert!(err
+            .to_string()
+            .contains("exceeded configured max bytes before terminator"));
+
+        client.join().expect("client thread join");
     }
 }
