@@ -41,3 +41,21 @@ fn policy_accepts_snapshot_exactly_at_staleness_boundary() {
     p.validate_snapshot(&snap, 15_000)
         .expect("boundary staleness should remain valid");
 }
+
+#[test]
+fn snapshot_new_rejects_duplicate_sources_after_canonical_sort() {
+    let err = OracleSnapshot::new(
+        "btc/usd",
+        100_000,
+        vec![source("chainlink"), source("coingecko"), source("chainlink")],
+        3,
+        Some(99_900),
+        Some(10),
+        1_000,
+        2_000,
+        10_000,
+    )
+    .expect_err("duplicate oracle sources must fail closed before settlement layering");
+
+    assert_eq!(err, OracleError::DuplicateSources);
+}
