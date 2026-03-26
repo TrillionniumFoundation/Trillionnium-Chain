@@ -162,6 +162,10 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
         })
         .expect("non-empty bids");
     let winner_reputation_lookup_key = normalize_market_worker_key(&winner.worker);
+    let winner_reputation_lookup_missing = winner_reputation_lookup_key
+        .as_ref()
+        .map(|k| !reputation.contains_key(k))
+        .unwrap_or(true);
     let winner_reputation = winner_reputation_lookup_key
         .as_ref()
         .and_then(|k| reputation.get(k).copied())
@@ -186,6 +190,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "matched_bid_count": matched_bid_count,
         "winner_reputation": winner_reputation,
         "winner_reputation_lookup_key": winner_reputation_lookup_key,
+        "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
         "winner_reputation_effective": winner_reputation_effective,
         "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
         "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
