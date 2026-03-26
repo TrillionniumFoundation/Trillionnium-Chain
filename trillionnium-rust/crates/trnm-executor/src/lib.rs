@@ -2498,6 +2498,22 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_treat_object_zero_as_real_primary_write_domain() {
+        let echoed = tx(
+            1,
+            vec![o(0), o(7), o(0), o(9)],
+            vec![o(5), o(0), o(5), o(11)],
+        );
+        let canonical = tx(2, vec![o(7), o(9)], vec![o(5), o(0), o(11)]);
+
+        // Object id 0 is a real conflict domain member, not a sentinel fallback.
+        // Mixed read/write echoes on object 0 must preserve the same canonical
+        // hot-bucket pair as the deduped write-first footprint.
+        assert_eq!(hot_bucket_keys(&echoed), (0, 5));
+        assert_eq!(hot_bucket_keys(&echoed), hot_bucket_keys(&canonical));
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
