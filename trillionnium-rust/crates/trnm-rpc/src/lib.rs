@@ -101,6 +101,13 @@ pub struct OracleValidateSnapshotResponse {
 }
 
 impl OracleValidateSnapshotResponse {
+    fn has_non_empty_error_label(&self) -> bool {
+        self.error
+            .as_deref()
+            .map(str::trim)
+            .is_some_and(|label| !label.is_empty())
+    }
+
     pub fn classified_reject_total(&self) -> u32 {
         self.metrics.classified_reject_total()
     }
@@ -135,7 +142,7 @@ impl OracleValidateSnapshotResponse {
 
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
-            && self.error.is_some()
+            && self.has_non_empty_error_label()
             && self.metrics.accepted_total == 0
             && self.classified_reject_total() == 0
             && self.observation_classified_reject_total() == 0
@@ -147,7 +154,7 @@ impl OracleValidateSnapshotResponse {
         let result_label_consistent = if self.ok {
             self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
         } else {
-            self.error.is_some() && self.metrics.accepted_total == 0
+            self.has_non_empty_error_label() && self.metrics.accepted_total == 0
         };
         let source_cardinality_consistent = if self.metrics.sample_count == 0 {
             self.metrics.oracle_source_cardinality == 0
