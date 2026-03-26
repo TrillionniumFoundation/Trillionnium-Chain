@@ -10,6 +10,10 @@ use trnm_types::{
     GovProposalStatus, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding, TaskStatus,
 };
 
+fn option_vec_is_none_or_empty<T>(value: &Option<Vec<T>>) -> bool {
+    value.as_ref().is_none_or(Vec::is_empty)
+}
+
 pub use relay::*;
 pub use transfer::{
     compute_tx_hash, get_tx, submit_tx, GetTxError, GetTxResponse, InMemoryTransferLedger,
@@ -74,7 +78,7 @@ pub struct TaskQueryResponse {
     pub metadata_requires_governance_upgrade: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata_primary_compatibility_finding: Option<TaskMetadataCompatibilityFinding>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "option_vec_is_none_or_empty")]
     pub metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,

@@ -124,6 +124,30 @@ fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
 }
 
 #[test]
+fn rpc_task_query_omits_empty_metadata_compatibility_findings_array() {
+    let task = TaskQueryResponse {
+        task_id: 10,
+        status: TaskStatus::Assigned,
+        worker: Some("worker-2".into()),
+        bounty: 200,
+        result_hash_hex: None,
+        version: 4,
+        metadata_compatibility: Some(TaskMetadataCompatibility {
+            legacy_note_only: false,
+            canonical_core_fields: true,
+            complete_metering_snapshot: true,
+        }),
+        metadata_runtime_compatible: Some(true),
+        metadata_requires_governance_upgrade: Some(false),
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: Some(vec![]),
+        metering: None,
+    };
+    let v = serde_json::to_value(task).unwrap();
+    assert!(v.get("metadata_compatibility_findings").is_none());
+}
+
+#[test]
 fn rpc_task_query_includes_metering_when_present() {
     let task = TaskQueryResponse {
         task_id: 1,
