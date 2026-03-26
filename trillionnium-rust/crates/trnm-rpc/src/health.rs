@@ -53,6 +53,12 @@ fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
         .filter(|suffix| !suffix.is_empty())
 }
 
+fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
+    path.strip_prefix(prefix)
+        .map(|suffix| suffix.trim_end_matches('/'))
+        .filter(|suffix| !suffix.is_empty())
+}
+
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -153,26 +159,33 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
-                let registry = load_identity_registry(&identity_registry_file());
-                if let Some(token_id) =
-                    resolve_capability_token_subject_or_token(&registry, subject_or_token)
-                {
-                    match query_capability_audit(&registry, token_id) {
-                        Ok(out) => {
-                            let body = serde_json::to_string(&out).unwrap_or_else(|_| {
-                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
-                            });
-                            json_response_for_method(method, "200 OK", &body)
-                        }
-                        Err(err) => {
-                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            json_response_for_method(method, "404 Not Found", &body)
+                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+                    Some(subject_or_token) => {
+                        let registry = load_identity_registry(&identity_registry_file());
+                        if let Some(token_id) =
+                            resolve_capability_token_subject_or_token(&registry, subject_or_token)
+                        {
+                            match query_capability_audit(&registry, token_id) {
+                                Ok(out) => {
+                                    let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                        "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                    });
+                                    json_response_for_method(method, "200 OK", &body)
+                                }
+                                Err(err) => {
+                                    let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
+                                    json_response_for_method(method, "404 Not Found", &body)
+                                }
+                            }
+                        } else {
+                            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
+                            json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                } else {
-                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
-                    json_response_for_method(method, "404 Not Found", body)
+                    None => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
                 }
             }
             _ => {
@@ -192,7 +205,10 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_health_probe_path, json_response_for_method, parse_path_u64_suffix};
+    use super::{
+        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
+        parse_path_u64_suffix,
+    };
 
     #[test]
     fn accepts_health_probe_aliases() {
@@ -257,5 +273,25 @@ mod tests {
         );
         assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
         assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+    }
+
+    #[test]
+    fn parse_nonempty_path_suffix_rejects_empty_capability_subject() {
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice", "/query-capability-audit/"),
+            Some("alice")
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice/", "/query-capability-audit/"),
+            Some("alice")
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
+            None
+        );
     }
 }

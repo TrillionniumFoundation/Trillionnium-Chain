@@ -3090,6 +3090,12 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
+    path.strip_prefix(prefix)
+        .map(|suffix| suffix.trim_end_matches('/'))
+        .filter(|suffix| !suffix.is_empty())
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -3185,7 +3191,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some((method, _)), Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
+            (Some((method, _)), Some(path), Some(target))
+                if path == "/query-normalized-audit-events" =>
+            {
                 let query = parse_query_normalized_audit_events_query_from_path(target);
                 match query {
                     Ok(query) => {
@@ -3200,27 +3208,36 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
 
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
-                let registry = load_identity_registry(&identity_registry_file());
-                if let Some(token_id) =
-                    resolve_capability_token_subject_or_token(&registry, subject_or_token)
-                {
-                    match query_capability_audit(&registry, token_id) {
-                        Ok(out) => {
-                            let body = serde_json::to_string(&out).unwrap_or_else(|_| {
-                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
-                            });
-                            json_response_for_method(method, "200 OK", &body)
-                        }
-                        Err(err) => {
-                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            json_response_for_method(method, "404 Not Found", &body)
+            (Some((method, _)), Some(path), Some(_))
+                if path.starts_with("/query-capability-audit/") =>
+            {
+                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+                    Some(subject_or_token) => {
+                        let registry = load_identity_registry(&identity_registry_file());
+                        if let Some(token_id) =
+                            resolve_capability_token_subject_or_token(&registry, subject_or_token)
+                        {
+                            match query_capability_audit(&registry, token_id) {
+                                Ok(out) => {
+                                    let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                        "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                    });
+                                    json_response_for_method(method, "200 OK", &body)
+                                }
+                                Err(err) => {
+                                    let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
+                                    json_response_for_method(method, "404 Not Found", &body)
+                                }
+                            }
+                        } else {
+                            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
+                            json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                } else {
-                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
-                    json_response_for_method(method, "404 Not Found", body)
+                    None => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
                 }
             }
             _ => {
@@ -4997,11 +5014,34 @@ mod tests {
         assert!(!not_found.ends_with("{\"ok\":false}"));
         assert!(not_found.contains("Content-Length: 12\r\n"));
 
-        let bad_request =
-            json_response_for_method("HEAD", "400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
+        let bad_request = json_response_for_method(
+            "HEAD",
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\"}",
+        );
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn parse_nonempty_path_suffix_rejects_empty_capability_subject() {
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice", "/query-capability-audit/"),
+            Some("alice")
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice/", "/query-capability-audit/"),
+            Some("alice")
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
+            None
+        );
     }
 
     #[test]
