@@ -57,6 +57,29 @@ fn x3_prep_rejects_source_height_confirm_when_target_has_already_reached_source_
 }
 
 #[test]
+fn x3_prep_rejects_confirm_height_below_target_when_overlay_has_already_caught_up() {
+    let mut request = SettlementRequest::new(1, "0xoverlay-below-target".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 700, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 699 },
+    )
+    .expect_err("caught-up overlay must reject confirmations below the observed target head");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 699 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_accepts_source_plus_one_confirm_when_target_has_already_reached_source_head() {
     let mut request = SettlementRequest::new(1, "0xoverlay-head-plus-one".to_string());
     let token = operator_token();
