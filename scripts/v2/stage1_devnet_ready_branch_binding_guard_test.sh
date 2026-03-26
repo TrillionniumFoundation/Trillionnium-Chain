@@ -14,6 +14,7 @@ required_lines=(
   'head_sha='
   '--expected-branch-ref "refs/heads/$EXPECTED_BRANCH"'
   '--expected-branch-ref "$EXPECTED_BRANCH_REF"'
+  '不要同时传'
   'CURRENT_BRANCH="$(git branch --show-current)"'
   'CURRENT_HEAD="$(git rev-parse HEAD)"'
   'test -n "$CURRENT_BRANCH"'
@@ -29,4 +30,4 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-echo "[PASS] stage1 devnet checklist pins branch short name + full branch ref + exact HEAD for operator handoff evidence"
+echo "[PASS] stage1 devnet checklist pins branch short name + full branch ref + exact HEAD and documents the verifier's branch/branch-ref exclusivity"

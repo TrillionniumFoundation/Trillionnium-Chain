@@ -104,11 +104,17 @@ if [[ -n "$EXPECTED_WORKTREE_ROOT" || -n "$EXPECTED_BRANCH" || -n "$EXPECTED_BRA
   if [[ -n "$EXPECTED_WORKTREE_ROOT" ]]; then
     VERIFY_ARGS+=(--expected-worktree-root "$EXPECTED_WORKTREE_ROOT")
   fi
-  if [[ -n "$EXPECTED_BRANCH" ]]; then
-    VERIFY_ARGS+=(--expected-branch "$EXPECTED_BRANCH")
+  if [[ -n "$EXPECTED_BRANCH" && -n "$EXPECTED_BRANCH_REF" ]]; then
+    CANONICAL_BRANCH_REF="refs/heads/$EXPECTED_BRANCH"
+    if [[ "$EXPECTED_BRANCH_REF" != "$CANONICAL_BRANCH_REF" ]]; then
+      echo "[FAIL] expected branch/ref mismatch: branch=$EXPECTED_BRANCH branch_ref=$EXPECTED_BRANCH_REF canonical_ref=$CANONICAL_BRANCH_REF" >&2
+      exit 1
+    fi
   fi
   if [[ -n "$EXPECTED_BRANCH_REF" ]]; then
     VERIFY_ARGS+=(--expected-branch-ref "$EXPECTED_BRANCH_REF")
+  elif [[ -n "$EXPECTED_BRANCH" ]]; then
+    VERIFY_ARGS+=(--expected-branch "$EXPECTED_BRANCH")
   fi
   if [[ -n "$EXPECTED_HEAD" ]]; then
     VERIFY_ARGS+=(--expected-head "$EXPECTED_HEAD")
