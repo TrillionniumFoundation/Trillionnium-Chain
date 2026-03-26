@@ -2659,17 +2659,23 @@ fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
         let to_read = remaining.min(chunk.len());
         let n = stream.read(&mut chunk[..to_read])?;
         if n == 0 {
-            break;
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "incomplete HTTP request header",
+            ));
         }
         buf.extend_from_slice(&chunk[..n]);
         if buf.windows(4).any(|window| window == b"\r\n\r\n")
             || buf.windows(2).any(|window| window == b"\n\n")
         {
-            break;
+            return Ok(buf);
         }
     }
 
-    Ok(buf)
+    Err(std::io::Error::new(
+        std::io::ErrorKind::InvalidData,
+        "HTTP request header too large",
+    ))
 }
 
 fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
@@ -5031,7 +5037,10 @@ mod tests {
             Some("alice")
         );
         assert_eq!(
-            parse_nonempty_path_suffix("/query-capability-audit/alice/", "/query-capability-audit/"),
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice/",
+                "/query-capability-audit/"
+            ),
             Some("alice")
         );
         assert_eq!(
@@ -5069,6 +5078,59 @@ mod tests {
             err.kind(),
             std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
         ));
+
+        client.join().expect("client thread join");
+    }
+
+    #[test]
+    fn read_http_request_head_rejects_truncated_header_on_peer_close() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(b"GET /health HTTP/1.1\r\nHost: localhost")
+                .expect("write truncated request");
+            client
+                .shutdown(Shutdown::Write)
+                .expect("shutdown write half after truncated request");
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err = read_http_request_head(&mut server_stream)
+            .expect_err("truncated header must fail closed instead of being parsed");
+        assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
+
+        client.join().expect("client thread join");
+    }
+
+    #[test]
+    fn read_http_request_head_rejects_oversized_header_without_terminator() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+        let oversized = vec![b'a'; HEALTH_REQUEST_HEADER_MAX_BYTES + 32];
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(&oversized)
+                .expect("write oversized request head without terminator");
+            let _ = client.shutdown(Shutdown::Write);
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err = read_http_request_head(&mut server_stream)
+            .expect_err("oversized unterminated header must be rejected");
+        assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
 
         client.join().expect("client thread join");
     }
