@@ -323,6 +323,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.retry_scan_hit_rate(), 0.0);
     assert_eq!(profile.retry_scan_misses(), 4);
     assert_eq!(profile.retry_scan_miss_rate(), 4.0 / 7.0);
+    assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
     assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
     assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
     assert!((profile.retry_scan_overhang_per_hit() - (4.0 / 3.0)).abs() < f64::EPSILON);
@@ -469,6 +470,7 @@ fn candidate_groups_per_reused_placement_tracks_speculative_retry_cost() {
     assert_eq!(profile.reused_group_placements(), 5);
     assert!((profile.candidate_groups_per_retry_hit() - 5.0).abs() < f64::EPSILON);
     assert!((profile.candidate_groups_per_reused_placement() - 2.0).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_reuse_rate() - 0.5).abs() < f64::EPSILON);
     assert!((profile.retry_scan_overhang_per_reused_placement() - 1.6).abs() < f64::EPSILON);
     assert!((profile.retry_fallback_share_of_new_groups() - (1.0 / 3.0)).abs() < f64::EPSILON);
 }

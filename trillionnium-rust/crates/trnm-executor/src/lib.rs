@@ -103,6 +103,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_scan_reuse_rate(&self) -> f64 {
+        ratio_usize(self.reused_group_placements(), self.candidate_groups_scanned)
+    }
+
+    #[inline]
     pub fn retry_scan_hit_rate(&self) -> f64 {
         ratio_usize(self.conflict_hits, self.candidate_groups_scanned)
     }

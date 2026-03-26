@@ -225,6 +225,7 @@ fn main() {
         let retry_fallback_share_of_new_groups = profile.retry_fallback_share_of_new_groups();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
+        let retry_scan_reuse_rate = profile.retry_scan_reuse_rate();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
         let retry_scan_misses = profile.retry_scan_misses();
         let retry_scan_miss_rate = profile.retry_scan_miss_rate();
@@ -295,6 +296,10 @@ fn main() {
         lines.push(format!(
             "profile.candidate_groups_per_reused_placement={:.4}",
             candidate_groups_per_reused_placement
+        ));
+        lines.push(format!(
+            "profile.retry_scan_reuse_rate={:.4}",
+            retry_scan_reuse_rate
         ));
         lines.push(format!(
             "profile.retry_scan_hit_rate={:.4}",
@@ -649,6 +654,7 @@ mod tests {
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_reuse_rate() - (5.0 / 6.0)).abs() < f64::EPSILON);
         assert_eq!(profile.reused_group_placements(), 5);
         assert!((profile.reused_group_share() - 0.625).abs() < f64::EPSILON);
         assert!((profile.new_group_share() - 0.375).abs() < f64::EPSILON);
@@ -716,6 +722,7 @@ mod tests {
         assert_eq!(profile.retry_scan_hit_rate(), 0.0);
         assert_eq!(profile.retry_scan_misses(), 0);
         assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+        assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
         assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
