@@ -43,6 +43,9 @@ impl StateStore {
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
+        if task.task_id == 0 {
+            return Err("task id must be non-zero".into());
+        }
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
@@ -77,6 +80,9 @@ impl StateStore {
         if current.version != expected.version {
             return Err("version conflict".into());
         }
+        if task.version != expected.version {
+            return Err("payload version mismatch".into());
+        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
@@ -87,6 +93,7 @@ impl StateStore {
                 value: ObjectValue::Task(task),
             },
         );
+        self.pending_resolve_approvals.remove(&expected.id);
         Ok(ObjectRef {
             id: expected.id,
             version: new_version,
@@ -97,6 +104,9 @@ impl StateStore {
         &mut self,
         mut proposal: GovProposalObject,
     ) -> Result<ObjectRef, String> {
+        if proposal.proposal_id == 0 {
+            return Err("proposal id must be non-zero".into());
+        }
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
@@ -130,6 +140,9 @@ impl StateStore {
         }
         if current.version != expected.version {
             return Err("version conflict".into());
+        }
+        if proposal.version != expected.version {
+            return Err("payload version mismatch".into());
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
