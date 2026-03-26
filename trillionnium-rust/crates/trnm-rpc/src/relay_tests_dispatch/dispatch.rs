@@ -63,9 +63,47 @@ fn relay_query_session_proof_returns_messages_root_and_proofs() {
 
     for (i, p) in out.proofs.iter().enumerate() {
         assert_eq!(p.envelope.sequence, out.messages[i].sequence);
+        assert_eq!(p.leaf_sequence, out.messages[i].sequence);
         assert_eq!(p.leaf_index, i);
         assert!(!p.leaf_hash_hex.is_empty());
     }
+}
+
+#[test]
+fn relay_session_proof_rejects_leaf_sequence_drift() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp-leaf-seq".into(),
+        })
+        .unwrap();
+
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp-leaf-seq".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let mut proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 77,
+            session_id: "sp-leaf-seq".into(),
+            from_seq: 1,
+            to_seq: 2,
+            source: None,
+        })
+        .unwrap();
+    verify_session_proof(&proof).unwrap();
+
+    proof.proofs[0].leaf_sequence += 1;
+    assert!(verify_session_proof(&proof).is_err());
 }
 
 #[test]

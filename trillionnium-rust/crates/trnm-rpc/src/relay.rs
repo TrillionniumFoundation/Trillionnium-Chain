@@ -246,6 +246,7 @@ pub struct RelayEnvelopeProof {
     pub envelope: RelayEnvelope,
     pub leaf_hash_hex: String,
     pub leaf_index: usize,
+    pub leaf_sequence: u64,
     pub proof: Vec<RelayProofStep>,
 }
 
@@ -987,6 +988,7 @@ impl RelayService {
             .zip(proof_paths.into_iter())
             .enumerate()
             .map(|(i, ((env, leaf_hash), proof))| RelayEnvelopeProof {
+                leaf_sequence: env.sequence,
                 envelope: env,
                 leaf_hash_hex: hex::encode(leaf_hash),
                 leaf_index: i,
@@ -1123,6 +1125,14 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
                 "proof leaf index mismatch at index {}: got {}",
                 i,
                 p.leaf_index
+            );
+        }
+        if p.leaf_sequence != expected_seq {
+            bail!(
+                "proof leaf sequence mismatch at index {}: got {}, expected {}",
+                i,
+                p.leaf_sequence,
+                expected_seq
             );
         }
 
