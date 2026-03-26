@@ -250,6 +250,24 @@ impl PreExecPool {
 
 fn normalize_group_ids_for_preexec(group_ids: &[u64]) -> (Vec<u64>, usize) {
     let input_len = group_ids.len();
+    if input_len <= 1 {
+        return (group_ids.to_vec(), 0);
+    }
+
+    // Replay fanout is typically tiny (single group, a duplicate echo, or a
+    // short handoff list). Keep the common path allocation-light before falling
+    // back to HashSet for broader batches.
+    if input_len <= 8 {
+        let mut unique_group_ids = Vec::with_capacity(input_len);
+        for &id in group_ids {
+            if !unique_group_ids.contains(&id) {
+                unique_group_ids.push(id);
+            }
+        }
+        let replayed_ids = input_len.saturating_sub(unique_group_ids.len());
+        return (unique_group_ids, replayed_ids);
+    }
+
     let mut unique_group_ids = Vec::with_capacity(input_len);
     let mut seen_ids = HashSet::with_capacity(input_len);
     for &id in group_ids {
