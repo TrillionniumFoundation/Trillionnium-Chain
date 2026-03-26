@@ -234,6 +234,45 @@ fn state_root_changes_when_unchallenged_terminal_retention_snapshot_changes() {
 }
 
 #[test]
+fn state_root_changes_when_slashed_terminal_retention_metadata_changes() {
+    let mut st_a = StateStore::new();
+    let slashed_task = TaskObject {
+        task_id: 425,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Slashed,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker-1".into()),
+        committed_hash: Some([1u8; 32]),
+        result_hash: Some([2u8; 32]),
+        reveal_salt: Some([3u8; 32]),
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(40),
+        challenged_at_height: Some(25),
+        resolve_deadline_height: Some(35),
+        challenge_bond: Some(500),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 1,
+    };
+    st_a.put_task_new(slashed_task.clone()).unwrap();
+
+    let mut st_b = StateStore::new();
+    let mut changed = slashed_task;
+    changed.resolve_deadline_height = Some(36);
+    st_b.put_task_new(changed).unwrap();
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "slashed terminal challenge-retention metadata must contribute to state root so later collateral/proof audits cannot hash distinct slash-settlement trails identically"
+    );
+}
+
+#[test]
 fn state_root_changes_when_pending_resolve_first_approver_changes() {
     let mut st_a = StateStore::new();
     st_a.stage_or_confirm_resolve_approval(500, 1, true, "authority-a", "authority-a,authority-b")
