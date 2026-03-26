@@ -202,3 +202,36 @@ fn preexec_pool_clamps_zero_workers_to_a_single_safe_worker() {
     assert_eq!(second.0, vec![2, 1]);
     assert_eq!(second.1, 0);
 }
+
+#[test]
+fn preexec_pool_keeps_deduped_first_seen_order_across_multi_worker_fanout() {
+    let state = Arc::new(StateStore::new());
+    let picked = Arc::new(vec![
+        MockTx::CreateTask {
+            task_id: 4801,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::CreateTask {
+            task_id: 4802,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+        MockTx::CreateTask {
+            task_id: 4803,
+            creator: "carol".into(),
+            bounty: 30,
+        },
+        MockTx::CreateTask {
+            task_id: 4804,
+            creator: "dave".into(),
+            bounty: 40,
+        },
+    ]);
+
+    let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 3, 1);
+    let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, vec![4, 2, 4, 1, 3, 2, 1]);
+
+    assert_eq!(ordered_ids, vec![4, 2, 1, 3]);
+    assert_eq!(rejected, 0);
+}
