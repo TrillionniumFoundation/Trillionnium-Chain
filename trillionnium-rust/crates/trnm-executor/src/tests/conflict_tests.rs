@@ -178,6 +178,29 @@ fn object_version_updates_still_conflict_on_same_object_id() {
 }
 
 #[test]
+fn mixed_read_write_echo_still_conflicts_with_same_object_version_update() {
+    let echoed = tx(
+        1,
+        vec![ObjectRef { id: 77, version: 1 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    );
+    let version_update = tx(
+        2,
+        vec![],
+        vec![ObjectRef { id: 77, version: 2 }],
+    );
+
+    assert!(
+        detect_conflict(&echoed, &version_update),
+        "same-object read/write echoes must serialize against later writes even when the peer carries a newer object ref version"
+    );
+    assert!(
+        detect_conflict(&version_update, &echoed),
+        "conflict classification must stay symmetric for mixed echo domains under version updates"
+    );
+}
+
+#[test]
 fn dedup_access_keys_collapses_same_object_across_versions() {
     let keys = dedup_access_keys(&[
         ObjectRef { id: 100, version: 1 },
