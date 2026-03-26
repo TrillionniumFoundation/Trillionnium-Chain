@@ -2819,6 +2819,27 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_write_first_secondary_stable_under_shared_primary_echo_noise() {
+        let baseline = tx(
+            1,
+            vec![o(5), o(5), o(7), o(7), o(29)],
+            vec![o(5), o(13), o(13), o(21)],
+        );
+        let permuted = tx(
+            2,
+            vec![o(29), o(7), o(5), o(7), o(5)],
+            vec![o(21), o(5), o(13), o(13)],
+        );
+
+        // Avalanche-style lane isolation should stay on the same write-primary lane
+        // when the canonical primary key is echoed across domains and read-side noise
+        // is permuted independently. The smallest write-only secondary remains the
+        // stable execution-lane hint.
+        assert_eq!(hot_bucket_keys(&baseline), (5, 13));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
