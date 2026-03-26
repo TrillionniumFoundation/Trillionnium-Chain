@@ -2227,6 +2227,20 @@ mod tests {
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
+    fn hot_bucket_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_keys(&tx);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
     fn hot_bucket_keys_reject_cross_domain_version_skew_for_same_object_id() {
         let tx = tx(
             1,
