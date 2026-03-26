@@ -144,6 +144,10 @@ fn is_non_canonical_query_key(key: &str) -> bool {
     key.is_empty() || key.trim() != key || key.chars().any(|ch| ch.is_whitespace() || ch.is_control())
 }
 
+fn is_non_canonical_query_value(value: &str) -> bool {
+    value.trim() != value || value.chars().any(|ch| ch.is_control())
+}
+
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
     if query.is_empty()
@@ -210,6 +214,9 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
     if snapshot.trim().is_empty() {
         return Err("empty snapshot".to_string());
     }
+    if is_non_canonical_query_value(snapshot) {
+        return Err("non-canonical snapshot path".to_string());
+    }
     let snapshot = snapshot.to_string();
     if snapshot.len() > MAX_ORACLE_QUERY_PATH_LEN {
         return Err("snapshot path too long".to_string());
@@ -220,6 +227,9 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
         .ok_or_else(|| "missing policy".to_string())?;
     if policy.trim().is_empty() {
         return Err("empty policy".to_string());
+    }
+    if is_non_canonical_query_value(policy) {
+        return Err("non-canonical policy path".to_string());
     }
     let policy = policy.to_string();
     if policy.len() > MAX_ORACLE_QUERY_PATH_LEN {

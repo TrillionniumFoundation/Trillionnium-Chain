@@ -96,6 +96,21 @@ fn parse_oracle_validate_snapshot_target_rejects_empty_snapshot_or_policy() {
 }
 
 #[test]
+fn parse_oracle_validate_snapshot_target_rejects_non_canonical_snapshot_or_policy_paths() {
+    let snapshot_err = parse_oracle_validate_snapshot_target(
+        "/oracle/validate_snapshot?snapshot=+/tmp/s.json&policy=/tmp/p.json",
+    )
+    .expect_err("snapshot path with leading space must fail closed");
+    assert_eq!(snapshot_err, "non-canonical snapshot path");
+
+    let policy_err = parse_oracle_validate_snapshot_target(
+        "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json+",
+    )
+    .expect_err("policy path with trailing space must fail closed");
+    assert_eq!(policy_err, "non-canonical policy path");
+}
+
+#[test]
 fn parse_oracle_validate_snapshot_target_rejects_snapshot_path_above_bound() {
     let snapshot = format!("/tmp/{}", "a".repeat(MAX_ORACLE_QUERY_PATH_LEN + 1));
     let target = format!(
