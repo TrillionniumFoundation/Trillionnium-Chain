@@ -159,5 +159,14 @@ printf 'build_command=%s\n' "$BINARY_BUILD_COMMAND"
 printf 'cli_binary_path=%s\n' "$CLI_BINARY_PATH"
 printf 'cli_binary_sha256=%s\n' "$(if [[ -x "$CLI_BINARY_PATH" ]]; then shasum -a 256 "$CLI_BINARY_PATH" | awk '{print $1}'; else printf '<not-built>'; fi)"
 printf 'cli_build_command=%s\n' "$CLI_BUILD_COMMAND"
+for node in 1 2 3 4; do
+  config_path="$WORKSPACE_ROOT/configs/node${node}.toml"
+  if [[ -f "$config_path" ]]; then
+    config_sha256="$(shasum -a 256 "$config_path" | awk '{print $1}')"
+  else
+    config_sha256="<not-found>"
+  fi
+  printf 'node%s_config_sha256=%s\n' "$node" "$config_sha256"
+done
 printf 'previous_stable_anchor=%s\n' "$PREVIOUS_STABLE_ANCHOR"
 printf 'rollback_entrypoint=%s\n' "$ROLLBACK_ENTRYPOINT"
