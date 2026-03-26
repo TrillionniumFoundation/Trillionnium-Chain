@@ -47,6 +47,8 @@ fn relay_query_session_proof_returns_messages_root_and_proofs() {
     assert_eq!(out.range_len, 3);
     assert_eq!(out.message_count, 3);
     assert_eq!(out.proof_count, 3);
+    assert_eq!(out.total_proof_steps, 6);
+    assert_eq!(out.max_proof_depth, 2);
     assert_eq!(out.messages.len(), 3);
     assert_eq!(out.proofs.len(), 3);
     assert_eq!(out.messages[0].sequence, 2);
@@ -172,6 +174,8 @@ fn relay_session_proof_single_message_range_has_empty_merkle_path_and_verifies()
     assert_eq!(proof.range_len, 1);
     assert_eq!(proof.message_count, 1);
     assert_eq!(proof.proof_count, 1);
+    assert_eq!(proof.total_proof_steps, 0);
+    assert_eq!(proof.max_proof_depth, 0);
     assert_eq!(proof.messages.len(), 1);
     assert_eq!(proof.proofs.len(), 1);
     assert_eq!(proof.messages[0].sequence, 1);
@@ -305,7 +309,15 @@ fn relay_session_proof_rejects_tampered_explicit_count_fields() {
     wrong_message_count.message_count += 1;
     assert!(verify_session_proof(&wrong_message_count).is_err());
 
-    let mut wrong_proof_count = proof;
+    let mut wrong_proof_count = proof.clone();
     wrong_proof_count.proof_count += 1;
     assert!(verify_session_proof(&wrong_proof_count).is_err());
+
+    let mut wrong_total_proof_steps = proof.clone();
+    wrong_total_proof_steps.total_proof_steps += 1;
+    assert!(verify_session_proof(&wrong_total_proof_steps).is_err());
+
+    let mut wrong_max_proof_depth = proof;
+    wrong_max_proof_depth.max_proof_depth += 1;
+    assert!(verify_session_proof(&wrong_max_proof_depth).is_err());
 }
