@@ -4498,6 +4498,44 @@ mod tests {
     }
 
     #[test]
+    fn scrub_immediate_verification_challenge_fields_clears_legacy_retention_state() {
+        let mut task = TaskObject {
+            task_id: 78_902,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(777),
+            challenge_window_blocks_snapshot: Some(55),
+            challenged_at_height: Some(700),
+            resolve_deadline_height: Some(800),
+            challenge_bond: Some(25),
+            challenger: Some("challenger1".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 1,
+        };
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenge_window_blocks_snapshot, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
     fn reveal_accepts_valid_llm_token_meter_receipt_for_fraud_task() {
         let mut st = seeded_state();
         let task_id = 78_903;
