@@ -82,6 +82,7 @@ rollback_entrypoint=
 
 最少要求：
 - `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
+- `workspace_root` 必须位于当前 `worktree_root` 之内；若指向别的目录（哪怕是另一个 lane worktree 或外部 checkout），预检脚本应直接 fail-closed，避免把当前 lane 的 branch/commit 与外部构建产物混写进同一份 handoff；
 - `branch` / `branch_ref` / `head_sha` 与 `commit_short` 共同固定这次证据绑定的是哪一条 lane 引用与哪一个精确提交，避免只记录短 branch 名后在多 worktree 并行时发生同名误判；
 - 预检命令中显式传入 `--expected-branch-ref "refs/heads/$EXPECTED_BRANCH"`，可把“采集到的 branch_ref”与“操作者声称要验证的 refs/heads/... ”绑定到同一条 fail-closed 校验链路，而不是仅靠脚本推导；
 - `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个 `trnm-node` 构建”；

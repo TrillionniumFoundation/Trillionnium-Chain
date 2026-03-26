@@ -30,6 +30,20 @@ if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
   DEFAULT_WORKSPACE_ROOT="$ROOT/trillionnium-rust"
 fi
 WORKSPACE_ROOT="${WORKSPACE_ROOT:-$DEFAULT_WORKSPACE_ROOT}"
+if [[ ! -d "$WORKSPACE_ROOT" ]]; then
+  echo "[FAIL] workspace root does not exist: $WORKSPACE_ROOT" >&2
+  exit 1
+fi
+CANONICAL_ROOT="$(cd "$ROOT" && pwd -P)"
+CANONICAL_WORKSPACE_ROOT="$(cd "$WORKSPACE_ROOT" && pwd -P)"
+case "$CANONICAL_WORKSPACE_ROOT" in
+  "$CANONICAL_ROOT"|"$CANONICAL_ROOT"/*) ;;
+  *)
+    echo "[FAIL] workspace root escapes worktree root: workspace_root=$CANONICAL_WORKSPACE_ROOT worktree_root=$CANONICAL_ROOT" >&2
+    exit 1
+    ;;
+esac
+WORKSPACE_ROOT="$CANONICAL_WORKSPACE_ROOT"
 CURRENT_BRANCH=""
 CURRENT_HEAD=""
 WORKTREE_STATUS=""
