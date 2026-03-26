@@ -31,6 +31,14 @@ fn preexec_parallel_workers_match_single_worker_results() {
 }
 
 #[test]
+fn preexec_group_normalization_preserves_first_seen_order_and_counts_replays() {
+    let (normalized, replayed) = normalize_group_ids_for_preexec(vec![4, 2, 4, 3, 2, 4]);
+
+    assert_eq!(normalized, vec![4, 2, 3]);
+    assert_eq!(replayed, 3);
+}
+
+#[test]
 fn preexec_parallel_dedupes_replayed_group_ids_before_worker_fanout() {
     let state = StateStore::new();
     let picked = vec![

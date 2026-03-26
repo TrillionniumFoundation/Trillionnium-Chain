@@ -87,12 +87,13 @@ impl PreExecPool {
             return (vec![], 0);
         }
 
-        let mut unique_group_ids = Vec::with_capacity(group_ids.len());
-        let mut seen_ids = HashSet::with_capacity(group_ids.len());
-        for id in group_ids {
-            if seen_ids.insert(id) {
-                unique_group_ids.push(id);
-            }
+        let (unique_group_ids, replayed_ids) = normalize_group_ids_for_preexec(group_ids);
+        if replayed_ids > 0 {
+            println!(
+                "[preexec] deduped_replayed_group_ids={} unique_group_ids={}",
+                replayed_ids,
+                unique_group_ids.len()
+            );
         }
 
         let workers = self.width.min(unique_group_ids.len());
@@ -147,6 +148,19 @@ fn run_job(
             }
         }
     }
+}
+
+fn normalize_group_ids_for_preexec(group_ids: Vec<u64>) -> (Vec<u64>, usize) {
+    let input_len = group_ids.len();
+    let mut unique_group_ids = Vec::with_capacity(input_len);
+    let mut seen_ids = HashSet::with_capacity(input_len);
+    for id in group_ids {
+        if seen_ids.insert(id) {
+            unique_group_ids.push(id);
+        }
+    }
+    let replayed_ids = input_len.saturating_sub(unique_group_ids.len());
+    (unique_group_ids, replayed_ids)
 }
 
 fn shard_group_ids(group_ids: &[u64], workers: usize) -> Vec<Vec<u64>> {
