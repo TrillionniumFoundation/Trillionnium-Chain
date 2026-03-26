@@ -2083,6 +2083,17 @@ mod tests {
     }
 
     #[test]
+    fn retry_stage_mix_entropy_peaks_for_evenly_mixed_non_overlapping_retries() {
+        let profile = profile_with_stage_hits(3, 3, 3, 9);
+
+        assert_eq!(profile.attributed_retry_hits(), 9);
+        assert_eq!(profile.retry_stage_overlap_hits(), 0);
+        assert_eq!(profile.retry_stage_overlap_share(), 0.0);
+        assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
+        assert!((profile.retry_stage_mix_entropy() - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
     fn retry_stage_concentration_stays_zero_without_conflicts() {
         let profile = profile_with_stage_hits(0, 0, 0, 0);
 
