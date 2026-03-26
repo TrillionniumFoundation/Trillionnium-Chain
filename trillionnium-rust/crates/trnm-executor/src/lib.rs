@@ -1829,6 +1829,21 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn detect_conflict_rejects_cross_domain_version_skew_for_same_object_id_symmetrically() {
+        let other = tx(2, vec![], vec![o(9)]);
+        let skewed = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = detect_conflict(&other, &skewed);
+    }
+
+    #[test]
     fn read_only_overlap_is_non_conflicting() {
         assert!(!detect_conflict(
             &tx(1, vec![o(7), o(8)], vec![]),
