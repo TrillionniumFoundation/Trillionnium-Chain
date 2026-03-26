@@ -785,7 +785,7 @@ mod tests {
         validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
         GOV_SENSITIVE_KEYS,
     };
-    use crate::governance_ops::{GovParamKind, GOV_PARAM_SCHEMA};
+    use crate::governance_ops::{gov_pinned_key_ids, GovParamKind, GOV_PARAM_SCHEMA};
 
     #[test]
     fn governance_allowed_keys_have_explicit_value_validators() {
@@ -888,5 +888,23 @@ mod tests {
             .map(|entry| entry.key)
             .collect();
         assert_eq!(GOV_SENSITIVE_KEYS, schema_sensitive_keys.as_slice());
+    }
+
+    #[test]
+    fn governance_legacy_pinned_key_registry_matches_typed_schema_single_source() {
+        let schema_pinned: std::collections::BTreeMap<&str, u64> =
+            gov_pinned_key_ids().collect();
+        let legacy_pinned: std::collections::BTreeMap<&str, u64> =
+            GOV_ALLOWED_KEYS
+                .iter()
+                .filter_map(|key| governance_pinned_key_id(key).map(|key_id| (*key, key_id)))
+                .collect();
+
+        assert_eq!(legacy_pinned, schema_pinned);
+        assert_eq!(schema_pinned.get("emergency_pause"), Some(&EMERGENCY_PAUSE_KEY_ID));
+        assert!(
+            !schema_pinned.contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            "foreign algorand governance key must stay outside the typed pinned-key registry"
+        );
     }
 }

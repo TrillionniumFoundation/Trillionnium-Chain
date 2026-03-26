@@ -39,6 +39,7 @@ pub(crate) struct GovParamSchemaEntry {
     pub kind: GovParamKind,
     pub validator: GovParamValueValidator,
     pub invalid_merge_gate_sample: &'static str,
+    pub pinned_key_id: Option<u64>,
 }
 
 impl GovParamSchemaEntry {
@@ -56,6 +57,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 120_000,
         },
         invalid_merge_gate_sample: "9",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "max_parallel_workers",
@@ -65,6 +67,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 65_536,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "min_worker_stake",
@@ -74,6 +77,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "challenge_min_bond",
@@ -83,6 +87,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "challenge_min_bond_bounty_bps",
@@ -92,6 +97,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 100_000,
         },
         invalid_merge_gate_sample: "100001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "challenge_min_bond_worker_stake_bps",
@@ -101,12 +107,14 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 100_000,
         },
         invalid_merge_gate_sample: "100001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "challenge_window_blocks",
         kind: GovParamKind::Timelocked,
         validator: GovParamValueValidator::U64Range { min: 100, max: 600 },
         invalid_merge_gate_sample: "99",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "challenge_success_bounty",
@@ -116,6 +124,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "-1",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_prompt_token_weight",
@@ -125,6 +134,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_generated_token_weight",
@@ -134,6 +144,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_decode_step_weight",
@@ -143,6 +154,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_kv_byte_weight",
@@ -152,6 +164,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_min_accept_work_units",
@@ -161,6 +174,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_challenge_success_bounty_per_work_unit_num",
@@ -170,6 +184,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_challenge_success_bounty_per_work_unit_den",
@@ -179,6 +194,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_worker_completion_bonus_per_work_unit_num",
@@ -188,6 +204,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_worker_completion_bonus_per_work_unit_den",
@@ -197,6 +214,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_worker_slash_rebate_per_work_unit_num",
@@ -206,6 +224,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "llm_meter_worker_slash_rebate_per_work_unit_den",
@@ -215,18 +234,21 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "resolve_authority",
         kind: GovParamKind::Timelocked,
         validator: GovParamValueValidator::ResolveAuthoritySet,
         invalid_merge_gate_sample: "   ",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "emergency_pause",
         kind: GovParamKind::Immediate,
         validator: GovParamValueValidator::StrictBool,
         invalid_merge_gate_sample: "TRUE",
+        pinned_key_id: Some(EMERGENCY_PAUSE_KEY_ID),
     },
     GovParamSchemaEntry {
         key: "monetary_policy_tick_interval_blocks",
@@ -236,6 +258,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 100_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "monetary_policy_tick_cooldown_blocks",
@@ -245,6 +268,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 100_000,
         },
         invalid_merge_gate_sample: "0",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "monetary_base_issuance_per_tick",
@@ -254,6 +278,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
     GovParamSchemaEntry {
         key: "monetary_base_burn_per_tick",
@@ -263,6 +288,7 @@ pub(crate) const GOV_PARAM_SCHEMA: &[GovParamSchemaEntry] = &[
             max: 1_000_000_000_000,
         },
         invalid_merge_gate_sample: "1000000000001",
+        pinned_key_id: None,
     },
 ];
 
@@ -279,6 +305,16 @@ pub(crate) fn gov_sensitive_keys() -> impl Iterator<Item = &'static str> {
 
 pub(crate) fn gov_param_registry_entry(key: &str) -> Option<&'static GovParamSchemaEntry> {
     GOV_PARAM_SCHEMA.iter().find(|entry| entry.key == key)
+}
+
+pub(crate) fn gov_pinned_key_id(key: &str) -> Option<u64> {
+    gov_param_registry_entry(key).and_then(|entry| entry.pinned_key_id)
+}
+
+pub(crate) fn gov_pinned_key_ids() -> impl Iterator<Item = (&'static str, u64)> {
+    GOV_PARAM_SCHEMA
+        .iter()
+        .filter_map(|entry| entry.pinned_key_id.map(|key_id| (entry.key, key_id)))
 }
 
 pub(crate) fn is_allowed_gov_param(key: &str) -> bool {
