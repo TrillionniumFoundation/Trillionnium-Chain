@@ -6485,7 +6485,15 @@ mod tests {
         let r6 = apply_timeout(&mut st, r5, 311).expect("timeout should finalize challenged task");
         let task = st.get_task(r6.id).expect("timed out task must exist");
         assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
         assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenged_at_height, Some(210));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(310));
+        validate_challenge_accounting_invariants(&task)
+            .expect("challenged timeout completion must retain auditable challenge/slash evidence");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
         assert_eq!(st.pending_resolve_first_approver(r6.id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
