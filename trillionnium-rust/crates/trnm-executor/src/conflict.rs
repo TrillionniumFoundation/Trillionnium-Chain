@@ -1,7 +1,93 @@
 use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
+fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
+    if objs.len() <= 1 {
+        return true;
+    }
+
+    if objs.len() == 2 {
+        return objs[0].id != objs[1].id || objs[0].version == objs[1].version;
+    }
+
+    if objs.len() <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
+    for obj in objs {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+fn combined_access_domain_versions_are_consistent(
+    reads: &[ObjectRef],
+    writes: &[ObjectRef],
+) -> bool {
+    if reads.is_empty() {
+        return access_domain_versions_are_consistent(writes);
+    }
+    if writes.is_empty() {
+        return access_domain_versions_are_consistent(reads);
+    }
+
+    let total_len = reads.len() + writes.len();
+    if total_len <= 1 {
+        return true;
+    }
+
+    if reads.len() == 1 && writes.len() == 1 {
+        return reads[0].id != writes[0].id || reads[0].version == writes[0].version;
+    }
+
+    if total_len <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(total_len);
+        for obj in writes.iter().chain(reads.iter()) {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(total_len);
+    for obj in writes.iter().chain(reads.iter()) {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+#[inline]
+fn assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+}
+
 pub(crate) fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    assert_tx_access_domain_versions_are_consistent(a);
+    assert_tx_access_domain_versions_are_consistent(b);
+
     // Read-only pairs can never conflict; skip three intersection probes in
     // the common telemetry/transfer path where writes are absent.
     if a.write_set.is_empty() && b.write_set.is_empty() {
@@ -39,6 +125,11 @@ pub(crate) fn access_key(obj: &ObjectRef) -> u64 {
 
 #[inline]
 pub(crate) fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
+    debug_assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
     // Small-set fast path avoids HashSet allocation for common tiny access lists.
     if objs.len() <= 8 {
         let mut out: Vec<u64> = Vec::with_capacity(objs.len());
@@ -126,9 +217,10 @@ pub(crate) fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
 
     // Medium-small skew path: for 5..=8 keys against a moderately larger domain,
-    // avoid HashSet allocation and probe linearly. Once domains grow beyond this
-    // range, fall back to the HashSet path below to avoid repeated full scans.
-    if small.len() <= 8 && (16..=64).contains(&large.len()) {
+    // avoid HashSet allocation and probe linearly. Extend the guard slightly so
+    // duplicate-heavy domains just above the old 64-key cutoff stay on the same
+    // bounded path before falling back to the HashSet branch.
+    if small.len() <= 8 && (16..=128).contains(&large.len()) {
         let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
             let key = access_key(a);
