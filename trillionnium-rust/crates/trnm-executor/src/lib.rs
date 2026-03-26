@@ -1593,6 +1593,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteFirst => {
+            // Keep direct helper callers on the same fail-closed execution-domain
+            // contract as the main scheduler path. Otherwise a mixed read/write
+            // version skew could be silently collapsed into raw object-count hints
+            // and drift across lane selection instead of tripping the guard.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -1604,6 +1611,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteLast => {
+            // Mirror WriteFirst: direct reorder probes must fail closed on mixed
+            // access-domain version skew before deriving object-scoped lane hints.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -5159,8 +5171,8 @@ mod tests {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -5177,8 +5189,8 @@ mod tests {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -5188,6 +5200,20 @@ mod tests {
         // WriteLast should also follow deduped object-scoped domains so
         // version-heavy footprints do not drift from the executor's scheduler.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn write_first_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn write_last_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteLast);
     }
 
     #[test]
