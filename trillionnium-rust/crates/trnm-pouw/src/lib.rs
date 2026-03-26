@@ -947,9 +947,10 @@ fn preflight_resolve_transfers(
 
 fn scrub_immediate_verification_challenge_fields(task: &mut TaskObject) {
     task.challenge_deadline_height = None;
-    // Retain the reveal-time challenge window snapshot for terminal auditability
-    // while scrubbing all live challenge/collateral fields that would imply an
-    // active or resolved dispute lifecycle.
+    // Keep only the reveal-time challenge-window snapshot as legacy audit
+    // metadata. Immediate-finality TEE/ZK tasks did not actually enter a live
+    // dispute/collateral lifecycle, so every field that implies an active or
+    // resolved challenge must still be scrubbed.
     task.challenged_at_height = None;
     task.resolve_deadline_height = None;
     task.challenge_bond = None;
@@ -1527,10 +1528,11 @@ pub fn apply_reveal_result_at_height(
                 task.status = TaskStatus::Completed;
                 task.result_hash = Some(result_hash);
                 task.reveal_salt = Some(reveal_salt);
-                // No challenge window/collateral lifecycle exists for immediately
-                // verified proofs. Scrub any legacy/stale challenge retention fields
-                // so completed TEE/ZK tasks cannot masquerade as having Filecoin-like
-                // collateral-proof history they never actually entered.
+                // Immediate-finality proofs never enter a live challenge or
+                // collateral lifecycle. Preserve only the reveal-time challenge
+                // window snapshot as legacy audit metadata, and scrub every
+                // other retained dispute field so completed TEE/ZK tasks cannot
+                // masquerade as having undergone settlement.
                 scrub_immediate_verification_challenge_fields(&mut task);
 
                 // Immediate finality remains atomic with stake settlement: preflight
