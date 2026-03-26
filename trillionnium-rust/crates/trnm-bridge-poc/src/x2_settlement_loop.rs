@@ -566,6 +566,48 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_accepts_confirm_height_exactly_at_target_floor() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-height-floor".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 699 },
+        )
+        .expect("settlement should finalize at heartbeat target floor");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Finalized { height, event } => {
+                assert_eq!(height, 699);
+                assert_eq!(event.phase, "settlement_confirmed");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(19));
+                assert_eq!(event.confirm_height, Some(699));
+                assert_eq!(event.confirm_reason, None);
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(request.status, BridgeStatus::Finalized(699));
+    }
+
+    #[test]
     fn drive_minimal_settlement_accepts_confirm_height_exactly_at_source_finality_ceiling() {
         let mut request = SettlementRequest::new(1, "0xconfirm-height-ceiling".to_string());
         let token = CapabilityToken {
