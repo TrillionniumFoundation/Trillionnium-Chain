@@ -459,6 +459,26 @@ fn x3_prep_stale_confirm_height_replay_after_finalize_prefers_replay_guard_over_
 }
 
 #[test]
+fn x3_prep_rejects_stale_source_height_when_target_has_reached_source_head() {
+    let mut request = SettlementRequest::new(1, "0xstale-source-height-after-catchup".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 700, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 700 },
+    )
+    .expect_err("stale source-height confirm must fail once target reaches source head");
+
+    assert_eq!(err, trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 700 });
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_accepts_confirm_height_at_source_plus_one_finality_boundary() {
     let mut request = SettlementRequest::new(1, "0xconfirm-upper-boundary".to_string());
     let token = operator_token();

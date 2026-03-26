@@ -169,6 +169,14 @@ pub fn drive_minimal_settlement(
                 if height > max_confirm_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
+                // Once the target heartbeat has already caught up to the source head,
+                // only the stronger source+1 settlement boundary remains acceptable.
+                // Accepting the stale source-height confirmation would weaken the
+                // observed finality overlay even though a stricter boundary is already
+                // visible in the embedded heartbeat evidence.
+                if hb_tgt == Some(source_height) && height != max_confirm_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
             }
             request.settle_authorized(token, height)?;
             let event = SettlementEvent {
