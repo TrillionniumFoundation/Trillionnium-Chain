@@ -481,6 +481,33 @@ fn candidate_groups_per_reused_placement_tracks_speculative_retry_cost() {
 }
 
 #[test]
+fn retry_fallback_share_of_retry_misses_fails_closed_without_scan_misses() {
+    let profile = GroupingProfile {
+        tx_count: 6,
+        group_count: 2,
+        grouped_count: 6,
+        max_group_size: 3,
+        min_group_size: 3,
+        avg_group_size: 3.0,
+        hot_object_share: 0.5,
+        conflict_checks: 4,
+        conflict_hits: 4,
+        candidate_groups_scanned: 4,
+        retry_fallback_new_groups: 2,
+        stage_ww_checks: 2,
+        stage_ww_hits: 2,
+        stage_wr_checks: 2,
+        stage_wr_hits: 2,
+        stage_rw_checks: 0,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.retry_scan_misses(), 0);
+    assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+    assert_eq!(profile.retry_fallback_share_of_retry_misses(), 0.0);
+}
+
+#[test]
 fn empty_batch_fast_path_is_profile_stable_across_strategies() {
     let strategies = [
         GroupingStrategy::Original,
