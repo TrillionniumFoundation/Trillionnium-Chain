@@ -33,6 +33,15 @@ fn parse_http_request_target_accepts_only_supported_http_versions() {
 }
 
 #[test]
+fn http_json_responses_disable_caching_for_operator_probes() {
+    let get = http_json_response("200 OK", "{\"ok\":true}");
+    assert!(get.contains("\r\nCache-Control: no-store\r\n"));
+
+    let head = http_json_head_response("200 OK", 11);
+    assert!(head.contains("\r\nCache-Control: no-store\r\n"));
+}
+
+#[test]
 fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
     assert_eq!(parse_http_get_path("GET /health#bridge HTTP/1.1"), None);
     assert_eq!(

@@ -13,7 +13,7 @@ fn is_supported_http_version(version: &str) -> bool {
 
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),
         body
     )
@@ -21,7 +21,7 @@ pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
 
 pub(crate) fn http_json_head_response(status_line: &str, body_len: usize) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
     )
 }
 
