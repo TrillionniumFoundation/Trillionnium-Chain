@@ -879,10 +879,11 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                 ));
             }
             if !has_bond
-                && (task.challenge_window_blocks_snapshot.is_some()
-                    || task.challenged_at_height.is_some()
+                && (task.challenged_at_height.is_some()
                     || task.challenge_deadline_height.is_some()
-                    || task.resolve_deadline_height.is_some())
+                    || task.resolve_deadline_height.is_some()
+                    || (task.status == TaskStatus::Slashed
+                        && task.challenge_window_blocks_snapshot.is_some()))
             {
                 return Err(PouwError::State(
                     "terminal non-challenged task has stale challenge metadata".into(),
@@ -5919,6 +5920,43 @@ mod tests {
     }
 
     #[test]
+    fn completed_uncontested_terminal_state_allows_retained_challenge_window_snapshot_evidence() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(9_102, "challenge_window_blocks".into(), "125".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 50_102, "alice".into(), 10).unwrap();
+        let result_hash = [8u8; 32];
+        let reveal_salt = [10u8; 32];
+        let committed = compute_commitment(50_102, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let done = apply_timeout(&mut st, r4, 236).unwrap();
+
+        let completed = st.get_task(done.id).unwrap();
+        assert_eq!(completed.status, TaskStatus::Completed);
+        assert_eq!(completed.challenge_window_blocks_snapshot, Some(125));
+        assert!(completed.challenge_bond.is_none());
+        assert!(completed.challenger.is_none());
+        assert!(completed.challenge_bond_forfeited.is_none());
+        assert!(completed.challenge_deadline_height.is_none());
+        assert!(completed.challenged_at_height.is_none());
+        assert!(completed.resolve_deadline_height.is_none());
+        validate_challenge_accounting_invariants(&completed)
+            .expect("completed uncontested timeout should retain challenge window snapshot as audit evidence");
+
+        let mut stale_timing = completed.clone();
+        stale_timing.challenge_deadline_height = Some(235);
+        let err = validate_challenge_accounting_invariants(&stale_timing)
+            .expect_err("completed uncontested terminal state must still reject stale challenge timing metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge metadata")));
+    }
+
+    #[test]
     fn terminal_challenged_state_rejects_blank_challenger_identity() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -8508,7 +8546,7 @@ mod tests {
     }
 
     #[test]
-    fn timeout_rejects_terminal_non_challenged_task_with_stale_challenge_window_snapshot() {
+    fn timeout_rejects_terminal_non_challenged_task_with_stale_challenge_timing_metadata() {
         let mut st = seeded_state();
 
         let r1 = apply_create_task(&mut st, 39019, "alice".into(), 100).unwrap();
@@ -8527,6 +8565,7 @@ mod tests {
         assert_eq!(bad.status, TaskStatus::Completed);
         assert!(bad.challenge_bond.is_none());
         bad.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+        bad.challenge_deadline_height = Some(210);
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
