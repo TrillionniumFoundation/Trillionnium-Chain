@@ -591,6 +591,36 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_rejects_stale_source_height_when_target_has_reached_source_head() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-head-stale-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 700,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 700 },
+        )
+        .expect_err("stale source-height confirmation must fail closed once target has reached source head");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 700 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
     fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary() {
         let mut request = SettlementRequest::new(1, "0xconfirm-max-boundary".to_string());
         let token = CapabilityToken {
