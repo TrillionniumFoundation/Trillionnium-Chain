@@ -11,11 +11,13 @@ impl StateStore {
         if !is_allowed_gov_param(&key) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
+        if let Some(expected_key_id) = gov_pinned_key_id(&key) {
+            if key_id != expected_key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                    key, expected_key_id, key_id
+                ));
+            }
         }
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
@@ -85,11 +87,13 @@ impl StateStore {
         if !is_allowed_gov_param(&key) {
             return Err(format!("governance key not allowed: {}", key));
         }
-        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, EMERGENCY_PAUSE_KEY_ID, key_id
-            ));
+        if let Some(expected_key_id) = gov_pinned_key_id(&key) {
+            if key_id != expected_key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                    key, expected_key_id, key_id
+                ));
+            }
         }
         if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
             if existing_key_id != key_id {
