@@ -530,6 +530,33 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_profile_flags_non_canonical_legacy_note_only_payload() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":" legacy "}"#)
+            .expect("legacy payload should deserialize");
+        let compatibility = metadata.compatibility_profile();
+        assert!(compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            ]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            ])
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_profile_rejects_non_canonical_model_and_provenance_fields() {
         let metadata = TaskMetadata {
             model: Some(TaskModelMetadata {
