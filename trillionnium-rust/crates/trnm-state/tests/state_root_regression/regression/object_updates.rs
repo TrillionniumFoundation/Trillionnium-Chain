@@ -171,6 +171,54 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_task_none_clears_task_slot_and_rewinds_root() {
+    let mut state = StateStore::new();
+    let task = TaskObject {
+        task_id: 10_400,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let empty_root = state.state_root();
+    state.restore_task(task.task_id, Some(task.clone()));
+    let populated_root = state.state_root();
+    assert_ne!(
+        populated_root, empty_root,
+        "restoring a task into an empty store should perturb the deterministic root"
+    );
+    assert_eq!(state.get_task(task.task_id), Some(task));
+
+    state.restore_task(10_400, None);
+
+    assert!(
+        state.get_task(10_400).is_none(),
+        "restore_task(None) must clear the canonical task object slot during replay/rollback"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "clearing the restored task slot must rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn restore_zero_id_task_snapshot_fails_closed_without_perturbing_empty_root() {
     let mut state = StateStore::new();
     let empty_root = state.state_root();

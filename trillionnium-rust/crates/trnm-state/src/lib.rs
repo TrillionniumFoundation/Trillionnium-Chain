@@ -2283,11 +2283,17 @@ impl StateStore {
             }
             None => {
                 if let Some(existing) = self.objects.get(&id).cloned() {
-                    if let ObjectValue::GovParam(param) = existing.value {
-                        if param.version > 1 {
+                    match existing.value {
+                        ObjectValue::Task(_) => {
                             self.objects.remove(&id);
-                            self.remove_gov_param_key_index_for_id(param.key_id);
                         }
+                        ObjectValue::GovParam(param) => {
+                            if param.version > 1 {
+                                self.objects.remove(&id);
+                                self.remove_gov_param_key_index_for_id(param.key_id);
+                            }
+                        }
+                        ObjectValue::GovProposal(_) => {}
                     }
                 }
                 self.pending_resolve_approvals.remove(&id);
