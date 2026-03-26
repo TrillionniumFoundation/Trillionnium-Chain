@@ -578,7 +578,10 @@ fn validate_resolve_authority_value(key: &str, value: &str) -> Result<(), String
                 key
             ));
         }
-        if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
+        if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || member.eq_ignore_ascii_case("governance.emergency_pause")
+            || member.eq_ignore_ascii_case("emergency_pause")
+        {
             return Err(format!(
                 "invalid governance value for {}: reserved system authority is not allowed",
                 key
