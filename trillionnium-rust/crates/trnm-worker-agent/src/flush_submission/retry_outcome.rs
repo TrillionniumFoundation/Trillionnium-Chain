@@ -406,6 +406,48 @@ mod tests {
     }
 
     #[test]
+    fn classify_flush_ack_does_not_reuse_stale_reveal_receipt_after_fresh_terminal_rejection() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-retry-outcome-reveal-rejection-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            791,
+            "accepted",
+            Some("commit-old".to_string()),
+            Some("reveal-old".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with stale persisted reveal receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("commit-live".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_SKIPPED,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let decision = classify_flush_ack(&commit, &reveal, &ack_log, 791);
+        assert_eq!(decision.ack_status, "rejected");
+        assert_eq!(decision.reason_code, "deterministic_rejection");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-live"));
+        assert_eq!(decision.reveal_tx_hash_for_ack, None);
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
     fn classify_flush_ack_prefers_live_receipt_hashes_over_stale_persisted_values() {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-retry-outcome-live-preferred-{}-{}.jsonl",
