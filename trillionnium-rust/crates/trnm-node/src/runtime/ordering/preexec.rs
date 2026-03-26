@@ -160,10 +160,11 @@ fn format_replayed_group_id_sample(group_ids: &[u64], limit: usize) -> String {
     }
 
     let mut seen_ids = HashSet::with_capacity(group_ids.len());
+    let mut replayed_ids = HashSet::with_capacity(group_ids.len());
     let mut replay_sample = Vec::with_capacity(limit.min(group_ids.len()));
     let mut replayed_unique_total = 0usize;
     for &id in group_ids {
-        if !seen_ids.insert(id) {
+        if !seen_ids.insert(id) && replayed_ids.insert(id) {
             replayed_unique_total += 1;
             if replay_sample.len() < limit {
                 replay_sample.push(id);
@@ -279,10 +280,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn format_replayed_group_id_sample_uses_duplicate_encounter_order() {
+    fn format_replayed_group_id_sample_uses_unique_duplicate_encounter_order() {
         assert_eq!(
             format_replayed_group_id_sample(&[4, 2, 4, 3, 2, 4], 4),
-            "[4, 2, 4]"
+            "[4, 2]"
         );
     }
 
@@ -290,7 +291,15 @@ mod tests {
     fn format_replayed_group_id_sample_bounds_output_when_duplicates_are_noisy() {
         assert_eq!(
             format_replayed_group_id_sample(&[7, 3, 7, 5, 3, 9, 7, 11, 5, 13, 9, 15], 2),
-            "[7, 3]+3more"
+            "[7, 3]+2more"
+        );
+    }
+
+    #[test]
+    fn format_replayed_group_id_sample_returns_empty_when_duplicates_repeat_same_id_only() {
+        assert_eq!(
+            format_replayed_group_id_sample(&[5, 5, 5, 5], 4),
+            "[5]"
         );
     }
 
