@@ -81,10 +81,19 @@ impl OracleSnapshotAuditView {
             && self.snapshot_ts_ms >= self.window_end_ms
     }
 
+    fn snapshot_hash_contract_consistent(&self) -> bool {
+        self.snapshot_hash.len() == 64
+            && self.snapshot_hash == self.snapshot_hash.trim()
+            && self
+                .snapshot_hash
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    }
+
     pub fn proof_contract_consistent(&self) -> bool {
         let canonical_feed_id = self.feed_id.trim().to_ascii_lowercase();
 
-        !self.snapshot_hash.trim().is_empty()
+        self.snapshot_hash_contract_consistent()
             && !canonical_feed_id.is_empty()
             && canonical_feed_id == self.feed_id
             && self.source_contract_consistent()
@@ -755,6 +764,38 @@ mod tests {
         };
         assert!(!undercounted_sample.source_contract_consistent());
         assert!(!undercounted_sample.proof_contract_consistent());
+
+        let bad_hash = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "0xabc123".to_string(),
+        };
+        assert!(!bad_hash.proof_contract_consistent());
+
+        let uppercase_hash = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["chainlink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "A".repeat(64),
+        };
+        assert!(!uppercase_hash.proof_contract_consistent());
     }
 
     #[test]
