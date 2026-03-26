@@ -5728,6 +5728,20 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         ),
         "checkpoint evidence surfaces must reject non-genesis WAL metadata without prev_hash_hex so audit-ready state-root proofs cannot omit the predecessor link for height-2+ checkpoints"
     );
+
+    let mut uppercase_prev_hash_wal = wal.clone();
+    uppercase_prev_hash_wal.height = 2;
+    uppercase_prev_hash_wal.prev_hash_hex = Some("12".repeat(32).to_uppercase());
+    let mut uppercase_prev_hash_checkpoint = checkpoint.clone();
+    uppercase_prev_hash_checkpoint.height = 2;
+    uppercase_prev_hash_checkpoint.wal_entry_hash_hex = uppercase_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &uppercase_prev_hash_checkpoint,
+            &uppercase_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject mixed-case prev_hash_hex on non-genesis WAL metadata so audit-ready state-root proofs cannot encode predecessor links with non-canonical digest surfaces"
+    );
 }
 
 #[test]
@@ -5908,6 +5922,29 @@ fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_state_root_even_w
     assert!(
         got.is_none(),
         "checkpoint recovery must reject noncanonical checkpoint state_root_hex even when the WAL entry and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_zero_width_checkpoint_state_root_even_when_wal_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: format!("{}\u{200B}", wal.state_root_hex),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject zero-width checkpoint state_root_hex surfaces even when the WAL entry and wal_entry_hash_hex otherwise match"
     );
 }
 
