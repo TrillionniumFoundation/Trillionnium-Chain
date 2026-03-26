@@ -5789,9 +5789,11 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_committed=true"));
     assert!(summary.contains("wal_committed_encoding=u8"));
     assert!(summary.contains("wal_committed_bytes=1"));
+    assert!(summary.contains("wal_height_boundary_kind=non-genesis"));
     assert!(summary.contains(&format!("wal_prev_hash={}", "cd".repeat(32))));
     assert!(summary.contains("wal_prev_hash_present=true"));
     assert!(summary.contains("wal_prev_hash_kind=linked"));
+    assert!(summary.contains("wal_prev_hash_matches_height_boundary=true"));
     assert!(summary.contains("wal_prev_hash_bytes=32"));
     assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
     assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
@@ -5823,9 +5825,11 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
     let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
         .expect("genesis checkpoint/WAL evidence should still expose a DA/light-verifier summary");
 
+    assert!(summary.contains("wal_height_boundary_kind=genesis"));
     assert!(summary.contains("wal_prev_hash=none"));
     assert!(summary.contains("wal_prev_hash_present=false"));
     assert!(summary.contains("wal_prev_hash_kind=genesis"));
+    assert!(summary.contains("wal_prev_hash_matches_height_boundary=true"));
     assert!(summary.contains("wal_prev_hash_bytes=0"));
     assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
     assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
