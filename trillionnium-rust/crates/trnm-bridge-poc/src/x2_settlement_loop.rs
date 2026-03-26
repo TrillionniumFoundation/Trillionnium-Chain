@@ -131,7 +131,7 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
-    if heartbeat.should_retry && matches!(confirm, SettlementConfirm::Confirmed { .. }) {
+    if heartbeat.should_retry {
         return Err(SettlementError::HeartbeatRetryPending {
             reason: normalize_compensation_reason(
                 &heartbeat.message,
@@ -897,6 +897,39 @@ mod tests {
             &token,
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
+        )
+        .unwrap_err();
+
+        assert_eq!(
+            err,
+            SettlementError::HeartbeatRetryPending {
+                reason: "relay heartbeat retry pending".to_string(),
+            }
+        );
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_also_prefers_retry_pending() {
+        let mut request = SettlementRequest::new(1, "0xretry-failed-confirm".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: true,
+            degraded: false,
+            message: "relay heartbeat retry pending".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Failed {
+                reason: "target confirm timeout".to_string(),
+            },
         )
         .unwrap_err();
 
