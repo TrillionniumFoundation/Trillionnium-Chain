@@ -12271,6 +12271,43 @@ mod tests {
     }
 
     #[test]
+    fn state_root_changes_when_embedded_gov_param_version_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 2,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 2,
+                }),
+            },
+        );
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "embedded and outer governance object versions must contribute to state_root so replayed version drift cannot hash identically"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_embedded_gov_param_key_id_changes() {
         let mut st_a = StateStore::new();
         st_a.objects.insert(
