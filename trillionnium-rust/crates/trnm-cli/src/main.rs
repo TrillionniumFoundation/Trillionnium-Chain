@@ -2376,6 +2376,15 @@ mod tests {
     }
 
     #[test]
+    fn task_query_rejects_missing_primary_finding_when_compatibility_implies_one() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["non_canonical_core_fields"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_primary_compatibility_finding mismatch"
+        ));
+    }
+
+    #[test]
     fn task_query_rejects_mismatched_task_id() {
         let raw = r#"{"task_id":43,"status":"Open","worker":null,"bounty":100,"result_hash_hex":null,"version":1}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
