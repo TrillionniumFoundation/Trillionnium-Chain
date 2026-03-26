@@ -2909,6 +2909,19 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_smallest_secondary_when_shared_primary_echo_has_one_distinct_suffix_per_side() {
+        let write_suffix = tx(1, vec![o(5), o(13)], vec![o(5), o(7)]);
+        let read_suffix = tx(2, vec![o(5), o(7)], vec![o(5), o(13)]);
+
+        // When the canonical primary key is echoed across both domains and each
+        // side contributes exactly one distinct non-primary key, lane isolation
+        // should anchor to the smallest global secondary instead of drifting with
+        // the read/write role assignment.
+        assert_eq!(hot_bucket_keys(&write_suffix), (5, 7));
+        assert_eq!(hot_bucket_keys(&write_suffix), hot_bucket_keys(&read_suffix));
+    }
+
+    #[test]
     fn hot_bucket_keys_treat_object_zero_as_real_primary_domain_key() {
         let write_then_read = tx(1, vec![o(0), o(11)], vec![o(5)]);
         let read_then_write = tx(2, vec![o(5)], vec![o(0), o(11)]);
