@@ -324,8 +324,13 @@ This is **not** release-ready. It is only rehearsal-ready pending the external g
 ## Evidence handoff template
 
 Record these fields in the release ticket or operator handoff note:
+- assigned worktree (from ticket/lane prompt):
+- assigned branch ref (from ticket/lane prompt):
+- verified worktree:
+- verified branch ref:
 - branch:
 - commit:
+- signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
 - preflight summary path:
