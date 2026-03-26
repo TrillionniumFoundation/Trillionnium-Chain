@@ -19,9 +19,12 @@ output="$(cd "$ROOT" && "$SCRIPT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   --expected-head "$EXPECTED_HEAD")"
 
+printf '%s\n' "$output" | grep -Fqx 'window_type=<fill-me>'
+printf '%s\n' "$output" | grep -Fqx 'change_ticket=<fill-me>'
+printf '%s\n' "$output" | grep -Fqx 'started_at_utc=<fill-me>'
 printf '%s\n' "$output" | grep -Fqx 'config_set_id=<fill-me>'
 printf '%s\n' "$output" | grep -Fqx "validator_count=$EXPECTED_VALIDATOR_COUNT"
 printf '%s\n' "$output" | grep -Fqx 'seed_mode=<fill-me>'
 printf '%s\n' "$output" | grep -Fqx 'p2p_allowlist_source=<fill-me>'
 
-echo "[PASS] collect_release_operator_preflight.sh binds config-set and peer-source identity fields into operator handoff evidence"
+echo "[PASS] collect_release_operator_preflight.sh binds run identity plus config-set and peer-source fields into operator handoff evidence"

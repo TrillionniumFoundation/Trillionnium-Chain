@@ -6,6 +6,9 @@ usage() {
 Usage:
   collect_release_operator_preflight.sh \
     [--operator-id <id>] \
+    [--window-type <rehearsal|upgrade|rollback|handoff>] \
+    [--change-ticket <id>] \
+    [--started-at-utc <rfc3339-utc>] \
     [--binary-path <path>] \
     [--binary-build-command <cmd>] \
     [--cli-binary-path <path>] \
@@ -53,6 +56,9 @@ CURRENT_BRANCH=""
 CURRENT_HEAD=""
 WORKTREE_STATUS=""
 OPERATOR_ID="${OPERATOR_ID:-<fill-me>}"
+WINDOW_TYPE="${WINDOW_TYPE:-<fill-me>}"
+CHANGE_TICKET="${CHANGE_TICKET:-<fill-me>}"
+STARTED_AT_UTC="${STARTED_AT_UTC:-<fill-me>}"
 BINARY_PATH="${BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-node}"
 BINARY_BUILD_COMMAND="${BINARY_BUILD_COMMAND:-cargo build -p trnm-node}"
 CLI_BINARY_PATH="${CLI_BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-cli}"
@@ -76,6 +82,18 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --operator-id)
       OPERATOR_ID="${2:-}"
+      shift 2
+      ;;
+    --window-type)
+      WINDOW_TYPE="${2:-}"
+      shift 2
+      ;;
+    --change-ticket)
+      CHANGE_TICKET="${2:-}"
+      shift 2
+      ;;
+    --started-at-utc)
+      STARTED_AT_UTC="${2:-}"
       shift 2
       ;;
     --binary-path)
@@ -174,6 +192,9 @@ CURRENT_HEAD="$(git rev-parse HEAD)"
 WORKTREE_STATUS="$(test -z "$(git status --short)" && echo clean || echo dirty)"
 
 printf 'operator_id=%s\n' "$OPERATOR_ID"
+printf 'window_type=%s\n' "$WINDOW_TYPE"
+printf 'change_ticket=%s\n' "$CHANGE_TICKET"
+printf 'started_at_utc=%s\n' "$STARTED_AT_UTC"
 printf 'worktree_root=%s\n' "$ROOT"
 printf 'workspace_root=%s\n' "$WORKSPACE_ROOT"
 printf 'branch=%s\n' "$CURRENT_BRANCH"
