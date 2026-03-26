@@ -70,6 +70,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_fallback_scan_share(&self) -> f64 {
+        ratio_usize(self.retry_fallback_new_groups, self.candidate_groups_scanned)
+    }
+
+    #[inline]
     pub fn retry_pressure(&self) -> f64 {
         ratio_usize(self.conflict_hits, self.group_count)
     }
