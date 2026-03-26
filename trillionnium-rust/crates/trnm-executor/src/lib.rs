@@ -1988,6 +1988,43 @@ mod tests {
     }
 
     #[test]
+    fn medium_small_vs_extended_large_cutoff_boundary_preserves_semantics() {
+        let small_write = tx(
+            1,
+            vec![],
+            vec![o(2_101), o(2_102), o(2_103), o(2_104), o(2_105), o(2_106)],
+        );
+        let mut read_hit_at_boundary: Vec<ObjectRef> =
+            (1..=128).map(|id| o(70_000 + id)).collect();
+        read_hit_at_boundary.push(o(2_104));
+        let read_miss_at_boundary: Vec<ObjectRef> = (1..=128).map(|id| o(80_000 + id)).collect();
+
+        assert!(detect_conflict(
+            &small_write,
+            &tx(2, read_hit_at_boundary, vec![])
+        ));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, read_miss_at_boundary, vec![])
+        ));
+
+        let mut read_hit_past_boundary: Vec<ObjectRef> =
+            (1..=129).map(|id| o(90_000 + id)).collect();
+        read_hit_past_boundary.push(o(2_105));
+        let read_miss_past_boundary: Vec<ObjectRef> =
+            (1..=129).map(|id| o(100_000 + id)).collect();
+
+        assert!(detect_conflict(
+            &small_write,
+            &tx(4, read_hit_past_boundary, vec![])
+        ));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(5, read_miss_past_boundary, vec![])
+        ));
+    }
+
+    #[test]
     fn access_domain_versions_are_consistent_for_duplicate_same_version_refs() {
         assert!(access_domain_versions_are_consistent(&[
             o(42),
