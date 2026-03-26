@@ -425,9 +425,16 @@ impl OracleValidationReport {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_non_empty_error_label(&self) -> bool {
+        self.error
+            .as_deref()
+            .map(str::trim)
+            .is_some_and(|label| !label.is_empty())
+    }
+
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
-            && self.error.is_some()
+            && self.has_non_empty_error_label()
             && self.metrics.accepted_total == 0
             && self.classified_reject_total() == 0
             && self.observation_classified_reject_total() == 0
@@ -439,7 +446,7 @@ impl OracleValidationReport {
         let result_label_consistent = if self.ok {
             self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
         } else {
-            self.error.is_some() && self.metrics.accepted_total == 0
+            self.has_non_empty_error_label() && self.metrics.accepted_total == 0
         };
         let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
             && self.observation_classified_outcome_conserves_sample_count();
@@ -1611,5 +1618,30 @@ mod tests {
         assert!(failure.bridge_contract_consistent());
         failure.error = None;
         assert!(!failure.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_blank_unclassified_error_label() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert!(report.error.is_some());
+        report.error = Some(" \n\t ".to_string());
+
+        assert!(!report.bridge_contract_consistent());
     }
 }
