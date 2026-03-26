@@ -5047,6 +5047,54 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_keeps_equivalent_mixed_domains_on_same_lane_signal_when_roles_flip() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut write_primary = Vec::with_capacity(64);
+        let mut read_primary = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            write_primary.push(tx(180_000 + i, vec![o(23)], vec![o(5)]));
+            read_primary.push(tx(190_000 + i, vec![o(5)], vec![o(23)]));
+        }
+
+        // Equivalent two-key mixed access domains should keep the same
+        // Avalanche-style lane signal even when read/write roles flip between the
+        // same objects. Otherwise adaptive scheduling can fragment one hotspot
+        // into separate lanes purely because ingress classified the same domain
+        // with opposite local read/write roles.
+        let write_primary_decision = auto_adaptive_decision(&write_primary);
+        let read_primary_decision = auto_adaptive_decision(&read_primary);
+
+        assert_eq!(write_primary_decision.sample_len, 64);
+        assert_eq!(read_primary_decision.sample_len, 64);
+        assert_eq!(
+            write_primary_decision.use_hot_bucket,
+            read_primary_decision.use_hot_bucket
+        );
+        assert_eq!(write_primary_decision.reason, read_primary_decision.reason);
+        assert_eq!(
+            write_primary_decision.streak_ratio,
+            read_primary_decision.streak_ratio
+        );
+        assert_eq!(
+            write_primary_decision.hot_key_share,
+            read_primary_decision.hot_key_share
+        );
+        assert_eq!(
+            write_primary_decision.expected_gain_score,
+            read_primary_decision.expected_gain_score
+        );
+        assert!(write_primary_decision.use_hot_bucket);
+        assert_eq!(write_primary_decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_mixed_hot_key_probe_avoids_false_hotspots_from_shared_leading_writes() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
