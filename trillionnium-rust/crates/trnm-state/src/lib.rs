@@ -2152,13 +2152,10 @@ impl StateStore {
 
         if let Some(existing) = self.objects.get(&id) {
             let is_task = matches!(existing.value, ObjectValue::Task(_));
-            if !is_task {
-                if snapshot.is_some() {
-                    self.invalidate_state_root_cache();
-                    self.objects.remove(&id);
-                    self.pending_resolve_approvals.remove(&id);
-                    return;
-                }
+            if !is_task && snapshot.is_some() {
+                // Fail closed on cross-type restore attempts: a task replay/snapshot must not
+                // evict an existing non-task object that already owns the canonical id slot.
+                return;
             }
         }
 

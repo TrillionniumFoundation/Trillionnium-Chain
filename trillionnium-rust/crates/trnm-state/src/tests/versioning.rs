@@ -384,3 +384,57 @@ fn restore_task_rejects_zero_version_fail_closed() {
     );
     assert!(st.get_ref(17).is_none());
 }
+
+#[test]
+fn restore_task_rejects_cross_type_id_takeover_fail_closed() {
+    let mut st = StateStore::new();
+    st.restore_gov_param(
+        29,
+        Some(GovParamObject {
+            key_id: 29,
+            key: "monetary_base_burn_per_tick".into(),
+            value: "11".into(),
+            version: 1,
+        }),
+    );
+    let root_before = st.state_root();
+
+    st.restore_task(
+        29,
+        Some(TaskObject {
+            task_id: 29,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(st.get_task(29).is_none());
+    assert_eq!(
+        st.get_param(29)
+            .map(|param| (param.key_id, param.key, param.value, param.version)),
+        Some((29, "monetary_base_burn_per_tick".into(), "11".into(), 1)),
+        "restore_task must not evict an existing non-task object on a cross-type restore attempt"
+    );
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "cross-type restore attempts must leave canonical state unchanged"
+    );
+}
