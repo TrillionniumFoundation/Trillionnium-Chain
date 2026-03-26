@@ -36,6 +36,11 @@ fn recover_metadata_only_error_reports_retained_wal_entries() {
     assert!(err.contains("last retained checkpoint: 1"));
     assert!(err.contains("checkpoint_evidence: checkpoint_height=1 state_root=r1 wal_entry_hash="));
     assert!(err.contains("checkpoint_da_surface: da_light_surface=checkpoint-wal-v1"));
+    assert!(err.contains("light_verifier_surface=checkpoint-wal-v1"));
+    assert!(err.contains("checkpoint_commitment="));
+    assert!(err.contains("checkpoint_commitment_matches_recomputed=true"));
+    assert!(err.contains("checkpoint_surface_canonical=true"));
+    assert!(err.contains("wal_content_hash_matches_checkpoint=true"));
     assert_eq!(crate::runtime::recovery::recovery_scan::metadata_only_recovery_error(&wal_dir, &recovered), err);
 
     let would_require_snapshot_restore = recovered
