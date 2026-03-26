@@ -55,3 +55,25 @@ fn market_score_config_output_normalizes_clamp_before_reporting_max_delta() {
         },
     );
 }
+
+#[test]
+fn market_score_config_parses_nested_wrapped_weight_envs_and_fail_closed_clamp_floor() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, " '7' "),
+            (MARKET_REPUTATION_WEIGHT_ENV, " \"11\" "),
+            (MARKET_REPUTATION_CLAMP_ENV, " ' \"-2\" ' "),
+        ],
+        || {
+            let cfg = market_score_config();
+            assert_eq!(cfg.price_weight, 7);
+            assert_eq!(cfg.reputation_weight, 11);
+            assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+
+            let output = MarketScoreConfigOutput::from(cfg);
+            assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+            assert_eq!(output.max_reputation_score_delta, 11);
+            assert_eq!(output.min_reputation_score_delta, -11);
+        },
+    );
+}
