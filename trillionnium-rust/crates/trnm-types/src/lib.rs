@@ -165,6 +165,12 @@ impl TaskMetadataCompatibilityReport {
     pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
         self.findings.first().copied()
     }
+
+    /// Query-facing helper so downstream surfaces can omit empty arrays without
+    /// re-encoding the governance-upgrade finding rules themselves.
+    pub fn findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        (!self.findings.is_empty()).then_some(self.findings.clone())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -305,8 +311,7 @@ impl TaskMetadata {
     }
 
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
-        let findings = self.compatibility_findings();
-        (!findings.is_empty()).then_some(findings)
+        self.compatibility_report().findings_nonempty()
     }
 
     pub fn primary_compatibility_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
@@ -588,7 +593,18 @@ mod tests {
             ],
         };
 
-        assert_eq!(report.primary_finding(), Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload));
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+        assert_eq!(
+            report.findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ])
+        );
         assert_eq!(
             serde_json::to_value(&report).expect("serialize report"),
             serde_json::json!({
@@ -605,6 +621,22 @@ mod tests {
                 ]
             })
         );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_omits_empty_findings_array() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+            },
+            requires_governance_upgrade: false,
+            findings: Vec::new(),
+        };
+
+        assert_eq!(report.primary_finding(), None);
+        assert_eq!(report.findings_nonempty(), None);
     }
 
     #[test]

@@ -179,9 +179,9 @@ pub(crate) fn query_task_from_state_snapshot(
         metadata_primary_compatibility_finding: metadata_report
             .as_ref()
             .and_then(|report| report.primary_finding()),
-        metadata_compatibility_findings: metadata_report.as_ref().and_then(|report| {
-            (!report.findings.is_empty()).then_some(report.findings.clone())
-        }),
+        metadata_compatibility_findings: metadata_report
+            .as_ref()
+            .and_then(|report| report.findings_nonempty()),
         metering: task
             .metadata
             .as_ref()

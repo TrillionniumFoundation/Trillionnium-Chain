@@ -1300,7 +1300,7 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .and_then(|report| report.primary_finding()),
         metadata_compatibility_findings: metadata_report
             .as_ref()
-            .and_then(|report| (!report.findings.is_empty()).then_some(report.findings.clone())),
+            .and_then(|report| report.findings_nonempty()),
         metering: task
             .metadata
             .as_ref()
