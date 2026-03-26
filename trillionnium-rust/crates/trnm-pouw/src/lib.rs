@@ -8666,6 +8666,47 @@ mod tests {
     }
 
     #[test]
+    fn timeout_allows_terminal_non_challenged_task_to_retain_valid_challenge_snapshot_only() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39021, "alice".into(), 100).unwrap();
+        let result_hash = [3u8; 32];
+        let reveal_salt = [4u8; 32];
+        let committed = compute_commitment(39021, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let done = apply_timeout(&mut st, r4, 211).unwrap();
+
+        let mut retained = st.get_task(done.id).unwrap();
+        assert_eq!(retained.status, TaskStatus::Completed);
+        assert!(retained.challenge_bond.is_none());
+        assert!(retained.challenger.is_none());
+        assert!(retained.challenged_at_height.is_none());
+        assert!(retained.challenge_deadline_height.is_none());
+        assert!(retained.resolve_deadline_height.is_none());
+        retained.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+        let retained_ref = st.update_task(done, retained).unwrap();
+
+        let replayed = apply_timeout(&mut st, retained_ref, 212)
+            .expect("valid proof-retention snapshot without live collateral metadata should remain timeout-safe");
+        let replayed_task = st.get_task(replayed.id).unwrap();
+        assert_eq!(replayed_task.status, TaskStatus::Completed);
+        assert_eq!(
+            replayed_task.challenge_window_blocks_snapshot,
+            Some(MIN_CHALLENGE_WINDOW_BLOCKS)
+        );
+        assert!(replayed_task.challenge_bond.is_none());
+        assert!(replayed_task.challenger.is_none());
+        assert!(replayed_task.challenged_at_height.is_none());
+        assert!(replayed_task.challenge_deadline_height.is_none());
+        assert!(replayed_task.resolve_deadline_height.is_none());
+    }
+
+    #[test]
     fn resolve_rejects_challenged_state_without_bond_fields_even_if_status_is_challenged() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
