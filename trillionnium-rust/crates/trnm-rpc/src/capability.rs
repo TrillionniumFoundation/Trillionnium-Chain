@@ -3,6 +3,8 @@ use std::{fs, path::Path};
 use trnm_rpc::RpcErrorResponse;
 use trnm_types::{AuditEvent, CapabilityToken, IdentityRegistry};
 
+use crate::envpaths::normalize_wrapped_env_value;
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub(crate) struct CapabilityAuditQueryResponse {
     pub(crate) token: CapabilityToken,
@@ -85,8 +87,7 @@ pub(crate) fn query_capability_audit(
 
 #[cfg(test)]
 pub(crate) fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
+    let normalized = normalize_wrapped_env_value(raw)
         .chars()
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
@@ -103,8 +104,7 @@ pub(crate) fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
 
 #[cfg(not(test))]
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
+    let normalized = normalize_wrapped_env_value(raw)
         .chars()
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
