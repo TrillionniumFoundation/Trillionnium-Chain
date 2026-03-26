@@ -42,6 +42,20 @@ worktree_status=clean|dirty
   --rollback-entrypoint "$ROLLBACK_ENTRYPOINT"
 ```
 
+如果只是先做 fail-closed 身份校验、暂时还不生成完整 handoff 记录，可先单独运行：
+
+```bash
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  --expected-head "$EXPECTED_HEAD"
+```
+
+约束说明：
+- `EXPECTED_BRANCH_REF` 优先使用完整 `refs/heads/...` 形式，不要只靠短分支名目测；
+- `EXPECTED_HEAD` 应来自本轮准备交接/升级的那次实际提交，而不是“当前大概最新”的 commit；
+- 任一比较失败时，应立即把本轮标记为 `worktree mismatch` / `handoff blocked`，不要继续补跑 smoke 或收集 release 证据。
+
 ---
 
 ## 2. Binary binding（节点二进制与 CLI 二进制分别绑定）
