@@ -146,7 +146,8 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
     if snapshot.confirmations != 1 {
         return;
     }
-    if !is_canonical_resolve_approver_snapshot(&snapshot.first_approver) {
+    let snapshot_first_approver = snapshot.first_approver.trim().to_ascii_lowercase();
+    if !is_canonical_resolve_approver_snapshot(&snapshot_first_approver) {
         return;
     }
 
@@ -169,12 +170,13 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
         return;
     }
 
-    let _ = st.stage_or_confirm_resolve_approval(
+    st.restore_pending_resolve_approval_from_rollback(
         task_id,
-        snapshot.task_version,
-        snapshot.slash_worker,
-        &snapshot.first_approver,
-        &snapshot.authority_set,
+        Some(PendingResolveApprovalSnapshot {
+            first_approver: snapshot_first_approver,
+            authority_set: snapshot_authority_set,
+            ..snapshot
+        }),
     );
 }
 
