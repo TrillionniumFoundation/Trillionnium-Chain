@@ -114,6 +114,8 @@ fn relay_session_proof_json_contract_keeps_explicit_audit_fields() {
     let json = serde_json::to_value(&proof).unwrap();
     assert_eq!(json["task_id"], 88);
     assert_eq!(json["session_id"], "sp-contract");
+    assert_eq!(json["from_seq"], 1);
+    assert_eq!(json["to_seq"], 4);
     assert_eq!(json["range_len"], 4);
     assert_eq!(json["message_count"], 4);
     assert_eq!(json["proof_count"], 4);
@@ -125,6 +127,11 @@ fn relay_session_proof_json_contract_keeps_explicit_audit_fields() {
     assert_eq!(json["proofs"][3]["leaf_sequence"], 4);
     assert_eq!(json["proofs"][0]["leaf_index"], 0);
     assert_eq!(json["proofs"][3]["leaf_index"], 3);
+    assert_eq!(json["proofs"][0]["envelope"]["session_id"], "sp-contract");
+    assert_eq!(json["proofs"][0]["envelope"]["sequence"], 1);
+    assert_eq!(json["proofs"][3]["envelope"]["sequence"], 4);
+    assert_eq!(json["proofs"][0]["proof"].as_array().unwrap().len(), 2);
+    assert_eq!(json["proofs"][3]["proof"].as_array().unwrap().len(), 2);
     assert!(json["segment_root_hex"].as_str().unwrap().len() == 64);
     assert!(json["proofs"][0]["leaf_hash_hex"].as_str().unwrap().len() == 64);
 }
