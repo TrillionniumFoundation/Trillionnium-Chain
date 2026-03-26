@@ -4602,9 +4602,44 @@ mod tests {
     }
 
     #[test]
-    fn reveal_rejects_llm_token_meter_receipt_with_worker_mismatch_fail_closed() {
+    fn reveal_rejects_llm_token_meter_receipt_with_task_id_mismatch_without_mutating_async_state() {
         let mut st = seeded_state();
         let task_id = 78_904;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id + 1, &worker, result_hash);
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("llm token meter receipt task_id mismatch"))
+        );
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
+        assert!(task_after.challenge_window_blocks_snapshot.is_none());
+        assert!(
+            task_after
+                .metadata
+                .as_ref()
+                .and_then(|meta| meta.metering.as_ref())
+                .is_none(),
+            "receipt task_id mismatch must fail closed before any metering snapshot is persisted"
+        );
+    }
+
+    #[test]
+    fn reveal_rejects_llm_token_meter_receipt_with_worker_mismatch_fail_closed() {
+        let mut st = seeded_state();
+        let task_id = 78_905;
         let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
         let result_hash = [2u8; 32];
         let reveal_salt = [3u8; 32];
