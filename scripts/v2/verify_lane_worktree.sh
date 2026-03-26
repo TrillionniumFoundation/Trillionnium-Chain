@@ -64,6 +64,11 @@ if [[ -z "$EXPECTED_BRANCH" && -z "$EXPECTED_BRANCH_REF" ]]; then
   exit 1
 fi
 
+if [[ "$EXPECTED_WORKTREE_ROOT" != /* ]]; then
+  echo "[FAIL] --expected-worktree-root must be an absolute path: $EXPECTED_WORKTREE_ROOT" >&2
+  exit 1
+fi
+
 if [[ ! -d "$EXPECTED_WORKTREE_ROOT" ]]; then
   echo "[FAIL] expected worktree root does not exist: $EXPECTED_WORKTREE_ROOT" >&2
   exit 1
