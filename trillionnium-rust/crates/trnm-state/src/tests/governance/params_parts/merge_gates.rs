@@ -1,7 +1,7 @@
 use super::*;
 use crate::governance_ops::{
-    gov_param_registry_entry, GovParamKind, GovParamUpdateOutcome, GovParamValueValidator,
-    EMERGENCY_PAUSE_KEY_ID,
+    canonicalize_resolve_authority_set, gov_param_registry_entry, GovParamKind,
+    GovParamUpdateOutcome, GovParamValueValidator, EMERGENCY_PAUSE_KEY_ID,
 };
 
 #[test]
@@ -160,6 +160,38 @@ fn governance_resolve_authority_registry_entry_stays_canonical_and_typed() {
     assert_eq!(pending.key_id, 7_312);
     assert_eq!(pending.value, "authority-a,authority-b");
     assert_eq!(pending.activate_at_height, 22_020);
+}
+
+#[test]
+fn governance_resolve_authority_registry_entry_uses_single_canonical_value_policy() {
+    // Merge-gate guard: the typed registry row for resolve_authority and the runtime
+    // canonicalizer must keep sharing one value policy. Canonical spellings should round-trip,
+    // reordered members should normalize to one canonical value, and malformed placeholders must
+    // fail closed.
+    let entry = gov_param_registry_entry("resolve_authority")
+        .expect("resolve_authority must stay present in the canonical governance schema");
+    assert_eq!(entry.validator, GovParamValueValidator::ResolveAuthoritySet);
+
+    entry
+        .validator
+        .validate(entry.key, "authority-a,authority-b")
+        .expect("canonical resolve_authority value must satisfy the typed registry validator");
+    assert_eq!(
+        canonicalize_resolve_authority_set("authority-b,authority-a")
+            .expect("runtime canonicalizer must accept reorder-equivalent authority sets"),
+        "authority-a,authority-b"
+    );
+
+    let err = entry
+        .validator
+        .validate(entry.key, "authority-a,Governance.Resolve_Authority")
+        .expect_err("placeholder aliases must remain invalid under the typed registry validator");
+    assert!(err.contains("invalid governance value for resolve_authority"), "{err}");
+
+    assert!(
+        canonicalize_resolve_authority_set("authority-a,Governance.Resolve_Authority").is_err(),
+        "runtime canonicalizer must reject the same placeholder alias that the typed registry rejects"
+    );
 }
 
 #[test]
