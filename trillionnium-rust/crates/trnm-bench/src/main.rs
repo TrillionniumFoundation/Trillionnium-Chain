@@ -235,6 +235,8 @@ fn main() {
         let retry_scan_overhang_per_hit = profile.retry_scan_overhang_per_hit();
         let retry_scan_overhang_per_reused_placement =
             profile.retry_scan_overhang_per_reused_placement();
+        let retry_fallback_share_of_retry_misses =
+            profile.retry_fallback_share_of_retry_misses();
         let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
         let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
         let stage_rw_hit_rate = ratio(profile.stage_rw_hits, profile.stage_rw_checks);
@@ -331,6 +333,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_scan_overhang_per_reused_placement={:.4}",
             retry_scan_overhang_per_reused_placement
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_retry_misses={:.4}",
+            retry_fallback_share_of_retry_misses
         ));
         lines.push(format!(
             "profile.stage_ww_hit_rate={:.4}",
@@ -663,6 +669,7 @@ mod tests {
         assert!((profile.retry_stage_mix_entropy() - 0.9602297178607612).abs() < 1e-12);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_misses() - 0.0).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
         assert!((profile.retry_scan_reuse_rate() - (5.0 / 6.0)).abs() < f64::EPSILON);
         assert_eq!(profile.reused_group_placements(), 5);
@@ -699,6 +706,7 @@ mod tests {
         assert!((profile.retry_fallback_new_group_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_fallback_share_of_new_groups() - 0.4).abs() < f64::EPSILON);
         assert!((profile.retry_fallback_share_of_retry_hits() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_misses() - (2.0 / 2.0)).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -741,6 +749,7 @@ mod tests {
         assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
         assert_eq!(profile.retry_scan_overhang_per_hit(), 0.0);
         assert_eq!(profile.retry_scan_overhang_per_reused_placement(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_misses(), 0.0);
         assert_eq!(profile.ww_retry_hit_rate(), 0.0);
         assert_eq!(profile.wr_retry_hit_rate(), 0.0);
         assert_eq!(profile.rw_retry_hit_rate(), 0.0);

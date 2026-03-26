@@ -154,6 +154,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_fallback_share_of_retry_misses(&self) -> f64 {
+        ratio_usize(self.retry_fallback_new_groups, self.retry_scan_misses())
+    }
+
+    #[inline]
     pub fn ww_retry_hit_rate(&self) -> f64 {
         ratio_usize(self.stage_ww_hits, self.stage_ww_checks)
     }
