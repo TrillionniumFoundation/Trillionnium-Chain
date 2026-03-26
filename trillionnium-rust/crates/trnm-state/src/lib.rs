@@ -989,6 +989,9 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         task.challenged_at_height.is_none()
             && task.challenge_deadline_height.is_none()
             && task.resolve_deadline_height.is_none()
+            && task
+                .challenge_window_blocks_snapshot
+                .is_none_or(|window| window > 0)
     }
 }
 
@@ -4569,6 +4572,48 @@ mod tests {
         assert!(
             st.get_task(408).is_none(),
             "restore_task must fail closed when a terminal challenged task keeps collateral settlement metadata but drops the retained challenge-window snapshot needed for later proof audits"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_zeroed_terminal_unchallenged_retention_snapshot() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 409,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained proof trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("cd".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(0),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(409, Some(task));
+
+        assert!(
+            st.get_task(409).is_none(),
+            "restore_task must fail closed when an unchallenged terminal task keeps a zeroed retained challenge-window snapshot that cannot support later proof-retention audits"
         );
     }
 
