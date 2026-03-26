@@ -1989,6 +1989,36 @@ mod tests {
         }
     }
 
+    fn profile_with_retry_scan(
+        tx_count: usize,
+        group_count: usize,
+        conflict_hits: usize,
+        candidate_groups_scanned: usize,
+    ) -> GroupingProfile {
+        GroupingProfile {
+            tx_count,
+            group_count,
+            grouped_count: tx_count,
+            max_group_size: tx_count,
+            min_group_size: group_count.min(tx_count),
+            avg_group_size: if group_count == 0 {
+                0.0
+            } else {
+                tx_count as f64 / group_count as f64
+            },
+            hot_object_share: 0.0,
+            conflict_checks: candidate_groups_scanned,
+            conflict_hits,
+            candidate_groups_scanned,
+            stage_ww_checks: 0,
+            stage_ww_hits: 0,
+            stage_wr_checks: 0,
+            stage_wr_hits: 0,
+            stage_rw_checks: 0,
+            stage_rw_hits: 0,
+        }
+    }
+
     #[test]
     fn dominant_retry_lead_share_tracks_clear_stage_skew() {
         let profile = profile_with_stage_hits(9, 3, 1, 10);
@@ -2035,6 +2065,66 @@ mod tests {
         let profile = profile_with_stage_hits(0, 0, 0, 0);
 
         assert_eq!(profile.retry_stage_concentration(), 0.0);
+    }
+
+    #[test]
+    fn retry_scan_metrics_track_misses_hits_and_zero_denominators() {
+        let profile = profile_with_retry_scan(12, 3, 4, 10);
+
+        assert_eq!(profile.retry_scan_misses(), 6);
+        assert!((profile.candidate_groups_per_retry_hit() - 2.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_hit_rate() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_miss_rate() - 0.6).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_misses_per_tx() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_misses_per_group() - 2.0).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_hit() - 1.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - (2.0 / 3.0)).abs() < 1e-12);
+
+        let zero = profile_with_retry_scan(0, 0, 0, 0);
+        assert_eq!(zero.candidate_groups_per_retry_hit(), 0.0);
+        assert_eq!(zero.retry_scan_hit_rate(), 0.0);
+        assert_eq!(zero.retry_scan_miss_rate(), 0.0);
+        assert_eq!(zero.retry_scan_misses_per_tx(), 0.0);
+        assert_eq!(zero.retry_scan_misses_per_group(), 0.0);
+        assert_eq!(zero.retry_scan_overhang_per_hit(), 0.0);
+        assert_eq!(zero.retry_scan_overhang_per_reused_placement(), 0.0);
+    }
+
+    #[test]
+    fn retry_attribution_metrics_surface_overlap_and_unattributed_hits() {
+        let profile = GroupingProfile {
+            tx_count: 9,
+            group_count: 3,
+            grouped_count: 9,
+            max_group_size: 4,
+            min_group_size: 2,
+            avg_group_size: 3.0,
+            hot_object_share: 0.0,
+            conflict_checks: 0,
+            conflict_hits: 5,
+            candidate_groups_scanned: 7,
+            stage_ww_checks: 0,
+            stage_ww_hits: 3,
+            stage_wr_checks: 0,
+            stage_wr_hits: 2,
+            stage_rw_checks: 0,
+            stage_rw_hits: 2,
+        };
+
+        assert_eq!(profile.attributed_retry_hits(), 7);
+        assert_eq!(profile.unattributed_retry_hits(), 0);
+        assert_eq!(profile.retry_stage_overlap_hits(), 2);
+        assert!((profile.retry_stage_overlap_share() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_overlap_share_of_attributed() - (2.0 / 7.0)).abs() < 1e-12);
+        assert_eq!(profile.retry_attribution_coverage(), 1.0);
+        assert!((profile.unattributed_retry_share() - 0.0).abs() < f64::EPSILON);
+
+        let partial = profile_with_stage_hits(2, 1, 0, 6);
+        assert_eq!(partial.attributed_retry_hits(), 3);
+        assert_eq!(partial.unattributed_retry_hits(), 3);
+        assert_eq!(partial.retry_stage_overlap_hits(), 0);
+        assert!((partial.retry_attribution_coverage() - 0.5).abs() < f64::EPSILON);
+        assert!((partial.unattributed_retry_share() - 0.5).abs() < f64::EPSILON);
     }
 
     #[test]
