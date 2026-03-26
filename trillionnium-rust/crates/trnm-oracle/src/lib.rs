@@ -192,9 +192,16 @@ impl OraclePolicy {
     /// - a successful validation result means “this evidence may be considered”,
     ///   not “settlement is final”; downstream layers still own confirmation and
     ///   replay boundaries.
+    /// - median/MAD and source-count checks are confidence/admissibility guards,
+    ///   not settlement authority. They can reject low-confidence evidence, but
+    ///   they can never upgrade a bridge observation into final settlement on
+    ///   their own.
     /// - downstream bridge/RPC code should treat a validation failure here as a
     ///   fail-closed signal and avoid manufacturing fallback settlement meaning
     ///   from malformed oracle payloads.
+    /// - replay identity and source-chain finality thresholds stay downstream:
+    ///   bridge/RPC layers must dedupe repeated oracle payloads and enforce the
+    ///   source/target confirmation boundary before any settlement transition.
     /// - `sample_count` may exceed the number of unique canonical sources when a
     ///   report aggregates repeated observations inside one window; the opposite
     ///   direction remains invalid and is rejected below.
