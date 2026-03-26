@@ -16,6 +16,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be empty",
         path
     );
+    anyhow::ensure!(
+        !node_id.chars().any(char::is_control),
+        "invalid node config {}: node_id must not contain control characters",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -112,6 +117,24 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("rpc_addr and p2p_addr must differ"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_control_characters_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node\u{0007}1".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("node_id control characters must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must not contain control characters"),
             "unexpected error: {err:#}"
         );
     }
