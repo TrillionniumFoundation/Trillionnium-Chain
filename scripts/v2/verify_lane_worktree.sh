@@ -12,6 +12,7 @@ EOF
 }
 
 EXPECTED_WORKTREE_ROOT=""
+CANONICAL_EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
@@ -74,7 +75,8 @@ if [[ ! -d "$EXPECTED_WORKTREE_ROOT" ]]; then
   exit 1
 fi
 
-ACTUAL_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+CANONICAL_EXPECTED_WORKTREE_ROOT="$(cd "$EXPECTED_WORKTREE_ROOT" && pwd -P)"
+ACTUAL_WORKTREE_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
 ACTUAL_BRANCH="$(git branch --show-current)"
 ACTUAL_BRANCH_REF=""
 ACTUAL_HEAD="$(git rev-parse HEAD)"
@@ -88,8 +90,8 @@ if [[ -n "$ACTUAL_BRANCH" ]]; then
   ACTUAL_BRANCH_REF="refs/heads/$ACTUAL_BRANCH"
 fi
 
-if [[ "$ACTUAL_WORKTREE_ROOT" != "$EXPECTED_WORKTREE_ROOT" ]]; then
-  echo "[FAIL] worktree mismatch: expected $EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
+if [[ "$ACTUAL_WORKTREE_ROOT" != "$CANONICAL_EXPECTED_WORKTREE_ROOT" ]]; then
+  echo "[FAIL] worktree mismatch: expected $CANONICAL_EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
   exit 1
 fi
 
