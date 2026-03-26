@@ -537,6 +537,49 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_when_target_has_reached_source_head() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-head-plus-one-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 700,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("source+1 overlay boundary should remain confirmable even when target has reached source head");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(701));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: 701,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: Some(700),
+                    heartbeat_target_height: Some(700),
+                    heartbeat_latency_ms: Some(19),
+                    confirm_height: Some(701),
+                    confirm_reason: None,
+                },
+            }
+        );
+    }
+
+    #[test]
     fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary() {
         let mut request = SettlementRequest::new(1, "0xconfirm-max-boundary".to_string());
         let token = CapabilityToken {
