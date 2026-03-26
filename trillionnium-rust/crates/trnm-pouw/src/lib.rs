@@ -6048,6 +6048,34 @@ mod tests {
     }
 
     #[test]
+    fn slashed_uncontested_terminal_state_rejects_retained_snapshot_evidence() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(9_104, "challenge_window_blocks".into(), "125".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 50_104, "alice".into(), 10).unwrap();
+        let result_hash = [12u8; 32];
+        let reveal_salt = [13u8; 32];
+        let committed = compute_commitment(50_104, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let done = apply_timeout(&mut st, r4, 236).unwrap();
+
+        let mut slashed = st.get_task(done.id).unwrap();
+        slashed.status = TaskStatus::Slashed;
+        let err = validate_challenge_accounting_invariants(&slashed).expect_err(
+            "slashed terminal state must fail closed when uncontested tasks retain challenge snapshot evidence",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge metadata"))
+        );
+    }
+
+    #[test]
     fn terminal_challenged_state_rejects_blank_challenger_identity() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
