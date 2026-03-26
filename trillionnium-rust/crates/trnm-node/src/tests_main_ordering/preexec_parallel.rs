@@ -39,6 +39,15 @@ fn preexec_group_normalization_preserves_first_seen_order_and_counts_replays() {
 }
 
 #[test]
+fn preexec_group_normalization_preserves_first_seen_order_for_long_replay_lists() {
+    let (normalized, replayed) =
+        normalize_group_ids_for_preexec(&[7, 3, 7, 5, 3, 9, 7, 11, 5, 13, 9, 15]);
+
+    assert_eq!(normalized, vec![7, 3, 5, 9, 11, 13, 15]);
+    assert_eq!(replayed, 5);
+}
+
+#[test]
 fn preexec_parallel_dedupes_replayed_group_ids_before_worker_fanout() {
     let state = StateStore::new();
     let picked = vec![
