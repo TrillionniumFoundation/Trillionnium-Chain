@@ -219,6 +219,7 @@ fn main() {
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
         let retry_pressure = profile.retry_pressure();
         let retry_fallback_new_group_share = profile.retry_fallback_new_group_share();
+        let retry_fallback_share_of_new_groups = profile.retry_fallback_share_of_new_groups();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
@@ -273,6 +274,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_fallback_new_group_share={:.4}",
             retry_fallback_new_group_share
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_new_groups={:.4}",
+            retry_fallback_share_of_new_groups
         ));
         lines.push(format!(
             "profile.candidate_groups_per_retry_hit={:.4}",
@@ -637,6 +642,7 @@ mod tests {
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
         assert_eq!(profile.retry_fallback_new_groups, 0);
         assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
     }
 
     #[test]
@@ -662,6 +668,7 @@ mod tests {
         };
 
         assert!((profile.retry_fallback_new_group_share() - 0.25).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_new_groups() - 0.4).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -694,6 +701,7 @@ mod tests {
         assert_eq!(profile.retry_scan_hit_rate(), 0.0);
         assert_eq!(profile.retry_scan_misses(), 0);
         assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
         assert_eq!(profile.retry_scan_overhang_per_hit(), 0.0);
