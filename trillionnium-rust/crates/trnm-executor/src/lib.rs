@@ -1764,7 +1764,10 @@ mod tests {
         let skewed_write_only = tx(
             1,
             vec![],
-            vec![ObjectRef { id: 11, version: 1 }, ObjectRef { id: 11, version: 2 }],
+            vec![
+                ObjectRef { id: 11, version: 1 },
+                ObjectRef { id: 11, version: 2 },
+            ],
         );
         let other_write_only = tx(2, vec![], vec![o(99)]);
 
@@ -1818,7 +1821,10 @@ mod tests {
     fn read_only_fast_path_still_rejects_same_object_version_skew() {
         let skewed_read_only = tx(
             1,
-            vec![ObjectRef { id: 11, version: 1 }, ObjectRef { id: 11, version: 2 }],
+            vec![
+                ObjectRef { id: 11, version: 1 },
+                ObjectRef { id: 11, version: 2 },
+            ],
             vec![],
         );
         let other_read_only = tx(2, vec![o(99)], vec![]);
@@ -2141,7 +2147,8 @@ mod tests {
     }
 
     #[test]
-    fn combined_access_domain_versions_small_mixed_domain_accepts_late_same_version_echo_at_tiny_boundary() {
+    fn combined_access_domain_versions_small_mixed_domain_accepts_late_same_version_echo_at_tiny_boundary(
+    ) {
         assert!(combined_access_domain_versions_are_consistent(
             &[
                 o(7),
@@ -2159,7 +2166,8 @@ mod tests {
     }
 
     #[test]
-    fn combined_access_domain_versions_small_mixed_domain_rejects_late_cross_domain_version_skew_at_tiny_boundary() {
+    fn combined_access_domain_versions_small_mixed_domain_rejects_late_cross_domain_version_skew_at_tiny_boundary(
+    ) {
         assert!(!combined_access_domain_versions_are_consistent(
             &[
                 o(7),
@@ -2284,9 +2292,7 @@ mod tests {
 
     #[test]
     fn read_domain_only_keys_large_duplicate_heavy_write_domain_filters_shared_reads_once() {
-        let write_keys = vec![
-            100, 200, 300, 100, 400, 500, 200, 600, 700, 800, 300, 900,
-        ];
+        let write_keys = vec![100, 200, 300, 100, 400, 500, 200, 600, 700, 800, 300, 900];
 
         let keys = read_domain_only_keys(
             &[
@@ -2339,7 +2345,10 @@ mod tests {
         // read/write echoes on object 0 must collapse exactly once and retain
         // deterministic write-first ordering for downstream conflict reporting.
         assert_eq!(tx_access_domain_keys(&echoed), vec![5, 0, 11, 7, 9]);
-        assert_eq!(tx_access_domain_keys(&echoed), tx_access_domain_keys(&canonical));
+        assert_eq!(
+            tx_access_domain_keys(&echoed),
+            tx_access_domain_keys(&canonical)
+        );
     }
 
     #[test]
@@ -2355,7 +2364,10 @@ mod tests {
         // Scheduler primary-domain selection should keep the stronger write-domain
         // signal, ignoring same-version read echoes for objects already written.
         assert_eq!(primary_access_domain_key(&echoed), Some(11));
-        assert_eq!(primary_access_domain_key(&echoed), primary_access_domain_key(&canonical));
+        assert_eq!(
+            primary_access_domain_key(&echoed),
+            primary_access_domain_key(&canonical)
+        );
 
         // Pure read domains should still canonicalize to the smallest surviving
         // object key after dedup so fallback ordering remains deterministic.
@@ -2376,7 +2388,10 @@ mod tests {
         // and conflict classification aligned even when Sui-style shared-object
         // footprints repeat the same object ids across both domains.
         assert_eq!(tx_access_domain_keys(&echoed), vec![55, 33, 22, 66, 11, 44]);
-        assert_eq!(tx_access_domain_keys(&echoed), tx_access_domain_keys(&canonical));
+        assert_eq!(
+            tx_access_domain_keys(&echoed),
+            tx_access_domain_keys(&canonical)
+        );
     }
 
     #[test]
@@ -4858,6 +4873,24 @@ mod tests {
             primary_access_domain_key(&echoed_read),
             primary_access_domain_key(&deduped_read)
         );
+    }
+
+    #[test]
+    fn primary_access_domain_key_treats_object_zero_as_real_write_domain_key() {
+        let echoed = tx(90, vec![o(0), o(7), o(0), o(9)], vec![o(5), o(0), o(5), o(11)]);
+        let canonical = tx(91, vec![o(7), o(9)], vec![o(5), o(0), o(11)]);
+        let zero_only = tx(92, vec![o(7), o(0), o(7)], vec![]);
+
+        // Object id 0 must remain a real access-domain key here too. If a later
+        // refactor treats 0 like a sentinel, mixed-domain scheduling could drift
+        // away from tx_access_domain_keys()/hot-bucket ordering on shared-object
+        // lanes with canonical object zero references.
+        assert_eq!(primary_access_domain_key(&echoed), Some(0));
+        assert_eq!(
+            primary_access_domain_key(&echoed),
+            primary_access_domain_key(&canonical)
+        );
+        assert_eq!(primary_access_domain_key(&zero_only), Some(0));
     }
 
     #[test]
