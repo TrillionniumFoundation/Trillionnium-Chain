@@ -33,6 +33,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain whitespace",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_control),
+        "invalid node config {}: rpc_addr must not contain control characters",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -43,6 +48,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_whitespace),
         "invalid node config {}: p2p_addr must not contain whitespace",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_control),
+        "invalid node config {}: p2p_addr must not contain control characters",
         path
     );
     anyhow::ensure!(
@@ -170,6 +180,41 @@ mod tests {
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not contain whitespace"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_control_characters_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000\u{0007}".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr with control characters must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain control characters"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001\u{001b}".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr with control characters must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain control characters"),
             "unexpected error: {p2p_err:#}"
         );
     }
