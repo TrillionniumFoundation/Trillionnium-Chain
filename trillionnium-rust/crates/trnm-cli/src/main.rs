@@ -268,6 +268,11 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
         let Some(findings) = findings.as_array() else {
             bail!("task query response metadata_compatibility_findings must be a json array");
         };
+        if findings.is_empty() {
+            bail!(
+                "task query response metadata_compatibility_findings must be omitted when empty"
+            );
+        }
         let mut expected = Vec::new();
         if legacy_note_only {
             expected.push("legacy_note_only_payload");
@@ -2302,6 +2307,15 @@ mod tests {
         assert!(err
             .to_string()
             .contains("metadata_compatibility_findings requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_empty_metadata_compatibility_findings_array() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":false,"metadata_compatibility_findings":[]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility_findings must be omitted when empty"
+        ));
     }
 
     #[test]
