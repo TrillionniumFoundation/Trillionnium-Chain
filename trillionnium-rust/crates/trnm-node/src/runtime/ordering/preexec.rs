@@ -20,6 +20,7 @@ pub(crate) struct PreExecPool {
     pub(crate) state: Arc<PreExecPoolState>,
     pub(crate) handles: Vec<thread::JoinHandle<()>>,
     pub(crate) width: usize,
+    pub(crate) candidate_height: u64,
 }
 
 pub(crate) fn invalid_preexec_tx_id(id: u64, candidate_height: u64) -> String {
@@ -79,6 +80,7 @@ impl PreExecPool {
             state,
             handles,
             width,
+            candidate_height,
         }
     }
 
@@ -91,7 +93,7 @@ impl PreExecPool {
         if replayed_ids > 0 {
             println!(
                 "[preexec] candidate_height={} deduped_replayed_group_ids={} unique_group_ids={}",
-                candidate_height,
+                self.candidate_height,
                 replayed_ids,
                 unique_group_ids.len()
             );
