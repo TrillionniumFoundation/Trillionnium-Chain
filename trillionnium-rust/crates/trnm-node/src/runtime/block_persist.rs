@@ -154,6 +154,48 @@ mod tests {
         assert!(da_summary.contains("wal_content_hash="));
         assert!(da_summary.contains("wal_content_hash_matches_checkpoint=true"));
     }
+
+    #[test]
+    fn persist_checkpoint_if_needed_rejects_blank_proposal_hash_surface() {
+        let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
+        let mut runtime = runtime_fixture("blank-proposal-hash", 1);
+        runtime.wal_entries.push(WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        });
+
+        persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
+
+        assert!(
+            runtime.checkpoints.is_empty(),
+            "blank proposal hash must fail closed so node persistence never emits a checkpoint with a non-canonical DA/light-verifier surface"
+        );
+    }
+
+    #[test]
+    fn persist_checkpoint_if_needed_rejects_overlong_proposal_hash_surface() {
+        let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
+        let mut runtime = runtime_fixture("overlong-proposal-hash", 1);
+        runtime.wal_entries.push(WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p".repeat(257),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        });
+
+        persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
+
+        assert!(
+            runtime.checkpoints.is_empty(),
+            "overlong proposal hash must fail closed so node persistence never promotes a checkpoint beyond the canonical audit/light-verifier surface bound"
+        );
+    }
 }
 
 pub(crate) enum StopCondition {
