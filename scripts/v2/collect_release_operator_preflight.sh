@@ -14,6 +14,8 @@ Usage:
     [--cli-binary-path <path>] \
     [--cli-build-command <cmd>] \
     [--config-set-id <id>] \
+    [--chain-id <id>] \
+    [--genesis-sha256 <sha256-or-placeholder>] \
     [--validator-count <count>] \
     [--seed-mode <static|dynamic|mixed>] \
     [--p2p-allowlist-source <path-or-desc>] \
@@ -64,6 +66,8 @@ BINARY_BUILD_COMMAND="${BINARY_BUILD_COMMAND:-cargo build -p trnm-node}"
 CLI_BINARY_PATH="${CLI_BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-cli}"
 CLI_BUILD_COMMAND="${CLI_BUILD_COMMAND:-cargo build -p trnm-cli}"
 CONFIG_SET_ID="${CONFIG_SET_ID:-<fill-me>}"
+CHAIN_ID="${CHAIN_ID:-<fill-me>}"
+GENESIS_SHA256="${GENESIS_SHA256:-<fill-me>}"
 VALIDATOR_COUNT="${VALIDATOR_COUNT:-}"
 SEED_MODE="${SEED_MODE:-<fill-me>}"
 P2P_ALLOWLIST_SOURCE="${P2P_ALLOWLIST_SOURCE:-<fill-me>}"
@@ -114,6 +118,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --config-set-id)
       CONFIG_SET_ID="${2:-}"
+      shift 2
+      ;;
+    --chain-id)
+      CHAIN_ID="${2:-}"
+      shift 2
+      ;;
+    --genesis-sha256)
+      GENESIS_SHA256="${2:-}"
       shift 2
       ;;
     --validator-count)
@@ -214,6 +226,8 @@ printf 'cli_binary_path=%s\n' "$CLI_BINARY_PATH"
 printf 'cli_binary_sha256=%s\n' "$(if [[ -x "$CLI_BINARY_PATH" ]]; then shasum -a 256 "$CLI_BINARY_PATH" | awk '{print $1}'; else printf '<not-built>'; fi)"
 printf 'cli_build_command=%s\n' "$CLI_BUILD_COMMAND"
 printf 'config_set_id=%s\n' "$CONFIG_SET_ID"
+printf 'chain_id=%s\n' "$CHAIN_ID"
+printf 'genesis_sha256=%s\n' "$GENESIS_SHA256"
 printf 'validator_count=%s\n' "$VALIDATOR_COUNT"
 printf 'seed_mode=%s\n' "$SEED_MODE"
 printf 'p2p_allowlist_source=%s\n' "$P2P_ALLOWLIST_SOURCE"
