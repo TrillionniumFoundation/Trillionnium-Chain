@@ -250,12 +250,20 @@ pub(crate) fn oracle_validate_snapshot_response(
     let mut accepted_total = 0;
     let mut error = None;
 
+    let future = snapshot_val.observed_at_ms > now_ts_ms;
     let stale = now_ts_ms.saturating_sub(snapshot_val.observed_at_ms) > policy_val.max_staleness_ms;
     let quorum = cardinality < policy_val.min_source_count as u32;
     let drift = compute_deviation_bps(snapshot_val.aggregate_price, snapshot_val.reference_price)
         >= policy_val.max_deviation_bps;
 
-    if stale {
+    if future {
+        outcome = "stale";
+        stale_reject_total = 1;
+        error = Some(format!(
+            "snapshot future: observed_at_ms={} now_ts_ms={}",
+            snapshot_val.observed_at_ms, now_ts_ms
+        ));
+    } else if stale {
         outcome = "stale";
         stale_reject_total = 1;
         error = Some(format!(

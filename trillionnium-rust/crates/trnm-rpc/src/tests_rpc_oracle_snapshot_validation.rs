@@ -223,6 +223,34 @@ fn oracle_validate_snapshot_response_accepts_exact_staleness_boundary_without_qu
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_future_snapshot_as_fail_closed_stale_outcome() {
+    let policy_path = write_json_fixture("oracle-policy-future-snapshot", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-future-snapshot",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_001),
+    );
+
+    let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_000)
+        .expect("future snapshot oracle validation response");
+
+    assert!(!out.ok);
+    assert_eq!(out.observation.outcome, "stale");
+    assert_eq!(out.metrics.oracle_stale_reject_total, 1);
+    assert_eq!(out.metrics.oracle_quorum_reject_total, 0);
+    assert_eq!(out.metrics.oracle_drift_reject_total, 0);
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert_eq!(out.metrics.accepted_total, 0);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert_eq!(
+        out.error.as_deref(),
+        Some("snapshot future: observed_at_ms=10001 now_ts_ms=10000")
+    );
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_prefers_stale_outcome_over_quorum_and_drift_failures() {
     let policy_path = write_json_fixture("oracle-policy-stale-precedence", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(
