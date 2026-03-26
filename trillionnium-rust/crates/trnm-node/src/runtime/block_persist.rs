@@ -132,6 +132,12 @@ mod tests {
             .expect("persisted checkpoint must keep a canonical DA/light-verifier summary");
         assert!(da_summary.contains("da_light_surface=checkpoint-wal-v1"));
         assert!(da_summary.contains("light_verifier_surface=checkpoint-wal-v1"));
+        assert!(da_summary.contains("da_state_commitment="));
+        assert!(da_summary.contains("da_state_commitment_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("da_checkpoint_commitment="));
+        assert!(da_summary.contains("da_checkpoint_commitment_kind=canonical-hex-32b"));
+        assert!(da_summary.contains("da_wal_content_hash="));
+        assert!(da_summary.contains("da_wal_content_hash_kind=canonical-hex-32b"));
         assert!(da_summary.contains("checkpoint_commitment="));
         assert!(da_summary.contains("checkpoint_commitment_kind=canonical-hex-32b"));
         assert!(da_summary.contains("checkpoint_height_encoding=le-u64"));
