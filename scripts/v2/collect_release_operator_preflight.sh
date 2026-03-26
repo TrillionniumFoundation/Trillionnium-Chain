@@ -10,6 +10,10 @@ Usage:
     [--binary-build-command <cmd>] \
     [--cli-binary-path <path>] \
     [--cli-build-command <cmd>] \
+    [--config-set-id <id>] \
+    [--validator-count <count>] \
+    [--seed-mode <static|dynamic|mixed>] \
+    [--p2p-allowlist-source <path-or-desc>] \
     [--previous-stable-anchor <commit-or-tag>] \
     [--rollback-entrypoint <path-or-command>] \
     [--expected-worktree-root <abs-path>] \
@@ -53,12 +57,20 @@ BINARY_PATH="${BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-node}"
 BINARY_BUILD_COMMAND="${BINARY_BUILD_COMMAND:-cargo build -p trnm-node}"
 CLI_BINARY_PATH="${CLI_BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-cli}"
 CLI_BUILD_COMMAND="${CLI_BUILD_COMMAND:-cargo build -p trnm-cli}"
+CONFIG_SET_ID="${CONFIG_SET_ID:-<fill-me>}"
+VALIDATOR_COUNT="${VALIDATOR_COUNT:-}"
+SEED_MODE="${SEED_MODE:-<fill-me>}"
+P2P_ALLOWLIST_SOURCE="${P2P_ALLOWLIST_SOURCE:-<fill-me>}"
 PREVIOUS_STABLE_ANCHOR="${PREVIOUS_STABLE_ANCHOR:-<fill-me>}"
 ROLLBACK_ENTRYPOINT="${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
+
+if [[ -z "$VALIDATOR_COUNT" ]]; then
+  VALIDATOR_COUNT="$(find "$WORKSPACE_ROOT/configs" -maxdepth 1 -type f -name 'node*.toml' 2>/dev/null | wc -l | awk '{print $1}')"
+fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -80,6 +92,22 @@ while [[ $# -gt 0 ]]; do
       ;;
     --cli-build-command)
       CLI_BUILD_COMMAND="${2:-}"
+      shift 2
+      ;;
+    --config-set-id)
+      CONFIG_SET_ID="${2:-}"
+      shift 2
+      ;;
+    --validator-count)
+      VALIDATOR_COUNT="${2:-}"
+      shift 2
+      ;;
+    --seed-mode)
+      SEED_MODE="${2:-}"
+      shift 2
+      ;;
+    --p2p-allowlist-source)
+      P2P_ALLOWLIST_SOURCE="${2:-}"
       shift 2
       ;;
     --previous-stable-anchor)
@@ -159,6 +187,10 @@ printf 'build_command=%s\n' "$BINARY_BUILD_COMMAND"
 printf 'cli_binary_path=%s\n' "$CLI_BINARY_PATH"
 printf 'cli_binary_sha256=%s\n' "$(if [[ -x "$CLI_BINARY_PATH" ]]; then shasum -a 256 "$CLI_BINARY_PATH" | awk '{print $1}'; else printf '<not-built>'; fi)"
 printf 'cli_build_command=%s\n' "$CLI_BUILD_COMMAND"
+printf 'config_set_id=%s\n' "$CONFIG_SET_ID"
+printf 'validator_count=%s\n' "$VALIDATOR_COUNT"
+printf 'seed_mode=%s\n' "$SEED_MODE"
+printf 'p2p_allowlist_source=%s\n' "$P2P_ALLOWLIST_SOURCE"
 for node in 1 2 3 4; do
   config_path="$WORKSPACE_ROOT/configs/node${node}.toml"
   if [[ -f "$config_path" ]]; then
