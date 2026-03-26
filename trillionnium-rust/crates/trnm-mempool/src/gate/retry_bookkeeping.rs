@@ -83,6 +83,14 @@ impl AdmissionGate {
                     break;
                 }
             }
+            if self.backpressured_fifo.len() > self.backpressured_ids.len() {
+                // Restored-state repair can deterministically trim retry ids while stale
+                // FIFO markers survive. Rebuild markers immediately so bounded retry
+                // bookkeeping stays aligned without waiting for a later compaction pass.
+                let mut rebuilt: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                rebuilt.sort_unstable();
+                self.backpressured_fifo = rebuilt.into_iter().collect();
+            }
             true
         } else {
             false
