@@ -2482,6 +2482,26 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_share_canonicalizes_duplicate_heavy_same_version_cross_domain_echoes() {
+        let echoed = tx(
+            1,
+            vec![o(11), o(11), o(22), o(44), o(55), o(44)],
+            vec![o(55), o(33), o(33), o(22), o(22), o(66), o(11)],
+        );
+        let canonical = tx(2, vec![o(44)], vec![o(55), o(33), o(22), o(66), o(11)]);
+        let peer = tx(3, vec![o(44), o(88), o(88)], vec![o(99), o(22), o(99)]);
+
+        // Hot-object telemetry should collapse same-version read/write echoes to the
+        // same object-scoped footprint as the canonical writer-first domain so
+        // adaptive scheduling cannot drift on duplicate-heavy shared-object inputs.
+        assert_eq!(hot_object_share(&[echoed.clone(), peer.clone()]), 2.0 / 10.0);
+        assert_eq!(
+            hot_object_share(&[echoed, peer.clone()]),
+            hot_object_share(&[canonical, peer])
+        );
+    }
+
+    #[test]
     fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
         let tx = tx(
             1,
