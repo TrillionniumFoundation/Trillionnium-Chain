@@ -1350,6 +1350,28 @@ mod tests {
         }
         .into();
         assert!(!err_without_label.bridge_contract_consistent());
+
+        let err_with_whitespace_label: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 798,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some(" \t\n ".into()),
+        }
+        .into();
+        assert!(!err_with_whitespace_label.bridge_contract_consistent());
     }
 
     #[test]
