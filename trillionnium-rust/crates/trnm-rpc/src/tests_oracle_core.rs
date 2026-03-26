@@ -100,6 +100,24 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_event_type_
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_unknown_source_and_mixed_prefix_event_types() {
+    for path in [
+        "/query-normalized-audit-events?source=trnm.oracle",
+        "/query-normalized-audit-events?eventType=trnm.oracle.accept",
+        "/query-normalized-audit-events?source=trnm.task&eventType=trnm.adapter.accept",
+        "/query-normalized-audit-events?source=trnm.adapter&eventType=trnm.task.commit",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("unknown or mixed-prefix filters should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(
+            err.contains("invalid source") || err.contains("invalid eventType"),
+            "path={path} err={err}"
+        );
+    }
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_rejects_empty_cursor_value() {
     let err = parse_query_normalized_audit_events_query_from_path(
         "/query-normalized-audit-events?cursor=",

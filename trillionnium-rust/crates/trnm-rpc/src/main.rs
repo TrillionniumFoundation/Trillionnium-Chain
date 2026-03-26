@@ -2804,6 +2804,24 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
+fn is_valid_normalized_audit_source(value: &str) -> bool {
+    matches!(value, "trnm.task" | "trnm.adapter")
+}
+
+fn is_valid_normalized_audit_event_type(value: &str) -> bool {
+    let Some(suffix) = value
+        .strip_prefix("trnm.task.")
+        .or_else(|| value.strip_prefix("trnm.adapter."))
+    else {
+        return false;
+    };
+
+    !suffix.is_empty()
+        && suffix
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || matches!(ch, '.' | '-' | '_'))
+}
+
 fn parse_query_normalized_audit_events_query_from_path(
     path: &str,
 ) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
@@ -2906,7 +2924,7 @@ fn parse_query_normalized_audit_events_query_from_path(
                     ));
                 }
                 let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
+                if normalized.is_empty() || !is_valid_normalized_audit_source(normalized) {
                     return Err(http_json_response(
                         "400 Bad Request",
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
@@ -2922,7 +2940,7 @@ fn parse_query_normalized_audit_events_query_from_path(
                     ));
                 }
                 let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
+                if normalized.is_empty() || !is_valid_normalized_audit_event_type(normalized) {
                     return Err(http_json_response(
                         "400 Bad Request",
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
@@ -2983,6 +3001,22 @@ fn parse_query_normalized_audit_events_query_from_path(
                 return Err(http_json_response(
                     "400 Bad Request",
                     r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                ));
+            }
+        }
+    }
+
+    if let Some(source) = query_params.source.as_deref() {
+        if let Some(event_type) = query_params.event_type.as_deref() {
+            let prefix = if source == "trnm.task" {
+                "trnm.task."
+            } else {
+                "trnm.adapter."
+            };
+            if !event_type.starts_with(prefix) {
+                return Err(http_json_response(
+                    "400 Bad Request",
+                    r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
                 ));
             }
         }
@@ -4822,6 +4856,24 @@ mod tests {
         .expect_err("invalid cursor should fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_unknown_source_and_mixed_prefix_event_types() {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.oracle",
+            "/query-normalized-audit-events?eventType=trnm.oracle.accept",
+            "/query-normalized-audit-events?source=trnm.task&eventType=trnm.adapter.accept",
+            "/query-normalized-audit-events?source=trnm.adapter&eventType=trnm.task.commit",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("unknown or mixed-prefix filters should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(
+                err.contains("invalid source") || err.contains("invalid eventType"),
+                "path={path} err={err}"
+            );
+        }
     }
 
     #[test]

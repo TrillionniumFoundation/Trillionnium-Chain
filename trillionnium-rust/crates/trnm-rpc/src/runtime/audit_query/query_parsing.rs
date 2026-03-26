@@ -19,6 +19,24 @@ const DUPLICATE_CURSOR_RESPONSE: &str =
 const INVALID_CURSOR_RESPONSE: &str =
     r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#;
 
+fn is_valid_normalized_audit_source(value: &str) -> bool {
+    matches!(value, "trnm.task" | "trnm.adapter")
+}
+
+fn is_valid_normalized_audit_event_type(value: &str) -> bool {
+    let Some(suffix) = value
+        .strip_prefix("trnm.task.")
+        .or_else(|| value.strip_prefix("trnm.adapter."))
+    else {
+        return false;
+    };
+
+    !suffix.is_empty()
+        && suffix
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || matches!(ch, '.' | '-' | '_'))
+}
+
 pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
     validate_path_prefix(path, None, INVALID_LIMIT_RESPONSE)?;
     let Some(query) = extract_validated_query(path, INVALID_LIMIT_RESPONSE)? else {
@@ -75,16 +93,21 @@ pub(crate) fn parse_query_normalized_audit_events_query_from_path(
                 if query_params.source.is_some() {
                     return Err(bad_request(DUPLICATE_SOURCE_RESPONSE));
                 }
-                query_params.source =
-                    Some(normalized_required_value(value, INVALID_SOURCE_RESPONSE)?.to_string());
+                let normalized = normalized_required_value(value, INVALID_SOURCE_RESPONSE)?;
+                if !is_valid_normalized_audit_source(normalized) {
+                    return Err(bad_request(INVALID_SOURCE_RESPONSE));
+                }
+                query_params.source = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("eventType") && key == "eventType" => {
                 if query_params.event_type.is_some() {
                     return Err(bad_request(DUPLICATE_EVENT_TYPE_RESPONSE));
                 }
-                query_params.event_type = Some(
-                    normalized_required_value(value, INVALID_EVENT_TYPE_RESPONSE)?.to_string(),
-                );
+                let normalized = normalized_required_value(value, INVALID_EVENT_TYPE_RESPONSE)?;
+                if !is_valid_normalized_audit_event_type(normalized) {
+                    return Err(bad_request(INVALID_EVENT_TYPE_RESPONSE));
+                }
+                query_params.event_type = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("cursor") && key == "cursor" => {
                 if query_params.cursor.is_some() {
@@ -110,6 +133,19 @@ pub(crate) fn parse_query_normalized_audit_events_query_from_path(
                 ));
             }
             _ => return Err(bad_request(INVALID_QUERY_RESPONSE)),
+        }
+    }
+
+    if let Some(source) = query_params.source.as_deref() {
+        if let Some(event_type) = query_params.event_type.as_deref() {
+            let prefix = if source == "trnm.task" {
+                "trnm.task."
+            } else {
+                "trnm.adapter."
+            };
+            if !event_type.starts_with(prefix) {
+                return Err(bad_request(INVALID_EVENT_TYPE_RESPONSE));
+            }
         }
     }
 
