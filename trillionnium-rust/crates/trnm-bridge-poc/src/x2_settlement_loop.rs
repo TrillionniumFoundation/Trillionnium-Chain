@@ -156,6 +156,9 @@ pub fn drive_minimal_settlement(
             if height == 0 {
                 return Err(SettlementError::InvalidHeight { height });
             }
+            if hb_src.is_none() || hb_tgt.is_none() {
+                return Err(SettlementError::InvalidHeight { height });
+            }
             if let Some(target_height) = hb_tgt {
                 if height < target_height {
                     return Err(SettlementError::InvalidHeight { height });
@@ -974,7 +977,7 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_confirm_without_embedded_heartbeat_metrics_preserves_sparse_overlay_contract() {
+    fn drive_minimal_settlement_confirm_without_embedded_heartbeat_metrics_fails_closed() {
         let mut request = SettlementRequest::new(1, "0xconfirm-sparse-overlay".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -987,29 +990,16 @@ mod tests {
             message: "healthy overlay".to_string(),
         };
 
-        let out = drive_minimal_settlement(
+        let err = drive_minimal_settlement(
             &mut request,
             &token,
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .expect("healthy sparse overlay should remain confirmable");
+        .expect_err("confirm without heartbeat evidence must fail closed");
 
-        assert_eq!(request.status, BridgeStatus::Finalized(701));
-        assert_eq!(
-            out,
-            SettlementStep::Finalized {
-                height: 701,
-                event: SettlementEvent {
-                    phase: "settlement_confirmed",
-                    heartbeat_source_height: None,
-                    heartbeat_target_height: None,
-                    heartbeat_latency_ms: None,
-                    confirm_height: Some(701),
-                    confirm_reason: None,
-                },
-            }
-        );
+        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
+        assert_eq!(request.status, BridgeStatus::Pending);
     }
 
     #[test]

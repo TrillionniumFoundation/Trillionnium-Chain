@@ -1341,6 +1341,33 @@ fn x3_prep_degraded_blank_reason_takes_precedence_over_confirm_failure_reason() 
 }
 
 #[test]
+fn x3_confirm_without_embedded_heartbeat_metrics_fails_closed() {
+    let mut request = SettlementRequest::new(1, "0xmanual-sparse-overlay".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy overlay".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 9999 },
+    )
+    .expect_err("confirm without heartbeat evidence must fail closed");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 9999 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback() {
     let mut request = SettlementRequest::new(1, "0xmanual-hbblank".to_string());
     let token = operator_token();
