@@ -4240,6 +4240,7 @@ mod tests {
         let mut baseline = StateStore::new();
         let mut with_terminal_challenge_evidence = StateStore::new();
         let mut with_different_terminal_outcome = StateStore::new();
+        let mut with_different_challenger_identity = StateStore::new();
 
         let base_task = TaskObject {
             task_id: 406,
@@ -4276,12 +4277,18 @@ mod tests {
         let mut forfeited_terminal = challenged_terminal.clone();
         forfeited_terminal.challenge_bond_forfeited = Some(true);
 
+        let mut challenger_drift_terminal = challenged_terminal.clone();
+        challenger_drift_terminal.challenger = Some("challenger-b".into());
+
         baseline.put_task_new(base_task).unwrap();
         with_terminal_challenge_evidence
             .put_task_new(challenged_terminal)
             .unwrap();
         with_different_terminal_outcome
             .put_task_new(forfeited_terminal)
+            .unwrap();
+        with_different_challenger_identity
+            .put_task_new(challenger_drift_terminal)
             .unwrap();
 
         assert_ne!(
@@ -4293,6 +4300,11 @@ mod tests {
             with_terminal_challenge_evidence.state_root(),
             with_different_terminal_outcome.state_root(),
             "state_root must distinguish refunded-vs-forfeited challenge evidence outcomes for terminal challenged tasks"
+        );
+        assert_ne!(
+            with_terminal_challenge_evidence.state_root(),
+            with_different_challenger_identity.state_root(),
+            "state_root must bind terminal challenge evidence to the exact challenger identity so slash evidence retention cannot replay under a different claimant"
         );
     }
 
