@@ -237,6 +237,20 @@ fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_mi
 }
 
 #[test]
+fn market_score_config_output_saturates_max_reputation_score_delta_without_wrapping() {
+    let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+        price_weight: 1,
+        reputation_weight: u128::MAX,
+        reputation_clamp: i64::MAX,
+    });
+
+    assert_eq!(output.price_weight, 1);
+    assert_eq!(output.reputation_weight, u128::MAX);
+    assert_eq!(output.reputation_clamp, i64::MAX);
+    assert_eq!(output.max_reputation_score_delta, u128::MAX);
+}
+
+#[test]
 fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
     let breakdown = market_score_breakdown(
         50,
