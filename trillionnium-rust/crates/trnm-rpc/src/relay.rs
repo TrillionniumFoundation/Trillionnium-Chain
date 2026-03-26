@@ -952,25 +952,16 @@ impl RelayService {
             ));
         }
 
-        let messages: Vec<RelayEnvelope> = state
-            .queue
-            .iter()
-            .filter(|e| e.sequence >= req.from_seq && e.sequence <= req.to_seq)
-            .cloned()
-            .collect();
         let expected_len = (req.to_seq - req.from_seq + 1) as usize;
-        if messages.len() != expected_len {
-            return Err(anyhow!(
-                "session message gap in requested range: expected={} actual={} from_seq={} to_seq={}",
-                expected_len,
-                messages.len(),
-                req.from_seq,
-                req.to_seq
-            ));
-        }
-
         let start_idx = (req.from_seq - 1) as usize;
         let end_exclusive = req.to_seq as usize;
+        if end_exclusive > state.queue.len() {
+            bail!(
+                "session queue missing for requested range: to_seq={} available={}",
+                req.to_seq,
+                state.queue.len()
+            );
+        }
         if end_exclusive > state.envelope_hashes.len() {
             bail!(
                 "session hash cache missing for requested range: to_seq={} available={}",
@@ -978,6 +969,27 @@ impl RelayService {
                 state.envelope_hashes.len()
             );
         }
+
+        let messages: Vec<RelayEnvelope> = state
+            .queue
+            .iter()
+            .skip(start_idx)
+            .take(expected_len)
+            .cloned()
+            .collect();
+        for (offset, env) in messages.iter().enumerate() {
+            let expected_seq = req.from_seq + offset as u64;
+            if env.sequence != expected_seq {
+                return Err(anyhow!(
+                    "session message gap in requested range: expected_seq={} actual_seq={} from_seq={} to_seq={}",
+                    expected_seq,
+                    env.sequence,
+                    req.from_seq,
+                    req.to_seq
+                ));
+            }
+        }
+
         let leaf_hashes: Vec<[u8; 32]> = state.envelope_hashes[start_idx..end_exclusive].to_vec();
         let (root, proof_paths) = merkle_root_and_proofs(&leaf_hashes);
 
@@ -1666,6 +1678,58 @@ mod tests {
     }
 
     #[test]
+    fn relay_query_session_proof_rejects_noncontiguous_queue_slice() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-gap".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp-gap".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp-gap".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m2".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        {
+            let mut sessions = relay.sessions.lock().unwrap();
+            let state = sessions.get_mut("sp-gap").unwrap();
+            state.queue[2].sequence = 99;
+        }
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 8,
+                session_id: "sp-gap".into(),
+                from_seq: 1,
+                to_seq: 4,
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("session message gap in requested range"));
+    }
+
+    #[test]
     fn relay_session_proof_accepts_uppercase_leaf_hash_hex() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
@@ -2021,7 +2085,7 @@ mod tests {
             .unwrap_err();
         assert!(
             err.to_string()
-                .contains("session message gap in requested range: expected=3 actual=2"),
+                .contains("session message gap in requested range"),
             "unexpected err: {err}"
         );
     }
