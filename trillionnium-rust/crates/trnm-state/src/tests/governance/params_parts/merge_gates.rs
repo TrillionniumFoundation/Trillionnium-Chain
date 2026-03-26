@@ -121,6 +121,7 @@ fn governance_max_block_ms_registry_entry_stays_canonical_and_typed() {
             max: 120_000,
         }
     );
+    assert_eq!(entry.pinned_key_id, None);
     assert!(gov_param_registry_entry("Max_Block_Ms").is_none());
 
     let mut st = StateStore::new();
@@ -142,6 +143,7 @@ fn governance_emergency_pause_registry_entry_stays_canonical_and_typed() {
     assert_eq!(entry.key, "emergency_pause");
     assert_eq!(entry.kind, GovParamKind::Immediate);
     assert_eq!(entry.validator, GovParamValueValidator::StrictBool);
+    assert_eq!(entry.pinned_key_id, Some(EMERGENCY_PAUSE_KEY_ID));
     assert_eq!(EMERGENCY_PAUSE_KEY_ID, 7_999);
     assert!(gov_param_registry_entry("Emergency_Pause").is_none());
 
@@ -164,6 +166,7 @@ fn governance_resolve_authority_registry_entry_stays_canonical_and_typed() {
     assert_eq!(entry.key, "resolve_authority");
     assert_eq!(entry.kind, GovParamKind::Timelocked);
     assert_eq!(entry.validator, GovParamValueValidator::ResolveAuthoritySet);
+    assert_eq!(entry.pinned_key_id, None);
     assert!(gov_param_registry_entry("Resolve_Authority").is_none());
 
     let mut st = StateStore::new();
@@ -259,6 +262,7 @@ fn governance_challenge_min_bond_bounty_bps_registry_entry_stays_canonical_and_t
             max: 100_000,
         }
     );
+    assert_eq!(entry.pinned_key_id, None);
     assert!(gov_param_registry_entry("Challenge_Min_Bond_Bounty_Bps").is_none());
 
     let mut st = StateStore::new();
