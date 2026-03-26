@@ -174,6 +174,21 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn ww_retry_hits_per_tx(&self) -> f64 {
+        ratio_usize(self.stage_ww_hits, self.tx_count)
+    }
+
+    #[inline]
+    pub fn wr_retry_hits_per_tx(&self) -> f64 {
+        ratio_usize(self.stage_wr_hits, self.tx_count)
+    }
+
+    #[inline]
+    pub fn rw_retry_hits_per_tx(&self) -> f64 {
+        ratio_usize(self.stage_rw_hits, self.tx_count)
+    }
+
+    #[inline]
     pub fn ww_retry_share(&self) -> f64 {
         ratio_usize(self.stage_ww_hits, self.conflict_hits)
     }
@@ -2138,6 +2153,44 @@ mod tests {
         let profile = profile_with_stage_hits(0, 0, 0, 0);
 
         assert_eq!(profile.retry_stage_concentration(), 0.0);
+    }
+
+    #[test]
+    fn stage_retry_rate_and_per_tx_helpers_handle_zero_denominators() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 0,
+            grouped_count: 0,
+            max_group_size: 0,
+            min_group_size: 0,
+            avg_group_size: 0.0,
+            hot_object_share: 0.0,
+            conflict_checks: 0,
+            conflict_hits: 0,
+            candidate_groups_scanned: 0,
+            retry_fallback_new_groups: 0,
+            stage_ww_checks: 4,
+            stage_ww_hits: 2,
+            stage_wr_checks: 0,
+            stage_wr_hits: 3,
+            stage_rw_checks: 5,
+            stage_rw_hits: 1,
+        };
+
+        assert!((profile.ww_retry_hit_rate() - 0.5).abs() < f64::EPSILON);
+        assert_eq!(profile.wr_retry_hit_rate(), 0.0);
+        assert!((profile.rw_retry_hit_rate() - 0.2).abs() < 1e-12);
+        assert!((profile.ww_retry_hits_per_tx() - 0.25).abs() < f64::EPSILON);
+        assert!((profile.wr_retry_hits_per_tx() - 0.375).abs() < 1e-12);
+        assert!((profile.rw_retry_hits_per_tx() - 0.125).abs() < f64::EPSILON);
+
+        let zero = profile_with_stage_hits(0, 0, 0, 0);
+        assert_eq!(zero.ww_retry_hit_rate(), 0.0);
+        assert_eq!(zero.wr_retry_hit_rate(), 0.0);
+        assert_eq!(zero.rw_retry_hit_rate(), 0.0);
+        assert_eq!(zero.ww_retry_hits_per_tx(), 0.0);
+        assert_eq!(zero.wr_retry_hits_per_tx(), 0.0);
+        assert_eq!(zero.rw_retry_hits_per_tx(), 0.0);
     }
 
     #[test]

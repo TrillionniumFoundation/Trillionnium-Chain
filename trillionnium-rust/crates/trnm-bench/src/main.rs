@@ -238,12 +238,12 @@ fn main() {
             profile.retry_scan_overhang_per_reused_placement();
         let retry_fallback_share_of_retry_misses =
             profile.retry_fallback_share_of_retry_misses();
-        let stage_ww_hit_rate = ratio(profile.stage_ww_hits, profile.stage_ww_checks);
-        let stage_wr_hit_rate = ratio(profile.stage_wr_hits, profile.stage_wr_checks);
-        let stage_rw_hit_rate = ratio(profile.stage_rw_hits, profile.stage_rw_checks);
-        let stage_ww_hits_per_tx = ratio(profile.stage_ww_hits, profile.tx_count);
-        let stage_wr_hits_per_tx = ratio(profile.stage_wr_hits, profile.tx_count);
-        let stage_rw_hits_per_tx = ratio(profile.stage_rw_hits, profile.tx_count);
+        let stage_ww_hit_rate = profile.ww_retry_hit_rate();
+        let stage_wr_hit_rate = profile.wr_retry_hit_rate();
+        let stage_rw_hit_rate = profile.rw_retry_hit_rate();
+        let stage_ww_hits_per_tx = profile.ww_retry_hits_per_tx();
+        let stage_wr_hits_per_tx = profile.wr_retry_hits_per_tx();
+        let stage_rw_hits_per_tx = profile.rw_retry_hits_per_tx();
         let stage_ww_retry_share = profile.ww_retry_share();
         let stage_wr_retry_share = profile.wr_retry_share();
         let stage_rw_retry_share = profile.rw_retry_share();
