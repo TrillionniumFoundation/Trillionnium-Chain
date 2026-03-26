@@ -74,6 +74,11 @@ ACTUAL_BRANCH="$(git branch --show-current)"
 ACTUAL_BRANCH_REF=""
 ACTUAL_HEAD="$(git rev-parse HEAD)"
 
+if [[ -z "$ACTUAL_BRANCH" ]]; then
+  echo "[FAIL] detached HEAD is not allowed; check out the lane branch before collecting evidence" >&2
+  exit 1
+fi
+
 if [[ -n "$ACTUAL_BRANCH" ]]; then
   ACTUAL_BRANCH_REF="refs/heads/$ACTUAL_BRANCH"
 fi
