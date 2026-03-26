@@ -273,3 +273,53 @@ fn critical_guard_single_slot_still_surfaces_tail_critical_domain_work() {
     assert!(matches!(mempool[1], MockTx::AcceptTask { task_id: 31, .. }));
     assert!(matches!(mempool[2], MockTx::CreateTask { task_id: 32, .. }));
 }
+
+#[test]
+fn critical_guard_spillover_preserves_critical_domain_fifo_across_selection() {
+    let mut mempool = VecDeque::from(vec![
+        MockTx::CreateTask {
+            task_id: 41,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::AcceptTask {
+            task_id: 41,
+            worker: "w1".into(),
+        },
+        MockTx::Challenge {
+            task_id: 41,
+            challenger: "c1".into(),
+            bond: 10,
+        },
+        MockTx::Commit {
+            task_id: 41,
+            worker: "w1".into(),
+            committed_hash: [4u8; 32],
+        },
+        MockTx::Resolve {
+            task_id: 42,
+            slash_worker: false,
+            resolver: "gov".into(),
+        },
+        MockTx::CreateTask {
+            task_id: 42,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+    ]);
+
+    let picked = pick_txs_with_critical_guard(&mut mempool, 4);
+    assert_eq!(picked.len(), 4);
+
+    // The earliest critical tx should still lead selection, and a later
+    // spillovered critical tx must keep its FIFO position within the critical
+    // domain instead of leaping ahead of earlier normal work once the guard cools.
+    assert!(matches!(picked[0], MockTx::Challenge { task_id: 41, .. }));
+    assert!(matches!(picked[1], MockTx::CreateTask { task_id: 41, .. }));
+    assert!(matches!(picked[2], MockTx::AcceptTask { task_id: 41, .. }));
+    assert!(matches!(picked[3], MockTx::Resolve { task_id: 42, .. }));
+
+    assert_eq!(mempool.len(), 2);
+    assert!(matches!(mempool[0], MockTx::Commit { task_id: 41, .. }));
+    assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 42, .. }));
+}
