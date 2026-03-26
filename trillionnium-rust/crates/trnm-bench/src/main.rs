@@ -223,6 +223,7 @@ fn main() {
         let retry_pressure = profile.retry_pressure();
         let retry_fallback_new_group_share = profile.retry_fallback_new_group_share();
         let retry_fallback_share_of_new_groups = profile.retry_fallback_share_of_new_groups();
+        let retry_fallback_share_of_retry_hits = profile.retry_fallback_share_of_retry_hits();
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
         let retry_scan_reuse_rate = profile.retry_scan_reuse_rate();
@@ -289,6 +290,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_fallback_share_of_new_groups={:.4}",
             retry_fallback_share_of_new_groups
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_retry_hits={:.4}",
+            retry_fallback_share_of_retry_hits
         ));
         lines.push(format!(
             "profile.candidate_groups_per_retry_hit={:.4}",
@@ -666,6 +671,7 @@ mod tests {
         assert_eq!(profile.retry_fallback_new_groups, 0);
         assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
         assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_hits(), 0.0);
     }
 
     #[test]
@@ -692,6 +698,7 @@ mod tests {
 
         assert!((profile.retry_fallback_new_group_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_fallback_share_of_new_groups() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_hits() - 0.5).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -729,6 +736,7 @@ mod tests {
         assert_eq!(profile.retry_scan_miss_rate(), 0.0);
         assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
         assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_hits(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
         assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
         assert_eq!(profile.retry_scan_overhang_per_hit(), 0.0);

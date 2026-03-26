@@ -70,6 +70,11 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn retry_fallback_share_of_retry_hits(&self) -> f64 {
+        ratio_usize(self.retry_fallback_new_groups, self.conflict_hits)
+    }
+
+    #[inline]
     pub fn retry_fallback_scan_share(&self) -> f64 {
         ratio_usize(self.retry_fallback_new_groups, self.candidate_groups_scanned)
     }
@@ -2125,6 +2130,7 @@ mod tests {
 
         assert_eq!(profile.retry_scan_misses(), 6);
         assert!((profile.candidate_groups_per_retry_hit() - 2.5).abs() < f64::EPSILON);
+        assert_eq!(profile.retry_fallback_share_of_retry_hits(), 0.0);
         assert!((profile.retry_scan_hit_rate() - 0.4).abs() < f64::EPSILON);
         assert!((profile.retry_scan_miss_rate() - 0.6).abs() < f64::EPSILON);
         assert!((profile.retry_scan_misses_per_tx() - 0.5).abs() < f64::EPSILON);
