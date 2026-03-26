@@ -131,6 +131,108 @@ fn update_proposal_rejects_embedded_proposal_id_mismatch() {
 }
 
 #[test]
+fn update_task_rejects_cross_type_object_ref_fail_closed() {
+    let mut st = StateStore::new();
+    let proposal_ref = st
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 61,
+            proposer: "alice".into(),
+            title: "p".into(),
+            description: "d".into(),
+            status: GovProposalStatus::Draft,
+            yes_votes: 0,
+            no_votes: 0,
+            created_at_height: 1,
+            version: 1,
+        })
+        .unwrap();
+    let original_proposal = st.get_proposal(proposal_ref.id).unwrap();
+
+    let err = st
+        .update_task(
+            proposal_ref,
+            TaskObject {
+                task_id: original_proposal.proposal_id,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Assigned,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: None,
+                challenge_bond_forfeited: None,
+                version: proposal_ref.version,
+            },
+        )
+        .unwrap_err();
+
+    assert!(err.contains("object type mismatch"));
+    assert_eq!(st.get_proposal(original_proposal.proposal_id).unwrap(), original_proposal);
+    assert!(st.get_task(original_proposal.proposal_id).is_none());
+}
+
+#[test]
+fn update_proposal_rejects_cross_type_object_ref_fail_closed() {
+    let mut st = StateStore::new();
+    let task_ref = st
+        .put_task_new(TaskObject {
+            task_id: 71,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .unwrap();
+    let original_task = st.get_task(task_ref.id).unwrap();
+
+    let err = st
+        .update_proposal(
+            task_ref,
+            GovProposalObject {
+                proposal_id: original_task.task_id,
+                proposer: "alice".into(),
+                title: "p".into(),
+                description: "d".into(),
+                status: GovProposalStatus::Voting,
+                yes_votes: 1,
+                no_votes: 0,
+                created_at_height: 1,
+                version: task_ref.version,
+            },
+        )
+        .unwrap_err();
+
+    assert!(err.contains("object type mismatch"));
+    assert_eq!(st.get_task(original_task.task_id).unwrap(), original_task);
+    assert!(st.get_proposal(original_task.task_id).is_none());
+}
+
+#[test]
 fn put_task_new_rejects_zero_id() {
     let mut st = StateStore::new();
     let err = st
