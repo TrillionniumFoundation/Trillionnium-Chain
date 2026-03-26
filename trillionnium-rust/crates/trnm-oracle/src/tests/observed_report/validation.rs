@@ -78,6 +78,33 @@ fn observed_report_maps_quorum_rejection_to_stable_error_label() {
 }
 
 #[test]
+fn observed_report_maps_inconsistent_sample_count_to_stable_quorum_label() {
+    let p = policy();
+    let snap: OracleSnapshot = serde_json::from_value(serde_json::json!({
+        "feed_id": "btc/usd",
+        "value": 100000,
+        "sources": ["coingecko", "chainlink"],
+        "sample_count": 1,
+        "median": 100000,
+        "mad": 120,
+        "window_start_ms": 1000,
+        "window_end_ms": 2000,
+        "snapshot_ts_ms": 10000,
+        "snapshot_hash": "broken"
+    }))
+    .expect("snapshot deserialize");
+
+    let report = validate_snapshot_observed(&p, &snap, 10_100);
+    assert!(!report.ok);
+    assert_eq!(report.error.as_deref(), Some("quorum"));
+    assert_eq!(report.observation.quorum_reject_total, 1);
+    assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+    assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    assert_eq!(report.metrics.accepted_total, 0);
+    assert_eq!(report.metrics.sample_count, 1);
+}
+
+#[test]
 fn observed_report_maps_drift_rejection_to_stable_error_label() {
     let p = policy();
     let snap = snapshot_with(120_000, Some(100_000), 10_000);
