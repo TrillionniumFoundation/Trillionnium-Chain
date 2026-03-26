@@ -351,7 +351,9 @@ fn canonical_source_cardinality(snapshot: &OracleSnapshot) -> u32 {
 }
 
 fn validate_snapshot_sources(snapshot: &OracleSnapshot) -> Result<(), OracleError> {
+    let mut canonical_sequence = Vec::with_capacity(snapshot.sources.len());
     let mut canonical_sources = BTreeSet::new();
+
     for source in &snapshot.sources {
         let raw = source.as_str();
         if raw.trim().is_empty() {
@@ -364,10 +366,23 @@ fn validate_snapshot_sources(snapshot: &OracleSnapshot) -> Result<(), OracleErro
                 canonical,
             });
         }
-        if !canonical_sources.insert(canonical) {
+        if !canonical_sources.insert(canonical.clone()) {
             return Err(OracleError::DuplicateSources);
         }
+        canonical_sequence.push(canonical);
     }
+
+    for window in canonical_sequence.windows(2) {
+        let previous = &window[0];
+        let current = &window[1];
+        if current < previous {
+            return Err(OracleError::NonCanonicalSourceOrdering {
+                previous: previous.clone(),
+                current: current.clone(),
+            });
+        }
+    }
+
     Ok(())
 }
 
@@ -511,6 +526,8 @@ pub enum OracleError {
     },
     #[error("duplicate source ids are not allowed")]
     DuplicateSources,
+    #[error("source ids must be sorted canonically: previous={previous}, current={current}")]
+    NonCanonicalSourceOrdering { previous: String, current: String },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
@@ -1374,6 +1391,70 @@ mod tests {
                 canonical: "chainlink".to_string(),
             }
         );
+    }
+
+    #[test]
+    fn rejects_deserialized_unsorted_sources_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["pyth", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized source ordering must stay canonical");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSourceOrdering {
+                previous: "pyth".to_string(),
+                current: "chainlink".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn observed_report_preserves_unsorted_source_error_without_counter_drift() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["pyth", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some("source ids must be sorted canonically: previous=pyth, current=chainlink")
+        );
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
     }
 
     #[test]
