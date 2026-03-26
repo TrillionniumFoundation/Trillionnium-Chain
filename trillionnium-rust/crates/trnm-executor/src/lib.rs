@@ -2918,6 +2918,27 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_keeps_object_zero_primary_stable_across_asymmetric_role_flips() {
+        let buckets_n = 97usize;
+        let write_narrow = tx(1, vec![o(0), o(5)], vec![o(0), o(11), o(19)]);
+        let read_narrow = tx(2, vec![o(0), o(11), o(19)], vec![o(0), o(5)]);
+
+        // When object id 0 is the canonical primary domain key, lane selection must
+        // still anchor to the smallest distinct global secondary key instead of
+        // drifting toward a wider role-local suffix after read/write role flips.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, 5));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            hot_bucket_hint(&read_narrow, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
