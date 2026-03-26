@@ -98,12 +98,49 @@ fn reputation_gap_bps_from_best_lookup_fails_closed_on_non_canonical_values() {
 }
 
 #[test]
+fn reputation_gap_bps_from_worst_exposes_deterministic_distance_from_lowest_surface() {
+    assert_eq!(reputation_gap_bps_from_worst(ReputationSignal::Accepted), 20_000);
+    assert_eq!(
+        reputation_gap_bps_from_worst(ReputationSignal::AdapterRetryExhausted),
+        6_667
+    );
+    assert_eq!(
+        reputation_gap_bps_from_worst(ReputationSignal::VerifierRejected),
+        3_334
+    );
+    assert_eq!(
+        reputation_gap_bps_from_worst(ReputationSignal::AdapterNonRetriable),
+        0
+    );
+}
+
+#[test]
+fn reputation_gap_bps_from_worst_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let gap_bps = reputation_gap_bps_from_worst(signal);
+        let impact = reputation_impact(signal);
+        assert_eq!(reputation_signal_from_gap_bps_from_worst(gap_bps), Some(signal));
+        assert_eq!(reputation_impact_from_gap_bps_from_worst(gap_bps), Some(impact));
+    }
+}
+
+#[test]
+fn reputation_gap_bps_from_worst_lookup_fails_closed_on_non_canonical_values() {
+    assert_eq!(reputation_signal_from_gap_bps_from_worst(-1), None);
+    assert_eq!(reputation_signal_from_gap_bps_from_worst(1), None);
+    assert_eq!(reputation_signal_from_gap_bps_from_worst(6_666), None);
+    assert_eq!(reputation_impact_from_gap_bps_from_worst(19_999), None);
+}
+
+#[test]
 fn reputation_rank_gap_and_score_axes_stay_in_lockstep() {
     let accepted_score_bps = reputation_score_bps(ReputationSignal::Accepted);
+    let worst_score_bps = reputation_score_bps(ReputationSignal::AdapterNonRetriable);
 
     for (expected_rank, signal) in CANONICAL_REPUTATION_SIGNAL_ORDER.iter().enumerate() {
         let score_bps = reputation_score_bps(*signal);
         let gap_bps = reputation_gap_bps_from_best(*signal);
+        let gap_from_worst_bps = reputation_gap_bps_from_worst(*signal);
         let rank_ordinal = reputation_rank_ordinal(*signal);
         let impact = reputation_impact(*signal);
 
@@ -111,12 +148,18 @@ fn reputation_rank_gap_and_score_axes_stay_in_lockstep() {
         assert_eq!(reputation_signal_from_rank_ordinal(rank_ordinal), Some(*signal));
         assert_eq!(reputation_impact_from_rank_ordinal(rank_ordinal), Some(impact));
         assert_eq!(score_bps + gap_bps, accepted_score_bps);
+        assert_eq!(score_bps - gap_from_worst_bps, worst_score_bps);
+        assert_eq!(gap_bps + gap_from_worst_bps, accepted_score_bps - worst_score_bps);
 
         if expected_rank > 0 {
             let prev = CANONICAL_REPUTATION_SIGNAL_ORDER[expected_rank - 1];
             assert!(
                 reputation_gap_bps_from_best(prev) < gap_bps,
                 "higher rank ordinals must always sit farther from the accepted baseline"
+            );
+            assert!(
+                reputation_gap_bps_from_worst(prev) > gap_from_worst_bps,
+                "higher rank ordinals must always sit closer to the worst surface"
             );
             assert!(
                 reputation_score_bps(prev) > score_bps,
