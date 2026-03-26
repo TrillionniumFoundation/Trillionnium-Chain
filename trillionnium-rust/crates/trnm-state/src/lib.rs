@@ -4375,6 +4375,54 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_checkpoint_state_root_with_edge_whitespace() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "state-root-1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: " state-root-1 ".into(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject checkpoint state_root_hex with edge whitespace so restart-time checkpoint proofs cannot hide layout drift inside legacy state-root surfaces"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_non_ascii_checkpoint_state_root_surface() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "state-root-1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: "state-root-猫头鹰".into(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject checkpoint state_root_hex with non-ASCII layout so restart-time checkpoint proofs cannot depend on locale-sensitive legacy state-root surfaces"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_wal_state_root_with_edge_whitespace() {
         let wal_entry = WalMeta {
             height: 1,
