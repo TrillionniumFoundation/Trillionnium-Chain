@@ -195,6 +195,8 @@ for node in 1 2 3 4; do
   config_path="$WORKSPACE_ROOT/configs/node${node}.toml"
   if [[ -f "$config_path" ]]; then
     config_sha256="$(shasum -a 256 "$config_path" | awk '{print $1}')"
+  elif [[ "$VALIDATOR_COUNT" =~ ^[0-9]+$ ]] && (( node > VALIDATOR_COUNT )); then
+    config_sha256="<not-used>"
   else
     config_sha256="<not-found>"
   fi
