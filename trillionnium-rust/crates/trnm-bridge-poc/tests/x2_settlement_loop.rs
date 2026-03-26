@@ -47,6 +47,29 @@ fn x2_happy_path_heartbeat_ok_then_confirm_finalize() {
 }
 
 #[test]
+fn x2_confirm_rejects_stale_source_height_once_heartbeat_overlay_has_caught_up() {
+    let mut request = SettlementRequest::new(1, "0xstronger-finality-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(640, 640, 17);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 640 },
+    )
+    .expect_err("caught-up overlay must require the stronger source+1 boundary");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 640 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x2_failure_path_confirm_failed_triggers_compensation_revert() {
     let mut request = SettlementRequest::new(1, "0xbadf00d".to_string());
     let token = operator_token();
