@@ -96,3 +96,32 @@ fn reputation_gap_bps_from_best_lookup_fails_closed_on_non_canonical_values() {
     assert_eq!(reputation_signal_from_gap_bps_from_best(13_334), None);
     assert_eq!(reputation_impact_from_gap_bps_from_best(19_999), None);
 }
+
+#[test]
+fn reputation_rank_gap_and_score_axes_stay_in_lockstep() {
+    let accepted_score_bps = reputation_score_bps(ReputationSignal::Accepted);
+
+    for (expected_rank, signal) in CANONICAL_REPUTATION_SIGNAL_ORDER.iter().enumerate() {
+        let score_bps = reputation_score_bps(*signal);
+        let gap_bps = reputation_gap_bps_from_best(*signal);
+        let rank_ordinal = reputation_rank_ordinal(*signal);
+        let impact = reputation_impact(*signal);
+
+        assert_eq!(rank_ordinal, expected_rank as u8);
+        assert_eq!(reputation_signal_from_rank_ordinal(rank_ordinal), Some(*signal));
+        assert_eq!(reputation_impact_from_rank_ordinal(rank_ordinal), Some(impact));
+        assert_eq!(score_bps + gap_bps, accepted_score_bps);
+
+        if expected_rank > 0 {
+            let prev = CANONICAL_REPUTATION_SIGNAL_ORDER[expected_rank - 1];
+            assert!(
+                reputation_gap_bps_from_best(prev) < gap_bps,
+                "higher rank ordinals must always sit farther from the accepted baseline"
+            );
+            assert!(
+                reputation_score_bps(prev) > score_bps,
+                "higher rank ordinals must always keep a strictly worse normalized score"
+            );
+        }
+    }
+}
