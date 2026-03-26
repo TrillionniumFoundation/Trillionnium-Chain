@@ -485,9 +485,10 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
-    pinned_key_ids
-        .iter()
-        .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
+    governance_expected_key_id(key)
+        .filter(|expected_id| pinned_key_ids.iter().any(|(pinned_key, pinned_id)| {
+            *pinned_key == key && *pinned_id == *expected_id
+        }))
 }
 
 #[allow(dead_code)]
@@ -500,6 +501,10 @@ fn validate_governance_key_id_from_lists(
     key: &str,
     key_id: u64,
 ) -> Result<(), String> {
+    if pinned_key_ids == GOV_PINNED_KEY_IDS {
+        return validate_gov_param_key_id_policy(key, key_id);
+    }
+
     if let Some(expected_id) = governance_pinned_key_id_from_lists(pinned_key_ids, key) {
         if key_id != expected_id {
             return Err(format!(
@@ -8953,6 +8958,25 @@ mod tests {
 
         assert_eq!(governance_expected_key_id("resolve_authority"), None);
         assert_eq!(governance_expected_key_for_id(7_312), None);
+    }
+
+    #[test]
+    fn governance_list_based_key_id_validation_reuses_shared_pinned_policy() {
+        assert!(validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 7_999)
+            .is_ok());
+
+        let err =
+            validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 8_000)
+                .expect_err("list-based validation must reject non-canonical pinned ids");
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        let err = validate_governance_key_id_from_lists(
+            GOV_PINNED_KEY_IDS,
+            "resolve_authority",
+            EMERGENCY_PAUSE_KEY_ID,
+        )
+        .expect_err("list-based validation must reject reusing reserved ids across keys");
+        assert!(err.contains("expected_key=emergency_pause"), "{err}");
     }
 
     #[test]
