@@ -5731,6 +5731,141 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
+    let wal = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "proposal-7".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("canonical checkpoint/WAL evidence should expose a DA/light-verifier summary");
+
+    assert!(summary.contains("da_light_surface=checkpoint-wal-v1"));
+    assert!(summary.contains("light_verifier_surface=checkpoint-wal-v1"));
+    assert!(summary.contains("checkpoint_binding_fields=height,state_root,wal_entry_hash"));
+    assert!(summary.contains("checkpoint_tuple_order=height,state_root,wal_entry_hash"));
+    assert!(summary.contains("checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"));
+    assert!(summary.contains("checkpoint_commitment_fields=height,state_root,wal_entry_hash"));
+    assert!(summary.contains("checkpoint_commitment_kind=canonical-hex-32b"));
+    assert!(summary.contains("checkpoint_commitment_bytes=32"));
+    assert!(summary.contains("checkpoint_height=7"));
+    assert!(summary.contains("checkpoint_height_encoding=le-u64"));
+    assert!(summary.contains("checkpoint_height_bytes=8"));
+    assert!(summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
+    assert!(summary.contains("checkpoint_state_root_bytes=32"));
+    assert!(summary.contains("checkpoint_wal_entry_hash_kind=canonical-hex-32b"));
+    assert!(summary.contains("checkpoint_wal_entry_hash_bytes=32"));
+    assert!(summary.contains("checkpoint_height_matches_wal=true"));
+    assert!(summary.contains("checkpoint_state_root_matches_wal=true"));
+    assert!(summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
+    assert!(summary.contains("checkpoint_surface_canonical=true"));
+    assert!(summary.contains("wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash"));
+    assert!(summary.contains("wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash"));
+    assert!(summary.contains("wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?)"));
+    assert!(summary.contains("wal_height=7"));
+    assert!(summary.contains("wal_height_encoding=le-u64"));
+    assert!(summary.contains("wal_height_bytes=8"));
+    assert!(summary.contains("wal_round=3"));
+    assert!(summary.contains("wal_round_encoding=le-u64"));
+    assert!(summary.contains("wal_round_bytes=8"));
+    assert!(summary.contains("wal_state_root_kind=canonical-hex-32b"));
+    assert!(summary.contains("wal_state_root_bytes=32"));
+    assert!(summary.contains("wal_content_hash_kind=canonical-hex-32b"));
+    assert!(summary.contains("wal_content_hash_bytes=32"));
+    assert!(summary.contains("wal_content_hash_matches_checkpoint=true"));
+    assert!(summary.contains("wal_content_hash_matches_checkpoint_wal_entry_hash=true"));
+    assert!(summary.contains("wal_committed=true"));
+    assert!(summary.contains("wal_committed_encoding=u8"));
+    assert!(summary.contains("wal_committed_bytes=1"));
+    assert!(summary.contains(&format!("wal_prev_hash={}", "cd".repeat(32))));
+    assert!(summary.contains("wal_prev_hash_present=true"));
+    assert!(summary.contains("wal_prev_hash_kind=linked"));
+    assert!(summary.contains("wal_prev_hash_bytes=32"));
+    assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+    assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
+    assert!(summary.contains("wal_proposal_hash=proposal-7"));
+    assert!(summary.contains("wal_proposal_hash_present=true"));
+    assert!(summary.contains("wal_proposal_hash_kind=opaque-ascii"));
+    assert!(summary.contains("wal_proposal_hash_bytes=10"));
+    assert!(summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max128"));
+    assert!(summary.contains("wal_proposal_hash_surface_canonical=true"));
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "genesis-proposal".into(),
+        committed: true,
+        state_root_hex: "ef".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("genesis checkpoint/WAL evidence should still expose a DA/light-verifier summary");
+
+    assert!(summary.contains("wal_prev_hash=none"));
+    assert!(summary.contains("wal_prev_hash_present=false"));
+    assert!(summary.contains("wal_prev_hash_kind=genesis"));
+    assert!(summary.contains("wal_prev_hash_bytes=0"));
+    assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+    assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should produce a DA/light-verifier summary"
+    );
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex = "not-hex".into();
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &wal).is_none(),
+        "noncanonical checkpoint state_root_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+
+    let mut bad_wal = wal.clone();
+    bad_wal.proposal_hash = "proposal\n4".into();
+    bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.wal_entry_hash_hex = bad_wal.content_hash_hex();
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "noncanonical WAL proposal_hash surfaces must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
