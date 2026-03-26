@@ -1005,6 +1005,28 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_reopens_critical_admissibility_as_soon_as_dedicated_reserve_reopens() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Fill normal capacity, then force one critical tx to spill into normal
+        // capacity while another occupies the dedicated reserve slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Draining the dedicated critical occupant should immediately reopen fresh
+        // critical admissibility even though an older critical copy still occupies
+        // borrowed normal capacity.
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.queued_counts(), (3, 0, 3));
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+    }
+
+    #[test]
     fn qos_snapshot_resets_cleanly_after_reserve_only_full_drain_and_idle_poll() {
         let mut g = LaneAdmissionGate::new(3, 3);
 
