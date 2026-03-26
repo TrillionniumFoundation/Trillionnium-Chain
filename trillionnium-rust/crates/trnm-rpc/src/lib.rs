@@ -95,6 +95,8 @@ pub struct OracleValidateSnapshotResponse {
 }
 
 impl OracleValidateSnapshotResponse {
+    const ERROR_LABEL_MAX_LEN: usize = 160;
+
     pub fn classified_reject_total(&self) -> u32 {
         self.metrics.classified_reject_total()
     }
@@ -127,8 +129,21 @@ impl OracleValidateSnapshotResponse {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn error_label_contract_consistent(&self) -> bool {
+        match self.error.as_deref() {
+            None => true,
+            Some(label) => {
+                !label.is_empty()
+                    && label.len() <= Self::ERROR_LABEL_MAX_LEN
+                    && label == label.trim()
+                    && !label.chars().any(char::is_control)
+            }
+        }
+    }
+
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
+            && self.error_label_contract_consistent()
             && self.error.is_some()
             && self.metrics.accepted_total == 0
             && self.classified_reject_total() == 0
@@ -141,7 +156,9 @@ impl OracleValidateSnapshotResponse {
         let result_label_consistent = if self.ok {
             self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
         } else {
-            self.error.is_some() && self.metrics.accepted_total == 0
+            self.error_label_contract_consistent()
+                && self.error.is_some()
+                && self.metrics.accepted_total == 0
         };
         let source_cardinality_consistent = if self.metrics.sample_count == 0 {
             self.metrics.oracle_source_cardinality == 0
@@ -1314,6 +1331,42 @@ mod tests {
         assert!(out.classified_outcome_conserves_sample_count());
         assert!(out.observation_classified_outcome_conserves_sample_count());
         assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_noncanonical_unclassified_error_labels(
+    ) {
+        let invalid_errors = vec![
+            " rate".to_string(),
+            "rate ".to_string(),
+            "rate\nlimit".to_string(),
+            "r".repeat(OracleValidateSnapshotResponse::ERROR_LABEL_MAX_LEN + 1),
+        ];
+
+        for error in invalid_errors {
+            let out: OracleValidateSnapshotResponse = OracleValidationReport {
+                ok: false,
+                now_ts_ms: 798,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some(error.to_string()),
+            }
+            .into();
+
+            assert!(!out.bridge_contract_consistent(), "error={error:?}");
+        }
     }
 
     #[test]
