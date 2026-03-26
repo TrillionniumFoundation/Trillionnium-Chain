@@ -17,5 +17,9 @@ mod tests_adapter_path_classification_output;
 mod tests_adapter_path_classification_reputation_surface_export;
 
 #[cfg(test)]
+#[path = "tests_adapter_path_classification_reputation_score_bps.rs"]
+mod tests_adapter_path_classification_reputation_score_bps;
+
+#[cfg(test)]
 #[path = "tests_adapter_path_classification_retry.rs"]
 mod tests_adapter_path_classification_retry;

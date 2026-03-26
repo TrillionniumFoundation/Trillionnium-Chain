@@ -1898,6 +1898,30 @@ pub(crate) fn reputation_weight_bps(signal: ReputationSignal) -> u16 {
     ((u32::from(impact.tier) * 10_000) / u32::from(max_tier)) as u16
 }
 
+pub(crate) fn reputation_score_bps(signal: ReputationSignal) -> i32 {
+    let impact = reputation_impact(signal);
+    let max_abs_delta = CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .map(|(_, impact)| impact.delta.abs())
+        .max()
+        .unwrap_or(0);
+    if max_abs_delta == 0 {
+        return 0;
+    }
+
+    (impact.delta * 10_000) / max_abs_delta
+}
+
+pub(crate) fn reputation_signal_from_score_bps(score_bps: i32) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER
+        .iter()
+        .find_map(|signal| (reputation_score_bps(*signal) == score_bps).then_some(*signal))
+}
+
+pub(crate) fn reputation_impact_from_score_bps(score_bps: i32) -> Option<ReputationImpact> {
+    reputation_signal_from_score_bps(score_bps).map(reputation_impact)
+}
+
 pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface {
     let impact = reputation_impact(signal);
     ReputationSurface {
