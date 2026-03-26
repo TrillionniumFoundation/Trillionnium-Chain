@@ -12,6 +12,8 @@ fi
 required_lines=(
   'branch_ref='
   'head_sha='
+  '--expected-branch-ref "refs/heads/$EXPECTED_BRANCH"'
+  '--expected-branch-ref "$EXPECTED_BRANCH_REF"'
   'CURRENT_BRANCH="$(git branch --show-current)"'
   'CURRENT_HEAD="$(git rev-parse HEAD)"'
   'test -n "$CURRENT_BRANCH"'

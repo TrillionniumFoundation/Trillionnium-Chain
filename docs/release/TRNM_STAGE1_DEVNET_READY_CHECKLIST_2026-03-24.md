@@ -83,6 +83,7 @@ rollback_entrypoint=
 最少要求：
 - `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
 - `branch` / `branch_ref` / `head_sha` 与 `commit_short` 共同固定这次证据绑定的是哪一条 lane 引用与哪一个精确提交，避免只记录短 branch 名后在多 worktree 并行时发生同名误判；
+- 预检命令中显式传入 `--expected-branch-ref "refs/heads/$EXPECTED_BRANCH"`，可把“采集到的 branch_ref”与“操作者声称要验证的 refs/heads/... ”绑定到同一条 fail-closed 校验链路，而不是仅靠脚本推导；
 - `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个 `trnm-node` 构建”；
 - 若本轮使用 `trnm-cli` 做查询 / handoff / 预检，则 `cli_binary_sha256` 与 `cli_build_command` 必须能回答“操作员看到的结果来自哪一个 CLI 构建”；
 - `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
@@ -93,6 +94,7 @@ rollback_entrypoint=
 ./scripts/v2/collect_release_operator_preflight.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch "$EXPECTED_BRANCH" \
+  --expected-branch-ref "refs/heads/$EXPECTED_BRANCH" \
   --expected-head "$EXPECTED_HEAD" \
   --previous-stable-anchor "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}" \
   --rollback-entrypoint "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
@@ -148,11 +150,13 @@ done
 ```bash
 EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
 EXPECTED_BRANCH="lane/refXX-scope-name"
+EXPECTED_BRANCH_REF="refs/heads/$EXPECTED_BRANCH"
 EXPECTED_HEAD="$(git -C "$EXPECTED_WORKTREE_ROOT" rev-parse HEAD)"
 cd "$EXPECTED_WORKTREE_ROOT"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch "$EXPECTED_BRANCH" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   --expected-head "$EXPECTED_HEAD"
 ```
 
