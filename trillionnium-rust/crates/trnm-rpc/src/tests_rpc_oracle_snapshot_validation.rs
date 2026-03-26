@@ -51,6 +51,29 @@ fn oracle_validate_snapshot_response_reports_drift_rejection() {
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_exact_drift_boundary_fail_closed() {
+    let policy_path = write_json_fixture("oracle-policy-drift-boundary", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-drift-boundary",
+        &oracle_snapshot_fixture(105_000, Some(100_000), 10_000),
+    );
+
+    let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect("boundary drift oracle validation response");
+
+    assert!(!out.ok);
+    assert_eq!(out.now_ts_ms, 10_100);
+    assert_eq!(out.observation.outcome, "drift");
+    assert_eq!(out.metrics.oracle_drift_reject_total, 1);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert_eq!(out.metrics.accepted_total, 0);
+    assert_eq!(out.error.as_deref(), Some("deviation exceeded"));
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_uses_canonical_source_cardinality_for_duplicate_source_ids() {
     let policy_path = write_json_fixture("oracle-policy-duplicate-sources", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(

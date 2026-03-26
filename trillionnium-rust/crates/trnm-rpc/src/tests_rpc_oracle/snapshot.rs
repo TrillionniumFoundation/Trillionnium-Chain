@@ -253,7 +253,7 @@ pub(crate) fn oracle_validate_snapshot_response(
     let stale = now_ts_ms.saturating_sub(snapshot_val.observed_at_ms) > policy_val.max_staleness_ms;
     let quorum = cardinality < policy_val.min_source_count as u32;
     let drift = compute_deviation_bps(snapshot_val.aggregate_price, snapshot_val.reference_price)
-        > policy_val.max_deviation_bps;
+        >= policy_val.max_deviation_bps;
 
     if stale {
         outcome = "stale";
