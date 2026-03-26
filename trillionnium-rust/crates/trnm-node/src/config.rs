@@ -23,11 +23,21 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not be empty",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: rpc_addr must not contain whitespace",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
         !p2p_addr.is_empty(),
         "invalid node config {}: p2p_addr must not be empty",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: p2p_addr must not contain whitespace",
         path
     );
     anyhow::ensure!(
@@ -103,6 +113,41 @@ mod tests {
             err.to_string()
                 .contains("rpc_addr and p2p_addr must differ"),
             "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_internal_whitespace_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1 :7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr with internal whitespace must fail");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain whitespace"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:700 1".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr with internal whitespace must fail");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain whitespace"),
+            "unexpected error: {p2p_err:#}"
         );
     }
 }
