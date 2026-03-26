@@ -1852,6 +1852,21 @@ mod tests {
     }
 
     #[test]
+    fn read_only_same_object_different_versions_remains_non_conflicting() {
+        let older = tx(1, vec![ObjectRef { id: 77, version: 1 }], vec![]);
+        let newer = tx(2, vec![ObjectRef { id: 77, version: 2 }], vec![]);
+
+        assert!(
+            !detect_conflict(&older, &newer),
+            "pure read/read access must remain non-conflicting even when equivalent Sui-style object refs carry different versions"
+        );
+        assert!(
+            !detect_conflict(&newer, &older),
+            "read/read conflict classification must stay symmetric across object-ref version drift"
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
