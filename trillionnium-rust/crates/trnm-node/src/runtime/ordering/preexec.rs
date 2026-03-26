@@ -240,3 +240,25 @@ pub(crate) fn pre_execute_group_parallel(
 ) -> (Vec<u64>, u64) {
     pool.execute_group(group_ids)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_group_ids_preserves_first_seen_order_for_short_replay_lists() {
+        let (normalized, replayed) = normalize_group_ids_for_preexec(&[4, 2, 4, 3, 2, 4]);
+
+        assert_eq!(normalized, vec![4, 2, 3]);
+        assert_eq!(replayed, 3);
+    }
+
+    #[test]
+    fn normalize_group_ids_preserves_first_seen_order_for_long_replay_lists() {
+        let (normalized, replayed) =
+            normalize_group_ids_for_preexec(&[7, 3, 7, 5, 3, 9, 7, 11, 5, 13, 9, 15]);
+
+        assert_eq!(normalized, vec![7, 3, 5, 9, 11, 13, 15]);
+        assert_eq!(replayed, 5);
+    }
+}
