@@ -90,7 +90,8 @@ impl PreExecPool {
         let (unique_group_ids, replayed_ids) = normalize_group_ids_for_preexec(&group_ids);
         if replayed_ids > 0 {
             println!(
-                "[preexec] deduped_replayed_group_ids={} unique_group_ids={}",
+                "[preexec] candidate_height={} deduped_replayed_group_ids={} unique_group_ids={}",
+                candidate_height,
                 replayed_ids,
                 unique_group_ids.len()
             );
