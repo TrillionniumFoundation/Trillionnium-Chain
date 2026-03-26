@@ -438,3 +438,41 @@ fn restore_task_rejects_cross_type_id_takeover_fail_closed() {
         "cross-type restore attempts must leave canonical state unchanged"
     );
 }
+
+#[test]
+fn restore_gov_param_scrubs_stale_pending_resolve_on_same_id() {
+    let mut st = StateStore::new();
+    st.restore_pending_resolve_approval(
+        29,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 1,
+        }),
+    );
+    assert_eq!(st.pending_resolve_approval(29), Some((true, 1)));
+
+    st.restore_gov_param(
+        29,
+        Some(GovParamObject {
+            key_id: 29,
+            key: "monetary_base_burn_per_tick".into(),
+            value: "11".into(),
+            version: 1,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(29),
+        None,
+        "restoring a non-task object into an id slot must scrub stale staged resolve state bound to the old task identity"
+    );
+    assert_eq!(
+        st.get_param(29)
+            .map(|param| (param.key_id, param.key, param.value, param.version)),
+        Some((29, "monetary_base_burn_per_tick".into(), "11".into(), 1)),
+        "restore_gov_param should still materialize the canonical governance object after scrubbing stale task-only residue"
+    );
+}

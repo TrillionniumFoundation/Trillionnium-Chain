@@ -2380,6 +2380,7 @@ impl StateStore {
                         value: ObjectValue::GovParam(snapshot),
                     },
                 );
+                self.pending_resolve_approvals.remove(&key_id);
                 self.invalidate_state_root_cache();
             }
             None => {
