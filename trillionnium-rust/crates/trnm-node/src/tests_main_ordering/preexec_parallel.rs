@@ -112,3 +112,39 @@ fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
     .unwrap_err();
     assert_eq!(classify_apply_error(&err), "deadline_exceeded");
 }
+
+#[test]
+fn zero_worker_ordering_falls_back_to_single_worker_for_legacy_and_decoupled_paths() {
+    let state = StateStore::new();
+    let picked = vec![
+        MockTx::CreateTask {
+            task_id: 4_180,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::CreateTask {
+            task_id: 4_181,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+        MockTx::AcceptTask {
+            task_id: 999_999,
+            worker: "worker4182".into(),
+        },
+    ];
+
+    let legacy_single = decide_order_for_commit(&state, &picked, 1, false, 77);
+    let legacy_zero = decide_order_for_commit(&state, &picked, 0, false, 77);
+    let decoupled_single = decide_order_for_commit(&state, &picked, 1, true, 77);
+    let decoupled_zero = decide_order_for_commit(&state, &picked, 0, true, 77);
+
+    assert_eq!(legacy_single.ordered_ids, vec![1, 2]);
+    assert_eq!(legacy_single.rejected, 1);
+    assert_eq!(legacy_zero.ordered_ids, legacy_single.ordered_ids);
+    assert_eq!(legacy_zero.rejected, legacy_single.rejected);
+
+    assert_eq!(decoupled_single.ordered_ids, vec![1, 2]);
+    assert_eq!(decoupled_single.rejected, 1);
+    assert_eq!(decoupled_zero.ordered_ids, decoupled_single.ordered_ids);
+    assert_eq!(decoupled_zero.rejected, decoupled_single.rejected);
+}
