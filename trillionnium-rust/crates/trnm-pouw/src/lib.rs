@@ -1983,6 +1983,18 @@ pub fn apply_timeout(
 
     validate_challenge_accounting_invariants(&task)?;
 
+    if matches!(task.status, TaskStatus::Completed)
+        && task.challenge_window_blocks_snapshot.is_some()
+        && task.challenge_bond.is_none()
+        && task.challenger.is_none()
+        && task.challenge_bond_forfeited.is_none()
+        && task.challenged_at_height.is_none()
+        && task.challenge_deadline_height.is_none()
+        && task.resolve_deadline_height.is_none()
+    {
+        return Ok(task_ref);
+    }
+
     let mut forfeit_challenge_bond = false;
     let mut refund_challenge_bond = false;
 
