@@ -171,6 +171,69 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
 }
 
 #[test]
+fn restore_task_rejects_cross_type_slot_takeover_and_preserves_canonical_root() {
+    let mut state = StateStore::new();
+    let proposal = GovProposalObject {
+        proposal_id: 10_350,
+        title: "retain canonical proposal owner".into(),
+        proposer: "alice".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    };
+
+    state
+        .put_proposal_new(proposal.clone())
+        .expect("canonical governance proposal should be inserted first");
+    let root_before = state.state_root();
+
+    state.restore_task(
+        proposal.proposal_id,
+        Some(TaskObject {
+            task_id: proposal.proposal_id,
+            creator: "bob".into(),
+            bounty: 77,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(proposal.proposal_id).is_none(),
+        "cross-type task restore must fail closed instead of materializing a task into an existing non-task object slot"
+    );
+    assert_eq!(
+        state.get_proposal(proposal.proposal_id),
+        Some(proposal),
+        "cross-type task restore must preserve the canonical proposal that already owns the object id"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "cross-type task restore rejection must preserve the canonical deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after rejecting a cross-type task restore must deterministically reuse the preserved cached root"
+    );
+}
+
+#[test]
 fn restore_task_none_clears_task_slot_and_rewinds_root() {
     let mut state = StateStore::new();
     let task = TaskObject {
