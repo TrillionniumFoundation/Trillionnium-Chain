@@ -205,17 +205,17 @@ fn retained_checkpoint_da_surface(wal_dir: &Path, recovered: &RecoveredWalState)
     };
 
     let Ok(entries) = load_wal_meta_entries(wal_dir) else {
-        return "none".into();
+        return "unavailable:wal_meta_unreadable".into();
     };
 
-    entries
-        .iter()
-        .find(|entry| {
-            entry.height == checkpoint.height
-                && entry.content_hash_hex() == checkpoint.wal_entry_hash_hex
-        })
-        .and_then(|entry| trnm_state::checkpoint_da_light_verifier_summary(checkpoint, entry))
-        .unwrap_or_else(|| "none".into())
+    let Some(entry) = entries.iter().find(|entry| {
+        entry.height == checkpoint.height && entry.content_hash_hex() == checkpoint.wal_entry_hash_hex
+    }) else {
+        return "unavailable:no_matching_wal_entry".into();
+    };
+
+    trnm_state::checkpoint_da_light_verifier_summary(checkpoint, entry)
+        .unwrap_or_else(|| "unavailable:noncanonical_checkpoint_wal_pair".into())
 }
 
 pub(crate) fn metadata_only_recovery_error(
