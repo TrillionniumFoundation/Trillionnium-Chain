@@ -119,6 +119,32 @@ fn rejects_deviation_exactly_at_threshold() {
 }
 
 #[test]
+fn accepts_deviation_one_bps_inside_threshold() {
+    let p = policy();
+    let snap = snapshot_with(104_999, Some(100_000), 10_000); // 499 bps
+
+    p.validate_snapshot(&snap, 10_100)
+        .expect("snapshot one bps inside drift threshold should remain admissible");
+}
+
+#[test]
+fn rejects_future_snapshot_before_staleness_or_quorum_checks() {
+    let p = policy();
+    let snap = snapshot_with(100_000, Some(100_000), 10_101);
+
+    let err = p
+        .validate_snapshot(&snap, 10_100)
+        .expect_err("future snapshot should fail closed");
+    assert!(matches!(
+        err,
+        OracleError::FutureSnapshot {
+            snapshot_ts_ms: 10_101,
+            now_ts_ms: 10_100,
+        }
+    ));
+}
+
+#[test]
 fn zero_deviation_policy_accepts_only_exact_median_matches() {
     let p = OraclePolicy {
         min_sources: 2,
