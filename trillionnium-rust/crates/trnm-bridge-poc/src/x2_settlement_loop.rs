@@ -667,6 +667,54 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_cannot_be_upgraded_by_valid_confirm_height() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-valid-confirm".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "relay heartbeat degraded".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 700 },
+        )
+        .expect("degraded heartbeat should fail closed before valid confirm height can finalize");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Compensated { reason, event } => {
+                assert_eq!(reason, "heartbeat degraded: relay heartbeat degraded");
+                assert_eq!(event.phase, "relay_heartbeat_degraded");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(19));
+                assert_eq!(event.confirm_height, None);
+                assert_eq!(
+                    event.confirm_reason.as_deref(),
+                    Some("heartbeat degraded: relay heartbeat degraded")
+                );
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: relay heartbeat degraded".to_string())
+        );
+    }
+
+    #[test]
     fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
         let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
         let token = CapabilityToken {
