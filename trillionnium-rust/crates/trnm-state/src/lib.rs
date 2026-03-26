@@ -10689,35 +10689,9 @@ mod tests {
 
     #[test]
     fn governance_allowed_keys_schema_merge_gate_is_explicit() {
-        // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
-        // must update this table with an invalid sample that is expected to fail.
-        let expected_invalid_samples = [
-            ("max_block_ms", "9"),
-            ("max_parallel_workers", "0"),
-            ("min_worker_stake", "0"),
-            ("challenge_min_bond", "0"),
-            ("challenge_min_bond_bounty_bps", "100001"),
-            ("challenge_min_bond_worker_stake_bps", "100001"),
-            ("challenge_window_blocks", "99"),
-            ("challenge_success_bounty", "-1"),
-            ("llm_meter_prompt_token_weight", "-1"),
-            ("llm_meter_generated_token_weight", "-1"),
-            ("llm_meter_decode_step_weight", "-1"),
-            ("llm_meter_kv_byte_weight", "-1"),
-            ("llm_meter_min_accept_work_units", "-1"),
-            ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
-            ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
-            ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
-            ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
-            ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
-            ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-            ("resolve_authority", "   "),
-            ("emergency_pause", "TRUE"),
-            ("monetary_policy_tick_interval_blocks", "0"),
-            ("monetary_policy_tick_cooldown_blocks", "0"),
-            ("monetary_base_issuance_per_tick", "1000000000001"),
-            ("monetary_base_burn_per_tick", "1000000000001"),
-        ];
+        // Exhaustive merge-gate guard for whitelist+schema safety. Reuse the canonical
+        // invalid-sample registry instead of maintaining a second hand-written copy here.
+        let expected_invalid_samples = GOV_SCHEMA_INVALID_SAMPLES;
 
         assert_eq!(
             GOV_ALLOWED_KEYS.len(),
