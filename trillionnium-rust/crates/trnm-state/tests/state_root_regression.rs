@@ -5751,6 +5751,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
 
     assert!(summary.contains("da_light_surface=checkpoint-wal-v1"));
     assert!(summary.contains("light_verifier_surface=checkpoint-wal-v1"));
+    assert!(summary.contains("da_anchor_total_bytes=96"));
     assert!(summary.contains(&format!("da_state_commitment={}", checkpoint.state_root_hex)));
     assert!(summary.contains("da_state_commitment_kind=canonical-hex-32b"));
     assert!(summary.contains("da_state_commitment_bytes=32"));
