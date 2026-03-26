@@ -644,7 +644,74 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
 #[cfg(test)]
 mod tests {
+    use super::{build_hot_streak_txs, build_mixed_txs};
     use trnm_executor::GroupingProfile;
+
+    #[test]
+    fn mixed_workload_respects_read_fanout_and_write_every_stride() {
+        let txs = build_mixed_txs(6, 97, 3, 2);
+
+        assert_eq!(txs.len(), 6);
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(tx.read_set.len(), 3, "tx {idx} should keep configured read fanout");
+            if idx % 2 == 0 {
+                assert_eq!(
+                    tx.write_set.len(),
+                    1,
+                    "tx {idx} should emit one write on the configured stride"
+                );
+            } else {
+                assert!(
+                    tx.write_set.is_empty(),
+                    "tx {idx} should stay read-only off the configured stride"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn hot_streak_workload_keeps_deterministic_block_stm_style_streaks() {
+        let txs = build_hot_streak_txs(40, 5, 3, 2);
+
+        assert_eq!(txs.len(), 40);
+
+        let streak0 = txs[0].read_set[0].id;
+        for tx in &txs[..16] {
+            assert_eq!(
+                tx.read_set[0].id, streak0,
+                "first streak should stay on one hot object"
+            );
+        }
+
+        let streak1 = txs[16].read_set[0].id;
+        assert_ne!(
+            streak1, streak0,
+            "next streak should rotate to a different hot object when keys allow it"
+        );
+        for tx in &txs[16..32] {
+            assert_eq!(
+                tx.read_set[0].id, streak1,
+                "second streak should stay on its rotated hot object"
+            );
+        }
+
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(tx.read_set.len(), 3, "tx {idx} should keep configured read fanout");
+            if idx % 2 == 0 {
+                assert_eq!(
+                    tx.write_set.len(),
+                    1,
+                    "tx {idx} should write the streak hot key on the configured stride"
+                );
+                assert_eq!(tx.write_set[0].id, tx.read_set[0].id);
+            } else {
+                assert!(
+                    tx.write_set.is_empty(),
+                    "tx {idx} should stay read-only between write strides"
+                );
+            }
+        }
+    }
 
     #[test]
     fn retry_stage_overlap_share_reports_double_counted_retry_hits() {
