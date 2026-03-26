@@ -167,6 +167,16 @@ impl OracleValidateSnapshotResponse {
     /// This is intentionally narrower than any bridge-side decision: a payload
     /// can be contract-consistent here and still be insufficient for settlement
     /// finality, replay admission, or confirmation-window advancement.
+    ///
+    /// Layering boundary:
+    /// - this helper only checks whether RPC preserved the oracle layer's
+    ///   admissibility/confidence accounting without inventing new meaning.
+    /// - `oracle_source_cardinality <= sample_count` deliberately allows
+    ///   repeated observations inside one oracle window; that is confidence
+    ///   accounting, not evidence that multiple settlement attempts occurred.
+    /// - callers must still apply bridge-side replay identity, source/target
+    ///   confirmation thresholds, and terminal settlement guards before moving
+    ///   any state machine forward.
     pub fn bridge_contract_consistent(&self) -> bool {
         let non_empty_sample = self.metrics.sample_count > 0;
         let result_label_consistent = if self.ok {
