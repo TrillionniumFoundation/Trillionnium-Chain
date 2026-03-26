@@ -431,6 +431,7 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.score_bps,
                 surface.rank_ordinal,
             ),
             Some(signal)
@@ -441,6 +442,7 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.score_bps,
                 surface.rank_ordinal,
             ),
             Some(impact)
@@ -448,22 +450,27 @@ fn reputation_surface_round_trips_back_to_canonical_signal_and_impact() {
     }
 
     assert_eq!(
-        reputation_signal_from_surface("accepted", 3, 3, 9_999, 0),
+        reputation_signal_from_surface("accepted", 3, 3, 9_999, 10_000, 0),
         None,
         "surface lookup must reject weight drift"
     );
     assert_eq!(
-        reputation_signal_from_surface("accepted", 3, 2, 10_000, 0),
+        reputation_signal_from_surface("accepted", 3, 2, 10_000, 10_000, 0),
         None,
         "surface lookup must reject tier drift"
     );
     assert_eq!(
-        reputation_signal_from_surface("accepted", 3, 3, 10_000, 1),
+        reputation_signal_from_surface("accepted", 3, 3, 10_000, 9_999, 0),
+        None,
+        "surface lookup must reject score drift"
+    );
+    assert_eq!(
+        reputation_signal_from_surface("accepted", 3, 3, 10_000, 10_000, 1),
         None,
         "surface lookup must reject rank drift"
     );
     assert_eq!(
-        reputation_impact_from_surface("verifier_rejected", -2, 1, 10_000, 2),
+        reputation_impact_from_surface("verifier_rejected", -2, 1, 10_000, -6_666, 2),
         None,
         "surface lookup must fail closed on cross-signal weight hybrids"
     );
@@ -486,6 +493,7 @@ fn canonical_reputation_surfaces_export_single_deterministic_table() {
                 surface.delta,
                 surface.tier,
                 surface.weight_bps,
+                surface.score_bps,
                 surface.rank_ordinal,
             ),
             Some(*signal),
