@@ -3146,7 +3146,10 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
-                let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
+                let task_id = path
+                    .trim_start_matches("/query-task/")
+                    .trim_end_matches('/')
+                    .parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
@@ -3171,7 +3174,10 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
-                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                let task_id = path
+                    .trim_start_matches("/query-events/")
+                    .trim_end_matches('/')
+                    .parse::<u64>();
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => {
@@ -5010,6 +5016,18 @@ mod tests {
         assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
         assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
         assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_get_path_preserves_operator_trailing_slash_for_query_routes() {
+        assert_eq!(
+            parse_http_get_path("GET /query-task/42/ HTTP/1.1"),
+            Some("/query-task/42/")
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/7/?limit=5 HTTP/1.1"),
+            Some("/query-events/7/")
+        );
     }
 
     #[test]

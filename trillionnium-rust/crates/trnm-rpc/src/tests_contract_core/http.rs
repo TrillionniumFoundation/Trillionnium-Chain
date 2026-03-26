@@ -9,6 +9,18 @@ fn parse_http_get_path_accepts_canonical_request_line() {
 }
 
 #[test]
+fn parse_http_get_path_preserves_operator_trailing_slash_for_query_routes() {
+    assert_eq!(
+        parse_http_get_path("GET /query-task/42/ HTTP/1.1"),
+        Some("/query-task/42/")
+    );
+    assert_eq!(
+        parse_http_get_path("GET /query-events/7/?limit=5 HTTP/1.1"),
+        Some("/query-events/7/")
+    );
+}
+
+#[test]
 fn parse_http_request_target_accepts_head_health_probe() {
     assert_eq!(
         parse_http_request_target("HEAD /readyz HTTP/1.1"),
