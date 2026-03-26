@@ -158,6 +158,42 @@ mod tests {
     }
 
     #[test]
+    fn persist_checkpoint_if_needed_marks_genesis_prev_hash_surface_for_light_verifiers() {
+        let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
+        let mut runtime = runtime_fixture("genesis-da-light-summary", 1);
+        runtime.wal_entries.push(WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "12".repeat(32),
+            prev_hash_hex: None,
+        });
+
+        persist_checkpoint_if_needed(&args, &mut runtime).unwrap();
+
+        let checkpoint = runtime
+            .checkpoints
+            .last()
+            .expect("genesis committed WAL entry should still produce a checkpoint");
+        let wal_entry = runtime
+            .wal_entries
+            .last()
+            .expect("fixture should retain the genesis WAL entry");
+        let da_summary = checkpoint_da_light_verifier_summary(checkpoint, wal_entry)
+            .expect("persisted genesis checkpoint must expose a canonical DA/light-verifier summary");
+        assert!(da_summary.contains("checkpoint_height=1"));
+        assert!(da_summary.contains("checkpoint_height_matches_wal=true"));
+        assert!(da_summary.contains("wal_prev_hash=none"));
+        assert!(da_summary.contains("wal_prev_hash_present=false"));
+        assert!(da_summary.contains("wal_prev_hash_kind=genesis"));
+        assert!(da_summary.contains("wal_prev_hash_bytes=0"));
+        assert!(da_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+        assert!(da_summary.contains("wal_linkage_kind=prev-hash-chain"));
+        assert!(da_summary.contains("wal_proposal_hash=proposal-genesis"));
+    }
+
+    #[test]
     fn persist_checkpoint_if_needed_rejects_blank_proposal_hash_surface() {
         let args = Args::parse_from(["trnm-node", "--bft-checkpoint-interval", "1"]);
         let mut runtime = runtime_fixture("blank-proposal-hash", 1);
