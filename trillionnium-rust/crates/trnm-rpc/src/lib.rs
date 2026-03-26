@@ -151,6 +151,62 @@ impl OracleValidateSnapshotResponse {
             && self.metrics.sample_count > 0
     }
 
+    fn classified_error_label_matches_accounting(&self) -> bool {
+        let label = match self.error.as_deref() {
+            Some("stale") => "stale",
+            Some("quorum") => "quorum",
+            Some("drift") => "drift",
+            _ => return true,
+        };
+
+        if self.ok || self.metrics.sample_count == 0 || self.metrics.accepted_total != 0 {
+            return false;
+        }
+
+        let metrics_match = match label {
+            "stale" => {
+                self.metrics.oracle_stale_reject_total == self.metrics.sample_count
+                    && self.metrics.oracle_quorum_reject_total == 0
+                    && self.metrics.oracle_drift_reject_total == 0
+            }
+            "quorum" => {
+                self.metrics.oracle_stale_reject_total == 0
+                    && self.metrics.oracle_quorum_reject_total == self.metrics.sample_count
+                    && self.metrics.oracle_drift_reject_total == 0
+            }
+            "drift" => {
+                self.metrics.oracle_stale_reject_total == 0
+                    && self.metrics.oracle_quorum_reject_total == 0
+                    && self.metrics.oracle_drift_reject_total == self.metrics.sample_count
+            }
+            _ => unreachable!(),
+        };
+
+        let observation_match = match label {
+            "stale" => {
+                self.observation.stale_reject_total == self.metrics.sample_count
+                    && self.observation.quorum_reject_total == 0
+                    && self.observation.drift_reject_total == 0
+                    && self.observation.accepted_total == 0
+            }
+            "quorum" => {
+                self.observation.stale_reject_total == 0
+                    && self.observation.quorum_reject_total == self.metrics.sample_count
+                    && self.observation.drift_reject_total == 0
+                    && self.observation.accepted_total == 0
+            }
+            "drift" => {
+                self.observation.stale_reject_total == 0
+                    && self.observation.quorum_reject_total == 0
+                    && self.observation.drift_reject_total == self.metrics.sample_count
+                    && self.observation.accepted_total == 0
+            }
+            _ => unreachable!(),
+        };
+
+        metrics_match && observation_match
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
         let non_empty_sample = self.metrics.sample_count > 0;
         let result_label_consistent = if self.ok {
@@ -159,6 +215,7 @@ impl OracleValidateSnapshotResponse {
             self.error_label_contract_consistent()
                 && self.error.is_some()
                 && self.metrics.accepted_total == 0
+                && self.classified_error_label_matches_accounting()
         };
         let source_cardinality_consistent = if self.metrics.sample_count == 0 {
             self.metrics.oracle_source_cardinality == 0
@@ -1319,9 +1376,39 @@ mod tests {
                 oracle_stale_reject_total: 0,
                 oracle_quorum_reject_total: 1,
                 oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 2,
+                oracle_source_cardinality: 1,
                 accepted_total: 0,
                 sample_count: 1,
+            },
+            error: Some("stale".into()),
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_mixed_classified_error_accounting(
+    ) {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 798,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 2,
             },
             error: Some("stale".into()),
         }
