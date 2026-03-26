@@ -5768,6 +5768,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("checkpoint_state_root_matches_wal=true"));
     assert!(summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
     assert!(summary.contains("checkpoint_surface_canonical=true"));
+    assert!(summary.contains("checkpoint_wal_binding_kind=content-hash-equality"));
     assert!(summary.contains("wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash"));
     assert!(summary.contains("wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash"));
     assert!(summary.contains("wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?)"));
@@ -5792,6 +5793,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_prev_hash_bytes=32"));
     assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
     assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
+    assert!(summary.contains("wal_linkage_kind=prev-hash-chain"));
     assert!(summary.contains("wal_proposal_hash=proposal-7"));
     assert!(summary.contains("wal_proposal_hash_present=true"));
     assert!(summary.contains("wal_proposal_hash_kind=opaque-ascii"));
@@ -5825,6 +5827,7 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
     assert!(summary.contains("wal_prev_hash_bytes=0"));
     assert!(summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
     assert!(summary.contains("wal_prev_hash_surface_canonical=true"));
+    assert!(summary.contains("wal_linkage_kind=prev-hash-chain"));
 }
 
 #[test]
