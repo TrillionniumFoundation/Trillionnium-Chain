@@ -1477,6 +1477,14 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     }
 
     let primary = all_keys[0];
+    if primary == 0 {
+        // Object id 0 is a valid access-domain key, not an internal sentinel.
+        // Anchor the secondary to the smallest distinct global key so equivalent
+        // mixed domains touching {0,...} do not drift lanes when read/write roles flip.
+        let secondary = all_keys.iter().copied().find(|k| *k != primary).unwrap_or(0);
+        return (primary, secondary);
+    }
+
     let primary_is_echoed_across_domains = write_keys.binary_search(&primary).is_ok()
         && read_keys.binary_search(&primary).is_ok();
     if primary_is_echoed_across_domains {
@@ -2864,6 +2872,18 @@ mod tests {
         // same smallest global secondary across read/write role flips.
         assert_eq!(hot_bucket_keys(&write_wide), (5, 7));
         assert_eq!(hot_bucket_keys(&write_wide), hot_bucket_keys(&read_wide));
+    }
+
+    #[test]
+    fn hot_bucket_keys_treat_object_zero_as_real_primary_domain_key() {
+        let write_then_read = tx(1, vec![o(0), o(11)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(0), o(11)]);
+
+        // Object id 0 is a valid domain member, not an internal sentinel.
+        // Equivalent mixed domains touching {0,5,11} should preserve the same
+        // canonical two-key lane hint even when read/write roles flip.
+        assert_eq!(hot_bucket_keys(&write_then_read), (0, 5));
+        assert_eq!(hot_bucket_keys(&write_then_read), hot_bucket_keys(&read_then_write));
     }
 
     #[test]
