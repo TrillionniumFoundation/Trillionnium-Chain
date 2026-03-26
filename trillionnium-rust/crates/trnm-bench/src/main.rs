@@ -626,4 +626,55 @@ mod tests {
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
     }
+
+    #[test]
+    fn retry_telemetry_zero_denominator_metrics_fail_closed_to_zero() {
+        let profile = GroupingProfile {
+            tx_count: 4,
+            group_count: 4,
+            grouped_count: 4,
+            max_group_size: 1,
+            min_group_size: 1,
+            avg_group_size: 1.0,
+            hot_object_share: 0.25,
+            conflict_checks: 0,
+            conflict_hits: 0,
+            candidate_groups_scanned: 0,
+            stage_ww_checks: 0,
+            stage_ww_hits: 0,
+            stage_wr_checks: 0,
+            stage_wr_hits: 0,
+            stage_rw_checks: 0,
+            stage_rw_hits: 0,
+        };
+
+        assert_eq!(profile.conflict_checks_per_tx(), 0.0);
+        assert_eq!(profile.conflict_hits_per_tx(), 0.0);
+        assert_eq!(profile.candidate_groups_per_tx(), 0.0);
+        assert_eq!(profile.retry_pressure(), 0.0);
+        assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
+        assert_eq!(profile.retry_scan_hit_rate(), 0.0);
+        assert_eq!(profile.retry_scan_misses(), 0);
+        assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+        assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
+        assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
+        assert_eq!(profile.retry_scan_overhang_per_hit(), 0.0);
+        assert_eq!(profile.retry_scan_overhang_per_reused_placement(), 0.0);
+        assert_eq!(profile.ww_retry_hit_rate(), 0.0);
+        assert_eq!(profile.wr_retry_hit_rate(), 0.0);
+        assert_eq!(profile.rw_retry_hit_rate(), 0.0);
+        assert_eq!(profile.dominant_retry_stage(), "none");
+        assert_eq!(profile.dominant_retry_share(), 0.0);
+        assert_eq!(profile.dominant_retry_lead_hits(), 0);
+        assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+        assert_eq!(profile.attributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_share(), 0.0);
+        assert_eq!(profile.retry_attribution_coverage(), 0.0);
+        assert_eq!(profile.retry_stage_overlap_hits(), 0);
+        assert_eq!(profile.retry_stage_overlap_share(), 0.0);
+        assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
+        assert_eq!(profile.retry_stage_concentration(), 0.0);
+        assert_eq!(profile.retry_stage_mix_entropy(), 0.0);
+    }
 }
