@@ -1463,8 +1463,9 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     }
 
     let secondary = write_keys
-        .first()
+        .iter()
         .copied()
+        .find(|k| *k != primary)
         .or_else(|| read_keys.iter().copied().find(|k| *k != primary))
         .unwrap_or(0);
     (primary, secondary)
@@ -3187,6 +3188,15 @@ mod tests {
         // When the smallest access key is read-local, mixed domains should still carry
         // the first write-domain key in the secondary slot even if that writer key also
         // appears in the read set. This keeps the mixed-domain writer signal stable.
+        assert_eq!(hot_bucket_keys(&t), (3, 7));
+    }
+
+    #[test]
+    fn hot_bucket_keys_falls_back_to_read_local_secondary_when_primary_is_only_write_key() {
+        let t = tx(1, vec![o(3), o(7), o(7)], vec![o(3), o(3)]);
+
+        // If the only write-domain key is already the primary, preserve the second
+        // distinct access-domain key instead of duplicating the primary into both slots.
         assert_eq!(hot_bucket_keys(&t), (3, 7));
     }
 
