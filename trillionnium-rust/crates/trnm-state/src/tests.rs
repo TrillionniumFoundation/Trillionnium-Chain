@@ -199,6 +199,49 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_resolve_deadline
 }
 
 #[test]
+fn restore_task_rejects_terminal_collateral_retention_with_challenger_but_no_bond() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        409,
+        Some(TaskObject {
+            task_id: 409,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(409).is_none(),
+        "restore_task must fail closed when a retained terminal collateral snapshot keeps challenger identity but drops the posted challenge bond that funded the proof-retention audit trail"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_inverted_deadline_order() {
     let mut st = StateStore::new();
 
