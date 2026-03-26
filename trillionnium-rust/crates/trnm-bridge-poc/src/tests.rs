@@ -204,3 +204,45 @@ fn settlement_request_rejects_internal_ascii_whitespace_in_subject() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn settlement_request_rejects_revert_only_token_from_finalizing() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement-operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let err = request.settle_authorized(&token, 42);
+    assert_eq!(
+        err,
+        Err(SettlementError::Unauthorized {
+            subject: "did:trn:settlement-operator".to_string(),
+            action: "finalize",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
+fn settlement_request_rejects_finalize_only_token_from_reverting_finalized_request() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let finalize_only = CapabilityToken {
+        subject: "did:trn:settlement-finalizer".to_string(),
+        capabilities: vec![SettlementCapability::Finalize],
+    };
+
+    request
+        .settle_authorized(&finalize_only, 42)
+        .expect("finalize-only token should be able to finalize pending request");
+
+    let err = request.revert_authorized(&finalize_only, "late sponsor rollback".to_string());
+    assert_eq!(
+        err,
+        Err(SettlementError::Unauthorized {
+            subject: "did:trn:settlement-finalizer".to_string(),
+            action: "revert",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Finalized(42));
+}
