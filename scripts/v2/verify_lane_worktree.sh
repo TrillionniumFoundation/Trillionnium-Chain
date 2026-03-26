@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  verify_lane_worktree.sh --expected-worktree-root <abs-path> --expected-branch <branch> [--expected-head <commit>]
+  verify_lane_worktree.sh --expected-worktree-root <abs-path> [--expected-branch <branch> | --expected-branch-ref <refs/heads/...>] [--expected-head <commit>]
 
 Verifies that the current repository worktree root and checked-out branch match the
 expected lane context. Optionally pins the exact HEAD commit for evidence capture.
@@ -13,6 +13,7 @@ EOF
 
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH=""
+EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
 
 while [[ $# -gt 0 ]]; do
@@ -23,6 +24,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --expected-branch)
       EXPECTED_BRANCH="${2:-}"
+      shift 2
+      ;;
+    --expected-branch-ref)
+      EXPECTED_BRANCH_REF="${2:-}"
       shift 2
       ;;
     --expected-head)
@@ -41,8 +46,20 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$EXPECTED_WORKTREE_ROOT" || -z "$EXPECTED_BRANCH" ]]; then
-  echo "[FAIL] --expected-worktree-root and --expected-branch are required" >&2
+if [[ -z "$EXPECTED_WORKTREE_ROOT" ]]; then
+  echo "[FAIL] --expected-worktree-root is required" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ -n "$EXPECTED_BRANCH" && -n "$EXPECTED_BRANCH_REF" ]]; then
+  echo "[FAIL] pass either --expected-branch or --expected-branch-ref, not both" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ -z "$EXPECTED_BRANCH" && -z "$EXPECTED_BRANCH_REF" ]]; then
+  echo "[FAIL] one of --expected-branch or --expected-branch-ref is required" >&2
   usage >&2
   exit 1
 fi
@@ -54,15 +71,25 @@ fi
 
 ACTUAL_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
 ACTUAL_BRANCH="$(git branch --show-current)"
+ACTUAL_BRANCH_REF=""
 ACTUAL_HEAD="$(git rev-parse HEAD)"
+
+if [[ -n "$ACTUAL_BRANCH" ]]; then
+  ACTUAL_BRANCH_REF="refs/heads/$ACTUAL_BRANCH"
+fi
 
 if [[ "$ACTUAL_WORKTREE_ROOT" != "$EXPECTED_WORKTREE_ROOT" ]]; then
   echo "[FAIL] worktree mismatch: expected $EXPECTED_WORKTREE_ROOT got $ACTUAL_WORKTREE_ROOT" >&2
   exit 1
 fi
 
-if [[ "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
+if [[ -n "$EXPECTED_BRANCH" && "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
   echo "[FAIL] branch mismatch: expected $EXPECTED_BRANCH got $ACTUAL_BRANCH" >&2
+  exit 1
+fi
+
+if [[ -n "$EXPECTED_BRANCH_REF" && "$ACTUAL_BRANCH_REF" != "$EXPECTED_BRANCH_REF" ]]; then
+  echo "[FAIL] branch-ref mismatch: expected $EXPECTED_BRANCH_REF got $ACTUAL_BRANCH_REF" >&2
   exit 1
 fi
 
@@ -71,4 +98,4 @@ if [[ -n "$EXPECTED_HEAD" && "$ACTUAL_HEAD" != "$EXPECTED_HEAD" ]]; then
   exit 1
 fi
 
-printf '[OK] worktree_root=%s branch=%s head=%s\n' "$ACTUAL_WORKTREE_ROOT" "$ACTUAL_BRANCH" "$ACTUAL_HEAD"
+printf '[OK] worktree_root=%s branch=%s branch_ref=%s head=%s\n' "$ACTUAL_WORKTREE_ROOT" "$ACTUAL_BRANCH" "$ACTUAL_BRANCH_REF" "$ACTUAL_HEAD"
