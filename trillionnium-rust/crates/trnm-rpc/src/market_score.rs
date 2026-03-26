@@ -20,6 +20,7 @@ pub(crate) struct MarketScoreConfigOutput {
     pub(crate) price_weight: u128,
     pub(crate) reputation_weight: u128,
     pub(crate) reputation_clamp: i64,
+    pub(crate) max_reputation_score_delta: u128,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -34,10 +35,13 @@ pub(crate) struct MarketScoreBreakdown {
 
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
+        let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
-            reputation_clamp: normalized_reputation_clamp(value.reputation_clamp),
+            reputation_clamp,
+            max_reputation_score_delta: (reputation_clamp as u128)
+                .saturating_mul(value.reputation_weight),
         }
     }
 }

@@ -233,6 +233,7 @@ fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_mi
     assert_eq!(output.price_weight, 3);
     assert_eq!(output.reputation_weight, 7);
     assert_eq!(output.reputation_clamp, 1);
+    assert_eq!(output.max_reputation_score_delta, 7);
 }
 
 #[test]

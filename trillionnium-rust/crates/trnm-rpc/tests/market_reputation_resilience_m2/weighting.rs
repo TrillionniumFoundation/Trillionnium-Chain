@@ -459,8 +459,19 @@ fn market_match_normalizes_wrapped_weight_envs_in_output_config() {
         .as_object()
         .expect("match_config object");
     assert_eq!(cfg.get("price_weight").and_then(Value::as_u64), Some(7));
-    assert_eq!(cfg.get("reputation_weight").and_then(Value::as_u64), Some(11));
-    assert_eq!(cfg.get("reputation_clamp").and_then(Value::as_i64), Some(13));
+    assert_eq!(
+        cfg.get("reputation_weight").and_then(Value::as_u64),
+        Some(11)
+    );
+    assert_eq!(
+        cfg.get("reputation_clamp").and_then(Value::as_i64),
+        Some(13)
+    );
+    assert_eq!(
+        cfg.get("max_reputation_score_delta")
+            .and_then(Value::as_u64),
+        Some(143)
+    );
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
 
     let _ = fs::remove_file(tasks);
@@ -539,7 +550,10 @@ fn market_match_normalizes_nested_wrapped_below_floor_clamp_in_output_config() {
         .as_object()
         .expect("match_config object");
     assert_eq!(cfg.get("price_weight").and_then(Value::as_u64), Some(1));
-    assert_eq!(cfg.get("reputation_weight").and_then(Value::as_u64), Some(2));
+    assert_eq!(
+        cfg.get("reputation_weight").and_then(Value::as_u64),
+        Some(2)
+    );
     assert_eq!(cfg.get("reputation_clamp").and_then(Value::as_i64), Some(1));
 
     let _ = fs::remove_file(tasks);
