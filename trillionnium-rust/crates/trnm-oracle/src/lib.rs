@@ -67,9 +67,14 @@ impl OracleSnapshotAuditView {
             .map(|source| source.trim().to_ascii_lowercase())
             .collect::<BTreeSet<_>>()
             .len() as u32;
+        let all_sources_canonical = self.source_ids.iter().all(|source| {
+            let canonical = source.trim().to_ascii_lowercase();
+            !canonical.is_empty() && canonical == *source
+        });
 
         self.source_count > 0
             && self.sample_count > 0
+            && all_sources_canonical
             && self.source_count == self.source_ids.len() as u32
             && canonical_source_count == self.source_count
             && self.source_count <= self.sample_count
@@ -730,6 +735,23 @@ mod tests {
         };
         assert!(!duplicate_sources.source_contract_consistent());
         assert!(!duplicate_sources.proof_contract_consistent());
+
+        let non_canonical_source = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["ChainLink".to_string(), "coingecko".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!non_canonical_source.source_contract_consistent());
+        assert!(!non_canonical_source.proof_contract_consistent());
 
         let bad_window = OracleSnapshotAuditView {
             feed_id: "btc/usd".to_string(),
