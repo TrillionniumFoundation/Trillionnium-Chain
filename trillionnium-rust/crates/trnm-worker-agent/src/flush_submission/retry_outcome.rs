@@ -218,6 +218,52 @@ mod tests {
     }
 
     #[test]
+    fn classify_flush_ack_trims_observed_receipt_hashes_before_acceptance() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("  commit-hash  ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\treveal-hash\n".to_string()),
+            terminal: true,
+        };
+
+        let decision =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 18);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-hash"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-hash"));
+    }
+
+    #[test]
+    fn classify_flush_ack_rejects_whitespace_only_observed_receipt_hashes() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("   ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\n\t".to_string()),
+            terminal: true,
+        };
+
+        let decision =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 19);
+        assert_eq!(decision.ack_status, "failed");
+        assert_eq!(decision.reason_code, "missing_tx_hash_receipt");
+        assert_eq!(decision.commit_tx_hash_for_ack, None);
+        assert_eq!(decision.reveal_tx_hash_for_ack, None);
+    }
+
+    #[test]
     fn classify_flush_ack_does_not_reuse_stale_receipts_for_non_duplicate_rejection() {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-retry-outcome-stale-rejection-{}-{}.jsonl",
