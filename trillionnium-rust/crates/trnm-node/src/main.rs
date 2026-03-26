@@ -3019,6 +3019,36 @@ mod tests {
     }
 
     #[test]
+    fn preexec_zero_workers_falls_back_to_single_worker_results() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4054,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4055,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_999,
+                worker: "worker4056".into(),
+            },
+        ];
+
+        let pool_single = PreExecPool::new(Arc::new(state.clone()), Arc::new(picked.clone()), 1, 1);
+        let single = pre_execute_group_parallel(&pool_single, vec![1, 2, 3]);
+
+        let pool_zero = PreExecPool::new(Arc::new(state), Arc::new(picked), 0, 1);
+        let zero_workers = pre_execute_group_parallel(&pool_zero, vec![1, 2, 3]);
+
+        assert_eq!(single, (vec![1, 2], 1));
+        assert_eq!(zero_workers, single);
+    }
+
+    #[test]
     fn preexec_preserves_first_seen_group_order_and_dedupes_duplicates() {
         let state = Arc::new(StateStore::new());
         let picked = Arc::new(vec![
