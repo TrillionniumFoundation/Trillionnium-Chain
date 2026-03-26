@@ -874,6 +874,16 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     "terminal non-challenged task has stale challenge timing fields".into(),
                 ));
             }
+            if !has_bond
+                && task
+                    .challenge_window_blocks_snapshot
+                    .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "terminal non-challenged task has invalid retained challenge_window_blocks_snapshot"
+                        .into(),
+                ));
+            }
         }
     }
 
@@ -8626,6 +8636,31 @@ mod tests {
 
         let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
+    }
+
+    #[test]
+    fn timeout_rejects_terminal_non_challenged_task_with_invalid_retained_challenge_snapshot() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39020, "alice".into(), 100).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(39020, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let done = apply_timeout(&mut st, r4, 211).unwrap();
+
+        let mut bad = st.get_task(done.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Completed);
+        bad.challenge_window_blocks_snapshot = Some(0);
+        let bad_ref = st.update_task(done, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot")));
     }
 
     #[test]
