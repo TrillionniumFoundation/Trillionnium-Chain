@@ -47,6 +47,12 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
+    path.strip_prefix(prefix)
+        .map(|suffix| suffix.trim_end_matches('/'))
+        .filter(|suffix| !suffix.is_empty())
+}
+
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -91,7 +97,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
-                let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
+                let task_id = parse_path_u64_suffix(path, "/query-task/")
+                    .ok_or(())
+                    .and_then(|suffix| suffix.parse::<u64>().map_err(|_| ()));
                 match task_id {
                     Ok(task_id) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
@@ -116,7 +124,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
-                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                let task_id = parse_path_u64_suffix(path, "/query-events/")
+                    .ok_or(())
+                    .and_then(|suffix| suffix.parse::<u64>().map_err(|_| ()));
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => {
@@ -182,7 +192,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_health_probe_path, json_response_for_method};
+    use super::{is_health_probe_path, json_response_for_method, parse_path_u64_suffix};
 
     #[test]
     fn accepts_health_probe_aliases() {
@@ -235,5 +245,17 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn parse_path_u64_suffix_accepts_operator_trailing_slash() {
+        assert_eq!(parse_path_u64_suffix("/query-task/42", "/query-task/"), Some("42"));
+        assert_eq!(parse_path_u64_suffix("/query-task/42/", "/query-task/"), Some("42"));
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42/", "/query-events/"),
+            Some("42")
+        );
+        assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
     }
 }
