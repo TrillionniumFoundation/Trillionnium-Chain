@@ -25,7 +25,11 @@ EOF
 
 ROOT="$(git rev-parse --show-toplevel)"
 VERIFY_SCRIPT="$ROOT/scripts/v2/verify_lane_worktree.sh"
-WORKSPACE_ROOT="$ROOT"
+DEFAULT_WORKSPACE_ROOT="$ROOT"
+if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
+  DEFAULT_WORKSPACE_ROOT="$ROOT/trillionnium-rust"
+fi
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-$DEFAULT_WORKSPACE_ROOT}"
 CURRENT_BRANCH=""
 CURRENT_HEAD=""
 WORKTREE_STATUS=""
