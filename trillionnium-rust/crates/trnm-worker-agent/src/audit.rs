@@ -11,6 +11,7 @@ use std::{
 use crate::{
     load_ingress_records, normalized_agent_protocol, normalized_compliance_profile,
     normalized_optional_field, normalized_provenance_label, normalized_provider_request_id,
+    reputation_gap_bps_from_best, reputation_surface, reputation_signal_from_delta,
     trim_boundary_audit_fillers, MessageIngressRecord,
 };
 
@@ -27,6 +28,20 @@ pub(crate) struct EnterpriseAuditExportRecord {
     pub(crate) adapter: Option<String>,
     pub(crate) agent_protocol: Option<String>,
     pub(crate) compliance_profile: Option<String>,
+    #[serde(default)]
+    pub(crate) reputation_label: Option<String>,
+    #[serde(default)]
+    pub(crate) reputation_delta: Option<i32>,
+    #[serde(default)]
+    pub(crate) reputation_tier: Option<u8>,
+    #[serde(default)]
+    pub(crate) reputation_weight_bps: Option<u16>,
+    #[serde(default)]
+    pub(crate) reputation_score_bps: Option<i32>,
+    #[serde(default)]
+    pub(crate) reputation_rank_ordinal: Option<u8>,
+    #[serde(default)]
+    pub(crate) reputation_gap_bps_from_best: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -352,6 +367,10 @@ pub(crate) fn to_enterprise_audit_export(
         compliance_profile.as_deref(),
     );
 
+    let reputation_signal = rec.reputation_delta.and_then(reputation_signal_from_delta);
+    let reputation_surface = reputation_signal.map(reputation_surface);
+    let reputation_gap_bps = reputation_signal.map(reputation_gap_bps_from_best);
+
     EnterpriseAuditExportRecord {
         request_id: rec.request_id.clone(),
         task_id: rec.task_id,
@@ -364,6 +383,13 @@ pub(crate) fn to_enterprise_audit_export(
         adapter,
         agent_protocol,
         compliance_profile,
+        reputation_label: reputation_surface.map(|surface| surface.label.to_string()),
+        reputation_delta: reputation_surface.map(|surface| surface.delta),
+        reputation_tier: reputation_surface.map(|surface| surface.tier),
+        reputation_weight_bps: reputation_surface.map(|surface| surface.weight_bps),
+        reputation_score_bps: reputation_surface.map(|surface| surface.score_bps),
+        reputation_rank_ordinal: reputation_surface.map(|surface| surface.rank_ordinal),
+        reputation_gap_bps_from_best: reputation_gap_bps,
     }
 }
 
@@ -395,13 +421,13 @@ pub(crate) fn markdown_escape(value: Option<&str>) -> String {
 
 pub(crate) fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> String {
     let mut out = String::from(
-        "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
+        "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile | reputation_label | reputation_delta | reputation_tier | reputation_weight_bps | reputation_score_bps | reputation_rank_ordinal | reputation_gap_bps_from_best |\n",
     );
-    out.push_str("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
+    out.push_str("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
 
     for rec in exports {
         let row = format!(
-            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
+            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
             markdown_escape(Some(rec.request_id.as_str())),
             rec.task_id,
             markdown_escape(Some(rec.status.as_str())),
@@ -413,6 +439,17 @@ pub(crate) fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportR
             markdown_escape(rec.adapter.as_deref()),
             markdown_escape(rec.agent_protocol.as_deref()),
             markdown_escape(rec.compliance_profile.as_deref()),
+            markdown_escape(rec.reputation_label.as_deref()),
+            markdown_escape(rec.reputation_delta.map(|value| value.to_string()).as_deref()),
+            markdown_escape(rec.reputation_tier.map(|value| value.to_string()).as_deref()),
+            markdown_escape(rec.reputation_weight_bps.map(|value| value.to_string()).as_deref()),
+            markdown_escape(rec.reputation_score_bps.map(|value| value.to_string()).as_deref()),
+            markdown_escape(rec.reputation_rank_ordinal.map(|value| value.to_string()).as_deref()),
+            markdown_escape(
+                rec.reputation_gap_bps_from_best
+                    .map(|value| value.to_string())
+                    .as_deref(),
+            ),
         );
         out.push_str(&row);
     }
