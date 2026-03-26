@@ -76,6 +76,13 @@ pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<
         ));
     }
 
+    if !buf.is_empty() && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::UnexpectedEof,
+            "http request header ended before terminator",
+        ));
+    }
+
     Ok(buf)
 }
 
@@ -266,19 +273,15 @@ mod tests {
 
     #[test]
     fn http_response_for_method_preserves_get_error_bodies() {
-        let response = http_json_response(
-            "400 Bad Request",
-            "{\"ok\":false,\"code\":\"BAD_REQUEST\"}",
-        );
+        let response =
+            http_json_response("400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
         assert_eq!(http_response_for_method("GET", &response), response);
     }
 
     #[test]
     fn http_response_for_method_strips_head_error_bodies() {
-        let response = http_json_response(
-            "400 Bad Request",
-            "{\"ok\":false,\"code\":\"BAD_REQUEST\"}",
-        );
+        let response =
+            http_json_response("400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
         let head = http_response_for_method("HEAD", &response);
         assert!(head.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(head.ends_with("\r\n\r\n"));

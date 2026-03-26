@@ -295,6 +295,32 @@ fn read_http_request_head_times_out_on_partial_slowloris_client() {
 }
 
 #[test]
+fn read_http_request_head_rejects_premature_eof_before_terminator() {
+    use std::net::{Shutdown, TcpListener, TcpStream};
+    use std::thread;
+
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+    let addr = listener.local_addr().expect("listener addr");
+
+    let client = thread::spawn(move || {
+        let mut client = TcpStream::connect(addr).expect("connect test listener");
+        client
+            .write_all(b"GET /health HTTP/1.1\r\nHost: localhost\r\n")
+            .expect("write unterminated request head");
+        let _ = client.shutdown(Shutdown::Write);
+    });
+
+    let (mut server_stream, _) = listener.accept().expect("accept test client");
+    configure_health_stream(&server_stream).expect("configure timeouts");
+    let err = read_http_request_head(&mut server_stream)
+        .expect_err("unterminated request head must fail closed on eof");
+    assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
+    assert!(err.to_string().contains("ended before terminator"));
+
+    client.join().expect("client thread join");
+}
+
+#[test]
 fn read_http_request_head_rejects_oversized_header_without_terminator() {
     use std::net::{Shutdown, TcpListener, TcpStream};
     use std::thread;
