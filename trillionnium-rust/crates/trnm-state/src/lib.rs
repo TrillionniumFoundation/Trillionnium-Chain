@@ -4237,6 +4237,47 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_surface_rejects_zero_height_and_uncommitted_wal() {
+        let zero_height_wal = WalMeta {
+            height: 0,
+            round: 0,
+            proposal_hash: "proposal-0".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let zero_height_checkpoint = CheckpointMeta {
+            height: 0,
+            state_root_hex: zero_height_wal.state_root_hex.clone(),
+            wal_entry_hash_hex: zero_height_wal.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&zero_height_checkpoint, &zero_height_wal),
+            "checkpoint audit surfaces must reject height-zero metadata so checkpoint proofs cannot claim an audit-ready slot outside the positive-height chain"
+        );
+
+        let uncommitted_wal = WalMeta {
+            height: 9,
+            round: 0,
+            proposal_hash: "proposal-9".into(),
+            committed: false,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let uncommitted_checkpoint = CheckpointMeta {
+            height: uncommitted_wal.height,
+            state_root_hex: uncommitted_wal.state_root_hex.clone(),
+            wal_entry_hash_hex: uncommitted_wal.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&uncommitted_checkpoint, &uncommitted_wal),
+            "checkpoint audit surfaces must reject uncommitted WAL metadata so proof-facing checkpoints cannot bind to speculative state"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches(
     ) {
         let wal_entry = WalMeta {
