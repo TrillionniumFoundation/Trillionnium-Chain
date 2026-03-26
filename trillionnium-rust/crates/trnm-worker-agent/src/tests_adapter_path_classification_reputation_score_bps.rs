@@ -78,3 +78,21 @@ fn reputation_gap_bps_from_best_stays_strictly_increasing_across_canonical_order
         previous = Some(gap_bps);
     }
 }
+
+#[test]
+fn reputation_gap_bps_from_best_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let gap_bps = reputation_gap_bps_from_best(signal);
+        let impact = reputation_impact(signal);
+        assert_eq!(reputation_signal_from_gap_bps_from_best(gap_bps), Some(signal));
+        assert_eq!(reputation_impact_from_gap_bps_from_best(gap_bps), Some(impact));
+    }
+}
+
+#[test]
+fn reputation_gap_bps_from_best_lookup_fails_closed_on_non_canonical_values() {
+    assert_eq!(reputation_signal_from_gap_bps_from_best(-1), None);
+    assert_eq!(reputation_signal_from_gap_bps_from_best(1), None);
+    assert_eq!(reputation_signal_from_gap_bps_from_best(13_334), None);
+    assert_eq!(reputation_impact_from_gap_bps_from_best(19_999), None);
+}
