@@ -783,6 +783,12 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     "revealed task missing challenge_deadline_height".into(),
                 ));
             }
+            if matches!(task.challenge_window_blocks_snapshot, Some(window) if window < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "revealed task has invalid challenge_window_blocks_snapshot evidence".into(),
+                ));
+            }
         }
         TaskStatus::Challenged => {
             if !has_bond {
@@ -870,7 +876,8 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     ));
                 }
             }
-            if task.status == TaskStatus::Slashed && has_bond
+            if task.status == TaskStatus::Slashed
+                && has_bond
                 && !matches!(task.challenge_bond_forfeited, Some(false))
             {
                 return Err(PouwError::State(
@@ -5728,8 +5735,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 =
             apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 =
-            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
 
         let revealed = st.get_task(r4.id).unwrap();
         assert_eq!(revealed.status, TaskStatus::Revealed);
@@ -5786,8 +5793,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 =
             apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 =
-            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
 
         let mut missing_deadline = st.get_task(r4.id).unwrap();
         missing_deadline.challenge_deadline_height = None;
@@ -5801,7 +5808,43 @@ mod tests {
             111,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("revealed task missing challenge_deadline_height")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("revealed task missing challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn challenge_rejects_revealed_state_with_invalid_snapshot_evidence() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 39021, "alice".into(), 100).unwrap();
+        let result_hash = [9u8; 32];
+        let reveal_salt = [10u8; 32];
+        let committed = compute_commitment(39021, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+
+        let mut malformed_revealed = st.get_task(r4.id).unwrap();
+        malformed_revealed.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS - 1);
+        let malformed_revealed_ref = st.update_task(r4, malformed_revealed).unwrap();
+
+        let err = apply_challenge_at_height(
+            &mut st,
+            malformed_revealed_ref,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            111,
+        )
+        .unwrap_err();
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("revealed task has invalid challenge_window_blocks_snapshot evidence"))
+        );
     }
 
     #[test]
@@ -5884,15 +5927,21 @@ mod tests {
 
         let mut missing_snapshot = slashed.clone();
         missing_snapshot.challenge_window_blocks_snapshot = None;
-        let err = validate_challenge_accounting_invariants(&missing_snapshot)
-            .expect_err("terminal slashed challenge state must fail closed without evidence snapshot");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge_window_blocks_snapshot")));
+        let err = validate_challenge_accounting_invariants(&missing_snapshot).expect_err(
+            "terminal slashed challenge state must fail closed without evidence snapshot",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge_window_blocks_snapshot"))
+        );
 
         let mut missing_timing = slashed;
         missing_timing.challenge_deadline_height = None;
-        let err = validate_challenge_accounting_invariants(&missing_timing)
-            .expect_err("terminal slashed challenge state must fail closed without timing evidence");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge timing metadata")));
+        let err = validate_challenge_accounting_invariants(&missing_timing).expect_err(
+            "terminal slashed challenge state must fail closed without timing evidence",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge timing metadata"))
+        );
     }
 
     #[test]
@@ -5923,9 +5972,12 @@ mod tests {
         let mut slashed = st.get_task(r5.id).unwrap();
         slashed.status = TaskStatus::Slashed;
         slashed.challenge_bond_forfeited = Some(true);
-        let err = validate_challenge_accounting_invariants(&slashed)
-            .expect_err("slashed terminal evidence must reject forfeited challenge outcome metadata");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata")));
+        let err = validate_challenge_accounting_invariants(&slashed).expect_err(
+            "slashed terminal evidence must reject forfeited challenge outcome metadata",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata"))
+        );
     }
 
     #[test]
@@ -5942,8 +5994,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 =
             apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 =
-            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
         let done = apply_timeout(&mut st, r4, 236).unwrap();
 
         let completed = st.get_task(done.id).unwrap();
@@ -5962,7 +6014,9 @@ mod tests {
         stale_timing.challenge_deadline_height = Some(235);
         let err = validate_challenge_accounting_invariants(&stale_timing)
             .expect_err("completed uncontested terminal state must still reject stale challenge timing metadata");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge metadata")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge metadata"))
+        );
     }
 
     #[test]
@@ -5979,8 +6033,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 =
             apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 =
-            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
         let done = apply_timeout(&mut st, r4, 211).unwrap();
 
         let mut completed = st.get_task(done.id).unwrap();
@@ -5988,7 +6042,9 @@ mod tests {
 
         let err = validate_challenge_accounting_invariants(&completed)
             .expect_err("completed uncontested terminal state must fail closed on invalid retained challenge window evidence");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot evidence")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot evidence"))
+        );
     }
 
     #[test]
@@ -6020,8 +6076,9 @@ mod tests {
         slashed.status = TaskStatus::Slashed;
         slashed.challenge_bond_forfeited = Some(false);
         slashed.challenger = Some(" \n\t ".into());
-        let err = validate_challenge_accounting_invariants(&slashed)
-            .expect_err("terminal challenged evidence must fail closed on blank challenger identity");
+        let err = validate_challenge_accounting_invariants(&slashed).expect_err(
+            "terminal challenged evidence must fail closed on blank challenger identity",
+        );
         assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
     }
 
@@ -6122,7 +6179,7 @@ mod tests {
     }
 
     #[test]
-    fn challenge_clamps_malformed_legacy_zero_snapshot_to_minimum_block() {
+    fn challenge_rejects_malformed_legacy_zero_snapshot_instead_of_clamping() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
 
@@ -6141,7 +6198,7 @@ mod tests {
         malformed.challenge_window_blocks_snapshot = Some(0);
         let r4 = st.update_task(r4, malformed).unwrap();
 
-        let r5 = apply_challenge_at_height(
+        let err = apply_challenge_at_height(
             &mut st,
             r4,
             "challenger".into(),
@@ -6149,10 +6206,12 @@ mod tests {
             "challenger".into(),
             111,
         )
-        .unwrap();
-        let task = st.get_task(r5.id).unwrap();
-        assert_eq!(task.challenge_window_blocks_snapshot, Some(1));
-        assert_eq!(task.resolve_deadline_height, Some(112));
+        .unwrap_err();
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("revealed task has invalid challenge_window_blocks_snapshot evidence"))
+        );
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
     }
 
     #[test]
@@ -13455,7 +13514,8 @@ mod tests {
     }
 
     #[test]
-    fn slashed_terminal_settlement_rejects_forfeited_challenge_bond_marker_without_moving_balances() {
+    fn slashed_terminal_settlement_rejects_forfeited_challenge_bond_marker_without_moving_balances()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -13491,11 +13551,19 @@ mod tests {
 
         let err = settle_worker_stake_for_terminal_state(&mut st, &task)
             .expect_err("slashed settlement must fail closed when challenge bond metadata says challenger forfeited");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata") || msg.contains("terminal challenged task")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata") || msg.contains("terminal challenged task"))
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(st.balance_of("worker1"), before_worker);
-        assert_eq!(st.balance_of(&worker_stake_lock_account(40_103_1)), before_lock);
-        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_103_1)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
     }
 
     #[test]
@@ -13534,13 +13602,20 @@ mod tests {
         let before_lock = st.balance_of(&worker_stake_lock_account(40_103_2));
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
-        let err = settle_worker_stake_for_terminal_state(&mut st, &task)
-            .expect_err("slashed settlement must fail closed when challenger evidence metadata is blank");
+        let err = settle_worker_stake_for_terminal_state(&mut st, &task).expect_err(
+            "slashed settlement must fail closed when challenger evidence metadata is blank",
+        );
         assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(st.balance_of("worker1"), before_worker);
-        assert_eq!(st.balance_of(&worker_stake_lock_account(40_103_2)), before_lock);
-        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_103_2)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
     }
 
     #[test]
@@ -13801,12 +13876,9 @@ mod tests {
         let before_lock = st.balance_of(&worker_stake_lock_account(40_243));
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
-        let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
-            "challenge success bounty must fail closed for blank challenger identity",
-        );
-        assert!(
-            matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity"))
-        );
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed for blank challenger identity");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
             st.balance_of(&worker_stake_lock_account(40_243)),
