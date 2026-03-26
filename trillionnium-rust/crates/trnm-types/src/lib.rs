@@ -159,6 +159,14 @@ pub struct TaskMetadataCompatibilityReport {
     pub findings: Vec<TaskMetadataCompatibilityFinding>,
 }
 
+impl TaskMetadataCompatibilityReport {
+    /// Deterministic headline reason for query surfaces that want a single,
+    /// stable governance-upgrade classification without re-encoding precedence.
+    pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.findings.first().copied()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -299,6 +307,10 @@ impl TaskMetadata {
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
         let findings = self.compatibility_findings();
         (!findings.is_empty()).then_some(findings)
+    }
+
+    pub fn primary_compatibility_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report().primary_finding()
     }
 
     pub fn requires_runtime_metadata_upgrade(&self) -> bool {
@@ -504,6 +516,14 @@ mod tests {
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
             ]
         );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+        );
     }
 
     #[test]
@@ -526,6 +546,10 @@ mod tests {
             Some(vec![
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload
             ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
         );
     }
 
@@ -553,6 +577,10 @@ mod tests {
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
             ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
         );
     }
 
@@ -675,6 +703,10 @@ mod tests {
         assert_eq!(
             metadata.compatibility_findings_nonempty(),
             Some(vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
         );
     }
 
