@@ -4038,6 +4038,13 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
         if matching_hash_roots.len() > 1 {
             return Ok(best_checkpoint);
         }
+        if !matching_hash_checkpoints.is_empty()
+            && !matching_hash_checkpoints
+                .iter()
+                .all(|cp| checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash))
+        {
+            return Ok(best_checkpoint);
+        }
 
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
             if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
@@ -4669,6 +4676,38 @@ mod tests {
         assert!(
             got.is_none(),
             "node recovery must fail closed when one WAL hash is claimed by multiple checkpoint state roots at the same height"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_same_hash_duplicate_with_malformed_surface() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let wal_hash = wal_entry.content_hash_hex();
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: wal_entry.height,
+                state_root_hex: wal_entry.state_root_hex.clone(),
+                wal_entry_hash_hex: wal_hash.clone(),
+            },
+            CheckpointMeta {
+                height: wal_entry.height,
+                state_root_hex: format!("{}\n", wal_entry.state_root_hex),
+                wal_entry_hash_hex: wal_hash,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must fail closed when same-hash checkpoint duplicates include malformed digest surfaces at the same height"
         );
     }
 
