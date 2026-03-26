@@ -51,6 +51,10 @@ fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
         .map(|suffix| suffix.trim_end_matches('/'))
         .filter(|suffix| !suffix.is_empty())
+        // Task/event lookups accept only a single decimal id path segment.
+        // Reject extra slash-delimited suffixes so malformed operator paths
+        // fail closed before numeric parsing.
+        .filter(|suffix| !suffix.contains('/'))
 }
 
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
@@ -277,6 +281,14 @@ mod tests {
         );
         assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
         assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+        assert_eq!(
+            parse_path_u64_suffix("/query-task/42/extra", "/query-task/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42/history", "/query-events/"),
+            None
+        );
     }
 
     #[test]
