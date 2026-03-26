@@ -2537,6 +2537,31 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_fast_path_does_not_double_count_shared_read_write_object_conflicts() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "0");
+        let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![2]
+        );
+        // Aggressive fast path should reuse the same read-domain filtering as the
+        // original scheduler so mixed read/write echoes do not inflate conflict
+        // metrics for the shared object domain.
+        assert_eq!(profile.conflict_checks, 4);
+        assert_eq!(profile.conflict_hits, 1);
+    }
+
+    #[test]
     fn grouping_parallel_safe() {
         let g = build_parallel_groups(&[
             tx(1, vec![], vec![o(1)]),
