@@ -191,6 +191,11 @@ CURRENT_BRANCH="$(git branch --show-current)"
 CURRENT_HEAD="$(git rev-parse HEAD)"
 WORKTREE_STATUS="$(test -z "$(git status --short)" && echo clean || echo dirty)"
 
+if [[ -z "$CURRENT_BRANCH" ]]; then
+  echo "[FAIL] detached HEAD is not allowed; check out the lane branch before collecting operator preflight evidence" >&2
+  exit 1
+fi
+
 printf 'operator_id=%s\n' "$OPERATOR_ID"
 printf 'window_type=%s\n' "$WINDOW_TYPE"
 printf 'change_ticket=%s\n' "$CHANGE_TICKET"
