@@ -5,8 +5,9 @@ use anyhow::Result;
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
     load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
-    save_ingress_records, should_execute_reveal, transition_request_status, try_acquire_task_lock,
-    AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent, RC_SKIPPED,
+    save_ingress_records, should_execute_reveal, transition_request_status, trim_boundary_audit_fillers,
+    try_acquire_task_lock, AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent,
+    RC_SKIPPED,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -266,7 +267,7 @@ fn submission_args(rec: &SubmissionRecord) -> (Vec<String>, Vec<String>) {
 
 fn normalize_adapter_tx_hash(tx_hash: Option<&str>) -> Option<String> {
     tx_hash.and_then(|hash| {
-        let trimmed = hash.trim();
+        let trimmed = trim_boundary_audit_fillers(hash);
         if trimmed.is_empty() {
             None
         } else {
@@ -599,6 +600,24 @@ mod tests {
             RC_OK,
         );
         assert_eq!(staged, None);
+    }
+
+    #[test]
+    fn normalize_adapter_tx_hash_trims_bom_and_zero_width_fillers() {
+        let normalized = super::normalize_adapter_tx_hash(Some(
+            "\u{feff}\u{200b}fresh-commit-hash\u{2060}\u{200d}",
+        ));
+        assert_eq!(normalized.as_deref(), Some("fresh-commit-hash"));
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_has_only_invisible_fillers() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("\u{feff}\u{200b}\u{2060}")),
+            Some("previous-commit".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("previous-commit"));
     }
 
     #[test]
