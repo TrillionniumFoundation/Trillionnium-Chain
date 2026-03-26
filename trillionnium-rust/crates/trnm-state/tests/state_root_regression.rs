@@ -5752,10 +5752,16 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("da_light_surface=checkpoint-wal-v1"));
     assert!(summary.contains("light_verifier_surface=checkpoint-wal-v1"));
     assert!(summary.contains("da_anchor_total_bytes=96"));
-    assert!(summary.contains(&format!("da_state_commitment={}", checkpoint.state_root_hex)));
+    assert!(summary.contains(&format!(
+        "da_state_commitment={}",
+        checkpoint.state_root_hex
+    )));
     assert!(summary.contains("da_state_commitment_kind=canonical-hex-32b"));
     assert!(summary.contains("da_state_commitment_bytes=32"));
-    assert!(summary.contains(&format!("da_checkpoint_commitment={}", checkpoint.commitment_hex())));
+    assert!(summary.contains(&format!(
+        "da_checkpoint_commitment={}",
+        checkpoint.commitment_hex()
+    )));
     assert!(summary.contains("da_checkpoint_commitment_kind=canonical-hex-32b"));
     assert!(summary.contains("da_checkpoint_commitment_bytes=32"));
     assert!(summary.contains(&format!("da_wal_content_hash={}", wal.content_hash_hex())));
@@ -5763,7 +5769,9 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("da_wal_content_hash_bytes=32"));
     assert!(summary.contains("checkpoint_binding_fields=height,state_root,wal_entry_hash"));
     assert!(summary.contains("checkpoint_tuple_order=height,state_root,wal_entry_hash"));
-    assert!(summary.contains("checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"));
+    assert!(summary.contains(
+        "checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"
+    ));
     assert!(summary.contains("checkpoint_commitment_fields=height,state_root,wal_entry_hash"));
     assert!(summary.contains("checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash)"));
     assert!(summary.contains("checkpoint_commitment_binding_kind=tuple-hash"));
@@ -5781,8 +5789,11 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("checkpoint_wal_entry_hash_matches_wal=true"));
     assert!(summary.contains("checkpoint_surface_canonical=true"));
     assert!(summary.contains("checkpoint_wal_binding_kind=content-hash-equality"));
-    assert!(summary.contains("wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash"));
-    assert!(summary.contains("wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash"));
+    assert!(summary.contains(
+        "wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash"
+    ));
+    assert!(summary
+        .contains("wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash"));
     assert!(summary.contains("wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?)"));
     assert!(summary.contains("wal_height=7"));
     assert!(summary.contains("wal_height_encoding=le-u64"));
@@ -5802,6 +5813,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_height_boundary_kind=non-genesis"));
     assert!(summary.contains(&format!("wal_prev_hash={}", "cd".repeat(32))));
     assert!(summary.contains("wal_prev_hash_present=true"));
+    assert!(summary.contains("wal_prev_hash_required=true"));
     assert!(summary.contains("wal_prev_hash_kind=linked"));
     assert!(summary.contains("wal_prev_hash_matches_height_boundary=true"));
     assert!(summary.contains("wal_prev_hash_bytes=32"));
@@ -5838,6 +5850,7 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
     assert!(summary.contains("wal_height_boundary_kind=genesis"));
     assert!(summary.contains("wal_prev_hash=none"));
     assert!(summary.contains("wal_prev_hash_present=false"));
+    assert!(summary.contains("wal_prev_hash_required=false"));
     assert!(summary.contains("wal_prev_hash_kind=genesis"));
     assert!(summary.contains("wal_prev_hash_matches_height_boundary=true"));
     assert!(summary.contains("wal_prev_hash_bytes=0"));
