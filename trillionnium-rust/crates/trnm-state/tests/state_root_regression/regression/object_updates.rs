@@ -359,6 +359,136 @@ fn restore_zero_id_gov_param_snapshot_fails_closed_without_perturbing_empty_root
 }
 
 #[test]
+fn restore_mismatched_task_id_snapshot_rewinds_live_task_and_pending_root() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    let live_task = TaskObject {
+        task_id: 10_305,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Challenged,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("live canonical task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-a".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-12T10:40:00Z".into()),
+                provenance_index: Some("prov-task-live-mismatch".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            metering: None,
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x31; 32]),
+        result_hash: Some([0x41; 32]),
+        reveal_salt: Some([0x51; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: Some(28),
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 3,
+    };
+    state.restore_task(10_305, Some(live_task));
+    state
+        .stage_or_confirm_resolve_approval(10_305, 3, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("canonical staged resolve approval should succeed");
+    let staged_root = state.state_root();
+
+    state.restore_task(
+        10_305,
+        Some(TaskObject {
+            task_id: 10_306,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("mismatched restore snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(TaskModelMetadata {
+                    model_id: Some("trnm-model-a".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T10:45:00Z".into()),
+                    provenance_index: Some("prov-task-mismatch".into()),
+                    privacy_tier: Some(PrivacyTier::Internal),
+                }),
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x31; 32]),
+            result_hash: Some([0x41; 32]),
+            reveal_salt: Some([0x51; 32]),
+            committed_at_height: Some(20),
+            reveal_deadline_height: Some(30),
+            challenge_deadline_height: Some(40),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(28),
+            resolve_deadline_height: Some(52),
+            challenge_bond: Some(17),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        }),
+    );
+
+    let mut expected = StateStore::new();
+    expected.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(10_305).is_none(),
+        "mismatched restore target must fail closed by dropping the targeted live task slot"
+    );
+    assert!(
+        state.pending_resolve_approval(10_305).is_none(),
+        "mismatched restore target must also scrub staged pending resolve metadata"
+    );
+    assert_ne!(
+        state.state_root(),
+        staged_root,
+        "dropping the targeted task slot on mismatched restore input must rewind the staged challenged-task root"
+    );
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "mismatched task-id restore input must rewind to the canonical governance-only baseline"
+    );
+}
+
+#[test]
 fn restore_zero_version_gov_param_snapshot_preserves_live_canonical_param_and_root() {
     let mut state = StateStore::new();
     state
