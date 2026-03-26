@@ -947,6 +947,51 @@ fn challenged_task_snapshot_anchor_is_complete(task: &TaskObject) -> bool {
             .is_some_and(|window| window != 0)
 }
 
+fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
+    if !matches!(task.status, TaskStatus::Completed | TaskStatus::Slashed) {
+        return true;
+    }
+
+    let has_bond = task.challenge_bond.is_some_and(|bond| bond > 0);
+    let has_challenger = task.challenger.as_deref().is_some_and(|challenger| {
+        validate_resolve_approver_token(challenger).is_ok()
+    });
+
+    if has_bond != has_challenger {
+        return false;
+    }
+
+    if task.challenge_bond_forfeited.is_some() != has_bond {
+        return false;
+    }
+
+    if has_bond {
+        let Some(challenged_at_height) = task.challenged_at_height else {
+            return false;
+        };
+        let Some(challenge_deadline_height) = task.challenge_deadline_height else {
+            return false;
+        };
+        let Some(resolve_deadline_height) = task.resolve_deadline_height else {
+            return false;
+        };
+        let Some(challenge_window_blocks_snapshot) = task.challenge_window_blocks_snapshot else {
+            return false;
+        };
+
+        challenge_window_blocks_snapshot > 0
+            && challenged_at_height > 0
+            && challenge_deadline_height > 0
+            && resolve_deadline_height > 0
+            && challenged_at_height <= challenge_deadline_height
+            && challenge_deadline_height <= resolve_deadline_height
+    } else {
+        task.challenged_at_height.is_none()
+            && task.challenge_deadline_height.is_none()
+            && task.resolve_deadline_height.is_none()
+    }
+}
+
 fn resolve_actor_is_reserved(token: &str) -> bool {
     token.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
         || token.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
@@ -2175,7 +2220,9 @@ impl StateStore {
                     self.pending_resolve_approvals.remove(&id);
                     return;
                 }
-                if !task_snapshot_metadata_is_complete(&task) {
+                if !task_snapshot_metadata_is_complete(&task)
+                    || !terminal_challenge_retention_is_consistent(&task)
+                {
                     self.pending_resolve_approvals.remove(&id);
                     self.objects.remove(&id);
                     return;
@@ -4438,6 +4485,48 @@ mod tests {
         assert!(
             st.get_task(406).is_none(),
             "restore_task must fail closed when metering proof metadata uses whitespace-padded fields instead of canonical snapshot material"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_inconsistent_terminal_challenge_retention_metadata() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 407,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: None,
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        };
+
+        st.restore_task(407, Some(task));
+
+        assert!(
+            st.get_task(407).is_none(),
+            "restore_task must fail closed when a retained terminal collateral snapshot keeps a challenge bond outcome but drops the challenger identity"
         );
     }
 
