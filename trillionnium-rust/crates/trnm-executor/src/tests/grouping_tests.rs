@@ -336,6 +336,7 @@ fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() 
     assert_eq!(profile.rw_retry_share(), 0.0);
     assert_eq!(profile.dominant_retry_stage(), "none");
     assert_eq!(profile.dominant_retry_share(), 0.0);
+    assert_eq!(profile.dominant_attributed_retry_share(), 0.0);
     assert_eq!(profile.dominant_retry_lead_hits(), 0);
     assert_eq!(profile.dominant_retry_lead_share(), 0.0);
     assert_eq!(profile.attributed_retry_hits(), 0);
@@ -394,6 +395,7 @@ fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
     assert!((profile.rw_retry_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
     assert_eq!(profile.dominant_retry_stage(), "wr");
     assert!((profile.dominant_retry_share() - (4.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.dominant_attributed_retry_share() - (4.0 / 7.0)).abs() < f64::EPSILON);
     assert_eq!(profile.dominant_retry_lead_hits(), 2);
     assert!((profile.dominant_retry_lead_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
     assert_eq!(profile.attributed_retry_hits(), 7);
