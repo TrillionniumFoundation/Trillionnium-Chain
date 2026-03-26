@@ -749,7 +749,9 @@ mod tests {
         assert_eq!(profile.reused_group_share(), 0.0);
         assert_eq!(profile.new_group_share(), 1.0);
         assert_eq!(profile.retry_pressure(), 0.0);
+        assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
         assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
+        assert_eq!(profile.candidate_groups_per_reused_placement(), 0.0);
         assert_eq!(profile.retry_scan_hit_rate(), 0.0);
         assert_eq!(profile.retry_scan_misses(), 0);
         assert_eq!(profile.retry_scan_miss_rate(), 0.0);
