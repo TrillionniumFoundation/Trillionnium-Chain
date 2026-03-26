@@ -61,20 +61,29 @@ pub struct OracleSnapshotAuditView {
 
 impl OracleSnapshotAuditView {
     pub fn source_contract_consistent(&self) -> bool {
-        let canonical_source_count = self
+        let canonical_sources = self
             .source_ids
             .iter()
             .map(|source| source.trim().to_ascii_lowercase())
+            .collect::<Vec<_>>();
+        let canonical_source_count = canonical_sources
+            .iter()
+            .cloned()
             .collect::<BTreeSet<_>>()
             .len() as u32;
-        let all_sources_canonical = self.source_ids.iter().all(|source| {
-            let canonical = source.trim().to_ascii_lowercase();
-            !canonical.is_empty() && canonical == *source
-        });
+        let all_sources_canonical = self
+            .source_ids
+            .iter()
+            .zip(canonical_sources.iter())
+            .all(|(source, canonical)| !canonical.is_empty() && canonical == source);
+        let sources_sorted = canonical_sources
+            .windows(2)
+            .all(|window| window[0] < window[1]);
 
         self.source_count > 0
             && self.sample_count > 0
             && all_sources_canonical
+            && sources_sorted
             && self.source_count == self.source_ids.len() as u32
             && canonical_source_count == self.source_count
             && self.source_count <= self.sample_count
@@ -752,6 +761,23 @@ mod tests {
         };
         assert!(!non_canonical_source.source_contract_consistent());
         assert!(!non_canonical_source.proof_contract_consistent());
+
+        let unsorted_sources = OracleSnapshotAuditView {
+            feed_id: "btc/usd".to_string(),
+            value: 100_000,
+            source_ids: vec!["coingecko".to_string(), "chainlink".to_string()],
+            source_count: 2,
+            sample_count: 2,
+            median: Some(100_000),
+            mad: Some(120),
+            window_start_ms: 1_000,
+            window_end_ms: 2_000,
+            window_span_ms: 1_000,
+            snapshot_ts_ms: 10_000,
+            snapshot_hash: "abc123".to_string(),
+        };
+        assert!(!unsorted_sources.source_contract_consistent());
+        assert!(!unsorted_sources.proof_contract_consistent());
 
         let bad_window = OracleSnapshotAuditView {
             feed_id: "btc/usd".to_string(),
