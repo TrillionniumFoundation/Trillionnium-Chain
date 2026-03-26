@@ -979,6 +979,52 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_resets_cleanly_after_reserve_only_full_drain_and_idle_poll() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        // Reserve-only mode routes all ingress through critical capacity.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 3, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 3,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // After the full drain and one idle scheduler poll, observability should
+        // reopen reserve-only borrowed headroom for both ingress classes.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 3,
+                total_headroom: 3,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
     fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
