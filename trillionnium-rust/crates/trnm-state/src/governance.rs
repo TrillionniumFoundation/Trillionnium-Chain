@@ -1,6 +1,9 @@
 use trnm_types::{GovParamObject, ObjectRef};
 
-use crate::{validate_gov_param_registry_binding, ObjectValue, StateStore, VersionedObject};
+use crate::{
+    validate_gov_param_registry_binding, ObjectValue, StateStore, VersionedObject,
+    NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PendingGovParamUpdate {
@@ -829,23 +832,21 @@ mod tests {
 
     #[test]
     fn foreign_algorand_governance_key_stays_outside_explicit_registry() {
-        const FOREIGN_ALGORAND_KEY: &str = "algorand_governance_key_id";
-
         assert!(
-            !GOV_ALLOWED_KEYS.contains(&FOREIGN_ALGORAND_KEY),
+            !GOV_ALLOWED_KEYS.contains(&NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "foreign algorand governance key must stay outside the allowlist"
         );
         assert!(
-            !has_explicit_gov_param_validator(FOREIGN_ALGORAND_KEY),
+            !has_explicit_gov_param_validator(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "foreign algorand governance key must not gain an explicit validator"
         );
         assert_eq!(
-            governance_pinned_key_id(FOREIGN_ALGORAND_KEY),
+            governance_pinned_key_id(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "foreign algorand governance key must not acquire a reserved pinned id"
         );
 
-        let err = validate_gov_param_value(FOREIGN_ALGORAND_KEY, "7999")
+        let err = validate_gov_param_value(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID, "7999")
             .expect_err("foreign algorand governance key must fail closed at validator boundary");
         assert!(err.contains("no explicit validator registered"), "{err}");
     }
