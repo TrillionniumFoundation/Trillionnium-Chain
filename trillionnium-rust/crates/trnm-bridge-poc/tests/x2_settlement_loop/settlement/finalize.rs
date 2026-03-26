@@ -90,6 +90,33 @@ fn x3_prep_accepts_source_plus_one_confirm_when_target_has_already_reached_sourc
 }
 
 #[test]
+fn x3_prep_rejects_stale_saturated_confirm_when_target_has_already_reached_u64_max_source_head() {
+    let mut request = SettlementRequest::new(1, "0xoverlay-max-stale-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(u64::MAX, u64::MAX, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed {
+            height: u64::MAX - 1,
+        },
+    )
+    .expect_err("stale saturated confirm must fail once target reaches the source head");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight {
+            height: u64::MAX - 1,
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_accepts_saturated_finality_boundary_at_u64_max() {
     let mut request = SettlementRequest::new(1, "0xoverlay-max-boundary".to_string());
     let token = operator_token();
