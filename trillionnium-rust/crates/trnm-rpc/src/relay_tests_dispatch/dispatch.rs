@@ -70,6 +70,66 @@ fn relay_query_session_proof_returns_messages_root_and_proofs() {
 }
 
 #[test]
+fn relay_session_proof_json_contract_keeps_explicit_audit_fields() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp-contract".into(),
+        })
+        .unwrap();
+
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp-contract".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp-contract".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m2".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 88,
+            session_id: "sp-contract".into(),
+            from_seq: 1,
+            to_seq: 4,
+            source: None,
+        })
+        .unwrap();
+
+    let json = serde_json::to_value(&proof).unwrap();
+    assert_eq!(json["task_id"], 88);
+    assert_eq!(json["session_id"], "sp-contract");
+    assert_eq!(json["range_len"], 4);
+    assert_eq!(json["message_count"], 4);
+    assert_eq!(json["proof_count"], 4);
+    assert_eq!(json["total_proof_steps"], 8);
+    assert_eq!(json["max_proof_depth"], 2);
+    assert_eq!(json["messages"].as_array().unwrap().len(), 4);
+    assert_eq!(json["proofs"].as_array().unwrap().len(), 4);
+    assert_eq!(json["proofs"][0]["leaf_sequence"], 1);
+    assert_eq!(json["proofs"][3]["leaf_sequence"], 4);
+    assert_eq!(json["proofs"][0]["leaf_index"], 0);
+    assert_eq!(json["proofs"][3]["leaf_index"], 3);
+    assert!(json["segment_root_hex"].as_str().unwrap().len() == 64);
+    assert!(json["proofs"][0]["leaf_hash_hex"].as_str().unwrap().len() == 64);
+}
+
+#[test]
 fn relay_session_proof_rejects_leaf_sequence_drift() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);
