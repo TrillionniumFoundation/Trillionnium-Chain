@@ -57,6 +57,10 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
     path.strip_prefix(prefix)
         .map(|suffix| suffix.trim_end_matches('/'))
         .filter(|suffix| !suffix.is_empty())
+        // Capability subjects/tokens are single path segments. Reject extra
+        // slash-delimited segments so malformed operator paths fail closed
+        // instead of being misread as an opaque identifier.
+        .filter(|suffix| !suffix.contains('/'))
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -291,6 +295,13 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice/extra",
+                "/query-capability-audit/"
+            ),
             None
         );
     }
