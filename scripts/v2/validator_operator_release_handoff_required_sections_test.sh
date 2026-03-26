@@ -37,6 +37,7 @@ required_lines=(
   'rollback_entrypoint='
   'rollback_trigger=apply_error|height_stall|config_drift|binary_mismatch|operator_abort'
   'window_outcome=pass|blocked|rolled-back'
+  'blocker_summary='
   'next_safe_action='
   '字段缺失时，不应把本轮状态描述成 release-ready'
   'trnm-node` 与 `trnm-cli` 必须分别记录'
