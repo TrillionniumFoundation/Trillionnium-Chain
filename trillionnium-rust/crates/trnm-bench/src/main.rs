@@ -217,6 +217,9 @@ fn main() {
         let conflict_checks_per_tx = profile.conflict_checks_per_tx();
         let conflict_hits_per_tx = profile.conflict_hits_per_tx();
         let candidate_groups_per_tx = profile.candidate_groups_per_tx();
+        let reused_group_placements = profile.reused_group_placements();
+        let reused_group_share = profile.reused_group_share();
+        let new_group_share = profile.new_group_share();
         let retry_pressure = profile.retry_pressure();
         let retry_fallback_new_group_share = profile.retry_fallback_new_group_share();
         let retry_fallback_share_of_new_groups = profile.retry_fallback_share_of_new_groups();
@@ -270,6 +273,12 @@ fn main() {
             "profile.candidate_groups_per_tx={:.4}",
             candidate_groups_per_tx
         ));
+        lines.push(format!(
+            "profile.reused_group_placements={}",
+            reused_group_placements
+        ));
+        lines.push(format!("profile.reused_group_share={:.4}", reused_group_share));
+        lines.push(format!("profile.new_group_share={:.4}", new_group_share));
         lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
         lines.push(format!(
             "profile.retry_fallback_new_group_share={:.4}",
@@ -640,6 +649,9 @@ mod tests {
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
+        assert_eq!(profile.reused_group_placements(), 5);
+        assert!((profile.reused_group_share() - 0.625).abs() < f64::EPSILON);
+        assert!((profile.new_group_share() - 0.375).abs() < f64::EPSILON);
         assert_eq!(profile.retry_fallback_new_groups, 0);
         assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
         assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
@@ -696,6 +708,9 @@ mod tests {
         assert_eq!(profile.conflict_checks_per_tx(), 0.0);
         assert_eq!(profile.conflict_hits_per_tx(), 0.0);
         assert_eq!(profile.candidate_groups_per_tx(), 0.0);
+        assert_eq!(profile.reused_group_placements(), 0);
+        assert_eq!(profile.reused_group_share(), 0.0);
+        assert_eq!(profile.new_group_share(), 1.0);
         assert_eq!(profile.retry_pressure(), 0.0);
         assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
         assert_eq!(profile.retry_scan_hit_rate(), 0.0);
