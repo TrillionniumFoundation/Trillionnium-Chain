@@ -4163,8 +4163,9 @@ mod tests {
         };
 
         let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
-        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
-            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex = uppercase_checkpoint_wal_hash
+            .wal_entry_hash_hex
+            .to_uppercase();
         assert!(
             !checkpoint_evidence_surface_is_canonical(&uppercase_checkpoint_wal_hash, &wal_entry),
             "checkpoint wal_entry_hash_hex must stay lowercase canonical hex so audit surfaces do not accept mixed-case WAL digest encodings"
@@ -4182,7 +4183,8 @@ mod tests {
         uppercase_prev_hash_wal.prev_hash_hex = Some("ab".repeat(32).to_uppercase());
         let mut uppercase_prev_hash_checkpoint = checkpoint.clone();
         uppercase_prev_hash_checkpoint.height = 8;
-        uppercase_prev_hash_checkpoint.wal_entry_hash_hex = uppercase_prev_hash_wal.content_hash_hex();
+        uppercase_prev_hash_checkpoint.wal_entry_hash_hex =
+            uppercase_prev_hash_wal.content_hash_hex();
         assert!(
             !checkpoint_evidence_surface_is_canonical(
                 &uppercase_prev_hash_checkpoint,
@@ -4294,7 +4296,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4318,7 +4321,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4342,7 +4346,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4366,7 +4371,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4390,7 +4396,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4427,7 +4434,8 @@ mod tests {
         );
 
         let mut uppercase_wal_hash = checkpoint.clone();
-        uppercase_wal_hash.wal_entry_hash_hex = uppercase_wal_hash.wal_entry_hash_hex.to_uppercase();
+        uppercase_wal_hash.wal_entry_hash_hex =
+            uppercase_wal_hash.wal_entry_hash_hex.to_uppercase();
         let got = verify_wal_and_find_checkpoint_node_recovery(&[uppercase_wal_hash], &[wal_entry])
             .unwrap();
         assert!(
@@ -4452,7 +4460,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4476,7 +4485,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4500,7 +4510,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4524,7 +4535,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4548,7 +4560,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4572,7 +4585,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4596,7 +4610,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4620,7 +4635,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4665,6 +4681,40 @@ mod tests {
     }
 
     #[test]
+    fn node_recovery_checkpoint_verification_rejects_noncanonical_prev_hash_surface() {
+        let genesis = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let successor = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: Some(format!("{}\n", genesis.content_hash_hex())),
+        };
+        let checkpoint = CheckpointMeta {
+            height: successor.height,
+            state_root_hex: successor.state_root_hex.clone(),
+            wal_entry_hash_hex: successor.content_hash_hex(),
+        };
+
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[genesis, successor])
+                .unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must reject predecessor hashes with embedded control/whitespace so restart-time checkpoint proofs preserve canonical chain-link digest surfaces"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_height_zero_checkpoint_surface() {
         let wal_entry = WalMeta {
             height: 1,
@@ -4680,7 +4730,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
@@ -4689,7 +4740,8 @@ mod tests {
     }
 
     #[test]
-    fn node_recovery_checkpoint_verification_rejects_uncommitted_wal_even_when_checkpoint_matches() {
+    fn node_recovery_checkpoint_verification_rejects_uncommitted_wal_even_when_checkpoint_matches()
+    {
         let wal_entry = WalMeta {
             height: 1,
             round: 0,
@@ -4704,7 +4756,8 @@ mod tests {
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
-        let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+        let got =
+            verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
 
         assert!(
             got.is_none(),
