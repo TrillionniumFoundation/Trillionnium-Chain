@@ -128,7 +128,7 @@ impl CheckpointMeta {
     pub fn evidence_summary(&self) -> String {
         let checkpoint_commitment = self.commitment_hex();
         format!(
-            "checkpoint_height={} checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes={} wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes={} checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes={}",
+            "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_height={} checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes={} wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes={} checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes={}",
             self.height,
             self.state_root_hex,
             self.state_root_hex.len() / 2,
@@ -170,7 +170,7 @@ impl WalMeta {
 
     pub fn evidence_summary(&self) -> String {
         format!(
-            "wal_height={} wal_round={} wal_proposal_hash={} wal_committed={} wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+            "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height={} wal_round={} wal_proposal_hash={} wal_committed={} wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
             self.height,
             self.round,
             self.proposal_hash,
@@ -4233,7 +4233,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes=32 wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes=32 checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes=32",
+                "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes=32 wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes=32 checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes=32",
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
                 checkpoint.commitment_hex()
@@ -4335,7 +4335,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "wal_height=7 wal_round=3 wal_proposal_hash=proposal-7 wal_committed=true wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
+                "wal_evidence_surface=wal-v1 wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=7 wal_round=3 wal_proposal_hash=proposal-7 wal_committed=true wal_state_root={} wal_prev_hash={} wal_entry_hash={}",
                 wal.state_root_hex,
                 wal.prev_hash_hex.as_deref().unwrap(),
                 wal.content_hash_hex()
