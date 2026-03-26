@@ -2952,6 +2952,41 @@
     }
 
     #[test]
+    fn critical_guard_critical_only_backlog_preserves_fifo_prefix_within_domain() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::Challenge {
+                task_id: 41,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 41,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::Challenge {
+                task_id: 42,
+                challenger: "c2".into(),
+                bond: 20,
+            },
+            MockTx::Resolve {
+                task_id: 42,
+                slash_worker: true,
+                resolver: "gov".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(matches!(picked[0], MockTx::Challenge { task_id: 41, .. }));
+        assert!(matches!(picked[1], MockTx::Resolve { task_id: 41, .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Challenge { task_id: 42, .. }));
+        assert!(matches!(mempool[1], MockTx::Resolve { task_id: 42, .. }));
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
