@@ -1,7 +1,7 @@
 use super::*;
 use crate::governance_ops::{
-    canonicalize_resolve_authority_set, gov_param_registry_entry, GovParamKind,
-    GovParamUpdateOutcome, GovParamValueValidator, EMERGENCY_PAUSE_KEY_ID,
+    canonicalize_resolve_authority_set, gov_param_registry_entry, gov_pinned_key_ids,
+    GovParamKind, GovParamUpdateOutcome, GovParamValueValidator, EMERGENCY_PAUSE_KEY_ID,
 };
 
 #[test]
@@ -349,4 +349,39 @@ fn governance_keysets_merge_gate_are_unique_and_subset_safe() {
         !sensitive_unique.contains("emergency_pause"),
         "emergency_pause must remain immediate and never timelocked"
     );
+}
+
+#[test]
+fn governance_pinned_key_registry_merge_gate_is_unique_and_canonical() {
+    // Merge-gate: reserved Algorand-style key bindings must stay one-to-one in the typed
+    // registry so canonical key and reserved key-id cannot silently drift apart.
+    let pinned_pairs: Vec<(&str, u64)> = gov_pinned_key_ids().collect();
+    let pinned_keys: std::collections::BTreeSet<&str> =
+        pinned_pairs.iter().map(|(key, _)| *key).collect();
+    let pinned_ids: std::collections::BTreeSet<u64> =
+        pinned_pairs.iter().map(|(_, key_id)| *key_id).collect();
+
+    assert_eq!(
+        pinned_keys.len(),
+        pinned_pairs.len(),
+        "typed pinned-key registry contains duplicate keys"
+    );
+    assert_eq!(
+        pinned_ids.len(),
+        pinned_pairs.len(),
+        "typed pinned-key registry contains duplicate reserved key_ids"
+    );
+
+    let schema_pinned: std::collections::BTreeMap<&str, u64> = GOV_PARAM_SCHEMA
+        .iter()
+        .filter_map(|entry| entry.pinned_key_id.map(|key_id| (entry.key, key_id)))
+        .collect();
+    let derived_pinned: std::collections::BTreeMap<&str, u64> =
+        pinned_pairs.iter().copied().collect();
+    assert_eq!(
+        derived_pinned, schema_pinned,
+        "derived pinned-key view drifted from GOV_PARAM_SCHEMA"
+    );
+    assert_eq!(derived_pinned.get("emergency_pause"), Some(&EMERGENCY_PAUSE_KEY_ID));
+    assert_eq!(derived_pinned.len(), 1, "unexpected extra reserved governance key binding");
 }
