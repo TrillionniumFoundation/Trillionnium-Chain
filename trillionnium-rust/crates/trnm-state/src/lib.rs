@@ -4025,6 +4025,20 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
 
+        let matching_hash_checkpoints: Vec<&CheckpointMeta> = checkpoints
+            .iter()
+            .filter(|cp| cp.height == e.height && cp.wal_entry_hash_hex == cur_hash)
+            .collect();
+        let mut matching_hash_roots: Vec<&str> = matching_hash_checkpoints
+            .iter()
+            .map(|cp| cp.state_root_hex.as_str())
+            .collect();
+        matching_hash_roots.sort_unstable();
+        matching_hash_roots.dedup();
+        if matching_hash_roots.len() > 1 {
+            return Ok(best_checkpoint);
+        }
+
         for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
             if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
                 let should_replace = best_checkpoint
@@ -4623,6 +4637,38 @@ mod tests {
         assert!(
             got.is_none(),
             "node recovery must reject uncommitted WAL metadata even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+        );
+    }
+
+    #[test]
+    fn node_recovery_checkpoint_verification_rejects_ambiguous_same_hash_state_roots() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let wal_hash = wal_entry.content_hash_hex();
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: wal_entry.height,
+                state_root_hex: wal_entry.state_root_hex.clone(),
+                wal_entry_hash_hex: wal_hash.clone(),
+            },
+            CheckpointMeta {
+                height: wal_entry.height,
+                state_root_hex: "cd".repeat(32),
+                wal_entry_hash_hex: wal_hash,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal_entry]).unwrap();
+
+        assert!(
+            got.is_none(),
+            "node recovery must fail closed when one WAL hash is claimed by multiple checkpoint state roots at the same height"
         );
     }
 
