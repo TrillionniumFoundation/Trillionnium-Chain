@@ -16,6 +16,23 @@ fn relay_proof_query_rejects_empty_session() {
 }
 
 #[test]
+fn relay_proof_query_rejects_unknown_session_with_explicit_not_found_code() {
+    let relay = RelayService::new(RelayRouter::new());
+    let err = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "sp-missing".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: None,
+        })
+        .unwrap_err();
+    assert!(err
+        .to_string()
+        .contains("not_found/session_not_found"));
+}
+
+#[test]
 fn relay_proof_query_rejects_noncanonical_session() {
     let relay = RelayService::new(RelayRouter::new());
     let err = relay
