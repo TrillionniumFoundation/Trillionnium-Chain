@@ -4241,6 +4241,7 @@ mod tests {
         let mut with_terminal_challenge_evidence = StateStore::new();
         let mut with_different_terminal_outcome = StateStore::new();
         let mut with_different_challenger_identity = StateStore::new();
+        let mut with_different_terminal_timing = StateStore::new();
 
         let base_task = TaskObject {
             task_id: 406,
@@ -4280,6 +4281,9 @@ mod tests {
         let mut challenger_drift_terminal = challenged_terminal.clone();
         challenger_drift_terminal.challenger = Some("challenger-b".into());
 
+        let mut timing_drift_terminal = challenged_terminal.clone();
+        timing_drift_terminal.resolve_deadline_height = Some(41);
+
         baseline.put_task_new(base_task).unwrap();
         with_terminal_challenge_evidence
             .put_task_new(challenged_terminal)
@@ -4289,6 +4293,9 @@ mod tests {
             .unwrap();
         with_different_challenger_identity
             .put_task_new(challenger_drift_terminal)
+            .unwrap();
+        with_different_terminal_timing
+            .put_task_new(timing_drift_terminal)
             .unwrap();
 
         assert_ne!(
@@ -4305,6 +4312,11 @@ mod tests {
             with_terminal_challenge_evidence.state_root(),
             with_different_challenger_identity.state_root(),
             "state_root must bind terminal challenge evidence to the exact challenger identity so slash evidence retention cannot replay under a different claimant"
+        );
+        assert_ne!(
+            with_terminal_challenge_evidence.state_root(),
+            with_different_terminal_timing.state_root(),
+            "state_root must bind terminal challenge timing evidence so retained slash/challenge audit anchors cannot replay under drifted deadlines"
         );
     }
 
@@ -6173,10 +6185,20 @@ mod tests {
     #[test]
     fn paused_restore_pending_resolve_rejects_finalized_snapshot_without_forfeit_evidence() {
         let mut st = StateStore::new();
-        st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-            .expect("bootstrap resolve_authority write should succeed");
-        st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
-            .expect("bootstrap resolve_authority should apply after timelock");
+        st.set_gov_param(
+            98_240,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+        st.set_gov_param(
+            98_260,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
 
         let task = TaskObject {
             task_id: 9_932,
