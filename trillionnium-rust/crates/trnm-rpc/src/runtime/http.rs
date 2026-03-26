@@ -164,6 +164,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
+    path.strip_prefix(prefix)
+        .map(|suffix| suffix.trim_end_matches('/'))
+        .filter(|suffix| !suffix.is_empty())
+        // Task/event lookups accept only a single decimal id path segment.
+        // Reject extra slash-delimited suffixes so malformed operator paths
+        // fail closed before numeric parsing.
+        .filter(|suffix| !suffix.contains('/'))
+}
+
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
         .map(|suffix| suffix.trim_end_matches('/'))
@@ -218,10 +228,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
-                let task_id = path
-                    .trim_start_matches("/query-task/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
+                let task_id = parse_path_u64_suffix(path, "/query-task/")
+                    .ok_or(())
+                    .and_then(|suffix| suffix.parse::<u64>().map_err(|_| ()));
                 match task_id {
                     Ok(task_id) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
@@ -246,10 +255,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
-                let task_id = path
-                    .trim_start_matches("/query-events/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
+                let task_id = parse_path_u64_suffix(path, "/query-events/")
+                    .ok_or(())
+                    .and_then(|suffix| suffix.parse::<u64>().map_err(|_| ()));
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => {
@@ -340,7 +348,7 @@ mod tests {
     use super::{
         configure_health_stream, http_json_head_response, http_json_response,
         is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        read_http_request_head, HEALTH_REQUEST_HEADER_MAX_BYTES,
+        parse_path_u64_suffix, read_http_request_head, HEALTH_REQUEST_HEADER_MAX_BYTES,
     };
     use std::io::Write;
 
@@ -422,6 +430,26 @@ mod tests {
 
         let head = http_json_head_response("200 OK", 11);
         assert!(head.contains("\r\nCache-Control: no-store\r\n"));
+    }
+
+    #[test]
+    fn parse_path_u64_suffix_rejects_nested_operator_suffixes() {
+        assert_eq!(parse_path_u64_suffix("/query-task/42", "/query-task/"), Some("42"));
+        assert_eq!(parse_path_u64_suffix("/query-task/42/", "/query-task/"), Some("42"));
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7/", "/query-events/"),
+            Some("7")
+        );
+        assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+        assert_eq!(
+            parse_path_u64_suffix("/query-task/42/extra", "/query-task/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7/history", "/query-events/"),
+            None
+        );
     }
 
     #[test]
