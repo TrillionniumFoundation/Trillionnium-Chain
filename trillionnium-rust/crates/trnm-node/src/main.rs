@@ -13021,14 +13021,19 @@ fn main() -> Result<()> {
                 state_root_hex: root.clone(),
                 wal_entry_hash_hex: wal_hash,
             };
-            let checkpoint_summary = checkpoint.evidence_summary();
-            let wal_summary = wal_entries
+            let wal_entry = wal_entries
                 .last()
-                .expect("just-pushed committed WAL entry must exist")
-                .evidence_summary();
+                .expect("just-pushed committed WAL entry must exist");
+            let checkpoint_summary = checkpoint.evidence_summary();
+            let wal_summary = wal_entry.evidence_summary();
+            let da_summary = trnm_state::checkpoint_da_light_verifier_summary(&checkpoint, wal_entry)
+                .expect("canonical checkpoint evidence must produce a DA/light-verifier summary");
             checkpoints.push(checkpoint);
             persist_checkpoint_meta(&wal_dir, &checkpoints)?;
-            println!("[bft-checkpoint] {} {}", checkpoint_summary, wal_summary);
+            println!(
+                "[bft-checkpoint] {} {} da_light_summary={}",
+                checkpoint_summary, wal_summary, da_summary
+            );
         }
 
         persist_consensus_wal(
