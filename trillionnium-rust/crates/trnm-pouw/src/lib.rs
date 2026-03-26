@@ -778,6 +778,11 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     task.status
                 )));
             }
+            if task.challenge_deadline_height.is_none() {
+                return Err(PouwError::State(
+                    "revealed task missing challenge_deadline_height".into(),
+                ));
+            }
         }
         TaskStatus::Challenged => {
             if !has_bond {
@@ -5756,6 +5761,37 @@ mod tests {
 
         let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
         assert!(matches!(err, PouwError::State(msg) if msg.contains("stale challenge fields")));
+    }
+
+    #[test]
+    fn challenge_rejects_revealed_state_missing_deadline() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 39020, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(39020, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+
+        let mut missing_deadline = st.get_task(r4.id).unwrap();
+        missing_deadline.challenge_deadline_height = None;
+        let missing_deadline_ref = st.update_task(r4, missing_deadline).unwrap();
+        let err = apply_challenge_at_height(
+            &mut st,
+            missing_deadline_ref,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            111,
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("revealed task missing challenge_deadline_height")));
     }
 
     #[test]
