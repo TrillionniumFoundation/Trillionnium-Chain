@@ -1,7 +1,8 @@
 use super::*;
 use crate::governance_ops::{
-    canonicalize_resolve_authority_set, gov_param_registry_entry, gov_pinned_key_ids,
-    GovParamKind, GovParamUpdateOutcome, GovParamValueValidator, EMERGENCY_PAUSE_KEY_ID,
+    canonicalize_resolve_authority_set, gov_invalid_merge_gate_samples, gov_param_registry_entry,
+    gov_pinned_key_ids, GovParamKind, GovParamUpdateOutcome, GovParamValueValidator,
+    EMERGENCY_PAUSE_KEY_ID,
 };
 
 #[test]
@@ -270,15 +271,7 @@ fn governance_allowed_keys_schema_merge_gate_is_explicit() {
     );
 
     let mut st = StateStore::new();
-    for (
-        i,
-        GovParamSchemaEntry {
-            key,
-            invalid_merge_gate_sample,
-            ..
-        },
-    ) in GOV_PARAM_SCHEMA.iter().copied().enumerate()
-    {
+    for (i, (key, invalid_merge_gate_sample)) in gov_invalid_merge_gate_samples().enumerate() {
         assert!(
             allowed_keys.contains(&key),
             "schema merge gate contains non-whitelisted key: {}",

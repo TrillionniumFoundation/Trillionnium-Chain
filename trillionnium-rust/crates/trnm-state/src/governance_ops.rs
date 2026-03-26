@@ -317,6 +317,12 @@ pub(crate) fn gov_pinned_key_ids() -> impl Iterator<Item = (&'static str, u64)> 
         .filter_map(|entry| entry.pinned_key_id.map(|key_id| (entry.key, key_id)))
 }
 
+pub(crate) fn gov_invalid_merge_gate_samples() -> impl Iterator<Item = (&'static str, &'static str)> {
+    GOV_PARAM_SCHEMA
+        .iter()
+        .map(|entry| (entry.key, entry.invalid_merge_gate_sample))
+}
+
 pub(crate) fn is_allowed_gov_param(key: &str) -> bool {
     gov_allowed_keys().any(|allowed_key| allowed_key == key)
 }
