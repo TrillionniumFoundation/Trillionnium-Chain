@@ -34,6 +34,29 @@ fn x3_prep_confirm_at_exact_source_plus_one_finality_boundary_succeeds() {
 }
 
 #[test]
+fn x3_prep_rejects_source_height_confirm_when_target_has_already_reached_source_head() {
+    let mut request = SettlementRequest::new(1, "0xoverlay-head-caught-up".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 700, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 700 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 700 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdup00f".to_string());
     let token = operator_token();
