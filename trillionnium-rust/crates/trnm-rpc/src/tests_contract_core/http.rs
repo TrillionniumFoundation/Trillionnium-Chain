@@ -293,3 +293,32 @@ fn read_http_request_head_times_out_on_partial_slowloris_client() {
 
     client.join().expect("client thread join");
 }
+
+#[test]
+fn read_http_request_head_rejects_oversized_header_without_terminator() {
+    use std::net::{Shutdown, TcpListener, TcpStream};
+    use std::thread;
+
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+    let addr = listener.local_addr().expect("listener addr");
+    let oversized = vec![b'a'; HEALTH_REQUEST_HEADER_MAX_BYTES + 32];
+
+    let client = thread::spawn(move || {
+        let mut client = TcpStream::connect(addr).expect("connect test listener");
+        client
+            .write_all(&oversized)
+            .expect("write oversized partial request head");
+        let _ = client.shutdown(Shutdown::Write);
+    });
+
+    let (mut server_stream, _) = listener.accept().expect("accept test client");
+    configure_health_stream(&server_stream).expect("configure timeouts");
+    let err = read_http_request_head(&mut server_stream)
+        .expect_err("oversized unterminated request head must fail closed");
+    assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
+    assert!(err
+        .to_string()
+        .contains("exceeded configured max bytes before terminator"));
+
+    client.join().expect("client thread join");
+}

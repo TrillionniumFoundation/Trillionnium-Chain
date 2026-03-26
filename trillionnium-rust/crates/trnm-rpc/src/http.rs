@@ -47,6 +47,11 @@ pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()>
     Ok(())
 }
 
+fn has_complete_http_head(buf: &[u8]) -> bool {
+    buf.windows(4).any(|window| window == b"\r\n\r\n")
+        || buf.windows(2).any(|window| window == b"\n\n")
+}
+
 pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     let mut buf = Vec::with_capacity(512);
     let mut chunk = [0u8; 512];
@@ -59,11 +64,16 @@ pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<
             break;
         }
         buf.extend_from_slice(&chunk[..n]);
-        if buf.windows(4).any(|window| window == b"\r\n\r\n")
-            || buf.windows(2).any(|window| window == b"\n\n")
-        {
-            break;
+        if has_complete_http_head(&buf) {
+            return Ok(buf);
         }
+    }
+
+    if buf.len() >= HEALTH_REQUEST_HEADER_MAX_BYTES && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "http request header exceeded configured max bytes before terminator",
+        ));
     }
 
     Ok(buf)
