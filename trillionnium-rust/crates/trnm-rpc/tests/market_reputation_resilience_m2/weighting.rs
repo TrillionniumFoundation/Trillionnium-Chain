@@ -472,6 +472,11 @@ fn market_match_normalizes_wrapped_weight_envs_in_output_config() {
             .and_then(Value::as_u64),
         Some(143)
     );
+    assert_eq!(
+        cfg.get("min_reputation_score_delta")
+            .and_then(Value::as_i64),
+        Some(-143)
+    );
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
 
     let _ = fs::remove_file(tasks);
@@ -553,6 +558,10 @@ fn market_match_clamps_wrapped_overflow_weight_envs_in_output_config() {
     assert_eq!(
         cfg.get("max_reputation_score_delta").and_then(Value::as_u64),
         Some(1_000_000_000_000)
+    );
+    assert_eq!(
+        cfg.get("min_reputation_score_delta").and_then(Value::as_i64),
+        Some(-1_000_000_000_000)
     );
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
 
