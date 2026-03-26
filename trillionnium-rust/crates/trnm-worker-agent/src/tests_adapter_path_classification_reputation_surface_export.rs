@@ -95,3 +95,37 @@ fn exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids() 
         "surface lookup must reject cross-signal normalized score hybrids"
     );
 }
+
+#[test]
+fn exported_canonical_reputation_surfaces_keep_unique_score_bps_per_signal() {
+    let surfaces = canonical_reputation_surfaces();
+
+    for (idx, surface) in surfaces.iter().enumerate() {
+        assert_eq!(
+            reputation_signal_from_score_bps(surface.score_bps),
+            Some(CANONICAL_REPUTATION_SIGNAL_ORDER[idx]),
+            "score_bps must round-trip to exactly one canonical signal"
+        );
+
+        for other in surfaces.iter().skip(idx + 1) {
+            assert_ne!(
+                surface.score_bps, other.score_bps,
+                "each canonical surface must keep a unique normalized score"
+            );
+        }
+    }
+}
+
+#[test]
+fn exported_canonical_reputation_surfaces_keep_strictly_descending_score_bps() {
+    let surfaces = canonical_reputation_surfaces();
+
+    for window in surfaces.windows(2) {
+        let current = window[0];
+        let next = window[1];
+        assert!(
+            current.score_bps > next.score_bps,
+            "normalized score surface must remain strictly descending across canonical rank order"
+        );
+    }
+}
