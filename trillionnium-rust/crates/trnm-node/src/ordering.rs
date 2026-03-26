@@ -240,45 +240,6 @@ impl PreExecPool {
             .collect();
         (ordered_ok_ids, rejected)
     }
-        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
-        {
-            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
-            for w in 0..workers {
-                let ids: Vec<u64> = group_ids
-                    .iter()
-                    .copied()
-                    .enumerate()
-                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
-                    .collect();
-                if ids.is_empty() {
-                    continue;
-                }
-                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
-                    ids,
-                    result_tx: tx.clone(),
-                }));
-            }
-        }
-        self.state.cv.notify_all();
-        drop(tx);
-
-        let mut succeeded = std::collections::HashSet::new();
-        let mut rejected = 0u64;
-        for (id, ok, err) in rx {
-            if ok {
-                succeeded.insert(id);
-            } else {
-                rejected += 1;
-                println!("[preexec] tx_id={} rejected err={}", id, err);
-            }
-        }
-
-        let ok_ids: Vec<u64> = group_ids
-            .into_iter()
-            .filter(|id| succeeded.contains(id))
-            .collect();
-        (ok_ids, rejected)
-    }
 }
 
 impl Drop for PreExecPool {
