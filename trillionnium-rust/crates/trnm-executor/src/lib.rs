@@ -2753,6 +2753,31 @@ mod tests {
         assert_eq!(aggressive_profile.stage_rw_checks, 0);
     }
 
+    #[test]
+    fn aggressive_fast_path_does_not_double_count_shared_read_write_domains() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "0");
+
+        let txs = vec![tx(1, vec![o(7)], vec![o(7)]), tx(2, vec![], vec![o(7)])];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert_eq!(groups.len(), 2);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1]
+        );
+        assert_eq!(
+            groups[1].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![2]
+        );
+        assert_eq!(profile.conflict_checks, 4);
+        assert_eq!(profile.conflict_hits, 1);
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.retry_fallback_new_groups, 0);
+    }
+
     fn env_lock() -> MutexGuard<'static, ()> {
         static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
