@@ -220,6 +220,20 @@ mod tests {
     }
 
     #[test]
+    fn timeout_skip_reason_keeps_non_eligible_status_precedence_even_while_paused() {
+        assert_eq!(
+            timeout_skip_reason(&TaskStatus::Created, true),
+            Some("status_not_timeout_eligible"),
+            "pause must not relabel non-timeout states as challenged settlement skips"
+        );
+        assert_eq!(
+            timeout_skip_reason(&TaskStatus::Completed, true),
+            Some("status_not_timeout_eligible"),
+            "completed tasks must stay outside the timeout scanner even during emergency pause"
+        );
+    }
+
+    #[test]
     fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
