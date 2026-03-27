@@ -2875,6 +2875,77 @@ mod tests {
     }
 
     #[test]
+    fn timeout_rejects_blank_challenger_identity_without_balance_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1_000);
+
+        let task_id = 21_503;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let _ =
+            apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 1)
+                .unwrap();
+
+        let mut task = st.get_task(task_id).unwrap();
+        task.challenger = Some("   ".into());
+        let challenged_ref = st
+            .update_task(
+                ObjectRef {
+                    id: task_id,
+                    version: task.version,
+                },
+                task,
+            )
+            .unwrap();
+
+        let before_task = st.get_task(task_id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(task_id));
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = apply_timeout(&mut st, challenged_ref, 999).expect_err(
+            "timeout must fail closed when challenged task carries blank challenger identity",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
+
+        let after_task = st.get_task(task_id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenger, before_task.challenger);
+        assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(
+            after_task.resolve_deadline_height,
+            before_task.resolve_deadline_height
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(task_id)),
+            before_lock
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
     fn resolve_rejects_dirty_resolver_actor_ids() {
         for (i, dirty_resolver) in dirty_actor_ids().into_iter().enumerate() {
             let mut st = seeded_state();
