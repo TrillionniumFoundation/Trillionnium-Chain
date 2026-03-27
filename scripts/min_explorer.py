@@ -70,7 +70,7 @@ class ExplorerData:
     def load_blocks(self) -> dict[int, dict[str, Any]]:
         # keep latest occurrence for each height
         blocks: dict[int, dict[str, Any]] = {}
-        pattern = re.compile(r"\[block\].*?height=(\d+).*?state_root=([0-9a-fA-F]+)")
+        pattern = re.compile(r"\[block\].*?height=(\d+).*?state_root=((?:0x)?[0-9a-fA-F]+)")
         for logf in self.block_logs:
             if not logf.exists():
                 continue
