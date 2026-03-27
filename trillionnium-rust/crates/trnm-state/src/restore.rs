@@ -5,6 +5,7 @@ use crate::{ObjectValue, StateStore, VersionedObject};
 use trnm_types::TaskObject;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CheckpointMeta {
     pub height: u64,
     pub state_root_hex: String,
@@ -12,6 +13,7 @@ pub struct CheckpointMeta {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct WalMeta {
     pub height: u64,
     pub round: u64,
@@ -239,4 +241,50 @@ pub fn verify_wal_and_find_checkpoint(
     }
 
     Ok(best_checkpoint)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn checkpoint_meta_rejects_unknown_fields_for_restore_surface() {
+        let err = toml::from_str::<CheckpointMeta>(
+            r#"
+                height = 7
+                state_root_hex = "aa"
+                wal_entry_hash_hex = "bb"
+                forged = true
+            "#,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+    }
+
+    #[test]
+    fn wal_meta_rejects_unknown_fields_for_restore_surface() {
+        let err = toml::from_str::<WalMeta>(
+            r#"
+                height = 7
+                round = 1
+                proposal_hash = "proposal-7"
+                committed = true
+                state_root_hex = "aa"
+                prev_hash_hex = "bb"
+                forged = true
+            "#,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+    }
 }
