@@ -2795,6 +2795,23 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_treats_object_zero_as_real_shared_domain_key() {
+        let write_keys = vec![
+            0, 100, 200, 300, 400, 500, 600, 700, 800, 900,
+        ];
+
+        let keys = read_domain_only_keys(
+            &[o(0), o(42), o(0), o(42), o(900), o(7), o(7)],
+            &write_keys,
+        );
+
+        // Object id 0 is a real execution-domain member. Large write-domain
+        // filtering must remove it just like any other shared key rather than
+        // treating it as an empty/sentinel lane marker.
+        assert_eq!(keys, vec![42, 7]);
+    }
+
+    #[test]
     fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
         let tx = tx(
             1,
