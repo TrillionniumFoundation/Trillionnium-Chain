@@ -209,6 +209,22 @@ fn tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env() {
 }
 
 #[test]
+fn tx_retry_policy_trims_whitespace_wrapped_env_values() {
+    let policy = RetryPolicy {
+        max_retries: resolve_u32(None, Some(" 7\n"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        backoff_ms: resolve_u64(None, Some("\t900 "), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+    };
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
 fn llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default() {
     let policy = LlmAdapterPolicy {
         retry: RetryPolicy {
