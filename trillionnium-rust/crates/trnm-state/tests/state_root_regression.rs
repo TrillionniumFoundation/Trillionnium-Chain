@@ -6097,6 +6097,40 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_height_mismatch_surface(
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_height_surface() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "genesis-proposal".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut zero_height_wal = wal.clone();
+    zero_height_wal.height = 0;
+    let zero_height_checkpoint = CheckpointMeta {
+        height: 0,
+        state_root_hex: zero_height_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: zero_height_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should summarize before the zero-height regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&zero_height_checkpoint, &zero_height_wal).is_none(),
+        "height-zero checkpoint/WAL metadata must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() {
     let wal = WalMeta {
         height: 4,
