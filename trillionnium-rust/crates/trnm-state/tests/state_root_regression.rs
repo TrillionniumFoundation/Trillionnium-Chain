@@ -5779,6 +5779,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("checkpoint_commitment_bytes=32"));
     assert!(summary.contains("checkpoint_height=7"));
     assert!(summary.contains("checkpoint_height_encoding=le-u64"));
+    assert!(summary.contains("checkpoint_height_kind=bft-height-u64"));
     assert!(summary.contains("checkpoint_height_bytes=8"));
     assert!(summary.contains("checkpoint_height_boundary_kind=non-genesis"));
     assert!(summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
@@ -5798,6 +5799,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?)"));
     assert!(summary.contains("wal_height=7"));
     assert!(summary.contains("wal_height_encoding=le-u64"));
+    assert!(summary.contains("wal_height_kind=bft-height-u64"));
     assert!(summary.contains("wal_height_bytes=8"));
     assert!(summary.contains("wal_round=3"));
     assert!(summary.contains("wal_round_encoding=le-u64"));
