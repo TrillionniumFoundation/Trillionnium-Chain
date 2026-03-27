@@ -6682,3 +6682,47 @@ fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_
         "the original state's cached root must remain canonical after the clone restores its applied governance snapshot"
     );
 }
+
+#[test]
+fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_fields() {
+    let wal = WalMeta {
+        height: 2,
+        round: 5,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_evidence_surface=checkpoint-v1"));
+    assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=non-genesis"));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_encoding=hex-lower"));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_kind=canonical-hex-32b"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_encoding=hex-lower"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_commitment_kind=canonical-hex-32b"));
+    assert!(checkpoint_summary.contains("checkpoint_commitment_encoding=hex-lower"));
+    assert!(checkpoint_summary.contains("checkpoint_commitment_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_surface_canonical=true"));
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_evidence_surface=wal-v1"));
+    assert!(wal_summary.contains("wal_state_root_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_state_root_bytes=32"));
+    assert!(wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
+    assert!(wal_summary.contains("wal_committed_encoding=u8"));
+    assert!(wal_summary.contains("wal_prev_hash_present=true"));
+    assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
+    assert!(wal_summary.contains("wal_prev_hash_bytes=32"));
+    assert!(wal_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+    assert!(wal_summary.contains("wal_content_hash_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_content_hash_bytes=32"));
+}
