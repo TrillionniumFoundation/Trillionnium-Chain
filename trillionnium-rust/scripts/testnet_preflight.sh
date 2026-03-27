@@ -162,8 +162,10 @@ fi
 cat > "$SUMMARY" <<EOF
 rust_l1_testnet_preflight
 status=GO
+result=GO
 timestamp=$TS
 generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+truth_source=$ROOT/RELEASE_READINESS.md
 log=$LOG
 git_toplevel=$GIT_TOPLEVEL
 git_branch=$GIT_BRANCH
