@@ -26,7 +26,7 @@ pub(crate) fn http_json_head_response(status_line: &str, body_len: usize) -> Str
 }
 
 pub(crate) fn http_response_for_method(method: &str, response: &str) -> String {
-    if method != "HEAD" {
+    if !method.eq_ignore_ascii_case("HEAD") {
         return response.to_string();
     }
 
@@ -294,6 +294,17 @@ mod tests {
         assert!(!head.ends_with("BAD_REQUEST\"}"));
         assert!(head.contains("Content-Length: 33\r\n"));
         assert!(head.contains("Content-Type: application/json\r\n"));
+    }
+
+    #[test]
+    fn http_response_for_method_treats_lowercase_head_as_head() {
+        let response =
+            http_json_response("404 Not Found", "{\"ok\":false,\"code\":\"NOT_FOUND\"}");
+        let head = http_response_for_method("head", &response);
+        assert!(head.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(head.ends_with("\r\n\r\n"));
+        assert!(!head.ends_with("NOT_FOUND\"}"));
+        assert!(head.contains("Content-Length: 30\r\n"));
     }
 
     #[test]
