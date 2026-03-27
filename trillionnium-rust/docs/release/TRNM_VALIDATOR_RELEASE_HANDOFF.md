@@ -261,6 +261,14 @@ Operator discipline:
 
 When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
 
+Preferred helper (fail-closed on missing paths or cross-artifact identity mismatches):
+
+```bash
+./scripts/v2/extract_release_handoff_fields.sh
+```
+
+If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
+
 ```bash
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
