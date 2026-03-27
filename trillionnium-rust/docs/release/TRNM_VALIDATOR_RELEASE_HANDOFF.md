@@ -101,44 +101,29 @@ Operator rule:
 
 ### Dedicated lane / ticket-bound assertion example
 
-When a supervisor ticket already assigns the exact worktree and branch ref, bind those values directly instead of deriving expectations from the current shell:
+When a supervisor ticket already assigns the exact worktree and branch ref, bind those values directly and prefer the shared fail-closed helper instead of re-copying the assertion block into the runbook:
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
 EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
-CURRENT_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
-CURRENT_BRANCH_NAME="$(git branch --show-current)"
-CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
-CURRENT_HEAD="$(git rev-parse HEAD)"
-CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURRENT_WORKTREE_ROOT" '
-  BEGIN { in_match=0 }
-  /^worktree / { in_match = ($2 == target) }
-  in_match { print }
-  in_match && /^$/ { exit }
-')"
-
-[ -n "$CURRENT_BRANCH_NAME" ] || { echo "detached HEAD: no branch checked out" >&2; exit 1; }
-[ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
-  printf 'worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$CURRENT_WORKTREE_ROOT" >&2
-  exit 1
-}
-[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF" ] || {
-  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$CURRENT_BRANCH_REF" >&2
-  exit 1
-}
-if [ -n "$EXPECTED_HEAD" ] && [ "$CURRENT_HEAD" != "$EXPECTED_HEAD" ]; then
-  printf 'head mismatch: expected %s got %s\n' "$EXPECTED_HEAD" "$CURRENT_HEAD" >&2
-  exit 1
-fi
-printf 'verified_worktree=%s\nverified_branch_ref=%s\nverified_head=%s\n' \
-  "$CURRENT_WORKTREE_ROOT" "$CURRENT_BRANCH_REF" "$CURRENT_HEAD"
-printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
 
+Helper output to capture before running any release/evidence script:
+- `verified_worktree=`
+- `verified_branch_ref=`
+- `verified_head=`
+- the matching `git worktree list --porcelain` stanza for the current worktree path
+
+If you need the raw shell assertions for an air-gapped/debugging context, fall back to the equivalent block documented in `scripts/v2/verify_lane_worktree.sh` rather than hand-editing a new variant in this runbook.
+
 Interpretation rule:
-- use this block exactly as the first operator step when a lane prompt, release ticket, or handoff note already assigns a dedicated worktree/ref
+- use this helper invocation exactly as the first operator step when a lane prompt, release ticket, or handoff note already assigns a dedicated worktree/ref
 - if the printed `git worktree list --porcelain` stanza does not describe the current path/ref pairing you expected, stop immediately instead of continuing to the release scripts
 - if `EXPECTED_HEAD` is intentionally unknown, leave it empty; do **not** invent or backfill a commit from memory
 
