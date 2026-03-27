@@ -431,6 +431,21 @@ mod tests {
         }
     }
 
+    fn ov(id: u64, version: u64) -> ObjectRef {
+        ObjectRef { id, version }
+    }
+
+    #[test]
+    fn detect_conflict_treats_object_versions_as_one_execution_domain() {
+        let write_v1 = tx(1, vec![], vec![ov(7, 1)]);
+        let write_v9 = tx(2, vec![], vec![ov(7, 9)]);
+        let other_object = tx(3, vec![], vec![ov(8, 9)]);
+
+        assert!(detect_conflict(&write_v1, &write_v9));
+        assert!(detect_conflict(&write_v9, &write_v1));
+        assert!(!detect_conflict(&write_v1, &other_object));
+    }
+
     #[test]
     fn medium_small_vs_just_over_old_large_cutoff_preserves_semantics() {
         let small_write = tx(
