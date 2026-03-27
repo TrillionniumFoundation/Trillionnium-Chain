@@ -87,6 +87,25 @@ fn settlement_audit_view_normalizes_reverted_reason_from_legacy_state() {
 }
 
 #[test]
+fn settlement_audit_view_omits_legacy_revert_reason_that_sanitizes_empty() {
+    let mut reverted = SettlementRequest::new(7, "0xlegacy-empty".to_string());
+    reverted.status =
+        BridgeStatus::Reverted("\u{200B}\u{2065}\u{202E}\n\t\u{FEFF}".to_string());
+
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xlegacy-empty".to_string(),
+            status: "reverted",
+            is_terminal: true,
+            finalized_height: None,
+            revert_reason: None,
+        }
+    );
+}
+
+#[test]
 fn settlement_request_collapses_bom_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
