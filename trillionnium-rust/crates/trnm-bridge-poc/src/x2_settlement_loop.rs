@@ -1249,6 +1249,39 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_slash_suffix_fails_closed() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-height-slash-suffix".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 0,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "invalid heartbeat height/source=0 target=701".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect_err("unsupported suffix delimiter must not weaken invalid-height fail-closed behavior");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
     fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_height_still_compensates() {
         let mut request = SettlementRequest::new(
             1,
