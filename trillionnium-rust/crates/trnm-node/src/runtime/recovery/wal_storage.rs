@@ -139,6 +139,58 @@ mod tests {
     }
 
     #[test]
+    fn persist_wal_meta_canonicalizes_disk_order_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-canonical-persist-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(
+            &wal_dir,
+            &[
+                WalMeta {
+                    height: 2,
+                    round: 0,
+                    proposal_hash: "proposal-b".into(),
+                    committed: true,
+                    state_root_hex: "bb".repeat(32),
+                    prev_hash_hex: Some("prev-b".into()),
+                },
+                WalMeta {
+                    height: 1,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "aa".repeat(32),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+                WalMeta {
+                    height: 2,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "aa".repeat(32),
+                    prev_hash_hex: Some("prev-c".into()),
+                },
+            ],
+        )
+        .unwrap();
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        let first = raw.find("proposal-a").unwrap();
+        let second = raw.rfind("proposal-b").unwrap();
+        assert!(first < second, "expected canonical disk order, got: {raw}");
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries[0].height, 1);
+        assert_eq!(entries[0].proposal_hash, "proposal-a");
+        assert_eq!(entries[1].height, 2);
+        assert_eq!(entries[1].proposal_hash, "proposal-a");
+        assert_eq!(entries[2].height, 2);
+        assert_eq!(entries[2].proposal_hash, "proposal-b");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_canonicalizes_equal_height_entries_for_recovery_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-order");
         fs::create_dir_all(&wal_dir).unwrap();
