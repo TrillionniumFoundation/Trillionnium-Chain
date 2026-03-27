@@ -1004,6 +1004,11 @@ fn preflight_timeout_transfers(
             "timeout challenge transfer mode conflict".into(),
         ));
     }
+    if matches!(task.challenge_bond, Some(0)) {
+        return Err(PouwError::State(
+            "timeout challenge settlement requested with zero challenge bond".into(),
+        ));
+    }
     if (forfeit_challenge_bond || refund_challenge_bond) && task.challenge_bond.is_none() {
         return Err(PouwError::State(
             "timeout challenge transfer requested without posted challenge bond".into(),
@@ -18650,6 +18655,37 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_zero_challenge_bond() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 80,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(0),
+            challenge_bond_forfeited: Some(false),
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("resolve preflight must fail closed on zero challenge bond metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("zero challenge bond")));
+    }
+
+    #[test]
     fn resolve_preflight_rejects_non_canonical_challenger_identity() {
         let mut st = seeded_state();
         st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
@@ -18805,6 +18841,37 @@ mod tests {
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond"))
         );
+    }
+
+    #[test]
+    fn timeout_preflight_rejects_zero_challenge_bond() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(0),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, true, false)
+            .expect_err("timeout settlement must fail closed on zero challenge bond metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("zero challenge bond")));
     }
 
     #[test]
