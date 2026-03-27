@@ -12,7 +12,14 @@
 
 **结论：Not release-ready / 不应对外宣称“已发布就绪”。**
 
-当前仓库具备若干可复用的局部门禁、历史证据包与前端发布前检查脚本，但仍存在会误导读者的 truth-source drift：
+当前仓库具备若干可复用的局部门禁、历史证据包与前端发布前检查脚本，但仍存在会误导读者的 truth-source drift。
+
+补充判读边界：
+- `RELEASE_READINESS.md` 回答的是“当前仓库快照是否已经可以被表述为 release-ready / 对外可发布”。
+- `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 回答的是“如果目标是 **public mainnet launch**，当前还缺哪些 P0/P1 blocker”。
+- 因此，**local RC rehearsal PASS / validator handoff evidence 完整 / 某条子链路 GO-ready**，都不能单独外推为“public mainnet ready”。
+
+当前主要误导风险包括：
 
 1. `STATUS.md` 顶部仍以“可发布基线视角”描述 2026-02-21 状态，时间上已失效。
 2. 根 `README.md` 曾把 Web4 发布前脚本写成仓库根 `scripts/*.sh`，但这些路径当前并不存在；实际脚本位于 `web4-frontend/scripts/`。
@@ -56,6 +63,9 @@
 9. **RC / validator handoff 操作纪律**：看 `trillionnium-rust/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`。
    - 适用场景：需要把 `testnet_preflight.sh`、`run_local_release_evidence.sh`、`release_rc.sh` 的产物交接给另一位 operator / validator 时。
    - 作用边界：它定义的是 artifact path 解析、identity 字段核对、replay/rollback 引用纪律；**不替代**本文件的 release readiness 结论。
+10. **public mainnet blocker 判定 / P0-P1 收口顺序**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`。
+   - 适用场景：需要回答“距离 public mainnet 还差什么”“哪些属于 launch blocker”“Day-1 最小可信 scope 是什么”。
+   - 作用边界：它是 mainnet closure matrix，不等于某一轮本地 RC/证据脚本已跑绿。
 
 ## RC 演练最小证据模板（不发布）
 
