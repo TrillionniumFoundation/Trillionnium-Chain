@@ -8899,6 +8899,45 @@ mod tests {
     }
 
     #[test]
+    fn timeout_rejects_terminal_challenged_task_with_bond_outcome_but_missing_bond_fields() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 390170, "alice".into(), 100).unwrap();
+        let result_hash = [3u8; 32];
+        let reveal_salt = [4u8; 32];
+        let committed = compute_commitment(390170, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+        let done = apply_timeout(&mut st, r5, 221).unwrap();
+
+        // Simulate corrupted terminal challenged object that retained a bond
+        // outcome marker but lost the bonded collateral metadata itself.
+        let mut bad = st.get_task(done.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Completed);
+        assert_eq!(bad.challenge_bond_forfeited, Some(false));
+        bad.challenge_bond = None;
+        bad.challenger = None;
+        let bad_ref = st.update_task(done, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 222).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenge bond outcome requires challenge bond fields")));
+    }
+
+    #[test]
     fn timeout_rejects_terminal_challenged_task_with_non_monotonic_challenge_timing_fields() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
