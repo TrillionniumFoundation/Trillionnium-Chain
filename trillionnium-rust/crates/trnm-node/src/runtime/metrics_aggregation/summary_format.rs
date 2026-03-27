@@ -95,6 +95,13 @@ mod tests {
         stats.bft_round_change_per_height_ppm = 714_285;
         stats.bft_round_change_backoff_avg_ms = 6;
         stats.bft_round_change_backoff_density_avg_ms = 16;
+        stats.bft_round_change_backoff_wall_share_ppm = 125_000;
+        stats.bft_round_change_backoff_share_ppm = 125_000;
+        stats.bft_leader_missed_total = 3;
+        stats.bft_leader_missed_max = 2;
+        stats.bft_leader_missed_top_share_ppm = 666_666;
+        stats.bft_leader_missed_active_validators = 2;
+        stats.bft_leader_missed_active_validator_share_ppm = 500_000;
         stats.leader_missed_final = vec![0, 2, 0, 1];
 
         let summary = format_runtime_summary_line(&metrics, &stats);
@@ -114,6 +121,13 @@ mod tests {
         assert!(summary.contains("bft_round_change_backoff_active_heights=2"));
         assert!(summary.contains("bft_round_change_backoff_density_avg_ms=16"));
         assert!(summary.contains("bft_round_change_backoff_max_ms=21"));
+        assert!(summary.contains("bft_round_change_backoff_wall_share_ppm=125000"));
+        assert!(summary.contains("bft_round_change_backoff_share_ppm=125000"));
+        assert!(summary.contains("bft_leader_missed_total=3"));
+        assert!(summary.contains("bft_leader_missed_max=2"));
+        assert!(summary.contains("bft_leader_missed_top_share_ppm=666666"));
+        assert!(summary.contains("bft_leader_missed_active_validators=2"));
+        assert!(summary.contains("bft_leader_missed_active_validator_share_ppm=500000"));
         assert!(summary.contains("bft_double_vote_total=1"));
         assert!(summary.contains("bft_auth_reject_bad_sig_total=4"));
         assert!(summary.contains("bft_auth_reject_replay_total=6"));
