@@ -912,6 +912,26 @@ fn preflight_resolve_transfers(
     task: &TaskObject,
     slash_worker: bool,
 ) -> Result<(), PouwError> {
+    if matches!(task.challenge_bond, Some(0)) {
+        return Err(PouwError::State(
+            "resolve challenge settlement requested with zero challenge bond".into(),
+        ));
+    }
+
+    if let Some(challenger) = task.challenger.as_ref() {
+        if challenger.trim().is_empty() {
+            return Err(PouwError::State(
+                "resolve challenge settlement requested with blank challenger identity".into(),
+            ));
+        }
+        require_canonical_actor_id_state(challenger, "challenger identity").map_err(|_| {
+            PouwError::State(
+                "resolve challenge settlement requested with non-canonical challenger identity"
+                    .into(),
+            )
+        })?;
+    }
+
     if task.challenge_bond.is_some() && task.challenger.is_none() {
         return Err(PouwError::State(
             "resolve challenge settlement requested without challenger".into(),
@@ -18480,6 +18500,40 @@ mod tests {
 
         let err = preflight_resolve_transfers(&st, &task, false).unwrap_err();
         assert!(matches!(err, PouwError::State(msg) if msg.contains("without challenger")));
+    }
+
+    #[test]
+    fn resolve_preflight_rejects_non_canonical_challenger_identity() {
+        let mut st = seeded_state();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(&worker_stake_lock_account(80), 10);
+
+        let task = TaskObject {
+            task_id: 80,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(false),
+            challenger: Some("challenger alias".into()),
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("resolve preflight must fail closed on malformed challenger identity");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity")));
     }
 
     #[test]
