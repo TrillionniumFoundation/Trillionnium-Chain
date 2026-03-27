@@ -289,6 +289,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_invisible_math_operators_and_mvs() {
+        let raw = "target\u{2061} relay\u{2062} timeout\u{2063} signal\u{2064}\u{180E}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_strips_hangul_fillers_for_replay_stability() {
         let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_failure_reason(raw);
