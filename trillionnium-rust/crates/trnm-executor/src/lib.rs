@@ -3644,6 +3644,33 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_keeps_high_bit_domains_stable_when_zero_primary_flips_roles() {
+        let buckets_n = 64usize;
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 40) + 17;
+        let write_then_read = tx(1, vec![o(0), o(high_b)], vec![o(high_a)]);
+        let read_then_write = tx(2, vec![o(high_a)], vec![o(0), o(high_b)]);
+
+        // Equivalent mixed domains touching {0, high_a, high_b} must keep the same
+        // canonical two-key hint even when object 0 flips between read/write sets.
+        // This guards executor lane isolation against future bucket-key regressions
+        // on wide object-id ranges while preserving the zero-is-real-key contract.
+        assert_eq!(hot_bucket_keys(&write_then_read), (0, high_a));
+        assert_eq!(
+            hot_bucket_keys(&write_then_read),
+            hot_bucket_keys(&read_then_write)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            ((0u64 ^ high_a.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
