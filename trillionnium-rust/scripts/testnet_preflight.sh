@@ -130,7 +130,11 @@ sleep 12
 cleanup_devnet
 trap - EXIT
 
-latest_audit=$(ls -1dt run/audit/state-root-audit-*.txt | head -n 1)
+latest_audit=$(find run/audit -maxdepth 1 -type f -name 'state-root-audit-*.txt' -print 2>/dev/null | sort | tail -n 1)
+if [ -z "$latest_audit" ]; then
+  log "audit failed: missing state-root audit report under run/audit"
+  exit 6
+fi
 grep -q 'summary ok=true mismatch=0 missing=0' "$latest_audit"
 log "audit pass: $latest_audit"
 
@@ -139,9 +143,21 @@ TXS=5000 ./scripts/run_bench_matrix.sh | tee -a "$LOG"
 TXS=5000 ./scripts/run_bench_mixed_matrix.sh | tee -a "$LOG"
 ./scripts/executor_profile_report.py | tee -a "$LOG"
 
-latest_bench=$(ls -1dt run/bench/bench-matrix-*.txt | head -n 1)
-latest_mixed=$(ls -1dt run/bench/bench-mixed-matrix-*.txt | head -n 1)
-latest_profile=$(ls -1dt run/bench/executor-profile-summary-*.txt | head -n 1)
+latest_bench=$(find run/bench -maxdepth 1 -type f -name 'bench-matrix-*.txt' -print 2>/dev/null | sort | tail -n 1)
+if [ -z "$latest_bench" ]; then
+  log "benchmark failed: missing classic bench matrix report under run/bench"
+  exit 7
+fi
+latest_mixed=$(find run/bench -maxdepth 1 -type f -name 'bench-mixed-matrix-*.txt' -print 2>/dev/null | sort | tail -n 1)
+if [ -z "$latest_mixed" ]; then
+  log "benchmark failed: missing mixed bench matrix report under run/bench"
+  exit 8
+fi
+latest_profile=$(find run/bench -maxdepth 1 -type f -name 'executor-profile-summary-*.txt' -print 2>/dev/null | sort | tail -n 1)
+if [ -z "$latest_profile" ]; then
+  log "benchmark failed: missing executor profile summary under run/bench"
+  exit 9
+fi
 
 cat > "$SUMMARY" <<EOF
 rust_l1_testnet_preflight
