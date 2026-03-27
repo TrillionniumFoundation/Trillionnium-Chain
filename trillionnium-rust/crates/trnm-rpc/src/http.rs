@@ -11,6 +11,25 @@ fn is_supported_http_version(version: &str) -> bool {
     matches!(version, "HTTP/1.0" | "HTTP/1.1")
 }
 
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -126,15 +145,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%00")
-        || normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
-        || normalized.contains("%7f")
-    {
+    if contains_percent_encoded_control_or_space(path) {
         return None;
     }
 
@@ -174,14 +185,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
-        || normalized_path.contains("%00")
-        || normalized_path.contains("%0d")
-        || normalized_path.contains("%0a")
-        || normalized_path.contains("%09")
-        || normalized_path.contains("%0b")
-        || normalized_path.contains("%0c")
-        || normalized_path.contains("%20")
-        || normalized_path.contains("%7f")
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -211,14 +215,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
-        || normalized_query.contains("%00")
-        || normalized_query.contains("%0d")
-        || normalized_query.contains("%0a")
-        || normalized_query.contains("%09")
-        || normalized_query.contains("%0b")
-        || normalized_query.contains("%0c")
-        || normalized_query.contains("%20")
-        || normalized_query.contains("%7f")
+        || contains_percent_encoded_control_or_space(query)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -281,7 +278,10 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
 
 #[cfg(test)]
 mod tests {
-    use super::{http_json_response, http_response_for_method};
+    use super::{
+        contains_percent_encoded_control_or_space, http_json_response, http_response_for_method,
+        parse_http_request_target, parse_query_events_limit_from_path,
+    };
 
     #[test]
     fn http_response_for_method_preserves_get_error_bodies() {
@@ -330,5 +330,39 @@ mod tests {
         assert!(head.contains("Content-Type: text/plain; version=0.0.4; charset=utf-8\r\n"));
         assert!(head.contains("Cache-Control: no-store\r\n"));
         assert!(head.contains("Content-Length: 4\r\n"));
+    }
+
+    #[test]
+    fn encoded_c0_controls_and_space_are_rejected_case_insensitively() {
+        assert!(contains_percent_encoded_control_or_space("/health%01check"));
+        assert!(contains_percent_encoded_control_or_space("/health%1fcheck"));
+        assert!(contains_percent_encoded_control_or_space("/health%20check"));
+        assert!(contains_percent_encoded_control_or_space("/health%7Fcheck"));
+        assert!(!contains_percent_encoded_control_or_space("/oracle?snapshot=%2Ftmp%2Fs.json"));
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_other_encoded_c0_controls() {
+        assert_eq!(
+            parse_http_request_target("GET /health%01check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_other_encoded_c0_controls() {
+        let response = parse_query_events_limit_from_path("/query-events/42?limit=1%01");
+        assert!(response.is_err());
+        assert_eq!(
+            response.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+            )
+        );
     }
 }
