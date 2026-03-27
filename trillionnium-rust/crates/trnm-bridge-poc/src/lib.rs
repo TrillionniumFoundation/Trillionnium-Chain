@@ -68,6 +68,7 @@ pub mod bridge_status {
                     | '\u{FFFB}'
             )
             || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+            || ('\u{E0000}'..='\u{E007F}').contains(&ch)
             || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
     }
 

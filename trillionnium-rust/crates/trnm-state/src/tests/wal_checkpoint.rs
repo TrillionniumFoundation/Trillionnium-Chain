@@ -200,3 +200,27 @@ fn wal_checkpoint_verification_stops_before_uncommitted_tail() {
     assert_eq!(got.height, 1);
     assert_eq!(got.state_root_hex, "r1");
 }
+
+#[test]
+fn wal_checkpoint_verification_rejects_metadata_only_chain_without_genesis_anchor() {
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "r2".into(),
+        prev_hash_hex: Some("genesis-missing".into()),
+    };
+
+    let checkpoints = vec![CheckpointMeta {
+        height: 2,
+        state_root_hex: "r2".into(),
+        wal_entry_hash_hex: e2.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e2]).unwrap();
+    assert!(
+        got.is_none(),
+        "metadata-only WAL chains that start above height 1 must fail closed"
+    );
+}

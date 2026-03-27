@@ -232,6 +232,27 @@ fn test_authorized_revert_normalizes_variation_selectors_and_plane14_tags_for_re
 }
 
 #[test]
+fn test_authorized_revert_normalizes_plane14_language_tags_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xbbc2ba".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(
+            &token,
+            "target\u{E0001}receipt\u{E0020}timeout\u{E007F}signal".to_string(),
+        )
+        .unwrap();
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target receipt timeout signal".to_string())
+    );
+}
+
+#[test]
 fn test_authorized_revert_normalizes_legacy_bidi_isolates_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xbbc2c".to_string());
     let token = CapabilityToken {

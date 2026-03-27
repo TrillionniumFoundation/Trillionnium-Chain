@@ -103,6 +103,18 @@ fn settlement_request_collapses_bom_spacing_in_revert_reason() {
 }
 
 #[test]
+fn settlement_request_rejects_revert_reason_that_becomes_empty_after_sanitize() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let err = request.revert_authorized(
+        &settlement_operator(),
+        "\u{200B}\u{2065}\u{202E}\n\t\u{FEFF}".to_string(),
+    );
+
+    assert_eq!(err, Err(SettlementError::InvalidRevertReason));
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn settlement_request_rejects_non_canonical_subject_with_word_joiner() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     let token = CapabilityToken {

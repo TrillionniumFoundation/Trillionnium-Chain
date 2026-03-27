@@ -6037,6 +6037,28 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_noncanonical_non_genesis_prev_hash_even_when_hashes_match() {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("CD".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: 2,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject non-genesis WAL prev_hash_hex values that are not canonical lowercase digests even when state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,

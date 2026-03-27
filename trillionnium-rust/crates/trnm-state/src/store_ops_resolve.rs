@@ -165,6 +165,14 @@ impl StateStore {
             if task.status != TaskStatus::Challenged || task.version != snapshot.task_version {
                 return;
             }
+            if snapshot.slash_worker
+                && task
+                    .worker
+                    .as_deref()
+                    .is_some_and(resolve_actor_is_reserved)
+            {
+                return;
+            }
         }
 
         self.pending_resolve_approvals.insert(

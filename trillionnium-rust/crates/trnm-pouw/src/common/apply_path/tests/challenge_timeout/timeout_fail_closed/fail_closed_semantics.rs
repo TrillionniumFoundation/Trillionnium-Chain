@@ -486,3 +486,49 @@ fn challenged_timeout_rejects_missing_window_snapshot_without_escrow_or_slash_tr
         before_slash_treasury
     );
 }
+
+#[test]
+fn completed_challenge_terminal_state_requires_retained_evidence_surface() {
+    let mut st = seeded_state();
+    st.set_balance("challenger", 100);
+
+    let r1 = apply_create_task(&mut st, 40_128, "alice".into(), 10).unwrap();
+    let result_hash = [15u8; 32];
+    let reveal_salt = [16u8; 32];
+    let committed = compute_commitment(40_128, &result_hash, &reveal_salt, "worker1");
+
+    let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+    let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 10).unwrap();
+    let r4 =
+        apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 20).unwrap();
+    let r5 = apply_challenge_at_height(
+        &mut st,
+        r4,
+        "challenger".into(),
+        10,
+        "challenger".into(),
+        30,
+    )
+    .unwrap();
+    let completed_ref = apply_timeout(&mut st, r5, 131).unwrap();
+
+    let completed = st.get_task(completed_ref.id).unwrap();
+    validate_challenge_accounting_invariants(&completed)
+        .expect("completed challenge timeout path must retain auditable evidence metadata");
+
+    let mut missing_snapshot = completed.clone();
+    missing_snapshot.challenge_window_blocks_snapshot = None;
+    let err = validate_challenge_accounting_invariants(&missing_snapshot)
+        .expect_err("terminal completed challenge state must fail closed without evidence snapshot");
+    assert!(matches!(err, PouwError::State(msg) if msg.contains(
+        "terminal challenged task missing challenge_window_blocks_snapshot"
+    )));
+
+    let mut missing_timing = completed;
+    missing_timing.resolve_deadline_height = None;
+    let err = validate_challenge_accounting_invariants(&missing_timing)
+        .expect_err("terminal completed challenge state must fail closed without timing evidence");
+    assert!(matches!(err, PouwError::State(msg) if msg.contains(
+        "terminal challenged task missing challenge timing metadata"
+    )));
+}
