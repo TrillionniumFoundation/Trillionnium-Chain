@@ -150,6 +150,24 @@ fn parse_oracle_validate_snapshot_target_rejects_fragment_and_encoded_query_smug
 }
 
 #[test]
+fn parse_oracle_validate_snapshot_target_rejects_empty_or_invalid_now_ts_ms() {
+    for (target, expected) in [
+        (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=",
+            "empty now_ts_ms",
+        ),
+        (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=10ms",
+            "invalid now_ts_ms",
+        ),
+    ] {
+        let err = parse_oracle_validate_snapshot_target(target)
+            .expect_err("non-canonical now_ts_ms must fail closed");
+        assert_eq!(err, expected, "target={target}");
+    }
+}
+
+#[test]
 fn parse_oracle_validate_snapshot_target_rejects_non_exact_path_prefixes() {
     for target in [
         "/oracle/validate_snapshot_extra?snapshot=/tmp/s.json&policy=/tmp/p.json",
