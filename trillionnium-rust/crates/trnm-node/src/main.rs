@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
     fs,
+    net::SocketAddr,
     path::{Path, PathBuf},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
@@ -1462,6 +1463,22 @@ fn hash32_hex(data: &[u8]) -> String {
     hex::encode(hasher.finalize())
 }
 
+fn validate_listen_addr(addr: &str, field: &str, path: &str) -> Result<()> {
+    let socket_addr = addr.parse::<SocketAddr>().with_context(|| {
+        format!(
+            "invalid node config {}: {} must be a valid socket address host:port",
+            path, field
+        )
+    })?;
+    anyhow::ensure!(
+        socket_addr.port() != 0,
+        "invalid node config {}: {} port must be non-zero",
+        path,
+        field
+    );
+    Ok(())
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -1506,6 +1523,13 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    validate_listen_addr(rpc_addr, "rpc_addr", path)?;
+    validate_listen_addr(p2p_addr, "p2p_addr", path)?;
+    anyhow::ensure!(
+        rpc_addr != p2p_addr,
+        "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
 
@@ -12746,6 +12770,34 @@ locked_block_hash = "stale-lock"
             .contains("refusing to reuse existing BFT WAL state"));
 
         let _ = fs::remove_dir_all(&wal_dir);
+    }
+}
+
+#[cfg(test)]
+mod mn07_config_tests {
+    use super::load_config;
+
+    #[test]
+    fn load_config_rejects_zero_p2p_port_after_trimming_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-zero-p2p-port-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \" 127.0.0.1:0\\n\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("trimmed zero p2p port must fail closed");
+        assert!(
+            err.to_string().contains("p2p_addr port must be non-zero"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 }
 
