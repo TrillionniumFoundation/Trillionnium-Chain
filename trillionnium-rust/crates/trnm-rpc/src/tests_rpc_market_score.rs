@@ -11,3 +11,7 @@ mod tests_rpc_market_score_effective;
 #[cfg(test)]
 #[path = "tests_rpc_market_score_policy.rs"]
 mod tests_rpc_market_score_policy;
+
+#[cfg(test)]
+#[path = "tests_rpc_market_score_surface.rs"]
+mod tests_rpc_market_score_surface;
