@@ -89,8 +89,12 @@ mod tests {
         let mut stats = RuntimeSummaryStats::zeroed();
         stats.rollback_block_rate = 0.25;
         stats.recovery_error_rate = 0.5;
+        stats.bft_commit_observed_height_rate_ppm = 636_363;
         stats.bft_skipped_height_total = 4;
         stats.bft_skipped_observed_height_rate_ppm = 363_636;
+        stats.bft_round_change_per_height_ppm = 714_285;
+        stats.bft_round_change_backoff_avg_ms = 6;
+        stats.bft_round_change_backoff_density_avg_ms = 16;
         stats.leader_missed_final = vec![0, 2, 0, 1];
 
         let summary = format_runtime_summary_line(&metrics, &stats);
@@ -99,7 +103,17 @@ mod tests {
         assert!(summary.contains("rollback_total=2"));
         assert!(summary.contains("timeout_migrated_total=3"));
         assert!(summary.contains("recovery_error_rate=0.500000"));
+        assert!(summary.contains("bft_commit_observed_height_rate_ppm=636363"));
         assert!(summary.contains("bft_skipped_height_total=4"));
+        assert!(summary.contains("bft_skipped_observed_height_rate_ppm=363636"));
+        assert!(summary.contains("bft_round_change_total=5"));
+        assert!(summary.contains("bft_round_change_per_height_ppm=714285"));
+        assert!(summary.contains("bft_round_change_active_heights=4"));
+        assert!(summary.contains("bft_round_change_backoff_total_ms=33"));
+        assert!(summary.contains("bft_round_change_backoff_avg_ms=6"));
+        assert!(summary.contains("bft_round_change_backoff_active_heights=2"));
+        assert!(summary.contains("bft_round_change_backoff_density_avg_ms=16"));
+        assert!(summary.contains("bft_round_change_backoff_max_ms=21"));
         assert!(summary.contains("bft_double_vote_total=1"));
         assert!(summary.contains("bft_auth_reject_bad_sig_total=4"));
         assert!(summary.contains("bft_auth_reject_replay_total=6"));
