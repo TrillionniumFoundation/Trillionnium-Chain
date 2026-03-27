@@ -545,6 +545,64 @@ fn restore_task_cross_type_attempt_scrubs_stale_pending_resolve_on_same_id() {
 }
 
 #[test]
+fn restore_task_rejects_cross_type_gov_proposal_id_takeover_fail_closed() {
+    let mut st = StateStore::new();
+    let proposal_ref = st
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 39,
+            proposer: "alice".into(),
+            title: "p".into(),
+            description: "d".into(),
+            status: GovProposalStatus::Draft,
+            yes_votes: 0,
+            no_votes: 0,
+            created_at_height: 1,
+            version: 1,
+        })
+        .unwrap();
+    let original_proposal = st.get_proposal(proposal_ref.id).unwrap();
+    let root_before = st.state_root();
+
+    st.restore_task(
+        proposal_ref.id,
+        Some(TaskObject {
+            task_id: proposal_ref.id,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(st.get_task(proposal_ref.id).is_none());
+    assert_eq!(
+        st.get_proposal(proposal_ref.id).unwrap(),
+        original_proposal,
+        "restore_task must not evict an existing governance proposal on a cross-type restore attempt"
+    );
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "cross-type restore attempts against proposal slots must leave the canonical state root unchanged"
+    );
+}
+
+#[test]
 fn restore_gov_param_scrubs_stale_pending_resolve_on_same_id() {
     let mut st = StateStore::new();
     st.restore_pending_resolve_approval(
