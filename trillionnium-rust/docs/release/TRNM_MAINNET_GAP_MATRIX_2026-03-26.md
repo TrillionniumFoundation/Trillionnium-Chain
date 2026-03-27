@@ -1,0 +1,428 @@
+# TRNM Mainnet Gap Matrix (2026-03-26)
+
+## Goal
+
+Turn the current "what is still missing before public mainnet" discussion into a **single actionable gap matrix**.
+
+This document is intentionally practical.
+It does **not** claim TRNM is mainnet-ready.
+It defines:
+
+1. what already exists,
+2. what is still missing,
+3. which gaps are true **P0 launch blockers**,
+4. and what the next 4-week closing sequence should be.
+
+---
+
+## Current headline judgment
+
+TRNM currently looks much closer to:
+
+> **stage-1 internal devnet / RC-prep**
+
+than to:
+
+> **public mainnet launch candidate**
+
+Reason:
+- core execution/state/task lifecycle machinery exists,
+- local devnet / replay / evidence / smoke infrastructure exists,
+- but the outer production perimeter is still incomplete.
+
+That perimeter includes:
+- real network formation and sync,
+- validator/operator lifecycle tooling,
+- secure wallet/signer path,
+- explorer/indexer/read-model,
+- unified observability/alerting,
+- and release-grade economics / anti-spam policy freeze.
+
+---
+
+## What already exists (do not re-solve)
+
+### Core chain kernel
+- `trnm-state`
+- `trnm-pouw`
+- `trnm-executor`
+- `trnm-node`
+- `trnm-mempool`
+- `trnm-rpc`
+- `trnm-worker-agent`
+- `trnm-cli`
+
+### Existing proof-of-life / release-prep assets
+- workspace tests and many crate gates
+- rollback / replay / recovery validation paths
+- state-root audit scripts
+- RC evidence / local release evidence scripts
+- testnet preflight script
+- multi-node local configs
+- BFT smoke / query audit / worker receipt gates
+
+### Important implication
+The biggest remaining problem is **not** "missing blockchain core logic".
+The biggest remaining problem is:
+
+> **the production perimeter around the core is not yet complete enough for public mainnet.**
+
+---
+
+# P0 — True mainnet launch blockers
+
+These are the items that should block any public-mainnet claim.
+
+## P0.1 Real network layer / peer formation / sync
+
+### Current state
+Node config currently exposes only a minimal address surface:
+- `node_id`
+- `rpc_addr`
+- `p2p_addr`
+
+The runtime bootstrap path still initializes demo state/mempool for local execution.
+
+### Missing
+- peer discovery
+- bootstrap peer management
+- stable gossip / transport behavior
+- state sync / snapshot sync / fast catch-up
+- peer scoring / abuse handling / network-level backpressure
+- explicit join/rejoin behavior for lagging nodes
+
+### Why P0
+Without this, TRNM can run local devnets and test loops, but it is not yet a credible public network runtime.
+
+---
+
+## P0.2 Genesis + validator/operator lifecycle
+
+### Current state
+The repository has local node configs and preflight scripts, but not a clearly closed public-validator lifecycle.
+
+### Missing
+- genesis generation + validation flow
+- validator key ceremony / validator identity process
+- validator replacement / rotation workflow
+- chain upgrade / rollback operator drill
+- disaster recovery and node rebuild SOP
+- validator bootstrap / re-bootstrap operational guide
+
+### Why P0
+A public mainnet is not only a binary; it is an operator system.
+If operator lifecycle is unclear, the chain is not actually launchable.
+
+---
+
+## P0.3 Secure wallet / signer / key management path
+
+### Current state
+`trnm-cli` explicitly describes itself as:
+- wallet/query/tx **MVP**
+- wallet create is an MVP placeholder path
+
+### Missing
+- secure keystore model
+- offline signing flow
+- multi-sig / HSM / remote signer integration path
+- wallet recovery/import/export policy
+- clear nonce / fee / signing UX and safety checks
+- key rotation and compromise response runbook
+
+### Why P0
+Public mainnet without a secure signer story is not acceptable for operators or users.
+
+---
+
+## P0.4 Indexer / explorer / stable read-model
+
+### Current state
+The repo contains a minimal local explorer script, explicitly local-only and log/json backed.
+
+### Missing
+- durable indexer
+- tx/block/account/event read-model
+- historical query path
+- stable explorer backend/API
+- archive/read replica strategy
+- production query performance expectations
+
+### Why P0
+A public chain without a stable read surface becomes operationally opaque and unusable for integrators.
+
+---
+
+## P0.5 Unified observability / alerting / SRE view
+
+### Current state
+There are partial metrics, smoke checks, benchmark outputs, and localized Prometheus-style surfaces.
+There is not yet one clearly unified production observability plane.
+
+### Missing
+- node/rpc/worker/oracle/bridge unified metrics contract
+- production exporter path
+- dashboards
+- alert thresholds
+- incident labels / severity conventions
+- replay + failure-attribution workflow tied to observability
+
+### Why P0
+Mainnet incidents are inevitable.
+Without observability and alerting, recovery becomes guesswork.
+
+---
+
+## P0.6 Economics / anti-spam / fee boundary freeze
+
+### Current state
+TRNM already has substantial work around free-ingress, QoS, lane fairness, challenge bonds, and slash logic.
+
+### Missing
+- final public mempool admission policy
+- minimum fee / anti-spam thresholds
+- sponsor/free-ingress boundary definition
+- storage/evidence retention pricing policy
+- resource abuse protection under sustained load
+- frozen economic parameter set for launch
+
+### Why P0
+Mainnet begins exactly where adversarial usage begins.
+If anti-spam and pricing remain fluid, launch risk is too high.
+
+---
+
+# P1 — Highly important, but can trail P0 if launch scope is narrow
+
+## P1.1 Oracle online subsystem
+
+### Current state
+`trnm-oracle` looks like a real validation/reporting library plus offline baseline tooling.
+But it is still much closer to an offline validator than a live chain-integrated oracle subsystem.
+
+### Missing
+- node ingest path for oracle observations
+- state persistence for oracle snapshot/policy lifecycle
+- stable RPC query surface for oracle state
+- replay/recovery semantics for oracle data
+- high-volume feed path and operational metrics
+
+### Launch effect
+If TRNM public launch does **not** depend on oracle-secured features on day 1, this may trail P0.
+If oracle-backed settlement is part of day-1 positioning, it becomes P0.
+
+---
+
+## P1.2 Bridge productionization
+
+### Current state
+The crate is still explicitly named `trnm-bridge-poc`.
+That is the right level of honesty.
+
+### Missing
+- finality/checkpoint contract for bridge consumers
+- proof material surface
+- relayer trust model hardening
+- failure recovery + settlement audit trail
+- bridge operator runbook
+
+### Launch effect
+If bridge is not part of day-1 launch promise, this can trail.
+If cross-chain positioning is public day-1, it becomes P0.
+
+---
+
+## P1.3 Verifier / proof sidecar productization
+
+### Current state
+TEE / ZK / verification paths have meaningful code and contracts in motion, but the repository does not currently justify saying a production verifier subsystem is fully in-place.
+
+### Missing
+- stable deployable verifier service boundary
+- operational packaging
+- trust/retry/failure semantics under production conditions
+- audit/replay evidence path for verifier outages or mismatches
+
+### Launch effect
+Can trail if day-1 mainnet only requires the core task lifecycle and local trust assumptions.
+Cannot trail if "trusted verification as a product" is part of the public launch claim.
+
+---
+
+## P1.4 Governance / upgrade discipline hardening
+
+### Current state
+TRNM already has meaningful governance-sensitive logic and timelock/security coverage.
+
+### Missing
+- fully typed governance registry closure
+- upgrade playbooks with operator sign-off checkpoints
+- schema migration discipline for public upgrade cycles
+- clearly frozen set of launch-sensitive parameters
+
+### Launch effect
+Launchable chains still need this very early, but it can proceed in parallel with late P0 closure.
+
+---
+
+# P2 — Valuable launch-adjacent work, but not first blocking ring
+
+## P2.1 Better public frontend / wallet UX
+- richer user wallet UX
+- integrated task dashboard
+- better explorer polish
+- self-serve user onboarding
+
+## P2.2 Broader ecosystem integrations
+- SDK polish
+- partner-facing client examples
+- external indexer adapters
+- richer analytics endpoints
+
+## P2.3 Full bridge/oracle/verifier product narrative
+- not just the code path,
+- but the external platform story, packaging, and support posture
+
+---
+
+# Minimal mainnet module checklist
+
+If TRNM wants the **smallest credible public mainnet scope**, the minimum set should be:
+
+## Core already present
+- node
+- state
+- executor
+- mempool
+- rpc
+- PoUW state machine
+- worker-agent path
+
+## Must close before launch
+1. network formation + sync
+2. genesis + validator/operator lifecycle
+3. secure wallet/signer path
+4. indexer/explorer/read-model
+5. unified observability + alerting
+6. launch economics + anti-spam freeze
+
+## Can trail only if explicitly out-of-scope for day 1
+7. oracle online subsystem
+8. bridge productionization
+9. verifier sidecar productization
+
+---
+
+# Recommended next 4-week closing sequence
+
+## Week 1 — Freeze launch scope and operational truth
+
+### Goals
+- define the exact day-1 launch promise
+- decide what is out-of-scope
+- stop mixing internal devnet readiness with public mainnet language
+
+### Required outputs
+1. one public-scope definition:
+   - core-only mainnet
+   - or core + oracle
+   - or core + oracle + bridge
+2. one launch-blocker board with owners
+3. one operator truth-source doc
+4. one frozen list of P0 module owners
+
+### Rule
+Anything not required for the chosen day-1 promise must not be allowed to silently expand P0.
+
+---
+
+## Week 2 — Close ops/network foundations
+
+### Focus
+- genesis process
+- validator bootstrap/recovery
+- peer formation and join/rejoin behavior
+- node sync expectations
+
+### Required outputs
+- genesis generation checklist
+- validator bootstrap runbook
+- network formation smoke test
+- node recovery / catch-up acceptance criteria
+
+---
+
+## Week 3 — Close user/operator surfaces
+
+### Focus
+- signer / wallet hardening
+- explorer/indexer minimum viable public read path
+- alerting and unified observability
+
+### Required outputs
+- secure wallet/signer policy
+- minimum explorer/indexer service
+- alert set (node down / lag / replay failure / rpc unhealthy / worker failure)
+- one dashboard bundle or equivalent metrics contract
+
+---
+
+## Week 4 — Freeze economics and run full prelaunch rehearsal
+
+### Focus
+- anti-spam / admission / sponsor boundaries
+- launch parameter freeze
+- full prelaunch rehearsal
+
+### Required outputs
+- launch parameter sheet
+- adversarial spam/fairness rehearsal
+- incident rollback drill
+- go/no-go document for public launch
+
+---
+
+# Suggested owner map by module family
+
+## Core launch ring
+- `trnm-node` / networking / recovery: owner A
+- `trnm-rpc` / read surface / health: owner B
+- `trnm-cli` / wallet/signer path: owner C
+- ops/genesis/validator lifecycle: owner D
+- observability / alerting / dashboards: owner E
+- economics / mempool admission / sponsor boundary: owner F
+
+## Secondary ring
+- `trnm-oracle`: owner G
+- `trnm-bridge-poc`: owner H
+- verifier sidecar / proof service path: owner I
+
+---
+
+# Go / No-Go interpretation
+
+## No-Go for public mainnet if any P0 item remains ambiguous
+Especially if:
+- the network can only be reproduced as a local static devnet,
+- the signer path is still MVP-only,
+- the explorer/read path is still local-script grade,
+- the observability path is fragmented,
+- or launch economics are still intentionally fluid.
+
+## Possible Go for restricted internal/test operator launch if:
+- the scope is explicitly devnet / RC / internal testnet,
+- P0 items are being closed under operator control,
+- and no public mainnet claim is made.
+
+---
+
+# Final judgment
+
+TRNM is no longer at the "empty architecture" stage.
+It has enough kernel substance that the correct next move is **not** broad new feature expansion.
+
+The correct next move is:
+
+> **close the production perimeter around the core and freeze the day-1 launch scope.**
+
+That is the shortest path from "impressive internal system" to "credible public network candidate."
