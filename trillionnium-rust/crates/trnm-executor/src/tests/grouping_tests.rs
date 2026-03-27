@@ -312,6 +312,224 @@ fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
 }
 
 #[test]
+fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() {
+    let profile = GroupingProfile {
+        tx_count: 0,
+        group_count: 0,
+        grouped_count: 0,
+        max_group_size: 0,
+        min_group_size: 0,
+        avg_group_size: 0.0,
+        hot_object_share: 0.0,
+        conflict_checks: 0,
+        conflict_hits: 3,
+        candidate_groups_scanned: 7,
+        stage_ww_checks: 0,
+        stage_ww_hits: 0,
+        stage_wr_checks: 0,
+        stage_wr_hits: 0,
+        stage_rw_checks: 0,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.conflict_checks_per_tx(), 0.0);
+    assert_eq!(profile.conflict_hits_per_tx(), 0.0);
+    assert_eq!(profile.candidate_groups_per_tx(), 0.0);
+    assert_eq!(profile.retry_pressure(), 0.0);
+    assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+    assert_eq!(profile.retry_fallback_scan_share(), 0.0);
+    assert_eq!(profile.reused_group_placements(), 0);
+    assert_eq!(profile.reused_group_share(), 0.0);
+    assert_eq!(profile.new_group_share(), 0.0);
+    assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
+    assert_eq!(profile.candidate_groups_per_reused_placement(), 0.0);
+    assert_eq!(profile.retry_scan_hit_rate(), 0.0);
+    assert_eq!(profile.retry_scan_misses(), 4);
+    assert_eq!(profile.retry_scan_miss_rate(), 4.0 / 7.0);
+    assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
+    assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
+    assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
+    assert!((profile.retry_scan_overhang_per_hit() - (4.0 / 3.0)).abs() < f64::EPSILON);
+    assert_eq!(profile.retry_scan_overhang_per_reused_placement(), 0.0);
+    assert_eq!(profile.ww_retry_hit_rate(), 0.0);
+    assert_eq!(profile.wr_retry_hit_rate(), 0.0);
+    assert_eq!(profile.rw_retry_hit_rate(), 0.0);
+    assert_eq!(profile.ww_retry_share(), 0.0);
+    assert_eq!(profile.wr_retry_share(), 0.0);
+    assert_eq!(profile.rw_retry_share(), 0.0);
+    assert_eq!(profile.dominant_retry_stage(), "none");
+    assert_eq!(profile.dominant_retry_share(), 0.0);
+    assert_eq!(profile.dominant_attributed_retry_share(), 0.0);
+    assert_eq!(profile.dominant_retry_lead_hits(), 0);
+    assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+    assert_eq!(profile.attributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_hits(), 3);
+    assert_eq!(profile.unattributed_retry_share(), 1.0);
+    assert_eq!(profile.retry_attribution_coverage(), 0.0);
+    assert_eq!(profile.retry_stage_overlap_hits(), 0);
+    assert_eq!(profile.retry_stage_overlap_share(), 0.0);
+    assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
+    assert_eq!(profile.retry_stage_mix_entropy(), 0.0);
+}
+
+#[test]
+fn grouping_profile_retry_metrics_prefer_heaviest_retry_stage() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 2,
+        grouped_count: 8,
+        max_group_size: 4,
+        min_group_size: 4,
+        avg_group_size: 4.0,
+        hot_object_share: 0.5,
+        conflict_checks: 12,
+        conflict_hits: 6,
+        candidate_groups_scanned: 10,
+        stage_ww_checks: 3,
+        stage_ww_hits: 1,
+        stage_wr_checks: 5,
+        stage_wr_hits: 4,
+        stage_rw_checks: 4,
+        stage_rw_hits: 2,
+    };
+
+    assert!((profile.conflict_checks_per_tx() - 1.5).abs() < f64::EPSILON);
+    assert!((profile.conflict_hits_per_tx() - 0.75).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_tx() - 1.25).abs() < f64::EPSILON);
+    assert!((profile.retry_pressure() - 3.0).abs() < f64::EPSILON);
+    assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+    assert_eq!(profile.retry_fallback_scan_share(), 0.0);
+    assert_eq!(profile.reused_group_placements(), 6);
+    assert!((profile.reused_group_share() - 0.75).abs() < f64::EPSILON);
+    assert!((profile.new_group_share() - 0.25).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_retry_hit() - (10.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_reused_placement() - (10.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_hit_rate() - 0.6).abs() < f64::EPSILON);
+    assert_eq!(profile.retry_scan_misses(), 4);
+    assert!((profile.retry_scan_miss_rate() - 0.4).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_misses_per_tx() - 0.5).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_misses_per_group() - 2.0).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_overhang_per_hit() - (4.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_overhang_per_reused_placement() - (4.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.ww_retry_hit_rate() - (1.0 / 3.0)).abs() < f64::EPSILON);
+    assert!((profile.wr_retry_hit_rate() - 0.8).abs() < f64::EPSILON);
+    assert!((profile.rw_retry_hit_rate() - 0.5).abs() < f64::EPSILON);
+    assert!((profile.ww_retry_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.wr_retry_share() - (4.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.rw_retry_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
+    assert_eq!(profile.dominant_retry_stage(), "wr");
+    assert!((profile.dominant_retry_share() - (4.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.dominant_attributed_retry_share() - (4.0 / 7.0)).abs() < f64::EPSILON);
+    assert_eq!(profile.dominant_retry_lead_hits(), 2);
+    assert!((profile.dominant_retry_lead_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
+    assert_eq!(profile.attributed_retry_hits(), 7);
+    assert_eq!(profile.unattributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_share(), 0.0);
+    assert_eq!(profile.retry_attribution_coverage(), 1.0);
+    assert_eq!(profile.retry_stage_overlap_hits(), 1);
+    assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_overlap_share_of_attributed() - (1.0 / 7.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_mix_entropy() - 0.8699155297736259).abs() < 1e-12);
+}
+
+#[test]
+fn grouping_profile_retry_metrics_report_mixed_when_retry_stage_ties() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 2,
+        grouped_count: 8,
+        max_group_size: 4,
+        min_group_size: 4,
+        avg_group_size: 4.0,
+        hot_object_share: 0.5,
+        conflict_checks: 12,
+        conflict_hits: 6,
+        candidate_groups_scanned: 10,
+        stage_ww_checks: 4,
+        stage_ww_hits: 3,
+        stage_wr_checks: 5,
+        stage_wr_hits: 3,
+        stage_rw_checks: 3,
+        stage_rw_hits: 1,
+    };
+
+    assert!((profile.ww_retry_hit_rate() - 0.75).abs() < f64::EPSILON);
+    assert!((profile.wr_retry_hit_rate() - 0.6).abs() < f64::EPSILON);
+    assert!((profile.rw_retry_hit_rate() - (1.0 / 3.0)).abs() < f64::EPSILON);
+    assert!((profile.ww_retry_share() - 0.5).abs() < f64::EPSILON);
+    assert!((profile.wr_retry_share() - 0.5).abs() < f64::EPSILON);
+    assert!((profile.rw_retry_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert_eq!(profile.dominant_retry_stage(), "mixed");
+    assert!((profile.dominant_retry_share() - 0.5).abs() < f64::EPSILON);
+    assert_eq!(profile.dominant_retry_lead_hits(), 0);
+    assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+    assert_eq!(profile.unattributed_retry_hits(), 0);
+    assert_eq!(profile.unattributed_retry_share(), 0.0);
+    assert_eq!(profile.retry_attribution_coverage(), 1.0);
+    assert!((profile.retry_stage_overlap_share() - (1.0 / 6.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_overlap_share_of_attributed() - (1.0 / 7.0)).abs() < f64::EPSILON);
+    assert!((profile.retry_stage_mix_entropy() - 0.914100892018565).abs() < 1e-12);
+}
+
+#[test]
+fn candidate_groups_per_reused_placement_tracks_speculative_retry_cost() {
+    let profile = GroupingProfile {
+        tx_count: 8,
+        group_count: 3,
+        grouped_count: 8,
+        max_group_size: 3,
+        min_group_size: 2,
+        avg_group_size: 8.0 / 3.0,
+        hot_object_share: 0.5,
+        conflict_checks: 10,
+        conflict_hits: 2,
+        candidate_groups_scanned: 10,
+        retry_fallback_new_groups: 1,
+        stage_ww_checks: 3,
+        stage_ww_hits: 1,
+        stage_wr_checks: 4,
+        stage_wr_hits: 1,
+        stage_rw_checks: 3,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.reused_group_placements(), 5);
+    assert!((profile.candidate_groups_per_retry_hit() - 5.0).abs() < f64::EPSILON);
+    assert!((profile.candidate_groups_per_reused_placement() - 2.0).abs() < f64::EPSILON);
+    assert!((profile.retry_fallback_scan_share() - 0.1).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_reuse_rate() - 0.5).abs() < f64::EPSILON);
+    assert!((profile.retry_scan_overhang_per_reused_placement() - 1.6).abs() < f64::EPSILON);
+    assert!((profile.retry_fallback_share_of_new_groups() - (1.0 / 3.0)).abs() < f64::EPSILON);
+}
+
+#[test]
+fn retry_fallback_share_of_retry_misses_fails_closed_without_scan_misses() {
+    let profile = GroupingProfile {
+        tx_count: 6,
+        group_count: 2,
+        grouped_count: 6,
+        max_group_size: 3,
+        min_group_size: 3,
+        avg_group_size: 3.0,
+        hot_object_share: 0.5,
+        conflict_checks: 4,
+        conflict_hits: 4,
+        candidate_groups_scanned: 4,
+        retry_fallback_new_groups: 2,
+        stage_ww_checks: 2,
+        stage_ww_hits: 2,
+        stage_wr_checks: 2,
+        stage_wr_hits: 2,
+        stage_rw_checks: 0,
+        stage_rw_hits: 0,
+    };
+
+    assert_eq!(profile.retry_scan_misses(), 0);
+    assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+    assert_eq!(profile.retry_fallback_share_of_retry_misses(), 0.0);
+}
+
+#[test]
 fn empty_batch_fast_path_is_profile_stable_across_strategies() {
     let strategies = [
         GroupingStrategy::Original,

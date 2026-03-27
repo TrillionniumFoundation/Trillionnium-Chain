@@ -202,6 +202,10 @@ fn main() {
                 "profile.candidate_groups_scanned={}",
                 profile.candidate_groups_scanned
             ),
+            format!(
+                "profile.retry_fallback_new_groups={}",
+                profile.retry_fallback_new_groups
+            ),
             format!("profile.stage_ww_checks={}", profile.stage_ww_checks),
             format!("profile.stage_ww_hits={}", profile.stage_ww_hits),
             format!("profile.stage_wr_checks={}", profile.stage_wr_checks),
@@ -209,12 +213,256 @@ fn main() {
             format!("profile.stage_rw_checks={}", profile.stage_rw_checks),
             format!("profile.stage_rw_hits={}", profile.stage_rw_hits),
         ]);
-        let hit_rate = if profile.conflict_checks == 0 {
-            0.0
-        } else {
-            profile.conflict_hits as f64 / profile.conflict_checks as f64
-        };
+        let hit_rate = ratio(profile.conflict_hits, profile.conflict_checks);
+        let conflict_checks_per_tx = profile.conflict_checks_per_tx();
+        let conflict_hits_per_tx = profile.conflict_hits_per_tx();
+        let candidate_groups_per_tx = profile.candidate_groups_per_tx();
+        let reused_group_placements = profile.reused_group_placements();
+        let reused_group_share = profile.reused_group_share();
+        let new_group_share = profile.new_group_share();
+        let retry_pressure = profile.retry_pressure();
+        let retry_fallback_new_group_share = profile.retry_fallback_new_group_share();
+        let retry_fallback_share_of_new_groups = profile.retry_fallback_share_of_new_groups();
+        let retry_fallback_share_of_retry_hits = profile.retry_fallback_share_of_retry_hits();
+        let retry_fallback_scan_share = profile.retry_fallback_scan_share();
+        let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
+        let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
+        let retry_scan_reuse_rate = profile.retry_scan_reuse_rate();
+        let retry_reuse_salvage_rate = profile.retry_reuse_salvage_rate();
+        let retry_scan_hit_rate = profile.retry_scan_hit_rate();
+        let retry_scan_misses = profile.retry_scan_misses();
+        let retry_scan_miss_rate = profile.retry_scan_miss_rate();
+        let retry_scan_misses_per_tx = profile.retry_scan_misses_per_tx();
+        let retry_scan_misses_per_group = profile.retry_scan_misses_per_group();
+        let retry_scan_overhang_per_hit = profile.retry_scan_overhang_per_hit();
+        let retry_scan_overhang_per_reused_placement =
+            profile.retry_scan_overhang_per_reused_placement();
+        let retry_fallback_share_of_retry_misses = profile.retry_fallback_share_of_retry_misses();
+        let stage_ww_hit_rate = profile.ww_retry_hit_rate();
+        let stage_wr_hit_rate = profile.wr_retry_hit_rate();
+        let stage_rw_hit_rate = profile.rw_retry_hit_rate();
+        let stage_ww_hits_per_tx = profile.ww_retry_hits_per_tx();
+        let stage_wr_hits_per_tx = profile.wr_retry_hits_per_tx();
+        let stage_rw_hits_per_tx = profile.rw_retry_hits_per_tx();
+        let stage_ww_retry_share = profile.ww_retry_share();
+        let stage_wr_retry_share = profile.wr_retry_share();
+        let stage_rw_retry_share = profile.rw_retry_share();
+        let dominant_retry_stage = profile.dominant_retry_stage();
+        let dominant_retry_share = profile.dominant_retry_share();
+        let dominant_attributed_retry_share = profile.dominant_attributed_retry_share();
+        let dominant_retry_lead_hits = profile.dominant_retry_lead_hits();
+        let dominant_retry_lead_share = profile.dominant_retry_lead_share();
+        let dominant_attributed_retry_lead_share = profile.dominant_attributed_retry_lead_share();
+        let attributed_retry_hits = profile.attributed_retry_hits();
+        let unattributed_retry_hits = profile.unattributed_retry_hits();
+        let unattributed_retry_share = profile.unattributed_retry_share();
+        let retry_attribution_coverage = profile.retry_attribution_coverage();
+        let retry_stage_overlap_hits = profile.retry_stage_overlap_hits();
+        let retry_stage_overlap_share = profile.retry_stage_overlap_share();
+        let retry_stage_overlap_share_of_attributed =
+            profile.retry_stage_overlap_share_of_attributed();
+        let singly_attributed_retry_hits = profile.singly_attributed_retry_hits();
+        let singly_attributed_retry_share = profile.singly_attributed_retry_share();
+        let singly_attributed_retry_share_of_attributed =
+            profile.singly_attributed_retry_share_of_attributed();
+        let retry_stage_concentration = profile.retry_stage_concentration();
+        let retry_stage_mix_entropy = profile.retry_stage_mix_entropy();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
+        // Block-STM-style speculative tuning cares less about raw conflicts alone
+        // than about how much retry pressure and candidate-lane scanning each tx
+        // induces. Keep these as derived telemetry only so scheduler semantics stay
+        // deterministic and benchmark output remains backward-compatible.
+        lines.push(format!(
+            "profile.conflict_checks_per_tx={:.4}",
+            conflict_checks_per_tx
+        ));
+        lines.push(format!(
+            "profile.conflict_hits_per_tx={:.4}",
+            conflict_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.candidate_groups_per_tx={:.4}",
+            candidate_groups_per_tx
+        ));
+        lines.push(format!(
+            "profile.reused_group_placements={}",
+            reused_group_placements
+        ));
+        lines.push(format!(
+            "profile.reused_group_share={:.4}",
+            reused_group_share
+        ));
+        lines.push(format!("profile.new_group_share={:.4}", new_group_share));
+        lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
+        lines.push(format!(
+            "profile.retry_fallback_new_group_share={:.4}",
+            retry_fallback_new_group_share
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_new_groups={:.4}",
+            retry_fallback_share_of_new_groups
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_retry_hits={:.4}",
+            retry_fallback_share_of_retry_hits
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_scan_share={:.4}",
+            retry_fallback_scan_share
+        ));
+        lines.push(format!(
+            "profile.candidate_groups_per_retry_hit={:.4}",
+            candidate_groups_per_retry_hit
+        ));
+        lines.push(format!(
+            "profile.candidate_groups_per_reused_placement={:.4}",
+            candidate_groups_per_reused_placement
+        ));
+        lines.push(format!(
+            "profile.retry_scan_reuse_rate={:.4}",
+            retry_scan_reuse_rate
+        ));
+        lines.push(format!(
+            "profile.retry_reuse_salvage_rate={:.4}",
+            retry_reuse_salvage_rate
+        ));
+        lines.push(format!(
+            "profile.retry_scan_hit_rate={:.4}",
+            retry_scan_hit_rate
+        ));
+        lines.push(format!("profile.retry_scan_misses={}", retry_scan_misses));
+        lines.push(format!(
+            "profile.retry_scan_miss_rate={:.4}",
+            retry_scan_miss_rate
+        ));
+        lines.push(format!(
+            "profile.retry_scan_misses_per_tx={:.4}",
+            retry_scan_misses_per_tx
+        ));
+        lines.push(format!(
+            "profile.retry_scan_misses_per_group={:.4}",
+            retry_scan_misses_per_group
+        ));
+        lines.push(format!(
+            "profile.retry_scan_overhang_per_hit={:.4}",
+            retry_scan_overhang_per_hit
+        ));
+        lines.push(format!(
+            "profile.retry_scan_overhang_per_reused_placement={:.4}",
+            retry_scan_overhang_per_reused_placement
+        ));
+        lines.push(format!(
+            "profile.retry_fallback_share_of_retry_misses={:.4}",
+            retry_fallback_share_of_retry_misses
+        ));
+        lines.push(format!(
+            "profile.stage_ww_hit_rate={:.4}",
+            stage_ww_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_wr_hit_rate={:.4}",
+            stage_wr_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_rw_hit_rate={:.4}",
+            stage_rw_hit_rate
+        ));
+        lines.push(format!(
+            "profile.stage_ww_hits_per_tx={:.4}",
+            stage_ww_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_wr_hits_per_tx={:.4}",
+            stage_wr_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_rw_hits_per_tx={:.4}",
+            stage_rw_hits_per_tx
+        ));
+        lines.push(format!(
+            "profile.stage_ww_retry_share={:.4}",
+            stage_ww_retry_share
+        ));
+        lines.push(format!(
+            "profile.stage_wr_retry_share={:.4}",
+            stage_wr_retry_share
+        ));
+        lines.push(format!(
+            "profile.stage_rw_retry_share={:.4}",
+            stage_rw_retry_share
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_stage={}",
+            dominant_retry_stage
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_share={:.4}",
+            dominant_retry_share
+        ));
+        lines.push(format!(
+            "profile.dominant_attributed_retry_share={:.4}",
+            dominant_attributed_retry_share
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_lead_hits={}",
+            dominant_retry_lead_hits
+        ));
+        lines.push(format!(
+            "profile.dominant_retry_lead_share={:.4}",
+            dominant_retry_lead_share
+        ));
+        lines.push(format!(
+            "profile.dominant_attributed_retry_lead_share={:.4}",
+            dominant_attributed_retry_lead_share
+        ));
+        lines.push(format!(
+            "profile.attributed_retry_hits={}",
+            attributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.unattributed_retry_hits={}",
+            unattributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.unattributed_retry_share={:.4}",
+            unattributed_retry_share
+        ));
+        lines.push(format!(
+            "profile.retry_attribution_coverage={:.4}",
+            retry_attribution_coverage
+        ));
+        lines.push(format!(
+            "profile.retry_stage_overlap_hits={}",
+            retry_stage_overlap_hits
+        ));
+        lines.push(format!(
+            "profile.retry_stage_overlap_share={:.4}",
+            retry_stage_overlap_share
+        ));
+        lines.push(format!(
+            "profile.retry_stage_overlap_share_of_attributed={:.4}",
+            retry_stage_overlap_share_of_attributed
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_hits={}",
+            singly_attributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_share={:.4}",
+            singly_attributed_retry_share
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_share_of_attributed={:.4}",
+            singly_attributed_retry_share_of_attributed
+        ));
+        lines.push(format!(
+            "profile.retry_stage_concentration={:.4}",
+            retry_stage_concentration
+        ));
+        lines.push(format!(
+            "profile.retry_stage_mix_entropy={:.4}",
+            retry_stage_mix_entropy
+        ));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
             let d = auto_adaptive_decision(&txs);
@@ -248,6 +496,14 @@ fn main() {
 
     for line in lines {
         println!("{line}");
+    }
+}
+
+fn ratio(numerator: usize, denominator: usize) -> f64 {
+    if denominator == 0 {
+        0.0
+    } else {
+        numerator as f64 / denominator as f64
     }
 }
 
@@ -407,4 +663,269 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
         });
     }
     txs
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{build_hot_streak_txs, build_mixed_txs};
+    use trnm_executor::GroupingProfile;
+
+    #[test]
+    fn mixed_workload_respects_read_fanout_and_write_every_stride() {
+        let txs = build_mixed_txs(6, 97, 3, 2);
+
+        assert_eq!(txs.len(), 6);
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(
+                tx.read_set.len(),
+                3,
+                "tx {idx} should keep configured read fanout"
+            );
+            if idx % 2 == 0 {
+                assert_eq!(
+                    tx.write_set.len(),
+                    1,
+                    "tx {idx} should emit one write on the configured stride"
+                );
+            } else {
+                assert!(
+                    tx.write_set.is_empty(),
+                    "tx {idx} should stay read-only off the configured stride"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn hot_streak_workload_keeps_deterministic_block_stm_style_streaks() {
+        let txs = build_hot_streak_txs(40, 5, 3, 2);
+
+        assert_eq!(txs.len(), 40);
+
+        let streak0 = txs[0].read_set[0].id;
+        for tx in &txs[..16] {
+            assert_eq!(
+                tx.read_set[0].id, streak0,
+                "first streak should stay on one hot object"
+            );
+        }
+
+        let streak1 = txs[16].read_set[0].id;
+        assert_ne!(
+            streak1, streak0,
+            "next streak should rotate to a different hot object when keys allow it"
+        );
+        for tx in &txs[16..32] {
+            assert_eq!(
+                tx.read_set[0].id, streak1,
+                "second streak should stay on its rotated hot object"
+            );
+        }
+
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(
+                tx.read_set.len(),
+                3,
+                "tx {idx} should keep configured read fanout"
+            );
+            if idx % 2 == 0 {
+                assert_eq!(
+                    tx.write_set.len(),
+                    1,
+                    "tx {idx} should write the streak hot key on the configured stride"
+                );
+                assert_eq!(tx.write_set[0].id, tx.read_set[0].id);
+            } else {
+                assert!(
+                    tx.write_set.is_empty(),
+                    "tx {idx} should stay read-only between write strides"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn retry_stage_overlap_share_reports_double_counted_retry_hits() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 3,
+            grouped_count: 8,
+            max_group_size: 3,
+            min_group_size: 2,
+            avg_group_size: 8.0 / 3.0,
+            hot_object_share: 0.5,
+            conflict_checks: 9,
+            conflict_hits: 4,
+            candidate_groups_scanned: 6,
+            retry_fallback_new_groups: 0,
+            stage_ww_checks: 4,
+            stage_ww_hits: 2,
+            stage_wr_checks: 3,
+            stage_wr_hits: 2,
+            stage_rw_checks: 2,
+            stage_rw_hits: 1,
+        };
+
+        assert_eq!(profile.attributed_retry_hits(), 5);
+        assert_eq!(profile.unattributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_share(), 0.0);
+        assert_eq!(profile.retry_attribution_coverage(), 1.0);
+        assert_eq!(profile.retry_stage_overlap_hits(), 1);
+        assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_overlap_share_of_attributed() - 0.2).abs() < f64::EPSILON);
+        assert_eq!(profile.singly_attributed_retry_hits(), 4);
+        assert!((profile.singly_attributed_retry_share() - 1.0).abs() < f64::EPSILON);
+        assert!((profile.singly_attributed_retry_share_of_attributed() - 0.8).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_concentration() - 0.5625).abs() < f64::EPSILON);
+        assert!((profile.retry_stage_mix_entropy() - 0.9602297178607612).abs() < 1e-12);
+        assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_misses() - 0.0).abs() < f64::EPSILON);
+        assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_reuse_rate() - (5.0 / 6.0)).abs() < f64::EPSILON);
+        assert_eq!(profile.retry_reuse_salvage_rate(), 1.0);
+        assert_eq!(profile.reused_group_placements(), 5);
+        assert!((profile.reused_group_share() - 0.625).abs() < f64::EPSILON);
+        assert!((profile.new_group_share() - 0.375).abs() < f64::EPSILON);
+        assert_eq!(profile.retry_fallback_new_groups, 0);
+        assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_hits(), 0.0);
+    }
+
+    #[test]
+    fn retry_fallback_new_group_share_tracks_scan_exhaustion_pressure() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 5,
+            grouped_count: 8,
+            max_group_size: 2,
+            min_group_size: 1,
+            avg_group_size: 1.6,
+            hot_object_share: 0.5,
+            conflict_checks: 9,
+            conflict_hits: 4,
+            candidate_groups_scanned: 6,
+            retry_fallback_new_groups: 2,
+            stage_ww_checks: 4,
+            stage_ww_hits: 2,
+            stage_wr_checks: 3,
+            stage_wr_hits: 1,
+            stage_rw_checks: 2,
+            stage_rw_hits: 1,
+        };
+
+        assert!((profile.retry_fallback_new_group_share() - 0.25).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_new_groups() - 0.4).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_hits() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_scan_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
+        assert!(
+            (profile.retry_fallback_share_of_retry_misses() - (2.0 / 2.0)).abs() < f64::EPSILON
+        );
+        assert!((profile.retry_reuse_salvage_rate() - (3.0 / 5.0)).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn retry_scan_hit_and_miss_metrics_partition_candidate_scans() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 4,
+            grouped_count: 8,
+            max_group_size: 3,
+            min_group_size: 1,
+            avg_group_size: 2.0,
+            hot_object_share: 0.5,
+            conflict_checks: 9,
+            conflict_hits: 4,
+            candidate_groups_scanned: 9,
+            retry_fallback_new_groups: 2,
+            stage_ww_checks: 3,
+            stage_ww_hits: 2,
+            stage_wr_checks: 3,
+            stage_wr_hits: 1,
+            stage_rw_checks: 3,
+            stage_rw_hits: 1,
+        };
+
+        assert_eq!(profile.retry_scan_misses(), 5);
+        assert!((profile.retry_scan_hit_rate() - (4.0 / 9.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_miss_rate() - (5.0 / 9.0)).abs() < f64::EPSILON);
+        assert!(
+            ((profile.retry_scan_hit_rate() + profile.retry_scan_miss_rate()) - 1.0).abs()
+                < 1e-12
+        );
+        assert!((profile.retry_scan_misses_per_tx() - (5.0 / 8.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_misses_per_group() - (5.0 / 4.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_hit() - (5.0 / 4.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - 1.25).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_misses() - 0.4).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn retry_telemetry_zero_denominator_metrics_fail_closed_to_zero() {
+        let profile = GroupingProfile {
+            tx_count: 4,
+            group_count: 4,
+            grouped_count: 4,
+            max_group_size: 1,
+            min_group_size: 1,
+            avg_group_size: 1.0,
+            hot_object_share: 0.25,
+            conflict_checks: 0,
+            conflict_hits: 0,
+            candidate_groups_scanned: 0,
+            retry_fallback_new_groups: 0,
+            stage_ww_checks: 0,
+            stage_ww_hits: 0,
+            stage_wr_checks: 0,
+            stage_wr_hits: 0,
+            stage_rw_checks: 0,
+            stage_rw_hits: 0,
+        };
+
+        assert_eq!(profile.conflict_checks_per_tx(), 0.0);
+        assert_eq!(profile.conflict_hits_per_tx(), 0.0);
+        assert_eq!(profile.candidate_groups_per_tx(), 0.0);
+        assert_eq!(profile.reused_group_placements(), 0);
+        assert_eq!(profile.reused_group_share(), 0.0);
+        assert_eq!(profile.new_group_share(), 1.0);
+        assert_eq!(profile.retry_pressure(), 0.0);
+        assert_eq!(profile.retry_fallback_new_group_share(), 0.0);
+        assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
+        assert_eq!(profile.candidate_groups_per_reused_placement(), 0.0);
+        assert_eq!(profile.retry_scan_hit_rate(), 0.0);
+        assert_eq!(profile.retry_reuse_salvage_rate(), 0.0);
+        assert_eq!(profile.retry_scan_misses(), 0);
+        assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+        assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_new_groups(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_hits(), 0.0);
+        assert_eq!(profile.retry_fallback_scan_share(), 0.0);
+        assert_eq!(profile.retry_scan_misses_per_tx(), 0.0);
+        assert_eq!(profile.retry_scan_misses_per_group(), 0.0);
+        assert_eq!(profile.retry_scan_overhang_per_hit(), 0.0);
+        assert_eq!(profile.retry_scan_overhang_per_reused_placement(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_misses(), 0.0);
+        assert_eq!(profile.ww_retry_hit_rate(), 0.0);
+        assert_eq!(profile.wr_retry_hit_rate(), 0.0);
+        assert_eq!(profile.rw_retry_hit_rate(), 0.0);
+        assert_eq!(profile.dominant_retry_stage(), "none");
+        assert_eq!(profile.dominant_retry_share(), 0.0);
+        assert_eq!(profile.dominant_attributed_retry_share(), 0.0);
+        assert_eq!(profile.dominant_retry_lead_hits(), 0);
+        assert_eq!(profile.dominant_retry_lead_share(), 0.0);
+        assert_eq!(profile.dominant_attributed_retry_lead_share(), 0.0);
+        assert_eq!(profile.attributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_hits(), 0);
+        assert_eq!(profile.unattributed_retry_share(), 0.0);
+        assert_eq!(profile.retry_attribution_coverage(), 0.0);
+        assert_eq!(profile.retry_stage_overlap_hits(), 0);
+        assert_eq!(profile.retry_stage_overlap_share(), 0.0);
+        assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
+        assert_eq!(profile.singly_attributed_retry_hits(), 0);
+        assert_eq!(profile.singly_attributed_retry_share(), 0.0);
+        assert_eq!(profile.singly_attributed_retry_share_of_attributed(), 0.0);
+        assert_eq!(profile.retry_stage_concentration(), 0.0);
+        assert_eq!(profile.retry_stage_mix_entropy(), 0.0);
+    }
 }
