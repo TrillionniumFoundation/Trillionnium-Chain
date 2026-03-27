@@ -81,11 +81,22 @@ if ! grep -q '^\[consensus\] finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; 
   exit 3
 fi
 
+cleanup_devnet() {
+  if [ "${DEVNET_STARTED:-0}" -eq 1 ]; then
+    ./scripts/devnet_down.sh | tee -a "$LOG" || true
+    DEVNET_STARTED=0
+  fi
+}
+
 log "devnet + audit"
+DEVNET_STARTED=0
+trap cleanup_devnet EXIT
 ./scripts/devnet_up.sh | tee -a "$LOG"
+DEVNET_STARTED=1
 sleep 12
-./scripts/devnet_down.sh | tee -a "$LOG" || true
 ./scripts/audit_state_roots.sh | tee -a "$LOG"
+cleanup_devnet
+trap - EXIT
 
 latest_audit=$(ls -1dt run/audit/state-root-audit-*.txt | head -n 1)
 grep -q 'summary ok=true mismatch=0 missing=0' "$latest_audit"
