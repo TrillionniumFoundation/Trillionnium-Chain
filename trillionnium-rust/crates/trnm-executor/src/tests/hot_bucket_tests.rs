@@ -186,6 +186,20 @@ fn hot_bucket_interleave_short_circuits_all_singleton_buckets() {
 }
 
 #[test]
+fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
+    let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
+    let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
+
+    // Misconfigured callers can collapse the fanout to zero or one bucket.
+    // Keep the lane hint total and deterministic instead of deriving a drift-prone
+    // modulo path from the mixed execution domain.
+    assert_eq!(hot_bucket_hint(&mixed, 0), 0);
+    assert_eq!(hot_bucket_hint(&mixed, 1), 0);
+    assert_eq!(hot_bucket_hint(&write_only, 0), 0);
+    assert_eq!(hot_bucket_hint(&write_only, 1), 0);
+}
+
+#[test]
 fn hot_bucket_hint_uses_full_u64_keyspace_before_bucket_reduce() {
     let buckets_n = 97usize;
     let low = tx(1, vec![], vec![o(1)]);

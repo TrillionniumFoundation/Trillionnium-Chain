@@ -225,3 +225,28 @@ fn full_drain_resets_fairness_streak_immediately_without_waiting_for_next_admit(
     // Full-drain boundary should cold-reset fairness immediately.
     assert_eq!(g.critical_served_streak, 0);
 }
+
+#[test]
+fn zero_reserve_shared_queue_duplicate_probes_do_not_invent_cross_domain_preemption() {
+    let mut g = LaneAdmissionGate::new(3, 0);
+
+    // Zero-reserve mode collapses both ingress classes into the shared normal lane.
+    // Mixed-class retries must remain classification-only and must not synthesize
+    // fairness/preemption state that perturbs shared FIFO dequeue order.
+    assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (3, 0, 3));
+
+    // Cross-class duplicate probes stay Duplicate while the tx ids are queued.
+    assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+    // The shared queue must still drain in pure FIFO order; duplicate probe noise
+    // must not create synthetic critical preference or warm fairness state.
+    assert_eq!(g.pop_ready(), Some(10));
+    assert_eq!(g.pop_ready(), Some(20));
+    assert_eq!(g.pop_ready(), Some(30));
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+    assert_eq!(g.critical_served_streak, 0);
+}

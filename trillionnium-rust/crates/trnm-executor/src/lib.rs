@@ -478,6 +478,11 @@ fn read_domain_only_keys(read_set: &[ObjectRef], write_keys: &[u64]) -> Vec<u64>
 
 #[inline]
 fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
+    // Fail-closed at the helper boundary as well: internal callers should not be
+    // able to derive a canonical execution-domain keyset from a tx that mixes the
+    // same object id across read/write sets with mismatched versions.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
     // Keep telemetry/object-domain reporting aligned with scheduler hotspot
     // selection: writes carry the stronger conflict signal, while reads extend the
     // object scope only when they introduce additional keys. Reuse the same
@@ -1351,15 +1356,22 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = if tx.write_set.is_empty() || tx.read_set.is_empty() {
+        let key = {
             let (key_a, key_b) = hot_bucket_keys(tx);
             if key_a == 0 && key_b == 0 {
                 None
+            } else if tx.read_set.is_empty() || tx.write_set.is_empty() {
+                Some((key_a, key_b))
+            } else if primary_access_domain_key(tx) == Some(key_a) {
+                // Preserve the existing write-primary hotspot detector contract for
+                // mixed domains whose canonical lane anchor already matches the
+                // primary access key. Only fall through to the two-key hint when
+                // mixed-domain canonicalization would otherwise drift onto a
+                // different execution-domain lane than the write-primary fast path.
+                Some((key_a, 0))
             } else {
                 Some((key_a, key_b))
             }
-        } else {
-            primary_access_domain_key(tx).map(|key| (key, 0))
         };
         if let Some(k) = key {
             observed += 1;
@@ -1426,11 +1438,18 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
+    // Fail closed before deriving scheduler hotspot buckets: mixed read/write
+    // footprints for the same object id must not silently collapse across
+    // mismatched versions and drift the execution-domain lane signal.
+    assert_tx_access_domain_versions_are_consistent(tx);
+
     // Canonicalize access-domain buckets by deduping object ids independently of
     // version. Use the smallest combined key as primary to preserve mixed-domain
-    // role-flip stability, while choosing secondary by deterministic domain family:
-    // when primary is write-dominant, prefer the next write key; otherwise prefer
-    // read-local secondary before write spillover.
+    // role-flip stability, then keep the secondary key deterministic without
+    // drifting when read/write roles flip: if the primary comes from writes,
+    // prefer the next write key before falling back to reads; otherwise anchor to
+    // the smallest distinct write key so mixed domains keep the same global two-
+    // key hint across equivalent role permutations.
     let mut write_keys = dedup_access_keys_no_version(&tx.write_set);
     let mut read_keys = dedup_access_keys_no_version(&tx.read_set);
     write_keys.sort_unstable();
@@ -1458,6 +1477,57 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
     }
 
     let primary = all_keys[0];
+    if primary == 0 {
+        // Object id 0 is a valid access-domain key, not an internal sentinel.
+        // Anchor the secondary to the smallest distinct global key so equivalent
+        // mixed domains touching {0,...} do not drift lanes when read/write roles flip.
+        let secondary = all_keys.iter().copied().find(|k| *k != primary).unwrap_or(0);
+        return (primary, secondary);
+    }
+
+    let primary_is_echoed_across_domains = write_keys.binary_search(&primary).is_ok()
+        && read_keys.binary_search(&primary).is_ok();
+    if primary_is_echoed_across_domains {
+        let write_only_secondary = write_keys.iter().copied().find(|k| *k != primary);
+        let read_only_secondary = read_keys.iter().copied().find(|k| *k != primary);
+        let has_single_write_only_secondary = write_keys
+            .iter()
+            .copied()
+            .filter(|k| *k != primary)
+            .nth(1)
+            .is_none();
+        let has_single_read_only_secondary = read_keys
+            .iter()
+            .copied()
+            .filter(|k| *k != primary)
+            .nth(1)
+            .is_none();
+        if has_single_write_only_secondary && has_single_read_only_secondary {
+            let secondary = match (write_only_secondary, read_only_secondary) {
+                (Some(write_key), Some(read_key)) => write_key.min(read_key),
+                (Some(write_key), None) => write_key,
+                (None, Some(read_key)) => read_key,
+                (None, None) => 0,
+            };
+            return (primary, secondary);
+        }
+
+        if has_single_write_only_secondary || has_single_read_only_secondary {
+            // When the primary object key is echoed across read/write domains and
+            // one side contributes at most one distinct non-primary key, keep the
+            // secondary anchored to the smallest available global non-primary key.
+            // This prevents equivalent mixed domains from drifting execution lanes
+            // just because the narrower side flips between reads and writes.
+            let secondary = match (write_only_secondary, read_only_secondary) {
+                (Some(write_key), Some(read_key)) => write_key.min(read_key),
+                (Some(write_key), None) => write_key,
+                (None, Some(read_key)) => read_key,
+                (None, None) => 0,
+            };
+            return (primary, secondary);
+        }
+    }
+
     if write_keys[0] == primary {
         let secondary = write_keys
             .iter()
@@ -1490,9 +1560,16 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Keep hash mixing deterministic across targets (32/64-bit) by using a
-    // fixed-width integer domain before reducing to bucket count.
-    let (key_a, key_b) = hot_bucket_keys(tx);
+    // Derive the bucket hint from the canonical object-scoped domain rather than
+    // a role-local secondary choice. Once the smallest key is fixed, hash over the
+    // two smallest distinct access keys so equivalent read/write role flips stay on
+    // the same Avalanche-style execution lane even when writes carry a larger local
+    // secondary than reads.
+    let mut domain_keys = tx_access_domain_keys(tx);
+    domain_keys.sort_unstable();
+    domain_keys.dedup();
+    let key_a = domain_keys.first().copied().unwrap_or(0);
+    let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
@@ -1516,6 +1593,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteFirst => {
+            // Keep direct helper callers on the same fail-closed execution-domain
+            // contract as the main scheduler path. Otherwise a mixed read/write
+            // version skew could be silently collapsed into raw object-count hints
+            // and drift across lane selection instead of tripping the guard.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -1527,6 +1611,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteLast => {
+            // Mirror WriteFirst: direct reorder probes must fail closed on mixed
+            // access-domain version skew before deriving object-scoped lane hints.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let write_keys = dedup_access_keys_no_version(&tx.write_set);
                 let read_keys = dedup_access_keys_no_version(&tx.read_set);
@@ -2140,6 +2229,20 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn tx_access_domain_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = tx_access_domain_keys(&tx);
+    }
+
+    #[test]
     fn hot_bucket_keys_filter_shared_read_keys_before_selecting_second_domain_key() {
         let tx = tx(
             1,
@@ -2153,6 +2256,56 @@ mod tests {
         assert_eq!(keys, vec![8, 40, 50, 9, 10]);
         assert_eq!((key_a, key_b), (8, 40));
         assert_eq!((key_a, key_b), (keys[0], keys[1]));
+    }
+
+    #[test]
+    fn tx_access_domain_keys_treat_object_zero_as_real_write_domain_member() {
+        let tx = tx(1, vec![o(5), o(0), o(5)], vec![o(0), o(11), o(11)]);
+
+        // Object id 0 is a real execution-domain member, not a sentinel. When it
+        // participates in the write domain, write-first scope reporting should
+        // keep it as the leading canonical lane key.
+        assert_eq!(tx_access_domain_keys(&tx), vec![0, 11, 5]);
+    }
+
+    #[test]
+    fn primary_access_domain_key_treats_object_zero_as_real_key_for_write_and_read_fallback() {
+        let write_primary = tx(1, vec![o(5)], vec![o(0), o(11)]);
+        let read_only = tx(2, vec![o(0), o(11)], vec![]);
+
+        // The canonical primary execution-domain key should preserve object id 0
+        // both when it leads the write domain and when the helper falls back to a
+        // read-only domain.
+        assert_eq!(primary_access_domain_key(&write_primary), Some(0));
+        assert_eq!(primary_access_domain_key(&read_only), Some(0));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_keys_rejects_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_keys(&tx);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn hot_bucket_keys_reject_cross_domain_version_skew_for_same_object_id() {
+        let tx = tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = hot_bucket_keys(&tx);
     }
 
     #[test]
@@ -2655,6 +2808,132 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_keeps_stable_secondary_when_primary_echo_roles_flip_with_wide_domains() {
+        let buckets_n = 97usize;
+        let write_heavy = tx(1, vec![o(5), o(13), o(19)], vec![o(5), o(17), o(23)]);
+        let read_heavy = tx(2, vec![o(5), o(17), o(23)], vec![o(5), o(13), o(19)]);
+
+        // Equivalent mixed domains should stay on the same bucket even when the
+        // smaller secondary keys migrate between read/write ownership.
+        assert_eq!(
+            hot_bucket_hint(&write_heavy, buckets_n),
+            hot_bucket_hint(&read_heavy, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_heavy, buckets_n),
+            ((5u64 ^ 13u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_global_two_key_mixed_domain_hint_when_read_domain_is_primary() {
+        let tx = tx(3, vec![o(5), o(13), o(11), o(13)], vec![o(7), o(19), o(19)]);
+
+        // Even when the canonical primary key comes from the read domain, keep the
+        // mixed-domain hint anchored to the two smallest distinct access keys across
+        // the whole tx. That preserves stable Avalanche-style lane classification
+        // instead of drifting toward a larger read-local secondary.
+        assert_eq!(hot_bucket_keys(&tx), (5, 7));
+    }
+
+    #[test]
+    fn hot_bucket_keys_stay_stable_when_primary_echo_exists_in_both_domains() {
+        let baseline = tx(1, vec![o(13), o(17)], vec![o(5), o(13)]);
+        let permuted = tx(2, vec![o(17), o(5), o(17)], vec![o(13), o(5), o(13)]);
+
+        // If the smallest key is echoed across read/write domains, preserve the same
+        // two-key execution-domain hint instead of drifting toward a larger
+        // lane-local secondary just because role-local ordering changed.
+        assert_eq!(hot_bucket_keys(&baseline), (5, 13));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_global_secondary_when_primary_echo_roles_flip() {
+        let write_heavy = tx(1, vec![o(7), o(9)], vec![o(7), o(11)]);
+        let read_heavy = tx(2, vec![o(7), o(11)], vec![o(7), o(9)]);
+
+        // If the canonical primary key is echoed in both domains, lane selection
+        // must anchor to the same global secondary key regardless of whether the
+        // smaller non-primary key happens to live in reads or writes.
+        assert_eq!(hot_bucket_keys(&write_heavy), (7, 9));
+        assert_eq!(hot_bucket_keys(&write_heavy), hot_bucket_keys(&read_heavy));
+    }
+
+    #[test]
+    fn hot_bucket_keys_preserve_write_priority_under_duplicate_heavy_primary_echo() {
+        let baseline = tx(1, vec![o(8), o(8), o(9), o(10)], vec![o(8), o(8), o(40), o(50)]);
+        let permuted = tx(
+            2,
+            vec![o(10), o(8), o(9), o(8), o(10)],
+            vec![o(50), o(8), o(40), o(8), o(40)],
+        );
+
+        // Once the shared primary is fixed, duplicate-heavy permutations must keep
+        // the same write-first secondary lane signal instead of drifting with local order.
+        assert_eq!(hot_bucket_keys(&baseline), (8, 40));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_write_first_secondary_stable_under_shared_primary_echo_noise() {
+        let baseline = tx(
+            1,
+            vec![o(5), o(5), o(7), o(7), o(29)],
+            vec![o(5), o(13), o(13), o(21)],
+        );
+        let permuted = tx(
+            2,
+            vec![o(29), o(7), o(5), o(7), o(5)],
+            vec![o(21), o(5), o(13), o(13)],
+        );
+
+        // Avalanche-style lane isolation should stay on the same write-primary lane
+        // when the canonical primary key is echoed across domains and read-side noise
+        // is permuted independently. The smallest write-only secondary remains the
+        // stable execution-lane hint.
+        assert_eq!(hot_bucket_keys(&baseline), (5, 13));
+        assert_eq!(hot_bucket_keys(&baseline), hot_bucket_keys(&permuted));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_global_secondary_when_primary_echo_role_flip_is_asymmetric() {
+        let write_wide = tx(1, vec![o(5), o(7)], vec![o(5), o(13), o(21)]);
+        let read_wide = tx(2, vec![o(5), o(13), o(21)], vec![o(5), o(7)]);
+
+        // If one side contributes only a single distinct non-primary key while the
+        // other side fans out wider, keep the mixed-domain lane hint anchored to the
+        // same smallest global secondary across read/write role flips.
+        assert_eq!(hot_bucket_keys(&write_wide), (5, 7));
+        assert_eq!(hot_bucket_keys(&write_wide), hot_bucket_keys(&read_wide));
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_smallest_secondary_when_shared_primary_echo_has_one_distinct_suffix_per_side() {
+        let write_suffix = tx(1, vec![o(5), o(13)], vec![o(5), o(7)]);
+        let read_suffix = tx(2, vec![o(5), o(7)], vec![o(5), o(13)]);
+
+        // When the canonical primary key is echoed across both domains and each
+        // side contributes exactly one distinct non-primary key, lane isolation
+        // should anchor to the smallest global secondary instead of drifting with
+        // the read/write role assignment.
+        assert_eq!(hot_bucket_keys(&write_suffix), (5, 7));
+        assert_eq!(hot_bucket_keys(&write_suffix), hot_bucket_keys(&read_suffix));
+    }
+
+    #[test]
+    fn hot_bucket_keys_treat_object_zero_as_real_primary_domain_key() {
+        let write_then_read = tx(1, vec![o(0), o(11)], vec![o(5)]);
+        let read_then_write = tx(2, vec![o(5)], vec![o(0), o(11)]);
+
+        // Object id 0 is a valid domain member, not an internal sentinel.
+        // Equivalent mixed domains touching {0,5,11} should preserve the same
+        // canonical two-key lane hint even when read/write roles flip.
+        assert_eq!(hot_bucket_keys(&write_then_read), (0, 5));
+        assert_eq!(hot_bucket_keys(&write_then_read), hot_bucket_keys(&read_then_write));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
@@ -2669,6 +2948,27 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_then_read, buckets_n),
+            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_keeps_object_zero_primary_stable_across_asymmetric_role_flips() {
+        let buckets_n = 97usize;
+        let write_narrow = tx(1, vec![o(0), o(5)], vec![o(0), o(11), o(19)]);
+        let read_narrow = tx(2, vec![o(0), o(11), o(19)], vec![o(0), o(5)]);
+
+        // When object id 0 is the canonical primary domain key, lane selection must
+        // still anchor to the smallest distinct global secondary key instead of
+        // drifting toward a wider role-local suffix after read/write role flips.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, 5));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            hot_bucket_hint(&read_narrow, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
             ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
@@ -2772,6 +3072,41 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_share_stays_stable_for_duplicate_heavy_equivalent_mixed_domains() {
+        let baseline = vec![
+            tx(
+                1,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(19), o(13), o(19), o(13), o(13)],
+            ),
+            tx(
+                2,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(23), o(13), o(23), o(13), o(13)],
+            ),
+        ];
+        let echoed = vec![
+            tx(
+                3,
+                vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+                vec![o(19), o(13), o(19), o(13)],
+            ),
+            tx(
+                4,
+                vec![o(41), o(13), o(2), o(23), o(99), o(13)],
+                vec![o(23), o(13), o(23), o(13)],
+            ),
+        ];
+
+        // Equivalent duplicate-heavy mixed execution domains should contribute the
+        // same distinct access-domain cardinality regardless of echo order. If
+        // this drifts, hotspot telemetry can fragment one execution lane into
+        // different shares purely because ingress repeated the same domain keys.
+        assert_eq!(hot_object_share(&baseline), hot_object_share(&echoed));
+        assert_eq!(hot_object_share(&baseline), 0.2);
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
@@ -2868,6 +3203,31 @@ mod tests {
         assert!(
             msg.contains("mixed access domain contains the same object id with multiple versions"),
             "unexpected panic: {msg}"
+        );
+    }
+
+    #[test]
+    fn auto_adaptive_mixed_domains_do_not_collapse_distinct_secondary_lane_hints() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "4");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "4");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs = vec![
+            tx(1, vec![o(7)], vec![o(5)]),
+            tx(2, vec![o(11)], vec![o(5)]),
+            tx(3, vec![o(7)], vec![o(5)]),
+            tx(4, vec![o(11)], vec![o(5)]),
+        ];
+
+        let decision = auto_adaptive_decision(&txs);
+
+        assert!(
+            !decision.use_hot_bucket,
+            "distinct mixed execution domains should not collapse onto one hotspot hint"
         );
     }
 
@@ -4521,6 +4881,39 @@ mod tests {
     }
 
     #[test]
+    fn primary_access_domain_key_stays_on_canonical_write_lane_under_duplicate_heavy_mixed_domains() {
+        let baseline = tx(
+            13,
+            vec![o(2), o(41), o(2), o(41), o(99)],
+            vec![o(19), o(13), o(19), o(13), o(13)],
+        );
+        let echoed = tx(
+            14,
+            vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+            vec![o(19), o(13), o(19), o(13)],
+        );
+        let permuted = tx(
+            15,
+            vec![o(99), o(41), o(2), o(2)],
+            vec![o(19), o(13), o(19), o(13), o(19)],
+        );
+
+        // Avalanche-style lane isolation benefits from a stable primary execution
+        // domain key even when telemetry/ingress repeats the same write-domain keys
+        // and mixed read/write echoes arrive in different orders. Lower read-only
+        // keys must not steal the canonical write-lane signal.
+        assert_eq!(primary_access_domain_key(&baseline), Some(13));
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&echoed)
+        );
+        assert_eq!(
+            primary_access_domain_key(&baseline),
+            primary_access_domain_key(&permuted)
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
@@ -4616,6 +5009,52 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_keeps_duplicate_heavy_mixed_domains_on_same_write_lane_signal() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut baseline = Vec::with_capacity(64);
+        let mut echoed = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            baseline.push(tx(
+                160_000 + i,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(19), o(13), o(19), o(13), o(13)],
+            ));
+            echoed.push(tx(
+                170_000 + i,
+                vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+                vec![o(19), o(13), o(19), o(13)],
+            ));
+        }
+
+        // Avalanche-style mixed-domain lanes should stay anchored to the same
+        // canonical write-lane key even when duplicate-heavy read/write echoes
+        // arrive in different orders. Otherwise the adaptive hotspot probe can
+        // drift across equivalent execution domains and fragment lane isolation.
+        let baseline_decision = auto_adaptive_decision(&baseline);
+        let echoed_decision = auto_adaptive_decision(&echoed);
+
+        assert_eq!(baseline_decision.sample_len, 64);
+        assert_eq!(echoed_decision.sample_len, 64);
+        assert_eq!(baseline_decision.use_hot_bucket, echoed_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, echoed_decision.reason);
+        assert_eq!(baseline_decision.streak_ratio, echoed_decision.streak_ratio);
+        assert_eq!(baseline_decision.hot_key_share, echoed_decision.hot_key_share);
+        assert_eq!(
+            baseline_decision.expected_gain_score,
+            echoed_decision.expected_gain_score
+        );
+        assert!(baseline_decision.use_hot_bucket);
+        assert_eq!(baseline_decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_prefers_write_hotspot_signal_over_shared_read_domains() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
@@ -4640,6 +5079,54 @@ mod tests {
         assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
         assert_eq!(d.streak_ratio, 0.0);
         assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_keeps_equivalent_mixed_domains_on_same_lane_signal_when_roles_flip() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        let mut write_primary = Vec::with_capacity(64);
+        let mut read_primary = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            write_primary.push(tx(180_000 + i, vec![o(23)], vec![o(5)]));
+            read_primary.push(tx(190_000 + i, vec![o(5)], vec![o(23)]));
+        }
+
+        // Equivalent two-key mixed access domains should keep the same
+        // Avalanche-style lane signal even when read/write roles flip between the
+        // same objects. Otherwise adaptive scheduling can fragment one hotspot
+        // into separate lanes purely because ingress classified the same domain
+        // with opposite local read/write roles.
+        let write_primary_decision = auto_adaptive_decision(&write_primary);
+        let read_primary_decision = auto_adaptive_decision(&read_primary);
+
+        assert_eq!(write_primary_decision.sample_len, 64);
+        assert_eq!(read_primary_decision.sample_len, 64);
+        assert_eq!(
+            write_primary_decision.use_hot_bucket,
+            read_primary_decision.use_hot_bucket
+        );
+        assert_eq!(write_primary_decision.reason, read_primary_decision.reason);
+        assert_eq!(
+            write_primary_decision.streak_ratio,
+            read_primary_decision.streak_ratio
+        );
+        assert_eq!(
+            write_primary_decision.hot_key_share,
+            read_primary_decision.hot_key_share
+        );
+        assert_eq!(
+            write_primary_decision.expected_gain_score,
+            read_primary_decision.expected_gain_score
+        );
+        assert!(write_primary_decision.use_hot_bucket);
+        assert_eq!(write_primary_decision.reason, "hotspot_detected");
     }
 
     #[test]
@@ -4823,8 +5310,8 @@ mod tests {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -4841,8 +5328,8 @@ mod tests {
         let mut txs = vec![
             tx(
                 9,
-                vec![ov(77, 1), ov(77, 2), ov(77, 3), ov(77, 4)],
-                vec![ov(77, 5), ov(77, 6)],
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
             ),
             tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
         ];
@@ -4852,6 +5339,20 @@ mod tests {
         // WriteLast should also follow deduped object-scoped domains so
         // version-heavy footprints do not drift from the executor's scheduler.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn write_first_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteFirst);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn write_last_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::WriteLast);
     }
 
     #[test]
