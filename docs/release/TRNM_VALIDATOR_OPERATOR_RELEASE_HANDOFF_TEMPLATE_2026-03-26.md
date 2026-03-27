@@ -58,6 +58,7 @@ worktree_status=clean|dirty
 ```
 
 约束说明：
+- `verify_lane_worktree.sh` 的分支参数是二选一：这里优先传 `--expected-branch-ref`，不要再同时补传 `--expected-branch`，避免把“短分支名看起来对”误当成 handoff 证据已绑定完成；
 - `EXPECTED_BRANCH_REF` 优先使用完整 `refs/heads/...` 形式，不要只靠短分支名目测；
 - `EXPECTED_HEAD` 应来自本轮准备交接/升级的那次实际提交，而不是“当前大概最新”的 commit；
 - 任一比较失败时，应立即把本轮标记为 `worktree mismatch` / `handoff blocked`，不要继续补跑 smoke 或收集 release 证据。
