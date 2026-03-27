@@ -333,6 +333,47 @@ mod tests {
     }
 
     #[test]
+    fn equal_height_wal_entries_order_genesis_before_continued_chain_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("wal-canonical-genesis-prev-hash-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(
+            &wal_dir,
+            &[
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+            ],
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].prev_hash_hex, None);
+        assert_eq!(entries[1].prev_hash_hex, Some("prev-a".into()));
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        let none_idx = raw.find("height = 9").unwrap();
+        let some_idx = raw.rfind("prev_hash_hex = \"prev-a\"").unwrap();
+        assert!(none_idx < some_idx);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn persist_checkpoint_meta_canonicalizes_disk_order_for_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
         fs::create_dir_all(&wal_dir).unwrap();
