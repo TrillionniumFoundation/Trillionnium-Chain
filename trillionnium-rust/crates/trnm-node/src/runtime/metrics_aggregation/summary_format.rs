@@ -107,4 +107,33 @@ mod tests {
             "state root evidence metrics and the unprofiled share field should remain a contiguous canonical block for DA/light-verifier summary parsers"
         );
     }
+
+    #[test]
+    fn runtime_summary_line_emits_state_root_evidence_block_exactly_once() {
+        let metrics = RuntimeMetrics::new(2);
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.state_root_total_avg = 21;
+        stats.state_root_total_p50 = 22;
+        stats.state_root_total_p95 = 23;
+        stats.state_root_total_max = 24;
+        stats.state_root_total_share_avg_ppm = 25;
+        stats.state_root_total_peak_share_ppm = 26;
+        stats.unprofiled_finality_share_bps = 27;
+
+        let line = format_runtime_summary_line(&metrics, &stats);
+        let expected_block = "state_root_total_avg_ms=21 state_root_total_p50_ms=22 state_root_total_p95_ms=23 state_root_total_max_ms=24 state_root_total_share_avg_ppm=25 state_root_total_peak_share_ppm=26 unprofiled_finality_share_bps=27";
+
+        assert_eq!(line.matches("state_root_total_avg_ms=").count(), 1);
+        assert_eq!(line.matches("state_root_total_p50_ms=").count(), 1);
+        assert_eq!(line.matches("state_root_total_p95_ms=").count(), 1);
+        assert_eq!(line.matches("state_root_total_max_ms=").count(), 1);
+        assert_eq!(line.matches("state_root_total_share_avg_ppm=").count(), 1);
+        assert_eq!(line.matches("state_root_total_peak_share_ppm=").count(), 1);
+        assert_eq!(line.matches("unprofiled_finality_share_bps=").count(), 1);
+        assert_eq!(
+            line.matches(expected_block).count(),
+            1,
+            "DA/light-verifier parsers should observe exactly one canonical state-root evidence block"
+        );
+    }
 }
