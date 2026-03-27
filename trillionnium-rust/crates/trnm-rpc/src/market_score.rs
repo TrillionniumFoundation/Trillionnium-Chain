@@ -112,7 +112,7 @@ pub(crate) fn market_score_breakdown(
     let base_score = price.saturating_mul(cfg.price_weight);
     if effective_reputation >= 0 {
         let reputation_reward = (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
-        let score_floor_applied = reputation_reward >= base_score;
+        let score_floor_applied = reputation_reward > base_score;
         MarketScoreBreakdown {
             effective_reputation,
             base_score,
