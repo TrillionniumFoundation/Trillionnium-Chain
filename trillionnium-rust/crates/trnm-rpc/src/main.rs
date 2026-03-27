@@ -3128,6 +3128,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             }
             Err(_) => continue,
         };
+        if req.is_empty() {
+            continue;
+        }
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
         let request = parse_http_request_target(first);
