@@ -10,12 +10,18 @@ pub(crate) struct NodeConfig {
 }
 
 fn validate_listen_addr(addr: &str, field: &str, path: &str) -> Result<()> {
-    addr.parse::<SocketAddr>().with_context(|| {
+    let socket_addr = addr.parse::<SocketAddr>().with_context(|| {
         format!(
             "invalid node config {}: {} must be a valid socket address host:port",
             path, field
         )
     })?;
+    anyhow::ensure!(
+        socket_addr.port() != 0,
+        "invalid node config {}: {} port must be non-zero",
+        path,
+        field
+    );
     Ok(())
 }
 
@@ -371,6 +377,40 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("p2p_addr must be a valid socket address host:port"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_zero_rpc_port() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:0".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr port zero must fail closed");
+        assert!(
+            err.to_string().contains("rpc_addr port must be non-zero"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_zero_p2p_port() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:0".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr port zero must fail closed");
+        assert!(
+            err.to_string().contains("p2p_addr port must be non-zero"),
             "unexpected error: {err:#}"
         );
     }
