@@ -519,7 +519,8 @@ pub fn validate_snapshot_observed(
             Some("stale".to_string())
         }
         Err(OracleError::InsufficientSources { .. })
-        | Err(OracleError::InconsistentSampleCount { .. }) => {
+        | Err(OracleError::InconsistentSampleCount { .. })
+        | Err(OracleError::DuplicateSources) => {
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
@@ -1535,11 +1536,10 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some("duplicate source ids are not allowed")
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
     }
 
     #[test]
@@ -1566,7 +1566,7 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_unclassified_failure() {
+    fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_quorum_failure() {
         let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
             "value": 100000,
@@ -1584,12 +1584,14 @@ mod tests {
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
 
         assert!(!report.ok);
-        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
-        assert_eq!(report.classified_reject_total(), 0);
-        assert_eq!(report.classified_outcome_total(), 0);
-        assert!(!report.classified_outcome_conserves_sample_count());
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+        assert_eq!(report.classified_reject_total(), 1);
+        assert_eq!(report.classified_outcome_total(), 1);
+        assert!(report.classified_outcome_conserves_sample_count());
         assert!(report.observation_matches_metrics());
         assert!(report.bridge_contract_consistent());
     }
