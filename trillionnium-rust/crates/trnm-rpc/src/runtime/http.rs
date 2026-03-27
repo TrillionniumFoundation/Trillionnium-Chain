@@ -110,7 +110,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
 
     let first_sp = line.find(' ')?;
     let method = &line[..first_sp];
-    if method != "GET" && method != "HEAD" {
+    if !method.eq_ignore_ascii_case("GET") && !method.eq_ignore_ascii_case("HEAD") {
         return None;
     }
 
@@ -162,7 +162,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
 
 pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
     match parse_http_request_target(first_line) {
-        Some(("GET", path)) => Some(path),
+        Some((method, path)) if method.eq_ignore_ascii_case("GET") => Some(path),
         _ => None,
     }
 }
@@ -173,7 +173,7 @@ pub(crate) fn parse_http_get_path(first_line: &str) -> Option<&str> {
 }
 
 fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
-    if method == "HEAD" {
+    if method.eq_ignore_ascii_case("HEAD") {
         http_json_head_response(status_line, body.len())
     } else {
         http_json_response(status_line, body)

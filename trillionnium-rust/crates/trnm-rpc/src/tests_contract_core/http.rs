@@ -26,7 +26,19 @@ fn parse_http_request_target_accepts_head_health_probe() {
         parse_http_request_target("HEAD /readyz HTTP/1.1"),
         Some(("HEAD", "/readyz"))
     );
+    assert_eq!(
+        parse_http_request_target("head /readyz HTTP/1.1"),
+        Some(("head", "/readyz"))
+    );
     assert_eq!(parse_http_get_path("HEAD /readyz HTTP/1.1"), None);
+}
+
+#[test]
+fn parse_http_get_path_accepts_lowercase_get_method() {
+    assert_eq!(
+        parse_http_get_path("get /query-task/42?verbose=1 HTTP/1.1"),
+        Some("/query-task/42")
+    );
 }
 
 #[test]
@@ -267,6 +279,7 @@ fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
 #[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
+    assert_eq!(parse_http_get_path("post /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health"), None);
     assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
