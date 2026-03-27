@@ -256,6 +256,36 @@ fn emergency_pause_replace_action_still_enforces_strict_bool_schema() {
 }
 
 #[test]
+fn emergency_pause_enforce_action_scrubs_stale_pending_entry() {
+    // Merge-gate guard: explicit Enforce must stay on the immediate non-sensitive path,
+    // including cleanup of any legacy/corrupt queued emergency_pause timelock entry.
+    let mut st = StateStore::new();
+    st.pending_gov_updates.insert(
+        "emergency_pause".into(),
+        PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            activate_at_height: 100_111,
+        },
+    );
+
+    let applied = st
+        .set_gov_param_with_action(
+            9_006,
+            7_999,
+            "emergency_pause".into(),
+            "true".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect("enforce action should apply immediately for emergency_pause");
+
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+    assert!(st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
+
+#[test]
 fn emergency_pause_toggles_preserve_challenge_escrow_conservation() {
     // Merge-gate guard: emergency pause is a control-plane brake only; it must never
     // mutate custody balances used by challenge escrow accounting.
