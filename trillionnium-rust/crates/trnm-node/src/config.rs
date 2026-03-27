@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use std::fs;
+use std::{fs, net::SocketAddr};
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct NodeConfig {
@@ -60,8 +60,20 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: p2p_addr must not contain control characters",
         path
     );
+    let rpc_socket: SocketAddr = rpc_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: rpc_addr must be a valid socket address",
+            path
+        )
+    })?;
+    let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: p2p_addr must be a valid socket address",
+            path
+        )
+    })?;
     anyhow::ensure!(
-        rpc_addr != p2p_addr,
+        rpc_socket != p2p_socket,
         "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
@@ -133,6 +145,41 @@ mod tests {
             err.to_string()
                 .contains("rpc_addr and p2p_addr must differ"),
             "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invalid_socket_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "not-an-addr".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("invalid rpc_addr must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must be a valid socket address"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1".into(),
+            },
+            "inline",
+        )
+        .expect_err("invalid p2p_addr must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must be a valid socket address"),
+            "unexpected error: {p2p_err:#}"
         );
     }
 
