@@ -353,6 +353,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_uses_stable_fallback_when_empty_after_sanitize() {
+        let raw = "\u{200B}\u{2060}\n\t\u{FEFF}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "unknown heartbeat failure");
+    }
+
+    #[test]
     fn normalize_failure_reason_exact_cap_has_no_ellipsis() {
         let raw = "b".repeat(160);
         let normalized = normalize_failure_reason(&raw);
