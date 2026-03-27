@@ -80,3 +80,37 @@ fn write_key_refuses_to_overwrite_existing_wallet_file() {
     let _ = std::fs::remove_file(&existing);
     let _ = std::fs::remove_dir(&store);
 }
+
+#[test]
+#[cfg(unix)]
+fn write_key_refuses_existing_dangling_symlink_wallet_path() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+    let existing = wallet_file(&store, "alice");
+    symlink(store.join("missing-target.key"), &existing).unwrap();
+
+    let err = write_key(
+        &store,
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        err.to_string().contains("refusing to overwrite existing key"),
+        "unexpected error: {err}"
+    );
+    assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
+
+    let _ = std::fs::remove_file(&existing);
+    let _ = std::fs::remove_dir(&store);
+}
