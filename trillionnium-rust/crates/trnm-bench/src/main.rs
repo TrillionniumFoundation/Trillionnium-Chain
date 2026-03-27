@@ -639,7 +639,14 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
         });
 
         for j in 1..read_fanout {
-            let side = ((i + j * 11) % keys) as u64;
+            let mut side = ((i + j * 11) % keys) as u64;
+            let mut probes = 0usize;
+            while probes < keys
+                && read_set.iter().any(|existing| existing.id == side)
+            {
+                side = ((side as usize + 1) % keys) as u64;
+                probes += 1;
+            }
             read_set.push(ObjectRef {
                 id: side,
                 version: 1,
@@ -741,6 +748,28 @@ mod tests {
                     "tx {idx} should stay read-only between write strides"
                 );
             }
+        }
+    }
+
+    #[test]
+    fn hot_streak_workload_avoids_duplicate_side_reads_when_keyspace_allows() {
+        let txs = build_hot_streak_txs(8, 3, 3, 2);
+
+        for (idx, tx) in txs.iter().enumerate() {
+            let ids = tx.read_set.iter().map(|obj| obj.id).collect::<Vec<_>>();
+            assert_eq!(ids.len(), 3, "tx {idx} should keep configured read fanout");
+            assert_eq!(
+                ids[0],
+                tx.write_set.first().map(|obj| obj.id).unwrap_or(ids[0]),
+                "tx {idx} should keep the hot key in the first read slot"
+            );
+
+            let unique = ids.iter().copied().collect::<std::collections::BTreeSet<_>>();
+            assert_eq!(
+                unique.len(),
+                ids.len(),
+                "tx {idx} should avoid duplicate side reads when keys >= read_fanout"
+            );
         }
     }
 
