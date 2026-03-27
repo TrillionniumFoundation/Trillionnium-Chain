@@ -207,12 +207,14 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || normalized_query.contains("%00")
         || normalized_query.contains("%0d")
         || normalized_query.contains("%0a")
         || normalized_query.contains("%09")
         || normalized_query.contains("%0b")
         || normalized_query.contains("%0c")
         || normalized_query.contains("%20")
+        || normalized_query.contains("%7f")
     {
         return Err(http_json_response(
             "400 Bad Request",

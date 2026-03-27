@@ -370,6 +370,19 @@
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_null_and_del_controls() {
+        for path in [
+            "/query-events/42?limit=7%00shadow",
+            "/query-events/42?limit=7%7fshadow",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded null and DEL controls must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
         for path in [
             "/query-events/42?limit=7#tail",
