@@ -23,8 +23,8 @@ pub(crate) use trnm_pouw::{
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 pub(crate) use trnm_state::{
-    verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
-    WalMeta,
+    checkpoint_evidence_surface_is_canonical, verify_wal_and_find_checkpoint, CheckpointMeta,
+    PendingResolveApprovalSnapshot, StateStore, WalMeta,
 };
 pub(crate) use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
