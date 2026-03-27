@@ -60,3 +60,57 @@ impl StateStore {
         self.monetary_state = snapshot;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use trnm_types::GovParamObject;
+
+    #[test]
+    fn emergency_pause_requires_canonical_key_index_and_object_binding() {
+        let mut state = StateStore::default();
+        state
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("canonical emergency_pause binding should succeed");
+        assert!(
+            state.is_emergency_paused(),
+            "canonical emergency_pause binding should enable the pause gate"
+        );
+
+        state.gov_param_key_index.insert("emergency_pause".into(), 8_001);
+        state.objects.insert(
+            8_001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_999,
+                    key: "emergency_pause".into(),
+                    value: "true".into(),
+                    version: 1,
+                }),
+            },
+        );
+        assert!(
+            !state.is_emergency_paused(),
+            "pause gate must fail closed when the indexed object key_id mismatches the registry slot"
+        );
+
+        state.gov_param_key_index.insert("emergency_pause".into(), 7_999);
+        state.objects.insert(
+            7_999,
+            VersionedObject {
+                version: 2,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7_999,
+                    key: " emergency_pause".into(),
+                    value: "true".into(),
+                    version: 2,
+                }),
+            },
+        );
+        assert!(
+            !state.is_emergency_paused(),
+            "pause gate must fail closed when the indexed object key is non-canonical"
+        );
+    }
+}
