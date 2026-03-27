@@ -785,7 +785,9 @@ mod tests {
         validate_governance_key_id, GOV_ALLOWED_KEYS, GOV_SCHEMA_INVALID_SAMPLES,
         GOV_SENSITIVE_KEYS,
     };
-    use crate::governance_ops::{gov_pinned_key_ids, GovParamKind, GOV_PARAM_SCHEMA};
+    use crate::governance_ops::{
+        gov_invalid_merge_gate_samples, gov_pinned_key_ids, GovParamKind, GOV_PARAM_SCHEMA,
+    };
 
     #[test]
     fn governance_allowed_keys_have_explicit_value_validators() {
@@ -891,6 +893,34 @@ mod tests {
     }
 
     #[test]
+    fn governance_typed_schema_entries_remain_canonical_and_samples_fail_closed() {
+        for entry in GOV_PARAM_SCHEMA {
+            assert_eq!(entry.key.trim(), entry.key, "schema key must not carry surrounding whitespace: {}", entry.key);
+            assert!(entry.key.is_ascii(), "schema key must stay ASCII: {}", entry.key);
+            assert!(
+                !entry
+                    .key
+                    .chars()
+                    .any(|ch| ch.is_ascii_uppercase() || ch.is_whitespace() || ch.is_control()),
+                "schema key must stay canonical lowercase/no-whitespace: {}",
+                entry.key
+            );
+
+            let err = validate_gov_param_value(entry.key, entry.invalid_merge_gate_sample)
+                .expect_err("typed invalid sample must fail closed for every governance schema entry");
+            assert!(
+                err.contains(entry.key),
+                "typed invalid sample rejection should mention the canonical key: {} => {}",
+                entry.key,
+                err
+            );
+        }
+
+        let typed_samples: Vec<(&str, &str)> = gov_invalid_merge_gate_samples().collect();
+        assert_eq!(typed_samples.as_slice(), GOV_SCHEMA_INVALID_SAMPLES);
+    }
+
+    #[test]
     fn governance_legacy_pinned_key_registry_matches_typed_schema_single_source() {
         let schema_pinned: std::collections::BTreeMap<&str, u64> =
             gov_pinned_key_ids().collect();
@@ -901,10 +931,31 @@ mod tests {
                 .collect();
 
         assert_eq!(legacy_pinned, schema_pinned);
-        assert_eq!(schema_pinned.get("emergency_pause"), Some(&EMERGENCY_PAUSE_KEY_ID));
+        assert_eq!(schema_pinned.get("emergency_pause"), Some(&7_999));
         assert!(
             !schema_pinned.contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "foreign algorand governance key must stay outside the typed pinned-key registry"
         );
+    }
+
+    #[test]
+    fn governance_typed_pinned_key_entries_round_trip_through_legacy_guard() {
+        for entry in GOV_PARAM_SCHEMA {
+            match entry.pinned_key_id {
+                Some(expected_id) => {
+                    assert_eq!(governance_pinned_key_id(entry.key), Some(expected_id));
+                    validate_governance_key_id(entry.key, expected_id)
+                        .expect("typed pinned key id should satisfy the legacy guard");
+
+                    let err = validate_governance_key_id(entry.key, expected_id + 1)
+                        .expect_err("typed pinned key ids must fail closed on mismatch");
+                    assert!(err.contains(entry.key), "{err}");
+                    assert!(err.contains(&expected_id.to_string()), "{err}");
+                }
+                None => {
+                    assert_eq!(governance_pinned_key_id(entry.key), None);
+                }
+            }
+        }
     }
 }
