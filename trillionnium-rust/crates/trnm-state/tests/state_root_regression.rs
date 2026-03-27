@@ -6158,6 +6158,15 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
         "noncanonical checkpoint state_root_hex must fail closed instead of emitting a DA/light-verifier summary"
     );
 
+    let mut uppercase_wal_hash_checkpoint = checkpoint.clone();
+    uppercase_wal_hash_checkpoint.wal_entry_hash_hex = uppercase_wal_hash_checkpoint
+        .wal_entry_hash_hex
+        .to_uppercase();
+    assert!(
+        checkpoint_da_light_verifier_summary(&uppercase_wal_hash_checkpoint, &wal).is_none(),
+        "mixed-case checkpoint wal_entry_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+
     let mut bad_wal = wal.clone();
     bad_wal.proposal_hash = "proposal\n4".into();
     bad_checkpoint = checkpoint.clone();
