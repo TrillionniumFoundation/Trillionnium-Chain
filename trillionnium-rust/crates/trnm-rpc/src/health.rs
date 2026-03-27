@@ -79,24 +79,38 @@ fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
     }
 }
 
+fn single_segment_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
+    let suffix = path.strip_prefix(prefix)?;
+    if suffix.is_empty() {
+        return None;
+    }
+
+    let suffix = if let Some(stripped) = suffix.strip_suffix('/') {
+        if stripped.is_empty() || stripped.contains('/') {
+            return None;
+        }
+        stripped
+    } else {
+        suffix
+    };
+
+    if suffix.contains('/') {
+        return None;
+    }
+
+    Some(suffix)
+}
+
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
-    path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
-        .filter(|suffix| !suffix.is_empty())
-        // Task/event lookups accept only a single decimal id path segment.
-        // Reject extra slash-delimited suffixes so malformed operator paths
-        // fail closed before numeric parsing.
-        .filter(|suffix| !suffix.contains('/'))
+    // Task/event lookups accept only a single decimal id path segment with at
+    // most one optional trailing slash.
+    single_segment_path_suffix(path, prefix)
 }
 
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
-    path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
-        .filter(|suffix| !suffix.is_empty())
-        // Capability subjects/tokens are single path segments. Reject extra
-        // slash-delimited segments so malformed operator paths fail closed
-        // instead of being misread as an opaque identifier.
-        .filter(|suffix| !suffix.contains('/'))
+    // Capability subjects/tokens are single path segments with at most one
+    // optional trailing slash.
+    single_segment_path_suffix(path, prefix)
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -337,6 +351,7 @@ mod tests {
         );
         assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
         assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-task/42//", "/query-task/"), None);
         assert_eq!(
             parse_path_u64_suffix("/query-task/42/extra", "/query-task/"),
             None
@@ -363,6 +378,10 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice//", "/query-capability-audit/"),
             None
         );
         assert_eq!(
