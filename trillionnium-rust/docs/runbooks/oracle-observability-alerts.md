@@ -99,6 +99,22 @@ These are safe starter alerts for mainnet rehearsal.
 5. If rejects are mostly drift, isolate the outlier provider/symbol mapping.
 6. If counters do not conserve to `sample_count`, stop relying on alert math and investigate the metrics contract.
 
+## Operator-visible summary template
+
+When opening an incident or handing off between operators, include one compact summary line built only from the stable metric names above.
+
+Minimal template:
+
+- `sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+
+Interpretation hints:
+
+- choose `contract-drift` first if the conservation invariant breaks, even if another reject class is elevated;
+- choose `quorum-collapse` over `drift-anomaly` when source cardinality is below quorum floor;
+- choose `accepts-stalled` when `sample_count` is still increasing but `accepted_total` is flat.
+
+This keeps pager handoff text append-stable even if dashboards differ across environments.
+
 ## Operator note
 
 These metrics are already guarded by schema/serialization tests in `trnm-rpc` and `trnm-oracle`. Keep alert rules append-stable and prefer adding new metrics over renaming existing ones.
