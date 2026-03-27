@@ -9712,6 +9712,7 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
         assert!(err.contains("repaired WAL tail required truncation"));
         assert!(err.contains("last retained checkpoint: 1"));
+        assert!(err.contains("next startup height: 3"));
         assert!(err.contains(
             "does not yet restore application StateStore snapshots or replay committed blocks"
         ));
