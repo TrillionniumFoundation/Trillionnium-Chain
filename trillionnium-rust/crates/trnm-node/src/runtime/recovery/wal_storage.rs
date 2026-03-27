@@ -261,6 +261,52 @@ mod tests {
     }
 
     #[test]
+    fn persist_wal_meta_canonicalizes_missing_prev_hash_before_linked_successors_for_recovery_audit_surfaces() {
+        let wal_dir = temp_wal_dir("wal-persist-canonical-missing-prev-hash-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(
+            &wal_dir,
+            &[
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-z".into()),
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        )
+        .unwrap();
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        let parsed: WalMetaList = toml::from_str(&raw).unwrap();
+        assert_eq!(parsed.entries.len(), 3);
+        assert_eq!(parsed.entries[0].prev_hash_hex, None);
+        assert_eq!(parsed.entries[1].prev_hash_hex.as_deref(), Some("prev-a"));
+        assert_eq!(parsed.entries[2].prev_hash_hex.as_deref(), Some("prev-z"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_canonicalizes_missing_prev_hash_before_linked_successors_for_recovery_audit_surfaces() {
         let wal_dir = temp_wal_dir("wal-canonical-missing-prev-hash-order");
         fs::create_dir_all(&wal_dir).unwrap();
