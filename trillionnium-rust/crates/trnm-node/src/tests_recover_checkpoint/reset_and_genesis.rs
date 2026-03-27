@@ -1,5 +1,6 @@
 use super::*;
 
+#[test]
 fn recover_clears_orphan_checkpoints_when_wal_is_empty() {
     let wal_dir = temp_wal_dir("recover-orphan-checkpoints");
     fs::create_dir_all(&wal_dir).unwrap();
