@@ -1115,7 +1115,10 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
                 .is_none_or(|window| window > 0)
         };
 
-        task.challenged_at_height.is_none()
+        task.challenge_bond.is_none()
+            && task.challenger.is_none()
+            && task.challenge_bond_forfeited.is_none()
+            && task.challenged_at_height.is_none()
             && task.challenge_deadline_height.is_none()
             && task.resolve_deadline_height.is_none()
             && retained_window_is_consistent
