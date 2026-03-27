@@ -2706,7 +2706,6 @@ impl StateStore {
         if task.version != expected.version {
             return Err("payload version mismatch".into());
         }
-        }
         let new_version = current.version + 1;
         task.version = new_version;
         self.invalidate_state_root_cache();
@@ -2771,7 +2770,6 @@ impl StateStore {
         }
         if proposal.version != expected.version {
             return Err("payload version mismatch".into());
-        }
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
