@@ -4625,6 +4625,90 @@ mod tests {
     }
 
     #[test]
+    fn restore_task_rejects_terminal_challenge_retention_with_noncanonical_challenger_identity() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 4082,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("Bob Smith".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        };
+
+        st.restore_task(4082, Some(task));
+
+        assert!(
+            st.get_task(4082).is_none(),
+            "restore_task must fail closed when retained terminal collateral metadata keeps a non-canonical challenger identity that cannot anchor later proof/collateral audits"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_terminal_challenge_retention_with_inverted_settlement_boundaries() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 4081,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(31),
+            resolve_deadline_height: Some(29),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        };
+
+        st.restore_task(4081, Some(task));
+
+        assert!(
+            st.get_task(4081).is_none(),
+            "restore_task must fail closed when retained terminal collateral/proof snapshots invert the challenged/challenge-deadline/resolve-deadline ordering needed for Filecoin-like audit retention"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_zeroed_terminal_unchallenged_retention_snapshot() {
         let mut st = StateStore::new();
 
