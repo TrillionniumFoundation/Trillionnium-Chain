@@ -665,7 +665,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 }
 
 fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
-    match recovered.wal_entries_retained {
+    let base = match recovered.wal_entries_retained {
         0 => "retained no committed WAL entries".into(),
         1 => format!(
             "retained 1 committed WAL entry through height {}",
@@ -676,6 +676,30 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
             count,
             recovered.next_height.saturating_sub(1)
         ),
+    };
+
+    let summary = if recovered.wal_entries_retained == 0 {
+        base
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                let lag = tip_height - checkpoint_height;
+                let blocks = if lag == 1 { "block" } else { "blocks" };
+                format!(
+                    "{} (checkpoint lags retained WAL tip by {} {})",
+                    base, lag, blocks
+                )
+            }
+            None => format!("{} (no retained checkpoint metadata)", base),
+            Some(_) => base,
+        }
+    };
+
+    if recovered.truncated {
+        format!("{}; repaired WAL tail required truncation", summary)
+    } else {
+        summary
     }
 }
 

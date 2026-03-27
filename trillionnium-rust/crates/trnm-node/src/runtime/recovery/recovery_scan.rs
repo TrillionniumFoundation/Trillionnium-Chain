@@ -193,22 +193,28 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
         ),
     };
 
-    if recovered.wal_entries_retained == 0 {
-        return base;
-    }
-
-    let tip_height = recovered.next_height.saturating_sub(1);
-    match recovered.checkpoint_height_retained {
-        Some(checkpoint_height) if checkpoint_height < tip_height => {
-            let lag = tip_height - checkpoint_height;
-            let blocks = if lag == 1 { "block" } else { "blocks" };
-            format!(
-                "{} (checkpoint lags retained WAL tip by {} {})",
-                base, lag, blocks
-            )
+    let summary = if recovered.wal_entries_retained == 0 {
+        base
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                let lag = tip_height - checkpoint_height;
+                let blocks = if lag == 1 { "block" } else { "blocks" };
+                format!(
+                    "{} (checkpoint lags retained WAL tip by {} {})",
+                    base, lag, blocks
+                )
+            }
+            None => format!("{} (no retained checkpoint metadata)", base),
+            Some(_) => base,
         }
-        None => format!("{} (no retained checkpoint metadata)", base),
-        Some(_) => base,
+    };
+
+    if recovered.truncated {
+        format!("{}; repaired WAL tail required truncation", summary)
+    } else {
+        summary
     }
 }
 
