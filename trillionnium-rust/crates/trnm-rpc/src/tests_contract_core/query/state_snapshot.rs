@@ -64,6 +64,67 @@ fn query_task_from_state_snapshot_computes_metering_derived_block() {
 }
 
 #[test]
+fn query_task_from_state_snapshot_fail_closes_metering_with_zero_policy_denominator() {
+    let tasks = vec![TaskObject {
+        task_id: 41,
+        creator: "alice".into(),
+        bounty: 777,
+        status: TaskStatus::Completed,
+        proof_type: trnm_types::ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: None,
+            input_hash: None,
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: "deadbeef".into(),
+                prompt_tokens: 128,
+                generated_tokens: 32,
+                decode_steps: 32,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 192,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                min_accept_work_units: 100,
+                challenge_success_bounty_base: 1,
+                challenge_success_bounty_per_work_unit_num: 1,
+                challenge_success_bounty_per_work_unit_den: 0,
+                worker_completion_bonus_per_work_unit_num: 1,
+                worker_completion_bonus_per_work_unit_den: 256,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 384,
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: None,
+        result_hash: Some([0xabu8; 32]),
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 9,
+    }];
+
+    let out = query_task_from_state_snapshot(41, &tasks).expect("task expected");
+    assert!(
+        out.metering.is_none(),
+        "zero-denominator snapshot metering must fail closed instead of reporting derived incentives"
+    );
+}
+
+#[test]
 fn query_task_from_state_snapshot_exposes_metering_audit_fields() {
     let tasks = vec![TaskObject {
         task_id: 42,

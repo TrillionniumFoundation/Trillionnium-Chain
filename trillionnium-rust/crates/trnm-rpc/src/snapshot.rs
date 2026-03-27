@@ -115,7 +115,7 @@ pub(crate) fn task_status_path(status: TaskStatus) -> String {
 pub(crate) fn task_metering_query_response(
     snapshot: &TaskMeteringSnapshot,
     path: String,
-) -> TaskMeteringQueryResponse {
+) -> Option<TaskMeteringQueryResponse> {
     let policy = TaskMeteringPolicyQueryResponse {
         snapshot_version: snapshot.policy_snapshot_version,
         min_accept_work_units: snapshot.min_accept_work_units,
@@ -131,7 +131,13 @@ pub(crate) fn task_metering_query_response(
         worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
         worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
     };
-    build_task_metering_query_response(
+    if policy.challenge_success_bounty_per_work_unit_den == 0
+        || policy.worker_completion_bonus_per_work_unit_den == 0
+        || policy.worker_slash_rebate_per_work_unit_den == 0
+    {
+        return None;
+    }
+    Some(build_task_metering_query_response(
         path,
         snapshot.workload_class.clone(),
         snapshot.metering_schema.clone(),
@@ -146,7 +152,7 @@ pub(crate) fn task_metering_query_response(
         snapshot.decode_step_weight,
         snapshot.kv_byte_weight,
         policy,
-    )
+    ))
 }
 
 pub(crate) fn query_task_from_state_snapshot(
