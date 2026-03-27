@@ -1009,6 +1009,19 @@ fn preflight_timeout_transfers(
             "timeout challenge transfer requested without posted challenge bond".into(),
         ));
     }
+    if let Some(challenger) = task.challenger.as_ref() {
+        if challenger.trim().is_empty() {
+            return Err(PouwError::State(
+                "timeout challenge settlement requested with blank challenger identity".into(),
+            ));
+        }
+        require_canonical_actor_id_state(challenger, "challenger identity").map_err(|_| {
+            PouwError::State(
+                "timeout challenge settlement requested with non-canonical challenger identity"
+                    .into(),
+            )
+        })?;
+    }
     if refund_challenge_bond && task.challenge_bond.is_some() && task.challenger.is_none() {
         return Err(PouwError::State(
             "timeout challenge refund requested without challenger".into(),
@@ -2292,7 +2305,10 @@ mod tests {
             .unwrap();
 
         let before = st.get_task(r4.id).unwrap();
-        let before_metering = before.metadata.as_ref().and_then(|meta| meta.metering.clone());
+        let before_metering = before
+            .metadata
+            .as_ref()
+            .and_then(|meta| meta.metering.clone());
         let replay_err = apply_reveal_result(&mut st, r4, result_hash, reveal_salt, Some(proof))
             .expect_err("second reveal attempt must be rejected as a replay");
         assert!(matches!(replay_err, PouwError::InvalidTransition));
@@ -2302,8 +2318,7 @@ mod tests {
         assert_eq!(after.result_hash, before.result_hash);
         assert_eq!(after.reveal_salt, before.reveal_salt);
         assert_eq!(
-            after.challenge_deadline_height,
-            before.challenge_deadline_height,
+            after.challenge_deadline_height, before.challenge_deadline_height,
             "receipt replay must not re-arm or shift the async challenge window"
         );
         assert_eq!(
@@ -2311,7 +2326,10 @@ mod tests {
             before.challenge_window_blocks_snapshot
         );
         assert_eq!(
-            after.metadata.as_ref().and_then(|meta| meta.metering.clone()),
+            after
+                .metadata
+                .as_ref()
+                .and_then(|meta| meta.metering.clone()),
             before_metering,
             "receipt replay must not overwrite or drift the persisted metering snapshot"
         );
@@ -2334,10 +2352,14 @@ mod tests {
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let before = st.get_task(r4.id).unwrap();
-        let before_metering = before.metadata.as_ref().and_then(|meta| meta.metering.clone());
+        let before_metering = before
+            .metadata
+            .as_ref()
+            .and_then(|meta| meta.metering.clone());
 
         let alternate_result_hash = [8u8; 32];
-        let alternate_proof = sample_llm_token_meter_receipt_json(task_id, &worker, alternate_result_hash);
+        let alternate_proof =
+            sample_llm_token_meter_receipt_json(task_id, &worker, alternate_result_hash);
         let replay_err = apply_reveal_result(
             &mut st,
             r4,
@@ -2345,7 +2367,9 @@ mod tests {
             reveal_salt,
             Some(alternate_proof),
         )
-        .expect_err("replayed reveal must be rejected before any alternate receipt can be persisted");
+        .expect_err(
+            "replayed reveal must be rejected before any alternate receipt can be persisted",
+        );
         assert!(matches!(replay_err, PouwError::InvalidTransition));
 
         let after = st.get_task(task_id).unwrap();
@@ -2353,8 +2377,7 @@ mod tests {
         assert_eq!(after.result_hash, before.result_hash);
         assert_eq!(after.reveal_salt, before.reveal_salt);
         assert_eq!(
-            after.challenge_deadline_height,
-            before.challenge_deadline_height,
+            after.challenge_deadline_height, before.challenge_deadline_height,
             "alternate receipt replay must not re-arm or shift the async challenge window"
         );
         assert_eq!(
@@ -2362,7 +2385,10 @@ mod tests {
             before.challenge_window_blocks_snapshot
         );
         assert_eq!(
-            after.metadata.as_ref().and_then(|meta| meta.metering.clone()),
+            after
+                .metadata
+                .as_ref()
+                .and_then(|meta| meta.metering.clone()),
             before_metering,
             "alternate receipt replay must not replace the persisted metering snapshot"
         );
@@ -4967,9 +4993,17 @@ mod tests {
             .challenge_success_bounty_per_work_unit_den = 0;
         let r4_bad = st.update_task(r4, tampered).unwrap();
 
-        let err = apply_challenge(&mut st, r4_bad.clone(), "challenger".into(), 10, "challenger".into())
-            .expect_err("challenge must fail closed when llm meter snapshot denominator is zero");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("challenge success bounty denominator cannot be zero")));
+        let err = apply_challenge(
+            &mut st,
+            r4_bad.clone(),
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .expect_err("challenge must fail closed when llm meter snapshot denominator is zero");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("challenge success bounty denominator cannot be zero"))
+        );
 
         let task_after = st.get_task(r4_bad.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Revealed);
@@ -7787,8 +7821,12 @@ mod tests {
     fn challenged_resolve_retains_snapshot_and_collateral_metadata_for_audit() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_bootstrap_unchecked(98_998, "challenge_window_blocks".into(), "100".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            98_998,
+            "challenge_window_blocks".into(),
+            "100".into(),
+        )
+        .unwrap();
         set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 198_998, "alice".into(), 10).unwrap();
@@ -7891,7 +7929,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_finalize_verified_reveal_success_from_committed_task_scrubs_legacy_challenge_retention_fields() {
+    fn tee_finalize_verified_reveal_success_from_committed_task_scrubs_legacy_challenge_retention_fields(
+    ) {
         let mut st = seeded_state();
         let task_id = 198_913;
         let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
@@ -7965,7 +8004,8 @@ mod tests {
     }
 
     #[test]
-    fn verified_reveal_completion_scrubbed_legacy_retention_state_root_matches_clean_terminal_task() {
+    fn verified_reveal_completion_scrubbed_legacy_retention_state_root_matches_clean_terminal_task()
+    {
         let mut clean_state = seeded_state();
         let mut legacy_state = seeded_state();
         let task_id = 198_915;
@@ -7989,7 +8029,8 @@ mod tests {
         legacy_task.challenger = Some("legacy-challenger".into());
         legacy_task.challenge_bond_forfeited = Some(true);
 
-        let clean_ref = finalize_verified_reveal_success(&mut clean_state, r2_clean, clean_task).unwrap();
+        let clean_ref =
+            finalize_verified_reveal_success(&mut clean_state, r2_clean, clean_task).unwrap();
         scrub_immediate_verification_challenge_fields(&mut legacy_task);
         let legacy_ref =
             finalize_verified_reveal_success(&mut legacy_state, r2_legacy, legacy_task).unwrap();
@@ -8921,7 +8962,9 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot"))
+        );
     }
 
     #[test]
@@ -8966,7 +9009,8 @@ mod tests {
     }
 
     #[test]
-    fn timeout_allows_terminal_slashed_non_challenged_task_to_retain_valid_challenge_snapshot_only() {
+    fn timeout_allows_terminal_slashed_non_challenged_task_to_retain_valid_challenge_snapshot_only()
+    {
         let mut st = seeded_state();
 
         let r1 = apply_create_task(&mut st, 39022, "alice".into(), 100).unwrap();
@@ -9380,7 +9424,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_slash_terminal_state_retains_challenge_audit_metadata_for_collateral_proof_accounting() {
+    fn resolve_slash_terminal_state_retains_challenge_audit_metadata_for_collateral_proof_accounting(
+    ) {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
 
@@ -18604,7 +18649,9 @@ mod tests {
 
         let err = preflight_resolve_transfers(&st, &task, true)
             .expect_err("resolve preflight must fail closed on malformed challenger identity");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
     }
 
     #[test]
@@ -18726,6 +18773,70 @@ mod tests {
         let err = preflight_timeout_transfers(&st, &task, true, false).unwrap_err();
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond"))
+        );
+    }
+
+    #[test]
+    fn timeout_preflight_rejects_blank_challenger_identity() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("   ".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, true, false)
+            .expect_err("timeout settlement must fail closed on blank challenger identity");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
+    }
+
+    #[test]
+    fn timeout_preflight_rejects_non_canonical_challenger_identity() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 80,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger alias".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, false, true)
+            .expect_err("timeout settlement must fail closed on malformed challenger identity");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
         );
     }
 
