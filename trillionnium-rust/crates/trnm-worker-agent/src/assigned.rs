@@ -5,9 +5,9 @@ use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
     adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
     classify_adapter_error, commitment, execute_payload, load_ingress_records,
-    reputation_gap_bps_from_best, resolve_llm_adapter_policy, run_llm_adapter_with_retry,
-    save_ingress_records, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
-    ReputationSignal, PROOF_ADAPTER_ENV,
+    reputation_gap_bps_from_best, reputation_gap_bps_from_worst, resolve_llm_adapter_policy,
+    run_llm_adapter_with_retry, save_ingress_records, transition_request_status,
+    AdapterErrorKind, LlmAdapterPolicy, ReputationSignal, PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
 
@@ -83,7 +83,7 @@ pub(crate) fn handle_run_assigned(
                 rec.adapter_error = Some(e.context.clone());
                 n += 1;
                 println!(
-                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} error={}",
+                    "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={} error={}",
                     rec.request_id,
                     rec.task_id,
                     worker,
@@ -95,6 +95,7 @@ pub(crate) fn handle_run_assigned(
                     reputation_impact.weight_bps,
                     reputation_impact.score_bps,
                     reputation_gap_bps_from_best(reputation_signal),
+                    reputation_gap_bps_from_worst(reputation_signal),
                     e.context
                 );
                 continue;
@@ -114,7 +115,7 @@ pub(crate) fn handle_run_assigned(
             rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
             n += 1;
             println!(
-                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
+                "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
@@ -125,7 +126,8 @@ pub(crate) fn handle_run_assigned(
                 reputation_impact.tier,
                 reputation_impact.weight_bps,
                 reputation_impact.score_bps,
-                reputation_gap_bps_from_best(reputation_signal)
+                reputation_gap_bps_from_best(reputation_signal),
+                reputation_gap_bps_from_worst(reputation_signal)
             );
             continue;
         }
@@ -149,7 +151,7 @@ pub(crate) fn handle_run_assigned(
         rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
         n += 1;
         println!(
-            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
+            "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={}",
             rec.request_id,
             rec.task_id,
             worker,
@@ -161,7 +163,8 @@ pub(crate) fn handle_run_assigned(
             reputation_impact.tier,
             reputation_impact.weight_bps,
             reputation_impact.score_bps,
-            reputation_gap_bps_from_best(reputation_signal)
+            reputation_gap_bps_from_best(reputation_signal),
+            reputation_gap_bps_from_worst(reputation_signal)
         );
     }
     save_ingress_records(&ingress_file, &records)?;

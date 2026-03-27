@@ -7,8 +7,8 @@ use crate::state::MessageIngressRecord;
 use crate::{
     adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
     classify_adapter_error, commitment, execute_payload, reputation_gap_bps_from_best,
-    run_llm_adapter_with_retry, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
-    ReputationSignal,
+    reputation_gap_bps_from_worst, run_llm_adapter_with_retry, transition_request_status,
+    AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -40,7 +40,7 @@ pub(crate) fn process_assigned_record(
             rec.adapter_error = Some(e.context.clone());
 
             println!(
-                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} error={}",
+                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={} error={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
@@ -52,6 +52,7 @@ pub(crate) fn process_assigned_record(
                 reputation_impact.weight_bps,
                 reputation_impact.score_bps,
                 reputation_gap_bps_from_best(reputation_signal),
+                reputation_gap_bps_from_worst(reputation_signal),
                 e.context
             );
             return Ok(true);
@@ -72,7 +73,7 @@ pub(crate) fn process_assigned_record(
         rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
 
         println!(
-            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
+            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={}",
             rec.request_id,
             rec.task_id,
             worker,
@@ -83,7 +84,8 @@ pub(crate) fn process_assigned_record(
             reputation_impact.tier,
             reputation_impact.weight_bps,
             reputation_impact.score_bps,
-            reputation_gap_bps_from_best(reputation_signal)
+            reputation_gap_bps_from_best(reputation_signal),
+            reputation_gap_bps_from_worst(reputation_signal)
         );
         return Ok(true);
     }
@@ -109,7 +111,7 @@ pub(crate) fn process_assigned_record(
     rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
 
     println!(
-        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
+        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} reputation_gap_bps_from_worst={}",
         rec.request_id,
         rec.task_id,
         worker,
@@ -121,7 +123,8 @@ pub(crate) fn process_assigned_record(
         reputation_impact.tier,
         reputation_impact.weight_bps,
         reputation_impact.score_bps,
-        reputation_gap_bps_from_best(reputation_signal)
+        reputation_gap_bps_from_best(reputation_signal),
+        reputation_gap_bps_from_worst(reputation_signal)
     );
     Ok(true)
 }
