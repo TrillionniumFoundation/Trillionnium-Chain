@@ -3179,6 +3179,26 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_blank_rpc_addr_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-blank-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"   \"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("blank rpc_addr must fail");
+        assert!(err.to_string().contains("rpc_addr must not be empty"));
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_blank_p2p_addr_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-p2p-{}-{}.toml",
