@@ -47,7 +47,8 @@ fi
 CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
   BEGIN { in_match=0 }
   /^worktree / {
-    in_match = ($2 == target)
+    path = substr($0, length("worktree ") + 1)
+    in_match = (path == target)
   }
   in_match { print }
   in_match && /^$/ { exit }
