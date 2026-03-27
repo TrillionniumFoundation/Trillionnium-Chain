@@ -981,17 +981,50 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
 }
 
 fn extract_tx_hash(text: &str) -> Option<String> {
-    if let Some(v) = text.split_whitespace().find_map(|w| {
-        let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
-        let (k, v) = trimmed
-            .split_once('=')
-            .or_else(|| trimmed.split_once(':'))?;
-        match k.trim().to_ascii_lowercase().as_str() {
-            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => normalize_tx_hash(v),
-            _ => None,
+    for line in text.lines() {
+        if let Some((key, value)) = parse_kv_line(line) {
+            match key.as_str() {
+                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                    if let Some(normalized) = normalize_tx_hash(&value) {
+                        return Some(normalized);
+                    }
+                }
+                _ => {}
+            }
         }
-    }) {
-        return Some(v);
+
+        let tokens = line.split_whitespace().collect::<Vec<_>>();
+        if let Some(v) = tokens.iter().find_map(|w| {
+            let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
+            let (k, v) = trimmed
+                .split_once('=')
+                .or_else(|| trimmed.split_once(':'))?;
+            match k.trim().to_ascii_lowercase().as_str() {
+                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                    normalize_tx_hash(v)
+                }
+                _ => None,
+            }
+        }) {
+            return Some(v);
+        }
+
+        for window in tokens.windows(3) {
+            let key = window[0].trim_matches(|c: char| c.is_ascii_whitespace());
+            let sep = window[1].trim();
+            let value = window[2].trim_matches(|c: char| c.is_ascii_whitespace());
+            if !matches!(sep, "=" | ":") {
+                continue;
+            }
+            match key.to_ascii_lowercase().as_str() {
+                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                    if let Some(normalized) = normalize_tx_hash(value) {
+                        return Some(normalized);
+                    }
+                }
+                _ => {}
+            }
+        }
     }
 
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
@@ -1988,6 +2021,10 @@ mod tests {
         assert_eq!(
             extract_tx_hash("note transactionHash=0xbabe04").as_deref(),
             Some("0xbabe04")
+        );
+        assert_eq!(
+            extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
+            Some("0xfeed55")
         );
     }
 
