@@ -882,7 +882,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
-    if f.exists() {
+    if fs::symlink_metadata(&f).is_ok() {
         bail!(
             "wallet '{}' already exists at {}; refusing to overwrite existing key",
             name,
@@ -1982,6 +1982,40 @@ mod tests {
             std::fs::read_to_string(&existing).unwrap(),
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n"
         );
+
+        let _ = std::fs::remove_file(&existing);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn write_key_refuses_existing_dangling_symlink_wallet_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+        let existing = wallet_file(&store, "alice");
+        symlink(store.join("missing-target.key"), &existing).unwrap();
+
+        let err = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("refusing to overwrite existing key"),
+            "unexpected error: {err}"
+        );
+        assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
 
         let _ = std::fs::remove_file(&existing);
         let _ = std::fs::remove_dir(&store);

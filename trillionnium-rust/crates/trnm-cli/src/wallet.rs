@@ -66,7 +66,7 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
     ensure_wallet_name(name)?;
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
-    if f.exists() {
+    if fs::symlink_metadata(&f).is_ok() {
         bail!(
             "wallet '{}' already exists at {}; refusing to overwrite existing key",
             name,
