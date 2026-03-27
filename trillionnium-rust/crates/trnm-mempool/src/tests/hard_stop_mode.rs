@@ -1,6 +1,47 @@
 use super::*;
 
 #[test]
+fn hard_stop_restored_duplicate_noise_keeps_qos_snapshot_and_queue_state_flat() {
+    let mut g = LaneAdmissionGate::new(0, 0);
+
+    // Simulate restored duplicate metadata that spans lane-local and lane-wide
+    // caches while ingress is temporarily hard-stopped.
+    g.normal.seen.insert(41);
+    g.critical.seen.insert(42);
+    g.seen_global.insert(41);
+    g.seen_global.insert(42);
+
+    let expected = LaneQosSnapshot {
+        normal_queued: 0,
+        critical_queued: 0,
+        total_queued: 0,
+        normal_headroom: 0,
+        critical_headroom: 0,
+        total_headroom: 0,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: false,
+    };
+
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+
+    for (tx_id, class, outcome) in [
+        (41, IngressClass::Normal, AdmitOutcome::Duplicate),
+        (42, IngressClass::Critical, AdmitOutcome::Duplicate),
+        (99, IngressClass::Normal, AdmitOutcome::Backpressured),
+        (99, IngressClass::Critical, AdmitOutcome::Backpressured),
+        (41, IngressClass::Critical, AdmitOutcome::Duplicate),
+        (42, IngressClass::Normal, AdmitOutcome::Duplicate),
+    ] {
+        assert_eq!(g.admit(tx_id, class), outcome);
+        assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.qos_snapshot(), expected);
+    }
+}
+
+#[test]
 fn hard_stop_mode_preserves_duplicate_semantics_for_restored_backlog() {
     let mut g = LaneAdmissionGate::new(0, 0);
 
