@@ -368,7 +368,12 @@ For deterministic re-runs, prefer the exact replay command emitted by the artifa
 - `summary.txt` contains `replay_command=` for local evidence
 - `manifest.txt` contains `replay_command=` for RC rehearsal
 
-This prevents drift in locale, timezone, build-job parallelism, and output directory selection.
+Quoting rule:
+- when `summary.txt` exposes both `env_*` and `replay_env_*`, treat `replay_env_*` as the deterministic audit/replay baseline and do not rewrite the run as a shorter shell without those fields
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim in the handoff note together with `replay_command=`; if the value is `<entry_not_found>`, preserve that literal rather than rewriting it as an implicit TODO
+- when quoting `manifest.txt`, keep `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` adjacent to `replay_command=` / `rollback_command=` so a local RC rehearsal is not misread as a public-mainnet readiness proof
+
+This prevents drift in locale, timezone, build-job parallelism, output directory selection, and release-readiness interpretation.
 
 ## Common failure interpretation
 
