@@ -185,6 +185,52 @@ fn run_adapter_with_retry_stops_after_nonce_rejected_terminal_receipt() {
 }
 
 #[test]
+fn tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env() {
+    assert_eq!(
+        resolve_u32(Some(0), Some("not-a-number"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        0
+    );
+    assert_eq!(
+        resolve_u64(Some(0), Some("also-bad"), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+        0
+    );
+
+    let policy = RetryPolicy {
+        max_retries: resolve_u32(Some(0), Some("7"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        backoff_ms: resolve_u64(Some(0), Some("900"), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+    };
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 0,
+            backoff_ms: 0,
+        }
+    );
+}
+
+#[test]
+fn llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default() {
+    let policy = LlmAdapterPolicy {
+        retry: RetryPolicy {
+            max_retries: resolve_u32(None, Some("5"), DEFAULT_LLM_ADAPTER_MAX_RETRIES, 0),
+            backoff_ms: resolve_u64(None, Some("250"), DEFAULT_LLM_ADAPTER_BACKOFF_MS, 0),
+        },
+        timeout_ms: resolve_u64(Some(0), Some("0"), DEFAULT_LLM_ADAPTER_TIMEOUT_MS, 1),
+    };
+
+    assert_eq!(
+        policy,
+        LlmAdapterPolicy {
+            retry: RetryPolicy {
+                max_retries: 5,
+                backoff_ms: 250,
+            },
+            timeout_ms: DEFAULT_LLM_ADAPTER_TIMEOUT_MS,
+        }
+    );
+}
+
+#[test]
 fn parse_tx_hash_accepts_quoted_and_trailing_punctuated_tokens() {
     let mixed_case =
         "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
