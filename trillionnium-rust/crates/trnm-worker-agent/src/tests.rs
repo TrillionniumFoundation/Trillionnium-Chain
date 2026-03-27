@@ -129,6 +129,13 @@ fn backoff_delay_is_linear_and_saturating() {
 }
 
 #[test]
+fn zero_backoff_delay_remains_zero_across_retries() {
+    assert_eq!(backoff_delay_ms(0, 0), 0);
+    assert_eq!(backoff_delay_ms(0, 1), 0);
+    assert_eq!(backoff_delay_ms(0, u32::MAX), 0);
+}
+
+#[test]
 fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-duplicate-counter-{}-{}.txt",
