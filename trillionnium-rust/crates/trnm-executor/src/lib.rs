@@ -3348,6 +3348,25 @@ mod tests {
     }
 
     #[test]
+    fn build_parallel_groups_keeps_read_only_same_object_version_drift_in_one_group() {
+        let txs = vec![
+            tx(1, vec![ObjectRef { id: 77, version: 1 }], vec![]),
+            tx(2, vec![ObjectRef { id: 77, version: 9 }], vec![]),
+            tx(3, vec![ObjectRef { id: 88, version: 3 }], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 1, "pure read domains must still batch together");
+        assert_eq!(groups[0].len(), 3);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 2, 3]);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.grouped_count, 3);
+        assert_eq!(profile.conflict_hits, 0);
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
