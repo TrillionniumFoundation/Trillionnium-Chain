@@ -107,7 +107,14 @@ The repository has local node configs and preflight scripts, but not a clearly c
 - validator replacement / rotation workflow
 - chain upgrade / rollback operator drill
 - disaster recovery and node rebuild SOP
-- validator bootstrap / re-bootstrap operational guide
+
+### Partial coverage now present
+- validator bootstrap / re-bootstrap operational guide: `docs/runbooks/validator-bootstrap-rebootstrap.md`
+
+### Still open inside this area
+- bootstrap procedure is documented, but not yet wired into a signed/public-mainnet operator ceremony
+- no validator replacement / rotation automation
+- no disaster-recovery rebuild drill with captured evidence
 
 ### Why P0
 A public mainnet is not only a binary; it is an operator system.
