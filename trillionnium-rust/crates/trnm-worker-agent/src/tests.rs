@@ -129,6 +129,34 @@ fn backoff_delay_is_linear_and_saturating() {
 }
 
 #[test]
+fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xDEADBEEF', file=sys.stderr); raise SystemExit(9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 1)
+        .expect("adapter execution should return terminal duplicate result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "1", "duplicate must fail fast without retrying");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_stops_after_nonce_rejected_terminal_receipt() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-retry-counter-{}-{}.txt",
