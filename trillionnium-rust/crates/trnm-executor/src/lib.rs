@@ -3804,6 +3804,25 @@ mod tests {
     }
 
     #[test]
+    fn access_map_capacity_hint_sizes_from_unique_access_domain_keys() {
+        let txs = vec![tx(
+            1,
+            (0..40u64)
+                .flat_map(|i| [o(1_000 + i), o(1_000 + i)])
+                .collect(),
+            (0..40u64)
+                .flat_map(|i| [o(2_000 + i), o(2_000 + i), o(1_000 + i)])
+                .collect(),
+        )];
+
+        // Capacity sizing should track the tx's distinct object-domain footprint,
+        // not raw duplicate/echo volume. Otherwise mixed read/write echoes can
+        // inflate scheduler map reservations and blur lane-isolation telemetry.
+        assert_eq!(tx_access_domain_keys(&txs[0]).len(), 80);
+        assert_eq!(access_map_capacity_hint(&txs), 107);
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
