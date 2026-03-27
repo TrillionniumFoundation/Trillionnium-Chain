@@ -50,6 +50,20 @@ log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOG"; }
 log "start testnet preflight"
 log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_status_summary=$GIT_STATUS_SUMMARY"
 
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
+  [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { log "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled"; exit 4; }
+  [ -n "${EXPECTED_BRANCH_REF:-}" ] || { log "lane identity failed: EXPECTED_BRANCH_REF is required when lane binding is enabled"; exit 4; }
+  log "verify lane-bound worktree identity"
+  lane_verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "${EXPECTED_HEAD:-}" ]; then
+    lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" | tee -a "$LOG"
+fi
+
 log "check rust toolchain"
 command -v cargo >/dev/null
 cargo --version | tee -a "$LOG"
