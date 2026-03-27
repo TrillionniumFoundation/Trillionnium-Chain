@@ -101,6 +101,12 @@ bash -n ./scripts/v2/verify_lane_worktree.sh
 bash -n ./scripts/devnet_up.sh
 bash -n ./scripts/devnet_down.sh
 bash -n ./scripts/audit_state_roots.sh
+bash -n ./scripts/run_bench_matrix.sh
+bash -n ./scripts/run_bench_mixed_matrix.sh
+
+log "check script prerequisites"
+command -v python3 >/dev/null
+python3 -m py_compile ./scripts/executor_profile_report.py
 
 log "check rust toolchain"
 command -v cargo >/dev/null
