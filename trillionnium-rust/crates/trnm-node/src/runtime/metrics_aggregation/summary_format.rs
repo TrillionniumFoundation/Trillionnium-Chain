@@ -90,21 +90,35 @@ mod tests {
         assert!(line.contains("state_root_total_peak_share_ppm=16"));
         assert!(line.contains("unprofiled_finality_share_bps=17"));
 
+        let commit_peak_idx = line
+            .find("commit_peak_share_ppm=0")
+            .expect("commit_peak_share_ppm should be present before the state-root evidence block");
         let state_root_idx = line
             .find("state_root_total_avg_ms=11")
             .expect("state_root_total_avg_ms should be present in the summary line");
         let unprofiled_idx = line
             .find("unprofiled_finality_share_bps=17")
             .expect("unprofiled_finality_share_bps should be present in the summary line");
+        let critical_wait_idx = line
+            .find("critical_wait_blocks_avg=0")
+            .expect("critical_wait_blocks_avg should remain present after the state-root evidence block");
+        assert!(
+            commit_peak_idx < state_root_idx,
+            "commit share metrics must remain immediately ahead of the state-root evidence block so DA/light-verifier summary parsers keep a canonical left boundary"
+        );
         assert!(
             state_root_idx < unprofiled_idx,
             "state root evidence metrics must precede the unprofiled share field so downstream DA/light-verifier parsers see the canonical linkage"
         );
         assert!(
+            unprofiled_idx < critical_wait_idx,
+            "critical-wait metrics must remain after the unprofiled share field so DA/light-verifier summary parsers keep a canonical right boundary"
+        );
+        assert!(
             line.contains(
-                "state_root_total_avg_ms=11 state_root_total_p50_ms=12 state_root_total_p95_ms=13 state_root_total_max_ms=14 state_root_total_share_avg_ppm=15 state_root_total_peak_share_ppm=16 unprofiled_finality_share_bps=17"
+                "commit_peak_share_ppm=0 state_root_total_avg_ms=11 state_root_total_p50_ms=12 state_root_total_p95_ms=13 state_root_total_max_ms=14 state_root_total_share_avg_ppm=15 state_root_total_peak_share_ppm=16 unprofiled_finality_share_bps=17 critical_wait_blocks_avg=0"
             ),
-            "state root evidence metrics and the unprofiled share field should remain a contiguous canonical block for DA/light-verifier summary parsers"
+            "state root evidence metrics should remain a contiguous canonical block between commit-share and critical-wait summary fields for DA/light-verifier parsers"
         );
     }
 
