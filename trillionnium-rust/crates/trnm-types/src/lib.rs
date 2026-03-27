@@ -142,6 +142,26 @@ impl TaskMetadataCompatibility {
     pub fn requires_governance_upgrade(&self) -> bool {
         self.legacy_note_only || !self.is_runtime_compatible()
     }
+
+    /// Stable typed ordering for query/report surfaces that need deterministic
+    /// governance-upgrade diagnostics without re-encoding precedence rules.
+    pub fn findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
+        let mut findings = Vec::new();
+        if self.legacy_note_only {
+            findings.push(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload);
+        }
+        if !self.canonical_core_fields {
+            findings.push(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields);
+        }
+        if !self.complete_metering_snapshot {
+            findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
+        }
+        findings
+    }
+
+    pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.findings().into_iter().next()
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -163,7 +183,7 @@ impl TaskMetadataCompatibilityReport {
     /// Deterministic headline reason for query surfaces that want a single,
     /// stable governance-upgrade classification without re-encoding precedence.
     pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
-        self.findings.first().copied()
+        self.compatibility.primary_finding()
     }
 
     /// Query-facing helper so downstream surfaces can omit empty arrays without
@@ -284,16 +304,7 @@ impl TaskMetadata {
             complete_metering_snapshot,
         };
 
-        let mut findings = Vec::new();
-        if compatibility.legacy_note_only {
-            findings.push(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload);
-        }
-        if !compatibility.canonical_core_fields {
-            findings.push(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields);
-        }
-        if !compatibility.complete_metering_snapshot {
-            findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
-        }
+        let findings = compatibility.findings();
 
         TaskMetadataCompatibilityReport {
             requires_governance_upgrade: compatibility.requires_governance_upgrade(),
@@ -554,6 +565,28 @@ mod tests {
         );
         assert_eq!(
             metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_helpers_preserve_typed_finding_order() {
+        let compatibility = TaskMetadataCompatibility {
+            legacy_note_only: true,
+            canonical_core_fields: false,
+            complete_metering_snapshot: false,
+        };
+
+        assert_eq!(
+            compatibility.findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
+        assert_eq!(
+            compatibility.primary_finding(),
             Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
         );
     }
