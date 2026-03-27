@@ -24,6 +24,13 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
+    if f.exists() {
+        bail!(
+            "wallet '{}' already exists at {}; refusing to overwrite existing key",
+            name,
+            f.display()
+        );
+    }
     fs::write(&f, format!("{}\n", priv_hex))?;
     Ok(f)
 }
