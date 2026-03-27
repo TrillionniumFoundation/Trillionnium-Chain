@@ -126,9 +126,10 @@ pub(crate) fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
 
     // Medium-small skew path: for 5..=8 keys against a moderately larger domain,
-    // avoid HashSet allocation and probe linearly. Once domains grow beyond this
-    // range, fall back to the HashSet path below to avoid repeated full scans.
-    if small.len() <= 8 && (16..=64).contains(&large.len()) {
+    // avoid HashSet allocation and probe linearly. Extend the guard slightly so
+    // duplicate-heavy domains just above the old 64-key cutoff stay on the same
+    // bounded path before falling back to the HashSet branch.
+    if small.len() <= 8 && (16..=128).contains(&large.len()) {
         let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
             let key = access_key(a);
@@ -187,8 +188,13 @@ pub(crate) fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return false;
     }
 
+    // Large duplicate-heavy probe vectors can show up when object-scoped read
+    // domains are widened before dedup reaches the aggressive stage checks.
+    // Collapse repeated keys once so scheduling guardrails stay bounded even on
+    // long duplicate bursts from shared-object access domains.
+    let mut seen: HashSet<u64> = HashSet::with_capacity(a.len().min(64));
     for k in a {
-        if b.contains(k) {
+        if seen.insert(*k) && b.contains(k) {
             return true;
         }
     }
