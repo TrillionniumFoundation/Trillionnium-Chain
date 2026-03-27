@@ -65,6 +65,28 @@ fn challenged_timeout_transitions_to_completed() {
     let task = st.get_task(r6.id).unwrap();
     assert_eq!(task.status, TaskStatus::Completed);
     assert_eq!(task.challenge_bond_forfeited, Some(false));
+    assert_eq!(
+        task.challenge_window_blocks_snapshot,
+        Some(100),
+        "terminal challenged tasks should retain the challenge-window snapshot for later collateral/proof audits"
+    );
+    assert_eq!(
+        task.challenged_at_height,
+        Some(30),
+        "terminal challenged tasks should retain the original challenge height"
+    );
+    assert_eq!(
+        task.challenge_deadline_height,
+        Some(130),
+        "terminal challenged tasks should retain the original challenge deadline"
+    );
+    assert_eq!(
+        task.resolve_deadline_height,
+        Some(230),
+        "terminal challenged tasks should retain the resolve deadline that governed timeout settlement"
+    );
+    assert_eq!(task.challenge_bond, Some(10));
+    assert_eq!(task.challenger.as_deref(), Some("challenger"));
     assert_eq!(st.balance_of("challenger"), 100);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
@@ -246,6 +268,72 @@ fn challenged_timeout_default_path_does_not_pay_bounty_or_touch_global_slash_tre
             before_slash_treasury,
             "default challenged-timeout path must not pay challenge bounty or drain global slash treasury"
         );
+}
+
+#[test]
+fn challenged_timeout_completed_path_does_not_pay_worker_completion_bonus_from_forfeit_pool() {
+    let mut st = seeded_state();
+    st.set_balance("challenger", 100);
+    st.set_balance("worker1", 40);
+    st.set_gov_param_bootstrap_unchecked(40_114, "min_worker_stake".into(), "40".into())
+        .unwrap();
+    st.set_gov_param_bootstrap_unchecked(
+        40_115,
+        "llm_meter_worker_completion_bonus_per_work_unit_num".into(),
+        "1".into(),
+    )
+    .unwrap();
+    st.set_gov_param_bootstrap_unchecked(
+        40_116,
+        "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+        "192".into(),
+    )
+    .unwrap();
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 9);
+
+    let task_id = 40_117u64;
+    let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+    let result_hash = [5u8; 32];
+    let reveal_salt = [9u8; 32];
+    let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+    let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+    let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+    let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+    let r4 =
+        apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, Some(proof), 110)
+            .unwrap();
+    let r5 = apply_challenge_at_height(
+        &mut st,
+        r4,
+        "challenger".into(),
+        10,
+        "challenger".into(),
+        120,
+    )
+    .unwrap();
+
+    let before_worker = st.balance_of("worker1");
+    let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let before_lock = st.balance_of(&worker_stake_lock_account(task_id));
+
+    let next = apply_timeout(&mut st, r5, 221).unwrap();
+    let task = st.get_task(next.id).unwrap();
+
+    assert_eq!(task.status, TaskStatus::Completed);
+    assert_eq!(task.challenge_bond_forfeited, Some(false));
+    assert_eq!(st.balance_of("challenger"), 100);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+    assert_eq!(st.balance_of(&worker_stake_lock_account(task_id)), 0);
+    assert_eq!(
+        st.balance_of("worker1"),
+        before_worker + before_lock,
+        "challenged timeout should only release the task-local worker stake and must not top up from unrelated forfeited challenge collateral"
+    );
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        before_forfeit,
+        "challenged timeout refund path must not spend historical forfeit funds on completion bonus settlement"
+    );
 }
 
 #[test]

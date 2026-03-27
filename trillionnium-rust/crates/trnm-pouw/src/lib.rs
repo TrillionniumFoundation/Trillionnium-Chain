@@ -874,6 +874,16 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                     "terminal non-challenged task has stale challenge timing fields".into(),
                 ));
             }
+            if !has_bond
+                && task
+                    .challenge_window_blocks_snapshot
+                    .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "terminal non-challenged task has invalid retained challenge_window_blocks_snapshot"
+                        .into(),
+                ));
+            }
         }
     }
 
@@ -933,6 +943,19 @@ fn preflight_resolve_transfers(
 
     settle_worker_stake_for_terminal_state(&mut sim, task)?;
     Ok(())
+}
+
+fn scrub_immediate_verification_challenge_fields(task: &mut TaskObject) {
+    task.challenge_deadline_height = None;
+    // Keep only the reveal-time challenge-window snapshot as legacy audit
+    // metadata. Immediate-finality TEE/ZK tasks did not actually enter a live
+    // dispute/collateral lifecycle, so every field that implies an active or
+    // resolved challenge must still be scrubbed.
+    task.challenged_at_height = None;
+    task.resolve_deadline_height = None;
+    task.challenge_bond = None;
+    task.challenger = None;
+    task.challenge_bond_forfeited = None;
 }
 
 fn finalize_verified_reveal_success(
@@ -1505,9 +1528,12 @@ pub fn apply_reveal_result_at_height(
                 task.status = TaskStatus::Completed;
                 task.result_hash = Some(result_hash);
                 task.reveal_salt = Some(reveal_salt);
-                // No challenge window needed.
-                task.challenge_deadline_height = None;
-                task.resolve_deadline_height = None;
+                // Immediate-finality proofs never enter a live challenge or
+                // collateral lifecycle. Preserve only the reveal-time challenge
+                // window snapshot as legacy audit metadata, and scrub every
+                // other retained dispute field so completed TEE/ZK tasks cannot
+                // masquerade as having undergone settlement.
+                scrub_immediate_verification_challenge_fields(&mut task);
 
                 // Immediate finality remains atomic with stake settlement: preflight
                 // the unlock on a cloned state, then persist the task before touching balances.
@@ -1958,6 +1984,18 @@ pub fn apply_timeout(
     }
 
     validate_challenge_accounting_invariants(&task)?;
+
+    if matches!(task.status, TaskStatus::Completed | TaskStatus::Slashed)
+        && task.challenge_window_blocks_snapshot.is_some()
+        && task.challenge_bond.is_none()
+        && task.challenger.is_none()
+        && task.challenge_bond_forfeited.is_none()
+        && task.challenged_at_height.is_none()
+        && task.challenge_deadline_height.is_none()
+        && task.resolve_deadline_height.is_none()
+    {
+        return Ok(task_ref);
+    }
 
     let mut forfeit_challenge_bond = false;
     let mut refund_challenge_bond = false;
@@ -4483,6 +4521,44 @@ mod tests {
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
         assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn scrub_immediate_verification_challenge_fields_clears_legacy_retention_state() {
+        let mut task = TaskObject {
+            task_id: 78_902,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(777),
+            challenge_window_blocks_snapshot: Some(55),
+            challenged_at_height: Some(700),
+            resolve_deadline_height: Some(800),
+            challenge_bond: Some(25),
+            challenger: Some("challenger1".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 1,
+        };
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(55));
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
     }
 
     #[test]
@@ -7439,9 +7515,335 @@ mod tests {
         let r5 = apply_timeout(&mut st, r4, 211).unwrap();
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: once revealed, the policy snapshot stays
+        // attached for later bookkeeping/audit clarity even if the task clears without
+        // an actual challenge. Only live timing fields are dropped on terminalization.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
         assert_eq!(task.challenged_at_height, None);
         assert_eq!(task.challenge_deadline_height, None);
         assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.challenger, None);
+    }
+
+    #[test]
+    fn challenged_timeout_retains_snapshot_and_collateral_metadata_for_audit() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(98997, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 198997, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(198997, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let err = apply_timeout(&mut st, r5.clone(), 220).unwrap_err();
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let r6 = apply_timeout(&mut st, r5, 221).unwrap();
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: once a challenge exists, retain the
+        // challenge window snapshot plus collateral/accountability metadata after
+        // terminalization so later accounting and proof audits can reconstruct
+        // the exact challenge lifecycle.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenged_at_height, Some(120));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(220));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn challenged_resolve_retains_snapshot_and_collateral_metadata_for_audit() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(98_998, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let r1 = apply_create_task(&mut st, 198_998, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(198_998, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+            180,
+        )
+        .expect_err("first resolver should stage multisig approval");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            180,
+        )
+        .unwrap();
+
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention semantics: even after explicit resolve finalizes
+        // the challenge, keep the exact challenge snapshot plus collateral trail so
+        // later accounting/proof audits can reconstruct which policy window and
+        // bond path governed settlement.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenged_at_height, Some(120));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(220));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenge_bond_forfeited, Some(true));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
+    }
+
+    #[test]
+    fn verified_reveal_scrubs_legacy_challenge_retention_fields_before_immediate_completion() {
+        let mut task = TaskObject {
+            task_id: 198_913,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: Some([9u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(100),
+            reveal_deadline_height: Some(120),
+            challenge_deadline_height: Some(222),
+            challenge_window_blocks_snapshot: Some(1440),
+            challenged_at_height: Some(111),
+            resolve_deadline_height: Some(333),
+            challenge_bond: Some(44),
+            challenger: Some("legacy-challenger".into()),
+            challenge_bond_forfeited: Some(true),
+            version: 1,
+        };
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(1440));
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.committed_at_height, Some(100));
+        assert_eq!(task.reveal_deadline_height, Some(120));
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+    }
+
+    #[test]
+    fn tee_finalize_verified_reveal_success_from_committed_task_scrubs_legacy_challenge_retention_fields() {
+        let mut st = seeded_state();
+        let task_id = 198_913;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let mut task = st.get_task(r2.id).unwrap();
+        task.status = TaskStatus::Completed;
+        task.proof_type = ProofType::Tee;
+        task.result_hash = Some([2u8; 32]);
+        task.reveal_salt = Some([3u8; 32]);
+        task.challenge_window_blocks_snapshot = Some(1440);
+        task.challenge_deadline_height = Some(222);
+        task.challenged_at_height = Some(111);
+        task.resolve_deadline_height = Some(333);
+        task.challenge_bond = Some(44);
+        task.challenger = Some("legacy-challenger".into());
+        task.challenge_bond_forfeited = Some(true);
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+        let r3 = finalize_verified_reveal_success(&mut st, r2, task).unwrap();
+
+        let task = st.get_task(r3.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.proof_type, ProofType::Tee);
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(1440));
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
+    fn verified_reveal_completion_persists_scrubbed_challenge_retention_fields() {
+        let mut st = seeded_state();
+        let task_id = 198_914;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let mut task = st.get_task(r2.id).unwrap();
+        task.status = TaskStatus::Completed;
+        task.proof_type = ProofType::Tee;
+        task.result_hash = Some([2u8; 32]);
+        task.reveal_salt = Some([3u8; 32]);
+        task.challenge_window_blocks_snapshot = Some(1440);
+        task.challenge_deadline_height = Some(222);
+        task.challenged_at_height = Some(111);
+        task.resolve_deadline_height = Some(333);
+        task.challenge_bond = Some(44);
+        task.challenger = Some("legacy-challenger".into());
+        task.challenge_bond_forfeited = Some(true);
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+        let r3 = finalize_verified_reveal_success(&mut st, r2, task).unwrap();
+
+        let task = st.get_task(r3.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.proof_type, ProofType::Tee);
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(1440));
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
+    fn verified_reveal_completion_scrubbed_legacy_retention_state_root_matches_clean_terminal_task() {
+        let mut clean_state = seeded_state();
+        let mut legacy_state = seeded_state();
+        let task_id = 198_915;
+        let r1_clean = apply_create_task(&mut clean_state, task_id, "alice".into(), 10).unwrap();
+        let r1_legacy = apply_create_task(&mut legacy_state, task_id, "alice".into(), 10).unwrap();
+        let r2_clean = apply_accept_task(&mut clean_state, r1_clean, "worker1".into()).unwrap();
+        let r2_legacy = apply_accept_task(&mut legacy_state, r1_legacy, "worker1".into()).unwrap();
+
+        let mut clean_task = clean_state.get_task(r2_clean.id).unwrap();
+        clean_task.status = TaskStatus::Completed;
+        clean_task.proof_type = ProofType::Tee;
+        clean_task.result_hash = Some([2u8; 32]);
+        clean_task.reveal_salt = Some([3u8; 32]);
+
+        let mut legacy_task = clean_task.clone();
+        legacy_task.challenge_window_blocks_snapshot = Some(1440);
+        legacy_task.challenge_deadline_height = Some(222);
+        legacy_task.challenged_at_height = Some(111);
+        legacy_task.resolve_deadline_height = Some(333);
+        legacy_task.challenge_bond = Some(44);
+        legacy_task.challenger = Some("legacy-challenger".into());
+        legacy_task.challenge_bond_forfeited = Some(true);
+
+        let clean_ref = finalize_verified_reveal_success(&mut clean_state, r2_clean, clean_task).unwrap();
+        scrub_immediate_verification_challenge_fields(&mut legacy_task);
+        let legacy_ref =
+            finalize_verified_reveal_success(&mut legacy_state, r2_legacy, legacy_task).unwrap();
+
+        let clean_task = clean_state.get_task(clean_ref.id).unwrap();
+        let legacy_task = legacy_state.get_task(legacy_ref.id).unwrap();
+        assert_eq!(clean_task.challenge_window_blocks_snapshot, None);
+        assert_eq!(legacy_task.challenge_window_blocks_snapshot, Some(1440));
+        assert_eq!(clean_task.challenge_deadline_height, None);
+        assert_eq!(legacy_task.challenge_deadline_height, None);
+        assert_eq!(clean_task.challenged_at_height, None);
+        assert_eq!(legacy_task.challenged_at_height, None);
+        assert_eq!(clean_task.resolve_deadline_height, None);
+        assert_eq!(legacy_task.resolve_deadline_height, None);
+        assert_eq!(clean_task.challenge_bond, None);
+        assert_eq!(legacy_task.challenge_bond, None);
+        assert_eq!(clean_task.challenger, None);
+        assert_eq!(legacy_task.challenger, None);
+        assert_eq!(clean_task.challenge_bond_forfeited, None);
+        assert_eq!(legacy_task.challenge_bond_forfeited, None);
+        assert_ne!(
+            clean_state.state_root(),
+            legacy_state.state_root(),
+            "retained challenge window snapshot should keep legacy immediate-finality tasks audibly distinct from clean tasks only in the expected proof-retention field"
+        );
+    }
+
+    #[test]
+    fn zk_verified_reveal_completion_persists_scrubbed_legacy_challenge_retention_fields() {
+        let mut st = seeded_state();
+        let task_id = 198_916;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let mut task = st.get_task(r2.id).unwrap();
+        task.status = TaskStatus::Completed;
+        task.proof_type = ProofType::Zk;
+        task.result_hash = Some([2u8; 32]);
+        task.reveal_salt = Some([3u8; 32]);
+        task.challenge_window_blocks_snapshot = Some(1440);
+        task.challenge_deadline_height = Some(222);
+        task.challenged_at_height = Some(111);
+        task.resolve_deadline_height = Some(333);
+        task.challenge_bond = Some(44);
+        task.challenger = Some("legacy-challenger".into());
+        task.challenge_bond_forfeited = Some(true);
+
+        scrub_immediate_verification_challenge_fields(&mut task);
+        let r3 = finalize_verified_reveal_success(&mut st, r2, task).unwrap();
+
+        let task = st.get_task(r3.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.proof_type, ProofType::Zk);
+        assert_eq!(task.result_hash, Some([2u8; 32]));
+        assert_eq!(task.reveal_salt, Some([3u8; 32]));
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(1440));
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
     }
 
     #[test]
@@ -8290,6 +8692,111 @@ mod tests {
     }
 
     #[test]
+    fn timeout_rejects_terminal_non_challenged_task_with_invalid_retained_challenge_snapshot() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39020, "alice".into(), 100).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(39020, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let done = apply_timeout(&mut st, r4, 211).unwrap();
+
+        let mut bad = st.get_task(done.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Completed);
+        bad.challenge_window_blocks_snapshot = Some(0);
+        let bad_ref = st.update_task(done, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot")));
+    }
+
+    #[test]
+    fn timeout_allows_terminal_non_challenged_task_to_retain_valid_challenge_snapshot_only() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39021, "alice".into(), 100).unwrap();
+        let result_hash = [3u8; 32];
+        let reveal_salt = [4u8; 32];
+        let committed = compute_commitment(39021, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let done = apply_timeout(&mut st, r4, 211).unwrap();
+
+        let mut retained = st.get_task(done.id).unwrap();
+        assert_eq!(retained.status, TaskStatus::Completed);
+        assert!(retained.challenge_bond.is_none());
+        assert!(retained.challenger.is_none());
+        assert!(retained.challenged_at_height.is_none());
+        assert!(retained.challenge_deadline_height.is_none());
+        assert!(retained.resolve_deadline_height.is_none());
+        retained.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+        let retained_ref = st.update_task(done, retained).unwrap();
+
+        let replayed = apply_timeout(&mut st, retained_ref, 212)
+            .expect("valid proof-retention snapshot without live collateral metadata should remain timeout-safe");
+        let replayed_task = st.get_task(replayed.id).unwrap();
+        assert_eq!(replayed_task.status, TaskStatus::Completed);
+        assert_eq!(
+            replayed_task.challenge_window_blocks_snapshot,
+            Some(MIN_CHALLENGE_WINDOW_BLOCKS)
+        );
+        assert!(replayed_task.challenge_bond.is_none());
+        assert!(replayed_task.challenger.is_none());
+        assert!(replayed_task.challenged_at_height.is_none());
+        assert!(replayed_task.challenge_deadline_height.is_none());
+        assert!(replayed_task.resolve_deadline_height.is_none());
+    }
+
+    #[test]
+    fn timeout_allows_terminal_slashed_non_challenged_task_to_retain_valid_challenge_snapshot_only() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39022, "alice".into(), 100).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(39022, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let slashed = apply_timeout(&mut st, r3, 201).unwrap();
+
+        let mut retained = st.get_task(slashed.id).unwrap();
+        assert_eq!(retained.status, TaskStatus::Slashed);
+        assert!(retained.challenge_bond.is_none());
+        assert!(retained.challenger.is_none());
+        assert!(retained.challenged_at_height.is_none());
+        assert!(retained.challenge_deadline_height.is_none());
+        assert!(retained.resolve_deadline_height.is_none());
+        retained.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+        let retained_ref = st.update_task(slashed, retained).unwrap();
+
+        let replayed = apply_timeout(&mut st, retained_ref, 202)
+            .expect("valid proof-retention snapshot on terminal slashed task without live collateral metadata should remain timeout-safe");
+        let replayed_task = st.get_task(replayed.id).unwrap();
+        assert_eq!(replayed_task.status, TaskStatus::Slashed);
+        assert_eq!(
+            replayed_task.challenge_window_blocks_snapshot,
+            Some(MIN_CHALLENGE_WINDOW_BLOCKS)
+        );
+        assert!(replayed_task.challenge_bond.is_none());
+        assert!(replayed_task.challenger.is_none());
+        assert!(replayed_task.challenged_at_height.is_none());
+        assert!(replayed_task.challenge_deadline_height.is_none());
+        assert!(replayed_task.resolve_deadline_height.is_none());
+    }
+
+    #[test]
     fn resolve_rejects_challenged_state_without_bond_fields_even_if_status_is_challenged() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -8589,6 +9096,152 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
+    }
+
+    #[test]
+    fn resolve_terminal_state_retains_challenge_audit_metadata_for_collateral_proof_accounting() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 890, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(890, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+            200,
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            200,
+        )
+        .unwrap();
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Completed);
+        assert_eq!(resolved.challenge_bond_forfeited, Some(true));
+        assert_eq!(
+            resolved.challenge_window_blocks_snapshot,
+            Some(100),
+            "resolved challenged tasks should retain the challenge-window snapshot for later collateral/proof audits"
+        );
+        assert_eq!(
+            resolved.challenged_at_height,
+            Some(120),
+            "resolved challenged tasks should retain the original challenge height"
+        );
+        assert_eq!(
+            resolved.challenge_deadline_height,
+            Some(210),
+            "resolved challenged tasks should retain the original challenge deadline"
+        );
+        assert_eq!(
+            resolved.resolve_deadline_height,
+            Some(220),
+            "resolved challenged tasks should retain the resolve deadline that governed collateral settlement"
+        );
+        assert_eq!(resolved.challenge_bond, Some(10));
+        assert_eq!(resolved.challenger.as_deref(), Some("challenger"));
+    }
+
+    #[test]
+    fn resolve_slash_terminal_state_retains_challenge_audit_metadata_for_collateral_proof_accounting() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8901, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8901, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+            200,
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            true,
+            "authority2".into(),
+            "authority2".into(),
+            200,
+        )
+        .unwrap();
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(resolved.challenge_bond_forfeited, Some(false));
+        assert_eq!(
+            resolved.challenge_window_blocks_snapshot,
+            Some(100),
+            "slashed challenged tasks should retain the challenge-window snapshot for later collateral/proof audits"
+        );
+        assert_eq!(
+            resolved.challenged_at_height,
+            Some(120),
+            "slashed challenged tasks should retain the original challenge height"
+        );
+        assert_eq!(
+            resolved.challenge_deadline_height,
+            Some(210),
+            "slashed challenged tasks should retain the original challenge deadline"
+        );
+        assert_eq!(
+            resolved.resolve_deadline_height,
+            Some(220),
+            "slashed challenged tasks should retain the resolve deadline that governed collateral settlement"
+        );
+        assert_eq!(resolved.challenge_bond, Some(10));
+        assert_eq!(resolved.challenger.as_deref(), Some("challenger"));
     }
 
     #[test]
@@ -13393,6 +14046,116 @@ mod tests {
     }
 
     #[test]
+    fn challenge_success_bounty_rejects_terminal_task_missing_retained_challenge_snapshot() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_261, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_262, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_263, "alice".into(), 10).unwrap();
+        let result_hash = [6u8; 32];
+        let reveal_salt = [10u8; 32];
+        let committed = compute_commitment(40_263, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(false);
+        malformed.challenge_window_blocks_snapshot = None;
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_263));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed when a terminal challenged task loses its retained challenge-window snapshot");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge_window_blocks_snapshot"))
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_263)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
+    fn challenge_success_bounty_rejects_terminal_task_missing_retained_challenge_timing() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_264, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_265, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_266, "alice".into(), 10).unwrap();
+        let result_hash = [6u8; 32];
+        let reveal_salt = [10u8; 32];
+        let committed = compute_commitment(40_266, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(false);
+        malformed.challenge_deadline_height = None;
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_266));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed when a terminal challenged task loses retained challenge timing");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenged task missing challenge timing metadata"))
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_266)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
     fn challenge_success_bounty_rejects_slashed_task_without_successful_forfeit_marker() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -13527,8 +14290,16 @@ mod tests {
             .get_task(next.id)
             .expect("revealed timeout completion must persist task object");
         assert_eq!(task.status, TaskStatus::Completed);
+        // Filecoin-like retention bookkeeping: unchallenged completion should keep the
+        // reveal-time retention policy snapshot for later audits, while clearing any
+        // live challenge/collateral timers that are no longer actionable.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert!(task.challenge_deadline_height.is_none());
+        assert!(task.challenged_at_height.is_none());
+        assert!(task.resolve_deadline_height.is_none());
         assert_eq!(task.challenge_bond, None);
         assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(task.challenger, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -19854,6 +20625,15 @@ mod tests {
         let task = st.get_task(done.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
+        // Filecoin-like proof/collateral bookkeeping: terminalized challenged tasks
+        // retain the resolved challenge provenance so later audits can see which
+        // retention policy snapshot and collateral path governed settlement.
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(100));
+        assert_eq!(task.challenge_deadline_height, Some(210));
+        assert_eq!(task.challenged_at_height, Some(210));
+        assert_eq!(task.resolve_deadline_height, Some(310));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
         assert_eq!(st.pending_resolve_approval(task_id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
         assert_eq!(st.balance_of("challenger"), before_challenger + 10);

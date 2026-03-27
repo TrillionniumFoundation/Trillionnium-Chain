@@ -74,6 +74,42 @@ fn parse_tee_attestation_payload_rejects_quote_target_without_collateral_metadat
 }
 
 #[test]
+fn parse_tee_attestation_payload_rejects_quote_target_with_blank_collateral_metadata_fail_closed() {
+    let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,collateral=   ,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel"
+        )
+        .unwrap_err();
+
+    assert!(
+        matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires collateral metadata"))
+    );
+}
+
+#[test]
+fn parse_tee_attestation_payload_rejects_quote_target_with_blank_cert_chain_metadata_fail_closed() {
+    let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=   ,issuer=intel"
+        )
+        .unwrap_err();
+
+    assert!(
+        matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires cert_chain metadata"))
+    );
+}
+
+#[test]
+fn parse_tee_attestation_payload_rejects_quote_target_with_blank_issuer_metadata_fail_closed() {
+    let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=   "
+        )
+        .unwrap_err();
+
+    assert!(
+        matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires issuer metadata"))
+    );
+}
+
+#[test]
 fn parse_tee_attestation_payload_rejects_report_target_with_quote_metadata_fail_closed() {
     let err = parse_tee_attestation_payload(
             b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,collateral=wrong-shape,cert_chain=amd-cert-chain-demo-v1,issuer=intel,vcek=amd-vcek-demo-v1,report_signer=amd"
@@ -82,6 +118,18 @@ fn parse_tee_attestation_payload_rejects_report_target_with_quote_metadata_fail_
 
     assert!(
         matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("does not accept quote verifier metadata"))
+    );
+}
+
+#[test]
+fn parse_tee_attestation_payload_rejects_report_target_with_blank_vcek_metadata_fail_closed() {
+    let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,vcek=   ,cert_chain=amd-cert-chain-demo-v1,report_signer=amd"
+        )
+        .unwrap_err();
+
+    assert!(
+        matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires vcek metadata"))
     );
 }
 

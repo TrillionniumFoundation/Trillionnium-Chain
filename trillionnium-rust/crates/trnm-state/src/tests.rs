@@ -113,6 +113,350 @@ fn task_metering_snapshot_affects_state_root() {
 }
 
 #[test]
+fn restore_task_rejects_unchallenged_terminal_retention_with_resolve_deadline() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        407,
+        Some(TaskObject {
+            task_id: 407,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained proof-window snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(407).is_none(),
+        "restore_task must fail closed when an unchallenged terminal task keeps a resolve deadline even though only the proof-window snapshot should survive retention"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_zero_resolve_deadline() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        408,
+        Some(TaskObject {
+            task_id: 408,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(0),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(408).is_none(),
+        "restore_task must fail closed when a retained terminal collateral snapshot zeroes the resolve deadline that bounds proof-retention settlement"
+    );
+}
+
+#[test]
+fn restore_task_rejects_unchallenged_terminal_retention_with_stale_forfeit_marker() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        4081,
+        Some(TaskObject {
+            task_id: 4081,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained proof-window snapshot".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(4081).is_none(),
+        "restore_task must fail closed when an unchallenged terminal proof-retention snapshot keeps a stale challenge-bond outcome without live collateral context"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_challenger_but_no_bond() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        409,
+        Some(TaskObject {
+            task_id: 409,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(409).is_none(),
+        "restore_task must fail closed when a retained terminal collateral snapshot keeps challenger identity but drops the posted challenge bond that funded the proof-retention audit trail"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_blank_challenger() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        4091,
+        Some(TaskObject {
+            task_id: 4091,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("   ".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(4091).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata keeps a posted challenge bond but the challenger identity is blank instead of canonical audit material"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_zero_challenge_bond() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        40915,
+        Some(TaskObject {
+            task_id: 40915,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(0),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(40915).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata zeroes the posted challenge bond instead of preserving canonical collateral/proof audit material"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_noncanonical_challenger() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        4092,
+        Some(TaskObject {
+            task_id: 4092,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some(" bob ".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(4092).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata uses a whitespace-padded challenger identity instead of canonical collateral-proof audit material"
+    );
+}
+
+#[test]
+fn restore_task_rejects_terminal_collateral_retention_with_inverted_deadline_order() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        409,
+        Some(TaskObject {
+            task_id: 409,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(31),
+            resolve_deadline_height: Some(29),
+            challenge_bond: Some(7),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(409).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata inverts the challenged/deadline/resolve ordering"
+    );
+}
+
+#[test]
 fn version_conflict() {
     let mut st = StateStore::new();
     let t = TaskObject {
@@ -626,6 +970,81 @@ fn restore_pending_resolve_snapshot_rejects_missing_challenge_timing_metadata() 
             challenge_window_blocks_snapshot: None,
             challenged_at_height: None,
             resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_931,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-b".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_931), None);
+    assert_eq!(st.pending_resolve_first_approver(9_931), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_931), None);
+}
+
+#[test]
+fn restore_pending_resolve_snapshot_rejects_zeroed_resolve_deadline_retention_metadata() {
+    let mut st = StateStore::new();
+    st.set_gov_param(98_240, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_260, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    st.restore_task(
+        9_931,
+        Some(TaskObject {
+            task_id: 9_931,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: Some(TaskMetadata {
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "inference".into(),
+                    metering_schema: "metering.v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "receipt-paused".into(),
+                    prompt_tokens: 0,
+                    generated_tokens: 0,
+                    decode_steps: 0,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 1,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+                ..Default::default()
+            }),
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(98_271),
+            challenge_window_blocks_snapshot: Some(11),
+            challenged_at_height: Some(98_260),
+            resolve_deadline_height: Some(0),
             challenge_bond: None,
             challenger: Some("challenger-paused".into()),
             challenge_bond_forfeited: None,
