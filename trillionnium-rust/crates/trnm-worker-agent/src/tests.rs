@@ -125,6 +125,7 @@ fn backoff_delay_is_linear_and_saturating() {
 
     // saturation guard (no overflow panic/wrap)
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    assert_eq!(backoff_delay_ms(u64::MAX / 2 + 1, 1), u64::MAX);
 }
 
 #[test]
