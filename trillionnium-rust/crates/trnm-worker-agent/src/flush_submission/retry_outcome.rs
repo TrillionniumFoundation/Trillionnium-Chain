@@ -2,7 +2,8 @@ use anyhow::Result;
 
 use crate::{
     is_idempotent_duplicate_ok, persisted_ack_hashes_for_task, run_adapter_with_retry,
-    should_execute_reveal, AdapterExecResult, SubmissionRecord, RC_SKIPPED,
+    should_execute_reveal, trim_boundary_audit_fillers, AdapterExecResult, SubmissionRecord,
+    RC_SKIPPED,
 };
 
 pub(crate) struct SubmissionExecution {
@@ -75,7 +76,7 @@ fn submission_args(rec: &SubmissionRecord) -> (Vec<String>, Vec<String>) {
 /// accepting terminal outcomes that never produced auditable receipts.
 fn normalize_adapter_tx_hash(tx_hash: Option<&str>) -> Option<String> {
     tx_hash.and_then(|hash| {
-        let trimmed = hash.trim();
+        let trimmed = trim_boundary_audit_fillers(hash);
         if trimmed.is_empty() {
             None
         } else {
@@ -261,6 +262,29 @@ mod tests {
         assert_eq!(decision.reason_code, "missing_tx_hash_receipt");
         assert_eq!(decision.commit_tx_hash_for_ack, None);
         assert_eq!(decision.reveal_tx_hash_for_ack, None);
+    }
+
+    #[test]
+    fn classify_flush_ack_trims_bom_and_zero_width_fillers_from_observed_receipts() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\u{feff}\u{200b}commit-live\u{2060}".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("\u{200d}reveal-live\u{200c}".to_string()),
+            terminal: true,
+        };
+
+        let decision =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 191);
+        assert_eq!(decision.ack_status, "accepted");
+        assert_eq!(decision.reason_code, "idempotent_ok");
+        assert_eq!(decision.commit_tx_hash_for_ack.as_deref(), Some("commit-live"));
+        assert_eq!(decision.reveal_tx_hash_for_ack.as_deref(), Some("reveal-live"));
     }
 
     #[test]
