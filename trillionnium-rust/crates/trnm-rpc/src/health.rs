@@ -63,6 +63,19 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
+    match request {
+        Some((method, _)) => {
+            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+            json_response_for_method(method, "404 Not Found", body)
+        }
+        None => {
+            let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
+            http_json_response("400 Bad Request", body)
+        }
+    }
+}
+
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
         .map(|suffix| suffix.trim_end_matches('/'))
@@ -215,13 +228,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            _ => {
-                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-                match request {
-                    Some((method, _)) => json_response_for_method(method, "404 Not Found", body),
-                    None => http_json_response("404 Not Found", body),
-                }
-            }
+            _ => fallback_response_for_request(request),
         };
 
         let _ = stream.write_all(response.as_bytes());
@@ -233,8 +240,8 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        parse_path_u64_suffix,
+        fallback_response_for_request, is_health_probe_path, json_response_for_method,
+        parse_nonempty_path_suffix, parse_path_u64_suffix,
     };
 
     #[test]
@@ -342,5 +349,20 @@ mod tests {
             ),
             None
         );
+    }
+
+    #[test]
+    fn fallback_response_returns_400_for_malformed_http_request() {
+        let response = fallback_response_for_request(None);
+        assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(response.ends_with("{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}"));
+    }
+
+    #[test]
+    fn fallback_response_preserves_404_for_unknown_valid_path() {
+        let response = fallback_response_for_request(Some(("HEAD", "/unknown")));
+        assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.ends_with("NOT_FOUND\"}"));
     }
 }
