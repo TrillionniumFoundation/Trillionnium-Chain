@@ -256,6 +256,24 @@ pub(crate) fn reputation_impact_from_gap_bps_from_worst(
     reputation_signal_from_gap_bps_from_worst(gap_bps_from_worst).map(reputation_impact)
 }
 
+pub(crate) fn reputation_signal_from_gap_pair(
+    gap_bps_from_best: i32,
+    gap_bps_from_worst: i32,
+) -> Option<ReputationSignal> {
+    CANONICAL_REPUTATION_SIGNAL_ORDER.iter().find_map(|signal| {
+        (reputation_gap_bps_from_best(*signal) == gap_bps_from_best
+            && reputation_gap_bps_from_worst(*signal) == gap_bps_from_worst)
+            .then_some(*signal)
+    })
+}
+
+pub(crate) fn reputation_impact_from_gap_pair(
+    gap_bps_from_best: i32,
+    gap_bps_from_worst: i32,
+) -> Option<ReputationImpact> {
+    reputation_signal_from_gap_pair(gap_bps_from_best, gap_bps_from_worst).map(reputation_impact)
+}
+
 pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface {
     let impact = reputation_impact(signal);
     ReputationSurface {

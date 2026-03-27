@@ -133,6 +133,45 @@ fn reputation_gap_bps_from_worst_lookup_fails_closed_on_non_canonical_values() {
 }
 
 #[test]
+fn reputation_gap_pair_round_trips_back_to_canonical_signal_and_impact() {
+    for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
+        let gap_bps_from_best = reputation_gap_bps_from_best(signal);
+        let gap_bps_from_worst = reputation_gap_bps_from_worst(signal);
+        let impact = reputation_impact(signal);
+
+        assert_eq!(
+            reputation_signal_from_gap_pair(gap_bps_from_best, gap_bps_from_worst),
+            Some(signal)
+        );
+        assert_eq!(
+            reputation_impact_from_gap_pair(gap_bps_from_best, gap_bps_from_worst),
+            Some(impact)
+        );
+    }
+}
+
+#[test]
+fn reputation_gap_pair_lookup_fails_closed_on_cross_signal_hybrids() {
+    let accepted = ReputationSignal::Accepted;
+    let verifier_rejected = ReputationSignal::VerifierRejected;
+
+    assert_eq!(
+        reputation_signal_from_gap_pair(
+            reputation_gap_bps_from_best(accepted),
+            reputation_gap_bps_from_worst(verifier_rejected)
+        ),
+        None
+    );
+    assert_eq!(
+        reputation_impact_from_gap_pair(
+            reputation_gap_bps_from_best(verifier_rejected),
+            reputation_gap_bps_from_worst(accepted)
+        ),
+        None
+    );
+}
+
+#[test]
 fn reputation_rank_gap_and_score_axes_stay_in_lockstep() {
     let accepted_score_bps = reputation_score_bps(ReputationSignal::Accepted);
     let worst_score_bps = reputation_score_bps(ReputationSignal::AdapterNonRetriable);
