@@ -86,15 +86,32 @@ pub(crate) fn preflight_timeout_transfers(
             "timeout challenge transfer requested without posted challenge bond".into(),
         ));
     }
-    if refund_challenge_bond && task.challenge_bond.is_some() && task.challenger.is_none() {
-        return Err(PouwError::State(
-            "timeout challenge refund requested without challenger".into(),
-        ));
+
+    let validate_timeout_challenger = |challenger: &str| -> Result<(), PouwError> {
+        if challenger.trim().is_empty() {
+            return Err(PouwError::State(
+                "timeout challenge transfer requested with blank challenger identity".into(),
+            ));
+        }
+        require_canonical_actor_id_state(challenger, "challenger identity").map_err(|_| {
+            PouwError::State(
+                "timeout challenge transfer requested with non-canonical challenger identity"
+                    .into(),
+            )
+        })
+    };
+
+    if refund_challenge_bond && task.challenge_bond.is_some() {
+        let challenger = task.challenger.as_deref().ok_or_else(|| {
+            PouwError::State("timeout challenge refund requested without challenger".into())
+        })?;
+        validate_timeout_challenger(challenger)?;
     }
-    if forfeit_challenge_bond && task.challenge_bond.is_some() && task.challenger.is_none() {
-        return Err(PouwError::State(
-            "timeout challenge forfeit requested without challenger".into(),
-        ));
+    if forfeit_challenge_bond && task.challenge_bond.is_some() {
+        let challenger = task.challenger.as_deref().ok_or_else(|| {
+            PouwError::State("timeout challenge forfeit requested without challenger".into())
+        })?;
+        validate_timeout_challenger(challenger)?;
     }
 
     let mut sim = st.clone();
