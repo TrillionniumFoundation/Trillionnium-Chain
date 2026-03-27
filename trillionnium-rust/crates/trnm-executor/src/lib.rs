@@ -3072,6 +3072,41 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_share_stays_stable_for_duplicate_heavy_equivalent_mixed_domains() {
+        let baseline = vec![
+            tx(
+                1,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(19), o(13), o(19), o(13), o(13)],
+            ),
+            tx(
+                2,
+                vec![o(2), o(41), o(2), o(41), o(99)],
+                vec![o(23), o(13), o(23), o(13), o(13)],
+            ),
+        ];
+        let echoed = vec![
+            tx(
+                3,
+                vec![o(41), o(13), o(2), o(19), o(99), o(13)],
+                vec![o(19), o(13), o(19), o(13)],
+            ),
+            tx(
+                4,
+                vec![o(41), o(13), o(2), o(23), o(99), o(13)],
+                vec![o(23), o(13), o(23), o(13)],
+            ),
+        ];
+
+        // Equivalent duplicate-heavy mixed execution domains should contribute the
+        // same distinct access-domain cardinality regardless of echo order. If
+        // this drifts, hotspot telemetry can fragment one execution lane into
+        // different shares purely because ingress repeated the same domain keys.
+        assert_eq!(hot_object_share(&baseline), hot_object_share(&echoed));
+        assert_eq!(hot_object_share(&baseline), 0.2);
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
