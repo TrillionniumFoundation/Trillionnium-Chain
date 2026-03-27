@@ -807,6 +807,42 @@ mod tests {
     }
 
     #[test]
+    fn retry_scan_hit_and_miss_metrics_partition_candidate_scans() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 4,
+            grouped_count: 8,
+            max_group_size: 3,
+            min_group_size: 1,
+            avg_group_size: 2.0,
+            hot_object_share: 0.5,
+            conflict_checks: 9,
+            conflict_hits: 4,
+            candidate_groups_scanned: 9,
+            retry_fallback_new_groups: 2,
+            stage_ww_checks: 3,
+            stage_ww_hits: 2,
+            stage_wr_checks: 3,
+            stage_wr_hits: 1,
+            stage_rw_checks: 3,
+            stage_rw_hits: 1,
+        };
+
+        assert_eq!(profile.retry_scan_misses(), 5);
+        assert!((profile.retry_scan_hit_rate() - (4.0 / 9.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_miss_rate() - (5.0 / 9.0)).abs() < f64::EPSILON);
+        assert!(
+            ((profile.retry_scan_hit_rate() + profile.retry_scan_miss_rate()) - 1.0).abs()
+                < 1e-12
+        );
+        assert!((profile.retry_scan_misses_per_tx() - (5.0 / 8.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_misses_per_group() - (5.0 / 4.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_hit() - (5.0 / 4.0)).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - 1.25).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_retry_misses() - 0.4).abs() < f64::EPSILON);
+    }
+
+    #[test]
     fn retry_telemetry_zero_denominator_metrics_fail_closed_to_zero() {
         let profile = GroupingProfile {
             tx_count: 4,
