@@ -55,6 +55,18 @@ class ExplorerData:
             return raw
         return {}
 
+    def find_tx(self, tx_hash: str) -> tuple[str, dict[str, Any]] | None:
+        txs = self.load_txs()
+        rec = txs.get(tx_hash)
+        if isinstance(rec, dict):
+            return tx_hash, rec
+
+        normalized = tx_hash.lower()
+        for key, value in txs.items():
+            if isinstance(key, str) and key.lower() == normalized and isinstance(value, dict):
+                return key, value
+        return None
+
     def load_blocks(self) -> dict[int, dict[str, Any]]:
         # keep latest occurrence for each height
         blocks: dict[int, dict[str, Any]] = {}
@@ -242,17 +254,24 @@ class Handler(BaseHTTPRequestHandler):
         self._send_html(200, f"Address {addr}", body)
 
     def _render_tx(self, txh: str) -> None:
-        txs = self.data.load_txs()
-        rec = txs.get(txh)
-        if not isinstance(rec, dict):
+        found = self.data.find_tx(txh)
+        if not found:
             self._send_html(404, f"Tx {txh}", f"<h2>Tx</h2><p><code>{html.escape(txh)}</code></p><p class='bad'>Transaction not found in run/rpc/txs.json</p>")
             return
 
+        resolved_txh, rec = found
         tx = rec.get("tx") if isinstance(rec.get("tx"), dict) else {}
         st = str(rec.get("status", "unknown"))
         st_cls = "ok" if st == "committed" else ("bad" if st == "fail" else "pending")
+        lookup_note = ""
+        if resolved_txh != txh:
+            lookup_note = (
+                "<p class='muted'>Resolved case-insensitive match to stored tx hash "
+                f"<code>{html.escape(resolved_txh)}</code>.</p>"
+            )
         body = (
-            f"<h2>Transaction</h2><p><code>{html.escape(txh)}</code></p>"
+            f"<h2>Transaction</h2><p><code>{html.escape(resolved_txh)}</code></p>"
+            f"{lookup_note}"
             f"<div class='card'><b>status:</b> <span class='{st_cls}'>{html.escape(st)}</span><br />"
             f"<b>error:</b> {html.escape(str(rec.get('error') or ''))}</div>"
             "<h3>Detail</h3>"
