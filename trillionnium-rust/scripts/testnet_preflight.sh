@@ -27,6 +27,7 @@ if [ -n "${EXPECTED_HEAD:-}" ]; then
   replay_command="$replay_command EXPECTED_HEAD='${EXPECTED_HEAD}'"
 fi
 replay_command="$replay_command ./scripts/testnet_preflight.sh"
+lane_verify_command=""
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
@@ -80,6 +81,12 @@ if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || 
   if [ -n "${EXPECTED_HEAD:-}" ]; then
     lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
   fi
+  lane_verify_command="./scripts/v2/verify_lane_worktree.sh"
+  for arg in "${lane_verify_args[@]}"; do
+    printf -v quoted_arg '%q' "$arg"
+    lane_verify_command+=" $quoted_arg"
+  done
+  log "lane_verify_command=$lane_verify_command"
   ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" | tee -a "$LOG"
 fi
 
@@ -194,6 +201,7 @@ bench_classic=$latest_bench
 bench_mixed=$latest_mixed
 executor_profile=$latest_profile
 replay_command=$replay_command
+lane_verify_command=${lane_verify_command:-<not-run>}
 rollback_command=$rollback_command
 EOF
 
