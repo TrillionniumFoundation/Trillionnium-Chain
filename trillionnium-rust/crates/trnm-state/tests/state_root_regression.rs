@@ -6101,6 +6101,28 @@ fn checkpoint_evidence_surface_rejects_noncanonical_non_genesis_prev_hash_even_w
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_uppercase_wal_state_root_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32).to_uppercase(),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject uppercase WAL state_root_hex even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match, so audit-ready proofs require lowercase canonical digest surfaces end-to-end"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
