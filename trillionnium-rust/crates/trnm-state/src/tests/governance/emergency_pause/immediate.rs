@@ -243,3 +243,46 @@ fn emergency_pause_enforce_noop_is_idempotent_and_non_scheduling() {
     assert!(st.is_emergency_paused());
     assert!(st.pending_gov_update("emergency_pause").is_none());
 }
+
+#[test]
+fn emergency_pause_invalid_literal_fails_closed_without_pending_side_effects() {
+    // Merge-gate guard: malformed pause toggles must not silently flip the live guardrail
+    // or leave behind a staged update under any checked-action path.
+    let mut st = StateStore::new();
+
+    st.set_gov_param_with_action(
+        9_020,
+        7_999,
+        "emergency_pause".into(),
+        "true".into(),
+        GovPendingUpdateAction::Replace,
+    )
+    .expect("baseline pause=true should apply immediately");
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.gov_param_string("emergency_pause"), Some("true".into()));
+
+    let err = st
+        .set_gov_param_with_action(
+            9_021,
+            7_999,
+            "emergency_pause".into(),
+            "TRUE".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect_err("invalid emergency_pause literal must fail closed");
+    assert!(err.contains("strict bool"), "unexpected error: {err}");
+
+    assert!(
+        st.is_emergency_paused(),
+        "failed malformed toggle must preserve the prior live pause state"
+    );
+    assert_eq!(
+        st.gov_param_string("emergency_pause"),
+        Some("true".into()),
+        "failed malformed toggle must preserve the canonical stored value"
+    );
+    assert!(
+        st.pending_gov_update("emergency_pause").is_none(),
+        "failed malformed toggle must not leave behind a pending governance entry"
+    );
+}
