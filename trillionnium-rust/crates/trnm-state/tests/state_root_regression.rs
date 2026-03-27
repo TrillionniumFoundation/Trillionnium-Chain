@@ -6145,6 +6145,33 @@ fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_
 }
 
 #[test]
+fn checkpoint_evidence_surface_accepts_max_length_proposal_hash_when_hashes_match() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(256),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces should accept WAL proposal identities at the canonical 256-byte boundary when state_root_hex and wal_entry_hash_hex match canonical digests"
+    );
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("canonical max-length proposal identities should still emit a DA/light-verifier summary");
+    assert!(summary.contains("wal_proposal_hash_bytes=256"));
+    assert!(summary.contains("wal_proposal_hash_surface_canonical=true"));
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_match() {
     let wal = WalMeta {
         height: 1,
