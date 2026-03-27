@@ -77,6 +77,11 @@ if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || 
   ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" | tee -a "$LOG"
 fi
 
+if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
+  log "preflight failed: dirty worktree (git status --short must be empty for clean-tree rehearsal)"
+  exit 5
+fi
+
 log "check rust toolchain"
 command -v cargo >/dev/null
 cargo --version | tee -a "$LOG"
