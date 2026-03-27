@@ -46,6 +46,14 @@
 - 只有 `state_root_hex` 相同，不足以证明前序提交链没有漂移；
 - 必须同时检查 checkpoint 三元组与 `prev_hash_hex` 连续性，才能确认恢复锚点既命中正确状态，又命中正确提交历史。
 
+对于**同一高度出现多条候选元数据**的情况，还要维持跨 surface 一致的 canonical 排序语义：
+
+- `WalMeta` 先按 `(height, round, proposal_hash, committed, state_root_hex, prev_hash_hex)` 排序；
+- `CheckpointMeta` 先按 `(height, state_root_hex, wal_entry_hash_hex)` 排序；
+- 因此 light-verifier / 审计脚本如果要输出“该高度的第一条/最后一条”摘要，必须先按上述顺序 canonicalize，再做索引或聚合。
+
+否则，不同读取路径即便面对**同一组证据文件**，也可能因为枚举顺序不同而得出不同的“canonical checkpoint / predecessor linkage”摘要。
+
 ## 最小验证
 
 ```bash
