@@ -64,6 +64,8 @@ cargo test -p trnm-state -p trnm-node
   - 含义：当前节点实现仍然不会仅凭元数据恢复 `StateStore` 快照或重放已提交块；即使 WAL/checkpoint 元数据链本身通过校验，也会拒绝继续启动。
 - `verified WAL/checkpoint metadata`
   - 含义：恢复流程已经确认当前保留下来的 WAL/checkpoint 元数据链自洽；它只说明“元数据校验通过”，**不**等于应用状态已经恢复完成，必须和 `refusing metadata-only recovery` / `next startup height` 一起解读。
+- `[bft-wal] existing default WAL state detected at <A>; isolating this run in <B> (pass --bft-wal-mode reuse to recover prior state explicitly)`
+  - 含义：节点发现默认 WAL 目录里已有旧状态，因此本次启动被自动隔离到新的 session 子目录；这通常是“为了避免误复用旧 WAL 的保护动作”，**不是**恢复成功信号。值班侧应立刻记录原目录 `<A>` 与自动隔离目录 `<B>`，避免把新进程产生的空白 WAL 误当成历史恢复结果。
 
 ## 推荐分诊顺序
 
@@ -73,7 +75,9 @@ cargo test -p trnm-state -p trnm-node
    - 若出现：说明恢复是 **fail-closed** 的，不应把它误判成“节点已经完成状态恢复”。
 3. 若只看到 `checkpoint lags retained WAL tip by ...`，但没有截断 / 拒绝恢复：
    - 优先判定为正常 checkpoint 粒度差，而不是 WAL 损坏。
-4. 若只看到 `retained no committed WAL entries`：
+4. 若看到 `[bft-wal] existing default WAL state detected ... isolating this run in ...`：
+   - 先确认值班人员当前查看的是旧目录还是自动隔离后的新目录；如果目录搞混，后续所有“是否真的恢复到历史 tip”的判断都会失真。
+5. 若只看到 `retained no committed WAL entries`：
    - 结合 `--bft-wal-dir` 是否为新目录、是否预期从 fresh start 启动来判断；单独出现它不等于数据损坏。
 
 ## Incident note 最小模板
