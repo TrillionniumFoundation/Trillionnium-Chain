@@ -261,6 +261,59 @@ mod tests {
     }
 
     #[test]
+    fn persist_checkpoint_meta_canonicalizes_disk_order_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let parsed: CheckpointMetaList = toml::from_str(&raw).unwrap();
+        assert_eq!(
+            parsed.checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+            ]
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_canonicalizes_equal_height_entries_for_recovery_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-order");
         fs::create_dir_all(&wal_dir).unwrap();
