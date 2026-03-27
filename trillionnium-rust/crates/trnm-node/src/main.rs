@@ -1610,6 +1610,18 @@ fn load_config(path: &str) -> Result<NodeConfig> {
     validate_node_config(cfg, resolved.to_string_lossy().as_ref())
 }
 
+fn validate_startup_args(args: &Args) -> Result<()> {
+    anyhow::ensure!(
+        args.validators > 0,
+        "invalid startup args: validators must be at least 1"
+    );
+    anyhow::ensure!(
+        args.byzantine < args.validators,
+        "invalid startup args: byzantine must be less than validators"
+    );
+    Ok(())
+}
+
 fn compute_commitment(
     task_id: u64,
     result_hash: &Hash32,
@@ -3288,6 +3300,75 @@ mod tests {
         assert!(err.to_string().contains("p2p_addr must not be empty"));
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_zero_validators() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 0,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args).expect_err("zero validators must fail closed");
+        assert!(err
+            .to_string()
+            .contains("validators must be at least 1"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_byzantine_at_or_above_validator_count() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 4,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("byzantine >= validators must fail closed");
+        assert!(err
+            .to_string()
+            .contains("byzantine must be less than validators"));
     }
 
     #[test]
@@ -13011,6 +13092,7 @@ locked_block_hash = "stale-lock"
 
 fn main() -> Result<()> {
     let args = Args::parse();
+    validate_startup_args(&args)?;
     let cfg = load_config(&args.config)?;
 
     println!("[node] start");
