@@ -29,6 +29,7 @@ fn qos_snapshot_stays_flat_across_mixed_probe_noise_while_last_reserved_slot_is_
     // the operator-facing snapshot while the last reserved slot is still guarded.
     for _ in 0..3 {
         assert_eq!(gate.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(gate.queued_counts(), (3, 1, 4));
