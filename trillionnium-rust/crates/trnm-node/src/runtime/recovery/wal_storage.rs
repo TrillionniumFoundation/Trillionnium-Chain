@@ -191,6 +191,76 @@ mod tests {
     }
 
     #[test]
+    fn load_wal_meta_canonicalizes_equal_height_entries_for_recovery_audit_surfaces() {
+        let wal_dir = temp_wal_dir("wal-canonical-equal-height-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&WalMetaList {
+            entries: vec![
+                WalMeta {
+                    height: 7,
+                    round: 2,
+                    proposal_hash: "proposal-b".into(),
+                    committed: true,
+                    state_root_hex: "root-b".into(),
+                    prev_hash_hex: Some("prev-b".into()),
+                },
+                WalMeta {
+                    height: 7,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-c".into()),
+                },
+                WalMeta {
+                    height: 7,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: false,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), raw).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(
+            entries,
+            vec![
+                WalMeta {
+                    height: 7,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: false,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+                WalMeta {
+                    height: 7,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-c".into()),
+                },
+                WalMeta {
+                    height: 7,
+                    round: 2,
+                    proposal_hash: "proposal-b".into(),
+                    committed: true,
+                    state_root_hex: "root-b".into(),
+                    prev_hash_hex: Some("prev-b".into()),
+                },
+            ]
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_canonicalizes_equal_height_entries_for_recovery_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-order");
         fs::create_dir_all(&wal_dir).unwrap();
