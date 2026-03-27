@@ -21,11 +21,13 @@ Before any public-mainnet cut, freeze all five items together:
    - which transaction classes can be sponsored
    - per-sponsor budget cap and per-epoch refill rule
    - revocation / disable path
+   - disposition of already-queued sponsored transactions after revocation (`grandfather`, `drain-only`, or `drop`)
 
 3. **Retention pricing rule**
    - which artifacts are retained: proofs, challenge snapshots, collateral metadata, audit evidence
    - minimum retention window for day-1 mainnet
    - who pays for long-tail storage (submitter, challenger, sponsor, treasury, or shared policy)
+   - fallback payer / disable rule when a sponsor-funded retention budget is exhausted
    - what happens after the window expires (prune, checkpoint-only, archive-only)
 
 4. **Anti-spam floor**
@@ -59,8 +61,10 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | `sponsor_allowed_callers` | Which actors/modules may sponsor ingress? |
 | `sponsor_epoch_budget` | What is the hard sponsor budget per epoch/account? |
 | `sponsor_revocation_path` | How is a sponsor disabled quickly and audibly? |
+| `sponsor_revocation_queue_disposition` | What happens to already-queued sponsored txs after revocation? |
 | `retention_window_blocks` | How long do proof/evidence snapshots remain queryable? |
 | `retention_payer_rule` | Who pays for long-tail retention? |
+| `retention_budget_exhaustion_fallback` | What payer or disable action applies when sponsor-funded retention budget runs dry? |
 | `anti_spam_floor` | What minimum floor applies under sustained public load? |
 | `override_authority` | Who can change these values before launch? |
 | `override_timelock_or_bypass` | What timelock or emergency rule governs changes? |
