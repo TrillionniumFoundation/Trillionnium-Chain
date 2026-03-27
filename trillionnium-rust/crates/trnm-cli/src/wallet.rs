@@ -38,6 +38,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
     if name.is_empty()
         || name == "."
         || name == ".."
+        || name.starts_with('-')
         || name.contains(['/', '\\'])
         || has_hidden_or_whitespace
     {
