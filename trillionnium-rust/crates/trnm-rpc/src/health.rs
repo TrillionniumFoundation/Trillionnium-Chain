@@ -119,6 +119,9 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
         .filter(|suffix| !suffix.contains('/'))
+        // Treat raw backslashes as ambiguous path separators too so
+        // slash-like operator paths fail closed even before decoding.
+        .filter(|suffix| !suffix.contains('\\'))
         // Also reject encoded slash-like separators so ambiguous operator
         // paths are not silently accepted as opaque identifiers.
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
@@ -408,6 +411,13 @@ mod tests {
         assert_eq!(
             parse_nonempty_path_suffix(
                 "/query-capability-audit/alice%5Cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice\\extra",
                 "/query-capability-audit/"
             ),
             None
