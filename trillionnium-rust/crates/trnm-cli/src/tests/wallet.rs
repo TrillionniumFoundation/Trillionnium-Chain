@@ -11,7 +11,17 @@ fn wallet_import_hex_check() {
 
 #[test]
 fn wallet_name_rejects_path_like_values() {
-    for bad in ["", ".", "..", "alice/bob", "alice\\bob", "alice\n"] {
+    for bad in [
+        "",
+        ".",
+        "..",
+        "alice/bob",
+        "alice\\bob",
+        "alice\n",
+        "alice bob",
+        " alice",
+        "alice\t",
+    ] {
         let err = ensure_wallet_name(bad).unwrap_err();
         assert!(
             err.to_string().contains("invalid wallet name"),

@@ -17,7 +17,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name == "."
         || name == ".."
         || name.contains(['/', '\\'])
-        || name.chars().any(|c| c.is_ascii_control())
+        || name.chars().any(|c| c.is_ascii_whitespace())
     {
         bail!(
             "invalid wallet name '{}': use a simple local name without path separators",
