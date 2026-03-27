@@ -1940,6 +1940,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
         GroupingStrategy::FootprintDesc => {
+            // Keep direct footprint probes on the same fail-closed execution-domain
+            // contract as the other scheduler reorder paths. Otherwise mixed
+            // read/write version skew could silently collapse into a width-only hint
+            // and drift lane selection instead of tripping the guardrail.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let footprint = tx_access_domain_keys(tx).len();
                 (std::cmp::Reverse(footprint), tx.id)
@@ -6214,6 +6221,24 @@ mod tests {
     }
 
     #[test]
+    fn footprint_desc_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
+
+        // FootprintDesc should rank by the deduped object-scoped access domain so
+        // duplicate/version-heavy footprints do not outrank genuinely wider work.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
+    }
+
+    #[test]
     fn write_first_reorder_uses_object_scoped_domains_not_raw_version_counts() {
         let mut txs = vec![
             tx(
@@ -6247,6 +6272,13 @@ mod tests {
         // WriteLast should also follow deduped object-scoped domains so
         // version-heavy footprints do not drift from the executor's scheduler.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn footprint_desc_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
     }
 
     #[test]
