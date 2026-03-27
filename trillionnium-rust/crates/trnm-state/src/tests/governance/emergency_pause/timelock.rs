@@ -118,3 +118,60 @@ fn emergency_pause_does_not_bypass_sensitive_timelock_guards() {
     assert_eq!(pending.activate_at_height, activate_at_height);
     assert_eq!(pending.value, "120");
 }
+
+#[test]
+fn emergency_pause_does_not_let_replace_or_enforce_bypass_sensitive_timelock() {
+    // Merge-gate guard: action-specific checked paths must keep sensitive params on the
+    // same fail-closed timelock rails while emergency_pause is active.
+    let mut st = StateStore::new();
+    st.set_gov_param_unchecked(8_510, "challenge_min_bond".into(), "100".into())
+        .unwrap();
+
+    let scheduled = st
+        .set_gov_param(9_300, 8_510, "challenge_min_bond".into(), "120".into())
+        .unwrap();
+    let activate_at_height = match scheduled {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+        GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+    };
+    assert_eq!(activate_at_height, 9_320);
+
+    st.set_gov_param(9_301, 7_999, "emergency_pause".into(), "true".into())
+        .unwrap();
+    assert!(st.is_emergency_paused());
+
+    let replace_err = st
+        .set_gov_param_with_action(
+            9_305,
+            8_510,
+            "challenge_min_bond".into(),
+            "130".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect_err("paused mode must not let Replace bypass a live sensitive timelock");
+    assert!(replace_err.contains("timelock active"), "{replace_err}");
+
+    let pending_after_replace = st
+        .pending_gov_update("challenge_min_bond")
+        .expect("replace rejection must preserve the staged sensitive update");
+    assert_eq!(pending_after_replace.value, "120");
+    assert_eq!(pending_after_replace.activate_at_height, activate_at_height);
+
+    let enforce_err = st
+        .set_gov_param_with_action(
+            9_306,
+            8_510,
+            "challenge_min_bond".into(),
+            "130".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect_err("paused mode must not let Enforce bypass a live sensitive timelock");
+    assert!(enforce_err.contains("timelock active"), "{enforce_err}");
+
+    let pending_after_enforce = st
+        .pending_gov_update("challenge_min_bond")
+        .expect("enforce rejection must preserve the staged sensitive update");
+    assert_eq!(pending_after_enforce.value, "120");
+    assert_eq!(pending_after_enforce.activate_at_height, activate_at_height);
+}
