@@ -17,6 +17,9 @@ for i in $(seq 1 "$RUNS"); do
   pre="$OUT_DIR/bft-restart-pre-${TS}-${i}.log"
   post="$OUT_DIR/bft-restart-post-${TS}-${i}.log"
 
+  wal_file="$WAL_DIR/consensus-wal.toml"
+  rm -f "$wal_file"
+
   cargo run -q -p trnm-node -- \
     --config configs/node1.toml \
     --block-ms 30 \
@@ -30,13 +33,17 @@ for i in $(seq 1 "$RUNS"); do
     --bft-wal-dir "$WAL_DIR" >"$pre" 2>&1 &
   pid=$!
 
-  wal_file="$WAL_DIR/consensus-wal.toml"
   for _ in $(seq 1 40); do
     [[ -f "$wal_file" ]] && break
     sleep 0.05
   done
   kill -9 "$pid" >/dev/null 2>&1 || true
   wait "$pid" >/dev/null 2>&1 || true
+
+  if [[ ! -f "$wal_file" ]]; then
+    echo "[FAIL] restart recovery did not produce WAL run=$i wal=$wal_file pre=$pre" >&2
+    exit 3
+  fi
 
   cargo run -q -p trnm-node -- \
     --config configs/node1.toml \
