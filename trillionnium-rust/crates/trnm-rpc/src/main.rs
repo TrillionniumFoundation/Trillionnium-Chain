@@ -1655,6 +1655,8 @@ struct MarketScoreConfigOutput {
     price_weight: u128,
     reputation_weight: u128,
     reputation_clamp: i64,
+    max_effective_reputation: i64,
+    min_effective_reputation: i64,
     max_reputation_score_delta: u128,
     min_reputation_score_delta: i128,
 }
@@ -1686,6 +1688,8 @@ impl From<MarketScoreConfig> for MarketScoreConfigOutput {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
             reputation_clamp,
+            max_effective_reputation: reputation_clamp,
+            min_effective_reputation: -reputation_clamp,
             max_reputation_score_delta,
             min_reputation_score_delta: saturated_negative_i128(max_reputation_score_delta),
         }
@@ -6064,6 +6068,21 @@ mod tests {
         assert_eq!(output.price_weight, 3);
         assert_eq!(output.reputation_weight, 7);
         assert_eq!(output.reputation_clamp, 1);
+        assert_eq!(output.max_effective_reputation, 1);
+        assert_eq!(output.min_effective_reputation, -1);
+    }
+
+    #[test]
+    fn market_score_config_output_reports_symmetric_fail_closed_reputation_bounds() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 7,
+            reputation_weight: 11,
+            reputation_clamp: 0,
+        });
+
+        assert_eq!(output.reputation_clamp, 1);
+        assert_eq!(output.max_effective_reputation, output.reputation_clamp);
+        assert_eq!(output.min_effective_reputation, -output.reputation_clamp);
     }
 
     #[test]
