@@ -52,6 +52,19 @@ Interpretation rule:
 - local `testnet_preflight.sh` PASS, `run_local_release_evidence.sh` PASS, or `release_rc.sh` PASS can prove that a branch is reproducible enough for an RC rehearsal;
 - they cannot by themselves prove that peer formation/sync, validator lifecycle, secure signer path, stable explorer/indexer, unified observability, and launch economics are closed for public mainnet.
 
+### RC evidence integrity minimum checklist
+
+Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious launch decision input", require all of the following together:
+- a path-resolved `summary.txt` from `run/health/evidence-*`
+- a path-resolved `manifest.txt` from `release/rc-*`
+- matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, and `git_worktree_branch_ref=` across those artifacts
+- preserved `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` fields next to the quoted PASS/GO language
+- verbatim `rollback_command=` and `replay_command=` copied from the generated artifact, not rewritten from shell memory
+
+Fail-closed rule:
+- if either artifact path is unresolved, or any of the identity/truth-source fields drift across artifacts, treat the rehearsal as **evidence-incomplete** rather than "probably fine"
+- prefer `./scripts/v2/extract_release_handoff_fields.sh` so this comparison fails closed instead of depending on manual copy/paste
+
 ---
 
 ## What already exists (do not re-solve)
