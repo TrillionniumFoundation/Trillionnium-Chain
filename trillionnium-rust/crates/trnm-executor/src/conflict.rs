@@ -104,6 +104,13 @@ pub(crate) fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         return intersects(&a.write_set, &b.read_set);
     }
 
+    // Pure write/write pairs cannot produce read hazards; keep the shared
+    // object-domain classifier aligned with lib.rs so Sui-like scheduler paths
+    // retain the same single-probe semantics in both implementations.
+    if a.read_set.is_empty() && b.read_set.is_empty() {
+        return intersects(&a.write_set, &b.write_set);
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
