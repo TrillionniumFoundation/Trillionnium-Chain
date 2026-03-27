@@ -829,11 +829,17 @@ fn wallet_file(store: &Path, name: &str) -> PathBuf {
 }
 
 fn ensure_wallet_name(name: &str) -> Result<()> {
+    let has_hidden_or_whitespace = name.chars().any(|c| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}')
+    });
+
     if name.is_empty()
         || name == "."
         || name == ".."
         || name.contains(['/', '\\'])
-        || name.chars().any(|c| c.is_ascii_control())
+        || has_hidden_or_whitespace
     {
         bail!(
             "invalid wallet name '{}': use a simple local name without path separators",
@@ -1842,7 +1848,22 @@ mod tests {
 
     #[test]
     fn wallet_name_rejects_path_like_values() {
-        for bad in ["", ".", "..", "alice/bob", "alice\\bob", "alice\n"] {
+        for bad in [
+            "",
+            ".",
+            "..",
+            "alice/bob",
+            "alice\\bob",
+            "alice\n",
+            "alice bob",
+            " alice",
+            "alice\t",
+            "alice\u{00a0}bob",
+            "alice\u{200b}bob",
+            "alice\u{2060}bob",
+            "alice\u{feff}bob",
+            "alice\u{0007}bob",
+        ] {
             let err = ensure_wallet_name(bad).unwrap_err();
             assert!(
                 err.to_string().contains("invalid wallet name"),

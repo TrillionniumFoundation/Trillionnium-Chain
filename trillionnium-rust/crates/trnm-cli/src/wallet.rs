@@ -13,11 +13,17 @@ pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
 }
 
 pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
+    let has_hidden_or_whitespace = name.chars().any(|c| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}')
+    });
+
     if name.is_empty()
         || name == "."
         || name == ".."
         || name.contains(['/', '\\'])
-        || name.chars().any(|c| c.is_ascii_whitespace())
+        || has_hidden_or_whitespace
     {
         bail!(
             "invalid wallet name '{}': use a simple local name without path separators",
