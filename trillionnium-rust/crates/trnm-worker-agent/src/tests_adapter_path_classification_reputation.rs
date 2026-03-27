@@ -385,6 +385,27 @@ fn reputation_label_round_trips_back_to_canonical_signal_and_impact() {
 }
 
 #[test]
+fn reputation_label_lookup_accepts_benign_formatting_variants() {
+    assert_eq!(
+        reputation_signal_from_label(" Accepted "),
+        Some(ReputationSignal::Accepted)
+    );
+    assert_eq!(
+        reputation_signal_from_label("adapter retry exhausted"),
+        Some(ReputationSignal::AdapterRetryExhausted)
+    );
+    assert_eq!(
+        reputation_signal_from_label("VERIFIER-REJECTED"),
+        Some(ReputationSignal::VerifierRejected)
+    );
+    assert_eq!(
+        reputation_impact_from_label("adapter non retriable"),
+        Some(reputation_impact(ReputationSignal::AdapterNonRetriable))
+    );
+    assert_eq!(reputation_signal_from_label("   \n\t  "), None);
+}
+
+#[test]
 fn reputation_score_impact_pair_round_trips_fail_closed_on_hybrid_tuples() {
     for signal in CANONICAL_REPUTATION_SIGNAL_ORDER {
         let impact = reputation_impact(signal);
