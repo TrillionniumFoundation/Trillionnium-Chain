@@ -3375,6 +3375,11 @@ impl StateStore {
         Some(self.gov_param_value(key)?.to_string())
     }
 
+    pub fn gov_param_snapshot(&self, key: &str) -> Option<GovParamObject> {
+        let (_, param) = self.gov_param_ref_for_key(key)?;
+        Some(param.clone())
+    }
+
     fn gov_param_ref_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
         self.canonical_gov_param_for_key(key)
     }

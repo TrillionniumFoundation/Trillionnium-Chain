@@ -127,6 +127,72 @@ pub struct TaskMeteringSnapshot {
     pub worker_slash_rebate_per_work_unit_den: u128,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct TaskMetadataCompatibility {
+    pub legacy_note_only: bool,
+    pub canonical_core_fields: bool,
+    pub complete_metering_snapshot: bool,
+}
+
+impl TaskMetadataCompatibility {
+    pub fn is_runtime_compatible(&self) -> bool {
+        self.canonical_core_fields && self.complete_metering_snapshot
+    }
+
+    pub fn requires_governance_upgrade(&self) -> bool {
+        self.legacy_note_only || !self.is_runtime_compatible()
+    }
+
+    /// Stable typed ordering for query/report surfaces that need deterministic
+    /// governance-upgrade diagnostics without re-encoding precedence rules.
+    pub fn findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
+        let mut findings = Vec::new();
+        if self.legacy_note_only {
+            findings.push(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload);
+        }
+        if !self.canonical_core_fields {
+            findings.push(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields);
+        }
+        if !self.complete_metering_snapshot {
+            findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
+        }
+        findings
+    }
+
+    pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.findings().into_iter().next()
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskMetadataCompatibilityFinding {
+    LegacyNoteOnlyPayload,
+    NonCanonicalCoreFields,
+    IncompleteMeteringSnapshot,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskMetadataCompatibilityReport {
+    pub compatibility: TaskMetadataCompatibility,
+    pub requires_governance_upgrade: bool,
+    pub findings: Vec<TaskMetadataCompatibilityFinding>,
+}
+
+impl TaskMetadataCompatibilityReport {
+    /// Deterministic headline reason for query surfaces that want a single,
+    /// stable governance-upgrade classification without re-encoding precedence.
+    pub fn primary_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.compatibility.primary_finding()
+    }
+
+    /// Query-facing helper so downstream surfaces can omit empty arrays without
+    /// re-encoding the governance-upgrade finding rules themselves.
+    pub fn findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        (!self.findings.is_empty()).then_some(self.findings.clone())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -141,6 +207,131 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
+}
+
+fn has_canonical_metadata_atom(value: &str) -> bool {
+    let trimmed = value.trim();
+    !trimmed.is_empty() && trimmed == value
+}
+
+impl TaskMeteringSnapshot {
+    pub fn has_complete_core_fields(&self) -> bool {
+        has_canonical_metadata_atom(&self.workload_class)
+            && has_canonical_metadata_atom(&self.metering_schema)
+            && has_canonical_metadata_atom(&self.receipt_hash)
+    }
+}
+
+impl TaskMetadata {
+    pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
+        let legacy_note_only = self.note.is_some()
+            && self.task_type.is_none()
+            && self.input_hash.is_none()
+            && self.model.is_none()
+            && self.provenance.is_none()
+            && self.metering.is_none();
+
+        // Keep top-level metadata canonicality distinct from the metering snapshot verdict.
+        // This makes governance-upgrade diagnostics clearer at query time: malformed
+        // metering no longer masquerades as a generic core-field failure.
+        let canonical_core_fields = self
+            .note
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(true)
+            && self
+                .task_type
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .input_hash
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .model
+                .as_ref()
+                .map(|model| {
+                    model
+                        .model_id
+                        .as_deref()
+                        .map(has_canonical_metadata_atom)
+                        .unwrap_or(true)
+                        && model
+                            .model_digest
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                        && model
+                            .version
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                })
+                .unwrap_or(true)
+            && self
+                .provenance
+                .as_ref()
+                .map(|provenance| {
+                    provenance
+                        .producer_did
+                        .as_deref()
+                        .map(has_canonical_metadata_atom)
+                        .unwrap_or(true)
+                        && provenance
+                            .produced_at
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                        && provenance
+                            .provenance_index
+                            .as_deref()
+                            .map(has_canonical_metadata_atom)
+                            .unwrap_or(true)
+                })
+                .unwrap_or(true);
+
+        let complete_metering_snapshot = self
+            .metering
+            .as_ref()
+            .map(TaskMeteringSnapshot::has_complete_core_fields)
+            .unwrap_or(true);
+
+        let compatibility = TaskMetadataCompatibility {
+            legacy_note_only,
+            canonical_core_fields,
+            complete_metering_snapshot,
+        };
+
+        let findings = compatibility.findings();
+
+        TaskMetadataCompatibilityReport {
+            requires_governance_upgrade: compatibility.requires_governance_upgrade(),
+            compatibility,
+            findings,
+        }
+    }
+
+    pub fn compatibility_profile(&self) -> TaskMetadataCompatibility {
+        self.compatibility_report().compatibility
+    }
+
+    pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report().findings
+    }
+
+    pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        self.compatibility_report().findings_nonempty()
+    }
+
+    pub fn primary_compatibility_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report().primary_finding()
+    }
+
+    pub fn requires_runtime_metadata_upgrade(&self) -> bool {
+        self.compatibility_report().requires_governance_upgrade
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -423,6 +614,361 @@ mod tests {
         let raw = serde_json::to_string(&metadata).expect("serialize metadata");
         let decoded: TaskMetadata = serde_json::from_str(&raw).expect("deserialize metadata");
         assert_eq!(decoded, metadata);
+
+        let compatibility = decoded.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.is_runtime_compatible());
+        assert!(!compatibility.requires_governance_upgrade());
+        assert!(!decoded.requires_runtime_metadata_upgrade());
+        assert_eq!(decoded.compatibility_findings_nonempty(), None);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_stays_consistent_with_helper_accessors() {
+        let metadata = TaskMetadata {
+            note: Some(" legacy ".into()),
+            task_type: None,
+            input_hash: None,
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                receipt_hash: "".into(),
+                prompt_tokens: 0,
+                generated_tokens: 0,
+                decode_steps: 0,
+                kv_bytes_moved: 0,
+                normalized_work_units: 0,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                policy_snapshot_version: 1,
+                min_accept_work_units: 0,
+                challenge_success_bounty_base: 0,
+                challenge_success_bounty_per_work_unit_num: 0,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 0,
+                worker_completion_bonus_per_work_unit_den: 1,
+                worker_slash_rebate_per_work_unit_num: 0,
+                worker_slash_rebate_per_work_unit_den: 1,
+            }),
+        };
+
+        let report = metadata.compatibility_report();
+        assert_eq!(report.compatibility, metadata.compatibility_profile());
+        assert_eq!(
+            report.requires_governance_upgrade,
+            metadata.requires_runtime_metadata_upgrade()
+        );
+        assert_eq!(report.findings, metadata.compatibility_findings());
+        assert_eq!(
+            report.findings,
+            vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_marks_legacy_note_only_payload() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        let compatibility = metadata.compatibility_profile();
+        assert!(compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload
+            ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_helpers_preserve_typed_finding_order() {
+        let compatibility = TaskMetadataCompatibility {
+            legacy_note_only: true,
+            canonical_core_fields: false,
+            complete_metering_snapshot: false,
+        };
+
+        assert_eq!(
+            compatibility.findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ]
+        );
+        assert_eq!(
+            compatibility.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_findings_serialize_with_stable_query_facing_names() {
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+                .expect("serialize finding"),
+            serde_json::json!("legacy_note_only_payload")
+        );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields)
+                .expect("serialize finding"),
+            serde_json::json!("non_canonical_core_fields")
+        );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
+                .expect("serialize finding"),
+            serde_json::json!("incomplete_metering_snapshot")
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_serializes_with_stable_query_facing_shape() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: true,
+                canonical_core_fields: false,
+                complete_metering_snapshot: false,
+            },
+            requires_governance_upgrade: true,
+            findings: vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ],
+        };
+
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+        assert_eq!(
+            report.findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+            ])
+        );
+        assert_eq!(
+            serde_json::to_value(&report).expect("serialize report"),
+            serde_json::json!({
+                "compatibility": {
+                    "legacy_note_only": true,
+                    "canonical_core_fields": false,
+                    "complete_metering_snapshot": false
+                },
+                "requires_governance_upgrade": true,
+                "findings": [
+                    "legacy_note_only_payload",
+                    "non_canonical_core_fields",
+                    "incomplete_metering_snapshot"
+                ]
+            })
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_omits_empty_findings_array() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+            },
+            requires_governance_upgrade: false,
+            findings: Vec::new(),
+        };
+
+        assert_eq!(report.primary_finding(), None);
+        assert_eq!(report.findings_nonempty(), None);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_flags_non_canonical_legacy_note_only_payload() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":" legacy "}"#)
+            .expect("legacy payload should deserialize");
+        let compatibility = metadata.compatibility_profile();
+        assert!(compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            ]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_rejects_non_canonical_model_and_provenance_fields() {
+        let metadata = TaskMetadata {
+            model: Some(TaskModelMetadata {
+                model_id: Some(" trnm-vision-base".into()),
+                model_digest: Some("b".repeat(64)),
+                version: Some("v1.0.0 ".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:org:lane-dae".into()),
+                produced_at: Some("2026-03-01T01:00:00Z".into()),
+                provenance_index: Some(" prov:lane-dae:task-20260301-0001".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(!compatibility.canonical_core_fields);
+        assert!(compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::NonCanonicalCoreFields]
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_rejects_non_canonical_metering_core_fields() {
+        let metadata = TaskMetadata {
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: " llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: " ".into(),
+                prompt_tokens: 1,
+                generated_tokens: 1,
+                decode_steps: 1,
+                kv_bytes_moved: 1,
+                normalized_work_units: 1,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 1,
+                min_accept_work_units: 0,
+                challenge_success_bounty_base: 0,
+                challenge_success_bounty_per_work_unit_num: 0,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 0,
+                worker_completion_bonus_per_work_unit_den: 1,
+                worker_slash_rebate_per_work_unit_num: 0,
+                worker_slash_rebate_per_work_unit_den: 1,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(!compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot]
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_profile_flags_incomplete_metering_even_when_other_fields_are_canonical(
+    ) {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: " ".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: "abc123".into(),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 20,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 30,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 1,
+                challenge_success_bounty_per_work_unit_num: 1,
+                challenge_success_bounty_per_work_unit_den: 192,
+                worker_completion_bonus_per_work_unit_num: 1,
+                worker_completion_bonus_per_work_unit_den: 256,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 384,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let compatibility = metadata.compatibility_profile();
+        assert!(!compatibility.legacy_note_only);
+        assert!(compatibility.canonical_core_fields);
+        assert!(!compatibility.complete_metering_snapshot);
+        assert!(!compatibility.is_runtime_compatible());
+        assert!(compatibility.requires_governance_upgrade());
+        assert!(metadata.requires_runtime_metadata_upgrade());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty(),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot
+            ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
+        );
     }
 
     #[test]

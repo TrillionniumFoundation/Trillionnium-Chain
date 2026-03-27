@@ -24,6 +24,22 @@ fn governance_sensitive_pending_cancel_before_activation_removes_pending() {
     assert_eq!(st.gov_param_u64("challenge_min_bond"), Some(100));
 }
 #[test]
+fn governance_param_snapshot_resolves_canonical_registry_binding() {
+    let mut st = StateStore::new();
+    st.set_gov_param_unchecked(7999, "resolve_authority".into(), "alice,bob".into())
+        .unwrap();
+
+    let snapshot = st
+        .gov_param_snapshot("resolve_authority")
+        .expect("canonical governance key should resolve through registry-backed snapshot accessor");
+
+    assert_eq!(snapshot.key_id, 7999);
+    assert_eq!(snapshot.key, "resolve_authority");
+    assert_eq!(snapshot.value, "alice,bob");
+    assert_eq!(snapshot.version, 1);
+}
+
+#[test]
 fn governance_sensitive_apply_without_pending_is_unchanged() {
     let mut st = StateStore::new();
     st.set_gov_param_unchecked(7322, "challenge_min_bond".into(), "100".into())

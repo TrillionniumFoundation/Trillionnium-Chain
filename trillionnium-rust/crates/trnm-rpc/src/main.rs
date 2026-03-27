@@ -22,9 +22,9 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
-    TaskStatus, TransferTx,
+    AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
+    PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
+    TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -1288,6 +1288,10 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         .iter()
         .filter(|task| task.task_id == task_id)
         .max_by_key(|task| task.version)?;
+    let metadata_report = task
+        .metadata
+        .as_ref()
+        .map(|metadata| metadata.compatibility_report());
 
     Some(TaskQueryResponse {
         task_id: task.task_id,
@@ -1296,6 +1300,19 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
         bounty: task.bounty,
         result_hash_hex: task.result_hash.map(hex::encode),
         version: task.version,
+        metadata_compatibility: metadata_report.as_ref().map(|report| report.compatibility),
+        metadata_runtime_compatible: metadata_report
+            .as_ref()
+            .map(|report| report.compatibility.is_runtime_compatible()),
+        metadata_requires_governance_upgrade: metadata_report
+            .as_ref()
+            .map(|report| report.requires_governance_upgrade),
+        metadata_primary_compatibility_finding: metadata_report
+            .as_ref()
+            .and_then(|report| report.primary_finding()),
+        metadata_compatibility_findings: metadata_report
+            .as_ref()
+            .and_then(|report| report.findings_nonempty()),
         metering: task
             .metadata
             .as_ref()
@@ -2124,8 +2141,8 @@ fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
 
 fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
     if let Some(task_type) = metadata.task_type.as_deref() {
-        if task_type.is_empty() {
-            bail!("metadata.task_type must not be empty");
+        if !is_nonempty_no_whitespace(task_type) {
+            bail!("metadata.task_type must be non-empty and whitespace-free");
         }
     }
 
@@ -3450,6 +3467,11 @@ fn query_task_from_node_events(
         bounty: 100,
         result_hash_hex: None,
         version,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }
@@ -3506,6 +3528,11 @@ fn query_task_response(
         bounty: 100,
         result_hash_hex,
         version: task_recs.len() as u64,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
         metering: None,
     })
 }
@@ -3793,23 +3820,23 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryParam { key } => {
-            let ids = [7001u64, 7999u64];
-            let mut found: Option<GovParamObject> = None;
-            for id in ids {
-                if let Some(p) = st.get_param(id) {
-                    if p.key == key {
-                        found = Some(p);
-                        break;
-                    }
-                }
-            }
-            let Some(p) = found else {
+            let Some(p) = st.gov_param_snapshot(&key) else {
                 bail!("param not found: {}", key);
             };
+            let pending_update = st.pending_gov_update(&key).map(|pending| {
+                trnm_rpc::PendingGovParamUpdateQueryResponse {
+                    key_id: pending.key_id,
+                    key: pending.key,
+                    value: pending.value,
+                    activate_at_height: pending.activate_at_height,
+                }
+            });
             let out = GovParamQueryResponse {
+                key_id: p.key_id,
                 key: p.key,
                 value: p.value,
                 version: p.version,
+                pending_update,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }

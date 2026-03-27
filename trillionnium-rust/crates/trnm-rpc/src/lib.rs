@@ -6,7 +6,13 @@ mod transfer;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
-use trnm_types::{GovProposalStatus, TaskStatus};
+use trnm_types::{
+    GovProposalStatus, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding, TaskStatus,
+};
+
+fn option_vec_is_none_or_empty<T>(value: &Option<Vec<T>>) -> bool {
+    value.as_ref().is_none_or(Vec::is_empty)
+}
 
 pub use relay::*;
 pub use transfer::{
@@ -65,6 +71,16 @@ pub struct TaskQueryResponse {
     pub result_hash_hex: Option<String>,
     pub version: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_compatibility: Option<TaskMetadataCompatibility>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_runtime_compatible: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_requires_governance_upgrade: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata_primary_compatibility_finding: Option<TaskMetadataCompatibilityFinding>,
+    #[serde(default, skip_serializing_if = "option_vec_is_none_or_empty")]
+    pub metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,
 }
 
@@ -77,11 +93,22 @@ pub struct GovProposalQueryResponse {
     pub version: u64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PendingGovParamUpdateQueryResponse {
+    pub key_id: u64,
+    pub key: String,
+    pub value: String,
+    pub activate_at_height: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GovParamQueryResponse {
+    pub key_id: u64,
     pub key: String,
     pub value: String,
     pub version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pending_update: Option<PendingGovParamUpdateQueryResponse>,
 }
 
 /// RPC envelope for oracle admissibility checks.
@@ -399,6 +426,11 @@ mod tests {
             bounty: 100,
             result_hash_hex: None,
             version: 1,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
             metering: None,
         };
         let v = serde_json::to_value(task).unwrap();
@@ -424,10 +456,49 @@ mod tests {
             bounty: 100,
             result_hash_hex: None,
             version: 1,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
             metering: None,
         };
         let v = serde_json::to_value(task).unwrap();
         assert!(v.get("metering").is_none());
+    }
+
+    #[test]
+    fn rpc_gov_param_query_omits_pending_update_when_absent() {
+        let response = GovParamQueryResponse {
+            key_id: 7,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            version: 3,
+            pending_update: None,
+        };
+        let v = serde_json::to_value(response).unwrap();
+        assert!(v.get("pending_update").is_none());
+    }
+
+    #[test]
+    fn rpc_gov_param_query_includes_pending_update_when_present() {
+        let response = GovParamQueryResponse {
+            key_id: 12,
+            key: "runtime_metadata_schema".into(),
+            value: "v2".into(),
+            version: 8,
+            pending_update: Some(PendingGovParamUpdateQueryResponse {
+                key_id: 12,
+                key: "runtime_metadata_schema".into(),
+                value: "v3".into(),
+                activate_at_height: 4_096,
+            }),
+        };
+        let v = serde_json::to_value(response).unwrap();
+        assert_eq!(v["pending_update"]["key_id"], json!(12));
+        assert_eq!(v["pending_update"]["key"], json!("runtime_metadata_schema"));
+        assert_eq!(v["pending_update"]["value"], json!("v3"));
+        assert_eq!(v["pending_update"]["activate_at_height"], json!(4_096));
     }
 
     #[test]
@@ -439,6 +510,11 @@ mod tests {
             bounty: 100,
             result_hash_hex: Some("abcd".into()),
             version: 3,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
             metering: Some(TaskMeteringQueryResponse {
                 workload_class: "llm_inference".into(),
                 metering_schema: "llm_token_meter_v1".into(),

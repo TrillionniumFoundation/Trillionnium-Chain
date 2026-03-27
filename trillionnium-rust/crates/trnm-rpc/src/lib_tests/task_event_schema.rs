@@ -1,4 +1,5 @@
 use super::*;
+use trnm_types::TaskMetadataCompatibilityFinding;
 
 #[test]
 fn rpc_schema_smoke_task_fields_stable() {
@@ -9,6 +10,11 @@ fn rpc_schema_smoke_task_fields_stable() {
         bounty: 100,
         result_hash_hex: None,
         version: 1,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
@@ -34,10 +40,111 @@ fn rpc_task_query_omits_metering_when_absent() {
         bounty: 100,
         result_hash_hex: None,
         version: 1,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
         metering: None,
     };
     let v = serde_json::to_value(task).unwrap();
     assert!(v.get("metering").is_none());
+}
+
+#[test]
+fn rpc_task_query_includes_metadata_compatibility_when_present() {
+    let task = TaskQueryResponse {
+        task_id: 1,
+        status: TaskStatus::Revealed,
+        worker: Some("worker-1".into()),
+        bounty: 100,
+        result_hash_hex: Some("abcd".into()),
+        version: 3,
+        metadata_compatibility: Some(TaskMetadataCompatibility {
+            legacy_note_only: false,
+            canonical_core_fields: true,
+            complete_metering_snapshot: true,
+        }),
+        metadata_runtime_compatible: Some(true),
+        metadata_requires_governance_upgrade: Some(false),
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
+        metering: None,
+    };
+    let v = serde_json::to_value(task).unwrap();
+    assert_eq!(v["metadata_compatibility"]["legacy_note_only"], json!(false));
+    assert_eq!(
+        v["metadata_compatibility"]["canonical_core_fields"],
+        json!(true)
+    );
+    assert_eq!(
+        v["metadata_compatibility"]["complete_metering_snapshot"],
+        json!(true)
+    );
+    assert_eq!(v["metadata_runtime_compatible"], json!(true));
+    assert_eq!(v["metadata_requires_governance_upgrade"], json!(false));
+}
+
+#[test]
+fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
+    let task = TaskQueryResponse {
+        task_id: 9,
+        status: TaskStatus::Revealed,
+        worker: Some("worker-1".into()),
+        bounty: 100,
+        result_hash_hex: Some("abcd".into()),
+        version: 3,
+        metadata_compatibility: Some(TaskMetadataCompatibility {
+            legacy_note_only: false,
+            canonical_core_fields: false,
+            complete_metering_snapshot: false,
+        }),
+        metadata_runtime_compatible: Some(false),
+        metadata_requires_governance_upgrade: Some(true),
+        metadata_primary_compatibility_finding: Some(
+            TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+        ),
+        metadata_compatibility_findings: Some(vec![
+            TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+            TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+        ]),
+        metering: None,
+    };
+    let v = serde_json::to_value(task).unwrap();
+    assert_eq!(v["metadata_runtime_compatible"], json!(false));
+    assert_eq!(v["metadata_requires_governance_upgrade"], json!(true));
+    assert_eq!(
+        v["metadata_primary_compatibility_finding"],
+        json!("non_canonical_core_fields")
+    );
+    assert_eq!(
+        v["metadata_compatibility_findings"],
+        json!(["non_canonical_core_fields", "incomplete_metering_snapshot"])
+    );
+}
+
+#[test]
+fn rpc_task_query_omits_empty_metadata_compatibility_findings_array() {
+    let task = TaskQueryResponse {
+        task_id: 10,
+        status: TaskStatus::Assigned,
+        worker: Some("worker-2".into()),
+        bounty: 200,
+        result_hash_hex: None,
+        version: 4,
+        metadata_compatibility: Some(TaskMetadataCompatibility {
+            legacy_note_only: false,
+            canonical_core_fields: true,
+            complete_metering_snapshot: true,
+        }),
+        metadata_runtime_compatible: Some(true),
+        metadata_requires_governance_upgrade: Some(false),
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: Some(vec![]),
+        metering: None,
+    };
+    let v = serde_json::to_value(task).unwrap();
+    assert!(v.get("metadata_compatibility_findings").is_none());
 }
 
 #[test]
@@ -49,6 +156,11 @@ fn rpc_task_query_includes_metering_when_present() {
         bounty: 100,
         result_hash_hex: Some("abcd".into()),
         version: 3,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
         metering: Some(TaskMeteringQueryResponse {
             workload_class: "llm_inference".into(),
             metering_schema: "llm_token_meter_v1".into(),

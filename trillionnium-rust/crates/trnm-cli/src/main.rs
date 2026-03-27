@@ -186,6 +186,151 @@ struct TxQueryResponse {
     error: Option<String>,
 }
 
+fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Result<()> {
+    let Some(compatibility) = parsed.get("metadata_compatibility") else {
+        if parsed.get("metadata_runtime_compatible").is_some() {
+            bail!(
+                "task query response metadata_runtime_compatible requires metadata_compatibility"
+            );
+        }
+        if parsed.get("metadata_requires_governance_upgrade").is_some() {
+            bail!(
+                "task query response metadata_requires_governance_upgrade requires metadata_compatibility"
+            );
+        }
+        if parsed
+            .get("metadata_primary_compatibility_finding")
+            .is_some()
+        {
+            bail!(
+                "task query response metadata_primary_compatibility_finding requires metadata_compatibility"
+            );
+        }
+        if parsed.get("metadata_compatibility_findings").is_some() {
+            bail!(
+                "task query response metadata_compatibility_findings requires metadata_compatibility"
+            );
+        }
+        return Ok(());
+    };
+
+    let Some(compatibility_obj) = compatibility.as_object() else {
+        bail!("task query response metadata_compatibility must be a json object");
+    };
+    let Some(legacy_note_only) = compatibility_obj
+        .get("legacy_note_only")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!("task query response metadata_compatibility missing boolean legacy_note_only");
+    };
+    let Some(canonical_core_fields) = compatibility_obj
+        .get("canonical_core_fields")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!("task query response metadata_compatibility missing boolean canonical_core_fields");
+    };
+    let Some(complete_metering_snapshot) = compatibility_obj
+        .get("complete_metering_snapshot")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!(
+            "task query response metadata_compatibility missing boolean complete_metering_snapshot"
+        );
+    };
+
+    let expected_runtime_compatible = canonical_core_fields && complete_metering_snapshot;
+    let Some(reported_runtime_compatible) = parsed
+        .get("metadata_runtime_compatible")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!(
+            "task query response metadata_compatibility requires boolean metadata_runtime_compatible"
+        );
+    };
+    if reported_runtime_compatible != expected_runtime_compatible {
+        bail!(
+            "task query response metadata_runtime_compatible mismatch: expected={}, got={}",
+            expected_runtime_compatible,
+            reported_runtime_compatible
+        );
+    }
+
+    let expected_requires_governance_upgrade = legacy_note_only || !expected_runtime_compatible;
+    let Some(reported_requires_governance_upgrade) = parsed
+        .get("metadata_requires_governance_upgrade")
+        .and_then(|v| v.as_bool())
+    else {
+        bail!(
+            "task query response metadata_compatibility requires boolean metadata_requires_governance_upgrade"
+        );
+    };
+    if reported_requires_governance_upgrade != expected_requires_governance_upgrade {
+        bail!(
+            "task query response metadata_requires_governance_upgrade mismatch: expected={}, got={}",
+            expected_requires_governance_upgrade,
+            reported_requires_governance_upgrade
+        );
+    }
+
+    let mut expected = Vec::new();
+    if legacy_note_only {
+        expected.push("legacy_note_only_payload");
+    }
+    if !canonical_core_fields {
+        expected.push("non_canonical_core_fields");
+    }
+    if !complete_metering_snapshot {
+        expected.push("incomplete_metering_snapshot");
+    }
+
+    let expected_primary = expected.first().copied();
+    let reported_primary = match parsed.get("metadata_primary_compatibility_finding") {
+        Some(value) => Some(value.as_str().ok_or_else(|| {
+            anyhow!("task query response metadata_primary_compatibility_finding must be a string")
+        })?),
+        None => None,
+    };
+    if reported_primary != expected_primary {
+        bail!(
+            "task query response metadata_primary_compatibility_finding mismatch: expected={:?}, got={:?}",
+            expected_primary,
+            reported_primary
+        );
+    }
+
+    if let Some(findings) = parsed.get("metadata_compatibility_findings") {
+        let Some(findings) = findings.as_array() else {
+            bail!("task query response metadata_compatibility_findings must be a json array");
+        };
+        if findings.is_empty() {
+            bail!("task query response metadata_compatibility_findings must be omitted when empty");
+        }
+        let actual = findings
+            .iter()
+            .map(|value| {
+                value.as_str().ok_or_else(|| {
+                    anyhow!(
+                        "task query response metadata_compatibility_findings must contain strings"
+                    )
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        if actual != expected {
+            bail!(
+                "task query response metadata_compatibility_findings mismatch: expected={:?}, got={:?}",
+                expected,
+                actual
+            );
+        }
+    } else if !expected.is_empty() {
+        bail!(
+            "task query response metadata_compatibility_findings required when compatibility implies findings"
+        );
+    }
+
+    Ok(())
+}
+
 fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse task query response as json: {err}"))?;
@@ -199,6 +344,7 @@ fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_
             task_id
         );
     }
+    validate_task_query_metadata_compatibility(&parsed)?;
     Ok(parsed)
 }
 
@@ -2106,6 +2252,136 @@ mod tests {
             parsed["metering"]["policy"]["snapshot_version"],
             serde_json::json!(1)
         );
+    }
+
+    #[test]
+    fn task_query_accepts_consistent_metadata_compatibility_signals() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":true,"metadata_primary_compatibility_finding":"legacy_note_only_payload","metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let parsed = parse_task_query_response(raw, 42).unwrap();
+        assert_eq!(
+            parsed["metadata_runtime_compatible"],
+            serde_json::json!(true)
+        );
+        assert_eq!(
+            parsed["metadata_requires_governance_upgrade"],
+            serde_json::json!(true)
+        );
+        assert_eq!(
+            parsed["metadata_primary_compatibility_finding"],
+            serde_json::json!("legacy_note_only_payload")
+        );
+        assert_eq!(
+            parsed["metadata_compatibility_findings"],
+            serde_json::json!(["legacy_note_only_payload"])
+        );
+    }
+
+    #[test]
+    fn task_query_rejects_inconsistent_metadata_runtime_compatible_signal() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_runtime_compatible mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_inconsistent_metadata_findings() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_primary_compatibility_finding":"non_canonical_core_fields","metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility_findings mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_inconsistent_metadata_primary_finding() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_primary_compatibility_finding":"legacy_note_only_payload","metadata_compatibility_findings":["non_canonical_core_fields"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_primary_compatibility_finding mismatch"));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_runtime_compatible_when_metadata_compatibility_present() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_requires_governance_upgrade":false}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility requires boolean metadata_runtime_compatible"));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_governance_upgrade_when_metadata_compatibility_present() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility requires boolean metadata_requires_governance_upgrade"
+        ));
+    }
+
+    #[test]
+    fn task_query_rejects_runtime_compatible_signal_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_runtime_compatible":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_runtime_compatible requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_governance_upgrade_signal_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_requires_governance_upgrade":true}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_requires_governance_upgrade requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_findings_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility_findings":["legacy_note_only_payload"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility_findings requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_primary_finding_without_metadata_compatibility() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_primary_compatibility_finding":"legacy_note_only_payload"}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_primary_compatibility_finding requires metadata_compatibility"));
+    }
+
+    #[test]
+    fn task_query_rejects_empty_metadata_compatibility_findings_array() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":false,"metadata_compatibility_findings":[]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("metadata_compatibility_findings must be omitted when empty"));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_findings_when_compatibility_implies_them() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":true,"canonical_core_fields":true,"complete_metering_snapshot":true},"metadata_runtime_compatible":true,"metadata_requires_governance_upgrade":true,"metadata_primary_compatibility_finding":"legacy_note_only_payload"}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_compatibility_findings required when compatibility implies findings"
+        ));
+    }
+
+    #[test]
+    fn task_query_rejects_missing_primary_finding_when_compatibility_implies_one() {
+        let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["non_canonical_core_fields"]}"#;
+        let err = parse_task_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains(
+            "metadata_primary_compatibility_finding mismatch"
+        ));
     }
 
     #[test]

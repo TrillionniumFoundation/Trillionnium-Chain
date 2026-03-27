@@ -83,6 +83,27 @@ fn submit_message_rejects_invalid_metadata_hash_shape() {
 }
 
 #[test]
+fn submit_message_rejects_task_type_with_whitespace() {
+    let ingress = unique_fixture_path("submit_message_metadata_bad_task_type", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let text = r#"{"metadata":{"task_type":"inference batch","input_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}"#;
+    let output = run_submit_message(&ingress, text, "k-meta-bad-task-type");
+
+    assert!(
+        !output.status.success(),
+        "stdout: {}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("metadata.task_type must be non-empty and whitespace-free"),
+        "stderr: {}",
+        stderr
+    );
+}
+
+#[test]
 fn submit_message_rejects_public_privacy_tier_with_provenance_index() {
     let ingress = unique_fixture_path("submit_message_metadata_public_index_reject", "jsonl");
     let _ = fs::remove_file(&ingress);

@@ -157,6 +157,10 @@ pub(crate) fn query_task_from_state_snapshot(
         .iter()
         .filter(|task| task.task_id == task_id)
         .max_by_key(|task| task.version)?;
+    let metadata_report = task
+        .metadata
+        .as_ref()
+        .map(|metadata| metadata.compatibility_report());
 
     Some(TaskQueryResponse {
         task_id: task.task_id,
@@ -165,6 +169,19 @@ pub(crate) fn query_task_from_state_snapshot(
         bounty: task.bounty,
         result_hash_hex: task.result_hash.map(hex::encode),
         version: task.version,
+        metadata_compatibility: metadata_report.as_ref().map(|report| report.compatibility),
+        metadata_runtime_compatible: metadata_report
+            .as_ref()
+            .map(|report| report.compatibility.is_runtime_compatible()),
+        metadata_requires_governance_upgrade: metadata_report
+            .as_ref()
+            .map(|report| report.requires_governance_upgrade),
+        metadata_primary_compatibility_finding: metadata_report
+            .as_ref()
+            .and_then(|report| report.primary_finding()),
+        metadata_compatibility_findings: metadata_report
+            .as_ref()
+            .and_then(|report| report.findings_nonempty()),
         metering: task
             .metadata
             .as_ref()
