@@ -282,13 +282,13 @@ manifest_path="$latest_rc_dir/manifest.txt"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
+awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command)=/ { print }' "$summary_path"
+awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- if `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Forbidden operator shortcuts
