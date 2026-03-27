@@ -228,6 +228,7 @@ fn main() {
         let candidate_groups_per_retry_hit = profile.candidate_groups_per_retry_hit();
         let candidate_groups_per_reused_placement = profile.candidate_groups_per_reused_placement();
         let retry_scan_reuse_rate = profile.retry_scan_reuse_rate();
+        let retry_reuse_salvage_rate = profile.retry_reuse_salvage_rate();
         let retry_scan_hit_rate = profile.retry_scan_hit_rate();
         let retry_scan_misses = profile.retry_scan_misses();
         let retry_scan_miss_rate = profile.retry_scan_miss_rate();
@@ -236,8 +237,7 @@ fn main() {
         let retry_scan_overhang_per_hit = profile.retry_scan_overhang_per_hit();
         let retry_scan_overhang_per_reused_placement =
             profile.retry_scan_overhang_per_reused_placement();
-        let retry_fallback_share_of_retry_misses =
-            profile.retry_fallback_share_of_retry_misses();
+        let retry_fallback_share_of_retry_misses = profile.retry_fallback_share_of_retry_misses();
         let stage_ww_hit_rate = profile.ww_retry_hit_rate();
         let stage_wr_hit_rate = profile.wr_retry_hit_rate();
         let stage_rw_hit_rate = profile.rw_retry_hit_rate();
@@ -284,7 +284,10 @@ fn main() {
             "profile.reused_group_placements={}",
             reused_group_placements
         ));
-        lines.push(format!("profile.reused_group_share={:.4}", reused_group_share));
+        lines.push(format!(
+            "profile.reused_group_share={:.4}",
+            reused_group_share
+        ));
         lines.push(format!("profile.new_group_share={:.4}", new_group_share));
         lines.push(format!("profile.retry_pressure={:.4}", retry_pressure));
         lines.push(format!(
@@ -314,6 +317,10 @@ fn main() {
         lines.push(format!(
             "profile.retry_scan_reuse_rate={:.4}",
             retry_scan_reuse_rate
+        ));
+        lines.push(format!(
+            "profile.retry_reuse_salvage_rate={:.4}",
+            retry_reuse_salvage_rate
         ));
         lines.push(format!(
             "profile.retry_scan_hit_rate={:.4}",
@@ -653,7 +660,11 @@ mod tests {
 
         assert_eq!(txs.len(), 6);
         for (idx, tx) in txs.iter().enumerate() {
-            assert_eq!(tx.read_set.len(), 3, "tx {idx} should keep configured read fanout");
+            assert_eq!(
+                tx.read_set.len(),
+                3,
+                "tx {idx} should keep configured read fanout"
+            );
             if idx % 2 == 0 {
                 assert_eq!(
                     tx.write_set.len(),
@@ -696,7 +707,11 @@ mod tests {
         }
 
         for (idx, tx) in txs.iter().enumerate() {
-            assert_eq!(tx.read_set.len(), 3, "tx {idx} should keep configured read fanout");
+            assert_eq!(
+                tx.read_set.len(),
+                3,
+                "tx {idx} should keep configured read fanout"
+            );
             if idx % 2 == 0 {
                 assert_eq!(
                     tx.write_set.len(),
@@ -749,6 +764,7 @@ mod tests {
         assert!((profile.retry_fallback_share_of_retry_misses() - 0.0).abs() < f64::EPSILON);
         assert!((profile.candidate_groups_per_reused_placement() - 1.2).abs() < f64::EPSILON);
         assert!((profile.retry_scan_reuse_rate() - (5.0 / 6.0)).abs() < f64::EPSILON);
+        assert_eq!(profile.retry_reuse_salvage_rate(), 1.0);
         assert_eq!(profile.reused_group_placements(), 5);
         assert!((profile.reused_group_share() - 0.625).abs() < f64::EPSILON);
         assert!((profile.new_group_share() - 0.375).abs() < f64::EPSILON);
@@ -784,7 +800,10 @@ mod tests {
         assert!((profile.retry_fallback_share_of_new_groups() - 0.4).abs() < f64::EPSILON);
         assert!((profile.retry_fallback_share_of_retry_hits() - 0.5).abs() < f64::EPSILON);
         assert!((profile.retry_fallback_scan_share() - (2.0 / 6.0)).abs() < f64::EPSILON);
-        assert!((profile.retry_fallback_share_of_retry_misses() - (2.0 / 2.0)).abs() < f64::EPSILON);
+        assert!(
+            (profile.retry_fallback_share_of_retry_misses() - (2.0 / 2.0)).abs() < f64::EPSILON
+        );
+        assert!((profile.retry_reuse_salvage_rate() - (3.0 / 5.0)).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -820,6 +839,7 @@ mod tests {
         assert_eq!(profile.candidate_groups_per_retry_hit(), 0.0);
         assert_eq!(profile.candidate_groups_per_reused_placement(), 0.0);
         assert_eq!(profile.retry_scan_hit_rate(), 0.0);
+        assert_eq!(profile.retry_reuse_salvage_rate(), 0.0);
         assert_eq!(profile.retry_scan_misses(), 0);
         assert_eq!(profile.retry_scan_miss_rate(), 0.0);
         assert_eq!(profile.retry_scan_reuse_rate(), 0.0);
