@@ -260,6 +260,10 @@ impl OraclePolicy {
             });
         }
 
+        if snapshot.sample_count == 0 {
+            return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
+        }
+
         if snapshot.sources.len() < self.min_sources as usize
             || snapshot.sample_count < self.min_sources
         {
@@ -1651,6 +1655,29 @@ mod tests {
             .validate_snapshot(&snapshot, 10_100)
             .expect_err("deserialized blank source id must fail guardrail");
         assert_eq!(err, OracleError::EmptySourceId);
+    }
+
+    #[test]
+    fn rejects_deserialized_zero_sample_count_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["chainlink", "coingecko"],
+            "sample_count": 0,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized zero sample count must fail guardrail");
+        assert_eq!(err, OracleError::InvalidPolicy("sample_count must be > 0"));
     }
 
     #[test]
