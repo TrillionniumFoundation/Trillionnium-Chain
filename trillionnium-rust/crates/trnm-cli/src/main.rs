@@ -828,6 +828,21 @@ fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
 
+fn ensure_wallet_name(name: &str) -> Result<()> {
+    if name.is_empty()
+        || name == "."
+        || name == ".."
+        || name.contains(['/', '\\'])
+        || name.chars().any(|c| c.is_ascii_control())
+    {
+        bail!(
+            "invalid wallet name '{}': use a simple local name without path separators",
+            name
+        );
+    }
+    Ok(())
+}
+
 fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     let x = s.strip_prefix("0x").unwrap_or(s).to_lowercase();
     if x.len() != 64 {
@@ -838,6 +853,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 }
 
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
+    ensure_wallet_name(name)?;
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
     if f.exists() {
@@ -852,6 +868,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
 }
 
 fn read_key(store: &Path, name: &str) -> Result<String> {
+    ensure_wallet_name(name)?;
     let f = wallet_file(store, name);
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
@@ -1821,6 +1838,17 @@ mod tests {
         .unwrap();
         assert_eq!(ok.len(), 64);
         assert!(ensure_hex_32_bytes("0x1234").is_err());
+    }
+
+    #[test]
+    fn wallet_name_rejects_path_like_values() {
+        for bad in ["", ".", "..", "alice/bob", "alice\\bob", "alice\n"] {
+            let err = ensure_wallet_name(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("invalid wallet name"),
+                "unexpected error for {bad:?}: {err}"
+            );
+        }
     }
 
     #[test]
