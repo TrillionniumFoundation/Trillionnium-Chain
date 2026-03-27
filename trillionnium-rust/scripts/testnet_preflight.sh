@@ -55,7 +55,7 @@ command -v cargo >/dev/null
 cargo --version | tee -a "$LOG"
 
 log "check configs"
-for f in configs/node1.toml configs/node2.toml configs/node3.toml; do
+for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml; do
   [[ -f "$f" ]] || { echo "missing $f" | tee -a "$LOG"; exit 1; }
 done
 
