@@ -74,6 +74,26 @@ A launch review should include:
 - one test or gate proving the state machine/mempool still honors the chosen boundaries
 - one rollback path for tightening policy before public launch
 
+## Initial evidence hooks already in tree
+
+Until the final launch parameter surface exists, freeze review should at minimum point to
+existing targeted gates that exercise sponsor/free-ingress admission and retention
+consistency boundaries:
+
+- `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_immediate_reopen_bound -q`
+  - proves reserve-only shared-lane QoS observability does not falsely re-advertise
+    sponsor/free-ingress headroom across guarded reopen boundaries
+- `cargo test -p trnm-mempool lane_qos_snapshot_zero_capacity_stability_bound -q`
+  - proves hard-stop mode keeps public admission closed even under repeated cross-class
+    probe noise
+- `cargo test -p trnm-state retention_restore_regression -q`
+  - proves retained proof/collateral metadata fails closed when challenge-window,
+    challenger, or treasury identity snapshots are non-canonical
+
+These are not a substitute for the final frozen parameter sheet, but they give launch review
+an auditable starting point: public ingress policy must stay explicitly bounded, and retained
+challenge evidence must remain canonical enough to support later sponsor-funded audit paths.
+
 ## What this helper deliberately does not decide
 
 This helper does **not** choose final numeric values.
