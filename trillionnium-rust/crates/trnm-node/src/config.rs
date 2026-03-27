@@ -160,6 +160,23 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_shared_rpc_and_p2p_addr_after_trimming() {
+        let cfg = NodeConfig {
+            node_id: "node-a".into(),
+            rpc_addr: " 127.0.0.1:7000\n".into(),
+            p2p_addr: "\t127.0.0.1:7000 ".into(),
+        };
+
+        let err = validate_node_config(cfg, "inline")
+            .expect_err("trimmed shared listen addr must still fail");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must differ"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_whitespace_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
