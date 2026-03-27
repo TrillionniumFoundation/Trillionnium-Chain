@@ -11,6 +11,9 @@ use crate::http::{
     read_http_request_head,
 };
 use crate::node_events::load_node_events;
+use crate::runtime::audit_query::{
+    parse_query_normalized_audit_events_query_from_path, query_normalized_audit_events,
+};
 use crate::runtime::now_ms;
 use crate::snapshot::load_latest_adapter_records;
 use crate::taskview::{query_events_response, query_task_response};
@@ -196,6 +199,20 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
+                }
+            }
+            (Some((method, _)), Some(path), Some(target)) if path == "/query-normalized-audit-events" => {
+                let query = parse_query_normalized_audit_events_query_from_path(target);
+                match query {
+                    Ok(query) => {
+                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
+                        let recs = load_latest_adapter_records();
+                        let out = query_normalized_audit_events(&node_events.events, &recs, &query);
+                        let body = serde_json::to_string(&out)
+                            .unwrap_or_else(|_| r#"{\"ok\":false,\"code\":\"SERDE_ERROR\"}"#.to_string());
+                        json_response_for_method(method, "200 OK", &body)
+                    }
+                    Err(err) => err,
                 }
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
