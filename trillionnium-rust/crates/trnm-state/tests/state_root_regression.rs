@@ -5852,7 +5852,7 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
 
     let mut uppercase_prev_hash_wal = wal.clone();
     uppercase_prev_hash_wal.height = 2;
-    uppercase_prev_hash_wal.prev_hash_hex = Some("12".repeat(32).to_uppercase());
+    uppercase_prev_hash_wal.prev_hash_hex = Some("ab".repeat(32).to_uppercase());
     let mut uppercase_prev_hash_checkpoint = checkpoint.clone();
     uppercase_prev_hash_checkpoint.height = 2;
     uppercase_prev_hash_checkpoint.wal_entry_hash_hex = uppercase_prev_hash_wal.content_hash_hex();

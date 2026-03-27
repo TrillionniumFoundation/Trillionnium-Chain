@@ -6111,7 +6111,7 @@ mod tests {
             }
         }
     }
-}
+
     #[test]
     fn original_conflict_only_batch_reports_singleton_profile_shape() {
         let txs = vec![
@@ -6139,4 +6139,5 @@ mod tests {
         assert_eq!(profile.avg_group_size, 1.0);
         assert_eq!(profile.conflict_hits, 2);
     }
+}
 
