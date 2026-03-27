@@ -6035,6 +6035,15 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
         "noncanonical WAL proposal_hash surfaces must fail closed instead of emitting a DA/light-verifier summary"
     );
 
+    let mut spaced_wal = wal.clone();
+    spaced_wal.proposal_hash = " proposal-4 ".into();
+    bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.wal_entry_hash_hex = spaced_wal.content_hash_hex();
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &spaced_wal).is_none(),
+        "WAL proposal_hash surfaces with leading or trailing ASCII whitespace must fail closed so DA/light-verifier summaries cannot accept non-canonical checkpoint evidence linkage"
+    );
+
     let mut bad_prev_hash_wal = wal.clone();
     bad_prev_hash_wal.prev_hash_hex = Some("CD".repeat(32));
     bad_checkpoint = checkpoint.clone();
