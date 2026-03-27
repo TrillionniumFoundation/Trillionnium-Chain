@@ -6237,6 +6237,39 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_wal_prev_ha
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_accepts_max_length_canonical_wal_proposal_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "p".repeat(256),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("max-length canonical WAL proposal_hash should remain audit-summary eligible");
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "proposal_hash at the 256-byte canonical boundary should remain admissible for checkpoint/WAL audit surfaces"
+    );
+    assert!(
+        summary.contains("wal_proposal_hash_bytes=256"),
+        "DA/light-verifier summary should report the exact max-length canonical WAL proposal_hash byte count"
+    );
+    assert!(
+        summary.contains("wal_proposal_hash_surface_canonical=true"),
+        "DA/light-verifier summary should keep the WAL proposal surface marked canonical at the 256-byte boundary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface() {
     let wal = WalMeta {
         height: 4,
