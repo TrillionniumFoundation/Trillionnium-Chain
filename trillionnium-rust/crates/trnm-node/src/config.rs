@@ -21,6 +21,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain control characters",
         path
     );
+    anyhow::ensure!(
+        !node_id.chars().any(char::is_whitespace),
+        "invalid node config {}: node_id must not contain whitespace",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -145,6 +150,23 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("node_id must not contain control characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_internal_whitespace_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("node_id whitespace must fail closed");
+        assert!(
+            err.to_string().contains("node_id must not contain whitespace"),
             "unexpected error: {err:#}"
         );
     }
