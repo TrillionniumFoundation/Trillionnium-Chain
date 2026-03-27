@@ -73,6 +73,39 @@ fn degraded_reason_allows_invalid_embedded_metrics(message: &str) -> bool {
         || normalized.eq_ignore_ascii_case("invalid heartbeat progression")
 }
 
+fn emit_settlement_event(event: &SettlementEvent) {
+    eprintln!(
+        "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
+        event.phase,
+        event.heartbeat_source_height,
+        event.heartbeat_target_height,
+        event.heartbeat_latency_ms,
+        event.confirm_height,
+        event.confirm_reason,
+    );
+}
+
+/// Drives the minimal settlement state transition after relay liveness has been
+/// sampled and a settlement confirmation result is available.
+///
+/// Layering contract:
+/// - `relay_heartbeat` establishes whether the path is healthy enough to attempt
+///   settlement at all and provides bounded source/target height evidence.
+/// - this function consumes that evidence and performs the bridge-side terminal
+///   transition only (`Pending -> Finalized` or `Pending -> Reverted`).
+/// - replay protection is evaluated against the already-materialized bridge
+///   state before any fresh confirmation detail is allowed to reinterpret a
+///   terminal outcome.
+/// - the finality boundary here is intentionally narrow: confirmation heights
+///   may prove `source + 1` progress for settlement, but they do not upgrade or
+///   downgrade oracle confidence on their own.
+/// - oracle confidence, snapshot freshness, and RPC parsing remain outside this
+///   function; callers must fail closed before entering here when oracle data is
+///   insufficient or non-canonical.
+///
+/// The ordering is intentionally conservative: degraded or retry-pending
+/// heartbeat outcomes block finalization before confirmation details can weaken
+/// the fail-closed boundary.
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
     token: &CapabilityToken,
@@ -119,15 +152,7 @@ pub fn drive_minimal_settlement(
             confirm_height: None,
             confirm_reason: Some(reason.clone()),
         };
-        eprintln!(
-            "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-            event.phase,
-            event.heartbeat_source_height,
-            event.heartbeat_target_height,
-            event.heartbeat_latency_ms,
-            event.confirm_height,
-            event.confirm_reason,
-        );
+        emit_settlement_event(&event);
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
@@ -190,15 +215,7 @@ pub fn drive_minimal_settlement(
                 confirm_height: Some(height),
                 confirm_reason: None,
             };
-            eprintln!(
-                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-                event.phase,
-                event.heartbeat_source_height,
-                event.heartbeat_target_height,
-                event.heartbeat_latency_ms,
-                event.confirm_height,
-                event.confirm_reason,
-            );
+            emit_settlement_event(&event);
             Ok(SettlementStep::Finalized { height, event })
         }
         SettlementConfirm::Failed { reason } => {
@@ -213,15 +230,7 @@ pub fn drive_minimal_settlement(
                 confirm_height: None,
                 confirm_reason: Some(reason.clone()),
             };
-            eprintln!(
-                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
-                event.phase,
-                event.heartbeat_source_height,
-                event.heartbeat_target_height,
-                event.heartbeat_latency_ms,
-                event.confirm_height,
-                event.confirm_reason,
-            );
+            emit_settlement_event(&event);
             Ok(SettlementStep::Compensated { reason, event })
         }
     }
@@ -475,6 +484,181 @@ mod tests {
         let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn drive_minimal_settlement_emits_finalized_event_with_canonical_heartbeat_bounds() {
+        let mut request = SettlementRequest::new(1, "0xsettlement-confirmed".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 700 },
+        )
+        .expect("settlement should finalize inside finality window");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Finalized { height, event } => {
+                assert_eq!(height, 700);
+                assert_eq!(event.phase, "settlement_confirmed");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(19));
+                assert_eq!(event.confirm_height, Some(700));
+                assert_eq!(event.confirm_reason, None);
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(request.status, BridgeStatus::Finalized(700));
+    }
+
+    #[test]
+    fn drive_minimal_settlement_compensates_failed_confirm_with_sanitized_reason() {
+        let mut request = SettlementRequest::new(1, "0xsettlement-failed".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 21,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Failed {
+                reason: " confirm\u{202E}\n timeout\u{200B} ".to_string(),
+            },
+        )
+        .expect("failed confirm should compensate with normalized reason");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Compensated { reason, event } => {
+                assert_eq!(reason, "settlement confirm failed: confirm timeout");
+                assert_eq!(event.phase, "settlement_confirm_failed");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(21));
+                assert_eq!(event.confirm_height, None);
+                assert_eq!(
+                    event.confirm_reason.as_deref(),
+                    Some("settlement confirm failed: confirm timeout")
+                );
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("settlement confirm failed: confirm timeout".to_string())
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_confirm_height_exactly_at_target_floor() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-height-floor".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 699 },
+        )
+        .expect("settlement should finalize at heartbeat target floor");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Finalized { height, event } => {
+                assert_eq!(height, 699);
+                assert_eq!(event.phase, "settlement_confirmed");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(19));
+                assert_eq!(event.confirm_height, Some(699));
+                assert_eq!(event.confirm_reason, None);
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(request.status, BridgeStatus::Finalized(699));
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_confirm_height_exactly_at_source_finality_ceiling() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-height-ceiling".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("settlement should finalize at source finality ceiling");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Finalized { height, event } => {
+                assert_eq!(height, 701);
+                assert_eq!(event.phase, "settlement_confirmed");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.confirm_height, Some(701));
+                assert_eq!(event.confirm_reason, None);
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(request.status, BridgeStatus::Finalized(701));
     }
 
     #[test]
@@ -796,6 +980,54 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_cannot_be_upgraded_by_valid_confirm_height() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-valid-confirm".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "relay heartbeat degraded".to_string(),
+        };
+
+        let step = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 700 },
+        )
+        .expect("degraded heartbeat should fail closed before valid confirm height can finalize");
+
+        match step {
+            crate::x2_settlement_loop::SettlementStep::Compensated { reason, event } => {
+                assert_eq!(reason, "heartbeat degraded: relay heartbeat degraded");
+                assert_eq!(event.phase, "relay_heartbeat_degraded");
+                assert_eq!(event.heartbeat_source_height, Some(700));
+                assert_eq!(event.heartbeat_target_height, Some(699));
+                assert_eq!(event.heartbeat_latency_ms, Some(19));
+                assert_eq!(event.confirm_height, None);
+                assert_eq!(
+                    event.confirm_reason.as_deref(),
+                    Some("heartbeat degraded: relay heartbeat degraded")
+                );
+            }
+            other => panic!("unexpected settlement step: {other:?}"),
+        }
+
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: relay heartbeat degraded".to_string())
+        );
+    }
+
+    #[test]
     fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_progression_still_compensates() {
         let mut request = SettlementRequest::new(
             1,
@@ -949,7 +1181,7 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retrying_heartbeat_with_invalid_progression_prefers_retry_pending() {
+    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
         let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),

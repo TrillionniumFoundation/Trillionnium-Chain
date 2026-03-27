@@ -92,7 +92,7 @@ fn oracle_validation_response_observation_helpers_keep_unclassified_errors_out_o
 }
 
 #[test]
-fn oracle_validation_response_bridge_contract_consistent_rejects_unclassified_errors() {
+fn oracle_validation_response_bridge_contract_consistent_allows_explicit_unclassified_failures() {
     let report = OracleValidationReport {
         ok: false,
         now_ts_ms: 793,
@@ -111,6 +111,73 @@ fn oracle_validation_response_bridge_contract_consistent_rejects_unclassified_er
             sample_count: 1,
         },
         error: Some("rate".into()),
+    };
+
+    let out: OracleValidateSnapshotResponse = report.into();
+
+    assert!(out.observation_matches_metrics());
+    assert_eq!(out.classified_outcome_total(), 0);
+    assert_eq!(out.observation_classified_outcome_total(), 0);
+    assert!(!out.classified_outcome_conserves_sample_count());
+    assert!(!out.observation_classified_outcome_conserves_sample_count());
+    assert!(out.bridge_contract_consistent());
+}
+
+#[test]
+fn oracle_validation_response_bridge_contract_consistent_for_duplicate_source_unclassified_failure() {
+    let report = OracleValidationReport {
+        ok: false,
+        now_ts_ms: 793,
+        observation: OracleValidationObservation {
+            stale_reject_total: 0,
+            quorum_reject_total: 0,
+            drift_reject_total: 0,
+            accepted_total: 0,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: 0,
+            oracle_quorum_reject_total: 0,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 2,
+            accepted_total: 0,
+            sample_count: 1,
+        },
+        error: Some("duplicate source ids are not allowed".into()),
+    };
+
+    let out: OracleValidateSnapshotResponse = report.into();
+
+    assert!(out.observation_matches_metrics());
+    assert_eq!(out.classified_reject_total(), 0);
+    assert_eq!(out.observation_classified_reject_total(), 0);
+    assert_eq!(out.classified_outcome_total(), 0);
+    assert_eq!(out.observation_classified_outcome_total(), 0);
+    assert!(!out.classified_outcome_conserves_sample_count());
+    assert!(!out.observation_classified_outcome_conserves_sample_count());
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert!(out.bridge_contract_consistent());
+}
+
+#[test]
+fn oracle_validation_response_bridge_contract_consistent_rejects_blank_unclassified_error_label() {
+    let report = OracleValidationReport {
+        ok: false,
+        now_ts_ms: 794,
+        observation: OracleValidationObservation {
+            stale_reject_total: 0,
+            quorum_reject_total: 0,
+            drift_reject_total: 0,
+            accepted_total: 0,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: 0,
+            oracle_quorum_reject_total: 0,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 1,
+            accepted_total: 0,
+            sample_count: 1,
+        },
+        error: Some(" \n\t ".into()),
     };
 
     let out: OracleValidateSnapshotResponse = report.into();
@@ -139,9 +206,28 @@ fn oracle_validation_response_bridge_contract_consistent_for_classified_outcomes
                 oracle_stale_reject_total: 0,
                 oracle_quorum_reject_total: 0,
                 oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 2,
+                oracle_source_cardinality: 1,
                 accepted_total: 1,
                 sample_count: 1,
+            },
+            error: None,
+        },
+        OracleValidationReport {
+            ok: true,
+            now_ts_ms: 790,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 3,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 3,
+                sample_count: 3,
             },
             error: None,
         },
@@ -272,5 +358,37 @@ fn oracle_validation_response_bridge_contract_consistent_rejects_accepted_total_
     assert_eq!(out.observation_classified_outcome_total(), 1);
     assert!(out.classified_outcome_conserves_sample_count());
     assert!(!out.observation_classified_outcome_conserves_sample_count());
+    assert!(!out.bridge_contract_consistent());
+}
+
+#[test]
+fn oracle_validation_response_bridge_contract_consistent_rejects_non_empty_samples_without_sources() {
+    let report = OracleValidationReport {
+        ok: false,
+        now_ts_ms: 796,
+        observation: OracleValidationObservation {
+            stale_reject_total: 1,
+            quorum_reject_total: 0,
+            drift_reject_total: 0,
+            accepted_total: 0,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: 1,
+            oracle_quorum_reject_total: 0,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 0,
+            accepted_total: 0,
+            sample_count: 1,
+        },
+        error: Some("stale".into()),
+    };
+
+    let out: OracleValidateSnapshotResponse = report.into();
+
+    assert!(out.observation_matches_metrics());
+    assert_eq!(out.classified_outcome_total(), 1);
+    assert_eq!(out.observation_classified_outcome_total(), 1);
+    assert!(out.classified_outcome_conserves_sample_count());
+    assert!(out.observation_classified_outcome_conserves_sample_count());
     assert!(!out.bridge_contract_consistent());
 }

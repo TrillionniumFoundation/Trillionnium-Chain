@@ -188,6 +188,29 @@ impl OraclePolicy {
         Ok(())
     }
 
+    /// Validates that a snapshot is canonical, fresh, and policy-compliant
+    /// enough to be consumed by higher layers.
+    ///
+    /// Layering contract:
+    /// - the oracle crate only decides whether snapshot data is admissible;
+    ///   it does not finalize bridge settlement or interpret replay/finality
+    ///   outcomes.
+    /// - a successful validation result means “this evidence may be considered”,
+    ///   not “settlement is final”; downstream layers still own confirmation and
+    ///   replay boundaries.
+    /// - median/MAD and source-count checks are confidence/admissibility guards,
+    ///   not settlement authority. They can reject low-confidence evidence, but
+    ///   they can never upgrade a bridge observation into final settlement on
+    ///   their own.
+    /// - downstream bridge/RPC code should treat a validation failure here as a
+    ///   fail-closed signal and avoid manufacturing fallback settlement meaning
+    ///   from malformed oracle payloads.
+    /// - replay identity and source-chain finality thresholds stay downstream:
+    ///   bridge/RPC layers must dedupe repeated oracle payloads and enforce the
+    ///   source/target confirmation boundary before any settlement transition.
+    /// - `sample_count` may exceed the number of unique canonical sources when a
+    ///   report aggregates repeated observations inside one window; the opposite
+    ///   direction remains invalid and is rejected below.
     pub fn validate_snapshot(
         &self,
         snapshot: &OracleSnapshot,
@@ -429,9 +452,16 @@ impl OracleValidationReport {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_non_empty_error_label(&self) -> bool {
+        self.error
+            .as_deref()
+            .map(str::trim)
+            .is_some_and(|label| !label.is_empty())
+    }
+
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
-            && self.error.is_some()
+            && self.has_non_empty_error_label()
             && self.metrics.accepted_total == 0
             && self.classified_reject_total() == 0
             && self.observation_classified_reject_total() == 0
@@ -443,7 +473,7 @@ impl OracleValidationReport {
         let result_label_consistent = if self.ok {
             self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
         } else {
-            self.error.is_some() && self.metrics.accepted_total == 0
+            self.has_non_empty_error_label() && self.metrics.accepted_total == 0
         };
         let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
             && self.observation_classified_outcome_conserves_sample_count();
@@ -772,6 +802,46 @@ mod tests {
     }
 
     #[test]
+    fn accepts_sample_count_exactly_at_update_rate_cap() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            60,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        p.validate_snapshot(&snap, 10_100)
+            .expect("sample_count exactly at the configured cap should remain valid");
+    }
+
+    #[test]
+    fn accepts_repeated_observations_when_sample_count_exceeds_unique_sources() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        p.validate_snapshot(&snap, 10_100)
+            .expect("repeated observations within one window should stay admissible");
+    }
+
+    #[test]
     fn rejects_sample_count_below_source_cardinality() {
         let err = OracleSnapshot::new(
             "btc/usd",
@@ -949,6 +1019,23 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_treats_exact_staleness_boundary_as_accepted_without_counter_drift() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 15_000);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_success_to_stable_metrics_contract() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_000);
@@ -963,6 +1050,32 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 1);
         assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_keeps_source_cardinality_distinct_from_repeated_observation_count() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
@@ -1149,6 +1262,7 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
@@ -1310,6 +1424,35 @@ mod tests {
         assert!(!report.ok);
         assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    }
+
+    #[test]
+    fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_unclassified_failure() {
+        let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("duplicate source ids are not allowed"));
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.classified_reject_total(), 0);
+        assert_eq!(report.classified_outcome_total(), 0);
+        assert!(!report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
@@ -1645,5 +1788,30 @@ mod tests {
         assert!(failure.bridge_contract_consistent());
         failure.error = None;
         assert!(!failure.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_blank_unclassified_error_label() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert!(report.error.is_some());
+        report.error = Some(" \n\t ".to_string());
+
+        assert!(!report.bridge_contract_consistent());
     }
 }

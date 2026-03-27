@@ -78,6 +78,39 @@ fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
 }
 
 #[test]
+fn x3_prep_degraded_heartbeat_with_invalid_bounds_fails_closed_before_compensation() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-invalid-bounds".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 0,
+            target_height: 9,
+            latency_ms: 42,
+        }),
+        degraded: true,
+        should_retry: false,
+        message: "target relay timeout with malformed heights".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_degraded_retry_pending_prefers_compensation_revert_over_retry_pending() {
     let mut request = SettlementRequest::new(1, "0xdegraded-retry-pending".to_string());
     let token = operator_token();
@@ -609,6 +642,39 @@ fn x3_prep_accepts_confirm_height_at_heartbeat_target_lower_boundary() {
         }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(699));
+}
+
+#[test]
+fn x3_prep_accepts_confirm_height_at_heartbeat_source_boundary() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-source-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 700 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 700,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(700),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(700));
 }
 
 #[test]
