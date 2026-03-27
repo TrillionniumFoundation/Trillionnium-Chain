@@ -2966,19 +2966,21 @@ fn parse_query_normalized_audit_events_query_from_path(
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     if !path_without_query.starts_with('/')
-        || !path_without_query.starts_with("/query-normalized-audit-events")
+        || path_without_query != "/query-normalized-audit-events"
         || path_without_query.contains('\x5c')
         || path_without_query.contains('#')
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -3014,12 +3016,14 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || normalized_query.contains("%00")
         || normalized_query.contains("%0d")
         || normalized_query.contains("%0a")
         || normalized_query.contains("%09")
         || normalized_query.contains("%0b")
         || normalized_query.contains("%0c")
         || normalized_query.contains("%20")
+        || normalized_query.contains("%7f")
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -5038,6 +5042,36 @@ mod tests {
         .expect_err("invalid cursor should fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
+        for path in [
+            "/query-normalized-audit-events-shadow",
+            "/query-normalized-audit-events-shadow?source=trnm.task",
+            "/query-normalized-audit-events/extra",
+            "/query-normalized-audit-events/extra?limit=2",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("prefix-shadow paths should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls() {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%00shadow",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+            "/query-normalized-audit-events%00shadow?source=trnm.task",
+            "/query-normalized-audit-events%7fshadow?source=trnm.task",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("encoded controls should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
     }
 
     #[test]
