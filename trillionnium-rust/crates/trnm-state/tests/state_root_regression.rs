@@ -5866,6 +5866,48 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
 }
 
 #[test]
+fn checkpoint_commitment_and_wal_content_hash_length_frame_adjacent_fields() {
+    let wal_a = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "ab".into(),
+        committed: true,
+        state_root_hex: "c".repeat(64),
+        prev_hash_hex: Some("de".repeat(32)),
+    };
+    let wal_b = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "a".into(),
+        state_root_hex: format!("b{}", "c".repeat(63)),
+        ..wal_a.clone()
+    };
+
+    assert_ne!(
+        wal_a.content_hash_hex(),
+        wal_b.content_hash_hex(),
+        "wal content_hash_hex must length-frame proposal_hash and state_root_hex so adjacent field-boundary collisions cannot hash identically"
+    );
+
+    let checkpoint_a = CheckpointMeta {
+        height: 9,
+        state_root_hex: "ab".repeat(32),
+        wal_entry_hash_hex: "cd".repeat(32),
+    };
+    let checkpoint_b = CheckpointMeta {
+        height: 9,
+        state_root_hex: format!("{}c", "ab".repeat(31)),
+        wal_entry_hash_hex: format!("d{}", "cd".repeat(31)),
+    };
+
+    assert_ne!(
+        checkpoint_a.commitment_hex(),
+        checkpoint_b.commitment_hex(),
+        "checkpoint commitment_hex must length-frame state_root_hex and wal_entry_hash_hex so adjacent field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     let wal = WalMeta {
         height: 7,
