@@ -26,6 +26,26 @@
    - 重新写 `consensus-wal.toml` 指针
 5. 从 `checkpoint.height + 1` 继续出块
 
+## Checkpoint 证据链接（面向 light-verifier / 审计面）
+
+每个 checkpoint 不是只靠高度定位，而是靠下面这组可交叉验证的证据：
+
+- `CheckpointMeta.height`
+- `CheckpointMeta.state_root_hex`
+- `CheckpointMeta.wal_entry_hash_hex`
+- `WalMeta.prev_hash_hex`（把当前 WAL 条目接回前一个已确认条目）
+
+推荐把它理解为两层约束：
+
+1. **checkpoint 锚点**：`(height, state_root_hex, wal_entry_hash_hex)` 必须命中同一条已提交 WAL 元数据。
+2. **链式连续性**：命中的 WAL 条目还必须通过 `prev_hash_hex` 与前序条目形成连续哈希链。
+
+这意味着 light-verifier 或人工审计都不能只看 `height` 或只看 `state_root_hex`：
+
+- 只有高度相同，不足以证明命中的是同一条 canonical WAL 记录；
+- 只有 `state_root_hex` 相同，不足以证明前序提交链没有漂移；
+- 必须同时检查 checkpoint 三元组与 `prev_hash_hex` 连续性，才能确认恢复锚点既命中正确状态，又命中正确提交历史。
+
 ## 最小验证
 
 ```bash
