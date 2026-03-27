@@ -1186,6 +1186,7 @@ mod tests {
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.bridge_contract_consistent());
     }
 
     #[test]
