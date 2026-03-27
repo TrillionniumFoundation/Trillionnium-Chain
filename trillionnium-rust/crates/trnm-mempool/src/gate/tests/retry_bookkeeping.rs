@@ -201,6 +201,19 @@ fn fairness_only_deferral_path_compacts_stale_fifo_markers() {
 }
 
 #[test]
+fn fairness_only_deferral_clears_stale_fifo_before_first_new_retry_marker() {
+    let mut gate = AdmissionGate::new(2);
+
+    gate.backpressured_fifo.extend([7, 8, 9]);
+    assert!(gate.backpressured_ids.is_empty());
+
+    gate.remember_backpressured_without_eviction(42);
+
+    assert_eq!(gate.backpressured_fifo, [42]);
+    assert_eq!(gate.backpressured_ids, [42].into_iter().collect());
+}
+
+#[test]
 fn restored_retry_set_without_fifo_markers_is_rebounded_to_capacity() {
     let mut gate = AdmissionGate::new(2);
 

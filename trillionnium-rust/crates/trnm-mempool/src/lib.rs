@@ -13,6 +13,18 @@ pub enum IngressClass {
     Critical,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LaneQosSnapshot {
+    pub normal_queued: usize,
+    pub critical_queued: usize,
+    pub total_queued: usize,
+    pub normal_headroom: usize,
+    pub critical_headroom: usize,
+    pub total_headroom: usize,
+    pub fresh_normal_admissible: bool,
+    pub fresh_critical_admissible: bool,
+}
+
 #[derive(Debug)]
 pub struct AdmissionGate {
     capacity: usize,
@@ -551,45 +563,13 @@ impl LaneAdmissionGate {
         };
         self.finish_admission(tx_id, out)
     }
-    pub fn queued_counts(&self) -> (usize, usize, usize) {
-        let normal = self.normal.queue.len();
-        let critical = self.critical.queue.len();
-        (normal, critical, self.lane_total())
+    fn prefer_normal_on_pop(&self) -> bool {
+        self.normal_has_dedicated_capacity
+            && self.critical_served_streak >= self.critical_burst_limit
+            && !self.normal.queue.is_empty()
     }
 
-    pub fn pop_ready(&mut self) -> Option<u64> {
-        if self.lane_is_idle() {
-            // Idle dequeue polls are common in long-lived schedulers. Treat them as a
-            // self-heal boundary too so restored-state ghost caches/fairness state do
-            // not survive indefinitely when no fresh admit() arrives to reset them.
-            //
-            // Exception: zero-capacity hard-stop mode intentionally preserves restored
-            // duplicate knowledge even though no queue slots exist, so repeated idle
-            // polls must not erase that recovery metadata.
-            self.reset_idle_state(true);
-            return None;
-        }
-
-        let prefer_normal = self.normal_has_dedicated_capacity
-            && self.critical_served_streak >= self.critical_burst_limit
-            && !self.normal.queue.is_empty();
-
-        let (id, served_critical) = if prefer_normal {
-            // prefer_normal is only true when normal queue is known non-empty.
-            // In restored-state edge cases, degrade gracefully instead of panicking.
-            if let Some(id) = self.normal.pop_ready() {
-                (id, false)
-            } else if let Some(id) = self.critical.pop_ready() {
-                (id, true)
-            } else {
-                return None;
-            }
-        } else if let Some(id) = self.critical.pop_ready() {
-            (id, true)
-        } else {
-            (self.normal.pop_ready()?, false)
-        };
-
+    fn record_pop_fairness(&mut self, served_critical: bool) {
         if self.normal_has_dedicated_capacity {
             if served_critical {
                 // Keep streak bounded to the fairness threshold. This preserves
@@ -612,6 +592,75 @@ impl LaneAdmissionGate {
             // prolonged spillover drains.
             self.critical_served_streak = 0;
         }
+    }
+
+    pub fn queued_counts(&self) -> (usize, usize, usize) {
+        let normal = self.normal.queue.len();
+        let critical = self.critical.queue.len();
+        let total = self.lane_total();
+
+        debug_assert_eq!(normal.saturating_add(critical), total);
+
+        (normal, critical, total)
+    }
+
+    pub fn qos_snapshot(&self) -> LaneQosSnapshot {
+        let normal_queued = self.normal.queue.len();
+        let critical_queued = self.critical.queue.len();
+        let total_queued = self.lane_total();
+        let normal_headroom = self.normal.capacity.saturating_sub(normal_queued);
+        let critical_headroom = self.critical.capacity.saturating_sub(critical_queued);
+        let total_headroom = self.total_capacity.saturating_sub(total_queued);
+        let fresh_normal_admissible = total_headroom > 0 && self.normal_has_admission_headroom();
+        let fresh_critical_admissible =
+            total_headroom > 0 && self.critical_has_admission_headroom();
+
+        debug_assert_eq!(normal_queued.saturating_add(critical_queued), total_queued);
+
+        LaneQosSnapshot {
+            normal_queued,
+            critical_queued,
+            total_queued,
+            normal_headroom,
+            critical_headroom,
+            total_headroom,
+            fresh_normal_admissible,
+            fresh_critical_admissible,
+        }
+    }
+
+    pub fn pop_ready(&mut self) -> Option<u64> {
+        if self.lane_is_idle() {
+            // Idle dequeue polls are common in long-lived schedulers. Treat them as a
+            // self-heal boundary too so restored-state ghost caches/fairness state do
+            // not survive indefinitely when no fresh admit() arrives to reset them.
+            //
+            // Exception: zero-capacity hard-stop mode intentionally preserves restored
+            // duplicate knowledge even though no queue slots exist, so repeated idle
+            // polls must not erase that recovery metadata.
+            self.reset_idle_state(true);
+            return None;
+        }
+
+        let prefer_normal = self.prefer_normal_on_pop();
+
+        let (id, served_critical) = if prefer_normal {
+            // prefer_normal is only true when normal queue is known non-empty.
+            // In restored-state edge cases, degrade gracefully instead of panicking.
+            if let Some(id) = self.normal.pop_ready() {
+                (id, false)
+            } else if let Some(id) = self.critical.pop_ready() {
+                (id, true)
+            } else {
+                return None;
+            }
+        } else if let Some(id) = self.critical.pop_ready() {
+            (id, true)
+        } else {
+            (self.normal.pop_ready()?, false)
+        };
+
+        self.record_pop_fairness(served_critical);
 
         self.repair_global_seen_after_pop(id);
 
@@ -655,6 +704,401 @@ mod tests {
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.pop_ready(), Some(7));
         assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn qos_snapshot_reports_lane_and_global_headroom() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 3,
+                critical_headroom: 2,
+                total_headroom: 5,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 2,
+                total_queued: 3,
+                normal_headroom: 2,
+                critical_headroom: 0,
+                total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_tracks_zero_reserve_spillover_headroom() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 0,
+                total_queued: 1,
+                normal_headroom: 1,
+                critical_headroom: 0,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_tracks_critical_spillover_into_free_normal_headroom() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 1, 2));
+
+        // Critical reserve is already full, but the second critical tx spilled into
+        // free normal capacity. Observability must keep advertising fresh critical
+        // admissibility while spare normal headroom remains available for spillover.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 1,
+                total_queued: 2,
+                normal_headroom: 2,
+                critical_headroom: 0,
+                total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_tracks_reserve_only_headroom_while_critical_backlog_is_active() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+
+        // Reserve-only mode has no dedicated normal queue, but fresh normal ingress
+        // should still be reported admissible while aggregate headroom remains.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 2,
+                total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_stops_advertising_fresh_critical_after_reserve_only_normal_borrows_last_slot() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Reserve-only mode: normal ingress borrows from critical headroom because
+        // there is no dedicated normal capacity.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Once the last reserve-only slot is also borrowed by normal traffic,
+        // observability must stop advertising fresh critical headroom.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity, then activate critical backlog while one
+        // aggregate slot still remains reserved for fresh critical ingress.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 1,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_reports_borrowed_last_critical_slot_as_consumed() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity first.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                // With the critical lane idle, normal ingress may still borrow the
+                // final reserved slot for free-ingress throughput.
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Borrow the last reserved critical slot. Observability must stop advertising
+        // fresh critical headroom once that slot is actually consumed by borrowed work.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+
+    #[test]
+    fn qos_snapshot_reopens_borrowed_last_critical_slot_after_critical_lane_drains() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the final idle reserved slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // While the borrowed reserved slot is occupied, no class has fresh headroom.
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Once the borrowed critical-lane occupant drains and the critical lane goes
+        // idle again, observability must immediately advertise that the final reserved
+        // slot is borrowable for fresh normal ingress again.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Critical reserve full; tx 51 spills into borrowed normal capacity.
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 1,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(51));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // Idle dequeue polls are the self-heal boundary for long-lived schedulers;
+        // observability should also cold-reset here instead of reporting stale
+        // spillover occupancy or blocked class headroom.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 3,
+                critical_headroom: 1,
+                total_headroom: 4,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_reopens_critical_admissibility_as_soon_as_dedicated_reserve_reopens() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Fill normal capacity, then force one critical tx to spill into normal
+        // capacity while another occupies the dedicated reserve slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Draining the dedicated critical occupant should immediately reopen fresh
+        // critical admissibility even though an older critical copy still occupies
+        // borrowed normal capacity.
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.queued_counts(), (3, 0, 3));
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+    }
+
+    #[test]
+    fn qos_snapshot_keeps_normal_closed_when_only_critical_spillover_headroom_remains() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill the dedicated normal lane and occupy one reserved critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // One aggregate slot remains, but it is reachable only by fresh critical
+        // spillover into the still-free normal headroom. Fresh normal ingress must
+        // stay closed because the last reserved critical slot is guarded.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 1,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn qos_snapshot_resets_cleanly_after_reserve_only_full_drain_and_idle_poll() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        // Reserve-only mode routes all ingress through critical capacity.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 3, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 3,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // After the full drain and one idle scheduler poll, observability should
+        // reopen reserve-only borrowed headroom for both ingress classes.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 3,
+                total_headroom: 3,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
     }
 
     #[test]
@@ -854,6 +1298,44 @@ mod tests {
             g.admit(1, IngressClass::Normal),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn critical_spillover_duplicate_probe_stays_globally_duplicate_until_spilled_copy_drains() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Fill free normal headroom via critical spillover while keeping one of the
+        // spilled tx ids live across both ingress classes.
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Even though tx 102 spilled into normal capacity, duplicate probes from
+        // either class must remain Duplicate until the queued copy drains.
+        assert_eq!(
+            g.admit(102, IngressClass::Critical),
+            AdmitOutcome::Duplicate
+        );
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Re-admission stays blocked until the spilled copy itself leaves the queue,
+        // regardless of whether fairness pops it before or after the reserved
+        // critical backlog.
+        let first = g.pop_ready();
+        assert!(matches!(first, Some(100) | Some(101) | Some(102)));
+        if first != Some(102) {
+            assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+            let second = g.pop_ready();
+            assert!(matches!(second, Some(100) | Some(101) | Some(102)));
+            if second != Some(102) {
+                assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+                assert_eq!(g.pop_ready(), Some(102));
+            }
+        }
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Accepted);
     }
 
     #[test]
@@ -1271,7 +1753,61 @@ mod tests {
             g.admit(99, IngressClass::Critical),
             AdmitOutcome::Backpressured
         );
-        assert_eq!(g.pop_ready(), None);
+
+        // Long-lived schedulers may keep polling a hard-stopped lane before any
+        // new capacity appears. Those idle polls must preserve restored duplicate
+        // metadata instead of erasing it as if the lane had drained normally.
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+        }
+    }
+
+    #[test]
+    fn qos_snapshot_stays_hard_stopped_while_restored_duplicate_metadata_survives_idle_polls() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by caches while the
+        // hard-stop lane remains empty.
+        g.seen_global.insert(41);
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+        g.critical_served_streak = 7;
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        assert_eq!(g.qos_snapshot(), expected);
+
+        // Idle scheduler polls must keep observability pinned to hard-stop semantics
+        // while preserved duplicate knowledge continues to classify restored ids.
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+        }
+
+        // Even though duplicate metadata is preserved, idle self-heal should still
+        // cold-reset fairness bookkeeping under hard-stop mode.
+        assert_eq!(g.critical_served_streak, 0);
     }
 
     #[test]

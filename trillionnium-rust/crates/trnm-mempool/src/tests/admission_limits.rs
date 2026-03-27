@@ -148,6 +148,29 @@ fn duplicate_stays_duplicate_when_lane_is_globally_full() {
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_preserves_cross_class_duplicate_and_fresh_backpressure() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    // Fill dedicated normal capacity first, then borrow the final idle critical slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+
+    // The borrowed tx id must still dedupe globally across ingress classes.
+    assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+    // Fresh critical ingress must remain backpressured until the borrowed slot drains.
+    assert_eq!(
+        g.admit(88, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
+
+    assert_eq!(g.pop_ready(), Some(77));
+    assert_eq!(g.admit(88, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn duplicate_semantics_survive_stale_seen_global_under_saturation() {
     let mut g = LaneAdmissionGate::new(2, 1);
 

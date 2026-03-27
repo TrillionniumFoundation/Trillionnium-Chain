@@ -94,3 +94,27 @@ fn hard_stop_idle_pop_preserves_restored_duplicate_metadata() {
         AdmitOutcome::Backpressured
     );
 }
+
+#[test]
+fn hard_stop_restored_duplicate_probes_keep_queue_accounting_flat() {
+    let mut g = LaneAdmissionGate::new(0, 0);
+
+    // Simulate restored duplicate metadata in all seen caches while the lane is
+    // temporarily hard-stopped. Replayed duplicates should stay Duplicate without
+    // ever fabricating queue occupancy.
+    g.normal.seen.insert(11);
+    g.critical.seen.insert(12);
+    g.seen_global.insert(13);
+
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+
+    for _ in 0..2 {
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(13, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+    }
+}
