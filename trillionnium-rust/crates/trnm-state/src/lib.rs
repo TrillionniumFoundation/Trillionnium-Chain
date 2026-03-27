@@ -12023,6 +12023,41 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases() {
+        let mut st = StateStore::new();
+
+        st.pending_gov_updates.insert(
+            "resolve_authority".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 88_888,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(
+            !st.pending_gov_updates.contains_key("resolve_authority"),
+            "reserved emergency_pause key-id rejection must scrub stale alias occupants sharing id=7999"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
     fn restore_pending_gov_update_rejects_incomplete_zero_activation_height_metadata() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(
