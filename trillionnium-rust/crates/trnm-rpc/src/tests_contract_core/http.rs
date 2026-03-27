@@ -265,6 +265,45 @@ fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
+    let out = parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
+        .expect("default should parse");
+    assert_eq!(out.limit, QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT);
+    assert!(out.source.is_none());
+    assert!(out.event_type.is_none());
+    assert!(out.cursor.is_none());
+
+    let out = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source=trnm.task&eventType=trnm.task.commit&limit=3&cursor=2",
+    )
+    .expect("explicit query should parse");
+    assert_eq!(out.source.as_deref(), Some("trnm.task"));
+    assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
+    assert_eq!(out.limit, 3);
+    assert_eq!(out.cursor, Some(2));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_unrelated_query_keys() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source=trnm.task&foo=bar",
+    )
+    .expect_err("unexpected keys should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid query"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?cursor=bad",
+    )
+    .expect_err("invalid cursor should fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid cursor"));
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health"), None);
