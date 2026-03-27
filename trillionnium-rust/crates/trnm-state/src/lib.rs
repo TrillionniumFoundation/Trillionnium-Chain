@@ -4474,6 +4474,19 @@ mod tests {
             !checkpoint_evidence_surface_is_canonical(&mismatched_checkpoint_wal_hash, &wal_entry),
             "checkpoint evidence surfaces must bind wal_entry_hash_hex to the exact WAL content hash"
         );
+
+        let mut whitespace_padded_prev_hash_wal = wal_entry.clone();
+        whitespace_padded_prev_hash_wal.prev_hash_hex = Some(format!("{} ", "01".repeat(32)));
+        let mut whitespace_padded_prev_hash_checkpoint = checkpoint.clone();
+        whitespace_padded_prev_hash_checkpoint.wal_entry_hash_hex =
+            whitespace_padded_prev_hash_wal.content_hash_hex();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(
+                &whitespace_padded_prev_hash_checkpoint,
+                &whitespace_padded_prev_hash_wal,
+            ),
+            "checkpoint evidence surfaces must reject whitespace-padded non-genesis prev_hash_hex so DA/light-verifier linkage stays canonical"
+        );
     }
 
     #[test]
