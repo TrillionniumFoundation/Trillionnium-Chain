@@ -674,7 +674,8 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
 #[cfg(test)]
 mod tests {
-    use super::{build_hot_streak_txs, build_mixed_txs};
+    use super::{build_hot_streak_txs, build_mixed_txs, chrono_like_iso};
+    use std::time::{Duration, UNIX_EPOCH};
     use trnm_executor::GroupingProfile;
 
     #[test]
@@ -771,6 +772,15 @@ mod tests {
                 "tx {idx} should avoid duplicate side reads when keys >= read_fanout"
             );
         }
+    }
+
+    #[test]
+    fn chrono_like_iso_formats_unix_epoch_and_next_second_stably() {
+        assert_eq!(chrono_like_iso(UNIX_EPOCH), "1970-01-01T00:00:00Z");
+        assert_eq!(
+            chrono_like_iso(UNIX_EPOCH + Duration::from_secs(1)),
+            "1970-01-01T00:00:01Z"
+        );
     }
 
     #[test]
