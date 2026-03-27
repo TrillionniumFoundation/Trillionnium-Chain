@@ -5,15 +5,50 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-TS="$(date +%Y%m%d-%H%M%S)"
+export TZ="${TZ:-UTC}"
+export LC_ALL="${LC_ALL:-C}"
+export LANG="${LANG:-C}"
+
+TS="$(date -u +%Y%m%d-%H%M%S)"
 OUT_DIR="$ROOT/run/preflight"
 LOG="$OUT_DIR/preflight-$TS.log"
 SUMMARY="$OUT_DIR/go-no-go-$TS.txt"
 mkdir -p "$OUT_DIR"
 
-log() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
+GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+if [ "$GIT_BRANCH_RAW" = "HEAD" ]; then
+  GIT_BRANCH="<detached-HEAD>"
+  GIT_HEAD_STATE="detached"
+else
+  GIT_BRANCH="$GIT_BRANCH_RAW"
+  GIT_HEAD_STATE="attached"
+fi
+GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || echo unknown)"
+GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
+if [ -z "$GIT_STATUS_SHORT" ]; then
+  GIT_STATUS_SUMMARY="clean"
+else
+  GIT_STATUS_SUMMARY="dirty"
+fi
+CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
+  BEGIN { in_match=0 }
+  /^worktree / {
+    in_match = ($2 == target)
+  }
+  in_match { print }
+  in_match && /^$/ { exit }
+' || true)"
+if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
+  CURRENT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
+else
+  CURRENT_WORKTREE_BRANCH_REF=""
+fi
+
+log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
 log "start testnet preflight"
+log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_status_summary=$GIT_STATUS_SUMMARY"
 
 log "check rust toolchain"
 command -v cargo >/dev/null
@@ -69,7 +104,21 @@ cat > "$SUMMARY" <<EOF
 rust_l1_testnet_preflight
 status=GO
 timestamp=$TS
+generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 log=$LOG
+git_toplevel=$GIT_TOPLEVEL
+git_branch=$GIT_BRANCH
+git_head=$GIT_HEAD
+git_head_state=$GIT_HEAD_STATE
+git_status_summary=$GIT_STATUS_SUMMARY
+git_worktree_path=$GIT_TOPLEVEL
+git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+git_worktree_entry_begin
+$CURRENT_WORKTREE_ENTRY
+git_worktree_entry_end
+git_status_short_begin
+$GIT_STATUS_SHORT
+git_status_short_end
 audit=$latest_audit
 bench_classic=$latest_bench
 bench_mixed=$latest_mixed

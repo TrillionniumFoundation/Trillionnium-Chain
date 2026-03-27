@@ -23,7 +23,34 @@ export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
-GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+if [[ "$GIT_BRANCH_RAW" == "HEAD" ]]; then
+  GIT_BRANCH="<detached-HEAD>"
+  GIT_HEAD_STATE="detached"
+else
+  GIT_BRANCH="$GIT_BRANCH_RAW"
+  GIT_HEAD_STATE="attached"
+fi
+GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || echo unknown)"
+GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
+if [[ -z "$GIT_STATUS_SHORT" ]]; then
+  GIT_STATUS_SUMMARY="clean"
+else
+  GIT_STATUS_SUMMARY="dirty"
+fi
+CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
+  BEGIN { in_match=0 }
+  /^worktree / {
+    in_match = ($2 == target)
+  }
+  in_match { print }
+  in_match && /^$/ { exit }
+' || true)"
+if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
+  CURRENT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
+else
+  CURRENT_WORKTREE_BRANCH_REF=""
+fi
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT_INPUT="${OUT_DIR:-$ROOT/run/health}"
@@ -113,8 +140,23 @@ find_challenge_reexec_entry() {
   echo "local_release_evidence=evidence-$TS"
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
+  echo "git_toplevel=$GIT_TOPLEVEL"
   echo "git_branch=$GIT_BRANCH"
   echo "git_head=$GIT_HEAD"
+  echo "git_head_state=$GIT_HEAD_STATE"
+  echo "git_status_summary=$GIT_STATUS_SUMMARY"
+  echo "git_worktree_path=$GIT_TOPLEVEL"
+  echo "git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}"
+  echo "git_worktree_entry_begin"
+  if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
+    printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
+  fi
+  echo "git_worktree_entry_end"
+  echo "git_status_short_begin"
+  if [[ -n "$GIT_STATUS_SHORT" ]]; then
+    printf '%s\n' "$GIT_STATUS_SHORT"
+  fi
+  echo "git_status_short_end"
   echo "evidence_dir=$EVIDENCE_DIR"
   echo "replay_out_dir=$BASE_OUT"
   echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"

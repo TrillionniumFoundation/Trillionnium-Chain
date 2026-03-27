@@ -35,6 +35,59 @@
 OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 ```
 
+## Operator handoff / 引用纪律清单
+
+在把本地证据包交给 validator/operator/release reviewer 之前，先按下面清单逐项确认：
+
+0. **先确认 worktree / branch / commit 身份，再引用任何 evidence 字段。**
+   - 运行：`git rev-parse --show-toplevel && git branch --show-current && git rev-parse HEAD && git status --short && git worktree list --porcelain`
+   - `git rev-parse --show-toplevel` 必须与本次演练目标 worktree 一致。
+   - `git branch --show-current` 不能为空；若为空，按 detached HEAD 处理，直接视为 **No-Go**，不要继续把 `summary.txt` 当成可交接证据。
+   - `summary.txt` 中的 `git_worktree_branch_ref=` 若为 `<detached-or-unbound>`，同样按 **No-Go** 处理；先解释 worktree 绑定异常，再讨论其他日志。
+   - `git status --short` 非空时，只能把本轮证据当作脏树留痕，不能口述成 clean-tree release evidence。
+   - 若本轮由 lane/supervisor 指定了**固定 worktree 路径 + 固定 branch ref**，不要靠 shell prompt 目测；先执行一个 fail-closed 断言块，例如：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket-or-lane"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+CURRENT_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+CURRENT_BRANCH_NAME="$(git branch --show-current)"
+CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
+
+[ -n "$CURRENT_BRANCH_NAME" ] || { echo "detached HEAD: no branch checked out" >&2; exit 1; }
+[ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
+  printf 'worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
+[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF" ] || {
+  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$CURRENT_BRANCH_REF" >&2
+  exit 1
+}
+```
+
+   - 只有在上述断言通过后，才开始 `./scripts/run_local_release_evidence.sh` / `./scripts/release_rc.sh`，避免把错误 worktree 上生成的 artifact 误交接给 validator/operator。
+
+1. **先看 `summary.txt` / `manifest.txt`，不要凭终端滚屏口述结论。**
+   - local evidence 以 `summary.txt` 为唯一汇总入口。
+   - RC rehearsal 以 `manifest.txt` 为审计入口；必要时再展开对应 `*.log`。
+2. **先看 `result=` / `pass_count=` / `fail_count=`，再看单项日志。**
+   - 只要出现任意 `FAIL(...)`，本轮就只能算失败留痕，不能表述成当前 release-ready 证据。
+3. **引用命令时优先复制脚本产出的 `replay_command=` / `rollback_command=`。**
+   - 不要手工重写成“差不多一样”的命令，避免漏掉 deterministic 前缀、`OUT_DIR`、或固定的 `TRNM_CHALLENGE_REEXEC_ENTRY`。
+4. **把历史证据和当前 truth-source 明确分开。**
+   - `historical_evidence_only=true` 表示它只能证明“这轮本地/历史演练发生过什么”，不能替代仓库根 `RELEASE_READINESS.md` 的当前结论。
+5. **交接时至少带上 4 个锚点字段。**
+   - `git_branch=`
+   - `git_head=`
+   - `generated_at=`
+   - `truth_source=`
+
+推荐交接口径：
+
+> “本次证据包/RC manifest 仅说明该分支在该时间点、该环境下的本地演练结果；当前是否可发布，仍以 `truth_source=` 指向的 `RELEASE_READINESS.md` 为准。”
+
+这条口径的目的，是把 Cosmos/CometBFT 式的 validator/operator handoff 做到 **可审计、可复放、可回滚**，避免“终端看起来绿过一次”就被误转述成 release 结论。
+
 ## RC 复现与回滚留痕（M3）
 
 为减少“同命令不同结果”的波动，建议在采集证据前固定环境，并优先使用与 `RELEASE_READINESS.md` 一致的 deterministic 前缀：

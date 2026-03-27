@@ -15,7 +15,7 @@
 
 ## Stage-1 的最小通过定义
 
-内部 devnet-ready 的最低门槛建议收敛为以下 6 项：
+内部 devnet-ready 的最低门槛建议收敛为以下 7 项：
 
 1. **工作区身份固定**
    - 记录 `git branch --show-current`
@@ -40,9 +40,150 @@
    - 至少为 `trnm-state` / `trnm-rpc` / `trnm-node` / `trnm-pouw` / `trnm-worker-agent` / `trnm-cli` 刷新 test inventory；
    - 用来防止“测试条目在漂移，但门禁只记得旧名字”。
 
-6. **repo hygiene blocker 单独挂牌**
+6. **运维预检 / 回滚锚点固定**
+   - 记录本次 smoke / rehearsal 使用的分支名、提交短 SHA、构建时间与产物位置；
+   - 若使用本地二进制，至少记录 `sha256sum`（或平台等价命令）与生成命令；
+   - 若 bring-up / 巡检 / handoff 同时依赖 `trnm-node` 与 `trnm-cli`，两者都要单独记录二进制路径、hash 与 build command，避免“节点进程版本”和“操作员查询/发布工具版本”被误认为同一份构建；
+   - 明确上一稳定锚点（上一个已知可恢复的 commit/tag）与回滚入口脚本；
+   - 目的：避免出现“跑的是哪一个二进制”和“回退到哪里”说不清。
+
+7. **本地提交门禁与 handoff 口径固定**
+   - 对外发布、打 tag、生成 release note 之前，先把本轮证据收敛到一个**本地已提交**的 path-scoped commit；
+   - commit message 应明确作用域（例如 `docs(release): ...` / `trnm-node: ...` / `trnm-cli: ...`），避免把 unrelated dirty tree 混进 release 叙事；
+   - handoff 至少附上：`branch`、`commit_short`、`binary_sha256`、`previous_stable_anchor`、`rollback_entrypoint`；
+   - 若 required tests 未绿，则允许保留本地改动继续修复，但**不得**把该状态描述成 release candidate。
+
+8. **repo hygiene blocker 单独挂牌**
    - dirty tree、历史文档漂移、未归档的大批新增文件，必须单列为 blocker；
    - 不允许因为 smoke 通过，就把整个仓库描述成“release-ready”。
+
+## 操作员预检记录模板（建议每次 rehearsal 都填写）
+
+在执行 bring-up / smoke 前，先固定以下信息：
+
+```text
+operator_id=
+worktree_root=
+workspace_root=
+branch=
+branch_ref=
+head_sha=
+commit_short=
+worktree_status=clean|dirty
+binary_path=
+binary_sha256=
+build_command=
+cli_binary_path=
+cli_binary_sha256=
+cli_build_command=
+previous_stable_anchor=
+rollback_entrypoint=
+```
+
+最少要求：
+- `worktree_root` 与 `workspace_root` 能回答“证据究竟是在哪个 worktree / cargo workspace 里跑出来的”；
+- `workspace_root` 必须位于当前 `worktree_root` 之内；若指向别的目录（哪怕是另一个 lane worktree 或外部 checkout），预检脚本应直接 fail-closed，避免把当前 lane 的 branch/commit 与外部构建产物混写进同一份 handoff；
+- `branch` / `branch_ref` / `head_sha` 与 `commit_short` 共同固定这次证据绑定的是哪一条 lane 引用与哪一个精确提交，避免只记录短 branch 名后在多 worktree 并行时发生同名误判；
+- 预检命令中显式传入 `--expected-branch-ref "refs/heads/$EXPECTED_BRANCH"`，可把“采集到的 branch_ref”与“操作者声称要验证的 refs/heads/... ”绑定到同一条 fail-closed 校验链路，而不是仅靠脚本推导；
+- `binary_sha256` 与 `build_command` 能回答“这次跑的到底是哪一个 `trnm-node` 构建”；
+- 若本轮使用 `trnm-cli` 做查询 / handoff / 预检，则 `cli_binary_sha256` 与 `cli_build_command` 必须能回答“操作员看到的结果来自哪一个 CLI 构建”；
+- `previous_stable_anchor` 与 `rollback_entrypoint` 能回答“失败后退回哪里、怎么退”。
+
+建议把上述字段做成一次性预检采集，避免手填时漏项或把不同 worktree 的值抄混。优先直接使用脚本：`scripts/v2/collect_release_operator_preflight.sh`
+
+```bash
+./scripts/v2/collect_release_operator_preflight.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch "$EXPECTED_BRANCH" \
+  --expected-branch-ref "refs/heads/$EXPECTED_BRANCH" \
+  --expected-head "$EXPECTED_HEAD" \
+  --previous-stable-anchor "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}" \
+  --rollback-entrypoint "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
+```
+
+若只想人工理解脚本采集了哪些字段，可参考它的等价展开：
+
+```bash
+cd trillionnium-rust
+WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+WORKSPACE_ROOT="$(pwd)"
+printf 'operator_id=%s\n' "${OPERATOR_ID:-<fill-me>}"
+printf 'worktree_root=%s\n' "$WORKTREE_ROOT"
+printf 'workspace_root=%s\n' "$WORKSPACE_ROOT"
+CURRENT_BRANCH="$(git branch --show-current)"
+CURRENT_HEAD="$(git rev-parse HEAD)"
+test -n "$CURRENT_BRANCH"
+printf 'branch=%s\n' "$CURRENT_BRANCH"
+printf 'branch_ref=%s\n' "refs/heads/$CURRENT_BRANCH"
+printf 'head_sha=%s\n' "$CURRENT_HEAD"
+printf 'commit_short=%s\n' "${CURRENT_HEAD:0:9}"
+printf 'worktree_status=%s\n' "$(test -z "$(git status --short)" && echo clean || echo dirty)"
+printf 'binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-node"
+printf 'build_command=%s\n' 'cargo build -p trnm-node'
+shasum -a 256 target/debug/trnm-node | awk '{printf "binary_sha256=%s\n", $1}'
+printf 'cli_binary_path=%s\n' "$WORKSPACE_ROOT/target/debug/trnm-cli"
+printf 'cli_build_command=%s\n' 'cargo build -p trnm-cli'
+if [[ -x target/debug/trnm-cli ]]; then
+  shasum -a 256 target/debug/trnm-cli | awk '{printf "cli_binary_sha256=%s\n", $1}'
+else
+  printf 'cli_binary_sha256=%s\n' '<not-built>'
+fi
+printf 'previous_stable_anchor=%s\n' "${PREVIOUS_STABLE_ANCHOR:-<fill-me>}"
+printf 'rollback_entrypoint=%s\n' "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.sh}"
+```
+
+若本轮涉及 validator 配置或 peer 变更，额外固定配置指纹，避免 smoke 证据与实际 bring-up 配置脱钩：
+
+```bash
+cd trillionnium-rust
+for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml; do
+  shasum -a 256 "$f"
+done
+```
+
+建议把输出直接附到 rehearsal/evidence 记录中；这样至少能回答三件事：
+1. 本轮是哪个操作员、在哪个 worktree/workspace/branch/commit 上执行；
+2. 实际启动的是哪一个 `trnm-node` 二进制；
+3. 参与 bring-up 的节点配置是否与证据记录一致。
+
+若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**，若本轮要固化证据，还应把预期 `HEAD` 一并钉住。`verify_lane_worktree.sh` 的分支参数是二选一：传 `--expected-branch` **或** `--expected-branch-ref`，不要同时传。对 handoff / release 证据，优先固定完整 `refs/heads/...` 形式：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
+EXPECTED_BRANCH="lane/refXX-scope-name"
+EXPECTED_BRANCH_REF="refs/heads/$EXPECTED_BRANCH"
+EXPECTED_HEAD="$(git -C "$EXPECTED_WORKTREE_ROOT" rev-parse HEAD)"
+cd "$EXPECTED_WORKTREE_ROOT"
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  --expected-head "$EXPECTED_HEAD"
+```
+
+脚本位置：`scripts/v2/verify_lane_worktree.sh`
+
+若只需要人工 spot-check，也至少保留以下原始命令输出到 evidence：
+
+```bash
+pwd
+git rev-parse --show-toplevel
+git branch --show-current
+git rev-parse HEAD
+```
+
+对 lane worktree，建议把**期望路径与期望分支**直接写进本轮命令，避免仅靠人工比对输出：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
+EXPECTED_BRANCH="lane/refXX-scope-name"
+test "$(pwd)" = "$EXPECTED_WORKTREE_ROOT"
+test "$(git rev-parse --show-toplevel)" = "$EXPECTED_WORKTREE_ROOT"
+test "$(git branch --show-current)" = "$EXPECTED_BRANCH"
+```
+
+只要任一比较失败，就应立即停止当前 bring-up / smoke / release 证据收集，并把这次运行标记为 **worktree mismatch**，不要继续补跑后续门禁。
+
+对于 lane 化运行，建议把 `EXPECTED_WORKTREE_ROOT` / `EXPECTED_BRANCH` / `EXPECTED_HEAD` 作为 runbook 参数或环境变量显式传入，而不是依赖人工目测当前 shell 提示符；这样在多 worktree 并行时可以更稳地 fail-closed，也能避免把别的 worktree 的 commit 误记成当前 bring-up 证据。 
 
 ## 最小 bring-up 路径
 
@@ -153,6 +294,22 @@ cd trillionnium-rust
    - `./scripts/run_local_release_evidence.sh`
    - `./scripts/release_rc.sh`
 4. 最后更新 `RELEASE_READINESS.md` 结论段，而不是反过来。
+
+## 操作员命令口径（避免路径歧义）
+
+为避免在仓库根目录与 `trillionnium-rust/` 工作区之间切换时误跑命令，建议固定如下口径：
+
+- 若当前目录是仓库根：
+
+```bash
+cd trillionnium-rust
+cargo test -p trnm-node -- --test-threads=1
+cargo test -p trnm-cli -- --test-threads=1
+```
+
+- 若当前目录已经是 `trillionnium-rust/`：直接执行同样的 `cargo test -p ...` 命令即可。
+
+- 在证据或 runbook 中记录命令时，优先保留**执行目录 + 原始命令**，避免事后无法判断 `cargo` 是在哪个 workspace 下运行。
 
 ## 回滚
 
