@@ -1,7 +1,93 @@
 use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
+fn access_domain_versions_are_consistent(objs: &[ObjectRef]) -> bool {
+    if objs.len() <= 1 {
+        return true;
+    }
+
+    if objs.len() == 2 {
+        return objs[0].id != objs[1].id || objs[0].version == objs[1].version;
+    }
+
+    if objs.len() <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(objs.len());
+    for obj in objs {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+fn combined_access_domain_versions_are_consistent(
+    reads: &[ObjectRef],
+    writes: &[ObjectRef],
+) -> bool {
+    if reads.is_empty() {
+        return access_domain_versions_are_consistent(writes);
+    }
+    if writes.is_empty() {
+        return access_domain_versions_are_consistent(reads);
+    }
+
+    let total_len = reads.len() + writes.len();
+    if total_len <= 1 {
+        return true;
+    }
+
+    if reads.len() == 1 && writes.len() == 1 {
+        return reads[0].id != writes[0].id || reads[0].version == writes[0].version;
+    }
+
+    if total_len <= 8 {
+        let mut seen: Vec<(u64, u64)> = Vec::with_capacity(total_len);
+        for obj in writes.iter().chain(reads.iter()) {
+            match seen.iter().find(|(id, _)| *id == obj.id) {
+                Some((_, version)) if *version != obj.version => return false,
+                Some(_) => {}
+                None => seen.push((obj.id, obj.version)),
+            }
+        }
+        return true;
+    }
+
+    let mut versions_by_id: HashMap<u64, u64> = HashMap::with_capacity(total_len);
+    for obj in writes.iter().chain(reads.iter()) {
+        match versions_by_id.insert(obj.id, obj.version) {
+            Some(version) if version != obj.version => return false,
+            Some(_) | None => {}
+        }
+    }
+
+    true
+}
+
+#[inline]
+fn assert_tx_access_domain_versions_are_consistent(tx: &Tx) {
+    assert!(
+        combined_access_domain_versions_are_consistent(&tx.read_set, &tx.write_set),
+        "mixed access domain contains the same object id with multiple versions"
+    );
+}
+
 pub(crate) fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    assert_tx_access_domain_versions_are_consistent(a);
+    assert_tx_access_domain_versions_are_consistent(b);
+
     // Read-only pairs can never conflict; skip three intersection probes in
     // the common telemetry/transfer path where writes are absent.
     if a.write_set.is_empty() && b.write_set.is_empty() {
@@ -16,6 +102,13 @@ pub(crate) fn detect_conflict(a: &Tx, b: &Tx) -> bool {
     }
     if b.write_set.is_empty() {
         return intersects(&a.write_set, &b.read_set);
+    }
+
+    // Pure write/write pairs cannot produce read hazards; keep the shared
+    // object-domain classifier aligned with lib.rs so Sui-like scheduler paths
+    // retain the same single-probe semantics in both implementations.
+    if a.read_set.is_empty() && b.read_set.is_empty() {
+        return intersects(&a.write_set, &b.write_set);
     }
 
     intersects(&a.write_set, &b.write_set)
@@ -39,6 +132,11 @@ pub(crate) fn access_key(obj: &ObjectRef) -> u64 {
 
 #[inline]
 pub(crate) fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
+    assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
     // Small-set fast path avoids HashSet allocation for common tiny access lists.
     if objs.len() <= 8 {
         let mut out: Vec<u64> = Vec::with_capacity(objs.len());
@@ -206,6 +304,7 @@ pub(crate) fn hot_object_share(txs: &[Tx]) -> f64 {
     let mut total = 0usize;
 
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
         let mut keys = dedup_access_keys(&tx.read_set);
         for key in dedup_access_keys(&tx.write_set) {
             if !keys.contains(&key) {
@@ -233,6 +332,7 @@ pub(crate) fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     let mut footprint = 0usize;
     for tx in txs {
+        assert_tx_access_domain_versions_are_consistent(tx);
         footprint = footprint
             .saturating_add(tx.read_set.len())
             .saturating_add(tx.write_set.len());

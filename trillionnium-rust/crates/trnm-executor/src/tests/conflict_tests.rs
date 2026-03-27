@@ -35,6 +35,25 @@ fn read_only_overlap_is_non_conflicting() {
 }
 
 #[test]
+fn read_only_same_object_different_versions_remains_non_conflicting() {
+    let older = tx(
+        1,
+        vec![ObjectRef { id: 77, version: 1 }],
+        vec![],
+    );
+    let newer = tx(
+        2,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![],
+    );
+
+    assert!(
+        !detect_conflict(&older, &newer),
+        "pure read/read access must remain non-conflicting even when equivalent Sui-style object refs carry different versions"
+    );
+}
+
+#[test]
 fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
     let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
     let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
@@ -159,19 +178,55 @@ fn object_version_updates_still_conflict_on_same_object_id() {
 }
 
 #[test]
-fn dedup_access_keys_collapses_same_object_across_versions() {
-    let keys = dedup_access_keys(&[
+fn mixed_read_write_echo_still_conflicts_with_same_object_version_update() {
+    let echoed = tx(
+        1,
+        vec![ObjectRef { id: 77, version: 1 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    );
+    let version_update = tx(
+        2,
+        vec![],
+        vec![ObjectRef { id: 77, version: 2 }],
+    );
+
+    assert!(
+        detect_conflict(&echoed, &version_update),
+        "same-object read/write echoes must serialize against later writes even when the peer carries a newer object ref version"
+    );
+    assert!(
+        detect_conflict(&version_update, &echoed),
+        "conflict classification must stay symmetric for mixed echo domains under version updates"
+    );
+}
+
+#[test]
+#[should_panic(expected = "access domain contains the same object id with multiple versions")]
+fn dedup_access_keys_rejects_same_object_version_skew() {
+    let _ = dedup_access_keys(&[
         ObjectRef { id: 100, version: 1 },
         ObjectRef { id: 200, version: 1 },
         ObjectRef { id: 100, version: 2 },
         ObjectRef { id: 300, version: 1 },
-        ObjectRef { id: 400, version: 1 },
-        ObjectRef { id: 300, version: 9 },
-        ObjectRef { id: 500, version: 1 },
-        ObjectRef { id: 600, version: 1 },
-        ObjectRef { id: 700, version: 1 },
-        ObjectRef { id: 600, version: 8 },
     ]);
+}
 
-    assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn hot_object_share_rejects_cross_domain_version_skew_for_same_object_id() {
+    let _ = hot_object_share(&[tx(
+        1,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    )]);
+}
+
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+    let _ = access_map_capacity_hint(&[tx(
+        1,
+        vec![ObjectRef { id: 77, version: 2 }],
+        vec![ObjectRef { id: 77, version: 1 }],
+    )]);
 }

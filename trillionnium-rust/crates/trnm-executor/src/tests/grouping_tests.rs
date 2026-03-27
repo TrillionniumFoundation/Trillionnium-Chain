@@ -39,6 +39,28 @@ fn same_object_different_versions_land_in_separate_groups() {
 }
 
 #[test]
+fn read_only_same_object_different_versions_share_one_group() {
+    let txs = vec![
+        Tx {
+            id: 1,
+            read_set: vec![ObjectRef { id: 55, version: 1 }],
+            write_set: vec![],
+            payload: vec![],
+        },
+        Tx {
+            id: 2,
+            read_set: vec![ObjectRef { id: 55, version: 2 }],
+            write_set: vec![],
+            payload: vec![],
+        },
+    ];
+
+    let groups = build_parallel_groups(&txs);
+    assert_eq!(groups.len(), 1);
+    assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![1, 2]);
+}
+
+#[test]
 fn strategy_preserves_tx_count() {
     let txs = vec![
         tx(1, vec![o(1)], vec![o(2)]),
