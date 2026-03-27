@@ -3612,6 +3612,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_zero_primary_echo_stable_when_single_suffix_flips_roles() {
+        let write_suffix = tx(1, vec![o(0), o(13)], vec![o(0), o(7)]);
+        let read_suffix = tx(2, vec![o(0), o(7)], vec![o(0), o(13)]);
+
+        // When object id 0 is echoed across both domains and each side contributes
+        // one distinct non-primary key, lane isolation should keep the smallest
+        // global suffix instead of drifting with read/write ownership.
+        assert_eq!(hot_bucket_keys(&write_suffix), (0, 7));
+        assert_eq!(hot_bucket_keys(&write_suffix), hot_bucket_keys(&read_suffix));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
