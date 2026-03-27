@@ -85,6 +85,7 @@ cli_build_command=
 最低要求：
 - 节点进程版本和 CLI 版本分开写；
 - 如果 CLI 未构建，明确写 `<not-built>`，不要留空；
+- `binary_path` / `cli_binary_path` 应记录为 worktree 内可复现的绝对路径，避免相对路径受当前 shell 目录影响；
 - handoff 接收方必须能据此在本地重建同一份二进制指纹。
 
 ---

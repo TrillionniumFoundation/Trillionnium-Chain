@@ -54,6 +54,34 @@ case "$CANONICAL_WORKSPACE_ROOT" in
     ;;
 esac
 WORKSPACE_ROOT="$CANONICAL_WORKSPACE_ROOT"
+
+normalize_report_path() {
+  local input="$1"
+  local base="$2"
+  local candidate=""
+  local parent=""
+  local name=""
+
+  if [[ -z "$input" ]]; then
+    printf '%s\n' "$input"
+    return 0
+  fi
+
+  if [[ "$input" == /* ]]; then
+    candidate="$input"
+  else
+    candidate="$base/$input"
+  fi
+
+  parent="$(dirname "$candidate")"
+  name="$(basename "$candidate")"
+  if [[ -d "$parent" ]]; then
+    printf '%s/%s\n' "$(cd "$parent" && pwd -P)" "$name"
+  else
+    printf '%s\n' "$candidate"
+  fi
+}
+
 CURRENT_BRANCH=""
 CURRENT_HEAD=""
 WORKTREE_STATUS=""
@@ -202,6 +230,9 @@ fi
 CURRENT_BRANCH="$(git branch --show-current)"
 CURRENT_HEAD="$(git rev-parse HEAD)"
 WORKTREE_STATUS="$(test -z "$(git status --short)" && echo clean || echo dirty)"
+BINARY_PATH="$(normalize_report_path "$BINARY_PATH" "$WORKSPACE_ROOT")"
+CLI_BINARY_PATH="$(normalize_report_path "$CLI_BINARY_PATH" "$WORKSPACE_ROOT")"
+ROLLBACK_ENTRYPOINT="$(normalize_report_path "$ROLLBACK_ENTRYPOINT" "$ROOT")"
 
 if [[ -z "$CURRENT_BRANCH" ]]; then
   echo "[FAIL] detached HEAD is not allowed; check out the lane branch before collecting operator preflight evidence" >&2
