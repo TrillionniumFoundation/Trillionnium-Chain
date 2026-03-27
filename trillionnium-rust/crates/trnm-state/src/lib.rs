@@ -3,7 +3,8 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject, TaskStatus,
+    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32,
+    EMERGENCY_PAUSE_KEY_ID, ObjectRef, TaskObject, TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -178,7 +179,6 @@ pub enum GovPendingUpdateAction {
 
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
-const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
 const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
@@ -7911,6 +7911,25 @@ mod tests {
         assert!(
             st.get_param(7315).is_none(),
             "id accessor must fail closed when registry id and object key_id diverge"
+        );
+    }
+
+    #[test]
+    fn governance_emergency_pause_registry_stays_aligned_with_typed_key_registry() {
+        assert_eq!(
+            GovParamKey::EmergencyPause.as_str(),
+            "emergency_pause",
+            "typed governance key registry must retain the canonical emergency_pause key"
+        );
+        assert_eq!(
+            GovParamKey::EmergencyPause.canonical_key_id(),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "typed governance key registry must remain the single source of truth for the reserved emergency_pause key_id"
+        );
+        assert_eq!(
+            GOV_PINNED_KEY_IDS,
+            [(GovParamKey::EmergencyPause.as_str(), EMERGENCY_PAUSE_KEY_ID)],
+            "state-layer pinned governance registry must stay aligned with the typed emergency_pause binding"
         );
     }
 
