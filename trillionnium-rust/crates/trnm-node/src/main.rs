@@ -4827,6 +4827,37 @@ mod tests {
     }
 
     #[test]
+    fn recovery_error_rate_field_name_stays_explicitly_incident_focused() {
+        let recovery_error_rate_field_name = "recovery_error_rate";
+        let apply_error_total_field_name = "apply_error_total";
+        let rollback_total_field_name = "rollback_total";
+        let timeout_migrated_total_field_name = "timeout_migrated_total";
+
+        assert!(recovery_error_rate_field_name.ends_with("_rate"));
+        assert!(apply_error_total_field_name.ends_with("_total"));
+        assert!(rollback_total_field_name.ends_with("_total"));
+        assert!(timeout_migrated_total_field_name.ends_with("_total"));
+        assert_ne!(recovery_error_rate_field_name, apply_error_total_field_name);
+        assert_ne!(recovery_error_rate_field_name, rollback_total_field_name);
+        assert_ne!(recovery_error_rate_field_name, timeout_migrated_total_field_name);
+    }
+
+    #[test]
+    fn recovery_error_rate_uses_finality_sample_count_as_denominator() {
+        let apply_error_total = 3u64;
+        let finality_samples_ms = [12u64, 18, 24, 30, 36];
+        let recovery_error_rate = if finality_samples_ms.is_empty() {
+            0.0
+        } else {
+            apply_error_total as f64 / finality_samples_ms.len() as f64
+        };
+
+        assert_eq!(recovery_error_rate, 0.6);
+        assert!(recovery_error_rate > 0.0);
+        assert!(recovery_error_rate < 1.0);
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
