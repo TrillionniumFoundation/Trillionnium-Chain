@@ -2742,12 +2742,18 @@ fn http_response_for_method(method: &str, response: &str) -> String {
     let Some((headers, body)) = response.split_once("\r\n\r\n") else {
         return response.to_string();
     };
-    let status_line = headers
-        .lines()
-        .next()
-        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
-        .unwrap_or("500 Internal Server Error");
-    http_json_head_response(status_line, body.len())
+
+    let mut rebuilt = String::new();
+    for (idx, line) in headers.split("\r\n").enumerate() {
+        if idx > 0 && line.to_ascii_lowercase().starts_with("content-length:") {
+            rebuilt.push_str(&format!("Content-Length: {}\r\n", body.len()));
+            continue;
+        }
+        rebuilt.push_str(line);
+        rebuilt.push_str("\r\n");
+    }
+    rebuilt.push_str("\r\n");
+    rebuilt
 }
 
 fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {

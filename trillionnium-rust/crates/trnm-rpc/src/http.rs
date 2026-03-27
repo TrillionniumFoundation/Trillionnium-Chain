@@ -33,12 +33,18 @@ pub(crate) fn http_response_for_method(method: &str, response: &str) -> String {
     let Some((headers, body)) = response.split_once("\r\n\r\n") else {
         return response.to_string();
     };
-    let status_line = headers
-        .lines()
-        .next()
-        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
-        .unwrap_or("500 Internal Server Error");
-    http_json_head_response(status_line, body.len())
+
+    let mut rebuilt = String::new();
+    for (idx, line) in headers.split("\r\n").enumerate() {
+        if idx > 0 && line.to_ascii_lowercase().starts_with("content-length:") {
+            rebuilt.push_str(&format!("Content-Length: {}\r\n", body.len()));
+            continue;
+        }
+        rebuilt.push_str(line);
+        rebuilt.push_str("\r\n");
+    }
+    rebuilt.push_str("\r\n");
+    rebuilt
 }
 
 pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
@@ -287,5 +293,25 @@ mod tests {
         assert!(head.ends_with("\r\n\r\n"));
         assert!(!head.ends_with("BAD_REQUEST\"}"));
         assert!(head.contains("Content-Length: 33\r\n"));
+        assert!(head.contains("Content-Type: application/json\r\n"));
+    }
+
+    #[test]
+    fn http_response_for_method_preserves_non_json_head_headers() {
+        let response = concat!(
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Type: text/plain; version=0.0.4; charset=utf-8\r\n",
+            "Cache-Control: no-store\r\n",
+            "Content-Length: 4\r\n",
+            "Connection: close\r\n\r\n",
+            "pong"
+        );
+        let head = http_response_for_method("HEAD", response);
+        assert!(head.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(head.ends_with("\r\n\r\n"));
+        assert!(!head.ends_with("pong"));
+        assert!(head.contains("Content-Type: text/plain; version=0.0.4; charset=utf-8\r\n"));
+        assert!(head.contains("Cache-Control: no-store\r\n"));
+        assert!(head.contains("Content-Length: 4\r\n"));
     }
 }
