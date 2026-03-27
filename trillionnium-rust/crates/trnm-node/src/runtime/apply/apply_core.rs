@@ -112,11 +112,45 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     })
 }
 
+fn resolve_config_path(path: &str) -> std::path::PathBuf {
+    let requested = std::path::Path::new(path);
+    if requested.is_absolute() {
+        return requested.to_path_buf();
+    }
+
+    let workspace_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+    let workspace_relative = workspace_root.join(requested);
+    if workspace_relative.exists() {
+        return workspace_relative;
+    }
+
+    if requested.exists() {
+        return requested.to_path_buf();
+    }
+
+    requested.to_path_buf()
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
-    let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
-    let cfg: NodeConfig =
-        toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    validate_node_config(cfg, path)
+    let resolved = resolve_config_path(path);
+    let raw = fs::read_to_string(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
+        format!(
+            "parse toml failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    validate_node_config(cfg, resolved.to_string_lossy().as_ref())
 }
 
 pub(crate) fn compute_commitment(
