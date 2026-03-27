@@ -262,6 +262,21 @@ fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_rejects_percent_encoded_null_and_del_controls() {
+    for path in [
+        "/query-events/42?limit=7%00tail",
+        "/query-events/42?limit=7%7ftrail",
+        "/query-events/%007?limit=7",
+        "/query-events/42%7fjson?limit=7",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("percent-encoded null and del controls must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid limit"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
     for path in [
         "/query-events%2f42?limit=7",
