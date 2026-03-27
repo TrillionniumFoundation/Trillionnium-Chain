@@ -1748,7 +1748,7 @@ fn market_score_breakdown(
     if effective_reputation >= 0 {
         let reputation_reward =
             (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
-        let score_floor_applied = reputation_reward > base_score;
+        let score_floor_applied = reputation_reward >= base_score;
         MarketScoreBreakdown {
             effective_reputation,
             base_score,
@@ -6109,6 +6109,24 @@ mod tests {
         });
 
         assert_eq!(delta, i128::MIN);
+    }
+
+    #[test]
+    fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
+        let breakdown = market_score_breakdown(
+            7,
+            3,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: 10,
+            },
+        );
+
+        assert_eq!(breakdown.base_score, 21);
+        assert_eq!(breakdown.reputation_reward, 21);
+        assert_eq!(breakdown.effective_score, 0);
+        assert!(breakdown.score_floor_applied);
     }
 
     #[test]
