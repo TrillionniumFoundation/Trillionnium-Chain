@@ -3787,6 +3787,24 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_keeps_asymmetric_primary_echo_domains_on_same_lane() {
+        let buckets_n = 97usize;
+        let write_wide = tx(1, vec![o(5), o(7)], vec![o(5), o(13), o(21)]);
+        let read_wide = tx(2, vec![o(5), o(13), o(21)], vec![o(5), o(7)]);
+        let expected = ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+        // When the primary object key is echoed across both domains and only one
+        // side contributes a single non-primary suffix, keep the hot-lane bucket
+        // anchored to the same smallest global secondary even if read/write roles
+        // flip on the wider suffix set.
+        assert_eq!(hot_bucket_hint(&write_wide, buckets_n), expected);
+        assert_eq!(
+            hot_bucket_hint(&write_wide, buckets_n),
+            hot_bucket_hint(&read_wide, buckets_n)
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_is_stable_for_duplicate_heavy_equivalent_mixed_domains() {
         let buckets_n = 97usize;
         let duplicate_heavy = tx(
