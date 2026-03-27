@@ -7,9 +7,12 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 RUNS="${RUNS:-5}"
 OUT_DIR="$ROOT/run"
-TS="$(date +%Y%m%d-%H%M%S)"
+TS="$(date -u +%Y%m%d-%H%M%S)"
 REPORT="$OUT_DIR/bft-restart-recovery-$TS.txt"
 WAL_DIR="$OUT_DIR/consensus-wal-restart-$TS"
+GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+REPLAY_COMMAND="env RUNS='${RUNS}' ./scripts/check_bft_restart_recovery.sh"
+ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR")"
 mkdir -p "$OUT_DIR" "$WAL_DIR"
 
 pass=0
@@ -69,7 +72,13 @@ done
 {
   echo "runs=$RUNS"
   echo "pass=$pass"
+  echo "generated_at=$GENERATED_AT"
+  echo "report=$REPORT"
   echo "wal_dir=$WAL_DIR"
+  echo "pre_log_glob=$OUT_DIR/bft-restart-pre-${TS}-*.log"
+  echo "post_log_glob=$OUT_DIR/bft-restart-post-${TS}-*.log"
+  echo "replay_command=$REPLAY_COMMAND"
+  echo "rollback_command=$ROLLBACK_COMMAND"
   echo "status=PASS"
 } > "$REPORT"
 
