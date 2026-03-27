@@ -48,6 +48,21 @@ fn relay_proof_query_rejects_noncanonical_session() {
 }
 
 #[test]
+fn relay_proof_query_rejects_session_with_unicode_control() {
+    let relay = RelayService::new(RelayRouter::new());
+    let err = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "sp\u{202E}canonical".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: None,
+        })
+        .unwrap_err();
+    assert!(err.to_string().contains("bad_request/invalid_session"));
+}
+
+#[test]
 fn relay_proof_query_rejects_zero_from_seq() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);
