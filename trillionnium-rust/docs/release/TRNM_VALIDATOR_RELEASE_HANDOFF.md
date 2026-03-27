@@ -146,7 +146,17 @@ Interpretation rule:
 
 ### 1. Fast preflight
 
-Run:
+If the lane/ticket already assigns an exact worktree path and branch ref, bind the preflight run to that identity explicitly:
+
+```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/to/assigned-worktree" \
+EXPECTED_BRANCH_REF="refs/heads/lane/..." \
+./scripts/testnet_preflight.sh
+```
+
+Use `EXPECTED_HEAD` only when the assigned commit is part of the rehearsal contract; otherwise leave it unset.
+
+For non-lane or ad-hoc local rehearsals, run:
 
 ```bash
 ./scripts/testnet_preflight.sh
