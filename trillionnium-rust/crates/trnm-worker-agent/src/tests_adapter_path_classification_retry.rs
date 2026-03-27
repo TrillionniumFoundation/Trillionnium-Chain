@@ -1,4 +1,26 @@
 use super::*;
+
+#[test]
+fn tx_retry_policy_mixes_partial_cli_overrides_with_env_fallbacks() {
+    let policy = resolve_tx_retry_policy_from_sources(Some(1), None, Some(" 4\n"), Some("\t250 "));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 1,
+            backoff_ms: 250,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, Some(0), Some(" 4\n"), Some("\t250 "));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 4,
+            backoff_ms: 0,
+        }
+    );
+}
+
 #[test]
 fn exp_backoff_delay_saturates_without_overflow() {
     assert_eq!(exp_backoff_delay_ms(25, 0), 25);
