@@ -22,7 +22,10 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
-    if session_id.trim() != session_id || session_id.as_bytes().iter().any(|b| b.is_ascii_control())
+    if session_id.trim() != session_id
+        || !session_id
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '-' | '_' | '.'))
     {
         return Err(bad_request(
             "invalid_session",
@@ -1961,6 +1964,21 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/empty_session"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_session_with_zero_width_space() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp\u{200B}canonical".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
     }
 
     #[test]
