@@ -477,6 +477,74 @@ fn restore_task_rejects_cross_type_id_takeover_fail_closed() {
 }
 
 #[test]
+fn restore_task_cross_type_attempt_scrubs_stale_pending_resolve_on_same_id() {
+    let mut st = StateStore::new();
+    st.restore_pending_resolve_approval(
+        29,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 1,
+        }),
+    );
+    st.restore_gov_param(
+        29,
+        Some(GovParamObject {
+            key_id: 29,
+            key: "monetary_base_burn_per_tick".into(),
+            value: "11".into(),
+            version: 1,
+        }),
+    );
+    let root_before = st.state_root();
+
+    st.restore_task(
+        29,
+        Some(TaskObject {
+            task_id: 29,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(29),
+        None,
+        "cross-type task restore attempts must scrub stale staged resolve state bound to a non-task slot"
+    );
+    assert_eq!(
+        st.get_param(29)
+            .map(|param| (param.key_id, param.key, param.value, param.version)),
+        Some((29, "monetary_base_burn_per_tick".into(), "11".into(), 1)),
+        "cross-type task restore attempts must preserve the canonical non-task occupant"
+    );
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "scrubbing stale task-only residue on a cross-type restore attempt must preserve the canonical root"
+    );
+}
+
+#[test]
 fn restore_gov_param_scrubs_stale_pending_resolve_on_same_id() {
     let mut st = StateStore::new();
     st.restore_pending_resolve_approval(

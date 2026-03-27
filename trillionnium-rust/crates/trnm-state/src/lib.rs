@@ -2155,6 +2155,11 @@ impl StateStore {
             if !is_task && snapshot.is_some() {
                 // Fail closed on cross-type restore attempts: a task replay/snapshot must not
                 // evict an existing non-task object that already owns the canonical id slot.
+                // Still scrub any stale task-only pending resolve residue bound to the same id so
+                // the canonical non-task occupant remains the single source of truth for the slot.
+                if self.pending_resolve_approvals.remove(&id).is_some() {
+                    self.invalidate_state_root_cache();
+                }
                 return;
             }
         }
