@@ -5252,6 +5252,35 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_first_sampled_batch_preserves_read_only_tail_hotspot_visibility() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mirror the first sampled-batch boundary for read-only batches. Once the
+        // batch grows from 2048 to 2049 txs, adaptive detection switches from
+        // direct scan to bounded sampling and still needs to see a hotspot that
+        // appears only in the tail through the read_set fallback path.
+        let mut txs = Vec::with_capacity(2049);
+        for i in 0..1024u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..1025u64 {
+            txs.push(tx(2_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(
+            d.use_hot_bucket,
+            "first sampled batch should preserve read-only tail hotspot visibility"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_sampling_includes_batch_tail_for_hotspot_estimate() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
