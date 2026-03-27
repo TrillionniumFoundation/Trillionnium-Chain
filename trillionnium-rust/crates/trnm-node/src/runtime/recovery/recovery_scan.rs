@@ -107,8 +107,8 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             valid_checkpoints.sort_by(|a, b| {
                 a.height
                     .cmp(&b.height)
-                    .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
                     .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
+                    .then_with(|| a.wal_entry_hash_hex.cmp(&b.wal_entry_hash_hex))
             });
             if valid_checkpoints != checkpoints {
                 persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
