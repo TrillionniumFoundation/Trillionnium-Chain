@@ -1,12 +1,22 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use std::fs;
+use std::{fs, net::SocketAddr};
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct NodeConfig {
     pub(crate) node_id: String,
     pub(crate) rpc_addr: String,
     pub(crate) p2p_addr: String,
+}
+
+fn validate_listen_addr(addr: &str, field: &str, path: &str) -> Result<()> {
+    addr.parse::<SocketAddr>().with_context(|| {
+        format!(
+            "invalid node config {}: {} must be a valid socket address host:port",
+            path, field
+        )
+    })?;
+    Ok(())
 }
 
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
@@ -60,6 +70,8 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: p2p_addr must not contain control characters",
         path
     );
+    validate_listen_addr(rpc_addr, "rpc_addr", path)?;
+    validate_listen_addr(p2p_addr, "p2p_addr", path)?;
     anyhow::ensure!(
         rpc_addr != p2p_addr,
         "invalid node config {}: rpc_addr and p2p_addr must differ",
@@ -300,6 +312,42 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must not contain control characters"),
             "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invalid_rpc_socket_addr() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr without host:port must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr must be a valid socket address host:port"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invalid_p2p_socket_addr() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:not-a-port".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr without numeric port must fail closed");
+        assert!(
+            err.to_string()
+                .contains("p2p_addr must be a valid socket address host:port"),
+            "unexpected error: {err:#}"
         );
     }
 }
