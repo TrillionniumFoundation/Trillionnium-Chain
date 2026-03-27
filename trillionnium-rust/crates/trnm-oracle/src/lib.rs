@@ -371,7 +371,10 @@ fn canonical_source_cardinality(snapshot: &OracleSnapshot) -> u32 {
     snapshot
         .sources
         .iter()
-        .map(|source| source.as_str().trim().to_ascii_lowercase())
+        .filter_map(|source| {
+            let canonical = source.as_str().trim().to_ascii_lowercase();
+            (!canonical.is_empty()).then_some(canonical)
+        })
         .collect::<BTreeSet<_>>()
         .len() as u32
 }
@@ -1469,6 +1472,29 @@ mod tests {
             Some("duplicate source ids are not allowed")
         );
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    }
+
+    #[test]
+    fn observed_report_excludes_blank_source_ids_from_canonical_source_cardinality() {
+        let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "   "],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("source id is empty"));
+        assert_eq!(report.metrics.oracle_source_cardinality, 1);
     }
 
     #[test]
