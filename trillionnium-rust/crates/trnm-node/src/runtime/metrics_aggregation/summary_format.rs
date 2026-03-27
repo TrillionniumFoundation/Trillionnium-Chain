@@ -62,3 +62,48 @@ pub(crate) fn format_runtime_summary_line(
         metrics.bft_auth_reject_replay_total, metrics.bft_auth_reject_stale_nonce_total
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn runtime_summary_line_keeps_alertable_bft_auth_and_recovery_counters_visible() {
+        let mut metrics = RuntimeMetrics::new(4);
+        metrics.apply_error_total = 9;
+        metrics.rollback_total = 2;
+        metrics.timeout_migrated_total = 3;
+        metrics.bft_observed_heights = 11;
+        metrics.bft_committed_heights = 7;
+        metrics.bft_round_change_total = 5;
+        metrics.bft_round_change_active_heights = 4;
+        metrics.bft_round_change_backoff_total_ms = 33;
+        metrics.bft_round_change_backoff_active_heights = 2;
+        metrics.bft_round_change_backoff_max_ms = 21;
+        metrics.bft_double_vote_total = 1;
+        metrics.bft_auth_reject_bad_sig_total = 4;
+        metrics.bft_auth_reject_replay_total = 6;
+        metrics.bft_auth_reject_stale_nonce_total = 8;
+        metrics.bft_leader_missed_active_heights = 2;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.rollback_block_rate = 0.25;
+        stats.recovery_error_rate = 0.5;
+        stats.bft_skipped_height_total = 4;
+        stats.bft_skipped_observed_height_rate_ppm = 363_636;
+        stats.leader_missed_final = vec![0, 2, 0, 1];
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        assert!(summary.contains("apply_error_total=9"));
+        assert!(summary.contains("rollback_total=2"));
+        assert!(summary.contains("timeout_migrated_total=3"));
+        assert!(summary.contains("recovery_error_rate=0.500000"));
+        assert!(summary.contains("bft_skipped_height_total=4"));
+        assert!(summary.contains("bft_double_vote_total=1"));
+        assert!(summary.contains("bft_auth_reject_bad_sig_total=4"));
+        assert!(summary.contains("bft_auth_reject_replay_total=6"));
+        assert!(summary.contains("bft_auth_reject_stale_nonce_total=8"));
+        assert!(summary.contains("bft_leader_missed_proposals=[0, 2, 0, 1]"));
+    }
+}
