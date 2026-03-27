@@ -5,7 +5,7 @@ use crate::wal::{
 };
 use anyhow::Result;
 use std::{collections::HashSet, path::Path};
-use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta};
+use trnm_state::{verify_wal_and_find_checkpoint_node_recovery, CheckpointMeta};
 
 fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
     wal_meta_file(wal_dir).exists() || checkpoint_file(wal_dir).exists()
@@ -14,8 +14,8 @@ fn has_empty_metadata_scaffold(wal_dir: &Path) -> bool {
 pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let mut last_checkpoint =
-        verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
+    let mut last_checkpoint = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &entries)
+        .map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
     if entries.is_empty()
@@ -71,9 +71,12 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             if idx + 1 < entries.len() {
                 let discarded_tail = &entries[idx + 1..];
                 metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
-                committed_tail_beyond_checkpoint_discarded = discarded_tail
-                    .iter()
-                    .any(|e| e.committed && e.height > cp.height);
+                let retained_tip_hash = entries[idx].content_hash_hex();
+                committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
+                    e.committed
+                        && e.height > cp.height
+                        && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
+                });
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
                 truncated = true;
@@ -135,12 +138,18 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
+        let restored_round =
+            if metadata_only_recovery && !committed_tail_beyond_checkpoint_discarded {
+                0
+            } else {
+                last.round
+            };
         let next_height = last.height.saturating_add(1);
         persist_consensus_wal(
             wal_dir,
             &ConsensusWal {
                 next_height,
-                last_round: last.round,
+                last_round: restored_round,
                 locked_block_hash: restored_lock.clone(),
             },
         )?;
@@ -178,7 +187,7 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 }
 
 fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
-    match recovered.wal_entries_retained {
+    let base = match recovered.wal_entries_retained {
         0 => "retained no committed WAL entries".into(),
         1 => format!(
             "retained 1 committed WAL entry through height {}",
@@ -189,6 +198,24 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
             count,
             recovered.next_height.saturating_sub(1)
         ),
+    };
+
+    if recovered.wal_entries_retained == 0 {
+        return base;
+    }
+
+    let tip_height = recovered.next_height.saturating_sub(1);
+    match recovered.checkpoint_height_retained {
+        Some(checkpoint_height) if checkpoint_height < tip_height => {
+            let lag = tip_height - checkpoint_height;
+            let blocks = if lag == 1 { "block" } else { "blocks" };
+            format!(
+                "{} (checkpoint lags retained WAL tip by {} {})",
+                base, lag, blocks
+            )
+        }
+        None => format!("{} (no retained checkpoint metadata)", base),
+        Some(_) => base,
     }
 }
 
@@ -197,13 +224,14 @@ pub(crate) fn metadata_only_recovery_error(
     recovered: &RecoveredWalState,
 ) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
     )
 }
 

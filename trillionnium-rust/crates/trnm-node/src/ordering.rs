@@ -148,26 +148,31 @@ impl PreExecPool {
                 match entry {
                     PreExecQueueEntry::Run(job) => {
                         for id in job.ids {
-                            let Some(idx) = id.checked_sub(1).map(|raw| raw as usize) else {
-                                let _ = job
-                                    .result_tx
-                                    .send((id, false, "invalid_preexec_tx_id".into()));
-                                continue;
-                            };
-                            let Some(tx) = picked_cloned.get(idx).cloned() else {
-                                let _ = job
-                                    .result_tx
-                                    .send((id, false, "invalid_preexec_tx_id".into()));
-                                continue;
-                            };
-                            let mut local_state = snapshot_cloned.as_ref().clone();
-                            let res = apply_one(&mut local_state, tx, candidate_height);
-                            match res {
-                                Ok(_) => {
+                            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                                let idx = id
+                                    .checked_sub(1)
+                                    .map(|raw| raw as usize)
+                                    .ok_or_else(|| invalid_preexec_tx_id(id, candidate_height))?;
+                                let tx = picked_cloned
+                                    .get(idx)
+                                    .cloned()
+                                    .ok_or_else(|| invalid_preexec_tx_id(id, candidate_height))?;
+                                let mut local_state = snapshot_cloned.as_ref().clone();
+                                apply_one(&mut local_state, tx, candidate_height)
+                                    .map(|_| ())
+                                    .map_err(|e| e.to_string())
+                            }));
+                            match result {
+                                Ok(Ok(())) => {
                                     let _ = job.result_tx.send((id, true, String::new()));
                                 }
-                                Err(e) => {
-                                    let _ = job.result_tx.send((id, false, e.to_string()));
+                                Ok(Err(err)) => {
+                                    let _ = job.result_tx.send((id, false, err));
+                                }
+                                Err(_) => {
+                                    let _ = job
+                                        .result_tx
+                                        .send((id, false, preexec_worker_panic(id, candidate_height)));
                                 }
                             }
                         }
@@ -189,12 +194,14 @@ impl PreExecPool {
             return (vec![], 0);
         }
 
-        let mut unique_group_ids = Vec::with_capacity(group_ids.len());
-        let mut seen_ids = HashSet::with_capacity(group_ids.len());
-        for id in group_ids {
-            if seen_ids.insert(id) {
-                unique_group_ids.push(id);
-            }
+        let (unique_group_ids, replayed_ids) = normalize_group_ids_for_preexec(&group_ids);
+        if replayed_ids > 0 {
+            println!(
+                "[preexec] deduped_replayed_group_ids={} unique_group_ids={} replay_sample={}",
+                replayed_ids,
+                unique_group_ids.len(),
+                format_replayed_group_id_sample(&group_ids, 4)
+            );
         }
 
         let workers = self.width.min(unique_group_ids.len());
@@ -240,45 +247,66 @@ impl PreExecPool {
             .collect();
         (ordered_ok_ids, rejected)
     }
-        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
-        {
-            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
-            for w in 0..workers {
-                let ids: Vec<u64> = group_ids
-                    .iter()
-                    .copied()
-                    .enumerate()
-                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
-                    .collect();
-                if ids.is_empty() {
-                    continue;
-                }
-                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
-                    ids,
-                    result_tx: tx.clone(),
-                }));
-            }
-        }
-        self.state.cv.notify_all();
-        drop(tx);
+}
 
-        let mut succeeded = std::collections::HashSet::new();
-        let mut rejected = 0u64;
-        for (id, ok, err) in rx {
-            if ok {
-                succeeded.insert(id);
-            } else {
-                rejected += 1;
-                println!("[preexec] tx_id={} rejected err={}", id, err);
-            }
-        }
-
-        let ok_ids: Vec<u64> = group_ids
-            .into_iter()
-            .filter(|id| succeeded.contains(id))
-            .collect();
-        (ok_ids, rejected)
+fn format_replayed_group_id_sample(group_ids: &[u64], limit: usize) -> String {
+    if limit == 0 || group_ids.len() <= 1 {
+        return "[]".to_string();
     }
+
+    let mut seen_ids = HashSet::with_capacity(group_ids.len());
+    let mut replay_sample = Vec::with_capacity(limit.min(group_ids.len()));
+    let mut replayed_unique_total = 0usize;
+    for &id in group_ids {
+        if !seen_ids.insert(id) {
+            replayed_unique_total += 1;
+            if replay_sample.len() < limit {
+                replay_sample.push(id);
+            }
+        }
+    }
+
+    if replay_sample.is_empty() {
+        return "[]".to_string();
+    }
+
+    let omitted = replayed_unique_total.saturating_sub(replay_sample.len());
+    if omitted == 0 {
+        format!("{:?}", replay_sample)
+    } else {
+        format!("{:?}+{}more", replay_sample, omitted)
+    }
+}
+
+fn normalize_group_ids_for_preexec(group_ids: &[u64]) -> (Vec<u64>, usize) {
+    let input_len = group_ids.len();
+    if input_len <= 1 {
+        return (group_ids.to_vec(), 0);
+    }
+
+    // Replay fanout is typically tiny (single group, a duplicate echo, or a
+    // short handoff list). Keep the common path allocation-light before falling
+    // back to HashSet for broader batches.
+    if input_len <= 8 {
+        let mut unique_group_ids = Vec::with_capacity(input_len);
+        for &id in group_ids {
+            if !unique_group_ids.contains(&id) {
+                unique_group_ids.push(id);
+            }
+        }
+        let replayed_ids = input_len.saturating_sub(unique_group_ids.len());
+        return (unique_group_ids, replayed_ids);
+    }
+
+    let mut unique_group_ids = Vec::with_capacity(input_len);
+    let mut seen_ids = HashSet::with_capacity(input_len);
+    for &id in group_ids {
+        if seen_ids.insert(id) {
+            unique_group_ids.push(id);
+        }
+    }
+    let replayed_ids = input_len.saturating_sub(unique_group_ids.len());
+    (unique_group_ids, replayed_ids)
 }
 
 impl Drop for PreExecPool {
@@ -294,6 +322,20 @@ impl Drop for PreExecPool {
             let _ = handle.join();
         }
     }
+}
+
+pub(crate) fn invalid_preexec_tx_id(id: u64, candidate_height: u64) -> String {
+    format!(
+        "preexec invalid tx id {} at candidate_height={} (tx ids are 1-based)",
+        id, candidate_height
+    )
+}
+
+pub(crate) fn preexec_worker_panic(id: u64, candidate_height: u64) -> String {
+    format!(
+        "preexec worker panic while evaluating tx_id={} at candidate_height={}",
+        id, candidate_height
+    )
 }
 
 pub(crate) fn pre_execute_group_parallel(

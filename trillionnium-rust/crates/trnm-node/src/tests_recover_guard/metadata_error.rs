@@ -34,6 +34,7 @@ fn recover_metadata_only_error_reports_retained_wal_entries() {
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
     assert!(err.contains("retained 1 committed WAL entry through height 1"));
     assert!(err.contains("last retained checkpoint: 1"));
+    assert!(err.contains("next startup height: 2"));
 
     let would_require_snapshot_restore = recovered
         .checkpoint_height_retained
@@ -64,7 +65,11 @@ fn recover_metadata_only_error_reports_absent_checkpoint() {
 
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
+    assert!(err.contains("retained no committed WAL entries"));
+    assert!(!err.contains("through height 0"));
+    assert!(!err.contains("no retained checkpoint metadata"));
     assert!(err.contains("last retained checkpoint: none"));
+    assert!(err.contains("next startup height: 1"));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
@@ -91,7 +96,9 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
     let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
     assert!(err.contains("retained 2 committed WAL entries through height 2"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
     assert!(err.contains("last retained checkpoint: 1"));
+    assert!(err.contains("next startup height: 3"));
     assert!(err.contains(
         "does not yet restore application StateStore snapshots or replay committed blocks"
     ));

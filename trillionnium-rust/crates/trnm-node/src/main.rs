@@ -664,17 +664,31 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     })
 }
 
+fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
+    match recovered.wal_entries_retained {
+        0 => "retained no committed WAL entries".into(),
+        1 => format!(
+            "retained 1 committed WAL entry through height {}",
+            recovered.next_height.saturating_sub(1)
+        ),
+        count => format!(
+            "retained {} committed WAL entries through height {}",
+            count,
+            recovered.next_height.saturating_sub(1)
+        ),
+    }
+}
+
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
-        recovered.wal_entries_retained,
-        if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-        recovered.next_height.saturating_sub(1),
+        retained_wal_summary(recovered),
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
     )
 }
 
@@ -2737,13 +2751,14 @@ impl PreExecPool {
                         for id in job.ids {
                             let result =
                                 std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                                    let idx = id.checked_sub(1).ok_or_else(|| {
-                                        format!("preexec invalid tx id {} (tx ids are 1-based)", id)
-                                    })? as usize;
+                                    let idx = id
+                                        .checked_sub(1)
+                                        .ok_or_else(|| invalid_preexec_tx_id(id))?
+                                        as usize;
                                     let tx = picked_cloned
                                         .get(idx)
                                         .cloned()
-                                        .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
+                                        .ok_or_else(|| invalid_preexec_tx_id(id))?;
                                     let mut local_state = snapshot_cloned.as_ref().clone();
                                     apply_one(&mut local_state, tx, candidate_height)
                                         .map(|_| ())
@@ -2846,6 +2861,10 @@ impl Drop for PreExecPool {
             let _ = handle.join();
         }
     }
+}
+
+fn invalid_preexec_tx_id(id: u64) -> String {
+    format!("preexec invalid tx id {} (tx ids are 1-based)", id)
 }
 
 fn pre_execute_group_parallel(pool: &PreExecPool, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
@@ -3100,6 +3119,36 @@ mod tests {
 
         assert_eq!(single, (vec![1, 2], 1));
         assert_eq!(parallel, single);
+    }
+
+    #[test]
+    fn preexec_zero_workers_falls_back_to_single_worker_results() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4054,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4055,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_999,
+                worker: "worker4056".into(),
+            },
+        ];
+
+        let pool_single = PreExecPool::new(Arc::new(state.clone()), Arc::new(picked.clone()), 1, 1);
+        let single = pre_execute_group_parallel(&pool_single, vec![1, 2, 3]);
+
+        let pool_zero = PreExecPool::new(Arc::new(state), Arc::new(picked), 0, 1);
+        let zero_workers = pre_execute_group_parallel(&pool_zero, vec![1, 2, 3]);
+
+        assert_eq!(single, (vec![1, 2], 1));
+        assert_eq!(zero_workers, single);
     }
 
     #[test]
@@ -6651,6 +6700,41 @@ mod tests {
     }
 
     #[test]
+    fn auth_accepts_first_nonce_at_bootstrap_jump_boundary() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h11-r0".into(),
+            byzantine: false,
+            height: 11,
+            round: 0,
+        };
+        let boundary_nonce = MAX_BFT_NONCE_FORWARD_JUMP;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: boundary_nonce,
+                signature: vote_signature(&vote, boundary_nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 1);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+
+        let key = ("v1".to_string(), 11, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), Some(&boundary_nonce));
+    }
+
+    #[test]
     fn aggregate_votes_dedups_validator_duplicates_per_hash() {
         let votes = vec![
             BftVote {
@@ -7639,6 +7723,80 @@ mod tests {
             st.pending_resolve_approval(8_111),
             None,
             "rollback must scrub snapshot approvers that live parsing would reject"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_forbidden_authority_separator() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_502,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_112);
+        let before_task = st.get_task(8_112).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_112,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a；authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_112).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_112),
+            None,
+            "rollback must scrub authority snapshots with forbidden separators before replay"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_case_folded_duplicate_authorities() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_503,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_113);
+        let before_task = st.get_task(8_113).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_113,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "Authority-A,authority-a".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_113).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_113),
+            None,
+            "rollback must reject case-folded duplicate authority members during replay"
         );
     }
 

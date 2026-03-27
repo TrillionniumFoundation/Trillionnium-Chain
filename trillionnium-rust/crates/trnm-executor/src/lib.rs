@@ -2927,6 +2927,70 @@ mod tests {
     }
 
     #[test]
+    fn original_free_ingress_fast_path_keeps_profile_stable_and_ordered() {
+        let txs = vec![
+            tx(31, vec![], vec![]),
+            tx(32, vec![], vec![]),
+            tx(33, vec![], vec![]),
+            tx(34, vec![], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![31, 32, 33, 34]);
+        assert_eq!(profile.tx_count, 4);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.grouped_count, 4);
+        assert_eq!(profile.max_group_size, 4);
+        assert_eq!(profile.min_group_size, 4);
+        assert_eq!(profile.avg_group_size, 4.0);
+        assert_eq!(profile.hot_object_share, 0.0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_ww_hits, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_wr_hits, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.stage_rw_hits, 0);
+    }
+
+    #[test]
+    fn auto_adaptive_free_ingress_fast_path_keeps_profile_stable_and_ordered() {
+        let txs = vec![
+            tx(41, vec![], vec![]),
+            tx(42, vec![], vec![]),
+            tx(43, vec![], vec![]),
+            tx(44, vec![], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![41, 42, 43, 44]);
+        assert_eq!(profile.tx_count, 4);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.grouped_count, 4);
+        assert_eq!(profile.max_group_size, 4);
+        assert_eq!(profile.min_group_size, 4);
+        assert_eq!(profile.avg_group_size, 4.0);
+        assert_eq!(profile.hot_object_share, 0.0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_ww_hits, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_wr_hits, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.stage_rw_hits, 0);
+    }
+
+    #[test]
     fn strategy_preserves_tx_count() {
         let txs = vec![
             tx(1, vec![o(1)], vec![o(2)]),
@@ -5534,6 +5598,34 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_write_only_version_skew_for_same_object_id() {
+        let t = tx(
+            2,
+            vec![],
+            vec![ObjectRef { id: 7, version: 2 }, ObjectRef { id: 7, version: 1 }],
+        );
+
+        let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn primary_access_domain_key_rejects_read_only_version_skew_for_same_object_id() {
+        let t = tx(
+            3,
+            vec![ObjectRef { id: 9, version: 4 }, ObjectRef { id: 9, version: 3 }],
+            vec![],
+        );
+
+        let _ = primary_access_domain_key(&t);
+    }
+
+    #[test]
     fn auto_adaptive_canonicalizes_primary_access_key_across_equivalent_domain_orderings() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
@@ -6020,3 +6112,31 @@ mod tests {
         }
     }
 }
+    #[test]
+    fn original_conflict_only_batch_reports_singleton_profile_shape() {
+        let txs = vec![
+            tx(51, vec![], vec![o(99)]),
+            tx(52, vec![], vec![o(99)]),
+            tx(53, vec![], vec![o(99)]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 3);
+        assert_eq!(
+            groups
+                .iter()
+                .map(|group| group.iter().map(|tx| tx.id).collect::<Vec<_>>())
+                .collect::<Vec<_>>(),
+            vec![vec![51], vec![52], vec![53]]
+        );
+        assert_eq!(profile.tx_count, 3);
+        assert_eq!(profile.group_count, 3);
+        assert_eq!(profile.grouped_count, 3);
+        assert_eq!(profile.max_group_size, 1);
+        assert_eq!(profile.min_group_size, 1);
+        assert_eq!(profile.avg_group_size, 1.0);
+        assert_eq!(profile.conflict_hits, 2);
+    }
+

@@ -166,12 +166,13 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
         return;
     }
 
-    let _ = st.stage_or_confirm_resolve_approval(
+    st.restore_pending_resolve_approval_from_rollback(
         task_id,
-        snapshot.task_version,
-        snapshot.slash_worker,
-        &snapshot_first_approver,
-        &snapshot_authority_set,
+        Some(PendingResolveApprovalSnapshot {
+            first_approver: snapshot_first_approver,
+            authority_set: snapshot_authority_set,
+            ..snapshot
+        }),
     );
 }
 
