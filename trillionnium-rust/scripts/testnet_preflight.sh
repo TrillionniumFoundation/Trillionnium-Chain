@@ -98,6 +98,9 @@ fi
 log "check shell syntax"
 bash -n ./scripts/testnet_preflight.sh
 bash -n ./scripts/v2/verify_lane_worktree.sh
+bash -n ./scripts/devnet_up.sh
+bash -n ./scripts/devnet_down.sh
+bash -n ./scripts/audit_state_roots.sh
 
 log "check rust toolchain"
 command -v cargo >/dev/null
