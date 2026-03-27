@@ -15,6 +15,19 @@ LOG="$OUT_DIR/preflight-$TS.log"
 SUMMARY="$OUT_DIR/go-no-go-$TS.txt"
 mkdir -p "$OUT_DIR"
 
+rollback_command="rm -f $(printf '%q' "$LOG") $(printf '%q' "$SUMMARY") $(printf '%q' "$OUT_DIR/preflight-latest.log") $(printf '%q' "$OUT_DIR/go-no-go-latest.txt")"
+replay_command="env TZ='${TZ}' LC_ALL='${LC_ALL}' LANG='${LANG}'"
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
+  replay_command="$replay_command EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
+fi
+if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  replay_command="$replay_command EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
+fi
+if [ -n "${EXPECTED_HEAD:-}" ]; then
+  replay_command="$replay_command EXPECTED_HEAD='${EXPECTED_HEAD}'"
+fi
+replay_command="$replay_command ./scripts/testnet_preflight.sh"
+
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 if [ "$GIT_BRANCH_RAW" = "HEAD" ]; then
@@ -148,6 +161,8 @@ audit=$latest_audit
 bench_classic=$latest_bench
 bench_mixed=$latest_mixed
 executor_profile=$latest_profile
+replay_command=$replay_command
+rollback_command=$rollback_command
 EOF
 
 cp -f "$SUMMARY" "$OUT_DIR/go-no-go-latest.txt"
