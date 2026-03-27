@@ -628,6 +628,9 @@ fn build_mixed_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize
 }
 
 fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize) -> Vec<Tx> {
+    let keys = keys.max(1);
+    let read_fanout = read_fanout.max(1);
+    let write_every = write_every.max(1);
     let mut txs = Vec::with_capacity(n);
     let streak = 16usize;
     for i in 0..n {
@@ -771,6 +774,19 @@ mod tests {
                 ids.len(),
                 "tx {idx} should avoid duplicate side reads when keys >= read_fanout"
             );
+        }
+    }
+
+    #[test]
+    fn hot_streak_workload_fail_closes_zero_inputs_to_single_key_single_read_stride() {
+        let txs = build_hot_streak_txs(4, 0, 0, 0);
+
+        assert_eq!(txs.len(), 4);
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(tx.read_set.len(), 1, "tx {idx} should clamp zero fanout to one read");
+            assert_eq!(tx.read_set[0].id, 0, "tx {idx} should clamp zero keyspace to one hot key");
+            assert_eq!(tx.write_set.len(), 1, "tx {idx} should clamp zero write stride to every tx");
+            assert_eq!(tx.write_set[0].id, tx.read_set[0].id);
         }
     }
 
