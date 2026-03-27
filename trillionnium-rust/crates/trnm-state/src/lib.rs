@@ -13340,6 +13340,50 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_restore_rejects_non_strict_bool_and_preserves_live_canonical_binding() {
+        let mut st = StateStore::new();
+        st.set_gov_param(98_010, 7_999, "emergency_pause".into(), "true".into())
+            .expect("baseline canonical emergency_pause=true must apply immediately");
+
+        let live_before = st.gov_param_snapshot("emergency_pause");
+        let root_before = st.state_root();
+        assert!(st.is_emergency_paused());
+
+        st.restore_gov_param(
+            7_999,
+            Some(GovParamObject {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "TRUE".into(),
+                version: live_before
+                    .as_ref()
+                    .expect("baseline emergency_pause object must exist")
+                    .version
+                    + 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_snapshot("emergency_pause"),
+            live_before,
+            "invalid restore payload must fail closed and preserve the live canonical emergency_pause object"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "invalid restore payload must not unpause the live emergency brake"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejecting a non-strict emergency_pause restore payload must preserve the prior deterministic root"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "invalid restore payload must not materialize a pending emergency_pause entry"
+        );
+    }
+
+    #[test]
     fn emergency_pause_toggles_preserve_challenge_escrow_conservation() {
         // Merge-gate guard: emergency pause is a control-plane brake only; it must never
         // mutate custody balances used by challenge escrow accounting.
