@@ -178,6 +178,30 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_shared_rpc_and_p2p_addr_after_trimming_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-shared-rpc-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:7000\\n\"\np2p_addr = \"\\t127.0.0.1:7000 \"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("shared rpc/p2p addr must fail even after trimming");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must differ"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn validate_node_config_rejects_shared_rpc_and_p2p_addr() {
         let cfg = NodeConfig {
             node_id: "node-a".into(),
