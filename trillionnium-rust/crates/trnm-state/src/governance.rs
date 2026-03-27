@@ -1,4 +1,4 @@
-use trnm_types::{GovParamObject, ObjectRef};
+use trnm_types::{GovParamKey, GovParamObject, ObjectRef, EMERGENCY_PAUSE_KEY_ID};
 
 use crate::{
     validate_gov_param_registry_binding, ObjectValue, StateStore, VersionedObject,
@@ -29,7 +29,6 @@ pub enum GovPendingUpdateAction {
 
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
-const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 pub(crate) const GOV_ALLOWED_KEYS: &[&str] = &[
     "max_block_ms",
     "max_parallel_workers",
@@ -185,20 +184,12 @@ fn has_explicit_gov_param_validator(key: &str) -> bool {
 }
 
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
-    match key {
-        "emergency_pause" => Some(EMERGENCY_PAUSE_KEY_ID),
-        _ => None,
-    }
+    GovParamKey::from_str(key).and_then(GovParamKey::canonical_key_id)
 }
 
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
-    if let Some(expected_id) = governance_pinned_key_id(key) {
-        if expected_id != key_id {
-            return Err(format!(
-                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
-                key, expected_id, key_id
-            ));
-        }
+    if let Some(typed_key) = GovParamKey::from_str(key) {
+        return typed_key.validate_key_id(key_id);
     }
     Ok(())
 }
