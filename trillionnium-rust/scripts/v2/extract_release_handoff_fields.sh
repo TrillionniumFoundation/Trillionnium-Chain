@@ -5,11 +5,11 @@ usage() {
   cat <<'EOF' >&2
 Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
 
-Resolve the latest local-evidence summary and RC manifest (unless paths are
-provided explicitly), then print the canonical handoff fields directly from the
-artifacts. This is a fail-closed helper for validator/operator release handoff:
-it refuses to guess missing paths or silently continue when identity fields
-mismatch across artifacts.
+Resolve the latest local-evidence summary and RC manifest under the current git
+toplevel (unless paths are provided explicitly), then print the canonical
+handoff fields directly from the artifacts. This is a fail-closed helper for
+validator/operator release handoff: it refuses to guess missing paths or
+silently continue when identity fields mismatch across artifacts.
 EOF
 }
 
@@ -40,7 +40,11 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-ROOT="$(git rev-parse --show-toplevel)"
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$ROOT" ] || {
+  echo "extract_release_handoff_fields.sh must run inside the intended trillionnium-rust git worktree (or use --summary-path/--manifest-path from there)" >&2
+  exit 1
+}
 
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(find "$ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
