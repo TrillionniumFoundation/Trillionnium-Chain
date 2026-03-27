@@ -1549,11 +1549,45 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     })
 }
 
+fn resolve_config_path(path: &str) -> PathBuf {
+    let requested = Path::new(path);
+    if requested.is_absolute() {
+        return requested.to_path_buf();
+    }
+
+    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+    let workspace_relative = workspace_root.join(requested);
+    if workspace_relative.exists() {
+        return workspace_relative;
+    }
+
+    if requested.exists() {
+        return requested.to_path_buf();
+    }
+
+    requested.to_path_buf()
+}
+
 fn load_config(path: &str) -> Result<NodeConfig> {
-    let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
-    let cfg: NodeConfig =
-        toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    validate_node_config(cfg, path)
+    let resolved = resolve_config_path(path);
+    let raw = fs::read_to_string(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
+        format!(
+            "parse toml failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    validate_node_config(cfg, resolved.to_string_lossy().as_ref())
 }
 
 fn compute_commitment(
@@ -3103,6 +3137,25 @@ mod tests {
         assert!(p2p_port_zero_err
             .to_string()
             .contains("p2p_addr must not use port 0"));
+    }
+
+    #[test]
+    fn resolve_config_path_anchors_relative_defaults_to_workspace_configs_dir() {
+        let resolved = resolve_config_path("configs/node1.toml");
+        assert!(
+            resolved.ends_with(std::path::Path::new("trillionnium-rust/configs/node1.toml")),
+            "resolved path should anchor to workspace configs dir: {}",
+            resolved.display()
+        );
+    }
+
+    #[test]
+    fn load_config_accepts_legacy_repo_root_relative_default_path() {
+        let cfg = load_config("configs/node1.toml")
+            .expect("repo-root launches should resolve legacy default config path");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
     }
 
     #[test]
