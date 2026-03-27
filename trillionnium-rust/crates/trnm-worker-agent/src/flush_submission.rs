@@ -5,8 +5,9 @@ use anyhow::Result;
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
     load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
-    save_ingress_records, should_execute_reveal, transition_request_status, try_acquire_task_lock,
-    AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent, RC_SKIPPED,
+    save_ingress_records, should_execute_reveal, transition_request_status, trim_boundary_audit_fillers,
+    try_acquire_task_lock, AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent,
+    RC_SKIPPED,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -153,8 +154,16 @@ pub(crate) fn process_submission_record(
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
 
-    let commit_tx_hash_for_ack = commit_res.tx_hash.clone().or(previous_commit_tx_hash);
-    let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+    let commit_tx_hash_for_ack = stage_tx_hash_for_ack(
+        normalize_adapter_tx_hash(commit_res.tx_hash.as_deref()),
+        previous_commit_tx_hash,
+        commit_res.rc,
+    );
+    let reveal_tx_hash_for_ack = stage_tx_hash_for_ack(
+        normalize_adapter_tx_hash(reveal_res.tx_hash.as_deref()),
+        previous_reveal_tx_hash,
+        reveal_res.rc,
+    );
 
     append_ack(
         ack_log,
@@ -174,11 +183,7 @@ pub(crate) fn process_submission_record(
                 ir.commit_tx_hash = commit_tx_hash_for_ack.clone();
                 ir.reveal_tx_hash = reveal_tx_hash_for_ack.clone();
                 ir.resolution_code = Some(reason_code.to_string());
-                ir.verifier_status = Some(if ack_status == "accepted" {
-                    "accepted".to_string()
-                } else {
-                    "rejected".to_string()
-                });
+                ir.verifier_status = Some(verifier_status_for_ack_status(ack_status).to_string());
                 ir.status = match ack_status {
                     "accepted" => transition_request_status(
                         &ir.status,
@@ -260,6 +265,54 @@ fn submission_args(rec: &SubmissionRecord) -> (Vec<String>, Vec<String>) {
     (commit_args, reveal_args)
 }
 
+fn normalize_adapter_tx_hash(tx_hash: Option<&str>) -> Option<String> {
+    tx_hash.and_then(|hash| {
+        let trimmed = trim_boundary_audit_fillers(hash);
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed.to_string())
+        }
+    })
+}
+
+fn stage_tx_hash_for_ack(
+    observed_tx_hash: Option<String>,
+    previous_tx_hash: Option<String>,
+    rc: i32,
+) -> Option<String> {
+    observed_tx_hash.or_else(|| {
+        if is_idempotent_duplicate_ok(rc) {
+            previous_tx_hash.and_then(|hash| {
+                let trimmed = hash.trim();
+                if trimmed.is_empty() {
+                    None
+                } else {
+                    Some(trimmed.to_string())
+                }
+            })
+        } else {
+            None
+        }
+    })
+}
+
+fn receipt_hash_observed(
+    observed_tx_hash: Option<String>,
+    previous_tx_hash: Option<String>,
+    rc: i32,
+) -> bool {
+    observed_tx_hash.is_some() || stage_tx_hash_for_ack(None, previous_tx_hash, rc).is_some()
+}
+
+fn verifier_status_for_ack_status(ack_status: &str) -> &'static str {
+    match ack_status {
+        "accepted" => "accepted",
+        "rejected" => "rejected",
+        _ => "failed",
+    }
+}
+
 fn classify_flush_ack(
     commit_res: &AdapterExecResult,
     reveal_res: &AdapterExecResult,
@@ -269,14 +322,22 @@ fn classify_flush_ack(
     let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id);
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
+    let observed_commit_tx_hash = normalize_adapter_tx_hash(commit_res.tx_hash.as_deref());
+    let observed_reveal_tx_hash = normalize_adapter_tx_hash(reveal_res.tx_hash.as_deref());
 
     let commit_idempotent_ok = should_execute_reveal(commit_res);
     let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-    let commit_hash_observed = commit_res.tx_hash.is_some()
-        || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
-    let reveal_hash_observed = reveal_res.tx_hash.is_some()
-        || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
+    let commit_hash_observed = receipt_hash_observed(
+        observed_commit_tx_hash,
+        previous_commit_tx_hash,
+        commit_res.rc,
+    );
+    let reveal_hash_observed = receipt_hash_observed(
+        observed_reveal_tx_hash,
+        previous_reveal_tx_hash,
+        reveal_res.rc,
+    );
 
     if commit_idempotent_ok && reveal_idempotent_ok && commit_hash_observed && reveal_hash_observed
     {
@@ -335,9 +396,8 @@ fn classify_flush_ack(
 
 #[cfg(test)]
 mod tests {
-    use super::{classify_flush_ack, AdapterExecResult};
-    use crate::RC_OK;
-    use crate::RC_SKIPPED;
+    use super::{classify_flush_ack, verifier_status_for_ack_status, AdapterExecResult};
+    use crate::{append_ack, now_ms, RC_DUPLICATE, RC_OK, RC_SKIPPED};
 
     #[test]
     fn classify_flush_ack_prefers_rejection_on_terminal_commit() {
@@ -377,5 +437,266 @@ mod tests {
             classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
+    }
+
+    #[test]
+    fn classify_flush_ack_treats_blank_live_receipt_hashes_as_missing_evidence() {
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("  \n\t ".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("   ".to_string()),
+            terminal: true,
+        };
+
+        let (status, reason, _) =
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+    }
+
+    #[test]
+    fn classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-blank-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            82,
+            "failed",
+            Some("   ".to_string()),
+            Some("reveal-old".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with blank commit receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 82);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn classify_flush_ack_keeps_blank_persisted_reveal_receipt_fail_closed_during_duplicate_resume() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-blank-reveal-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            83,
+            "failed",
+            Some("commit-old".to_string()),
+            Some(" \n\t ".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with blank reveal receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 83);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn classify_flush_ack_reuses_trimmed_persisted_hashes_during_duplicate_resume() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-trimmed-duplicate-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            84,
+            "failed",
+            Some("  commit-old  ".to_string()),
+            Some("\n\treveal-old\t ".to_string()),
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with padded persisted receipt hashes");
+
+        let commit = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, detail) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        assert_eq!(status, "accepted");
+        assert_eq!(reason, "idempotent_ok");
+        assert!(detail.contains("commit_rc="));
+        assert!(detail.contains("reveal_rc="));
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_is_blank() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("  \n\t ")),
+            Some(" previous-commit ".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("previous-commit"));
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_does_not_reuse_previous_hash_for_non_duplicate_blank_receipt() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("   ")),
+            Some("previous-commit".to_string()),
+            RC_OK,
+        );
+        assert_eq!(staged, None);
+    }
+
+    #[test]
+    fn normalize_adapter_tx_hash_trims_bom_and_zero_width_fillers() {
+        let normalized = super::normalize_adapter_tx_hash(Some(
+            "\u{feff}\u{200b}fresh-commit-hash\u{2060}\u{200d}",
+        ));
+        assert_eq!(normalized.as_deref(), Some("fresh-commit-hash"));
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_has_only_invisible_fillers() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("\u{feff}\u{200b}\u{2060}")),
+            Some("previous-commit".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("previous-commit"));
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_prefers_fresh_duplicate_receipt_over_persisted_hash() {
+        let staged = super::stage_tx_hash_for_ack(
+            super::normalize_adapter_tx_hash(Some("  fresh-commit-hash\n")),
+            Some("previous-commit".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("fresh-commit-hash"));
+    }
+
+    #[test]
+    fn receipt_hash_observed_only_reuses_trimmed_previous_hash_for_duplicates() {
+        assert!(super::receipt_hash_observed(
+            None,
+            Some(" previous-commit ".to_string()),
+            RC_DUPLICATE,
+        ));
+        assert!(!super::receipt_hash_observed(
+            None,
+            Some("   ".to_string()),
+            RC_DUPLICATE,
+        ));
+        assert!(!super::receipt_hash_observed(
+            None,
+            Some("previous-commit".to_string()),
+            RC_OK,
+        ));
+    }
+
+    #[test]
+    fn classify_flush_ack_does_not_reuse_persisted_reveal_hash_without_duplicate_receipt() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-nonduplicate-reveal-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            84,
+            "accepted",
+            Some("commit-old".to_string()),
+            Some("reveal-old".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write prior ack with persisted reveal receipt hash");
+
+        let commit = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("commit-new".to_string()),
+            terminal: true,
+        };
+        let reveal = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        assert_eq!(status, "failed");
+        assert_eq!(reason, "missing_tx_hash_receipt");
+
+        let _ = std::fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn verifier_status_mapping_keeps_retryable_flush_failures_distinct_from_rejections() {
+        assert_eq!(verifier_status_for_ack_status("accepted"), "accepted");
+        assert_eq!(verifier_status_for_ack_status("rejected"), "rejected");
+        assert_eq!(verifier_status_for_ack_status("failed"), "failed");
+        assert_eq!(
+            verifier_status_for_ack_status("missing_tx_hash_receipt"),
+            "failed"
+        );
     }
 }

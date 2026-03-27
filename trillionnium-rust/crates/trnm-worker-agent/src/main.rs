@@ -19,6 +19,7 @@ mod audit;
 mod cli;
 mod dispatch;
 mod flush;
+mod flush_submission;
 mod proof_adapter;
 mod workflow;
 
