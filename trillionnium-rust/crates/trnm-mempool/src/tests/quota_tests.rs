@@ -52,3 +52,27 @@ fn seen_global_len_matches_lane_queues_across_spillover_and_drain() {
     let (_, _, total_after_drain) = g.queued_counts();
     assert_eq!(g.seen_global.len(), total_after_drain);
 }
+
+#[test]
+fn reserve_only_normal_borrow_keeps_queue_counts_and_seen_global_in_sync() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+    assert_eq!(g.seen_global.len(), 0);
+
+    // With zero dedicated normal capacity, fresh normal ingress borrows one
+    // critical slot while the critical lane is idle.
+    assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 1, 1));
+    assert_eq!(g.seen_global.len(), 1);
+
+    // Cross-class duplicate probes must remain globally deduped and must not
+    // perturb reserve-only queue accounting.
+    assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(g.queued_counts(), (0, 1, 1));
+    assert_eq!(g.seen_global.len(), 1);
+
+    assert_eq!(g.pop_ready(), Some(41));
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+    assert_eq!(g.seen_global.len(), 0);
+}
