@@ -18936,6 +18936,36 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_refund_without_challenger() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(false),
+            challenger: None,
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("without challenger")));
+    }
+
+    #[test]
     fn resolve_preflight_rejects_blank_challenger_identity() {
         let st = seeded_state();
         let task = TaskObject {
