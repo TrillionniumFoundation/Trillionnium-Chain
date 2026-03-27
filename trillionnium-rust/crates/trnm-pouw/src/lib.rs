@@ -4659,6 +4659,16 @@ mod tests {
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
         assert!(task_after.reveal_salt.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
+        assert!(task_after.challenge_window_blocks_snapshot.is_none());
+        assert!(
+            task_after
+                .metadata
+                .as_ref()
+                .and_then(|meta| meta.metering.as_ref())
+                .is_none(),
+            "receipt worker mismatch must fail closed before any metering snapshot is persisted"
+        );
     }
 
     #[test]
@@ -4684,6 +4694,16 @@ mod tests {
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
         assert!(task_after.reveal_salt.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
+        assert!(task_after.challenge_window_blocks_snapshot.is_none());
+        assert!(
+            task_after
+                .metadata
+                .as_ref()
+                .and_then(|meta| meta.metering.as_ref())
+                .is_none(),
+            "receipt output_hash mismatch must fail closed before any metering snapshot is persisted"
+        );
     }
 
     #[test]
