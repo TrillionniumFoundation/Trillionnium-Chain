@@ -708,6 +708,26 @@ mod tests {
     }
 
     #[test]
+    fn accepts_snapshot_timestamp_exactly_at_window_end_boundary() {
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            2_000,
+        )
+        .expect("snapshot timestamp exactly at window end should remain canonical");
+
+        policy()
+            .validate_snapshot(&snap, 2_000)
+            .expect("boundary-equal window end timestamp should validate");
+    }
+
+    #[test]
     fn rejects_stale_snapshot() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_000);
