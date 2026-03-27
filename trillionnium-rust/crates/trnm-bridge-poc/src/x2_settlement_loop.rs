@@ -39,24 +39,6 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
-fn validate_heartbeat_outcome(heartbeat: &HeartbeatOutcome) -> Result<(), SettlementError> {
-    let Some(metrics) = heartbeat.heartbeat else {
-        return Ok(());
-    };
-
-    if metrics.source_height == 0 {
-        return Err(SettlementError::InvalidHeight { height: 0 });
-    }
-
-    if metrics.target_height == 0 || metrics.target_height > metrics.source_height {
-        return Err(SettlementError::InvalidHeight {
-            height: metrics.target_height,
-        });
-    }
-
-    Ok(())
-}
-
 fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
     heartbeat
         .heartbeat
@@ -76,6 +58,19 @@ fn has_invalid_heartbeat_bounds(heartbeat: &HeartbeatOutcome) -> bool {
         .heartbeat
         .map(|h| h.source_height == 0 || h.target_height == 0 || h.target_height > h.source_height)
         .unwrap_or(false)
+}
+
+fn invalid_heartbeat_embedded_height(heartbeat: &HeartbeatOutcome) -> u64 {
+    heartbeat
+        .heartbeat
+        .map(|h| h.source_height.max(h.target_height))
+        .unwrap_or(0)
+}
+
+fn degraded_reason_allows_invalid_embedded_metrics(message: &str) -> bool {
+    let normalized = normalize_compensation_reason(message, "");
+    normalized.eq_ignore_ascii_case("invalid heartbeat height")
+        || normalized.eq_ignore_ascii_case("invalid heartbeat progression")
 }
 
 pub fn drive_minimal_settlement(
@@ -101,16 +96,17 @@ pub fn drive_minimal_settlement(
         }
     }
 
-    if heartbeat.should_retry && !heartbeat.degraded {
-        let reason = normalize_compensation_reason(&heartbeat.message, "heartbeat retry pending");
-        return Err(SettlementError::HeartbeatRetryPending { reason });
-    }
-
-    validate_heartbeat_outcome(heartbeat)?;
-
     let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
+        if has_invalid_heartbeat_bounds(heartbeat)
+            && !degraded_reason_allows_invalid_embedded_metrics(&heartbeat.message)
+        {
+            return Err(SettlementError::InvalidHeight {
+                height: invalid_heartbeat_embedded_height(heartbeat),
+            });
+        }
+
         let degraded_reason =
             normalize_compensation_reason(&heartbeat.message, "unknown heartbeat failure");
         let reason = format!("heartbeat degraded: {degraded_reason}");
@@ -135,6 +131,15 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
+    if heartbeat.should_retry {
+        return Err(SettlementError::HeartbeatRetryPending {
+            reason: normalize_compensation_reason(
+                &heartbeat.message,
+                "heartbeat retry pending",
+            ),
+        });
+    }
+
     if has_invalid_heartbeat_bounds(heartbeat) {
         let height = match &confirm {
             SettlementConfirm::Confirmed { height } => *height,
@@ -146,28 +151,33 @@ pub fn drive_minimal_settlement(
         return Err(SettlementError::InvalidHeight { height });
     }
 
-    if heartbeat.should_retry {
-        return Err(SettlementError::HeartbeatRetryPending {
-            reason: normalize_compensation_reason(
-                &heartbeat.message,
-                "relay heartbeat retry pending",
-            ),
-        });
-    }
-
     match confirm {
         SettlementConfirm::Confirmed { height } => {
             if height == 0 {
+                return Err(SettlementError::InvalidHeight { height });
+            }
+            if hb_src.is_none() || hb_tgt.is_none() {
                 return Err(SettlementError::InvalidHeight { height });
             }
             if let Some(target_height) = hb_tgt {
                 if height < target_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
+                if height == target_height && target_height != u64::MAX {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
             }
             if let Some(source_height) = hb_src {
                 let max_confirm_height = source_height.saturating_add(1);
                 if height > max_confirm_height {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
+                // Once the target heartbeat has already caught up to the source head,
+                // only the stronger source+1 settlement boundary remains acceptable.
+                // Accepting the stale source-height confirmation would weaken the
+                // observed finality overlay even though a stricter boundary is already
+                // visible in the embedded heartbeat evidence.
+                if hb_tgt == Some(source_height) && height != max_confirm_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
             }
@@ -315,7 +325,10 @@ pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::{drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm};
+    use super::{
+        drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm,
+        SettlementEvent, SettlementStep,
+    };
     use crate::bridge_status::{
         BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
     };
@@ -495,7 +508,196 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_rejects_degraded_heartbeat_with_invalid_progression_before_revert() {
+    fn drive_minimal_settlement_rejects_confirm_height_equal_to_target_overlay_boundary() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-target-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 699 },
+        )
+        .expect_err("confirm height must advance beyond observed target finality boundary");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 699 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_at_finality_boundary() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-finality-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("exact source+1 finality boundary should remain confirmable");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(701));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: 701,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: Some(700),
+                    heartbeat_target_height: Some(699),
+                    heartbeat_latency_ms: Some(19),
+                    confirm_height: Some(701),
+                    confirm_reason: None,
+                },
+            }
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_when_target_has_reached_source_head() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-head-plus-one-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 700,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("source+1 overlay boundary should remain confirmable even when target has reached source head");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(701));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: 701,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: Some(700),
+                    heartbeat_target_height: Some(700),
+                    heartbeat_latency_ms: Some(19),
+                    confirm_height: Some(701),
+                    confirm_reason: None,
+                },
+            }
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_rejects_stale_source_height_when_target_has_reached_source_head() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-head-stale-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 700,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 700 },
+        )
+        .expect_err("stale source-height confirmation must fail closed once target has reached source head");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 700 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-max-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: u64::MAX,
+                target_height: u64::MAX,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: u64::MAX },
+        )
+        .expect("exact saturated finality boundary should remain confirmable");
+
+        assert_eq!(request.status, BridgeStatus::Finalized(u64::MAX));
+        assert_eq!(
+            out,
+            SettlementStep::Finalized {
+                height: u64::MAX,
+                event: SettlementEvent {
+                    phase: "settlement_confirmed",
+                    heartbeat_source_height: Some(u64::MAX),
+                    heartbeat_target_height: Some(u64::MAX),
+                    heartbeat_latency_ms: Some(19),
+                    confirm_height: Some(u64::MAX),
+                    confirm_reason: None,
+                },
+            }
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_prefers_compensation() {
         let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -509,23 +711,245 @@ mod tests {
             }),
             should_retry: false,
             degraded: true,
-            message: "relay heartbeat degraded".to_string(),
+            message: "invalid heartbeat progression".to_string(),
         };
 
-        let err = drive_minimal_settlement(
+        let out = drive_minimal_settlement(
             &mut request,
             &token,
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .unwrap_err();
+        .unwrap();
 
-        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
-        assert_eq!(request.status, BridgeStatus::Pending);
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: invalid heartbeat progression".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: invalid heartbeat progression".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: invalid heartbeat progression".to_string())
+        );
     }
 
     #[test]
-    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_progression_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-heartbeat-sanitized".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "  invalid\u{200B} heartbeat\u{202E} progression\n".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("sanitized invalid progression should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: invalid heartbeat progression".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: invalid heartbeat progression".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: invalid heartbeat progression".to_string())
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_progression_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-heartbeat-mixed-case".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: " Invalid Heartbeat Progression ".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("mixed-case invalid progression should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: Invalid Heartbeat Progression".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: Invalid Heartbeat Progression".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: Invalid Heartbeat Progression".to_string())
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_height_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-height-sanitized".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 0,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "  invalid\u{200B} heartbeat\u{202E} height\n".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("sanitized invalid heartbeat height should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: invalid heartbeat height".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: invalid heartbeat height".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: invalid heartbeat height".to_string())
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_height_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-height-mixed-case".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 0,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: " Invalid Heartbeat Height ".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("mixed-case invalid heartbeat height should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: Invalid Heartbeat Height".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: Invalid Heartbeat Height".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: Invalid Heartbeat Height".to_string())
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_retrying_heartbeat_with_invalid_progression_prefers_retry_pending() {
         let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -557,5 +981,139 @@ mod tests {
             }
         );
         assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_also_prefers_retry_pending() {
+        let mut request = SettlementRequest::new(1, "0xretry-failed-confirm".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: true,
+            degraded: false,
+            message: "relay heartbeat retry pending".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Failed {
+                reason: "target confirm timeout".to_string(),
+            },
+        )
+        .unwrap_err();
+
+        assert_eq!(
+            err,
+            SettlementError::HeartbeatRetryPending {
+                reason: "relay heartbeat retry pending".to_string(),
+            }
+        );
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_retrying_heartbeat_uses_settlement_scoped_fallback_when_message_sanitizes_empty() {
+        let mut request = SettlementRequest::new(1, "0xretry-empty-heartbeat-message".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: true,
+            degraded: false,
+            message: "\u{200B}\u{202E}\n\t\u{2066}".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .unwrap_err();
+
+        assert_eq!(
+            err,
+            SettlementError::HeartbeatRetryPending {
+                reason: "heartbeat retry pending".to_string(),
+            }
+        );
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_confirm_without_embedded_heartbeat_metrics_fails_closed() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-sparse-overlay".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: false,
+            degraded: false,
+            message: "healthy overlay".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect_err("confirm without heartbeat evidence must fail closed");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_overrides_retry_pending_to_preserve_terminal_compensation() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-retrying-heartbeat".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: None,
+            should_retry: true,
+            degraded: true,
+            message: "relay heartbeat retry pending".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("degraded heartbeat must resolve to terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: relay heartbeat retry pending".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: relay heartbeat retry pending".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("heartbeat degraded: relay heartbeat retry pending".to_string())
+        );
     }
 }

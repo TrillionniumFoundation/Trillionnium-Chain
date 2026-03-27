@@ -167,7 +167,6 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{202E}'
             | '\u{202F}'
             | '\u{205F}'
-            | '\u{2800}'
             | '\u{3000}'
             | '\u{2060}'
             | '\u{2061}'
@@ -211,8 +210,9 @@ fn normalize_failure_reason(reason: &str) -> String {
     }
 
     let mut normalized = String::new();
-    for (idx, ch) in collapsed.chars().enumerate() {
-        if idx >= MAX_FAILURE_REASON_CHARS {
+    for ch in collapsed.chars() {
+        if normalized.chars().count() >= MAX_FAILURE_REASON_CHARS {
+            normalized.pop();
             normalized.push('…');
             break;
         }
@@ -350,6 +350,23 @@ mod tests {
         let raw = "target\u{180F}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_exact_cap_has_no_ellipsis() {
+        let raw = "b".repeat(160);
+        let normalized = normalize_failure_reason(&raw);
+        assert_eq!(normalized.chars().count(), 160);
+        assert_eq!(normalized, raw);
+        assert!(!normalized.ends_with('…'));
+    }
+
+    #[test]
+    fn normalize_failure_reason_enforces_bounded_max_len_with_ellipsis() {
+        let raw = "a".repeat(220);
+        let normalized = normalize_failure_reason(&raw);
+        assert_eq!(normalized.chars().count(), 160);
+        assert!(normalized.ends_with('…'));
     }
 }
 

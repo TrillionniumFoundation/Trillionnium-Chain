@@ -142,7 +142,8 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
     if snapshot.confirmations != 1 {
         return;
     }
-    if !is_canonical_resolve_approver_snapshot(&snapshot.first_approver) {
+    let snapshot_first_approver = snapshot.first_approver.trim().to_ascii_lowercase();
+    if !is_canonical_resolve_approver_snapshot(&snapshot_first_approver) {
         return;
     }
 
@@ -169,9 +170,127 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
         task_id,
         snapshot.task_version,
         snapshot.slash_worker,
-        &snapshot.first_approver,
-        &snapshot.authority_set,
+        &snapshot_first_approver,
+        &snapshot_authority_set,
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn challenged_task_fixture(
+        st: &mut StateStore,
+        task_id: u64,
+    ) -> (ObjectRef, [u8; 32], [u8; 32]) {
+        st.set_balance("challenger", 1_000_000);
+        st.set_balance(&format!("worker{}", task_id), 1_000);
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(
+            task_id,
+            &result_hash,
+            &reveal_salt,
+            &format!("worker{}", task_id),
+        );
+        let r1 = apply_create_task(st, task_id, "alice".into(), 100).unwrap();
+        let r2 = apply_accept_task(st, r1, format!("worker{}", task_id)).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            st,
+            r2,
+            format!("worker{}", task_id),
+            committed,
+            100,
+        )
+        .unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(
+            st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = trnm_pouw::apply_challenge_at_height(
+            st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+        (r5, result_hash, reveal_salt)
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_normalizes_case_and_order_equivalent_replacement_authority() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_283,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_303,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_304,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        let _ = challenged_task_fixture(&mut st, 8_115);
+        st.set_gov_param(98_305, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_115).unwrap();
+
+        restore_pending_resolve_approval_from_snapshot(
+            &mut st,
+            8_115,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "Authority-D".into(),
+                authority_set: "Authority-D,Authority-C".into(),
+                task_version: before_task.version,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_115).as_deref(),
+            Some("authority-d")
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_115),
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-d".into(),
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            })
+        );
+    }
 }
 
 pub(crate) fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {

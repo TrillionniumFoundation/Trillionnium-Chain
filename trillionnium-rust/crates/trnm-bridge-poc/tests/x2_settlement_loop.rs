@@ -47,6 +47,62 @@ fn x2_happy_path_heartbeat_ok_then_confirm_finalize() {
 }
 
 #[test]
+fn x2_confirm_rejects_stale_source_height_once_heartbeat_overlay_has_caught_up() {
+    let mut request = SettlementRequest::new(1, "0xstronger-finality-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(640, 640, 17);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 640 },
+    )
+    .expect_err("caught-up overlay must require the stronger source+1 boundary");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 640 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x2_confirm_accepts_source_plus_one_height_once_heartbeat_overlay_has_caught_up() {
+    let mut request = SettlementRequest::new(1, "0xstronger-finality-boundary-pass".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(640, 640, 17);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 641 },
+    )
+    .expect("caught-up overlay should still accept the stronger source+1 boundary");
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 641,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(640),
+                heartbeat_target_height: Some(640),
+                heartbeat_latency_ms: Some(17),
+                confirm_height: Some(641),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(641));
+}
+
+#[test]
 fn x2_failure_path_confirm_failed_triggers_compensation_revert() {
     let mut request = SettlementRequest::new(1, "0xbadf00d".to_string());
     let token = operator_token();
@@ -1341,6 +1397,33 @@ fn x3_prep_degraded_blank_reason_takes_precedence_over_confirm_failure_reason() 
 }
 
 #[test]
+fn x3_confirm_without_embedded_heartbeat_metrics_fails_closed() {
+    let mut request = SettlementRequest::new(1, "0xmanual-sparse-overlay".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy overlay".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 9999 },
+    )
+    .expect_err("confirm without heartbeat evidence must fail closed");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 9999 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback() {
     let mut request = SettlementRequest::new(1, "0xmanual-hbblank".to_string());
     let token = operator_token();
@@ -1479,7 +1562,7 @@ fn x3_prep_manual_degraded_heartbeat_invalid_embedded_metrics_fail_closed_withou
 
     assert_eq!(
         err,
-        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 807 }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
@@ -1512,6 +1595,38 @@ fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_w
     assert_eq!(
         err,
         trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 808 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_manual_degraded_heartbeat_saturated_source_surfaces_max_invalid_height_without_state_drift()
+{
+    let mut request = SettlementRequest::new(1, "0xmanual-hbmetrics-saturated-source".to_string());
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: u64::MAX,
+            target_height: 0,
+            latency_ms: 91,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "target relay timeout".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: u64::MAX },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: u64::MAX }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }

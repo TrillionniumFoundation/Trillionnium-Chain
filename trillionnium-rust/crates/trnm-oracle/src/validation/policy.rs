@@ -38,6 +38,13 @@ impl OraclePolicy {
         self.validate()?;
         snapshot.validate_hash()?;
 
+        if snapshot.snapshot_ts_ms > now_ts_ms {
+            return Err(OracleError::FutureSnapshot {
+                snapshot_ts_ms: snapshot.snapshot_ts_ms,
+                now_ts_ms,
+            });
+        }
+
         if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
             return Err(OracleError::StaleSnapshot {
                 snapshot_ts_ms: snapshot.snapshot_ts_ms,
@@ -51,6 +58,13 @@ impl OraclePolicy {
         {
             return Err(OracleError::InsufficientSources {
                 min_sources: self.min_sources,
+                actual_sources: snapshot.sources.len() as u32,
+                sample_count: snapshot.sample_count,
+            });
+        }
+
+        if snapshot.sample_count < snapshot.sources.len() as u32 {
+            return Err(OracleError::InconsistentSampleCount {
                 actual_sources: snapshot.sources.len() as u32,
                 sample_count: snapshot.sample_count,
             });
@@ -87,7 +101,10 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
         return MAX_DEVIATION_BPS_CAP;
     }
 
-    let numerator = value.abs_diff(baseline) as u128 * 10_000;
+    let numerator = value
+        .abs_diff(baseline)
+        .saturating_mul(MAX_DEVIATION_BPS_CAP as u128);
     let denominator = baseline.unsigned_abs();
-    (numerator / denominator) as u32
+    let scaled = numerator / denominator;
+    scaled.min(MAX_DEVIATION_BPS_CAP as u128) as u32
 }

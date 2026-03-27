@@ -439,7 +439,11 @@ fn x3_prep_duplicate_or_reordered_degraded_after_finalize_is_rejected_without_st
     let token = operator_token();
 
     let healthy = HeartbeatOutcome {
-        heartbeat: None,
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 1001,
+            target_height: 1000,
+            latency_ms: 18,
+        }),
         should_retry: false,
         degraded: false,
         message: "healthy".to_string(),
@@ -459,9 +463,9 @@ fn x3_prep_duplicate_or_reordered_degraded_after_finalize_is_rejected_without_st
             height: 1001,
             event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
                 phase: "settlement_confirmed",
-                heartbeat_source_height: None,
-                heartbeat_target_height: None,
-                heartbeat_latency_ms: None,
+                heartbeat_source_height: Some(1001),
+                heartbeat_target_height: Some(1000),
+                heartbeat_latency_ms: Some(18),
                 confirm_height: Some(1001),
                 confirm_reason: None,
             },
@@ -500,7 +504,11 @@ fn x3_prep_duplicate_or_reordered_failed_confirm_after_finalize_is_rejected_with
     let token = operator_token();
 
     let healthy = HeartbeatOutcome {
-        heartbeat: None,
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 1003,
+            target_height: 1002,
+            latency_ms: 19,
+        }),
         should_retry: false,
         degraded: false,
         message: "healthy".to_string(),
@@ -520,9 +528,9 @@ fn x3_prep_duplicate_or_reordered_failed_confirm_after_finalize_is_rejected_with
             height: 1003,
             event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
                 phase: "settlement_confirmed",
-                heartbeat_source_height: None,
-                heartbeat_target_height: None,
-                heartbeat_latency_ms: None,
+                heartbeat_source_height: Some(1003),
+                heartbeat_target_height: Some(1002),
+                heartbeat_latency_ms: Some(19),
                 confirm_height: Some(1003),
                 confirm_reason: None,
             },

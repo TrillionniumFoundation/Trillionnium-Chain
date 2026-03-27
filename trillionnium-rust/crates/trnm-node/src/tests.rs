@@ -4422,15 +4422,15 @@
         assert_eq!(st.pending_resolve_approval(8_115), Some((false, 1)));
         assert_eq!(
             st.pending_resolve_first_approver(8_115).as_deref(),
-            Some("Authority-D")
+            Some("authority-d")
         );
         assert_eq!(
             st.pending_resolve_approval_snapshot(8_115),
             Some(PendingResolveApprovalSnapshot {
                 slash_worker: false,
                 confirmations: 1,
-                first_approver: "Authority-D".into(),
-                authority_set: "Authority-D,Authority-C".into(),
+                first_approver: "authority-d".into(),
+                authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             })
         );
