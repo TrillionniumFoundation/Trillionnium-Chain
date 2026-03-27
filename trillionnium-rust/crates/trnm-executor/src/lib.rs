@@ -2059,8 +2059,7 @@ mod tests {
             vec![],
             vec![o(2_101), o(2_102), o(2_103), o(2_104), o(2_105), o(2_106)],
         );
-        let mut read_hit_at_boundary: Vec<ObjectRef> =
-            (1..=128).map(|id| o(70_000 + id)).collect();
+        let mut read_hit_at_boundary: Vec<ObjectRef> = (1..=128).map(|id| o(70_000 + id)).collect();
         read_hit_at_boundary.push(o(2_104));
         let read_miss_at_boundary: Vec<ObjectRef> = (1..=128).map(|id| o(80_000 + id)).collect();
 
@@ -2076,8 +2075,7 @@ mod tests {
         let mut read_hit_past_boundary: Vec<ObjectRef> =
             (1..=129).map(|id| o(90_000 + id)).collect();
         read_hit_past_boundary.push(o(2_105));
-        let read_miss_past_boundary: Vec<ObjectRef> =
-            (1..=129).map(|id| o(100_000 + id)).collect();
+        let read_miss_past_boundary: Vec<ObjectRef> = (1..=129).map(|id| o(100_000 + id)).collect();
 
         assert!(detect_conflict(
             &small_write,
@@ -2421,10 +2419,8 @@ mod tests {
 
     #[test]
     fn read_domain_only_keys_treats_object_zero_as_real_filtered_domain_member() {
-        let keys = read_domain_only_keys(
-            &[o(0), o(7), o(0), o(11), o(7), o(13)],
-            &[0, 0, 5, 0, 19],
-        );
+        let keys =
+            read_domain_only_keys(&[o(0), o(7), o(0), o(11), o(7), o(13)], &[0, 0, 5, 0, 19]);
 
         // Object id 0 is a real access-domain key, not a sentinel. Filtering
         // shared read domains must drop it exactly like any other write-domain
@@ -2522,7 +2518,10 @@ mod tests {
         // Hot-object telemetry should collapse same-version read/write echoes to the
         // same object-scoped footprint as the canonical writer-first domain so
         // adaptive scheduling cannot drift on duplicate-heavy shared-object inputs.
-        assert_eq!(hot_object_share(&[echoed.clone(), peer.clone()]), 2.0 / 10.0);
+        assert_eq!(
+            hot_object_share(&[echoed.clone(), peer.clone()]),
+            2.0 / 10.0
+        );
         assert_eq!(
             hot_object_share(&[echoed, peer.clone()]),
             hot_object_share(&[canonical, peer])
@@ -3293,6 +3292,45 @@ mod tests {
         // scheduler's deterministic conflict domains.
         assert_eq!(hot_object_share(&echoed), 2.0 / 3.0);
         assert_eq!(hot_object_share(&echoed), hot_object_share(&canonical));
+    }
+
+    #[test]
+    fn access_map_capacity_hint_dedups_same_version_cross_domain_echoes() {
+        let echoed = vec![
+            tx(
+                1,
+                vec![ov(7, 3), ov(7, 3), ov(11, 1)],
+                vec![ov(7, 3), ov(13, 1), ov(13, 1)],
+            ),
+            tx(2, vec![ov(21, 1)], vec![ov(21, 1), ov(34, 1)]),
+        ];
+        let canonical = vec![
+            tx(1, vec![ov(11, 1)], vec![ov(7, 3), ov(13, 1)]),
+            tx(2, vec![], vec![ov(21, 1), ov(34, 1)]),
+        ];
+
+        // Capacity sizing should follow the txs' canonical object-scoped access
+        // domains rather than raw read/write entry counts, so same-version
+        // cross-domain echoes do not inflate map sizing on Sui-style workloads.
+        assert_eq!(access_map_capacity_hint(&echoed), 64);
+        assert_eq!(
+            access_map_capacity_hint(&echoed),
+            access_map_capacity_hint(&canonical)
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }, ov(9, 1)],
+        )];
+
+        let _ = access_map_capacity_hint(&txs);
     }
 
     #[test]
@@ -5062,7 +5100,11 @@ mod tests {
 
     #[test]
     fn primary_access_domain_key_treats_object_zero_as_real_write_domain_key() {
-        let echoed = tx(90, vec![o(0), o(7), o(0), o(9)], vec![o(5), o(0), o(5), o(11)]);
+        let echoed = tx(
+            90,
+            vec![o(0), o(7), o(0), o(9)],
+            vec![o(5), o(0), o(5), o(11)],
+        );
         let canonical = tx(91, vec![o(7), o(9)], vec![o(5), o(0), o(11)]);
         let zero_only = tx(92, vec![o(7), o(0), o(7)], vec![]);
 
