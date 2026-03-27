@@ -60,6 +60,11 @@ fi
 
 log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
+if [ "$GIT_HEAD_STATE" = "attached" ] && [ -z "$CURRENT_WORKTREE_BRANCH_REF" ]; then
+  log "preflight failed: attached HEAD is missing git worktree branch binding"
+  exit 10
+fi
+
 log "start testnet preflight"
 log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_status_summary=$GIT_STATUS_SUMMARY"
 
