@@ -85,6 +85,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use the IPv4 broadcast address",
         path
     );
+    anyhow::ensure!(
+        !rpc_socket.ip().is_unspecified(),
+        "invalid node config {}: rpc_addr must not use an unspecified address",
+        path
+    );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: p2p_addr must be a valid socket address",
@@ -104,6 +109,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_broadcast()),
         "invalid node config {}: p2p_addr must not use the IPv4 broadcast address",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_socket.ip().is_unspecified(),
+        "invalid node config {}: p2p_addr must not use an unspecified address",
         path
     );
     anyhow::ensure!(
@@ -369,7 +379,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_node_config_rejects_multicast_and_broadcast_listener_addresses() {
+    fn validate_node_config_rejects_multicast_broadcast_and_unspecified_listener_addresses() {
         let rpc_multicast_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -432,6 +442,38 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must not use the IPv4 broadcast address"),
             "unexpected error: {p2p_broadcast_err:#}"
+        );
+
+        let rpc_unspecified_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "0.0.0.0:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr unspecified bind must fail closed");
+        assert!(
+            rpc_unspecified_err
+                .to_string()
+                .contains("rpc_addr must not use an unspecified address"),
+            "unexpected error: {rpc_unspecified_err:#}"
+        );
+
+        let p2p_unspecified_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "[::]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr unspecified bind must fail closed");
+        assert!(
+            p2p_unspecified_err
+                .to_string()
+                .contains("p2p_addr must not use an unspecified address"),
+            "unexpected error: {p2p_unspecified_err:#}"
         );
     }
 
