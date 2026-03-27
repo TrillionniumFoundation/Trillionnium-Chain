@@ -27,6 +27,27 @@ require_nonempty_value() {
   }
 }
 
+require_worktree_root_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
 require_ref_token() {
   local flag_name="$1"
   local value="$2"
@@ -70,7 +91,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-require_nonempty_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
 require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
 if [ -n "$EXPECTED_HEAD" ]; then
   require_ref_token --expected-head "$EXPECTED_HEAD"
