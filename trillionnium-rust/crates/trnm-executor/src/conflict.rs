@@ -333,9 +333,18 @@ pub(crate) fn access_map_capacity_hint(txs: &[Tx]) -> usize {
     let mut footprint = 0usize;
     for tx in txs {
         assert_tx_access_domain_versions_are_consistent(tx);
-        footprint = footprint
-            .saturating_add(tx.read_set.len())
-            .saturating_add(tx.write_set.len());
+
+        // Size conflict-domain maps from the tx's unique access domain rather than
+        // raw read/write list lengths. This keeps same-version read/write echoes and
+        // duplicate keys from inflating hot-path map capacity under mixed Sui-like
+        // read/write workloads while preserving the same fail-closed skew guard.
+        let mut keys = dedup_access_keys(&tx.write_set);
+        for key in dedup_access_keys(&tx.read_set) {
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        footprint = footprint.saturating_add(keys.len());
     }
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
@@ -398,5 +407,23 @@ mod tests {
 
         assert!(vec_hashset_intersects(&hit, &domain));
         assert!(!vec_hashset_intersects(&miss, &domain));
+    }
+
+    #[test]
+    fn access_map_capacity_hint_tracks_unique_object_domain_footprint() {
+        let txs = vec![tx(
+            1,
+            (0..40u64)
+                .flat_map(|i| [o(1_000 + i), o(1_000 + i)])
+                .collect(),
+            (0..40u64)
+                .flat_map(|i| [o(2_000 + i), o(2_000 + i), o(1_000 + i)])
+                .collect(),
+        )];
+
+        // Capacity sizing should track the tx's distinct object-domain footprint,
+        // not raw duplicate/echo volume. Otherwise mixed read/write echoes can
+        // inflate scheduler map reservations and blur lane-isolation telemetry.
+        assert_eq!(access_map_capacity_hint(&txs), 107);
     }
 }
