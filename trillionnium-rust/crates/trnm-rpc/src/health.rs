@@ -417,6 +417,13 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
                 "/query-capability-audit/alice\\extra",
                 "/query-capability-audit/"
             ),
@@ -429,6 +436,7 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
