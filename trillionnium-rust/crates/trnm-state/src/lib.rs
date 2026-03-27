@@ -12023,6 +12023,31 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_noncanonical_emergency_pause_aliases() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            " emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: " emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must not materialize canonical emergency_pause metadata from a non-canonical key alias"
+        );
+        assert!(
+            st.pending_gov_update(" emergency_pause").is_none(),
+            "restore must fail closed instead of persisting a non-canonical emergency_pause alias"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
     fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases() {
         let mut st = StateStore::new();
 
