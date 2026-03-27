@@ -34,6 +34,22 @@ fn is_health_probe_path(path: &str) -> bool {
         "/status/",
         "/statusz",
         "/statusz/",
+        "/-/health",
+        "/-/health/",
+        "/-/healthz",
+        "/-/healthz/",
+        "/-/live",
+        "/-/live/",
+        "/-/livez",
+        "/-/livez/",
+        "/-/ready",
+        "/-/ready/",
+        "/-/readyz",
+        "/-/readyz/",
+        "/-/status",
+        "/-/status/",
+        "/-/statusz",
+        "/-/statusz/",
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
@@ -242,7 +258,14 @@ mod tests {
         assert!(is_health_probe_path("/ReadyZ/"));
         assert!(is_health_probe_path("/STATUS"));
         assert!(is_health_probe_path("/STATUSZ"));
+        assert!(is_health_probe_path("/-/health"));
+        assert!(is_health_probe_path("/-/health/"));
+        assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/readyz"));
+        assert!(is_health_probe_path("/-/STATUS"));
+        assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
+        assert!(!is_health_probe_path("/-/healthcheck"));
     }
 
     #[test]
