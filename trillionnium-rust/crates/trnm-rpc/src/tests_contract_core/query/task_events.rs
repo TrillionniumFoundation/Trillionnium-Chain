@@ -69,6 +69,25 @@ fn query_task_from_node_events_uses_latest_status_and_worker() {
 }
 
 #[test]
+fn query_task_response_fallback_normalizes_adapter_worker_for_read_model_consistency() {
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, None)], || {
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 88,
+            worker: Some(" \u{200B}Worker\u{2060} A\t".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xabc".into()),
+        }];
+
+        let out = query_task_response(88, &[], &recs).expect("task expected");
+        assert_eq!(out.worker.as_deref(), Some("worker a"));
+        assert_eq!(out.status, TaskStatus::Committed);
+    });
+}
+
+#[test]
 fn query_task_from_node_events_none_for_missing_task() {
     let events = vec![NodeEventRecord {
         event_type: "accept".into(),

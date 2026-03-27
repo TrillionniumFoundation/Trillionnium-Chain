@@ -180,7 +180,9 @@ pub(crate) fn query_task_response(
     } else {
         TaskStatus::Open
     };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let worker = task_recs
+        .iter()
+        .find_map(|r| r.worker.as_deref().and_then(normalize_actor_or_signer));
     let result_hash_hex = task_recs.iter().rev().find_map(|r| {
         if r.kind == "reveal" {
             r.result_hash.clone()
