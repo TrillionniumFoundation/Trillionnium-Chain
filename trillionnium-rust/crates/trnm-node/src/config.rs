@@ -1,6 +1,10 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use std::{fs, net::SocketAddr};
+use std::{
+    fs,
+    net::SocketAddr,
+    path::{Path, PathBuf},
+};
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct NodeConfig {
@@ -95,16 +99,62 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     })
 }
 
+fn resolve_config_path(path: &str) -> PathBuf {
+    let requested = Path::new(path);
+    if requested.is_absolute() {
+        return requested.to_path_buf();
+    }
+
+    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+    let workspace_relative = workspace_root.join(requested);
+    if workspace_relative.exists() {
+        return workspace_relative;
+    }
+
+    if requested.exists() {
+        return requested.to_path_buf();
+    }
+
+    requested.to_path_buf()
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
-    let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
-    let cfg: NodeConfig =
-        toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    validate_node_config(cfg, path)
+    let resolved = resolve_config_path(path);
+    let raw = fs::read_to_string(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
+        format!(
+            "parse toml failed: {} (resolved: {})",
+            path,
+            resolved.display()
+        )
+    })?;
+    validate_node_config(cfg, resolved.to_string_lossy().as_ref())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{load_config, validate_node_config, NodeConfig};
+    use super::{load_config, resolve_config_path, validate_node_config, NodeConfig};
+
+    #[test]
+    fn resolve_config_path_anchors_default_node_config_to_workspace_root() {
+        let resolved = resolve_config_path("configs/node1.toml");
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        assert_eq!(resolved, workspace_root.join("configs/node1.toml"));
+        assert!(resolved.is_file(), "expected shipped node1 config to exist");
+    }
 
     #[test]
     fn validate_node_config_trims_operator_addresses() {
