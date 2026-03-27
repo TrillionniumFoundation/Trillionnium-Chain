@@ -5908,6 +5908,33 @@ fn checkpoint_commitment_and_wal_content_hash_length_frame_adjacent_fields() {
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_forbidden_layout() {
+    let wal = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "proposal-9 ".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject WAL proposal_hash values with forbidden layout so audit-ready checkpoint proofs cannot rely on whitespace-variant proposal identifiers"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+        None,
+        "DA/light-verifier summaries must fail closed when WAL proposal_hash carries forbidden layout even if the tuple still hashes to canonical lowercase hex"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     let wal = WalMeta {
         height: 7,
