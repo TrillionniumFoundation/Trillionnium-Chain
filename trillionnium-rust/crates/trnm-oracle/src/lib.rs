@@ -1239,6 +1239,34 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_accepts_snapshot_timestamp_exactly_at_window_end_boundary() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            2_000,
+        )
+        .expect("snapshot timestamp exactly at window end should remain canonical");
+
+        let report = validate_snapshot_observed(&p, &snap, 2_000);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.classified_reject_total(), 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_drift_rejection_to_stable_error_label() {
         let p = policy();
         let snap = snapshot_with(120_000, Some(100_000), 10_000);
