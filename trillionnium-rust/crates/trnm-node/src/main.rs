@@ -12509,6 +12509,30 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_reports_missing_checkpoint_metadata_when_wal_is_retained() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-missing-checkpoint-metadata");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 3,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: None,
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 2"));
+        assert!(err.contains("no retained checkpoint metadata"));
+        assert!(err.contains("last retained checkpoint: none"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-plural");
         fs::create_dir_all(&wal_dir).unwrap();
