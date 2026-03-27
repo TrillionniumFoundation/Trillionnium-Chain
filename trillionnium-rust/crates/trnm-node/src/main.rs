@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
     fs,
+    net::SocketAddr,
     path::{Path, PathBuf},
     sync::{mpsc, Arc, Condvar, Mutex},
     thread,
@@ -1491,6 +1492,17 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain whitespace",
         path
     );
+    let rpc_socket: SocketAddr = rpc_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: rpc_addr must be a valid socket address",
+            path
+        )
+    })?;
+    anyhow::ensure!(
+        rpc_socket.port() != 0,
+        "invalid node config {}: rpc_addr must not use port 0",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1501,6 +1513,22 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_whitespace),
         "invalid node config {}: p2p_addr must not contain whitespace",
+        path
+    );
+    let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: p2p_addr must be a valid socket address",
+            path
+        )
+    })?;
+    anyhow::ensure!(
+        p2p_socket.port() != 0,
+        "invalid node config {}: p2p_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        rpc_socket != p2p_socket,
+        "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
 
@@ -3029,6 +3057,19 @@ mod tests {
         .expect_err("rpc_addr with internal whitespace must be rejected");
         assert!(rpc_err.to_string().contains("rpc_addr must not contain whitespace"));
 
+        let rpc_port_zero_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:0".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr port 0 must be rejected");
+        assert!(rpc_port_zero_err
+            .to_string()
+            .contains("rpc_addr must not use port 0"));
+
         let p2p_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -3039,6 +3080,19 @@ mod tests {
         )
         .expect_err("p2p_addr with embedded control whitespace must be rejected");
         assert!(p2p_err.to_string().contains("p2p_addr must not contain whitespace"));
+
+        let p2p_port_zero_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:0".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr port 0 must be rejected");
+        assert!(p2p_port_zero_err
+            .to_string()
+            .contains("p2p_addr must not use port 0"));
     }
 
     #[test]
