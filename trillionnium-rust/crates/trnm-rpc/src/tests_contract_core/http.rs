@@ -268,6 +268,8 @@ fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
         "/query-events/..%2f42?limit=7",
         "/query-events/%2e%2e/42?limit=7",
         "/query-events/42%2ejson?limit=7",
+        "/query-events/%007?limit=7",
+        "/query-events/42%7fjson?limit=7",
     ] {
         let err = parse_query_events_limit_from_path(path)
             .expect_err("percent encoded path delimiters must fail closed");
@@ -283,6 +285,8 @@ fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("GET /health"), None);
     assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    assert_eq!(parse_http_get_path("GET /health%00 HTTP/1.1"), None);
+    assert_eq!(parse_http_get_path("GET /health%7F HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health HTTP/1.1 junk"), None);
     assert_eq!(
         parse_http_request_target("HEAD /readyz HTTP/1.1\ttrail"),

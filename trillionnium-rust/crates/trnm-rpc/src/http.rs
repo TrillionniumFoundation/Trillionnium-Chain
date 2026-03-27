@@ -126,12 +126,14 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d")
+    if normalized.contains("%00")
+        || normalized.contains("%0d")
         || normalized.contains("%0a")
         || normalized.contains("%09")
         || normalized.contains("%0b")
         || normalized.contains("%0c")
         || normalized.contains("%20")
+        || normalized.contains("%7f")
     {
         return None;
     }
@@ -172,12 +174,14 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
