@@ -1,6 +1,9 @@
 use super::*;
 use crate::{assigned::assigned_skip_reason, proof_adapter::StandardProofAdapter};
 
+#[path = "tests_adapter_path_classification.rs"]
+mod tests_adapter_path_classification;
+
 #[test]
 fn assigned_skip_reason_reports_devnet_smoke_gating_causes() {
     let base = MessageIngressRecord {

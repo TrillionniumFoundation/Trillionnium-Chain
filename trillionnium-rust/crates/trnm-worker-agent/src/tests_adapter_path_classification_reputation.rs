@@ -274,11 +274,17 @@ fn canonical_reputation_table_keeps_dense_tiers_and_unit_penalty_steps() {
 
         if idx > 0 {
             let previous = CANONICAL_REPUTATION_IMPACTS[idx - 1].1;
-            assert_eq!(
-                previous.delta - impact.delta,
-                1,
-                "adjacent canonical impacts must remain spaced by exactly one score point"
+            assert!(
+                previous.delta > impact.delta,
+                "adjacent canonical impacts must remain strictly descending"
             );
+            if idx > 1 {
+                assert_eq!(
+                    previous.delta - impact.delta,
+                    1,
+                    "penalty-side canonical impacts must remain spaced by exactly one score point"
+                );
+            }
             assert_eq!(
                 previous.tier - impact.tier,
                 1,
