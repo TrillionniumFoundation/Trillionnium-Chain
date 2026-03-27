@@ -99,6 +99,29 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_blank_node_id_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-blank-node-id-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"   \"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let err =
+            load_config(path.to_str().expect("utf8 path")).expect_err("blank node_id must fail");
+        assert!(
+            err.to_string().contains("node_id must not be empty"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_blank_rpc_addr_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-rpc-{}-{}.toml",
