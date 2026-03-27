@@ -19,6 +19,24 @@ const DUPLICATE_CURSOR_RESPONSE: &str =
 const INVALID_CURSOR_RESPONSE: &str =
     r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#;
 
+fn is_valid_normalized_audit_source(value: &str) -> bool {
+    matches!(value, "trnm.task" | "trnm.adapter")
+}
+
+fn is_valid_normalized_audit_event_type(value: &str) -> bool {
+    let Some(suffix) = value
+        .strip_prefix("trnm.task.")
+        .or_else(|| value.strip_prefix("trnm.adapter."))
+    else {
+        return false;
+    };
+
+    !suffix.is_empty()
+        && suffix
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || matches!(ch, '.' | '-' | '_'))
+}
+
 pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
     validate_path_prefix(path, None, INVALID_LIMIT_RESPONSE)?;
     let Some(query) = extract_validated_query(path, INVALID_LIMIT_RESPONSE)? else {
@@ -75,16 +93,21 @@ pub(crate) fn parse_query_normalized_audit_events_query_from_path(
                 if query_params.source.is_some() {
                     return Err(bad_request(DUPLICATE_SOURCE_RESPONSE));
                 }
-                query_params.source =
-                    Some(normalized_required_value(value, INVALID_SOURCE_RESPONSE)?.to_string());
+                let normalized = normalized_required_value(value, INVALID_SOURCE_RESPONSE)?;
+                if !is_valid_normalized_audit_source(normalized) {
+                    return Err(bad_request(INVALID_SOURCE_RESPONSE));
+                }
+                query_params.source = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("eventType") && key == "eventType" => {
                 if query_params.event_type.is_some() {
                     return Err(bad_request(DUPLICATE_EVENT_TYPE_RESPONSE));
                 }
-                query_params.event_type = Some(
-                    normalized_required_value(value, INVALID_EVENT_TYPE_RESPONSE)?.to_string(),
-                );
+                let normalized = normalized_required_value(value, INVALID_EVENT_TYPE_RESPONSE)?;
+                if !is_valid_normalized_audit_event_type(normalized) {
+                    return Err(bad_request(INVALID_EVENT_TYPE_RESPONSE));
+                }
+                query_params.event_type = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("cursor") && key == "cursor" => {
                 if query_params.cursor.is_some() {
@@ -113,6 +136,19 @@ pub(crate) fn parse_query_normalized_audit_events_query_from_path(
         }
     }
 
+    if let Some(source) = query_params.source.as_deref() {
+        if let Some(event_type) = query_params.event_type.as_deref() {
+            let prefix = if source == "trnm.task" {
+                "trnm.task."
+            } else {
+                "trnm.adapter."
+            };
+            if !event_type.starts_with(prefix) {
+                return Err(bad_request(INVALID_EVENT_TYPE_RESPONSE));
+            }
+        }
+    }
+
     if let Some(limit) = parsed_limit {
         query_params.limit = limit;
     }
@@ -137,19 +173,21 @@ fn validate_path_prefix<'a>(
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     let has_invalid_path = !path_without_query.starts_with('/')
-        || required_prefix.is_some_and(|prefix| !path_without_query.starts_with(prefix))
+        || required_prefix.is_some_and(|prefix| path_without_query != prefix)
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..");
@@ -181,12 +219,14 @@ fn extract_validated_query<'a>(
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
-        || normalized_query.contains("%0d")
-        || normalized_query.contains("%0a")
+        || normalized_query.contains("%00")
         || normalized_query.contains("%09")
+        || normalized_query.contains("%0a")
         || normalized_query.contains("%0b")
         || normalized_query.contains("%0c")
+        || normalized_query.contains("%0d")
         || normalized_query.contains("%20")
+        || normalized_query.contains("%7f")
     {
         return Err(bad_request(error_body));
     }

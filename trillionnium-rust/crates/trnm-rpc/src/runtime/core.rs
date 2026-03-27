@@ -515,6 +515,13 @@ impl CapabilityAuditQueryError {
             },
         }
     }
+
+    fn http_status(&self) -> &'static str {
+        match self {
+            Self::TokenNotFound(_) => "404 Not Found",
+            Self::InvalidRegistryState { .. } => "422 Unprocessable Entity",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

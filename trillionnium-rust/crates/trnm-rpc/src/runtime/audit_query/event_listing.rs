@@ -1,5 +1,8 @@
 use super::*;
 
+const NORMALIZED_AUDIT_REASON_MAX_CHARS: usize = 160;
+const NORMALIZED_AUDIT_NOTE_MAX_CHARS: usize = 160;
+
 pub(crate) fn query_normalized_audit_events(
     node_events: &[NodeEventRecord],
     recs: &[AdapterRecord],
@@ -66,8 +69,14 @@ fn map_node_event(
         object_id: Some(format!("task:{}", event.task_id)),
         related_id: None,
         amount: None,
-        reason: Some(format!("{} -> {}", event.from_status, event.to_status)),
-        note: event.resolution_code.clone(),
+        reason: Some(bound_audit_text(
+            &format!("{} -> {}", event.from_status, event.to_status),
+            NORMALIZED_AUDIT_REASON_MAX_CHARS,
+        )),
+        note: event
+            .resolution_code
+            .as_deref()
+            .map(|value| bound_audit_text(value, NORMALIZED_AUDIT_NOTE_MAX_CHARS)),
         checked_at: Some(format!("height:{}", event.block_height)),
         timestamp: None,
         subject: None,
@@ -96,12 +105,39 @@ fn map_adapter_record(
         object_id: Some(format!("task:{}", record.task_id)),
         related_id: None,
         amount: None,
-        reason: Some("adapter-event".into()),
-        note: record.tx_hash.clone().or(record.result_hash.clone()),
+        reason: Some(bound_audit_text(
+            "adapter-event",
+            NORMALIZED_AUDIT_REASON_MAX_CHARS,
+        )),
+        note: record
+            .tx_hash
+            .as_deref()
+            .or(record.result_hash.as_deref())
+            .map(|value| bound_audit_text(value, NORMALIZED_AUDIT_NOTE_MAX_CHARS)),
         checked_at: Some(format!("height:{}", record.ts)),
         timestamp: None,
         subject: None,
     })
+}
+
+fn bound_audit_text(value: &str, max_chars: usize) -> String {
+    if max_chars == 0 {
+        return String::new();
+    }
+
+    let mut out = String::new();
+    for ch in value.chars() {
+        if out.chars().count() + 1 > max_chars {
+            if max_chars == 1 {
+                return "…".to_string();
+            }
+            out.pop();
+            out.push('…');
+            break;
+        }
+        out.push(ch);
+    }
+    out
 }
 
 fn matches_source_filter(filter: Option<&str>, expected: &str) -> bool {

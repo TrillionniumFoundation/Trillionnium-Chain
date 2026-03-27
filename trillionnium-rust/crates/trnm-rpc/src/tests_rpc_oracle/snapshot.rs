@@ -6,6 +6,8 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
 
+const MAX_ORACLE_QUERY_PATH_LEN: usize = 4096;
+
 pub(crate) fn write_json_fixture<T: Serialize>(prefix: &str, value: &T) -> std::path::PathBuf {
     let path = unique_tmp_path(prefix, "json");
     let bytes = serde_json::to_vec_pretty(value).expect("serialize fixture");
@@ -138,15 +140,48 @@ fn decode_url_component(input: &str) -> Option<String> {
     String::from_utf8(out).ok()
 }
 
+fn is_non_canonical_query_key(key: &str) -> bool {
+    key.is_empty() || key.trim() != key || key.chars().any(|ch| ch.is_whitespace() || ch.is_control())
+}
+
+fn is_non_canonical_query_value(value: &str) -> bool {
+    value.trim() != value || value.chars().any(|ch| ch.is_control())
+}
+
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
+    if query.is_empty()
+        || query.contains('?')
+        || query.contains('#')
+        || query.chars().any(|ch| ch.is_control())
+    {
+        return None;
+    }
+    let normalized_query = query.to_ascii_lowercase();
+    if normalized_query.contains("%26")
+        || normalized_query.contains("%3d")
+        || normalized_query.contains("%23")
+        || normalized_query.contains("%3f")
+        || normalized_query.contains("%0d")
+        || normalized_query.contains("%0a")
+        || normalized_query.contains("%09")
+        || normalized_query.contains("%0b")
+        || normalized_query.contains("%0c")
+        || normalized_query.contains("%20")
+    {
+        return None;
+    }
+
     let mut out = HashMap::new();
     for pair in query.split('&') {
         if pair.is_empty() {
-            continue;
+            return None;
         }
         let (raw_k, raw_v) = pair.split_once('=')?;
         let key = decode_url_component(raw_k)?;
+        if is_non_canonical_query_key(&key) {
+            return None;
+        }
         let value = decode_url_component(raw_v)?;
         if out.insert(key, value).is_some() {
             return None;
@@ -155,12 +190,16 @@ pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, St
     Some(out)
 }
 
+fn matches_exact_target_path(target: &str, path: &str) -> bool {
+    target == path || target.strip_prefix(path).is_some_and(|suffix| suffix.starts_with('?'))
+}
+
 pub(crate) fn parse_oracle_validate_snapshot_target(
     target: &str,
 ) -> Result<OracleValidateSnapshotTarget, String> {
-    if !(target.starts_with("/oracle/validate_snapshot")
-        || target.starts_with("/oracle/metrics")
-        || target.starts_with("/metrics"))
+    if !(matches_exact_target_path(target, "/oracle/validate_snapshot")
+        || matches_exact_target_path(target, "/oracle/metrics")
+        || matches_exact_target_path(target, "/metrics"))
     {
         return Err("unexpected oracle target".to_string());
     }
@@ -179,7 +218,13 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
     if snapshot.trim().is_empty() {
         return Err("empty snapshot".to_string());
     }
+    if is_non_canonical_query_value(snapshot) {
+        return Err("non-canonical snapshot path".to_string());
+    }
     let snapshot = snapshot.to_string();
+    if snapshot.len() > MAX_ORACLE_QUERY_PATH_LEN {
+        return Err("snapshot path too long".to_string());
+    }
 
     let policy = params
         .get("policy")
@@ -187,7 +232,13 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
     if policy.trim().is_empty() {
         return Err("empty policy".to_string());
     }
+    if is_non_canonical_query_value(policy) {
+        return Err("non-canonical policy path".to_string());
+    }
     let policy = policy.to_string();
+    if policy.len() > MAX_ORACLE_QUERY_PATH_LEN {
+        return Err("policy path too long".to_string());
+    }
 
     let now_ts_ms = match params.get("now_ts_ms") {
         Some(v) if !v.is_empty() => Some(
@@ -341,6 +392,10 @@ fn metrics_from_target(target: &str) -> String {
         "oracle_source_cardinality{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
         report.observation.feed_id, outcome, report.metrics.oracle_source_cardinality
     ));
+    text.push_str(&format!(
+        "oracle_sample_count{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
+        report.observation.feed_id, outcome, report.metrics.sample_count
+    ));
     text
 }
 
@@ -361,7 +416,7 @@ fn error_response(message: &str) -> String {
 
 pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
     let target = target.unwrap_or("/metrics");
-    if target.starts_with("/oracle/validate_snapshot") {
+    if matches_exact_target_path(target, "/oracle/validate_snapshot") {
         let req = parse_oracle_validate_snapshot_target(target);
         match req {
             Ok(request) => {
@@ -377,7 +432,9 @@ pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
             }
             Err(err) => error_response(&err),
         }
-    } else if target.starts_with("/oracle/metrics") || target.starts_with("/metrics") {
+    } else if matches_exact_target_path(target, "/oracle/metrics")
+        || matches_exact_target_path(target, "/metrics")
+    {
         if !target.contains('?') {
             return format!(
                 "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n\r\n{}",

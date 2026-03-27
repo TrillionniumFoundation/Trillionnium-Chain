@@ -39,3 +39,16 @@ fn http_service_response_for_oracle_validate_snapshot_returns_structured_json() 
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
 }
+
+#[test]
+fn http_service_response_for_oracle_validate_snapshot_rejects_non_exact_path_prefix() {
+    let response = http_service_response_for_target(Some(
+        "/oracle/validate_snapshot_extra?snapshot=/tmp/s.json&policy=/tmp/p.json",
+    ));
+
+    assert!(
+        response.starts_with("HTTP/1.1 404 Not Found\r\n"),
+        "unexpected response: {}",
+        response
+    );
+}

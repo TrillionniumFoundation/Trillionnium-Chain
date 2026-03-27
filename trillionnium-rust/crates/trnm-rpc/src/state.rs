@@ -37,6 +37,13 @@ pub(crate) fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
+    if session_id.trim() != session_id || session_id.as_bytes().iter().any(|b| b.is_ascii_control())
+    {
+        return Err(bad_request(
+            "invalid_session",
+            format!("{field} must be canonical"),
+        ));
+    }
     Ok(())
 }
 

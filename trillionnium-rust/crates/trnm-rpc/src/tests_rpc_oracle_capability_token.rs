@@ -24,6 +24,14 @@ fn resolve_capability_token_subject_or_token_strips_invisible_controls_before_lo
         resolve_capability_token_subject_or_token(&registry, " \u{FEFF}did:org:lane-xi\u{200B} ",),
         Some(token_id)
     );
+    assert_eq!(
+        resolve_capability_token_subject_or_token(
+            &registry,
+            "\u{2066}did:org:lane\u{200E}-xi\u{2069}\u{061C}",
+        ),
+        Some(token_id),
+        "bidi/format controls should be stripped before capability audit lookup"
+    );
 }
 
 #[test]

@@ -221,6 +221,7 @@ impl RelayService {
             .zip(proof_paths.into_iter())
             .enumerate()
             .map(|(i, ((env, leaf_hash), proof))| RelayEnvelopeProof {
+                leaf_sequence: env.sequence,
                 envelope: env,
                 leaf_hash_hex: hex::encode(leaf_hash),
                 leaf_index: i,
@@ -234,6 +235,9 @@ impl RelayService {
             from_seq: req.from_seq,
             to_seq: req.to_seq,
             segment_root_hex: hex::encode(root),
+            range_len: expected_len as u64,
+            message_count: expected_len as u32,
+            proof_count: expected_len as u32,
             messages,
             proofs,
         })
@@ -274,6 +278,15 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     if expected_len != resp.messages.len() {
         bail!("seq range does not match message count");
     }
+    if resp.range_len != expected_len as u64 {
+        bail!("range_len does not match seq range");
+    }
+    if resp.message_count != resp.messages.len() as u32 {
+        bail!("message_count does not match messages length");
+    }
+    if resp.proof_count != resp.proofs.len() as u32 {
+        bail!("proof_count does not match proofs length");
+    }
 
     let expected_root = decode_hex_32(&resp.segment_root_hex, "segment root")?;
 
@@ -304,6 +317,14 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
                 "proof leaf index mismatch at index {}: got {}",
                 i,
                 p.leaf_index
+            );
+        }
+        if p.leaf_sequence != expected_seq {
+            bail!(
+                "proof leaf sequence mismatch at index {}: got {}, expected {}",
+                i,
+                p.leaf_sequence,
+                expected_seq
             );
         }
 
