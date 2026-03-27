@@ -174,6 +174,9 @@ git_head_state=$GIT_HEAD_STATE
 git_status_summary=$GIT_STATUS_SUMMARY
 git_worktree_path=$GIT_TOPLEVEL
 git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}
+expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}
+expected_head=${EXPECTED_HEAD:-<unset>}
 git_worktree_entry_begin
 $CURRENT_WORKTREE_ENTRY
 git_worktree_entry_end
