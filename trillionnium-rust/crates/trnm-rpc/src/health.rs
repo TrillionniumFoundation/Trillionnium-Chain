@@ -56,7 +56,7 @@ fn is_health_probe_path(path: &str) -> bool {
 }
 
 fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
-    if method == "HEAD" {
+    if method.eq_ignore_ascii_case("HEAD") {
         http_json_head_response(status_line, body.len())
     } else {
         http_json_response(status_line, body)
@@ -287,6 +287,11 @@ mod tests {
         assert!(head.ends_with("\r\n\r\n"));
         assert!(!head.ends_with("{\"ok\":true}"));
         assert!(head.contains("Content-Length: 11\r\n"));
+
+        let lowercase_head = json_response_for_method("head", "200 OK", "{\"ok\":true}");
+        assert!(lowercase_head.ends_with("\r\n\r\n"));
+        assert!(!lowercase_head.ends_with("{\"ok\":true}"));
+        assert!(lowercase_head.contains("Content-Length: 11\r\n"));
     }
 
     #[test]
