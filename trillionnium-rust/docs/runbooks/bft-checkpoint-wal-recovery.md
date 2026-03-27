@@ -64,6 +64,9 @@ cargo test -p trnm-state -p trnm-node
   - 含义：当前节点实现仍然不会仅凭元数据恢复 `StateStore` 快照或重放已提交块；即使 WAL/checkpoint 元数据链本身通过校验，也会拒绝继续启动。
 - `verified WAL/checkpoint metadata`
   - 含义：恢复流程已经确认当前保留下来的 WAL/checkpoint 元数据链自洽；它只说明“元数据校验通过”，**不**等于应用状态已经恢复完成，必须和 `refusing metadata-only recovery` / `next startup height` 一起解读。
+- `[bft-recover] restored height=<H> lock=<L> checkpoint=<C> truncated=<true|false> metadata_only_recovery=<true|false>`
+  - 含义：这是恢复扫描结束后的结构化摘要行，适合值班侧第一眼确认“节点准备从哪个高度继续、是否带锁恢复、是否发生过截断、当前是否落入 metadata-only recovery 拒绝路径”。
+  - 读取建议：若 `truncated=true`，继续向上 grep `repaired WAL tail required truncation`；若 `metadata_only_recovery=true`，继续 grep `refusing metadata-only recovery` 以拿到带 `retained_wal_summary` 的完整拒绝原因；若 `checkpoint=none`，再结合 `retained no committed WAL entries` / `no retained checkpoint metadata` 判断这是 fresh start 还是 checkpoint 元数据缺失。
 - `[bft-wal] existing default WAL state detected at <A>; isolating this run in <B> (pass --bft-wal-mode reuse to recover prior state explicitly)`
   - 含义：节点发现默认 WAL 目录里已有旧状态，因此本次启动被自动隔离到新的 session 子目录；这通常是“为了避免误复用旧 WAL 的保护动作”，**不是**恢复成功信号。值班侧应立刻记录原目录 `<A>` 与自动隔离目录 `<B>`，避免把新进程产生的空白 WAL 误当成历史恢复结果。
 
