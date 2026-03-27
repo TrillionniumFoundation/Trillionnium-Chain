@@ -11712,6 +11712,30 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_replace_key_id_validation_precedes_bool_schema_validation() {
+        // Merge-gate guard: Replace must reject non-canonical pinned key ids before parsing
+        // the strict-bool payload, so malformed literals cannot perturb the boundary.
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param_with_action(
+                8_052,
+                8_000,
+                "emergency_pause".into(),
+                "TRUE".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace must reject non-canonical emergency_pause key_id first");
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(
+            !err.contains("strict bool"),
+            "replace key-id mismatch path must not leak value-schema errors: {err}"
+        );
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
     fn emergency_pause_key_id_fail_closed_error_stays_aligned_across_write_entrypoints() {
         // REF03 guard: the pinned emergency_pause key id must come from one shared gate so
         // unchecked, checked, and replace entrypoints all fail closed with the same boundary.
