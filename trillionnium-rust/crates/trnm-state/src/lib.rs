@@ -3638,15 +3638,27 @@ fn wal_content_hash_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     is_canonical_hex_digest(&wal_entry.content_hash_hex())
 }
 
-fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
-    let state_root_hex = wal_entry.state_root_hex.as_str();
+fn state_root_surface_is_canonical(state_root_hex: &str) -> bool {
     let looks_like_digest_surface = state_root_hex.len() == 64
         && state_root_hex
             .as_bytes()
             .iter()
             .all(|byte| byte.is_ascii_hexdigit());
 
-    !looks_like_digest_surface || is_canonical_hex_digest(state_root_hex)
+    if looks_like_digest_surface {
+        return is_canonical_hex_digest(state_root_hex);
+    }
+
+    state_root_hex == state_root_hex.trim()
+        && !state_root_hex.is_empty()
+        && state_root_hex.is_ascii()
+        && !state_root_hex
+            .chars()
+            .any(|c| c.is_whitespace() || c.is_control())
+}
+
+fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    state_root_surface_is_canonical(wal_entry.state_root_hex.as_str())
 }
 
 fn checkpoint_hash_surfaces_are_canonical(
@@ -3721,9 +3733,7 @@ fn checkpoint_matches_wal_entry_for_recovery(
     if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
         return false;
     }
-    if is_canonical_hex_digest(&wal_entry.state_root_hex)
-        && !is_canonical_hex_digest(&checkpoint.state_root_hex)
-    {
+    if !state_root_surface_is_canonical(&checkpoint.state_root_hex) {
         return false;
     }
 
@@ -4618,6 +4628,54 @@ mod tests {
         assert!(
             !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
             "checkpoint recovery binding must fail closed on uncommitted WAL metadata even if hash and height surfaces otherwise align"
+        );
+    }
+
+    #[test]
+    fn checkpoint_recovery_binding_rejects_noncanonical_nondigest_checkpoint_state_root() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "state-root-v7".into(),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let wal_entry_hash = wal_entry.content_hash_hex();
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: " state-root-v7 ".into(),
+            wal_entry_hash_hex: wal_entry_hash.clone(),
+        };
+
+        assert!(
+            !checkpoint_matches_wal_entry_for_recovery(&checkpoint, &wal_entry, &wal_entry_hash,),
+            "checkpoint recovery binding must fail closed when a non-digest checkpoint state root uses whitespace-padded evidence surfaces"
+        );
+    }
+
+    #[test]
+    fn node_recovery_rejects_noncanonical_nondigest_checkpoint_state_root() {
+        let wal_entry = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "state-root-v1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: 1,
+            state_root_hex: "state-root-v1\n".into(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let best = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry])
+            .expect("node recovery should fail closed on malformed checkpoint state-root surfaces");
+
+        assert!(
+            best.is_none(),
+            "node recovery must not promote a checkpoint whose non-digest state-root surface is padded with control/whitespace characters"
         );
     }
 
