@@ -96,6 +96,11 @@ fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
         .filter(|suffix| !suffix.contains('/'))
 }
 
+fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
+    let lower = segment.to_ascii_lowercase();
+    lower.contains("%2f") || lower.contains("%5c")
+}
+
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
         .and_then(|suffix| {
@@ -114,6 +119,9 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
         .filter(|suffix| !suffix.contains('/'))
+        // Also reject encoded slash-like separators so ambiguous operator
+        // paths are not silently accepted as opaque identifiers.
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -260,8 +268,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        fallback_response_for_request, is_health_probe_path, json_response_for_method,
-        parse_nonempty_path_suffix, parse_path_u64_suffix,
+        fallback_response_for_request, has_ambiguous_path_segment_encoding,
+        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
+        parse_path_u64_suffix,
     };
 
     #[test]
@@ -382,6 +391,35 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn ambiguous_path_segment_encoding_rejects_encoded_slashes_case_insensitively() {
+        assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
+        assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
     #[test]
