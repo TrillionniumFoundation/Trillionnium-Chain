@@ -747,3 +747,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: ver
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: verify-lane-worktree-branch-ref-guard-test" "./scripts/v2/verify_lane_worktree_branch_ref_guard_test.sh" "ci(gate): add verify-lane-worktree-branch-ref-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: verify-lane-worktree-canonical-worktree-root-test" "./scripts/v2/verify_lane_worktree_canonical_worktree_root_test.sh" "ci(gate): add verify-lane-worktree-canonical-worktree-root-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: verify-lane-worktree-detached-head-guard-test" "./scripts/v2/verify_lane_worktree_detached_head_guard_test.sh" "ci(gate): add verify-lane-worktree-detached-head-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: collect-release-operator-preflight-relative-paths-canonical-test" "./scripts/v2/collect_release_operator_preflight_relative_paths_canonical_test.sh" "ci(gate): add collect-release-operator-preflight-relative-paths-canonical-test regression to quick-check"
