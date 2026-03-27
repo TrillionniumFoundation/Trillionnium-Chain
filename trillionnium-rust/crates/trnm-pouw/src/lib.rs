@@ -19094,6 +19094,37 @@ mod tests {
     }
 
     #[test]
+    fn timeout_preflight_rejects_underfunded_challenge_escrow() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, false, true)
+            .expect_err("timeout settlement must fail closed when challenge escrow is underfunded");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("insufficient balance") && msg.contains(CHALLENGE_ESCROW_ACCOUNT)));
+    }
+
+    #[test]
     fn timeout_preflight_rejects_blank_challenger_identity() {
         let st = seeded_state();
         let task = TaskObject {
