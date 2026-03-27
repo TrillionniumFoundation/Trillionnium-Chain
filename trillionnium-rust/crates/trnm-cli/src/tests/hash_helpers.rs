@@ -41,3 +41,15 @@ fn extract_tx_hash_accepts_case_insensitive_keys_and_colon_separator() {
         Some("0xcafe02")
     );
 }
+
+#[test]
+fn extract_tx_hash_accepts_angle_bracket_wrapped_hashes() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=<0xBEEF42>").as_deref(),
+        Some("0xbeef42")
+    );
+    assert_eq!(
+        extract_tx_hash("see <transactionHash:0xCAFE99> now").as_deref(),
+        Some("0xcafe99")
+    );
+}
