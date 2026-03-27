@@ -71,6 +71,7 @@ For multi-worktree validator rehearsals, prefer the shared fail-closed helper in
 ```bash
 EXPECTED_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
 EXPECTED_BRANCH_REF="refs/heads/$(git branch --show-current)"
+bash -n ./scripts/v2/verify_lane_worktree.sh
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"

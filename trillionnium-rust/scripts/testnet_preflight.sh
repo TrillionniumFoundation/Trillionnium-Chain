@@ -95,6 +95,10 @@ if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
   exit 5
 fi
 
+log "check shell syntax"
+bash -n ./scripts/testnet_preflight.sh
+bash -n ./scripts/v2/verify_lane_worktree.sh
+
 log "check rust toolchain"
 command -v cargo >/dev/null
 cargo --version | tee -a "$LOG"
