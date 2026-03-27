@@ -317,3 +317,36 @@ fn emergency_pause_unchecked_invalid_literal_preserves_live_binding_and_pending_
         "failed unchecked malformed toggle must not materialize pending governance residue"
     );
 }
+
+#[test]
+fn emergency_pause_rejects_non_canonical_key_spelling_without_mutating_live_binding() {
+    // Merge-gate guard: the emergency brake must stay bound to one canonical governance key
+    // spelling, even when callers present the reserved key id with alias/case/whitespace drift.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(9_030, 7_999, "emergency_pause".into(), "true".into())
+        .expect("baseline canonical pause=true should apply immediately");
+    let live_before = st.gov_param("emergency_pause").cloned();
+    assert!(st.is_emergency_paused());
+
+    for bad_key in ["Emergency_Pause", " emergency_pause", "emergency_pause "] {
+        let err = st
+            .set_gov_param(9_031, 7_999, bad_key.into(), "false".into())
+            .expect_err("non-canonical emergency_pause key spelling must fail closed");
+        assert!(err.contains("governance key not allowed"), "unexpected error: {err}");
+    }
+
+    assert!(
+        st.is_emergency_paused(),
+        "non-canonical key spelling must not unpause the live emergency brake"
+    );
+    assert_eq!(
+        st.gov_param("emergency_pause").cloned(),
+        live_before,
+        "non-canonical key spelling must preserve the canonical live emergency_pause object"
+    );
+    assert!(
+        st.pending_gov_update("emergency_pause").is_none(),
+        "non-canonical key spelling must not materialize pending governance residue"
+    );
+}
