@@ -3710,6 +3710,25 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_is_stable_for_duplicate_heavy_equivalent_read_only_domains() {
+        let buckets_n = 97usize;
+        let duplicate_heavy = tx(1, vec![o(11), o(5), o(11), o(13), o(13)], vec![]);
+        let canonical = tx(2, vec![o(5), o(11), o(13)], vec![]);
+
+        // Read-only duplicate-heavy domains should collapse to the same two
+        // smallest distinct access keys as their canonical equivalent so lane
+        // hints stay stable under telemetry/order noise.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            hot_bucket_hint(&canonical, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            ((5u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_tracks_two_smallest_distinct_keys_when_new_min_arrives_last() {
         let t = tx(1, vec![o(3)], vec![o(5), o(4)]);
         let buckets_n = 8usize;
