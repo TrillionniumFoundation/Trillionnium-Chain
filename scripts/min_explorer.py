@@ -72,6 +72,7 @@ class ExplorerData:
                         "height": h,
                         "state_root": m.group(2),
                         "raw": line.strip(),
+                        "source": logf.name,
                     }
             except Exception:
                 continue
@@ -271,12 +272,12 @@ class Handler(BaseHTTPRequestHandler):
         if not b:
             latest_h = max(blocks.keys()) if blocks else None
             extra = f" Latest known height: <code>{latest_h}</code>." if latest_h is not None else ""
-            self._send_html(404, f"Block {h}", f"<h2>Block</h2><p><code>{h}</code></p><p class='bad'>Block not found from run/node*.log.{extra}</p>")
+            self._send_html(404, f"Block {h}", f"<h2>Block</h2><p><code>{h}</code></p><p class='bad'>Block not found from run/parallel-sanity.log or run/node*.log.{extra}</p>")
             return
 
         body = (
             f"<h2>Block</h2><p><code>{h}</code></p>"
-            f"<div class='card'><b>height:</b> {h}<br /><b>state_root:</b> <code>{html.escape(str(b.get('state_root')))}</code></div>"
+            f"<div class='card'><b>height:</b> {h}<br /><b>state_root:</b> <code>{html.escape(str(b.get('state_root')))}</code><br /><b>source:</b> <code>{html.escape(str(b.get('source') or 'unknown'))}</code></div>"
             "<h3>Raw log line</h3>"
             f"<pre>{html.escape(str(b.get('raw') or ''))}</pre>"
         )
