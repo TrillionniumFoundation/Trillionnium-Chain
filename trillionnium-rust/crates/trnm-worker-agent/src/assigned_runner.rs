@@ -5,9 +5,10 @@ use trnm_types::RequestStatus;
 use crate::proof_adapter::ProofAdapter;
 use crate::state::MessageIngressRecord;
 use crate::{
-    adapter_error_signal, append_submission, attach_llm_provenance, classify_adapter_error,
-    commitment, execute_payload, reputation_delta, run_llm_adapter_with_retry,
-    transition_request_status, AdapterErrorKind, LlmAdapterPolicy, ReputationSignal,
+    adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
+    classify_adapter_error, commitment, execute_payload, reputation_gap_bps_from_best,
+    run_llm_adapter_with_retry, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
+    ReputationSignal,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -31,19 +32,26 @@ pub(crate) fn process_assigned_record(
         Ok(v) => v,
         Err(e) => {
             let (resolution_code, failure_tag): (&str, &str) = classify_adapter_error(&e);
+            let reputation_signal = adapter_error_signal(e.kind);
+            let reputation_impact = apply_reputation_signal(rec, reputation_signal);
             rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
             rec.verifier_status = Some("rejected".to_string());
             rec.resolution_code = Some(resolution_code.to_string());
             rec.adapter_error = Some(e.context.clone());
-            rec.reputation_delta = Some(reputation_delta(adapter_error_signal(e.kind)));
 
             println!(
-                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} error={}",
+                "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={} error={}",
                 rec.request_id,
                 rec.task_id,
                 worker,
                 failure_tag,
                 matches!(e.kind, AdapterErrorKind::Retriable),
+                reputation_impact.label,
+                reputation_impact.delta,
+                reputation_impact.tier,
+                reputation_impact.weight_bps,
+                reputation_impact.score_bps,
+                reputation_gap_bps_from_best(reputation_signal),
                 e.context
             );
             return Ok(true);
@@ -59,12 +67,23 @@ pub(crate) fn process_assigned_record(
     rec.resolution_code = Some(resolution_code.to_string());
 
     if v_status != "accepted" {
+        let reputation_signal = ReputationSignal::VerifierRejected;
+        let reputation_impact = apply_reputation_signal(rec, reputation_signal);
         rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
-        rec.reputation_delta = Some(reputation_delta(ReputationSignal::VerifierRejected));
 
         println!(
-            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",
-            rec.request_id, rec.task_id, worker, v_status, resolution_code
+            "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
+            rec.request_id,
+            rec.task_id,
+            worker,
+            v_status,
+            resolution_code,
+            reputation_impact.label,
+            reputation_impact.delta,
+            reputation_impact.tier,
+            reputation_impact.weight_bps,
+            reputation_impact.score_bps,
+            reputation_gap_bps_from_best(reputation_signal)
         );
         return Ok(true);
     }
@@ -85,17 +104,24 @@ pub(crate) fn process_assigned_record(
         )?;
     }
 
+    let reputation_signal = ReputationSignal::Accepted;
+    let reputation_impact = apply_reputation_signal(rec, reputation_signal);
     rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
-    rec.reputation_delta = Some(reputation_delta(ReputationSignal::Accepted));
 
     println!(
-        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={}",
+        "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={} reputation_signal={} reputation_delta={} reputation_tier={} reputation_weight_bps={} reputation_score_bps={} reputation_gap_bps_from_best={}",
         rec.request_id,
         rec.task_id,
         worker,
         result_hash,
         submit,
-        rec.provider_request_id.as_deref().unwrap_or("-")
+        rec.provider_request_id.as_deref().unwrap_or("-"),
+        reputation_impact.label,
+        reputation_impact.delta,
+        reputation_impact.tier,
+        reputation_impact.weight_bps,
+        reputation_impact.score_bps,
+        reputation_gap_bps_from_best(reputation_signal)
     );
     Ok(true)
 }

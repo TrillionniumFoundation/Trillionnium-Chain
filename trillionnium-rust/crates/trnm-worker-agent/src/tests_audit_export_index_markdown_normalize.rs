@@ -14,6 +14,13 @@ fn export_audit_markdown_normalizes_multiline_cells_to_single_line() {
         adapter: Some("mcp".to_string()),
         agent_protocol: Some("a2a".to_string()),
         compliance_profile: Some("cn-pii-restricted".to_string()),
+        reputation_label: None,
+        reputation_delta: None,
+        reputation_tier: None,
+        reputation_weight_bps: None,
+        reputation_score_bps: None,
+        reputation_rank_ordinal: None,
+        reputation_gap_bps_from_best: None,
     }];
 
     let md = render_enterprise_audit_markdown(&rows);

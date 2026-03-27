@@ -40,6 +40,13 @@ fn enterprise_audit_export_drops_v2_only_fields_when_schema_is_not_v2() {
     assert_eq!(export.adapter.as_deref(), Some("mcp"));
     assert_eq!(export.agent_protocol, None);
     assert_eq!(export.compliance_profile, None);
+    assert_eq!(export.reputation_label, None);
+    assert_eq!(export.reputation_delta, None);
+    assert_eq!(export.reputation_tier, None);
+    assert_eq!(export.reputation_weight_bps, None);
+    assert_eq!(export.reputation_score_bps, None);
+    assert_eq!(export.reputation_rank_ordinal, None);
+    assert_eq!(export.reputation_gap_bps_from_best, None);
     let expected = build_provenance_fingerprint(
         Some("llm.v1"),
         Some("openai"),

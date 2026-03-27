@@ -14,6 +14,20 @@ pub(crate) struct EnterpriseAuditExportRecord {
     pub(crate) adapter: Option<String>,
     pub(crate) agent_protocol: Option<String>,
     pub(crate) compliance_profile: Option<String>,
+    #[serde(default)]
+    pub(crate) reputation_label: Option<String>,
+    #[serde(default)]
+    pub(crate) reputation_delta: Option<i32>,
+    #[serde(default)]
+    pub(crate) reputation_tier: Option<u8>,
+    #[serde(default)]
+    pub(crate) reputation_weight_bps: Option<u16>,
+    #[serde(default)]
+    pub(crate) reputation_score_bps: Option<i32>,
+    #[serde(default)]
+    pub(crate) reputation_rank_ordinal: Option<u8>,
+    #[serde(default)]
+    pub(crate) reputation_gap_bps_from_best: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
