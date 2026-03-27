@@ -2,6 +2,7 @@
 """TRNM minimal local explorer.
 
 Pages:
+- /healthz            -> liveness probe
 - /address/<address>  -> balance / nonce / recent tx
 - /tx/<tx_hash>       -> status / error
 - /block/<height>     -> height / state_root
@@ -152,6 +153,16 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/":
             self._send_html(200, "Home", "<p>Use the forms above to open address / tx / block pages.</p>")
+            return
+
+        if path == "/healthz":
+            out = b"ok\n"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(out)))
+            self.end_headers()
+            self.wfile.write(out)
             return
 
         if path == "/address":
