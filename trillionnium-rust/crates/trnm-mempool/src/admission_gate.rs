@@ -43,3 +43,22 @@ impl AdmissionGate {
         Some(id)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zero_capacity_gate_preserves_duplicate_vs_backpressure_contract() {
+        let mut gate = AdmissionGate::new(0);
+
+        // Simulate restored duplicate knowledge for a hard-stopped lane: known ids
+        // must remain Duplicate while fresh ingress stays fail-closed.
+        gate.seen.insert(7);
+
+        assert_eq!(gate.admit(7), AdmitOutcome::Duplicate);
+        assert_eq!(gate.admit(8), AdmitOutcome::Backpressured);
+        assert_eq!(gate.pop_ready(), None);
+        assert!(gate.seen.contains(&7));
+    }
+}
