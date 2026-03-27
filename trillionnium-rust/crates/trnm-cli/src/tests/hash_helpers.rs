@@ -77,3 +77,15 @@ fn extract_tx_hash_trims_sentence_punctuation_noise() {
         Some("0xbeef42")
     );
 }
+
+#[test]
+fn extract_tx_hash_trims_hidden_unicode_wrappers() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=\u{2068}<0xABCD1234>\u{2069}").as_deref(),
+        Some("0xabcd1234")
+    );
+    assert_eq!(
+        extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+        Some("0xbeef42")
+    );
+}

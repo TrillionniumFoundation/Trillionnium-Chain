@@ -92,6 +92,11 @@ fn query_local_tx_status_normalizes_requested_hash_noise() {
             .as_deref(),
         Some("pending")
     );
+    assert_eq!(
+        query_local_tx_status("\u{2068}<0xABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890>\u{2069}\u{200b}")
+            .as_deref(),
+        Some("pending")
+    );
 
     let _ = std::fs::remove_file(&path);
     std::env::remove_var("TRNM_RPC_TX_FILE");

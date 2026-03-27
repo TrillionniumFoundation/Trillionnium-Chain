@@ -8,8 +8,26 @@ pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
         cleaned = cleaned
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace()
+                    || c.is_control()
                     || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
                     || matches!(c, '.' | '!' | '?')
+                    || matches!(
+                        c,
+                        '\u{200B}'
+                            | '\u{200C}'
+                            | '\u{200D}'
+                            | '\u{2060}'
+                            | '\u{FEFF}'
+                            | '\u{202A}'
+                            | '\u{202B}'
+                            | '\u{202C}'
+                            | '\u{202D}'
+                            | '\u{202E}'
+                            | '\u{2066}'
+                            | '\u{2067}'
+                            | '\u{2068}'
+                            | '\u{2069}'
+                    )
             })
             .to_string();
 
