@@ -68,6 +68,57 @@ fn emergency_pause_cancel_skips_value_validation_but_stays_side_effect_free() {
 }
 
 #[test]
+fn emergency_pause_cancel_scrubs_stale_pending_entry_without_mutating_live_pause_binding() {
+    let mut st = StateStore::new();
+
+    st.set_gov_param(8_699, 7_999, "emergency_pause".into(), "true".into())
+        .expect("baseline pause=true should apply immediately");
+    let live_before = st.gov_param("emergency_pause").cloned();
+    assert!(st.is_emergency_paused());
+
+    // Corrupt/legacy state simulation: even while the live pause guard is already active,
+    // unsupported cancel should only scrub stale queued residue and must not mutate the
+    // canonical emergency_pause object or unpause the store.
+    st.pending_gov_updates.insert(
+        "emergency_pause".into(),
+        PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            activate_at_height: 88_777,
+        },
+    );
+
+    let cancel_err = st
+        .set_gov_param_with_action(
+            8_700,
+            7_999,
+            "emergency_pause".into(),
+            "NOT_BOOL".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("cancel remains unsupported for non-sensitive emergency_pause");
+    assert!(cancel_err.contains("cancel not supported for non-sensitive key"));
+    assert!(
+        !cancel_err.contains("invalid governance value"),
+        "cancel path must keep parser-bypass semantics for emergency_pause"
+    );
+    assert!(
+        st.pending_gov_update("emergency_pause").is_none(),
+        "unsupported cancel must still scrub stale pending emergency_pause entries"
+    );
+    assert!(
+        st.is_emergency_paused(),
+        "unsupported cancel must not unpause the live emergency brake"
+    );
+    assert_eq!(
+        st.gov_param("emergency_pause").cloned(),
+        live_before,
+        "unsupported cancel must preserve the canonical live emergency_pause object"
+    );
+}
+
+#[test]
 fn emergency_pause_checked_path_clears_stale_pending_entry_if_present() {
     let mut st = StateStore::new();
 
