@@ -5005,3 +5005,31 @@ mod tests {
         }
     }
 }
+    #[test]
+    fn original_conflict_only_batch_reports_singleton_profile_shape() {
+        let txs = vec![
+            tx(51, vec![], vec![o(99)]),
+            tx(52, vec![], vec![o(99)]),
+            tx(53, vec![], vec![o(99)]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(groups.len(), 3);
+        assert_eq!(
+            groups
+                .iter()
+                .map(|group| group.iter().map(|tx| tx.id).collect::<Vec<_>>())
+                .collect::<Vec<_>>(),
+            vec![vec![51], vec![52], vec![53]]
+        );
+        assert_eq!(profile.tx_count, 3);
+        assert_eq!(profile.group_count, 3);
+        assert_eq!(profile.grouped_count, 3);
+        assert_eq!(profile.max_group_size, 1);
+        assert_eq!(profile.min_group_size, 1);
+        assert_eq!(profile.avg_group_size, 1.0);
+        assert_eq!(profile.conflict_hits, 2);
+    }
+
