@@ -100,6 +100,7 @@ bash -n ./scripts/testnet_preflight.sh
 bash -n ./scripts/check_bft_restart_recovery.sh
 bash -n ./scripts/release_rc.sh
 bash -n ./scripts/v2/verify_lane_worktree.sh
+bash -n ./scripts/v2/extract_release_handoff_fields.sh
 bash -n ./scripts/devnet_up.sh
 bash -n ./scripts/devnet_down.sh
 bash -n ./scripts/audit_state_roots.sh
