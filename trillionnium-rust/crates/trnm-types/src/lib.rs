@@ -193,6 +193,146 @@ pub struct GovProposalObject {
     pub version: u64,
 }
 
+pub const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum GovParamKey {
+    MaxBlockMs,
+    MaxParallelWorkers,
+    MinWorkerStake,
+    ChallengeMinBond,
+    ChallengeMinBondBountyBps,
+    ChallengeMinBondWorkerStakeBps,
+    ChallengeWindowBlocks,
+    ChallengeSuccessBounty,
+    LlmMeterPromptTokenWeight,
+    LlmMeterGeneratedTokenWeight,
+    LlmMeterDecodeStepWeight,
+    LlmMeterKvByteWeight,
+    LlmMeterMinAcceptWorkUnits,
+    LlmMeterChallengeSuccessBountyPerWorkUnitNum,
+    LlmMeterChallengeSuccessBountyPerWorkUnitDen,
+    LlmMeterWorkerCompletionBonusPerWorkUnitNum,
+    LlmMeterWorkerCompletionBonusPerWorkUnitDen,
+    LlmMeterWorkerSlashRebatePerWorkUnitNum,
+    LlmMeterWorkerSlashRebatePerWorkUnitDen,
+    ResolveAuthority,
+    EmergencyPause,
+    MonetaryPolicyTickIntervalBlocks,
+    MonetaryPolicyTickCooldownBlocks,
+    MonetaryBaseIssuancePerTick,
+    MonetaryBaseBurnPerTick,
+}
+
+impl GovParamKey {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::MaxBlockMs => "max_block_ms",
+            Self::MaxParallelWorkers => "max_parallel_workers",
+            Self::MinWorkerStake => "min_worker_stake",
+            Self::ChallengeMinBond => "challenge_min_bond",
+            Self::ChallengeMinBondBountyBps => "challenge_min_bond_bounty_bps",
+            Self::ChallengeMinBondWorkerStakeBps => "challenge_min_bond_worker_stake_bps",
+            Self::ChallengeWindowBlocks => "challenge_window_blocks",
+            Self::ChallengeSuccessBounty => "challenge_success_bounty",
+            Self::LlmMeterPromptTokenWeight => "llm_meter_prompt_token_weight",
+            Self::LlmMeterGeneratedTokenWeight => "llm_meter_generated_token_weight",
+            Self::LlmMeterDecodeStepWeight => "llm_meter_decode_step_weight",
+            Self::LlmMeterKvByteWeight => "llm_meter_kv_byte_weight",
+            Self::LlmMeterMinAcceptWorkUnits => "llm_meter_min_accept_work_units",
+            Self::LlmMeterChallengeSuccessBountyPerWorkUnitNum => {
+                "llm_meter_challenge_success_bounty_per_work_unit_num"
+            }
+            Self::LlmMeterChallengeSuccessBountyPerWorkUnitDen => {
+                "llm_meter_challenge_success_bounty_per_work_unit_den"
+            }
+            Self::LlmMeterWorkerCompletionBonusPerWorkUnitNum => {
+                "llm_meter_worker_completion_bonus_per_work_unit_num"
+            }
+            Self::LlmMeterWorkerCompletionBonusPerWorkUnitDen => {
+                "llm_meter_worker_completion_bonus_per_work_unit_den"
+            }
+            Self::LlmMeterWorkerSlashRebatePerWorkUnitNum => {
+                "llm_meter_worker_slash_rebate_per_work_unit_num"
+            }
+            Self::LlmMeterWorkerSlashRebatePerWorkUnitDen => {
+                "llm_meter_worker_slash_rebate_per_work_unit_den"
+            }
+            Self::ResolveAuthority => "resolve_authority",
+            Self::EmergencyPause => "emergency_pause",
+            Self::MonetaryPolicyTickIntervalBlocks => "monetary_policy_tick_interval_blocks",
+            Self::MonetaryPolicyTickCooldownBlocks => "monetary_policy_tick_cooldown_blocks",
+            Self::MonetaryBaseIssuancePerTick => "monetary_base_issuance_per_tick",
+            Self::MonetaryBaseBurnPerTick => "monetary_base_burn_per_tick",
+        }
+    }
+
+    pub fn canonical_key_id(self) -> Option<u64> {
+        match self {
+            Self::EmergencyPause => Some(EMERGENCY_PAUSE_KEY_ID),
+            _ => None,
+        }
+    }
+
+    pub fn from_str(key: &str) -> Option<Self> {
+        Some(match key {
+            "max_block_ms" => Self::MaxBlockMs,
+            "max_parallel_workers" => Self::MaxParallelWorkers,
+            "min_worker_stake" => Self::MinWorkerStake,
+            "challenge_min_bond" => Self::ChallengeMinBond,
+            "challenge_min_bond_bounty_bps" => Self::ChallengeMinBondBountyBps,
+            "challenge_min_bond_worker_stake_bps" => Self::ChallengeMinBondWorkerStakeBps,
+            "challenge_window_blocks" => Self::ChallengeWindowBlocks,
+            "challenge_success_bounty" => Self::ChallengeSuccessBounty,
+            "llm_meter_prompt_token_weight" => Self::LlmMeterPromptTokenWeight,
+            "llm_meter_generated_token_weight" => Self::LlmMeterGeneratedTokenWeight,
+            "llm_meter_decode_step_weight" => Self::LlmMeterDecodeStepWeight,
+            "llm_meter_kv_byte_weight" => Self::LlmMeterKvByteWeight,
+            "llm_meter_min_accept_work_units" => Self::LlmMeterMinAcceptWorkUnits,
+            "llm_meter_challenge_success_bounty_per_work_unit_num" => {
+                Self::LlmMeterChallengeSuccessBountyPerWorkUnitNum
+            }
+            "llm_meter_challenge_success_bounty_per_work_unit_den" => {
+                Self::LlmMeterChallengeSuccessBountyPerWorkUnitDen
+            }
+            "llm_meter_worker_completion_bonus_per_work_unit_num" => {
+                Self::LlmMeterWorkerCompletionBonusPerWorkUnitNum
+            }
+            "llm_meter_worker_completion_bonus_per_work_unit_den" => {
+                Self::LlmMeterWorkerCompletionBonusPerWorkUnitDen
+            }
+            "llm_meter_worker_slash_rebate_per_work_unit_num" => {
+                Self::LlmMeterWorkerSlashRebatePerWorkUnitNum
+            }
+            "llm_meter_worker_slash_rebate_per_work_unit_den" => {
+                Self::LlmMeterWorkerSlashRebatePerWorkUnitDen
+            }
+            "resolve_authority" => Self::ResolveAuthority,
+            "emergency_pause" => Self::EmergencyPause,
+            "monetary_policy_tick_interval_blocks" => Self::MonetaryPolicyTickIntervalBlocks,
+            "monetary_policy_tick_cooldown_blocks" => Self::MonetaryPolicyTickCooldownBlocks,
+            "monetary_base_issuance_per_tick" => Self::MonetaryBaseIssuancePerTick,
+            "monetary_base_burn_per_tick" => Self::MonetaryBaseBurnPerTick,
+            _ => return None,
+        })
+    }
+
+    pub fn validate_key_id(self, key_id: u64) -> Result<(), String> {
+        if let Some(expected_key_id) = self.canonical_key_id() {
+            if key_id != expected_key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                    self.as_str(),
+                    expected_key_id,
+                    key_id
+                ));
+            }
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GovParamObject {
     pub key_id: u64,
@@ -299,5 +439,51 @@ mod tests {
             serde_json::from_str(raw).expect("legacy task payload should deserialize");
         assert_eq!(task.proof_type, ProofType::Fraud);
         assert!(task.metadata.is_none());
+    }
+
+    #[test]
+    fn gov_param_key_roundtrips_canonical_registry_strings() {
+        let cases = [
+            (GovParamKey::MaxBlockMs, "max_block_ms", None),
+            (GovParamKey::ResolveAuthority, "resolve_authority", None),
+            (
+                GovParamKey::EmergencyPause,
+                "emergency_pause",
+                Some(EMERGENCY_PAUSE_KEY_ID),
+            ),
+            (
+                GovParamKey::MonetaryBaseBurnPerTick,
+                "monetary_base_burn_per_tick",
+                None,
+            ),
+        ];
+
+        for (key, expected_str, expected_key_id) in cases {
+            assert_eq!(key.as_str(), expected_str);
+            assert_eq!(GovParamKey::from_str(expected_str), Some(key));
+            assert_eq!(key.canonical_key_id(), expected_key_id);
+        }
+
+        assert_eq!(GovParamKey::from_str("EmergencyPause"), None);
+        assert_eq!(GovParamKey::from_str("algorand_governance_key_id"), None);
+    }
+
+    #[test]
+    fn gov_param_key_enforces_reserved_key_id_bindings_fail_closed() {
+        GovParamKey::EmergencyPause
+            .validate_key_id(EMERGENCY_PAUSE_KEY_ID)
+            .expect("reserved binding should accept the canonical key id");
+
+        let err = GovParamKey::EmergencyPause
+            .validate_key_id(EMERGENCY_PAUSE_KEY_ID + 1)
+            .expect_err("reserved binding should reject mismatched key ids");
+        assert!(
+            err.contains("governance key id mismatch for emergency_pause"),
+            "unexpected mismatch error: {err}"
+        );
+
+        GovParamKey::ResolveAuthority
+            .validate_key_id(EMERGENCY_PAUSE_KEY_ID)
+            .expect("unpinned keys should not invent a reserved key-id policy here");
     }
 }

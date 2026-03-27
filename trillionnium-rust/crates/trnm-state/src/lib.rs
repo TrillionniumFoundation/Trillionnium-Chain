@@ -3,7 +3,8 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject, TaskStatus,
+    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32,
+    EMERGENCY_PAUSE_KEY_ID, ObjectRef, TaskObject, TaskStatus,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -180,7 +181,7 @@ pub enum GovPendingUpdateAction {
 
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
-const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
 const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
 
 fn governance_pinned_binding(
@@ -233,7 +234,13 @@ fn governance_registry_lookup_id_for_key(
     if !GOV_ALLOWED_KEYS.contains(&key) {
         return None;
     }
-    governance_expected_key_id(key).or_else(|| gov_param_key_index.get(key).copied())
+    governance_expected_key_id(key).or_else(|| {
+        let indexed_id = gov_param_key_index.get(key).copied()?;
+        match governance_expected_key_for_id(indexed_id) {
+            Some(expected_key) if expected_key != key => None,
+            _ => Some(indexed_id),
+        }
+    })
 }
 
 fn governance_registry_unique_dynamic_key_for_id<'a>(
@@ -459,18 +466,18 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
     ("challenge_min_bond_worker_stake_bps", "100001"),
     ("challenge_window_blocks", "99"),
     ("challenge_success_bounty", "-1"),
-    ("llm_meter_prompt_token_weight", "-1"),
-    ("llm_meter_generated_token_weight", "-1"),
-    ("llm_meter_decode_step_weight", "-1"),
-    ("llm_meter_kv_byte_weight", "-1"),
-    ("llm_meter_min_accept_work_units", "-1"),
-    ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
+    ("llm_meter_prompt_token_weight", "1000000000001"),
+    ("llm_meter_generated_token_weight", "1000000000001"),
+    ("llm_meter_decode_step_weight", "1000000000001"),
+    ("llm_meter_kv_byte_weight", "1000000000001"),
+    ("llm_meter_min_accept_work_units", "1000000000001"),
+    ("llm_meter_challenge_success_bounty_per_work_unit_num", "1000000000001"),
     ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
-    ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
+    ("llm_meter_worker_completion_bonus_per_work_unit_num", "1000000000001"),
     ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
-    ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
+    ("llm_meter_worker_slash_rebate_per_work_unit_num", "1000000000001"),
     ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-    ("resolve_authority", "authority-a"),
+    ("resolve_authority", "   "),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -480,14 +487,15 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
-    pinned_key_ids
-        .iter()
-        .find_map(|(pinned_key, pinned_id)| (*pinned_key == key).then_some(*pinned_id))
+    governance_expected_key_id(key)
+        .filter(|expected_id| pinned_key_ids.iter().any(|(pinned_key, pinned_id)| {
+            *pinned_key == key && *pinned_id == *expected_id
+        }))
 }
 
 #[allow(dead_code)]
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
-    governance_pinned_key_id_from_lists(GOV_PINNED_KEY_IDS, key)
+    governance_expected_key_id(key)
 }
 
 fn validate_governance_key_id_from_lists(
@@ -495,6 +503,10 @@ fn validate_governance_key_id_from_lists(
     key: &str,
     key_id: u64,
 ) -> Result<(), String> {
+    if pinned_key_ids == GOV_PINNED_KEY_IDS {
+        return validate_gov_param_key_id_policy(key, key_id);
+    }
+
     if let Some(expected_id) = governance_pinned_key_id_from_lists(pinned_key_ids, key) {
         if key_id != expected_id {
             return Err(format!(
@@ -503,12 +515,24 @@ fn validate_governance_key_id_from_lists(
             ));
         }
     }
+    if let Some((expected_key, _)) = pinned_key_ids
+        .iter()
+        .copied()
+        .find(|(_, pinned_key_id)| *pinned_key_id == key_id)
+    {
+        if key != expected_key {
+            return Err(format!(
+                "governance key id mismatch for id {}: expected_key={}, attempted_key={}",
+                key_id, expected_key, key
+            ));
+        }
+    }
     Ok(())
 }
 
 #[allow(dead_code)]
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
-    validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, key_id)
+    validate_gov_param_key_id_policy(key, key_id)
 }
 
 fn format_governance_registry_membership_drift(
@@ -530,7 +554,7 @@ fn format_governance_registry_membership_drift(
     }
 
     Some(format!(
-        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_validator_keys=[{}]",
+        "governance {} drifted from allowed-key registry: missing_allowed_keys=[{}], rogue_registry_keys=[{}]",
         registry_name,
         missing_allowed_keys.join(", "),
         rogue_registry_keys.join(", "),
@@ -2323,11 +2347,11 @@ impl StateStore {
                 let snapshot_key = snapshot.key.clone();
                 if snapshot.key_id == 0
                     || snapshot.version == 0
-                    || snapshot_key == "algorand_governance_key_id"
+                    || snapshot_key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID
                 {
                     self.clear_pending_gov_update_bindings(&snapshot_key, None);
-                    self.remove_gov_param_key_index_for_id(snapshot.key_id);
-                    self.objects.remove(&snapshot.key_id);
+                    self.remove_gov_param_key_index_for_id(key_id);
+                    self.objects.remove(&key_id);
                     self.invalidate_state_root_cache();
                     return;
                 }
@@ -2362,11 +2386,15 @@ impl StateStore {
                         self.gov_param_key_index.get(&snapshot_key).copied()
                     {
                         if existing_key_id != snapshot.key_id {
-                            self.clear_pending_gov_update_bindings(&snapshot_key, None);
-                            self.remove_gov_param_key_index_for_id(snapshot.key_id);
-                            self.objects.remove(&snapshot.key_id);
-                            self.invalidate_state_root_cache();
-                            return;
+                            if governance_expected_key_id(&snapshot_key) == Some(snapshot.key_id) {
+                                self.remove_gov_param_key_index_for_id(existing_key_id);
+                            } else {
+                                self.clear_pending_gov_update_bindings(&snapshot_key, None);
+                                self.remove_gov_param_key_index_for_id(snapshot.key_id);
+                                self.objects.remove(&snapshot.key_id);
+                                self.invalidate_state_root_cache();
+                                return;
+                            }
                         }
                     }
 
@@ -2805,9 +2833,7 @@ impl StateStore {
                 self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(GovParamUpdateOutcome::Applied(existing_ref));
@@ -2824,9 +2850,7 @@ impl StateStore {
                 && self.gov_param_value(&key) == Some(value.as_str())
             {
                 if let Some(existing_ref) = self
-                    .gov_param_key_index
-                    .get(&key)
-                    .copied()
+                    .validated_gov_param_registry_id_for_key(&key)
                     .and_then(|id| self.get_ref(id))
                 {
                     return Ok(GovParamUpdateOutcome::Applied(existing_ref));
@@ -3026,7 +3050,7 @@ impl StateStore {
                     return;
                 }
 
-                if key == "algorand_governance_key_id" {
+                if key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID {
                     self.clear_pending_gov_update_bindings(key, None);
                     self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
                     if scrubs_resolve_quorum {
@@ -4112,7 +4136,7 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::TaskStatus;
+    use trnm_types::{ProofType, TaskStatus};
 
     #[test]
     fn checkpoint_evidence_surface_requires_canonical_checkpoint_and_wal_roots() {
@@ -7782,6 +7806,11 @@ mod tests {
             err.contains("explicit-validator registry drifted from allowed-key registry"),
             "{err}"
         );
+        assert!(
+            err.contains("missing_allowed_keys=[max_parallel_workers]"),
+            "{err}"
+        );
+        assert!(err.contains("rogue_registry_keys=[]"), "{err}");
         assert!(err.contains("max_parallel_workers"), "{err}");
     }
 
@@ -7816,6 +7845,11 @@ mod tests {
                 err.contains("explicit-value-rule registry drifted from allowed-key registry"),
                 "{err}"
             );
+            assert!(
+                err.contains("missing_allowed_keys=[max_parallel_workers]"),
+                "{err}"
+            );
+            assert!(err.contains("rogue_registry_keys=[]"), "{err}");
             assert!(err.contains("max_parallel_workers"), "{err}");
         }
     }
@@ -7940,6 +7974,26 @@ mod tests {
 
         assert!(
             err.contains("governance key id mismatch for emergency_pause: expected_id=7999, attempted_id=8000"),
+            "{err}"
+        );
+    }
+
+    #[test]
+    fn governance_key_registration_rejects_reserved_id_alias_reuse_fail_closed() {
+        let err = validate_governance_key_registration_lists(
+            &BTreeMap::new(),
+            "resolve_authority",
+            EMERGENCY_PAUSE_KEY_ID,
+            &["emergency_pause", "resolve_authority"],
+            &[],
+            &["emergency_pause", "resolve_authority"],
+            &["emergency_pause", "resolve_authority"],
+            &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("registration helper must fail closed when another governance key attempts to reuse a reserved id");
+
+        assert!(
+            err.contains("governance key id mismatch for id 7999: expected_key=emergency_pause, attempted_key=resolve_authority"),
             "{err}"
         );
     }
@@ -9079,6 +9133,25 @@ mod tests {
     }
 
     #[test]
+    fn governance_emergency_pause_registry_stays_aligned_with_typed_key_registry() {
+        assert_eq!(
+            GovParamKey::EmergencyPause.as_str(),
+            "emergency_pause",
+            "typed governance key registry must retain the canonical emergency_pause key"
+        );
+        assert_eq!(
+            GovParamKey::EmergencyPause.canonical_key_id(),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "typed governance key registry must remain the single source of truth for the reserved emergency_pause key_id"
+        );
+        assert_eq!(
+            GOV_PINNED_KEY_IDS,
+            [(GovParamKey::EmergencyPause.as_str(), EMERGENCY_PAUSE_KEY_ID)],
+            "state-layer pinned governance registry must stay aligned with the typed emergency_pause binding"
+        );
+    }
+
+    #[test]
     fn governance_emergency_pause_accessor_fail_closed_on_reserved_id_alias() {
         let mut st = StateStore::new();
         st.restore_gov_param(
@@ -9198,8 +9271,6 @@ mod tests {
         );
     }
 
-    const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
-
     #[test]
     fn governance_expected_pinned_binding_is_single_source_for_reserved_key_and_id() {
         assert_eq!(
@@ -9303,6 +9374,41 @@ mod tests {
                 .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "restore must not register non-allowlisted governance keys in the shared registry"
+        );
+    }
+
+    #[test]
+    fn governance_restore_rejects_non_allowlisted_algorand_key_at_reserved_id_fail_closed() {
+        let mut st = StateStore::new();
+        let baseline = st.state_root();
+
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_string("emergency_pause"),
+            None,
+            "restore must not let a foreign Algorand governance key occupy the reserved emergency_pause id"
+        );
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "reserved-id restore must fail closed instead of materializing a non-allowlisted object behind the canonical accessor"
+        );
+        assert!(
+            st.gov_param_key_index.get("emergency_pause").is_none(),
+            "reserved-id restore must not backfill the canonical registry index from a foreign key snapshot"
+        );
+        assert_eq!(
+            st.state_root(),
+            baseline,
+            "rejecting a foreign non-allowlisted snapshot at the reserved id must leave state_root unchanged"
         );
     }
 
@@ -9461,6 +9567,38 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "reserved-id alias injection must not surface as an active emergency pause"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_clears_reserved_emergency_pause_id_when_foreign_algorand_key_replays() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "algorand_governance_key_id".into(),
+                value: "key-42".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).is_none(),
+            "restore must fail closed when emergency_pause reserved id replays under a foreign algorand registry key"
+        );
+        assert_eq!(
+            st.gov_param_string("algorand_governance_key_id"),
+            None,
+            "restore must not leave a foreign algorand registry binding behind on the reserved emergency_pause id"
+        );
+        assert!(
+            st.gov_param_ref_for_key("emergency_pause").is_none(),
+            "restore must not let the reserved emergency_pause key resolve through a foreign algorand registry alias"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "foreign algorand restore on the reserved emergency_pause id must not surface as an active pause"
         );
     }
 
@@ -9673,6 +9811,51 @@ mod tests {
                 .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
                 .is_none(),
             "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
+        );
+    }
+
+    #[test]
+    fn governance_restore_applied_param_rejects_non_allowlisted_algorand_key_fail_closed() {
+        let mut st = StateStore::new();
+        st.objects.insert(
+            9_200,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 9_200,
+                    key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                    value: "key-41".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(), 9_200);
+
+        st.restore_gov_param(
+            9_200,
+            Some(GovParamObject {
+                key_id: 9_200,
+                key: NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.into(),
+                value: "key-42".into(),
+                version: 2,
+            }),
+        );
+
+        assert!(
+            st.get_param(9_200).is_none(),
+            "applied restore must fail closed by scrubbing the raw non-allowlisted governance object"
+        );
+        assert!(
+            st.gov_param_string(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "public accessors must not resolve a non-allowlisted applied governance key after rejected restore"
+        );
+        assert!(
+            st.gov_param_key_index
+                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
+                .is_none(),
+            "applied restore must not retain a raw key-index entry for a non-allowlisted governance key"
         );
     }
 
@@ -10082,6 +10265,25 @@ mod tests {
     }
 
     #[test]
+    fn governance_list_based_key_id_validation_reuses_shared_pinned_policy() {
+        assert!(validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 7_999)
+            .is_ok());
+
+        let err =
+            validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 8_000)
+                .expect_err("list-based validation must reject non-canonical pinned ids");
+        assert!(err.contains("expected_id=7999"), "{err}");
+
+        let err = validate_governance_key_id_from_lists(
+            GOV_PINNED_KEY_IDS,
+            "resolve_authority",
+            EMERGENCY_PAUSE_KEY_ID,
+        )
+        .expect_err("list-based validation must reject reusing reserved ids across keys");
+        assert!(err.contains("expected_key=emergency_pause"), "{err}");
+    }
+
+    #[test]
     fn governance_restore_rejects_reusing_canonical_emergency_pause_id_for_another_key_fail_closed()
     {
         let mut st = StateStore::new();
@@ -10157,6 +10359,44 @@ mod tests {
             governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             None,
             "foreign governance keys must fail closed instead of resolving through mutable registry drift"
+        );
+    }
+
+    #[test]
+    fn governance_registry_lookup_id_for_key_keeps_reserved_binding_when_foreign_alias_reuses_reserved_id(
+    ) {
+        let mut indexed = BTreeMap::new();
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            EMERGENCY_PAUSE_KEY_ID,
+        );
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "forward lookup must keep the reserved emergency_pause binding even when a foreign alias reuses the same mutable key id"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
+            None,
+            "foreign aliases reusing a reserved governance id must not resolve through the allowlisted forward registry"
+        );
+    }
+
+    #[test]
+    fn governance_forward_lookup_fails_closed_when_dynamic_registry_reuses_reserved_key_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), EMERGENCY_PAUSE_KEY_ID);
+
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "resolve_authority"),
+            None,
+            "forward lookup must fail closed when a mutable registry entry reuses the reserved emergency_pause key id for another allowlisted governance key"
+        );
+        assert_eq!(
+            governance_registry_lookup_id_for_key(&indexed, "emergency_pause"),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "fail-closed dynamic lookup must not disturb the canonical reserved forward binding"
         );
     }
 
@@ -10252,6 +10492,26 @@ mod tests {
             governance_registry_lookup_key_for_id(&indexed, 9_200),
             None,
             "reverse lookup must ignore non-allowlisted dynamic governance keys instead of surfacing a foreign alias"
+        );
+    }
+
+    #[test]
+    fn governance_reverse_lookup_prefers_allowlisted_canonical_key_over_foreign_alias_at_same_id() {
+        let mut indexed = BTreeMap::new();
+        indexed.insert("resolve_authority".to_string(), 7_313);
+        indexed.insert(
+            NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID.to_string(),
+            7_313,
+        );
+
+        assert_eq!(
+            governance_registry_lookup_key_for_id(&indexed, 7_313),
+            Some("resolve_authority"),
+            "reverse lookup must keep the allowlisted canonical governance key when a foreign alias reuses the same mutable key id"
+        );
+        assert!(
+            validate_gov_param_registry_binding(&indexed, "resolve_authority", 7_313).is_ok(),
+            "foreign aliases outside the allowlist must not poison canonical registry validation for the real governance key"
         );
     }
 
@@ -10399,6 +10659,73 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_restore_repairs_same_key_registry_drift_via_single_source_binding() {
+        let mut st = StateStore::new();
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 3,
+                value: ObjectValue::Task(TaskObject {
+                    task_id: 8_000,
+                    creator: "registry-drift".into(),
+                    bounty: 1,
+                    status: TaskStatus::Open,
+                    proof_type: ProofType::Fraud,
+                    metadata: None,
+                    worker: None,
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: None,
+                    resolve_deadline_height: None,
+                    challenge_bond: None,
+                    challenger: None,
+                    challenge_bond_forfeited: None,
+                    version: 3,
+                }),
+            },
+        );
+
+        st.restore_gov_param(
+            EMERGENCY_PAUSE_KEY_ID,
+            Some(GovParamObject {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_key_index.get("emergency_pause").copied(),
+            Some(EMERGENCY_PAUSE_KEY_ID),
+            "restore must repair same-key registry drift back to the reserved emergency_pause id"
+        );
+        assert_eq!(
+            st.get_param(EMERGENCY_PAUSE_KEY_ID)
+                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            Some((
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+                1,
+            )),
+            "restore must materialize the canonical emergency_pause object at the reserved slot"
+        );
+        assert!(
+            st.objects.get(&8_000).is_some(),
+            "repairing registry drift must not scrub unrelated foreign objects that happened to occupy the stale mutable slot"
+        );
+        assert!(st.is_emergency_paused());
+    }
+
+    #[test]
     fn emergency_pause_unchecked_idempotent_replay_uses_single_source_lookup_without_registry_entry(
     ) {
         let mut st = StateStore::new();
@@ -10417,6 +10744,62 @@ mod tests {
                 .map(|param| (param.version, param.key_id, param.key, param.value)),
             Some((1, 7_999, "emergency_pause".into(), "false".into())),
             "idempotent replay must not churn version/state when the pinned key is recoverable from the shared single-source binding"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_checked_idempotent_apply_returns_canonical_ref_under_registry_drift() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("canonical emergency_pause bootstrap should succeed");
+        st.objects.insert(
+            8_000,
+            VersionedObject {
+                version: 4,
+                value: ObjectValue::Task(TaskObject {
+                    task_id: 8_000,
+                    creator: "registry-drift".into(),
+                    bounty: 1,
+                    status: TaskStatus::Open,
+                    proof_type: ProofType::Fraud,
+                    metadata: None,
+                    worker: None,
+                    committed_hash: None,
+                    result_hash: None,
+                    reveal_salt: None,
+                    committed_at_height: None,
+                    reveal_deadline_height: None,
+                    challenge_deadline_height: None,
+                    challenge_window_blocks_snapshot: None,
+                    challenged_at_height: None,
+                    resolve_deadline_height: None,
+                    challenge_bond: None,
+                    challenger: None,
+                    challenge_bond_forfeited: None,
+                    version: 4,
+                }),
+            },
+        );
+        st.gov_param_key_index
+            .insert("emergency_pause".into(), 8_000);
+
+        let applied = st
+            .set_gov_param(8_100, 7_999, "emergency_pause".into(), "true".into())
+            .expect("idempotent checked apply should reuse the canonical pinned object ref");
+
+        assert_eq!(
+            applied,
+            GovParamUpdateOutcome::Applied(ObjectRef {
+                id: 7_999,
+                version: 1,
+            }),
+            "checked idempotent apply must not leak a foreign object ref when mutable registry drift points at another object"
+        );
+        assert!(st.is_emergency_paused());
+        assert_eq!(
+            st.objects.get(&7_999).map(|object| object.version),
+            Some(1),
+            "checked idempotent apply must remain version-stable on the canonical pinned object"
         );
     }
 
@@ -11549,6 +11932,27 @@ mod tests {
     }
 
     #[test]
+    fn governance_schema_invalid_sample_registry_rejects_explicit_value_rule_coverage_drift_fail_closed(
+    ) {
+        let err = validate_governance_schema_sample_registry_shape_from_lists(
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms", "max_parallel_workers"],
+            &["max_block_ms"],
+            &[("max_block_ms", "9"), ("max_parallel_workers", "0")],
+        )
+        .expect_err(
+            "schema invalid-sample registry must fail closed when explicit value-rule coverage drifts",
+        );
+
+        assert!(
+            err.contains("explicit-validator complete for max_parallel_workers")
+                || err.contains("missing explicit value rule: max_parallel_workers")
+                || err.contains("explicit value-match coverage must derive from the explicit value-rule registry for max_parallel_workers"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_allowed_keys_schema_invalid_samples_merge_gate_is_explicit() {
         let allowed_unique: std::collections::BTreeSet<&str> =
             GOV_ALLOWED_KEYS.iter().copied().collect();
@@ -11593,35 +11997,9 @@ mod tests {
 
     #[test]
     fn governance_allowed_keys_schema_merge_gate_is_explicit() {
-        // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
-        // must update this table with an invalid sample that is expected to fail.
-        let expected_invalid_samples = [
-            ("max_block_ms", "9"),
-            ("max_parallel_workers", "0"),
-            ("min_worker_stake", "0"),
-            ("challenge_min_bond", "0"),
-            ("challenge_min_bond_bounty_bps", "100001"),
-            ("challenge_min_bond_worker_stake_bps", "100001"),
-            ("challenge_window_blocks", "99"),
-            ("challenge_success_bounty", "-1"),
-            ("llm_meter_prompt_token_weight", "-1"),
-            ("llm_meter_generated_token_weight", "-1"),
-            ("llm_meter_decode_step_weight", "-1"),
-            ("llm_meter_kv_byte_weight", "-1"),
-            ("llm_meter_min_accept_work_units", "-1"),
-            ("llm_meter_challenge_success_bounty_per_work_unit_num", "-1"),
-            ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
-            ("llm_meter_worker_completion_bonus_per_work_unit_num", "-1"),
-            ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
-            ("llm_meter_worker_slash_rebate_per_work_unit_num", "-1"),
-            ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-            ("resolve_authority", "   "),
-            ("emergency_pause", "TRUE"),
-            ("monetary_policy_tick_interval_blocks", "0"),
-            ("monetary_policy_tick_cooldown_blocks", "0"),
-            ("monetary_base_issuance_per_tick", "1000000000001"),
-            ("monetary_base_burn_per_tick", "1000000000001"),
-        ];
+        // Exhaustive merge-gate guard for whitelist+schema safety. Reuse the canonical
+        // invalid-sample registry instead of maintaining a second hand-written copy here.
+        let expected_invalid_samples = GOV_SCHEMA_INVALID_SAMPLES;
 
         assert_eq!(
             GOV_ALLOWED_KEYS.len(),
@@ -11671,10 +12049,34 @@ mod tests {
             );
         }
 
+        let pinned_keys: std::collections::BTreeSet<&str> =
+            GOV_PINNED_KEY_IDS.iter().map(|(key, _)| *key).collect();
+        assert_eq!(
+            pinned_keys.len(),
+            GOV_PINNED_KEY_IDS.len(),
+            "governance pinned key-id registry contains duplicate keys"
+        );
+
+        let pinned_ids: std::collections::BTreeSet<u64> =
+            GOV_PINNED_KEY_IDS.iter().map(|(_, key_id)| *key_id).collect();
+        assert_eq!(
+            pinned_ids.len(),
+            GOV_PINNED_KEY_IDS.len(),
+            "governance pinned key-id registry contains duplicate reserved ids"
+        );
+
         for (key, expected_id) in expected_pinned {
             let err = validate_governance_key_id(key, expected_id + 1)
                 .expect_err("mismatched pinned governance key id must be rejected");
             assert!(err.contains("governance key id mismatch for"), "{err}");
+
+            let reverse_err = validate_governance_key_id("max_block_ms", expected_id)
+                .expect_err("reserved governance key ids must reject cross-key reuse");
+            assert!(
+                reverse_err.contains("governance key id mismatch for id"),
+                "{reverse_err}"
+            );
+
             validate_governance_key_id(key, expected_id)
                 .expect("canonical pinned governance key id must remain accepted");
         }
