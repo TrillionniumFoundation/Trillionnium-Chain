@@ -91,9 +91,11 @@ fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
         })
         .filter(|suffix| !suffix.is_empty())
         // Task/event lookups accept only a single decimal id path segment.
-        // Reject extra slash-delimited suffixes so malformed operator paths
-        // fail closed before numeric parsing.
+        // Reject raw or encoded slash-like separators so malformed operator
+        // paths fail closed before numeric parsing.
         .filter(|suffix| !suffix.contains('/'))
+        .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
@@ -358,6 +360,18 @@ mod tests {
         );
         assert_eq!(
             parse_path_u64_suffix("/query-events/42/history", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-task/42\\extra", "/query-task/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%2Fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%5Chistory", "/query-events/"),
             None
         );
     }
