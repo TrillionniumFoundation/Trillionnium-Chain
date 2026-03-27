@@ -188,6 +188,45 @@ fn restore_pending_gov_update_rejects_zero_key_id_for_special_key_paths() {
 }
 
 #[test]
+fn restore_pending_gov_update_zero_activation_height_emergency_pause_snapshot_preserves_live_binding_and_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_239, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let root_before = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            activate_at_height: 0,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("emergency_pause").is_none(),
+        "zero-activation emergency_pause restore snapshots must fail closed instead of materializing a queued toggle"
+    );
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "rejecting an incomplete pending emergency_pause snapshot must preserve the live canonical pause binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "rejecting an incomplete pending emergency_pause snapshot must preserve the prior deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after rejecting an incomplete pending emergency_pause snapshot should deterministically reuse the preserved cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_nonzero_emergency_pause_snapshot_preserves_live_binding_and_root() {
     let mut state = StateStore::new();
     state
