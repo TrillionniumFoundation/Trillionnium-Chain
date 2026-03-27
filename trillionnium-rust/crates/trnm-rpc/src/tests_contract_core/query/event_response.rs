@@ -66,3 +66,36 @@ fn query_events_response_applies_same_trust_and_transition_filters() {
     assert_eq!(out.len(), 1);
     assert_eq!(out[0].event_type, "accept");
 }
+
+#[test]
+fn query_events_response_fallback_sorts_adapter_records_stably() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 20,
+            kind: "reveal".into(),
+            task_id: 44,
+            worker: Some("worker-z".into()),
+            result_hash: Some("0x44".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0xbbb".into()),
+        },
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 44,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xaaa".into()),
+        },
+    ];
+
+    let out = query_events_response(44, 20, &[], &recs).expect("events expected");
+    assert_eq!(out.len(), 2);
+    assert_eq!(out[0].event_type, "commit");
+    assert_eq!(out[0].from_status, "Assigned");
+    assert_eq!(out[0].to_status, "Committed");
+    assert_eq!(out[1].event_type, "reveal");
+    assert_eq!(out[1].from_status, "Committed");
+    assert_eq!(out[1].to_status, "Revealed");
+}
