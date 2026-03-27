@@ -3823,6 +3823,23 @@ mod tests {
     }
 
     #[test]
+    fn access_map_capacity_hint_keeps_minimum_floor_for_tiny_unique_domains() {
+        let txs = vec![
+            tx(1, vec![o(7), o(7)], vec![]),
+            tx(2, vec![o(7)], vec![o(7)]),
+            tx(3, vec![], vec![o(9), o(9)]),
+        ];
+
+        // Tiny duplicate-heavy batches should still keep the scheduler's minimum
+        // map capacity floor so lane-local micro-batches don't oscillate between
+        // undersized allocations and rehash churn.
+        assert_eq!(tx_access_domain_keys(&txs[0]).len(), 1);
+        assert_eq!(tx_access_domain_keys(&txs[1]).len(), 1);
+        assert_eq!(tx_access_domain_keys(&txs[2]).len(), 1);
+        assert_eq!(access_map_capacity_hint(&txs), 64);
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
