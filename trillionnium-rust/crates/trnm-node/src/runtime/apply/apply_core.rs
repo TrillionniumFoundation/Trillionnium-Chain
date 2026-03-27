@@ -13,6 +13,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be empty",
         path
     );
+    anyhow::ensure!(
+        !node_id.chars().any(char::is_control),
+        "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.chars().any(char::is_whitespace),
+        "invalid node config {}: node_id must not contain whitespace",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -20,11 +30,78 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not be empty",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: rpc_addr must not contain whitespace",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_control),
+        "invalid node config {}: rpc_addr must not contain control characters",
+        path
+    );
+    let rpc_socket: std::net::SocketAddr = rpc_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: rpc_addr must be a valid socket address",
+            path
+        )
+    })?;
+    anyhow::ensure!(
+        rpc_socket.port() != 0,
+        "invalid node config {}: rpc_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_socket.ip().is_multicast(),
+        "invalid node config {}: rpc_addr must not use a multicast address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_broadcast()),
+        "invalid node config {}: rpc_addr must not use the IPv4 broadcast address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
         !p2p_addr.is_empty(),
         "invalid node config {}: p2p_addr must not be empty",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: p2p_addr must not contain whitespace",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_control),
+        "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    let p2p_socket: std::net::SocketAddr = p2p_addr.parse().with_context(|| {
+        format!(
+            "invalid node config {}: p2p_addr must be a valid socket address",
+            path
+        )
+    })?;
+    anyhow::ensure!(
+        p2p_socket.port() != 0,
+        "invalid node config {}: p2p_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_socket.ip().is_multicast(),
+        "invalid node config {}: p2p_addr must not use a multicast address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_broadcast()),
+        "invalid node config {}: p2p_addr must not use the IPv4 broadcast address",
+        path
+    );
+    anyhow::ensure!(
+        rpc_socket != p2p_socket,
+        "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
 
