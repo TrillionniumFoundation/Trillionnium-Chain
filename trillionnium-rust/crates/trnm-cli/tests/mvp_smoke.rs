@@ -68,6 +68,33 @@ fn smoke_wallet_create_and_address() {
 }
 
 #[test]
+fn smoke_wallet_import_accepts_wrapped_private_key_hex() {
+    let store = tmp_dir("wallet-import-wrapped");
+    let pk = " \u{2068}<\"0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\">\u{2069}\n";
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        out.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let s = String::from_utf8_lossy(&out.stdout);
+    assert!(s.contains("wallet_name=alice"));
+    assert!(s.contains("address=trnm1"));
+}
+
+#[test]
 fn smoke_query_balance_fallback_json() {
     let store = tmp_dir("query-balance");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

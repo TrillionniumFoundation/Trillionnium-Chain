@@ -867,10 +867,34 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
 }
 
 fn ensure_hex_32_bytes(s: &str) -> Result<String> {
-    let x = s
+    let cleaned = s
+        .trim_matches(|c: char| {
+            c.is_ascii_whitespace()
+                || c.is_control()
+                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}')
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        .trim();
+    let x = cleaned
         .strip_prefix("0x")
-        .or_else(|| s.strip_prefix("0X"))
-        .unwrap_or(s)
+        .or_else(|| cleaned.strip_prefix("0X"))
+        .unwrap_or(cleaned)
         .to_lowercase();
     if x.len() != 64 {
         bail!("private key hex must be 32 bytes (64 hex chars)");
