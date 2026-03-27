@@ -126,6 +126,116 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
     );
 }
 #[test]
+fn restore_pending_gov_update_rejects_zero_key_id_fail_closed() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "zero-id pending governance restore snapshots must fail closed instead of materializing a queued update"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-id pending governance restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-id pending governance restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_rejects_zero_key_id_for_special_key_paths() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "emergency_pause".into(),
+            value: "true".into(),
+            activate_at_height: 1,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("emergency_pause").is_none(),
+        "zero-id pending governance snapshots must fail closed even on special-key restore paths"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "rejecting a zero-id special-key pending governance restore snapshot must preserve the canonical empty-state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after rejecting a zero-id special-key restore snapshot should deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_zero_key_id_resolve_authority_scrubs_pending_resolve_and_rewinds_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .stage_or_confirm_resolve_approval(5_240, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("initial staged resolve approval should succeed");
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: staged pending resolve approval must perturb the root before zero-id resolve_authority replay"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_240).is_some(),
+        "sanity: pending resolve approval should exist before the fail-closed resolve_authority restore"
+    );
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 0,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "zero-id resolve_authority restore snapshots must fail closed instead of materializing a queued governance update"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_240).is_none(),
+        "rejecting a zero-id resolve_authority restore snapshot must scrub staged pending resolve metadata"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting a zero-id resolve_authority restore snapshot must rewind state_root to the pre-staged baseline"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-id resolve_authority rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_none_rewinds_state_root_after_removing_timelocked_update() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();

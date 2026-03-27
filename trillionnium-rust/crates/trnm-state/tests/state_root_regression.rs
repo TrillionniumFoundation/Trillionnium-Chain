@@ -3109,6 +3109,62 @@ fn restore_task_none_on_non_task_slot_fails_closed_and_preserves_canonical_appli
 }
 
 #[test]
+fn restore_task_zero_version_fails_closed_and_rewinds_staged_pending_root() {
+    let mut state = StateStore::new();
+    state.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+    install_pending_resolve_root_task(&mut state, 10_304, 7);
+    state
+        .stage_or_confirm_resolve_approval(10_304, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("canonical staged resolve approval should succeed");
+
+    let staged_root = state.state_root();
+    let mut zero_version_snapshot = state
+        .get_task(10_304)
+        .expect("canonical challenged task snapshot should exist");
+    zero_version_snapshot.version = 0;
+
+    let mut expected = StateStore::new();
+    expected.restore_gov_param(
+        1,
+        Some(GovParamObject {
+            key_id: 1,
+            key: "resolve_authority".into(),
+            value: "resolver-a,resolver-b".into(),
+            version: 1,
+        }),
+    );
+
+    state.restore_task(10_304, Some(zero_version_snapshot));
+
+    assert!(
+        state.get_task(10_304).is_none(),
+        "restore_task should fail closed by dropping a zero-version task snapshot instead of materializing it"
+    );
+    assert!(
+        state.pending_resolve_approval(10_304).is_none(),
+        "restore_task should scrub staged pending resolve metadata when the replayed task snapshot carries version zero"
+    );
+    assert_ne!(
+        state.state_root(),
+        staged_root,
+        "a zero-version replay must not preserve the staged challenged-task state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        expected.state_root(),
+        "dropping the invalid task snapshot and its staged approval should rewind state_root to the canonical governance-only baseline"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
@@ -3807,6 +3863,71 @@ fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
         state.state_root(),
         empty_root,
         "malformed pending resolve checkpoint evidence must not perturb the canonical empty root"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_outer_object_version_drift_is_state_root_noop() {
+    let mut state = StateStore::new();
+    let task_ref = state
+        .put_task_new(TaskObject {
+            task_id: 5_199,
+            creator: "state-root-regression".into(),
+            bounty: 1,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-root".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(9),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task insertion should succeed");
+    let mut challenged = state.get_task(5_199).expect("task should exist");
+    challenged.status = TaskStatus::Challenged;
+    challenged.challenged_at_height = Some(25);
+    challenged.resolve_deadline_height = Some(40);
+    challenged.challenge_bond = Some(5);
+    challenged.challenger = Some("challenger-root".into());
+    let challenged_ref = state
+        .update_task(task_ref, challenged)
+        .expect("task challenge transition should succeed");
+    let drifted_root = state.state_root();
+
+    state.restore_pending_resolve_approval(
+        5_199,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_199).is_none(),
+        "pending resolve restore must fail closed when the outer object version has drifted away from the snapshot's task_version"
+    );
+    assert_eq!(
+        state.get_ref(5_199).map(|reference| reference.version),
+        Some(challenged_ref.version),
+        "rejecting the stale pending restore must not silently rewrite the drifted outer object version"
+    );
+    assert_eq!(
+        state.state_root(),
+        drifted_root,
+        "rejecting pending resolve restore across an outer object-version drift must remain a state-root no-op"
     );
 }
 

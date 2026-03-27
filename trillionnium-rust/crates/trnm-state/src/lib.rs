@@ -2152,13 +2152,15 @@ impl StateStore {
 
         if let Some(existing) = self.objects.get(&id) {
             let is_task = matches!(existing.value, ObjectValue::Task(_));
-            if !is_task {
-                if snapshot.is_some() {
+            if !is_task && snapshot.is_some() {
+                // Fail closed on cross-type restore attempts: a task replay/snapshot must not
+                // evict an existing non-task object that already owns the canonical id slot.
+                // Still scrub any stale task-only pending resolve residue bound to the same id so
+                // the canonical non-task occupant remains the single source of truth for the slot.
+                if self.pending_resolve_approvals.remove(&id).is_some() {
                     self.invalidate_state_root_cache();
-                    self.objects.remove(&id);
-                    self.pending_resolve_approvals.remove(&id);
-                    return;
                 }
+                return;
             }
         }
 
@@ -2286,11 +2288,17 @@ impl StateStore {
             }
             None => {
                 if let Some(existing) = self.objects.get(&id).cloned() {
-                    if let ObjectValue::GovParam(param) = existing.value {
-                        if param.version > 1 {
+                    match existing.value {
+                        ObjectValue::Task(_) => {
                             self.objects.remove(&id);
-                            self.remove_gov_param_key_index_for_id(param.key_id);
                         }
+                        ObjectValue::GovParam(param) => {
+                            if param.version > 1 {
+                                self.objects.remove(&id);
+                                self.remove_gov_param_key_index_for_id(param.key_id);
+                            }
+                        }
+                        ObjectValue::GovProposal(_) => {}
                     }
                 }
                 self.pending_resolve_approvals.remove(&id);
@@ -2311,8 +2319,13 @@ impl StateStore {
                 }
 
                 let snapshot_key = snapshot.key.clone();
-                if snapshot_key == "algorand_governance_key_id" {
+                if snapshot.key_id == 0
+                    || snapshot.version == 0
+                    || snapshot_key == "algorand_governance_key_id"
+                {
                     self.clear_pending_gov_update_bindings(&snapshot_key, None);
+                    self.remove_gov_param_key_index_for_id(snapshot.key_id);
+                    self.objects.remove(&snapshot.key_id);
                     self.invalidate_state_root_cache();
                     return;
                 }
@@ -2372,6 +2385,7 @@ impl StateStore {
                         value: ObjectValue::GovParam(snapshot),
                     },
                 );
+                self.pending_resolve_approvals.remove(&key_id);
                 self.invalidate_state_root_cache();
             }
             None => {
@@ -2463,12 +2477,16 @@ impl StateStore {
     }
 
     pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
+        if task.task_id == 0 {
+            return Err("task id must be non-zero".into());
+        }
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
         task.version = 1;
         self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -2488,8 +2506,17 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::Task(_)) {
+            return Err("object type mismatch".into());
+        }
+        if task.task_id != expected.id {
+            return Err("task id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
+        }
+        if task.version != expected.version {
+            return Err("payload version mismatch".into());
         }
         let new_version = current.version + 1;
         task.version = new_version;
@@ -2512,12 +2539,16 @@ impl StateStore {
         &mut self,
         mut proposal: GovProposalObject,
     ) -> Result<ObjectRef, String> {
+        if proposal.proposal_id == 0 {
+            return Err("proposal id must be non-zero".into());
+        }
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
         proposal.version = 1;
         self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -2537,8 +2568,17 @@ impl StateStore {
             .objects
             .get(&expected.id)
             .ok_or_else(|| "object not found".to_string())?;
+        if !matches!(current.value, ObjectValue::GovProposal(_)) {
+            return Err("object type mismatch".into());
+        }
+        if proposal.proposal_id != expected.id {
+            return Err("proposal id mismatch".into());
+        }
         if current.version != expected.version {
             return Err("version conflict".into());
+        }
+        if proposal.version != expected.version {
+            return Err("payload version mismatch".into());
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
@@ -2966,15 +3006,23 @@ impl StateStore {
         let scrubs_resolve_quorum = key == "resolve_authority";
         match snapshot {
             Some(snapshot) => {
+                let snapshot_key_id = snapshot.key_id;
                 if self
                     .pending_gov_updates
                     .get(key)
                     .is_some_and(|existing| existing == &snapshot)
+                    && !self.pending_gov_update_has_key_id_alias(key, snapshot_key_id)
                 {
                     return;
                 }
 
-                let snapshot_key_id = snapshot.key_id;
+                if snapshot_key_id == 0 {
+                    self.clear_pending_gov_update_bindings(key, None);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
+                    }
+                    return;
+                }
 
                 if key == "algorand_governance_key_id" {
                     self.clear_pending_gov_update_bindings(key, None);
@@ -4151,6 +4199,83 @@ mod tests {
     }
 
     #[test]
+    fn put_task_new_scrubs_orphaned_pending_resolve_slot_state() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            7001,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        let root_with_orphan = st.state_root();
+
+        let task = TaskObject {
+            task_id: 7001,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 99,
+        };
+
+        let created = st.put_task_new(task).expect("task creation should succeed");
+
+        assert_eq!(created.version, 1);
+        assert_eq!(st.pending_resolve_approval(7001), None);
+        assert_ne!(st.state_root(), root_with_orphan);
+    }
+
+    #[test]
+    fn put_proposal_new_scrubs_orphaned_pending_resolve_slot_state() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            7002,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+        let root_with_orphan = st.state_root();
+
+        let proposal = GovProposalObject {
+            proposal_id: 7002,
+            title: "proposal".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 88,
+        };
+
+        let created = st
+            .put_proposal_new(proposal)
+            .expect("proposal creation should succeed");
+
+        assert_eq!(created.version, 1);
+        assert_eq!(st.pending_resolve_approval(7002), None);
+        assert_ne!(st.state_root(), root_with_orphan);
+    }
+
+    #[test]
     fn task_metering_snapshot_affects_state_root() {
         let mut without_metering = StateStore::new();
         let mut with_metering = StateStore::new();
@@ -4377,6 +4502,126 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn update_task_rejects_payload_task_id_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 7,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let initial_ref = st.put_task_new(task.clone()).unwrap();
+        let mut mismatched = task;
+        mismatched.task_id = 8;
+        mismatched.status = TaskStatus::Assigned;
+
+        let err = st.update_task(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("task id mismatch"));
+        assert_eq!(st.get_ref(7).unwrap().version, 1);
+        assert_eq!(st.get_task(7).unwrap().task_id, 7);
+        assert!(st.get_task(8).is_none());
+    }
+
+    #[test]
+    fn update_task_rejects_payload_version_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 12,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let initial_ref = st.put_task_new(task.clone()).unwrap();
+        let original = st.get_task(12).unwrap();
+
+        let mut mismatched = original.clone();
+        mismatched.status = TaskStatus::Assigned;
+        mismatched.version = initial_ref.version + 1;
+
+        let err = st.update_task(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("payload version mismatch"));
+        assert_eq!(st.get_ref(12).unwrap().version, original.version);
+        assert_eq!(st.get_task(12).unwrap(), original);
+    }
+
+    #[test]
+    fn update_proposal_rejects_payload_proposal_id_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let proposal = GovProposalObject {
+            proposal_id: 9,
+            title: "update param x".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let initial_ref = st.put_proposal_new(proposal.clone()).unwrap();
+        let mut mismatched = proposal;
+        mismatched.proposal_id = 10;
+        mismatched.status = GovProposalStatus::Voting;
+
+        let err = st.update_proposal(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("proposal id mismatch"));
+        assert_eq!(st.get_ref(9).unwrap().version, 1);
+        assert_eq!(st.get_proposal(9).unwrap().proposal_id, 9);
+        assert!(st.get_proposal(10).is_none());
+    }
+
+    #[test]
+    fn update_proposal_rejects_payload_version_mismatch_fail_closed() {
+        let mut st = StateStore::new();
+        let proposal = GovProposalObject {
+            proposal_id: 13,
+            title: "update param x".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let initial_ref = st.put_proposal_new(proposal.clone()).unwrap();
+        let original = st.get_proposal(13).unwrap();
+
+        let mut mismatched = original.clone();
+        mismatched.status = GovProposalStatus::Voting;
+        mismatched.version = initial_ref.version + 1;
+
+        let err = st.update_proposal(initial_ref, mismatched).unwrap_err();
+        assert!(err.contains("payload version mismatch"));
+        assert_eq!(st.get_ref(13).unwrap().version, original.version);
+        assert_eq!(st.get_proposal(13).unwrap(), original);
     }
 
     #[test]
@@ -5017,6 +5262,117 @@ mod tests {
             restored.state_root(),
             canonical.state_root(),
             "restore must normalize canonical-equivalent snapshots to the same pending-approval state root"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority() {
+        let mut restored = StateStore::new();
+        restored.restore_gov_param(
+            700,
+            Some(GovParamObject {
+                key_id: 700,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        restored.restore_task(
+            9_905,
+            Some(TaskObject {
+                task_id: 9_905,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        restored.restore_pending_resolve_approval(
+            9_905,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "Authority-B".into(),
+                authority_set: "Authority-B,Authority-A".into(),
+                task_version: 3,
+            }),
+        );
+
+        let mut canonical = StateStore::new();
+        canonical.restore_gov_param(
+            700,
+            Some(GovParamObject {
+                key_id: 700,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                version: 1,
+            }),
+        );
+        canonical.restore_task(
+            9_905,
+            Some(TaskObject {
+                task_id: 9_905,
+                creator: "alice".into(),
+                bounty: 10,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: Some(12),
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
+        canonical.restore_pending_resolve_approval(
+            9_905,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-b".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(
+            restored.pending_resolve_approval(9_905),
+            Some((true, 1)),
+            "configured resolve authority should accept canonical-equivalent restore snapshots"
+        );
+        assert_eq!(
+            restored.pending_resolve_approval_snapshot(9_905),
+            canonical.pending_resolve_approval_snapshot(9_905),
+            "configured authority matching should not distinguish case/order-equivalent restore snapshots"
+        );
+        assert_eq!(
+            restored.state_root(),
+            canonical.state_root(),
+            "configured authority matching must preserve canonical pending-approval state roots"
         );
     }
 
@@ -7192,6 +7548,41 @@ mod tests {
             st.pending_gov_update("challenge_min_bond"),
             None,
             "restore must fail closed when a live GovParam object already binds the key_id to another governance key"
+        );
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_zero_key_id_fail_closed() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_201,
+            Some(GovParamObject {
+                key_id: 7_201,
+                key: "challenge_min_bond".into(),
+                value: "6000".into(),
+                version: 1,
+            }),
+        );
+
+        st.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 0,
+                key: "challenge_min_bond".into(),
+                value: "6500".into(),
+                activate_at_height: 1_020,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_gov_update("challenge_min_bond"),
+            None,
+            "restore must fail closed when a pending governance snapshot targets the zero object id"
+        );
+        assert_eq!(
+            st.gov_param_string("challenge_min_bond"),
+            Some("6000".into()),
+            "rejecting a zero-id pending governance snapshot must preserve the live canonical parameter"
         );
     }
 
@@ -9621,6 +10012,77 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_gov_update_rejects_zero_key_id_resolve_authority_and_scrubs_pending_resolve()
+    {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7_313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("seed resolve_authority");
+
+        let task = TaskObject {
+            task_id: 7_702,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(20),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(5),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 3,
+        };
+        st.restore_task(task.task_id, Some(task));
+        st.restore_pending_resolve_approval(
+            7_702,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "resolver-v1".into(),
+                authority_set: "resolver-v1,resolver-v2".into(),
+                task_version: 3,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(7_702), Some((true, 1)));
+
+        st.restore_pending_gov_update(
+            "resolve_authority",
+            Some(PendingGovParamUpdate {
+                key_id: 0,
+                key: "resolve_authority".into(),
+                value: "resolver-v3,resolver-v4".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "zero-id resolve_authority restore snapshots must fail closed instead of materializing a queued update"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into()),
+            "rejecting a zero-id resolve_authority snapshot must preserve the live canonical governance value"
+        );
+        assert!(
+            st.pending_resolve_approval(7_702).is_none(),
+            "zero-id resolve_authority restore snapshots must still scrub staged pending resolve metadata"
+        );
+    }
+
+    #[test]
     fn emergency_pause_unchecked_path_clears_stale_pending_entry_if_present() {
         let mut st = StateStore::new();
 
@@ -10441,6 +10903,77 @@ mod tests {
         );
 
         assert!(st.get_param(8_124).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_version_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "max_block_ms".into(),
+                value: "1000".into(),
+                version: 0,
+            }),
+        );
+
+        assert!(st.get_param(7_001).is_none());
+        assert!(st.gov_param_string("max_block_ms").is_none());
+    }
+
+    #[test]
+    fn restore_gov_param_zero_version_scrubs_existing_slot_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "max_block_ms".into(),
+                value: "1000".into(),
+                version: 1,
+            }),
+        );
+        assert_eq!(st.gov_param_string("max_block_ms"), Some("1000".to_string()));
+
+        st.restore_gov_param(
+            7_001,
+            Some(GovParamObject {
+                key_id: 7_001,
+                key: "max_block_ms".into(),
+                value: "2000".into(),
+                version: 0,
+            }),
+        );
+
+        assert!(
+            st.get_param(7_001).is_none(),
+            "restore_gov_param must clear the targeted object slot when replay/restore input carries version 0"
+        );
+        assert!(
+            st.gov_param_string("max_block_ms").is_none(),
+            "restore_gov_param must also scrub the canonical key binding when version 0 input targets an existing slot"
+        );
+    }
+
+    #[test]
+    fn restore_gov_param_rejects_zero_key_id_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            0,
+            Some(GovParamObject {
+                key_id: 0,
+                key: "max_block_ms".into(),
+                value: "1000".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(0).is_none());
         assert!(st.gov_param_string("max_block_ms").is_none());
     }
 
@@ -11497,6 +12030,147 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_from_rollback_allows_paused_canonical_snapshot_reentry() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            7_999,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority bootstrap should succeed for rollback replay coverage");
+
+        st.restore_task(
+            904,
+            Some(TaskObject {
+                task_id: 904,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        let snapshot = PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 7,
+        };
+
+        st.restore_pending_resolve_approval(904, Some(snapshot.clone()));
+        assert!(
+            st.pending_resolve_approval(904).is_none(),
+            "regular paused restore should still fail closed on canonical metadata-light snapshots"
+        );
+
+        st.restore_pending_resolve_approval_from_rollback(904, Some(snapshot));
+        assert_eq!(
+            st.pending_resolve_approval(904),
+            Some((true, 1)),
+            "rollback restore must preserve canonical paused snapshots for exact reentry"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(904).as_deref(),
+            Some("authority-a"),
+            "rollback restore should retain the snapshot approver token under pause"
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(904)
+                .expect("rollback restore should persist snapshot")
+                .authority_set,
+            "authority-a,authority-b",
+            "rollback restore should retain the snapshot authority set under pause"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_from_rollback_rejects_paused_noncanonical_authority_snapshot() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            7_999,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority bootstrap should succeed for rollback replay coverage");
+
+        st.restore_task(
+            905,
+            Some(TaskObject {
+                task_id: 905,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        st.restore_pending_resolve_approval_from_rollback(
+            905,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-c".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(905).is_none(),
+            "rollback restore must still fail closed when paused snapshot authority metadata drifts from canonical governance"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_rejects_forfeit_decision_metadata_mismatch() {
         let mut st = StateStore::new();
         st.put_task_new(TaskObject {
@@ -11740,6 +12414,43 @@ mod tests {
             st_b.pending_resolve_first_approver(501).as_deref(),
             Some("authority-a"),
             "canonicalizing authority membership must not erase first-approver audit spelling"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_embedded_gov_param_version_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 2,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 2,
+                }),
+            },
+        );
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "embedded and outer governance object versions must contribute to state_root so replayed version drift cannot hash identically"
         );
     }
 

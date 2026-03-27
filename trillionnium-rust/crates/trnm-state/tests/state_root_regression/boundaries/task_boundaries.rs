@@ -213,6 +213,70 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
     );
 }
 #[test]
+fn task_version_must_affect_state_root_even_when_other_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_503,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("same logical payload".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test".into()),
+                produced_at: Some("2026-03-26T03:21:00Z".into()),
+                provenance_index: Some("prov-6503".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            metering: None,
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task.version = 2;
+
+    state_a.put_task_new(base_task.clone()).unwrap();
+    state_b.put_task_new(changed_task.clone()).unwrap();
+
+    let root_v1 = state_a.state_root();
+    assert_ne!(
+        root_v1,
+        state_b.state_root(),
+        "task object version must contribute to state_root so otherwise identical task payloads at different canonical object versions cannot hash identically"
+    );
+
+    state_b.restore_task(changed_task.task_id, Some(base_task));
+    assert_eq!(
+        state_b.state_root(),
+        root_v1,
+        "restoring the original task object version should rewind the deterministic root exactly"
+    );
+}
+#[test]
 fn task_challenge_window_snapshot_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

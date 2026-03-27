@@ -85,6 +85,57 @@ fn pending_resolve_slash_worker_flag_must_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_confirmations_count_must_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state_b.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 2,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_ne!(
+        root_a, root_b,
+        "pending resolve confirmations count must contribute to state_root so one-of-two and finalized quorum snapshots cannot hash identically"
+    );
+
+    state_b.restore_pending_resolve_approval(
+        5_149,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original pending resolve confirmations count should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn pending_resolve_first_approver_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();

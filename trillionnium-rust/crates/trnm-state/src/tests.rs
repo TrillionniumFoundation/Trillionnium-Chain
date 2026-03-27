@@ -3785,3 +3785,54 @@ fn restore_pending_gov_update_same_key_id_drift_fails_closed() {
         "same-key key_id drift should return to the empty baseline root after fail-closed scrubbing"
     );
 }
+
+#[test]
+fn restore_pending_gov_update_identical_reentry_does_not_skip_same_key_id_alias_scrub() {
+    let mut state = StateStore::new();
+    let snapshot = PendingGovParamUpdate {
+        key_id: 7_201,
+        key: "challenge_min_bond".into(),
+        value: "6000".into(),
+        activate_at_height: 1_020,
+    };
+
+    state.restore_pending_gov_update("challenge_min_bond", Some(snapshot.clone()));
+    let root_with_canonical_pending = state.state_root();
+    assert!(state.pending_gov_update("challenge_min_bond").is_some());
+
+    state.pending_gov_updates.insert(
+        "max_block_ms".into(),
+        PendingGovParamUpdate {
+            key_id: snapshot.key_id,
+            key: "max_block_ms".into(),
+            value: "400".into(),
+            activate_at_height: 1_021,
+        },
+    );
+    state.invalidate_state_root_cache();
+    let root_with_alias = state.state_root();
+    assert_ne!(
+        root_with_alias, root_with_canonical_pending,
+        "sanity: a same-key_id alias should perturb the root before identical reentry"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "sanity: canonical accessor should fail closed while a same-key_id alias is present"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", Some(snapshot));
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "identical reentry must not bypass fail-closed handling once a same-key_id alias appears"
+    );
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "identical reentry should scrub the conflicting alias instead of leaving the poisoned slot behind"
+    );
+    assert_eq!(
+        state.state_root(),
+        StateStore::new().state_root(),
+        "identical reentry should rewind to the empty baseline once same-key_id aliases force fail-closed scrubbing"
+    );
+}

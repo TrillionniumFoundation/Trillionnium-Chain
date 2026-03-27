@@ -313,3 +313,116 @@ fn restore_combined_pending_and_monetary_none_roundtrip_rewinds_state_root() {
         "post-restore repeated reads should deterministically reuse the exact rewound root"
     );
 }
+
+#[test]
+fn restore_task_on_non_task_slot_scrubs_foreign_object_and_rewinds_state_root() {
+    let empty_root = StateStore::new().state_root();
+
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 9, "max_block_ms".to_string(), "5000".to_string())
+        .expect("sanity: should be able to seed a governance object at the target slot");
+
+    let foreign_root = state.state_root();
+    assert_ne!(
+        foreign_root, empty_root,
+        "sanity: occupying the slot with a foreign object must perturb the empty root"
+    );
+
+    state.restore_task(
+        9,
+        Some(TaskObject {
+            task_id: 9,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }),
+    );
+
+    assert!(
+        state.get_task(9).is_none(),
+        "restore_task must fail closed instead of materializing a task over a non-task slot"
+    );
+    assert!(
+        state.get_ref(9).is_none(),
+        "restore_task must scrub the foreign object slot rather than leave an ambiguous object/version binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "scrubbing the foreign slot must rewind state_root exactly to the canonical empty baseline"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "post-scrub repeated reads should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_task_zero_version_on_foreign_slot_preserves_existing_owner_and_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(0, 17, "max_block_ms".to_string(), "5000".to_string())
+        .expect("sanity: should be able to seed a governance object at the target slot");
+
+    let foreign_object = state.get_param(17).expect("foreign object must exist");
+    let foreign_root = state.state_root();
+
+    state.restore_task(
+        17,
+        Some(TaskObject {
+            task_id: 17,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        }),
+    );
+
+    assert!(
+        state.get_task(17).is_none(),
+        "invalid restore payloads must not materialize a task over an occupied foreign slot"
+    );
+    assert_eq!(
+        state.get_param(17),
+        Some(foreign_object),
+        "foreign object ownership must dominate malformed task restore payloads"
+    );
+    assert_eq!(
+        state.state_root(),
+        foreign_root,
+        "malformed task restore against a foreign slot must preserve the canonical root"
+    );
+}
