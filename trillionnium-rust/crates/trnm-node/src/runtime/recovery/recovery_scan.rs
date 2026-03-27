@@ -237,3 +237,54 @@ pub(crate) fn ensure_recoverable_wal_state(
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_wal_dir(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "trnm-node-runtime-recovery-scan-{}-{}",
+            name,
+            now_unix_ms()
+        ))
+    }
+
+    #[test]
+    fn recover_resets_stale_consensus_wal_when_only_empty_checkpoint_file_exists() {
+        let wal_dir = temp_wal_dir("empty-checkpoint-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 29,
+                last_round: 4,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+        persist_checkpoint_meta(&wal_dir, &[]).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+}
