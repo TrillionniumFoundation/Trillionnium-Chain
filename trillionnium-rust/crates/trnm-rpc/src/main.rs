@@ -1669,6 +1669,14 @@ struct MarketScoreBreakdown {
     score_floor_applied: bool,
 }
 
+fn saturated_negative_i128(value: u128) -> i128 {
+    if value >= (i128::MAX as u128) + 1 {
+        i128::MIN
+    } else {
+        -(value as i128)
+    }
+}
+
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
         let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
@@ -1679,7 +1687,7 @@ impl From<MarketScoreConfig> for MarketScoreConfigOutput {
             reputation_weight: value.reputation_weight,
             reputation_clamp,
             max_reputation_score_delta,
-            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
+            min_reputation_score_delta: saturated_negative_i128(max_reputation_score_delta),
         }
     }
 }
@@ -1718,7 +1726,7 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
 
 fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
     if breakdown.effective_reputation > 0 {
-        -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
+        saturated_negative_i128(breakdown.reputation_reward)
     } else if breakdown.effective_reputation < 0 {
         breakdown.penalty.min(i128::MAX as u128) as i128
     } else {
@@ -6056,6 +6064,32 @@ mod tests {
         assert_eq!(output.price_weight, 3);
         assert_eq!(output.reputation_weight, 7);
         assert_eq!(output.reputation_clamp, 1);
+    }
+
+    #[test]
+    fn market_score_config_output_saturates_min_reputation_delta_at_i128_min() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 1,
+            reputation_weight: (i128::MAX as u128) + 1,
+            reputation_clamp: 1,
+        });
+
+        assert_eq!(output.max_reputation_score_delta, (i128::MAX as u128) + 1);
+        assert_eq!(output.min_reputation_score_delta, i128::MIN);
+    }
+
+    #[test]
+    fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: 1,
+            base_score: 0,
+            reputation_reward: (i128::MAX as u128) + 1,
+            penalty: 0,
+            effective_score: 0,
+            score_floor_applied: true,
+        });
+
+        assert_eq!(delta, i128::MIN);
     }
 
     #[test]
