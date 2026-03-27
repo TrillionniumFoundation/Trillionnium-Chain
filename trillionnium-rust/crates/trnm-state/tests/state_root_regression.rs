@@ -6068,6 +6068,35 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_height_mismatch_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut mismatched_checkpoint = checkpoint.clone();
+    mismatched_checkpoint.height += 1;
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should summarize before the height-mismatch regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&mismatched_checkpoint, &wal).is_none(),
+        "checkpoint/WAL height mismatches must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() {
     let wal = WalMeta {
         height: 4,
