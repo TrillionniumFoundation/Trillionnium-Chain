@@ -4603,6 +4603,21 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_numeric_env_parser_treats_plus_prefixed_leading_comma_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "'+,250'");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+,125\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+,375' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+,050\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.125);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
     fn auto_adaptive_numeric_env_parser_treats_leading_comma_percent_values_as_decimals() {
         let _env = env_lock();
 
