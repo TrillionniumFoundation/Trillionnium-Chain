@@ -1072,6 +1072,28 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_reopens_normal_only_after_critical_backlog_fully_clears() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity and leave exactly one guarded critical
+        // slot while critical backlog is active.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+
+        // While critical backlog remains active, draining a normal item must not
+        // reopen fresh normal ingress against the final reserved critical slot.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (3, 0, 3));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+    }
+
+    #[test]
     fn qos_snapshot_keeps_normal_closed_when_only_critical_spillover_headroom_remains() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
