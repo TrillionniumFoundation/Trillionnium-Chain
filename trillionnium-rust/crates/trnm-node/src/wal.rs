@@ -374,6 +374,51 @@ mod tests {
     }
 
     #[test]
+    fn load_wal_meta_canonicalizes_equal_height_prev_hash_linkage_from_disk() {
+        let wal_dir = temp_wal_dir("wal-canonical-load-prev-hash-linkage");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&WalMetaList {
+            entries: vec![
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-c".into()),
+                },
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), raw).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 3);
+        assert_eq!(entries[0].prev_hash_hex, None);
+        assert_eq!(entries[1].prev_hash_hex, Some("prev-a".into()));
+        assert_eq!(entries[2].prev_hash_hex, Some("prev-c".into()));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn persist_checkpoint_meta_canonicalizes_disk_order_for_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
         fs::create_dir_all(&wal_dir).unwrap();
