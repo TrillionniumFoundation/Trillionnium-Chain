@@ -286,3 +286,34 @@ fn emergency_pause_invalid_literal_fails_closed_without_pending_side_effects() {
         "failed malformed toggle must not leave behind a pending governance entry"
     );
 }
+
+#[test]
+fn emergency_pause_unchecked_invalid_literal_preserves_live_binding_and_pending_cleanliness() {
+    // Merge-gate guard: unchecked path still validates the literal before any mutation,
+    // so malformed input must not unpause a live guardrail or materialize queued residue.
+    let mut st = StateStore::new();
+
+    st.set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+        .expect("baseline unchecked pause=true should succeed");
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.gov_param_string("emergency_pause"), Some("true".into()));
+
+    let err = st
+        .set_gov_param_unchecked(7_999, "emergency_pause".into(), "TRUE".into())
+        .expect_err("unchecked invalid emergency_pause literal must fail closed");
+    assert!(err.contains("strict bool"), "unexpected error: {err}");
+
+    assert!(
+        st.is_emergency_paused(),
+        "failed unchecked malformed toggle must preserve the prior live pause state"
+    );
+    assert_eq!(
+        st.gov_param_string("emergency_pause"),
+        Some("true".into()),
+        "failed unchecked malformed toggle must preserve the canonical stored value"
+    );
+    assert!(
+        st.pending_gov_update("emergency_pause").is_none(),
+        "failed unchecked malformed toggle must not materialize pending governance residue"
+    );
+}
