@@ -108,7 +108,10 @@ CURRENT_HEAD="$(git rev-parse HEAD)"
 CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
 CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURRENT_WORKTREE_ROOT" '
   BEGIN { in_match=0 }
-  /^worktree / { in_match = ($2 == target) }
+  /^worktree / {
+    worktree_path = substr($0, length("worktree ") + 1)
+    in_match = (worktree_path == target)
+  }
   in_match { print }
   in_match && /^$/ { exit }
 ')"
