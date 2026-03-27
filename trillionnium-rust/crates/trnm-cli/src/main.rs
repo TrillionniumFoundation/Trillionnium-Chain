@@ -1553,7 +1553,10 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let path = default_tx_state_file();
     let raw = fs::read_to_string(path).ok()?;
     let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
-    let rec = v.get(tx_hash)?;
+    let requested = normalize_tx_hash(tx_hash).unwrap_or_else(|| tx_hash.to_string());
+    let rec = v.as_object()?.iter().find_map(|(key, value)| {
+        (normalize_tx_hash(key).as_deref() == Some(requested.as_str())).then_some(value)
+    })?;
     [
         "status",
         "tx_status",
@@ -3190,6 +3193,14 @@ mod tests {
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
+        assert_eq!(
+            query_local_tx_status(&ok_hash.to_ascii_uppercase()).as_deref(),
+            Some("committed")
+        );
+        assert_eq!(
+            query_local_tx_status(&format!("<{}>", ok_hash.to_ascii_uppercase())).as_deref(),
+            Some("committed")
+        );
         assert_eq!(
             query_local_tx_status(completed_hash).as_deref(),
             Some("committed")
