@@ -4456,6 +4456,42 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_review_bundle_keeps_validator_count_between_spread_and_height_pressure() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        let top_share_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_top_share_ppm")
+            .expect("top-share field present");
+        let active_validators_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_active_validators")
+            .expect("active-validator count field present");
+        let active_validator_share_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_active_validator_share_ppm")
+            .expect("active-validator share field present");
+        let active_heights_idx = fairness_review_fields
+            .iter()
+            .position(|field| *field == "bft_leader_missed_active_heights")
+            .expect("active-height field present");
+
+        assert_eq!(top_share_idx, 0);
+        assert_eq!(active_validators_idx, top_share_idx + 1);
+        assert_eq!(active_validator_share_idx, active_validators_idx + 1);
+        assert_eq!(active_heights_idx, active_validator_share_idx + 1);
+    }
+
+    #[test]
     fn guardrail_review_bundles_keep_cause_fields_next_to_coverage_and_budget_pressure() {
         let review_bundles: &[&[&str]] = &[
             &[
