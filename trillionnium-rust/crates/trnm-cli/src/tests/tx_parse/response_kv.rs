@@ -107,6 +107,10 @@ fn tx_query_parse_normalizes_quoted_or_punctuated_tx_hash() {
     let nested_wrappers = "tx_hash=(`\"0xBEEF42\"`,)\nstatus=committed\n";
     let parsed_nested = parse_tx_query_response(nested_wrappers, "0xfallback").unwrap();
     assert_eq!(parsed_nested.tx_hash, "0xbeef42");
+
+    let sentence_noise = "tx_hash=0xC0FFEE42?!\nstatus=committed\n";
+    let parsed_sentence_noise = parse_tx_query_response(sentence_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_sentence_noise.tx_hash, "0xc0ffee42");
 }
 
 #[test]

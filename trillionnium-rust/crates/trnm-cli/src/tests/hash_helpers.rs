@@ -53,3 +53,15 @@ fn extract_tx_hash_accepts_angle_bracket_wrapped_hashes() {
         Some("0xcafe99")
     );
 }
+
+#[test]
+fn extract_tx_hash_trims_sentence_punctuation_noise() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=0xABCD1234.").as_deref(),
+        Some("0xabcd1234")
+    );
+    assert_eq!(
+        extract_tx_hash("transactionHash:0xBEEF42?!").as_deref(),
+        Some("0xbeef42")
+    );
+}

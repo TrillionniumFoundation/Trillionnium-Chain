@@ -9,6 +9,7 @@ pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+                    || matches!(c, '.' | '!' | '?')
             })
             .to_string();
 
