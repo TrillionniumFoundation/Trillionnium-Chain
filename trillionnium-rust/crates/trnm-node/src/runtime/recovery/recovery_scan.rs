@@ -410,4 +410,49 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_checkpoint_context() {
+        let wal_dir = temp_wal_dir("metadata-only-rejection");
+        let recovered = RecoveredWalState {
+            next_height: 18,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 17,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(16),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("checkpoint lags retained WAL tip by 1 block")
+                && err.contains("last retained checkpoint: 16")
+                && err.contains("next startup height: 18"),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_fresh_or_fully_replayable_state() {
+        let wal_dir = temp_wal_dir("recoverable-state-ok");
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap();
+    }
 }
