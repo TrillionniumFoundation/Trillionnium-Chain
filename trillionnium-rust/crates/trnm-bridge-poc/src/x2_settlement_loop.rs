@@ -163,6 +163,9 @@ pub fn drive_minimal_settlement(
                 if height < target_height {
                     return Err(SettlementError::InvalidHeight { height });
                 }
+                if height == target_height && target_height != u64::MAX {
+                    return Err(SettlementError::InvalidHeight { height });
+                }
             }
             if let Some(source_height) = hb_src {
                 let max_confirm_height = source_height.saturating_add(1);
@@ -501,6 +504,36 @@ mod tests {
         .unwrap_err();
 
         assert_eq!(err, SettlementError::InvalidHeight { height: 702 });
+        assert_eq!(request.status, BridgeStatus::Pending);
+    }
+
+    #[test]
+    fn drive_minimal_settlement_rejects_confirm_height_equal_to_target_overlay_boundary() {
+        let mut request = SettlementRequest::new(1, "0xconfirm-target-boundary".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 699,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: false,
+            message: "heartbeat ok".to_string(),
+        };
+
+        let err = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 699 },
+        )
+        .expect_err("confirm height must advance beyond observed target finality boundary");
+
+        assert_eq!(err, SettlementError::InvalidHeight { height: 699 });
         assert_eq!(request.status, BridgeStatus::Pending);
     }
 
