@@ -1619,6 +1619,14 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         args.byzantine < args.validators,
         "invalid startup args: byzantine must be less than validators"
     );
+    let min_validators_for_quorum = args.byzantine.saturating_mul(3).saturating_add(1);
+    anyhow::ensure!(
+        args.validators >= min_validators_for_quorum,
+        "invalid startup args: validators must satisfy N >= 3f + 1 for byzantine={} (need at least {}, got {})",
+        args.byzantine,
+        min_validators_for_quorum,
+        args.validators
+    );
     anyhow::ensure!(
         args.bft_checkpoint_interval > 0,
         "invalid startup args: bft_checkpoint_interval must be at least 1"
@@ -3377,6 +3385,41 @@ mod tests {
         assert!(err
             .to_string()
             .contains("byzantine must be less than validators"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_insufficient_validator_quorum_for_byzantine_budget() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 3,
+            byzantine: 1,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("validator quorum below 3f+1 must fail closed");
+        assert!(err
+            .to_string()
+            .contains("validators must satisfy N >= 3f + 1"));
     }
 
     #[test]
