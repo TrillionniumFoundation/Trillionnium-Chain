@@ -739,6 +739,26 @@ mod tests {
     }
 
     #[test]
+    fn rejects_deserialized_invalid_window_even_with_matching_hash() {
+        let p = policy();
+        let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
+        snap.window_start_ms = 2_001;
+        snap.window_end_ms = 2_000;
+        snap.snapshot_hash = snap.compute_hash();
+
+        let err = p
+            .validate_snapshot(&snap, 10_000)
+            .expect_err("deserialized invalid window should fail closed even with matching hash");
+        assert_eq!(
+            err,
+            OracleError::InvalidWindow {
+                start_ms: 2_001,
+                end_ms: 2_000,
+            }
+        );
+    }
+
+    #[test]
     fn rejects_insufficient_sources() {
         let p = policy();
         let snap = OracleSnapshot::new(
