@@ -75,6 +75,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use port 0",
         path
     );
+    anyhow::ensure!(
+        !rpc_socket.ip().is_multicast(),
+        "invalid node config {}: rpc_addr must not use a multicast address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_broadcast()),
+        "invalid node config {}: rpc_addr must not use the IPv4 broadcast address",
+        path
+    );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: p2p_addr must be a valid socket address",
@@ -84,6 +94,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_socket.ip().is_multicast(),
+        "invalid node config {}: p2p_addr must not use a multicast address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_broadcast()),
+        "invalid node config {}: p2p_addr must not use the IPv4 broadcast address",
         path
     );
     anyhow::ensure!(
@@ -322,6 +342,73 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must not use port 0"),
             "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_multicast_and_broadcast_listener_addresses() {
+        let rpc_multicast_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "239.1.2.3:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr multicast must fail closed");
+        assert!(
+            rpc_multicast_err
+                .to_string()
+                .contains("rpc_addr must not use a multicast address"),
+            "unexpected error: {rpc_multicast_err:#}"
+        );
+
+        let p2p_multicast_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "ff02::1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr multicast must fail closed");
+        assert!(
+            p2p_multicast_err
+                .to_string()
+                .contains("p2p_addr must not use a multicast address"),
+            "unexpected error: {p2p_multicast_err:#}"
+        );
+
+        let rpc_broadcast_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "255.255.255.255:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr broadcast must fail closed");
+        assert!(
+            rpc_broadcast_err
+                .to_string()
+                .contains("rpc_addr must not use the IPv4 broadcast address"),
+            "unexpected error: {rpc_broadcast_err:#}"
+        );
+
+        let p2p_broadcast_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "255.255.255.255:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr broadcast must fail closed");
+        assert!(
+            p2p_broadcast_err
+                .to_string()
+                .contains("p2p_addr must not use the IPv4 broadcast address"),
+            "unexpected error: {p2p_broadcast_err:#}"
         );
     }
 
