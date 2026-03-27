@@ -956,6 +956,51 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_keeps_last_reserved_critical_slot_guarded_under_active_backlog() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        // Fill dedicated normal capacity while leaving exactly one reserved critical
+        // slot free under active critical backlog.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                // Active critical backlog keeps the last reserved slot guarded,
+                // so only fresh critical ingress remains admissible here.
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Fresh normal ingress must stay fail-closed here: the final reserved
+        // critical slot cannot be borrowed while critical backlog is active.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
