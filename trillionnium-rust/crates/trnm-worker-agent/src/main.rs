@@ -902,24 +902,38 @@ fn resolve_u64(cli: Option<u64>, env_raw: Option<&str>, default: u64, min: u64) 
         .unwrap_or_else(|| parse_u64_with_min(env_raw, default, min))
 }
 
-pub(crate) fn resolve_tx_retry_policy(
+pub(crate) fn resolve_tx_retry_policy_from_sources(
     max_retries_cli: Option<u32>,
     backoff_ms_cli: Option<u64>,
+    env_max_retries_raw: Option<&str>,
+    env_backoff_ms_raw: Option<&str>,
 ) -> RetryPolicy {
     RetryPolicy {
         max_retries: resolve_u32(
             max_retries_cli,
-            env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+            env_max_retries_raw,
             DEFAULT_TX_ADAPTER_MAX_RETRIES,
             0,
         ),
         backoff_ms: resolve_u64(
             backoff_ms_cli,
-            env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+            env_backoff_ms_raw,
             DEFAULT_TX_ADAPTER_BACKOFF_MS,
             0,
         ),
     }
+}
+
+pub(crate) fn resolve_tx_retry_policy(
+    max_retries_cli: Option<u32>,
+    backoff_ms_cli: Option<u64>,
+) -> RetryPolicy {
+    resolve_tx_retry_policy_from_sources(
+        max_retries_cli,
+        backoff_ms_cli,
+        env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+        env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+    )
 }
 
 pub(crate) fn resolve_llm_adapter_policy(
