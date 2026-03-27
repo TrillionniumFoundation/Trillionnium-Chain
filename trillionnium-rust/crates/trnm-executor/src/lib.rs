@@ -326,6 +326,25 @@ impl GroupingProfile {
     }
 
     #[inline]
+    pub fn singly_attributed_retry_hits(&self) -> usize {
+        self.attributed_retry_hits()
+            .saturating_sub(self.retry_stage_overlap_hits())
+    }
+
+    #[inline]
+    pub fn singly_attributed_retry_share(&self) -> f64 {
+        ratio_usize(self.singly_attributed_retry_hits(), self.conflict_hits)
+    }
+
+    #[inline]
+    pub fn singly_attributed_retry_share_of_attributed(&self) -> f64 {
+        ratio_usize(
+            self.singly_attributed_retry_hits(),
+            self.attributed_retry_hits(),
+        )
+    }
+
+    #[inline]
     pub fn retry_stage_concentration(&self) -> f64 {
         if self.conflict_hits == 0 {
             return 0.0;
@@ -2260,6 +2279,9 @@ mod tests {
         assert_eq!(profile.retry_stage_overlap_hits(), 2);
         assert!((profile.retry_stage_overlap_share() - 0.4).abs() < f64::EPSILON);
         assert!((profile.retry_stage_overlap_share_of_attributed() - (2.0 / 7.0)).abs() < 1e-12);
+        assert_eq!(profile.singly_attributed_retry_hits(), 5);
+        assert!((profile.singly_attributed_retry_share() - 1.0).abs() < f64::EPSILON);
+        assert!((profile.singly_attributed_retry_share_of_attributed() - (5.0 / 7.0)).abs() < 1e-12);
         assert_eq!(profile.retry_attribution_coverage(), 1.0);
         assert!((profile.unattributed_retry_share() - 0.0).abs() < f64::EPSILON);
 
@@ -2267,6 +2289,9 @@ mod tests {
         assert_eq!(partial.attributed_retry_hits(), 3);
         assert_eq!(partial.unattributed_retry_hits(), 3);
         assert_eq!(partial.retry_stage_overlap_hits(), 0);
+        assert_eq!(partial.singly_attributed_retry_hits(), 3);
+        assert!((partial.singly_attributed_retry_share() - 0.5).abs() < f64::EPSILON);
+        assert!((partial.singly_attributed_retry_share_of_attributed() - 1.0).abs() < f64::EPSILON);
         assert!((partial.retry_attribution_coverage() - 0.5).abs() < f64::EPSILON);
         assert!((partial.unattributed_retry_share() - 0.5).abs() < f64::EPSILON);
     }

@@ -261,6 +261,10 @@ fn main() {
         let retry_stage_overlap_share = profile.retry_stage_overlap_share();
         let retry_stage_overlap_share_of_attributed =
             profile.retry_stage_overlap_share_of_attributed();
+        let singly_attributed_retry_hits = profile.singly_attributed_retry_hits();
+        let singly_attributed_retry_share = profile.singly_attributed_retry_share();
+        let singly_attributed_retry_share_of_attributed =
+            profile.singly_attributed_retry_share_of_attributed();
         let retry_stage_concentration = profile.retry_stage_concentration();
         let retry_stage_mix_entropy = profile.retry_stage_mix_entropy();
         lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
@@ -438,6 +442,18 @@ fn main() {
         lines.push(format!(
             "profile.retry_stage_overlap_share_of_attributed={:.4}",
             retry_stage_overlap_share_of_attributed
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_hits={}",
+            singly_attributed_retry_hits
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_share={:.4}",
+            singly_attributed_retry_share
+        ));
+        lines.push(format!(
+            "profile.singly_attributed_retry_share_of_attributed={:.4}",
+            singly_attributed_retry_share_of_attributed
         ));
         lines.push(format!(
             "profile.retry_stage_concentration={:.4}",
@@ -757,6 +773,9 @@ mod tests {
         assert_eq!(profile.retry_stage_overlap_hits(), 1);
         assert!((profile.retry_stage_overlap_share() - 0.25).abs() < f64::EPSILON);
         assert!((profile.retry_stage_overlap_share_of_attributed() - 0.2).abs() < f64::EPSILON);
+        assert_eq!(profile.singly_attributed_retry_hits(), 4);
+        assert!((profile.singly_attributed_retry_share() - 1.0).abs() < f64::EPSILON);
+        assert!((profile.singly_attributed_retry_share_of_attributed() - 0.8).abs() < f64::EPSILON);
         assert!((profile.retry_stage_concentration() - 0.5625).abs() < f64::EPSILON);
         assert!((profile.retry_stage_mix_entropy() - 0.9602297178607612).abs() < 1e-12);
         assert!((profile.retry_scan_overhang_per_hit() - 0.5).abs() < f64::EPSILON);
@@ -903,6 +922,9 @@ mod tests {
         assert_eq!(profile.retry_stage_overlap_hits(), 0);
         assert_eq!(profile.retry_stage_overlap_share(), 0.0);
         assert_eq!(profile.retry_stage_overlap_share_of_attributed(), 0.0);
+        assert_eq!(profile.singly_attributed_retry_hits(), 0);
+        assert_eq!(profile.singly_attributed_retry_share(), 0.0);
+        assert_eq!(profile.singly_attributed_retry_share_of_attributed(), 0.0);
         assert_eq!(profile.retry_stage_concentration(), 0.0);
         assert_eq!(profile.retry_stage_mix_entropy(), 0.0);
     }
