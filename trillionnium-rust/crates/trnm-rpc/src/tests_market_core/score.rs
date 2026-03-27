@@ -304,6 +304,20 @@ fn market_reputation_score_delta_uses_breakdown_effective_reputation_sign_fail_c
 }
 
 #[test]
+fn market_reputation_score_delta_treats_zero_effective_reputation_as_neutral() {
+    let neutral_breakdown = MarketScoreBreakdown {
+        effective_reputation: 0,
+        base_score: 100,
+        reputation_reward: 21,
+        penalty: 21,
+        effective_score: 100,
+        score_floor_applied: false,
+    };
+
+    assert_eq!(market_reputation_score_delta(&neutral_breakdown), 0);
+}
+
+#[test]
 fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
     let breakdown = market_score_breakdown(
         50,

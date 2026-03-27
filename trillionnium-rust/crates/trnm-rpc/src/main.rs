@@ -1717,10 +1717,12 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
 }
 
 fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
-    if breakdown.effective_reputation >= 0 {
+    if breakdown.effective_reputation > 0 {
         -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
-    } else {
+    } else if breakdown.effective_reputation < 0 {
         breakdown.penalty.min(i128::MAX as u128) as i128
+    } else {
+        0
     }
 }
 

@@ -90,10 +90,12 @@ pub(crate) fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfi
 }
 
 pub(crate) fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
-    if breakdown.effective_reputation >= 0 {
+    if breakdown.effective_reputation > 0 {
         saturated_negative_i128(breakdown.reputation_reward)
-    } else {
+    } else if breakdown.effective_reputation < 0 {
         breakdown.penalty.min(i128::MAX as u128) as i128
+    } else {
+        0
     }
 }
 
