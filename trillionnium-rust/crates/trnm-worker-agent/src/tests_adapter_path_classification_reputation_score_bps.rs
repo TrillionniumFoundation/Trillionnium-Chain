@@ -207,3 +207,42 @@ fn reputation_rank_gap_and_score_axes_stay_in_lockstep() {
         }
     }
 }
+
+#[test]
+fn reputation_numeric_surface_exports_stay_one_to_one_per_signal() {
+    for (idx, signal) in CANONICAL_REPUTATION_SIGNAL_ORDER.iter().enumerate() {
+        let score_bps = reputation_score_bps(*signal);
+        let gap_bps_from_best = reputation_gap_bps_from_best(*signal);
+        let gap_bps_from_worst = reputation_gap_bps_from_worst(*signal);
+        let rank_ordinal = reputation_rank_ordinal(*signal);
+
+        assert_eq!(reputation_signal_from_score_bps(score_bps), Some(*signal));
+        assert_eq!(
+            reputation_signal_from_gap_bps_from_best(gap_bps_from_best),
+            Some(*signal)
+        );
+        assert_eq!(
+            reputation_signal_from_gap_bps_from_worst(gap_bps_from_worst),
+            Some(*signal)
+        );
+        assert_eq!(
+            reputation_signal_from_gap_pair(gap_bps_from_best, gap_bps_from_worst),
+            Some(*signal)
+        );
+        assert_eq!(reputation_signal_from_rank_ordinal(rank_ordinal), Some(*signal));
+
+        for other in CANONICAL_REPUTATION_SIGNAL_ORDER.iter().skip(idx + 1) {
+            assert_ne!(score_bps, reputation_score_bps(*other));
+            assert_ne!(gap_bps_from_best, reputation_gap_bps_from_best(*other));
+            assert_ne!(gap_bps_from_worst, reputation_gap_bps_from_worst(*other));
+            assert_ne!(rank_ordinal, reputation_rank_ordinal(*other));
+            assert_ne!(
+                (gap_bps_from_best, gap_bps_from_worst),
+                (
+                    reputation_gap_bps_from_best(*other),
+                    reputation_gap_bps_from_worst(*other)
+                )
+            );
+        }
+    }
+}
