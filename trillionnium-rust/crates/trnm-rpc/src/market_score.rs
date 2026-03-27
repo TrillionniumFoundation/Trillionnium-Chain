@@ -20,6 +20,8 @@ pub(crate) struct MarketScoreConfigOutput {
     pub(crate) price_weight: u128,
     pub(crate) reputation_weight: u128,
     pub(crate) reputation_clamp: i64,
+    pub(crate) max_effective_reputation: i64,
+    pub(crate) min_effective_reputation: i64,
     pub(crate) max_reputation_score_delta: u128,
     pub(crate) min_reputation_score_delta: i128,
 }
@@ -51,6 +53,8 @@ impl From<MarketScoreConfig> for MarketScoreConfigOutput {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
             reputation_clamp,
+            max_effective_reputation: reputation_clamp,
+            min_effective_reputation: -reputation_clamp,
             max_reputation_score_delta,
             min_reputation_score_delta: saturated_negative_i128(max_reputation_score_delta),
         }
