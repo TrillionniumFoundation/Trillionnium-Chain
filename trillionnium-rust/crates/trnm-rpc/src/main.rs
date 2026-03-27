@@ -1708,7 +1708,7 @@ fn market_score_config() -> MarketScoreConfig {
 }
 
 fn normalized_reputation_clamp(clamp: i64) -> i64 {
-    clamp.max(MARKET_REPUTATION_CLAMP_MIN)
+    clamp.clamp(MARKET_REPUTATION_CLAMP_MIN, MARKET_REPUTATION_CLAMP_MAX)
 }
 
 fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
