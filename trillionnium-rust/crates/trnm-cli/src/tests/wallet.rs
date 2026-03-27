@@ -6,6 +6,12 @@ fn wallet_import_hex_check() {
         ensure_hex_32_bytes("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             .unwrap();
     assert_eq!(ok.len(), 64);
+
+    let upper =
+        ensure_hex_32_bytes("0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            .unwrap();
+    assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
     assert!(ensure_hex_32_bytes("0x1234").is_err());
 }
 

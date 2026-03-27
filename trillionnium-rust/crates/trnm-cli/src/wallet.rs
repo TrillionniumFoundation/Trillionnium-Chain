@@ -34,7 +34,11 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
 }
 
 pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
-    let x = s.strip_prefix("0x").unwrap_or(s).to_lowercase();
+    let x = s
+        .strip_prefix("0x")
+        .or_else(|| s.strip_prefix("0X"))
+        .unwrap_or(s)
+        .to_lowercase();
     if x.len() != 64 {
         bail!("private key hex must be 32 bytes (64 hex chars)");
     }

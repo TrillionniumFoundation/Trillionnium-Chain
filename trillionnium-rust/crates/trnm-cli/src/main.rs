@@ -850,7 +850,11 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
 }
 
 fn ensure_hex_32_bytes(s: &str) -> Result<String> {
-    let x = s.strip_prefix("0x").unwrap_or(s).to_lowercase();
+    let x = s
+        .strip_prefix("0x")
+        .or_else(|| s.strip_prefix("0X"))
+        .unwrap_or(s)
+        .to_lowercase();
     if x.len() != 64 {
         bail!("private key hex must be 32 bytes (64 hex chars)");
     }
@@ -1843,6 +1847,13 @@ mod tests {
         )
         .unwrap();
         assert_eq!(ok.len(), 64);
+
+        let upper = ensure_hex_32_bytes(
+            "0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        )
+        .unwrap();
+        assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }
 
