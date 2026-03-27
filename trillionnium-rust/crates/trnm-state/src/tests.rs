@@ -328,6 +328,49 @@ fn restore_task_rejects_terminal_collateral_retention_with_blank_challenger() {
 }
 
 #[test]
+fn restore_task_rejects_terminal_collateral_retention_with_zero_challenge_bond() {
+    let mut st = StateStore::new();
+
+    st.restore_task(
+        40915,
+        Some(TaskObject {
+            task_id: 40915,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(0),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        st.get_task(40915).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata zeroes the posted challenge bond instead of preserving canonical collateral/proof audit material"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_noncanonical_challenger() {
     let mut st = StateStore::new();
 
