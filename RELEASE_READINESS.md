@@ -53,6 +53,9 @@
 8. **子项目操作说明**：
    - 仓库总览：`README.md`
    - Web4 子项目：`web4-frontend/README.md`
+9. **RC / validator handoff 操作纪律**：看 `trillionnium-rust/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`。
+   - 适用场景：需要把 `testnet_preflight.sh`、`run_local_release_evidence.sh`、`release_rc.sh` 的产物交接给另一位 operator / validator 时。
+   - 作用边界：它定义的是 artifact path 解析、identity 字段核对、replay/rollback 引用纪律；**不替代**本文件的 release readiness 结论。
 
 ## RC 演练最小证据模板（不发布）
 
