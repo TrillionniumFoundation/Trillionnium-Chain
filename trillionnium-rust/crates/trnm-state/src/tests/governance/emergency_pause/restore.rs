@@ -286,6 +286,42 @@ fn emergency_pause_enforce_action_scrubs_stale_pending_entry() {
 }
 
 #[test]
+fn emergency_pause_enforce_action_invalid_literal_preserves_live_binding_and_pending_cleanliness() {
+    // Merge-gate guard: Enforce must not bypass strict bool validation, and a rejected
+    // payload must leave the live emergency brake and pending state untouched.
+    let mut st = StateStore::new();
+    st.set_gov_param(9_007, 7_999, "emergency_pause".into(), "true".into())
+        .expect("baseline pause=true should apply immediately");
+    let live_before = st.gov_param("emergency_pause").cloned();
+    assert!(st.is_emergency_paused());
+
+    let err = st
+        .set_gov_param_with_action(
+            9_008,
+            7_999,
+            "emergency_pause".into(),
+            "TRUE".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect_err("enforce action must reject non-strict bool literal");
+
+    assert!(err.contains("expected strict bool"), "unexpected error: {err}");
+    assert!(
+        st.is_emergency_paused(),
+        "rejected enforce payload must preserve the live emergency brake"
+    );
+    assert_eq!(
+        st.gov_param("emergency_pause").cloned(),
+        live_before,
+        "rejected enforce payload must preserve the canonical live emergency_pause object"
+    );
+    assert!(
+        st.pending_gov_update("emergency_pause").is_none(),
+        "rejected enforce payload must not materialize pending emergency_pause state"
+    );
+}
+
+#[test]
 fn emergency_pause_toggles_preserve_challenge_escrow_conservation() {
     // Merge-gate guard: emergency pause is a control-plane brake only; it must never
     // mutate custody balances used by challenge escrow accounting.
