@@ -6126,6 +6126,27 @@ mod tests {
     }
 
     #[test]
+    fn market_score_breakdown_keeps_zero_reputation_delta_neutral() {
+        let breakdown = market_score_breakdown(
+            7,
+            0,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 11,
+                reputation_clamp: 10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 0);
+        assert_eq!(breakdown.base_score, 21);
+        assert_eq!(breakdown.reputation_reward, 0);
+        assert_eq!(breakdown.penalty, 0);
+        assert_eq!(breakdown.effective_score, 21);
+        assert_eq!(market_reputation_score_delta(&breakdown), 0);
+        assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
     fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
         let breakdown = market_score_breakdown(
             7,
