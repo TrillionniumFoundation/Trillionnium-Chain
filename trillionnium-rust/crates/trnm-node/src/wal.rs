@@ -510,6 +510,59 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_canonicalizes_equal_height_evidence_linkage_from_disk() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-equal-height-load-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&CheckpointMetaList {
+            checkpoints: vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), raw).unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ],
+            "load path must canonicalize equal-height checkpoint evidence by state_root then wal_entry_hash so light-verifier summaries see a stable checkpoint linkage surface"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
