@@ -1,9 +1,10 @@
 # TRNM Release Readiness
 
-更新日期：2026-03-10
-适用范围：`origin/main` 当前快照（`0b209289`）
+更新日期：2026-03-28
+适用范围：引用本文件时，必须同时记录当下的 `git rev-parse origin/main` 输出；不要继续把旧文档头中的固定 commit hash 当作长期 truth source。
 
-> 本文件是当前 **release readiness truth source**，且仅对上面标明的 `origin/main` 快照负责。
+> 本文件是当前 **release readiness truth source**。
+> 在 release / RC / handoff 语境引用本文件时，必须把当时的 `origin/main` commit 与本文件一起记录，避免把过期快照误当成当前结论。
 > - `STATUS.md`：历史推进日志 / working journal，不参与当前 release 判定。
 > - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`：开发调度板，不覆盖发布口径。
 > - `docs/development/GO_READY_EVIDENCE_WEB4_2026-03-03.md`、`docs/release/web4-fix-sequence-2026-03-04-evidence.md`：仅表示当时那一轮修复/门禁证据，不等于今天整个仓库已可发布。
