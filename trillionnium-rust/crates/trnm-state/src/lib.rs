@@ -5654,7 +5654,7 @@ mod tests {
         let mut without_retention = StateStore::new();
         let mut with_retention = StateStore::new();
 
-        let mut base_task = TaskObject {
+        let base_task = TaskObject {
             task_id: 404,
             creator: "alice".into(),
             bounty: 25,
