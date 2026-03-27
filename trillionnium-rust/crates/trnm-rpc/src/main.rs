@@ -4976,6 +4976,31 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_duplicate_limit_keys() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=7&limit=9")
+            .expect_err("duplicate limit keys must fail closed instead of being silently merged");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_lowercase_percent_encoded_smuggling() {
+        for path in [
+            "/query-events/42?limit=7%26limit=9",
+            "/query-events/42?limit%3d9",
+            "/query-events/42?limit=7%23tail",
+            "/query-events/42?limit=7%0d%0aextra",
+            "/query-events/..%2f42?limit=7",
+            "/query-events/%2e%2e/42?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("lowercase percent-encoded smuggling must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
         let out =
             parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
