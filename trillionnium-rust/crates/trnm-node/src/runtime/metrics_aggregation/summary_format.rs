@@ -100,5 +100,11 @@ mod tests {
             state_root_idx < unprofiled_idx,
             "state root evidence metrics must precede the unprofiled share field so downstream DA/light-verifier parsers see the canonical linkage"
         );
+        assert!(
+            line.contains(
+                "state_root_total_avg_ms=11 state_root_total_p50_ms=12 state_root_total_p95_ms=13 state_root_total_max_ms=14 state_root_total_share_avg_ppm=15 state_root_total_peak_share_ppm=16 unprofiled_finality_share_bps=17"
+            ),
+            "state root evidence metrics and the unprofiled share field should remain a contiguous canonical block for DA/light-verifier summary parsers"
+        );
     }
 }
