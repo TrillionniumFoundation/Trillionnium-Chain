@@ -5,6 +5,7 @@ Verifies that a set of TRNM node config files is internally consistent for
 bootstrap/handoff use:
 - every file parses as TOML
 - node_id/rpc_addr/p2p_addr exist and are non-empty after trimming
+- rpc_addr/p2p_addr are bare host:port listener addresses with ports in 1..65535
 - rpc_addr != p2p_addr within each file
 - node_id values are unique across the bundle
 - rpc_addr values are unique across the bundle
@@ -16,6 +17,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 try:
     import tomllib
@@ -39,6 +41,28 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     if not value:
         fail(f"invalid node config {path}: {field} must not be empty")
     return value
+
+
+def validate_listener_addr(addr: str, field: str, path: Path) -> None:
+    parsed = urlsplit(f"tcp://{addr}")
+
+    try:
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        fail(f"invalid node config {path}: {field} port must be in 1..65535")
+
+    if parsed.scheme != "tcp" or parsed.path or parsed.query or parsed.fragment:
+        fail(
+            f"invalid node config {path}: {field} must be a bare host:port listener address"
+        )
+    if not host:
+        fail(f"invalid node config {path}: {field} must include a host")
+    if port is None:
+        fail(f"invalid node config {path}: {field} must include a numeric port")
+    if not (1 <= port <= 65535):
+        fail(f"invalid node config {path}: {field} port must be in 1..65535")
+
 
 
 def main(argv: list[str]) -> int:
@@ -68,6 +92,9 @@ def main(argv: list[str]) -> int:
         node_id = trimmed_string(data.get("node_id"), "node_id", path)
         rpc_addr = trimmed_string(data.get("rpc_addr"), "rpc_addr", path)
         p2p_addr = trimmed_string(data.get("p2p_addr"), "p2p_addr", path)
+
+        validate_listener_addr(rpc_addr, "rpc_addr", path)
+        validate_listener_addr(p2p_addr, "p2p_addr", path)
 
         if rpc_addr == p2p_addr:
             fail(f"invalid node config {path}: rpc_addr and p2p_addr must differ")
