@@ -937,6 +937,11 @@ fn preflight_resolve_transfers(
             "resolve challenge settlement requested without challenger".into(),
         ));
     }
+    if task.challenger.is_some() && task.challenge_bond.is_none() {
+        return Err(PouwError::State(
+            "resolve challenge settlement requested without posted challenge bond".into(),
+        ));
+    }
 
     let mut sim = st.clone();
     let mut settlement_preview = task.clone();
@@ -1035,6 +1040,11 @@ fn preflight_timeout_transfers(
     if forfeit_challenge_bond && task.challenge_bond.is_some() && task.challenger.is_none() {
         return Err(PouwError::State(
             "timeout challenge forfeit requested without challenger".into(),
+        ));
+    }
+    if task.challenger.is_some() && task.challenge_bond.is_none() {
+        return Err(PouwError::State(
+            "timeout challenge settlement requested without posted challenge bond".into(),
         ));
     }
 
@@ -18521,6 +18531,37 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_challenger_without_posted_bond() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 76,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: None,
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("resolve preflight must fail closed on dangling challenger metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond")));
+    }
+
+    #[test]
     fn resolve_preflight_rejects_challenge_success_bounty_above_task_bounty() {
         let mut st = seeded_state();
         st.set_gov_param_bootstrap_unchecked(9_504, "challenge_success_bounty".into(), "11".into())
@@ -18788,6 +18829,37 @@ mod tests {
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
         );
+    }
+
+    #[test]
+    fn timeout_preflight_rejects_challenger_without_posted_bond() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: None,
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, true, false)
+            .expect_err("timeout preflight must fail closed on dangling challenger metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond")));
     }
 
     #[test]
