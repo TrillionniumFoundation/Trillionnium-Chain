@@ -62,6 +62,8 @@ cargo test -p trnm-state -p trnm-node
   - 含义：检测到了损坏 / 重复 / 断链尾部，恢复流程已执行 fail-closed 截断；这是需要记入 incident note 的明确信号。
 - `refusing metadata-only recovery`
   - 含义：当前节点实现仍然不会仅凭元数据恢复 `StateStore` 快照或重放已提交块；即使 WAL/checkpoint 元数据链本身通过校验，也会拒绝继续启动。
+- `verified WAL/checkpoint metadata`
+  - 含义：恢复流程已经确认当前保留下来的 WAL/checkpoint 元数据链自洽；它只说明“元数据校验通过”，**不**等于应用状态已经恢复完成，必须和 `refusing metadata-only recovery` / `next startup height` 一起解读。
 
 ## 推荐分诊顺序
 
