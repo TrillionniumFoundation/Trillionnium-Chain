@@ -1286,6 +1286,33 @@ mod tests {
     }
 
     #[test]
+    fn borrowed_last_idle_critical_slot_reopens_critical_retry_after_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the last idle critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // While the borrowed slot is occupied, repeated critical retries must stay
+        // fail-closed rather than bypassing reserve protection.
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+
+        // Draining the borrowed normal occupant should immediately reopen that last
+        // reserved slot for fresh critical ingress.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
