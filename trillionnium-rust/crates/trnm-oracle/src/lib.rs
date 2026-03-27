@@ -659,6 +659,24 @@ mod tests {
     }
 
     #[test]
+    fn rejects_empty_feed_id_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            "   ",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot build should reject blank feed id");
+
+        assert_eq!(err, OracleError::EmptyFeedId);
+    }
+
+    #[test]
     fn rejects_snapshot_timestamp_before_window_end_when_building_snapshot() {
         let err = OracleSnapshot::new(
             "btc/usd",
@@ -1561,6 +1579,29 @@ mod tests {
                 canonical: "chainlink".to_string(),
             }
         );
+    }
+
+    #[test]
+    fn rejects_deserialized_empty_source_id_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "   "],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized blank source id must fail guardrail");
+        assert_eq!(err, OracleError::EmptySourceId);
     }
 
     #[test]
