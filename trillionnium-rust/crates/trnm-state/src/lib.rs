@@ -127,14 +127,35 @@ impl CheckpointMeta {
 
     pub fn evidence_summary(&self) -> String {
         let checkpoint_commitment = self.commitment_hex();
+        let checkpoint_height_kind = "bft-height-u64";
+        let checkpoint_height_boundary_kind = if self.height == 1 {
+            "genesis"
+        } else {
+            "non-genesis"
+        };
+        let checkpoint_state_root_kind = "canonical-hex-32b";
+        let checkpoint_state_root_encoding = "hex-lower";
+        let checkpoint_wal_entry_hash_kind = "canonical-hex-32b";
+        let checkpoint_wal_entry_hash_encoding = "hex-lower";
+        let checkpoint_commitment_kind = "canonical-hex-32b";
+        let checkpoint_commitment_encoding = "hex-lower";
+
         format!(
-            "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_height={} checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes={} wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes={} checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes={}",
+            "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_height={} checkpoint_height_encoding=le-u64 checkpoint_height_kind={} checkpoint_height_bytes=8 checkpoint_height_boundary_kind={} checkpoint_state_root_source=checkpoint.state_root_hex checkpoint_state_root={} checkpoint_state_root_kind={} checkpoint_state_root_encoding={} checkpoint_state_root_bytes={} checkpoint_wal_entry_hash_source=checkpoint.wal_entry_hash_hex checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind={} checkpoint_wal_entry_hash_encoding={} checkpoint_wal_entry_hash_bytes={} checkpoint_commitment_source=checkpoint.commitment_hex checkpoint_commitment={} checkpoint_commitment_kind={} checkpoint_commitment_encoding={} checkpoint_commitment_bytes={} checkpoint_surface_canonical=true",
             self.height,
+            checkpoint_height_kind,
+            checkpoint_height_boundary_kind,
             self.state_root_hex,
+            checkpoint_state_root_kind,
+            checkpoint_state_root_encoding,
             self.state_root_hex.len() / 2,
             self.wal_entry_hash_hex,
+            checkpoint_wal_entry_hash_kind,
+            checkpoint_wal_entry_hash_encoding,
             self.wal_entry_hash_hex.len() / 2,
             checkpoint_commitment,
+            checkpoint_commitment_kind,
+            checkpoint_commitment_encoding,
             checkpoint_commitment.len() / 2
         )
     }
@@ -4317,7 +4338,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_bytes=8 state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_bytes=32 wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_bytes=32 checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_bytes=32",
+                "checkpoint_evidence_surface=checkpoint-v1 checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_kind=bft-height-u64 checkpoint_height_bytes=8 checkpoint_height_boundary_kind=non-genesis checkpoint_state_root_source=checkpoint.state_root_hex checkpoint_state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_encoding=hex-lower checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash_source=checkpoint.wal_entry_hash_hex checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_encoding=hex-lower checkpoint_wal_entry_hash_bytes=32 checkpoint_commitment_source=checkpoint.commitment_hex checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_encoding=hex-lower checkpoint_commitment_bytes=32 checkpoint_surface_canonical=true",
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
                 checkpoint.commitment_hex()
