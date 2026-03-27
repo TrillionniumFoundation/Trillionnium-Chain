@@ -140,6 +140,7 @@ printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
 Interpretation rule:
 - use this block exactly as the first operator step when a lane prompt, release ticket, or handoff note already assigns a dedicated worktree/ref
 - if the printed `git worktree list --porcelain` stanza does not describe the current path/ref pairing you expected, stop immediately instead of continuing to the release scripts
+- treat a missing or mismatched `branch <ref>` line inside that stanza as **No-Go**; the path alone is not sufficient proof of lane binding
 - if `EXPECTED_HEAD` is intentionally unknown, leave it empty; do **not** invent or backfill a commit from memory
 
 ## Recommended execution order
