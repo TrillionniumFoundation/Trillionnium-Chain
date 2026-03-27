@@ -251,3 +251,9 @@ fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
 }
+
+#[test]
+fn hot_bucket_hint_single_bucket_count_fails_closed_to_bucket_zero() {
+    let t = tx(999, vec![o(7)], vec![o(42)]);
+    assert_eq!(hot_bucket_hint(&t, 1), 0);
+}
