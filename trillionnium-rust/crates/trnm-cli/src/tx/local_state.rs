@@ -23,10 +23,16 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
 }
 
 pub(crate) fn query_local_tx_status(tx_hash: &str) -> Option<String> {
+    let requested = super::parse::normalize_tx_hash(tx_hash).unwrap_or_else(|| tx_hash.to_string());
     let path = default_tx_state_file();
     let raw = fs::read_to_string(path).ok()?;
     let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
-    let rec = v.get(tx_hash)?;
+    let rec = v.get(&requested).or_else(|| {
+        v.as_object()?.iter().find_map(|(key, value)| {
+            (super::parse::normalize_tx_hash(key).as_deref() == Some(requested.as_str()))
+                .then_some(value)
+        })
+    })?;
     [
         "status",
         "tx_status",
