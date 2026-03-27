@@ -5780,6 +5780,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("checkpoint_height=7"));
     assert!(summary.contains("checkpoint_height_encoding=le-u64"));
     assert!(summary.contains("checkpoint_height_bytes=8"));
+    assert!(summary.contains("checkpoint_height_boundary_kind=non-genesis"));
     assert!(summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
     assert!(summary.contains("checkpoint_state_root_bytes=32"));
     assert!(summary.contains("checkpoint_wal_entry_hash_kind=canonical-hex-32b"));
@@ -5849,6 +5850,7 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
 
     assert!(summary.contains("wal_height_boundary_kind=genesis"));
     assert!(summary.contains("wal_prev_hash=none"));
+    assert!(summary.contains("checkpoint_height_boundary_kind=genesis"));
     assert!(summary.contains("wal_prev_hash_present=false"));
     assert!(summary.contains("wal_prev_hash_required=false"));
     assert!(summary.contains("wal_prev_hash_kind=genesis"));
