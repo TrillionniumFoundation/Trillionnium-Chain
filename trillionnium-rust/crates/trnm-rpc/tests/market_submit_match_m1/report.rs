@@ -29,6 +29,42 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["bid_coverage_rate"], 0.0);
     assert_eq!(report["avg_bids_per_task"], 0.0);
     assert_eq!(report["match_rate"], 0.0);
+    assert_eq!(report["match_config"]["price_weight"], 1000);
+    assert_eq!(report["match_config"]["reputation_weight"], 100);
+    assert_eq!(report["match_config"]["reputation_clamp"], 1000);
+    assert_eq!(report["match_config"]["max_reputation_score_delta"], 100000);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -100000);
+}
+
+#[test]
+fn market_report_normalizes_nested_wrapped_below_floor_clamp_in_output_config() {
+    let _guard = lock_test_guard();
+
+    let tasks = unique_market_fixture_path("market_report_wrapped_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_wrapped_bids", "jsonl");
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", " '7' "),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", " \"11\" "),
+        ("TRNM_RPC_MARKET_REPUTATION_CLAMP", " ' \"-2\" ' "),
+    ];
+
+    let out = run_ok_with_env(&["market.report"], &envs);
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["match_config"]["price_weight"], 7);
+    assert_eq!(report["match_config"]["reputation_weight"], 11);
+    assert_eq!(report["match_config"]["reputation_clamp"], 1);
+    assert_eq!(report["match_config"]["max_reputation_score_delta"], 11);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -11);
+    assert_eq!(report["task_count"], 0);
+    assert_eq!(report["bid_count"], 0);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
 }
 
 #[test]
@@ -42,6 +78,9 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     let envs = [
         ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
         ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", "7"),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", "11"),
+        ("TRNM_RPC_MARKET_REPUTATION_CLAMP", "13"),
     ];
 
     let create_1 = run_ok_with_env(
@@ -127,6 +166,11 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["bid_coverage_rate"], 1.0);
     assert_eq!(report["avg_bids_per_task"], 1.5);
     assert_eq!(report["match_rate"], 0.5);
+    assert_eq!(report["match_config"]["price_weight"], 7);
+    assert_eq!(report["match_config"]["reputation_weight"], 11);
+    assert_eq!(report["match_config"]["reputation_clamp"], 13);
+    assert_eq!(report["match_config"]["max_reputation_score_delta"], 143);
+    assert_eq!(report["match_config"]["min_reputation_score_delta"], -143);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);

@@ -70,7 +70,7 @@ pub(super) fn handle_market_submit_bid(task_id: u64, worker: String, price: u128
                 message: format!("market task not found: {}", task_id),
             }));
         };
-        if task.status != "open" {
+        if normalize_market_status_key(&task.status) != "open" {
             return Err(rpc_fail(RpcErrorResponse {
                 code: "task-not-open",
                 message: format!("market task not in open status: {}", task.status),
@@ -126,7 +126,7 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
             message: format!("market task not found: {}", task_id),
         }));
     };
-    if task.status != "open" {
+    if normalize_market_status_key(&task.status) != "open" {
         return Err(rpc_fail(RpcErrorResponse {
             code: "task-not-open",
             message: format!("market task not in open status: {}", task.status),
@@ -161,27 +161,22 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
             )
         })
         .expect("non-empty bids");
-    let winner_reputation = normalize_market_worker_key(&winner.worker)
-        .and_then(|k| reputation.get(&k).copied())
+    let winner_reputation_lookup_key = normalize_market_worker_key(&winner.worker);
+    let winner_reputation_lookup_missing = winner_reputation_lookup_key
+        .as_ref()
+        .map(|k| !reputation.contains_key(k))
+        .unwrap_or(true);
+    let winner_reputation = winner_reputation_lookup_key
+        .as_ref()
+        .and_then(|k| reputation.get(k).copied())
         .unwrap_or(0);
-    let winner_reputation_effective = clamp_reputation_for_market(winner_reputation, score_cfg);
-    let base_score = winner.price.saturating_mul(score_cfg.price_weight);
-    let reputation_weight = if winner_reputation_effective > 0 {
-        (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
-    } else {
-        0
-    };
-    let penalty = if winner_reputation_effective < 0 {
-        (winner_reputation_effective.unsigned_abs() as u128)
-            .saturating_mul(score_cfg.reputation_weight)
-    } else {
-        0
-    };
-    let winner_score = if winner_reputation_effective >= 0 {
-        base_score.saturating_sub(reputation_weight)
-    } else {
-        base_score.saturating_add(penalty)
-    };
+    let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
+    let winner_reputation_effective = breakdown.effective_reputation;
+    let base_score = breakdown.base_score;
+    let reputation_weight = breakdown.reputation_reward;
+    let penalty = breakdown.penalty;
+    let reputation_score_delta = market_reputation_score_delta(&breakdown);
+    let winner_score = breakdown.effective_score;
 
     task.status = "matched".into();
     save_market_tasks(&tasks)?;
@@ -194,10 +189,20 @@ pub(super) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "match_policy": "price_reputation_weighted",
         "matched_bid_count": matched_bid_count,
         "winner_reputation": winner_reputation,
+        "winner_reputation_lookup_key": winner_reputation_lookup_key,
+        "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
         "winner_reputation_effective": winner_reputation_effective,
+        "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
+        "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
+        "score_floor_applied": breakdown.score_floor_applied,
+        "price_weight_unit": score_cfg.price_weight,
         "base_score": base_score,
+        "price_component": base_score,
+        "reputation_weight_unit": score_cfg.reputation_weight,
         "reputation_weight": reputation_weight,
+        "reputation_reward": reputation_weight,
         "penalty": penalty,
+        "reputation_score_delta": reputation_score_delta,
         "final_score": winner_score,
         "effective_score": winner_score,
         "match_config": MarketScoreConfigOutput::from(score_cfg),
@@ -269,6 +274,7 @@ pub(super) fn handle_market_report() -> Result<()> {
         bid_coverage_rate,
         avg_bids_per_task,
         match_rate,
+        match_config: MarketScoreConfigOutput::from(market_score_config()),
     };
     println!("{}", serde_json::to_string_pretty(&out)?);
     Ok(())

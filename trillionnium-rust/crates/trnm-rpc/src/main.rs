@@ -256,6 +256,7 @@ struct MarketReport {
     bid_coverage_rate: f64,
     avg_bids_per_task: f64,
     match_rate: f64,
+    match_config: MarketScoreConfigOutput,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -586,6 +587,12 @@ fn ceil_mul_div_u128(value: u128, numerator: u128, denominator: u128) -> Option<
     Some(adjusted / denominator)
 }
 
+fn parse_required_u64_kv_value(kv: &BTreeMap<String, String>, key: &str) -> Option<u64> {
+    kv.get(key)
+        .and_then(|v| parse_u128_kv_value(v))
+        .and_then(|v| u64::try_from(v).ok())
+}
+
 fn task_metering_derived_query_response(
     path: String,
     normalized_work_units: u128,
@@ -620,6 +627,12 @@ fn task_metering_derived_query_response(
         worker_completion_bonus,
         worker_slash_rebate,
     }
+}
+
+fn metering_policy_has_nonzero_denominators(policy: &TaskMeteringPolicyQueryResponse) -> bool {
+    policy.challenge_success_bounty_per_work_unit_den != 0
+        && policy.worker_completion_bonus_per_work_unit_den != 0
+        && policy.worker_slash_rebate_per_work_unit_den != 0
 }
 
 fn build_task_metering_query_response(
@@ -698,20 +711,19 @@ fn parse_event_metering_query_response(
             .get("metering_worker_slash_rebate_per_work_unit_den")
             .and_then(|v| parse_u128_kv_value(v))?,
     };
+    if !metering_policy_has_nonzero_denominators(&policy) {
+        return None;
+    }
 
     Some(build_task_metering_query_response(
         normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),
         workload_class,
         metering_schema,
         receipt_hash,
-        kv.get("metering_prompt_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_generated_tokens")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_decode_steps")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
-        kv.get("metering_kv_bytes_moved")
-            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        parse_required_u64_kv_value(kv, "metering_prompt_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_generated_tokens")?,
+        parse_required_u64_kv_value(kv, "metering_decode_steps")?,
+        parse_required_u64_kv_value(kv, "metering_kv_bytes_moved")?,
         normalized_work_units,
         kv.get("metering_prompt_token_weight")
             .and_then(|v| parse_u128_kv_value(v))?,
@@ -1474,7 +1486,7 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
             '\u{00AD}' => None,
             // Treat control bytes as whitespace separators so malformed/injected
             // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>();
@@ -1502,7 +1514,7 @@ fn normalize_market_status_key(raw: &str) -> String {
             // remain stable against malformed JSONL producers and hidden-char drift.
             '\u{00AD}' => None,
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect::<String>()
@@ -1518,7 +1530,7 @@ fn normalize_actor_or_signer(raw: &str) -> Option<String> {
         .chars()
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => Some(' '),
+            _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect();
@@ -1549,6 +1561,22 @@ fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
         .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
 }
 
+fn stronger_market_reputation_signal(existing: i64, candidate: i64) -> i64 {
+    let existing_abs = existing.unsigned_abs();
+    let candidate_abs = candidate.unsigned_abs();
+    match candidate_abs.cmp(&existing_abs) {
+        std::cmp::Ordering::Greater => candidate,
+        std::cmp::Ordering::Less => existing,
+        std::cmp::Ordering::Equal => {
+            if candidate < existing {
+                candidate
+            } else {
+                existing
+            }
+        }
+    }
+}
+
 fn load_market_reputation() -> BTreeMap<String, i64> {
     let path = market_reputation_file();
     let Ok(raw) = fs::read_to_string(path) else {
@@ -1571,8 +1599,11 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
             normalized
                 .entry(key)
                 // M2 hardening: if aliases normalize to the same worker key,
-                // keep the strongest reputation signal to avoid accidental downgrade.
-                .and_modify(|existing| *existing = (*existing).max(rep))
+                // keep the strongest absolute reputation signal; on equal
+                // magnitude prefer the more negative value to stay fail-closed.
+                .and_modify(|existing| {
+                    *existing = stronger_market_reputation_signal(*existing, rep)
+                })
                 .or_insert(rep);
         }
     }
@@ -1602,19 +1633,36 @@ struct MarketScoreConfig {
     reputation_clamp: i64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 struct MarketScoreConfigOutput {
     price_weight: u128,
     reputation_weight: u128,
     reputation_clamp: i64,
+    max_reputation_score_delta: u128,
+    min_reputation_score_delta: i128,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct MarketScoreBreakdown {
+    effective_reputation: i64,
+    base_score: u128,
+    reputation_reward: u128,
+    penalty: u128,
+    effective_score: u128,
+    score_floor_applied: bool,
 }
 
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
+        let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
+        let max_reputation_score_delta = (reputation_clamp as u128)
+            .saturating_mul(value.reputation_weight);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
-            reputation_clamp: value.reputation_clamp,
+            reputation_clamp,
+            max_reputation_score_delta,
+            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
         }
     }
 }
@@ -1642,8 +1690,54 @@ fn market_score_config() -> MarketScoreConfig {
     }
 }
 
+fn normalized_reputation_clamp(clamp: i64) -> i64 {
+    clamp.max(MARKET_REPUTATION_CLAMP_MIN)
+}
+
 fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
-    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+    let clamp = normalized_reputation_clamp(cfg.reputation_clamp);
+    reputation.clamp(-clamp, clamp)
+}
+
+fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
+    if breakdown.effective_reputation >= 0 {
+        -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
+    } else {
+        breakdown.penalty.min(i128::MAX as u128) as i128
+    }
+}
+
+fn market_score_breakdown(
+    price: u128,
+    reputation: i64,
+    cfg: MarketScoreConfig,
+) -> MarketScoreBreakdown {
+    let effective_reputation = clamp_reputation_for_market(reputation, cfg);
+    let base_score = price.saturating_mul(cfg.price_weight);
+    if effective_reputation >= 0 {
+        let reputation_reward =
+            (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
+        let score_floor_applied = reputation_reward > base_score;
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward,
+            penalty: 0,
+            effective_score: base_score.saturating_sub(reputation_reward),
+            score_floor_applied,
+        }
+    } else {
+        let penalty =
+            (effective_reputation.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight);
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward: 0,
+            penalty,
+            effective_score: base_score.saturating_add(penalty),
+            score_floor_applied: false,
+        }
+    }
 }
 
 fn market_effective_score_with_config(
@@ -1651,13 +1745,7 @@ fn market_effective_score_with_config(
     reputation: i64,
     cfg: MarketScoreConfig,
 ) -> u128 {
-    let rep = clamp_reputation_for_market(reputation, cfg);
-    let base = price.saturating_mul(cfg.price_weight);
-    if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
-    } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
-    }
+    market_score_breakdown(price, reputation, cfg).effective_score
 }
 
 #[cfg(test)]
@@ -4205,7 +4293,7 @@ fn main() -> Result<()> {
                         message: format!("market task not found: {}", task_id),
                     }));
                 };
-                if task.status != "open" {
+                if normalize_market_status_key(&task.status) != "open" {
                     return Err(rpc_fail(RpcErrorResponse {
                         code: "task-not-open",
                         message: format!("market task not in open status: {}", task.status),
@@ -4262,7 +4350,7 @@ fn main() -> Result<()> {
                     message: format!("market task not found: {}", task_id),
                 }));
             };
-            if task.status != "open" {
+            if normalize_market_status_key(&task.status) != "open" {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "task-not-open",
                     message: format!("market task not in open status: {}", task.status),
@@ -4297,28 +4385,22 @@ fn main() -> Result<()> {
                     )
                 })
                 .expect("non-empty bids");
-            let winner_reputation = normalize_market_worker_key(&winner.worker)
-                .and_then(|k| reputation.get(&k).copied())
+            let winner_reputation_lookup_key = normalize_market_worker_key(&winner.worker);
+            let winner_reputation_lookup_missing = winner_reputation_lookup_key
+                .as_ref()
+                .map(|k| !reputation.contains_key(k))
+                .unwrap_or(true);
+            let winner_reputation = winner_reputation_lookup_key
+                .as_ref()
+                .and_then(|k| reputation.get(k).copied())
                 .unwrap_or(0);
-            let winner_reputation_effective =
-                clamp_reputation_for_market(winner_reputation, score_cfg);
-            let base_score = winner.price.saturating_mul(score_cfg.price_weight);
-            let reputation_weight = if winner_reputation_effective > 0 {
-                (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
-            } else {
-                0
-            };
-            let penalty = if winner_reputation_effective < 0 {
-                (winner_reputation_effective.unsigned_abs() as u128)
-                    .saturating_mul(score_cfg.reputation_weight)
-            } else {
-                0
-            };
-            let winner_score = if winner_reputation_effective >= 0 {
-                base_score.saturating_sub(reputation_weight)
-            } else {
-                base_score.saturating_add(penalty)
-            };
+            let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
+            let winner_reputation_effective = breakdown.effective_reputation;
+            let base_score = breakdown.base_score;
+            let reputation_weight = breakdown.reputation_reward;
+            let penalty = breakdown.penalty;
+            let reputation_score_delta = market_reputation_score_delta(&breakdown);
+            let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
@@ -4331,10 +4413,20 @@ fn main() -> Result<()> {
                 "match_policy": "price_reputation_weighted",
                 "matched_bid_count": matched_bid_count,
                 "winner_reputation": winner_reputation,
+                "winner_reputation_lookup_key": winner_reputation_lookup_key,
+                "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
                 "winner_reputation_effective": winner_reputation_effective,
+                "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
+                "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
+                "score_floor_applied": breakdown.score_floor_applied,
+                "price_weight_unit": score_cfg.price_weight,
                 "base_score": base_score,
+                "price_component": base_score,
+                "reputation_weight_unit": score_cfg.reputation_weight,
                 "reputation_weight": reputation_weight,
+                "reputation_reward": reputation_weight,
                 "penalty": penalty,
+                "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
                 "effective_score": winner_score,
                 "match_config": MarketScoreConfigOutput::from(score_cfg),
@@ -4404,6 +4496,7 @@ fn main() -> Result<()> {
                 bid_coverage_rate,
                 avg_bids_per_task,
                 match_rate,
+                match_config: MarketScoreConfigOutput::from(market_score_config()),
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
@@ -5488,7 +5581,15 @@ mod tests {
     }
 
     #[test]
-    fn market_reputation_loader_uses_highest_value_when_aliases_collide() {
+    fn stronger_market_reputation_signal_prefers_larger_absolute_value_and_negative_ties() {
+        assert_eq!(stronger_market_reputation_signal(10, 200), 200);
+        assert_eq!(stronger_market_reputation_signal(-7, -2), -7);
+        assert_eq!(stronger_market_reputation_signal(12, -20), -20);
+        assert_eq!(stronger_market_reputation_signal(20, -20), -20);
+    }
+
+    #[test]
+    fn market_reputation_loader_uses_strongest_signal_when_aliases_collide() {
         let mut path = std::env::temp_dir();
         path.push(format!(
             "trnm_rpc_market_reputation_alias_collision_{}_{}.json",
@@ -5497,7 +5598,7 @@ mod tests {
         ));
         fs::write(
             &path,
-            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7}",
+            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7, \" worker-b \": -2, \"worker-c\": 20, \" WORKER-C \": -20}",
         )
         .expect("write alias-collision reputation fixture");
 
@@ -5510,7 +5611,8 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker-a"), Some(&200));
                 assert_eq!(rep.get("worker-b"), Some(&-7));
-                assert_eq!(rep.len(), 2);
+                assert_eq!(rep.get("worker-c"), Some(&-20));
+                assert_eq!(rep.len(), 3);
             },
         );
 
@@ -5880,6 +5982,51 @@ mod tests {
                 assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
             },
         );
+    }
+
+    #[test]
+    fn clamp_reputation_for_market_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let cfg = MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        };
+
+        assert_eq!(clamp_reputation_for_market(250, cfg), 1);
+        assert_eq!(clamp_reputation_for_market(-250, cfg), -1);
+    }
+
+    #[test]
+    fn market_score_breakdown_normalizes_negative_manual_clamp_without_panic() {
+        let breakdown = market_score_breakdown(
+            50,
+            250,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: -10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 1);
+        assert_eq!(breakdown.base_score, 150);
+        assert_eq!(breakdown.reputation_reward, 7);
+        assert_eq!(breakdown.effective_score, 143);
+        assert_eq!(breakdown.penalty, 0);
+        assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
+    fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        });
+
+        assert_eq!(output.price_weight, 3);
+        assert_eq!(output.reputation_weight, 7);
+        assert_eq!(output.reputation_clamp, 1);
     }
 
     #[test]
@@ -7606,6 +7753,38 @@ mod tests {
         );
         assert_eq!(metering.derived.path, "Completed");
         assert_eq!(metering.derived.challenge_bonus_total, 2);
+    }
+
+    #[test]
+    fn load_node_events_skips_metering_block_with_u64_overflow_fields() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+        let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version=1 metering_prompt_tokens=18446744073709551616 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=192 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384\n";
+        fs::write(run.join("node1.log"), line).expect("write log");
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert_eq!(loaded.events.len(), 1);
+        assert!(
+            loaded.events[0].metering.is_none(),
+            "overflowing metering u64 fields must fail closed instead of truncating"
+        );
+    }
+
+    #[test]
+    fn load_node_events_skips_metering_block_with_zero_policy_denominator() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+        let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version=1 metering_prompt_tokens=128 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=0 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384\n";
+        fs::write(run.join("node1.log"), line).expect("write log");
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert_eq!(loaded.events.len(), 1);
+        assert!(
+            loaded.events[0].metering.is_none(),
+            "zero-denominator metering policies must fail closed instead of reporting derived incentives"
+        );
     }
 
     #[test]

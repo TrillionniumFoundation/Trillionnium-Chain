@@ -4768,6 +4768,41 @@ mod tests {
     }
 
     #[test]
+    fn challenge_rejects_zero_llm_meter_challenge_bounty_denominator_in_snapshot_fail_closed() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        let task_id = 78_908;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let mut tampered = st.get_task(r4.id).unwrap();
+        tampered
+            .metadata
+            .as_mut()
+            .unwrap()
+            .metering
+            .as_mut()
+            .unwrap()
+            .challenge_success_bounty_per_work_unit_den = 0;
+        let r4_bad = st.update_task(r4, tampered).unwrap();
+
+        let err = apply_challenge(&mut st, r4_bad.clone(), "challenger".into(), 10, "challenger".into())
+            .expect_err("challenge must fail closed when llm meter snapshot denominator is zero");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("challenge success bounty denominator cannot be zero")));
+
+        let task_after = st.get_task(r4_bad.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Revealed);
+    }
+
+    #[test]
     fn challenge_rejects_tampered_llm_metering_snapshot_fail_closed() {
         let mut st = seeded_state();
         st.set_balance("challenger", 1000);

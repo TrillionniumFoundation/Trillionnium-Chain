@@ -54,6 +54,12 @@ fn parse_required_u64_kv_value(kv: &BTreeMap<String, String>, key: &str) -> Opti
         .and_then(|v| u64::try_from(v).ok())
 }
 
+fn metering_policy_has_nonzero_denominators(policy: &TaskMeteringPolicyQueryResponse) -> bool {
+    policy.challenge_success_bounty_per_work_unit_den != 0
+        && policy.worker_completion_bonus_per_work_unit_den != 0
+        && policy.worker_slash_rebate_per_work_unit_den != 0
+}
+
 fn task_metering_derived_query_response(
     path: String,
     normalized_work_units: u128,
@@ -166,6 +172,9 @@ pub(crate) fn parse_event_metering_query_response(
             .get("metering_worker_slash_rebate_per_work_unit_den")
             .and_then(|v| parse_u128_kv_value(v))?,
     };
+    if !metering_policy_has_nonzero_denominators(&policy) {
+        return None;
+    }
 
     Some(build_task_metering_query_response(
         normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),

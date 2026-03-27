@@ -129,3 +129,39 @@ fn market_effective_score_clamps_price_weight_config_to_max_boundary() {
         },
     );
 }
+
+#[test]
+fn market_score_breakdown_marks_when_positive_reputation_floors_effective_score() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, "1"),
+            (MARKET_REPUTATION_WEIGHT_ENV, "10"),
+            (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+        ],
+        || {
+            let breakdown = market_score_breakdown(5, 1, market_score_config());
+            assert_eq!(breakdown.base_score, 5);
+            assert_eq!(breakdown.reputation_reward, 10);
+            assert_eq!(breakdown.effective_score, 0);
+            assert!(breakdown.score_floor_applied);
+        },
+    );
+}
+
+#[test]
+fn market_score_breakdown_does_not_mark_floor_when_reward_exactly_matches_base_score() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, "1"),
+            (MARKET_REPUTATION_WEIGHT_ENV, "5"),
+            (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+        ],
+        || {
+            let breakdown = market_score_breakdown(5, 1, market_score_config());
+            assert_eq!(breakdown.base_score, 5);
+            assert_eq!(breakdown.reputation_reward, 5);
+            assert_eq!(breakdown.effective_score, 0);
+            assert!(!breakdown.score_floor_applied);
+        },
+    );
+}

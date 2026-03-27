@@ -30,6 +30,16 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_unrelated_query_k
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_suffixed_paths() {
+    let err = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events-extra?source=trnm.task",
+    )
+    .expect_err("suffixed route variants must fail closed");
+    assert!(err.contains("400 Bad Request"));
+    assert!(err.contains("invalid query"));
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() {
     let err = parse_query_normalized_audit_events_query_from_path(
         "/query-normalized-audit-events?cursor=bad",

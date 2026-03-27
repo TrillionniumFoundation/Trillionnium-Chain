@@ -15,19 +15,36 @@ pub(crate) struct MarketScoreConfig {
     pub(crate) reputation_clamp: i64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct MarketScoreConfigOutput {
     pub(crate) price_weight: u128,
     pub(crate) reputation_weight: u128,
     pub(crate) reputation_clamp: i64,
+    pub(crate) max_reputation_score_delta: u128,
+    pub(crate) min_reputation_score_delta: i128,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct MarketScoreBreakdown {
+    pub(crate) effective_reputation: i64,
+    pub(crate) base_score: u128,
+    pub(crate) reputation_reward: u128,
+    pub(crate) penalty: u128,
+    pub(crate) effective_score: u128,
+    pub(crate) score_floor_applied: bool,
 }
 
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
+        let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
+        let max_reputation_score_delta = (reputation_clamp as u128)
+            .saturating_mul(value.reputation_weight);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
-            reputation_clamp: value.reputation_clamp,
+            reputation_clamp,
+            max_reputation_score_delta,
+            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
         }
     }
 }
@@ -55,8 +72,53 @@ pub(crate) fn market_score_config() -> MarketScoreConfig {
     }
 }
 
+fn normalized_reputation_clamp(clamp: i64) -> i64 {
+    clamp.max(MARKET_REPUTATION_CLAMP_MIN)
+}
+
 pub(crate) fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
-    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+    let clamp = normalized_reputation_clamp(cfg.reputation_clamp);
+    reputation.clamp(-clamp, clamp)
+}
+
+pub(crate) fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
+    if breakdown.effective_reputation >= 0 {
+        -(breakdown.reputation_reward.min(i128::MAX as u128) as i128)
+    } else {
+        breakdown.penalty.min(i128::MAX as u128) as i128
+    }
+}
+
+pub(crate) fn market_score_breakdown(
+    price: u128,
+    reputation: i64,
+    cfg: MarketScoreConfig,
+) -> MarketScoreBreakdown {
+    let effective_reputation = clamp_reputation_for_market(reputation, cfg);
+    let base_score = price.saturating_mul(cfg.price_weight);
+    if effective_reputation >= 0 {
+        let reputation_reward = (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
+        let score_floor_applied = reputation_reward > base_score;
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward,
+            penalty: 0,
+            effective_score: base_score.saturating_sub(reputation_reward),
+            score_floor_applied,
+        }
+    } else {
+        let penalty = (effective_reputation.unsigned_abs() as u128)
+            .saturating_mul(cfg.reputation_weight);
+        MarketScoreBreakdown {
+            effective_reputation,
+            base_score,
+            reputation_reward: 0,
+            penalty,
+            effective_score: base_score.saturating_add(penalty),
+            score_floor_applied: false,
+        }
+    }
 }
 
 pub(crate) fn market_effective_score_with_config(
@@ -64,13 +126,7 @@ pub(crate) fn market_effective_score_with_config(
     reputation: i64,
     cfg: MarketScoreConfig,
 ) -> u128 {
-    let rep = clamp_reputation_for_market(reputation, cfg);
-    let base = price.saturating_mul(cfg.price_weight);
-    if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
-    } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
-    }
+    market_score_breakdown(price, reputation, cfg).effective_score
 }
 
 #[cfg(test)]
