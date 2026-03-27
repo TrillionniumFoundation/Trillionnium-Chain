@@ -567,10 +567,11 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 
 fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
-        if v.is_empty() || v == "-" {
+        let normalized = v.trim();
+        if normalized.is_empty() || normalized == "-" {
             None
         } else {
-            Some(v.clone())
+            Some(normalized.to_string())
         }
     })
 }
