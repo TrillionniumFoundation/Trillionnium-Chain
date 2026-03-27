@@ -1898,6 +1898,31 @@
     }
 
     #[test]
+    fn consensus_summary_incident_bundle_keeps_timeout_and_recovery_signals_adjacent() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+        ];
+
+        assert_eq!(incident_bundle.len(), 6);
+        assert!(incident_bundle[0].ends_with("_total"));
+        assert!(incident_bundle[1].ends_with("_total"));
+        assert!(incident_bundle[2].ends_with("_share_bps"));
+        assert!(incident_bundle[3].ends_with("_total"));
+        assert!(incident_bundle[4].ends_with("_rate"));
+        assert!(incident_bundle[5].ends_with("_heights"));
+        assert_eq!(incident_bundle[3], "timeout_migrated_total");
+        assert_eq!(incident_bundle[4], "recovery_error_rate");
+        assert_eq!(incident_bundle[5], "bft_observed_heights");
+        assert_ne!(incident_bundle[3], incident_bundle[4]);
+        assert_ne!(incident_bundle[4], incident_bundle[5]);
+    }
+
+    #[test]
     fn recovery_error_rate_uses_finality_sample_count_as_denominator() {
         let apply_error_total = 3u64;
         let finality_samples_ms = [12u64, 18, 24, 30, 36];
