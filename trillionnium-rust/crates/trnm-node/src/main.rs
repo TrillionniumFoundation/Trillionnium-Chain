@@ -1448,11 +1448,55 @@ fn hash32_hex(data: &[u8]) -> String {
     hex::encode(hasher.finalize())
 }
 
+fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
+    let node_id = cfg.node_id.trim();
+    anyhow::ensure!(
+        !node_id.is_empty(),
+        "invalid node config {}: node_id must not be empty",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.chars().any(char::is_control),
+        "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+
+    let rpc_addr = cfg.rpc_addr.trim();
+    anyhow::ensure!(
+        !rpc_addr.is_empty(),
+        "invalid node config {}: rpc_addr must not be empty",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: rpc_addr must not contain whitespace",
+        path
+    );
+
+    let p2p_addr = cfg.p2p_addr.trim();
+    anyhow::ensure!(
+        !p2p_addr.is_empty(),
+        "invalid node config {}: p2p_addr must not be empty",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_whitespace),
+        "invalid node config {}: p2p_addr must not contain whitespace",
+        path
+    );
+
+    Ok(NodeConfig {
+        node_id: node_id.to_string(),
+        rpc_addr: rpc_addr.to_string(),
+        p2p_addr: p2p_addr.to_string(),
+    })
+}
+
 fn load_config(path: &str) -> Result<NodeConfig> {
     let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
     let cfg: NodeConfig =
         toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
-    Ok(cfg)
+    validate_node_config(cfg, path)
 }
 
 fn compute_commitment(
@@ -1625,9 +1669,12 @@ fn pick_txs_with_critical_guard(
     selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
 
     for (idx, pos) in selected {
-        let tx = mempool
-            .remove(idx)
-            .expect("selected tx index must still exist during descending extraction");
+        let Some(tx) = mempool.remove(idx) else {
+            // Fail closed on any stale/duplicated admission output instead of
+            // panicking the node hot path. Deterministic callers still produce
+            // the same picked set on the happy path.
+            continue;
+        };
         picked_slots[pos] = Some(tx);
     }
 
@@ -2930,6 +2977,60 @@ mod tests {
 
         let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
         assert_eq!(task_ids, vec![2001, 2002, 1001, 1001]);
+    }
+
+    #[test]
+    fn validate_node_config_trims_outer_whitespace_but_rejects_internal_addr_whitespace() {
+        let cfg = validate_node_config(
+            NodeConfig {
+                node_id: " node-a ".into(),
+                rpc_addr: " 127.0.0.1:26657\t".into(),
+                p2p_addr: "\n127.0.0.1:26656 ".into(),
+            },
+            "node.toml",
+        )
+        .expect("outer whitespace should be trimmed");
+        assert_eq!(cfg.node_id, "node-a");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1 :26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr with internal whitespace must be rejected");
+        assert!(rpc_err.to_string().contains("rpc_addr must not contain whitespace"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:\n26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr with embedded control whitespace must be rejected");
+        assert!(p2p_err.to_string().contains("p2p_addr must not contain whitespace"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_control_characters_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node\u{0007}1".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("node_id control characters must fail closed");
+        assert!(err
+            .to_string()
+            .contains("node_id must not contain control characters"));
     }
 
     #[test]

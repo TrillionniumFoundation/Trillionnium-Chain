@@ -7,18 +7,49 @@ use crate::{
     QUERY_EVENTS_LIMIT_DEFAULT, QUERY_EVENTS_LIMIT_MAX,
 };
 
+fn is_supported_http_version(version: &str) -> bool {
+    matches!(version, "HTTP/1.0" | "HTTP/1.1")
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),
         body
     )
+}
+
+pub(crate) fn http_json_head_response(status_line: &str, body_len: usize) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+    )
+}
+
+pub(crate) fn http_response_for_method(method: &str, response: &str) -> String {
+    if method != "HEAD" {
+        return response.to_string();
+    }
+
+    let Some((headers, body)) = response.split_once("\r\n\r\n") else {
+        return response.to_string();
+    };
+    let status_line = headers
+        .lines()
+        .next()
+        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
+        .unwrap_or("500 Internal Server Error");
+    http_json_head_response(status_line, body.len())
 }
 
 pub(crate) fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
     Ok(())
+}
+
+fn has_complete_http_head(buf: &[u8]) -> bool {
+    buf.windows(4).any(|window| window == b"\r\n\r\n")
+        || buf.windows(2).any(|window| window == b"\n\n")
 }
 
 pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
@@ -33,17 +64,29 @@ pub(crate) fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<
             break;
         }
         buf.extend_from_slice(&chunk[..n]);
-        if buf.windows(4).any(|window| window == b"\r\n\r\n")
-            || buf.windows(2).any(|window| window == b"\n\n")
-        {
-            break;
+        if has_complete_http_head(&buf) {
+            return Ok(buf);
         }
+    }
+
+    if buf.len() >= HEALTH_REQUEST_HEADER_MAX_BYTES && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "http request header exceeded configured max bytes before terminator",
+        ));
+    }
+
+    if !buf.is_empty() && !has_complete_http_head(&buf) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::UnexpectedEof,
+            "http request header ended before terminator",
+        ));
     }
 
     Ok(buf)
 }
 
-pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
+pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
         return None;
@@ -51,7 +94,7 @@ pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
 
     let first_sp = line.find(' ')?;
     let method = &line[..first_sp];
-    if method != "GET" {
+    if method != "GET" && method != "HEAD" {
         return None;
     }
 
@@ -66,7 +109,7 @@ pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
-    if rest.is_empty() || !rest.starts_with("HTTP/") {
+    if rest.is_empty() || rest.contains([' ', '\t']) || !is_supported_http_version(rest) {
         return None;
     }
 
@@ -98,7 +141,14 @@ pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path)
+    Some((method, path))
+}
+
+pub(crate) fn parse_http_get_target(first_line: &str) -> Option<&str> {
+    match parse_http_request_target(first_line) {
+        Some(("GET", path)) => Some(path),
+        _ => None,
+    }
 }
 
 #[cfg(test)]
@@ -215,4 +265,27 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
     }
 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{http_json_response, http_response_for_method};
+
+    #[test]
+    fn http_response_for_method_preserves_get_error_bodies() {
+        let response =
+            http_json_response("400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
+        assert_eq!(http_response_for_method("GET", &response), response);
+    }
+
+    #[test]
+    fn http_response_for_method_strips_head_error_bodies() {
+        let response =
+            http_json_response("400 Bad Request", "{\"ok\":false,\"code\":\"BAD_REQUEST\"}");
+        let head = http_response_for_method("HEAD", &response);
+        assert!(head.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(head.ends_with("\r\n\r\n"));
+        assert!(!head.ends_with("BAD_REQUEST\"}"));
+        assert!(head.contains("Content-Length: 33\r\n"));
+    }
 }

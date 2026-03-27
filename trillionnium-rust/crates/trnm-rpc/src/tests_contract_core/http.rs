@@ -9,6 +9,51 @@ fn parse_http_get_path_accepts_canonical_request_line() {
 }
 
 #[test]
+fn parse_http_get_path_preserves_operator_trailing_slash_for_query_routes() {
+    assert_eq!(
+        parse_http_get_path("GET /query-task/42/ HTTP/1.1"),
+        Some("/query-task/42/")
+    );
+    assert_eq!(
+        parse_http_get_path("GET /query-events/7/?limit=5 HTTP/1.1"),
+        Some("/query-events/7/")
+    );
+}
+
+#[test]
+fn parse_http_request_target_accepts_head_health_probe() {
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.1"),
+        Some(("HEAD", "/readyz"))
+    );
+    assert_eq!(parse_http_get_path("HEAD /readyz HTTP/1.1"), None);
+}
+
+#[test]
+fn parse_http_request_target_accepts_only_supported_http_versions() {
+    assert_eq!(
+        parse_http_request_target("GET /health HTTP/1.1"),
+        Some(("GET", "/health"))
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.0"),
+        Some(("HEAD", "/readyz"))
+    );
+    assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
+    assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
+    assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+}
+
+#[test]
+fn http_json_responses_disable_caching_for_operator_probes() {
+    let get = http_json_response("200 OK", "{\"ok\":true}");
+    assert!(get.contains("\r\nCache-Control: no-store\r\n"));
+
+    let head = http_json_head_response("200 OK", 11);
+    assert!(head.contains("\r\nCache-Control: no-store\r\n"));
+}
+
+#[test]
 fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
     assert_eq!(parse_http_get_path("GET /health#bridge HTTP/1.1"), None);
     assert_eq!(
@@ -59,6 +104,19 @@ fn parse_query_events_limit_from_path_rejects_invalid_limit() {
         .expect_err("invalid limit must fail closed");
     assert!(err.contains("400 Bad Request"));
     assert!(err.contains("invalid limit"));
+}
+
+#[test]
+fn parse_query_events_limit_from_path_rejects_duplicate_limit_keys() {
+    for path in [
+        "/query-events/42?limit=7&limit=9",
+        "/query-events/42?limit=7&limit=7",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("duplicate limit keys must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("duplicate limit"), "path={path} err={err}");
+    }
 }
 
 #[test]
@@ -212,6 +270,11 @@ fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("GET /health"), None);
     assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    assert_eq!(parse_http_get_path("GET /health HTTP/1.1 junk"), None);
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz HTTP/1.1\ttrail"),
+        None
+    );
 }
 
 #[test]
@@ -239,6 +302,61 @@ fn read_http_request_head_times_out_on_partial_slowloris_client() {
         err.kind(),
         std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
     ));
+
+    client.join().expect("client thread join");
+}
+
+#[test]
+fn read_http_request_head_rejects_premature_eof_before_terminator() {
+    use std::net::{Shutdown, TcpListener, TcpStream};
+    use std::thread;
+
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+    let addr = listener.local_addr().expect("listener addr");
+
+    let client = thread::spawn(move || {
+        let mut client = TcpStream::connect(addr).expect("connect test listener");
+        client
+            .write_all(b"GET /health HTTP/1.1\r\nHost: localhost\r\n")
+            .expect("write unterminated request head");
+        let _ = client.shutdown(Shutdown::Write);
+    });
+
+    let (mut server_stream, _) = listener.accept().expect("accept test client");
+    configure_health_stream(&server_stream).expect("configure timeouts");
+    let err = read_http_request_head(&mut server_stream)
+        .expect_err("unterminated request head must fail closed on eof");
+    assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
+    assert!(err.to_string().contains("ended before terminator"));
+
+    client.join().expect("client thread join");
+}
+
+#[test]
+fn read_http_request_head_rejects_oversized_header_without_terminator() {
+    use std::net::{Shutdown, TcpListener, TcpStream};
+    use std::thread;
+
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+    let addr = listener.local_addr().expect("listener addr");
+    let oversized = vec![b'a'; HEALTH_REQUEST_HEADER_MAX_BYTES + 32];
+
+    let client = thread::spawn(move || {
+        let mut client = TcpStream::connect(addr).expect("connect test listener");
+        client
+            .write_all(&oversized)
+            .expect("write oversized partial request head");
+        let _ = client.shutdown(Shutdown::Write);
+    });
+
+    let (mut server_stream, _) = listener.accept().expect("accept test client");
+    configure_health_stream(&server_stream).expect("configure timeouts");
+    let err = read_http_request_head(&mut server_stream)
+        .expect_err("oversized unterminated request head must fail closed");
+    assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
+    assert!(err
+        .to_string()
+        .contains("exceeded configured max bytes before terminator"));
 
     client.join().expect("client thread join");
 }
