@@ -85,10 +85,16 @@ ls configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml
 Recommended targeted validation:
 
 ```bash
+python3 scripts/v2/check_validator_config_bundle.py \
+  configs/node1.toml \
+  configs/node2.toml \
+  configs/node3.toml \
+  configs/node4.toml
 cargo check -p trnm-node -q
 ```
 
 What this proves:
+- the named validator config bundle has no duplicate node identity or reused listen addresses
 - the validator config loader still compiles
 - operator-facing config validation logic is present before you attempt runtime startup
 
@@ -97,6 +103,8 @@ If only shell automation changed, also syntax-check the touched script before us
 ```bash
 bash -n scripts/<touched-script>.sh
 ```
+
+If the config bundle check fails, treat the bootstrap as blocked until the duplicate node/address assignment is resolved explicitly.
 
 ## Step 4 — Bootstrap the validator in the smallest credible way
 
