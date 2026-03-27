@@ -62,3 +62,43 @@ pub(crate) fn format_runtime_summary_line(
         metrics.bft_auth_reject_replay_total, metrics.bft_auth_reject_stale_nonce_total
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn runtime_summary_line_keeps_state_root_fields_linked_into_consensus_surface() {
+        let metrics = RuntimeMetrics::new(4);
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.state_root_total_avg = 11;
+        stats.state_root_total_p50 = 12;
+        stats.state_root_total_p95 = 13;
+        stats.state_root_total_max = 14;
+        stats.state_root_total_share_avg_ppm = 15;
+        stats.state_root_total_peak_share_ppm = 16;
+        stats.unprofiled_finality_share_bps = 17;
+
+        let line = format_runtime_summary_line(&metrics, &stats);
+
+        assert!(line.starts_with("[consensus] "));
+        assert!(line.contains("state_root_total_avg_ms=11"));
+        assert!(line.contains("state_root_total_p50_ms=12"));
+        assert!(line.contains("state_root_total_p95_ms=13"));
+        assert!(line.contains("state_root_total_max_ms=14"));
+        assert!(line.contains("state_root_total_share_avg_ppm=15"));
+        assert!(line.contains("state_root_total_peak_share_ppm=16"));
+        assert!(line.contains("unprofiled_finality_share_bps=17"));
+
+        let state_root_idx = line
+            .find("state_root_total_avg_ms=11")
+            .expect("state_root_total_avg_ms should be present in the summary line");
+        let unprofiled_idx = line
+            .find("unprofiled_finality_share_bps=17")
+            .expect("unprofiled_finality_share_bps should be present in the summary line");
+        assert!(
+            state_root_idx < unprofiled_idx,
+            "state root evidence metrics must precede the unprofiled share field so downstream DA/light-verifier parsers see the canonical linkage"
+        );
+    }
+}
