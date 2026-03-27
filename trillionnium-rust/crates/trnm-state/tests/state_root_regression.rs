@@ -6349,6 +6349,29 @@ fn wal_checkpoint_verification_rejects_overlong_proposal_hash_even_when_checkpoi
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_non_ascii_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "提案-1".into(),
+        committed: true,
+        state_root_hex: "r1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must fail closed when WAL proposal identity is non-ASCII even if checkpoint fields otherwise match"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_state_root_even_when_wal_matches() {
     let wal = WalMeta {
         height: 1,
