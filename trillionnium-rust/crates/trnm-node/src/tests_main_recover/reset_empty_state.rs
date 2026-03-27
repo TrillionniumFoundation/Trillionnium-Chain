@@ -25,6 +25,11 @@ fn recover_clears_orphan_checkpoints_when_wal_is_empty() {
 
     let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
     assert!(checkpoints.is_empty());
+    let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+    let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+    assert_eq!(wal.next_height, 1);
+    assert_eq!(wal.last_round, 0);
+    assert!(wal.locked_block_hash.is_none());
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
