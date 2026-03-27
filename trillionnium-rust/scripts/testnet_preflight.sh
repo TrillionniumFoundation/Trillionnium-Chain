@@ -15,7 +15,7 @@ LOG="$OUT_DIR/preflight-$TS.log"
 SUMMARY="$OUT_DIR/go-no-go-$TS.txt"
 mkdir -p "$OUT_DIR"
 
-rollback_command="rm -f $(printf '%q' "$LOG") $(printf '%q' "$SUMMARY") $(printf '%q' "$OUT_DIR/preflight-latest.log") $(printf '%q' "$OUT_DIR/go-no-go-latest.txt")"
+rollback_command="rm -f $(printf '%q' "$LOG") $(printf '%q' "$SUMMARY") $(printf '%q' "$OUT_DIR/preflight-latest.log") $(printf '%q' "$OUT_DIR/go-no-go-latest.txt") $(printf '%q' "$ROOT/run/parallel-sanity.log")"
 replay_command="env TZ='${TZ}' LC_ALL='${LC_ALL}' LANG='${LANG}'"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
   replay_command="$replay_command EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
