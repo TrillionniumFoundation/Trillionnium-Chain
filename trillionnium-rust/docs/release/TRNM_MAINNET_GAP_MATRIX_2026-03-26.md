@@ -38,6 +38,20 @@ That perimeter includes:
 - unified observability/alerting,
 - and release-grade economics / anti-spam policy freeze.
 
+## Evidence boundary (RC / rehearsal / local proof)
+
+RC rehearsal success, validator handoff completeness, or local release-evidence PASS are **supporting evidence only**.
+They do **not** collapse public-mainnet P0 blockers by themselves.
+
+In particular:
+- `RELEASE_READINESS.md` answers whether the current repository snapshot should be described as release-ready.
+- `TRNM_VALIDATOR_RELEASE_HANDOFF.md` answers how an operator should verify branch/worktree identity, preserve artifacts, and decide GO / CONDITIONAL GO / NO-GO for a rehearsal.
+- `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` answers what still blocks a **public mainnet claim**.
+
+Interpretation rule:
+- local `testnet_preflight.sh` PASS, `run_local_release_evidence.sh` PASS, or `release_rc.sh` PASS can prove that a branch is reproducible enough for an RC rehearsal;
+- they cannot by themselves prove that peer formation/sync, validator lifecycle, secure signer path, stable explorer/indexer, unified observability, and launch economics are closed for public mainnet.
+
 ---
 
 ## What already exists (do not re-solve)
