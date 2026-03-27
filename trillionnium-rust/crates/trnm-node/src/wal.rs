@@ -499,6 +499,13 @@ mod tests {
         let second = raw.rfind("root-b").unwrap();
         assert!(first < second);
 
+        let hash_a = raw.find("wal_entry_hash_hex = \"hash-a\"").unwrap();
+        let hash_c = raw.find("wal_entry_hash_hex = \"hash-c\"").unwrap();
+        assert!(
+            hash_a < hash_c,
+            "equal-height checkpoint entries with the same state root must serialize in wal_entry_hash order for auditable checkpoint evidence linkage"
+        );
+
         let _ = fs::remove_dir_all(&wal_dir);
     }
 
