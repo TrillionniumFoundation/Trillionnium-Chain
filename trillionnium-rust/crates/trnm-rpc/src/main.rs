@@ -2824,12 +2824,14 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d")
+    if normalized.contains("%00")
+        || normalized.contains("%0d")
         || normalized.contains("%0a")
         || normalized.contains("%09")
         || normalized.contains("%0b")
         || normalized.contains("%0c")
         || normalized.contains("%20")
+        || normalized.contains("%7f")
     {
         return None;
     }
@@ -2868,12 +2870,14 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -4818,6 +4822,14 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_get_path_rejects_percent_encoded_control_path_bytes_fail_closed() {
+        assert_eq!(parse_http_get_path("GET /health%00check HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
@@ -5001,6 +5013,21 @@ mod tests {
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("percent encoded path delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_control_path_bytes() {
+        for path in [
+            "/query-events/42%00?limit=7",
+            "/query-events/42%7F?limit=7",
+            "/query-events/%00/42?limit=7",
+            "/query-events/%7f/42?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("percent encoded control bytes in path must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
