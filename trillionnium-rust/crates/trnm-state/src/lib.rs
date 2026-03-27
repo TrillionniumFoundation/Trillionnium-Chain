@@ -2486,6 +2486,7 @@ impl StateStore {
         let id = task.task_id;
         task.version = 1;
         self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -2547,6 +2548,7 @@ impl StateStore {
         let id = proposal.proposal_id;
         proposal.version = 1;
         self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.remove(&id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -4194,6 +4196,83 @@ mod tests {
         t2.status = TaskStatus::Assigned;
         let r2 = st.update_task(r1, t2).unwrap();
         assert_eq!(r2.version, 2);
+    }
+
+    #[test]
+    fn put_task_new_scrubs_orphaned_pending_resolve_slot_state() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            7001,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        let root_with_orphan = st.state_root();
+
+        let task = TaskObject {
+            task_id: 7001,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 99,
+        };
+
+        let created = st.put_task_new(task).expect("task creation should succeed");
+
+        assert_eq!(created.version, 1);
+        assert_eq!(st.pending_resolve_approval(7001), None);
+        assert_ne!(st.state_root(), root_with_orphan);
+    }
+
+    #[test]
+    fn put_proposal_new_scrubs_orphaned_pending_resolve_slot_state() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            7002,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+        let root_with_orphan = st.state_root();
+
+        let proposal = GovProposalObject {
+            proposal_id: 7002,
+            title: "proposal".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 88,
+        };
+
+        let created = st
+            .put_proposal_new(proposal)
+            .expect("proposal creation should succeed");
+
+        assert_eq!(created.version, 1);
+        assert_eq!(st.pending_resolve_approval(7002), None);
+        assert_ne!(st.state_root(), root_with_orphan);
     }
 
     #[test]
