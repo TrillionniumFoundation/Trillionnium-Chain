@@ -19,7 +19,7 @@ Before starting, confirm all of the following:
 - you are on the intended release branch/worktree
 - `git status --short` is empty
 - the branch tip is recorded in the ticket / release note
-- required config files exist: `configs/node1.toml`, `configs/node2.toml`, `configs/node3.toml`
+- required config files exist: `configs/node1.toml`, `configs/node2.toml`, `configs/node3.toml`, `configs/node4.toml`
 - no one is treating local evidence as a public release claim
 - exactly one validator signing context is active for the validator identity under rehearsal
 

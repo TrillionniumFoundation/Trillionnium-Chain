@@ -225,5 +225,6 @@ EOF
 cp -f configs/node1.toml "$OUT/" || true
 cp -f configs/node2.toml "$OUT/" || true
 cp -f configs/node3.toml "$OUT/" || true
+cp -f configs/node4.toml "$OUT/" || true
 
 printf '[rc] done\n[rc] manifest=%s\n' "$OUT/manifest.txt"
