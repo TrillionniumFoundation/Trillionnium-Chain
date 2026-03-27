@@ -4336,6 +4336,40 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_surface_rejects_zero_width_state_root_layout() {
+        let wal_entry = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        let mut zero_width_checkpoint = checkpoint.clone();
+        zero_width_checkpoint.state_root_hex.push('\u{200B}');
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&zero_width_checkpoint, &wal_entry),
+            "checkpoint state_root_hex must reject zero-width layout drift so audit-ready checkpoint proofs stay byte-canonical"
+        );
+
+        let mut zero_width_wal = wal_entry.clone();
+        zero_width_wal.state_root_hex.push('\u{200B}');
+        let mut zero_width_wal_checkpoint = checkpoint.clone();
+        zero_width_wal_checkpoint.state_root_hex = zero_width_wal.state_root_hex.clone();
+        zero_width_wal_checkpoint.wal_entry_hash_hex = zero_width_wal.content_hash_hex();
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&zero_width_wal_checkpoint, &zero_width_wal),
+            "WAL state_root_hex must reject zero-width layout drift so checkpoint proofs cannot bind to locale-sensitive state-root surfaces"
+        );
+    }
+
+    #[test]
     fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches(
     ) {
         let wal_entry = WalMeta {
