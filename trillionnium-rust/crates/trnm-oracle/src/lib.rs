@@ -1775,6 +1775,36 @@ mod tests {
     }
 
     #[test]
+    fn rejects_deserialized_insufficient_sources_even_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko"],
+            "sample_count": 1,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized insufficient sources must fail guardrail");
+        assert_eq!(
+            err,
+            OracleError::InsufficientSources {
+                min_sources: 2,
+                actual_sources: 1,
+                sample_count: 1,
+            }
+        );
+    }
+
+    #[test]
     fn rejects_deserialized_unsorted_sources_even_with_matching_hash() {
         let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
