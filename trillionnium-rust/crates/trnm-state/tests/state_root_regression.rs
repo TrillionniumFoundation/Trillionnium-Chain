@@ -6034,6 +6034,34 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
         "noncanonical WAL proposal_hash surfaces must fail closed instead of emitting a DA/light-verifier summary"
     );
+
+    let mut bad_prev_hash_wal = wal.clone();
+    bad_prev_hash_wal.prev_hash_hex = Some("CD".repeat(32));
+    bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.wal_entry_hash_hex = bad_prev_hash_wal.content_hash_hex();
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_prev_hash_wal).is_none(),
+        "noncanonical non-genesis WAL prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+
+    let forged_genesis_wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let forged_genesis_checkpoint = CheckpointMeta {
+        height: forged_genesis_wal.height,
+        state_root_hex: forged_genesis_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: forged_genesis_wal.content_hash_hex(),
+    };
+    assert!(
+        checkpoint_da_light_verifier_summary(&forged_genesis_checkpoint, &forged_genesis_wal)
+            .is_none(),
+        "forged genesis WAL prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
 }
 
 #[test]
