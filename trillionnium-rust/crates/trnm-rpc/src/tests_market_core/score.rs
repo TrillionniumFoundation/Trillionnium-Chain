@@ -335,6 +335,26 @@ fn market_reputation_score_delta_treats_zero_effective_reputation_as_neutral() {
 }
 
 #[test]
+fn market_score_breakdown_treats_zero_effective_reputation_as_neutral() {
+    let breakdown = market_score_breakdown(
+        50,
+        0,
+        MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: 10,
+        },
+    );
+
+    assert_eq!(breakdown.effective_reputation, 0);
+    assert_eq!(breakdown.base_score, 150);
+    assert_eq!(breakdown.reputation_reward, 0);
+    assert_eq!(breakdown.penalty, 0);
+    assert_eq!(breakdown.effective_score, 150);
+    assert!(!breakdown.score_floor_applied);
+}
+
+#[test]
 fn market_score_breakdown_uses_clamped_negative_reputation_for_penalty() {
     let breakdown = market_score_breakdown(
         50,
