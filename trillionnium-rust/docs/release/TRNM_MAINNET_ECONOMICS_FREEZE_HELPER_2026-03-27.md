@@ -74,6 +74,23 @@ A launch review should include:
 - one test or gate proving the state machine/mempool still honors the chosen boundaries
 - one rollback path for tightening policy before public launch
 
+## Minimal freeze review packet
+
+To keep this blocker reviewable, attach one concrete answer for each item below:
+
+1. **Frozen source of truth**
+   - file, config surface, or governance artifact containing the current tuple
+   - owner of record for edits before launch
+2. **Operator inspection path**
+   - exact command or runbook operators use to print the current tuple
+   - expected output fields: ingress classes, sponsor authority/budget, retention window/payer, anti-spam floor, override authority
+3. **Behavioral evidence**
+   - at least one mempool gate for ingress/sponsor boundaries
+   - at least one state gate for retention canonicalization
+4. **Tightening rollback**
+   - exact prelaunch action for moving from `CONDITIONAL GO` back to `NO-GO`
+   - preferred rollback bias: disable sponsorship first, then tighten free-ingress exposure, then shorten retention/query surface if storage payer remains undefined
+
 ## Initial evidence hooks already in tree
 
 Until the final launch parameter surface exists, freeze review should at minimum point to
