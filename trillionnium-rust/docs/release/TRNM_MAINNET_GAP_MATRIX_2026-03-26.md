@@ -200,6 +200,8 @@ To turn this blocker into a ship/no-ship gate, freeze one explicit tuple before 
 
 If any one of these five elements is still "to be decided", economics should remain **NO-GO** for public-mainnet release.
 
+For a concrete review sheet, see `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`.
+
 ---
 
 # P1 — Highly important, but can trail P0 if launch scope is narrow
