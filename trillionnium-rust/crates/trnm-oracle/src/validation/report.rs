@@ -105,10 +105,30 @@ impl OracleValidationReport {
             && self.observation.accepted_total == self.metrics.accepted_total
     }
 
+    fn has_explicit_unclassified_failure_accounting(&self) -> bool {
+        !self.ok
+            && self.error.is_some()
+            && self.metrics.accepted_total == 0
+            && self.classified_reject_total() == 0
+            && self.observation_classified_reject_total() == 0
+            && self.metrics.sample_count > 0
+    }
+
     pub fn bridge_contract_consistent(&self) -> bool {
-        self.observation_matches_metrics()
-            && self.classified_outcome_conserves_sample_count()
-            && self.observation_classified_outcome_conserves_sample_count()
+        let non_empty_sample = self.metrics.sample_count > 0;
+        let result_label_consistent = if self.ok {
+            self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
+        } else {
+            self.error.is_some() && self.metrics.accepted_total == 0
+        };
+        let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count();
+
+        non_empty_sample
+            && self.observation_matches_metrics()
+            && result_label_consistent
+            && (outcome_accounting_consistent
+                || self.has_explicit_unclassified_failure_accounting())
     }
 }
 
