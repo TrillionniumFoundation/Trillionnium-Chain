@@ -912,7 +912,8 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
         cleaned = cleaned
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+                    || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+                    || matches!(c, '.' | '!' | '?')
             })
             .to_string();
 
@@ -995,11 +996,18 @@ fn extract_tx_hash(text: &str) -> Option<String> {
 
         let tokens = line.split_whitespace().collect::<Vec<_>>();
         if let Some(v) = tokens.iter().find_map(|w| {
-            let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
+            let trimmed = w.trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
             let (k, v) = trimmed
                 .split_once('=')
                 .or_else(|| trimmed.split_once(':'))?;
-            match k.trim().to_ascii_lowercase().as_str() {
+            let key = k.trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            match key.to_ascii_lowercase().as_str() {
                 "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
                     normalize_tx_hash(v)
                 }
@@ -1010,9 +1018,15 @@ fn extract_tx_hash(text: &str) -> Option<String> {
         }
 
         for window in tokens.windows(3) {
-            let key = window[0].trim_matches(|c: char| c.is_ascii_whitespace());
+            let key = window[0].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
             let sep = window[1].trim();
-            let value = window[2].trim_matches(|c: char| c.is_ascii_whitespace());
+            let value = window[2].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
             if !matches!(sep, "=" | ":") {
                 continue;
             }
@@ -2047,6 +2061,30 @@ mod tests {
 
         let response = "{\"response\":{\"data\":{\"transactionHash\":\"BEEF4567\"}}}";
         assert_eq!(extract_tx_hash(response).as_deref(), Some("beef4567"));
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_angle_bracket_wrapped_hashes() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=<0xBEEF42>").as_deref(),
+            Some("0xbeef42")
+        );
+        assert_eq!(
+            extract_tx_hash("see <transactionHash:0xCAFE99> now").as_deref(),
+            Some("0xcafe99")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_sentence_punctuation_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=0xABCD1234.").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash:0xBEEF42?!").as_deref(),
+            Some("0xbeef42")
+        );
     }
 
     #[test]
