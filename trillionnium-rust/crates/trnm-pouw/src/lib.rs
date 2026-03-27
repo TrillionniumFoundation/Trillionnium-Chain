@@ -2051,6 +2051,14 @@ pub fn apply_timeout(
             if task.challenged_at_height.is_some() {
                 return Err(PouwError::InvalidTransition);
             }
+            if task
+                .challenge_window_blocks_snapshot
+                .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "revealed task has invalid retained challenge_window_blocks_snapshot".into(),
+                ));
+            }
             task.status = TaskStatus::Completed;
             task.challenge_deadline_height = None;
             task.challenged_at_height = None;
@@ -8943,6 +8951,30 @@ mod tests {
 
         let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
+    }
+
+    #[test]
+    fn timeout_rejects_revealed_state_with_invalid_retained_challenge_snapshot() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39019, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(39019, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+
+        let mut bad = st.get_task(r4.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Revealed);
+        bad.challenge_window_blocks_snapshot = Some(0);
+        let bad_ref = st.update_task(r4, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot")));
     }
 
     #[test]
