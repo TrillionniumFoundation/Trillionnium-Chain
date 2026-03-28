@@ -1071,6 +1071,37 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_stays_flat_across_guarded_same_class_duplicate_probe_noise() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        // Leave one aggregate slot free, but keep it reserved for fresh critical
+        // ingress while dedicated normal capacity is already exhausted.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Same-class duplicate probes against the queued critical id must remain
+        // Duplicate and must not perturb the public QoS surface while the final
+        // reserved slot stays guarded.
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+    }
+
+    #[test]
     fn qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
