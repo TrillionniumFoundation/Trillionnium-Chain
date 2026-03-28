@@ -437,4 +437,28 @@ mod tests {
             "unexpected error: {err:#}"
         );
     }
+
+    #[test]
+    fn load_config_rejects_zero_p2p_port_after_trimming_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-zero-p2p-port-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"\t127.0.0.1:0 \"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("trimmed zero p2p port must fail closed");
+        assert!(
+            err.to_string().contains("p2p_addr port must be non-zero"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
 }
+
