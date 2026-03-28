@@ -6212,6 +6212,40 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_short_checkpoint_state_root_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should produce a DA/light-verifier summary before the short-state-root regression mutation"
+    );
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex = "ab".repeat(31);
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &wal),
+        "checkpoint evidence surfaces must reject checkpoint state_root_hex values that are not canonical 32-byte lowercase digests"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &wal).is_none(),
+        "short checkpoint state_root_hex surfaces must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_uppercase_wal_state_root_surface() {
     let wal = WalMeta {
         height: 4,
