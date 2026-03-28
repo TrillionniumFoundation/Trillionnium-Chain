@@ -321,6 +321,28 @@ fn hot_bucket_interleave_ignores_empty_access_noise_around_single_role_flipped_m
 }
 
 #[test]
+fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_fanout() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+    let mut txs = vec![
+        tx(99, vec![], vec![]),           // empty-access noise still defaults to bucket 0
+        tx(100, vec![o(1)], vec![o(5)]),  // canonical mixed lane {1,5} -> bucket 1 when fanout=4
+        tx(101, vec![], vec![]),          // same empty-access noise
+        tx(102, vec![o(5)], vec![o(1)]),  // same mixed lane after read/write role flip
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Shrinking hot-bucket fanout must not let bucket-0 empty-access noise
+    // fabricate a second lane when the only signaled mixed domain remains
+    // canonical and stable across read/write role flips.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![99, 100, 101, 102]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
