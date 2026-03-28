@@ -2581,6 +2581,35 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_idle_polls_preserve_lane_local_duplicates_without_reviving_queue_state() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by one lane-local cache.
+        g.critical.seen.insert(55);
+        g.critical_served_streak = 3;
+
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot().total_queued, 0);
+            assert_eq!(g.admit(55, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+        }
+
+        // Idle self-heal may cold-reset fairness bookkeeping, but it must not erase
+        // restored duplicate metadata or fabricate queued work in hard-stop mode.
+        assert_eq!(g.critical_served_streak, 0);
+        assert!(g.seen_global.is_empty());
+        assert!(g.normal.seen.is_empty());
+        assert!(g.critical.seen.contains(&55));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+    }
+
+    #[test]
     fn hard_stop_fresh_retry_burst_keeps_backpressure_guard_flat_across_classes() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
