@@ -2212,6 +2212,41 @@ mod tests {
     }
 
     #[test]
+    fn accepts_deserialized_repeated_observations_with_matching_hash() {
+        let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+        snapshot.snapshot_hash = snapshot.compute_hash();
+
+        policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect("deserialized repeated observations should remain admissible");
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn rejects_deserialized_unsorted_sources_even_with_matching_hash() {
         let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
