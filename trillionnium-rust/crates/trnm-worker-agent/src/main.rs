@@ -760,7 +760,13 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> 
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(1u64.checked_shl(attempt.min(63)).unwrap_or(u64::MAX))
+    if base_ms == 0 {
+        return 0;
+    }
+    if attempt >= 64 {
+        return u64::MAX;
+    }
+    base_ms.saturating_mul(1u64 << attempt)
 }
 
 fn is_forbidden_shell_program(program: &str) -> bool {

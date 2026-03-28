@@ -30,6 +30,12 @@ fn tx_backoff_delay_saturates_without_overflow() {
     // Very large attempts should saturate rather than overflow/panic.
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
     assert_eq!(backoff_delay_ms(1_000_000, 62), u64::MAX);
+    assert_eq!(backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(
+        backoff_delay_ms(1, 64),
+        u64::MAX,
+        "attempts beyond the last exact shift must saturate for non-zero base"
+    );
     assert_eq!(
         backoff_delay_ms(1_000_000, u32::MAX),
         u64::MAX,
@@ -46,6 +52,12 @@ fn exp_backoff_delay_saturates_without_overflow() {
     // Very large attempts should saturate rather than overflow/panic.
     assert_eq!(exp_backoff_delay_ms(u64::MAX, 1), u64::MAX);
     assert_eq!(exp_backoff_delay_ms(1_000_000, 62), u64::MAX);
+    assert_eq!(exp_backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(
+        exp_backoff_delay_ms(1, 64),
+        u64::MAX,
+        "attempts beyond the last exact shift must saturate for non-zero base"
+    );
     assert_eq!(
         exp_backoff_delay_ms(1_000_000, u32::MAX),
         u64::MAX,
