@@ -6212,6 +6212,41 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_uppercase_wal_state_root_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should produce a DA/light-verifier summary"
+    );
+
+    let mut bad_wal = wal.clone();
+    bad_wal.state_root_hex = bad_wal.state_root_hex.to_uppercase();
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "uppercase WAL state_root_hex must fail closed instead of emitting a DA/light-verifier summary even when checkpoint fields otherwise match the same mixed-case digest surface"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface() {
     let wal = WalMeta {
         height: 4,
