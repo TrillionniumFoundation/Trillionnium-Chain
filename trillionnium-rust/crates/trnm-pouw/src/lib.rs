@@ -8821,7 +8821,7 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
-        assert!(matches!(err, PouwError::State(_)));
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge timing fields")));
     }
 
     #[test]
