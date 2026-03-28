@@ -138,11 +138,15 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_cursor_valu
 }
 
 #[test]
-fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls() {
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_c0_controls_and_del() {
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
+        "/query-normalized-audit-events?source=trnm.task%01shadow",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%1ftrail",
         "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
         "/query-normalized-audit-events%00shadow?source=trnm.task",
+        "/query-normalized-audit-events%01shadow?source=trnm.task",
+        "/query-normalized-audit-events%1fshadow?source=trnm.task",
         "/query-normalized-audit-events%7fshadow?source=trnm.task",
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)

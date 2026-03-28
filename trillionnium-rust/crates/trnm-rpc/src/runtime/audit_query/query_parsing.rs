@@ -165,6 +165,25 @@ fn default_normalized_audit_events_query() -> QueryNormalizedAuditEventsQuery {
     }
 }
 
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn validate_path_prefix<'a>(
     path: &'a str,
     required_prefix: Option<&str>,
@@ -180,14 +199,7 @@ fn validate_path_prefix<'a>(
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
-        || normalized_path.contains("%00")
-        || normalized_path.contains("%0d")
-        || normalized_path.contains("%0a")
-        || normalized_path.contains("%09")
-        || normalized_path.contains("%0b")
-        || normalized_path.contains("%0c")
-        || normalized_path.contains("%20")
-        || normalized_path.contains("%7f")
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..");
@@ -219,14 +231,7 @@ fn extract_validated_query<'a>(
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
-        || normalized_query.contains("%00")
-        || normalized_query.contains("%09")
-        || normalized_query.contains("%0a")
-        || normalized_query.contains("%0b")
-        || normalized_query.contains("%0c")
-        || normalized_query.contains("%0d")
-        || normalized_query.contains("%20")
-        || normalized_query.contains("%7f")
+        || contains_percent_encoded_control_or_space(query)
     {
         return Err(bad_request(error_body));
     }
