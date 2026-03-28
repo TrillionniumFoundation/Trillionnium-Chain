@@ -208,6 +208,26 @@ fn hot_bucket_interleave_short_circuits_all_singleton_buckets() {
 }
 
 #[test]
+fn hot_bucket_interleave_short_circuits_single_mixed_domain_lane_without_role_flip_drift() {
+    let mut txs = vec![
+        tx(81, vec![o(0)], vec![o(8)]),
+        tx(82, vec![o(8)], vec![o(0)]),
+        tx(83, vec![o(16)], vec![o(24)]),
+        tx(84, vec![o(24)], vec![o(16)]),
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Equivalent mixed execution domains should keep the same canonical lane hint
+    // even when read/write roles flip. If every tx still lands in one bucket,
+    // the single-bucket hotspot fast path must preserve ingress order instead of
+    // doing a pointless round-robin reorder.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![81, 82, 83, 84]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
