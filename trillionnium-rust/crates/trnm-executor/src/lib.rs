@@ -2016,8 +2016,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
-            // Misconfigured/trimmed bucket fanout can collapse to a single bucket,
-            // where interleave degenerates to identity while still paying probe cost.
+            // Input-size capping (or a future lower env floor) can collapse fanout
+            // to a single bucket, where interleave degenerates to identity while
+            // still paying probe cost.
             if buckets_n <= 1 {
                 return;
             }
@@ -4510,6 +4511,10 @@ mod tests {
         let _low = EnvGuard::set("TRNM_HOT_BUCKETS", "0");
         assert_eq!(hot_bucket_count(), 4);
         drop(_low);
+
+        let _positive_below_floor = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
+        assert_eq!(hot_bucket_count(), 4);
+        drop(_positive_below_floor);
 
         let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
         assert_eq!(hot_bucket_count(), 64);
