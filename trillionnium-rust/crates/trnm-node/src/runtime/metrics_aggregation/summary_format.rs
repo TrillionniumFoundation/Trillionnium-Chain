@@ -93,7 +93,11 @@ mod tests {
         stats.bft_skipped_height_total = 4;
         stats.bft_skipped_observed_height_rate_ppm = 363_636;
         stats.bft_round_change_per_height_ppm = 714_285;
+        stats.bft_round_change_active_height_rate_ppm = 571_428;
+        stats.bft_round_change_active_observed_height_rate_ppm = 363_636;
         stats.bft_round_change_backoff_avg_ms = 6;
+        stats.bft_round_change_backoff_active_height_rate_ppm = 285_714;
+        stats.bft_round_change_backoff_active_observed_height_rate_ppm = 181_818;
         stats.bft_round_change_backoff_density_avg_ms = 16;
         stats.bft_round_change_backoff_density_avg_milli = 16_500;
         stats.bft_round_change_backoff_wall_share_ppm = 125_000;
@@ -122,9 +126,13 @@ mod tests {
         assert!(summary.contains("bft_round_change_total=5"));
         assert!(summary.contains("bft_round_change_per_height_ppm=714285"));
         assert!(summary.contains("bft_round_change_active_heights=4"));
+        assert!(summary.contains("bft_round_change_active_height_rate_ppm=571428"));
+        assert!(summary.contains("bft_round_change_active_observed_height_rate_ppm=363636"));
         assert!(summary.contains("bft_round_change_backoff_total_ms=33"));
         assert!(summary.contains("bft_round_change_backoff_avg_ms=6"));
         assert!(summary.contains("bft_round_change_backoff_active_heights=2"));
+        assert!(summary.contains("bft_round_change_backoff_active_height_rate_ppm=285714"));
+        assert!(summary.contains("bft_round_change_backoff_active_observed_height_rate_ppm=181818"));
         assert!(summary.contains("bft_round_change_backoff_density_avg_ms=16"));
         assert!(summary.contains("bft_round_change_backoff_density_avg_milli=16500"));
         assert!(summary.contains("bft_round_change_backoff_max_ms=21"));
