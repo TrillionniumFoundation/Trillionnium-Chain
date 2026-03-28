@@ -92,4 +92,7 @@ cargo test -p trnm-state -p trnm-node
 - `next_startup_height`: `<height>`
 - `wal_tail_truncated`: `<yes|no>`
 - `metadata_only_recovery_refused`: `<yes|no>`
+- `default_wal_isolation_triggered`: `<yes|no>`
+- `original_default_wal_dir`: `<path|n/a>`
+- `isolated_run_dir`: `<path|n/a>`
 - `retained_wal_summary`: `<原始摘要短语>`
