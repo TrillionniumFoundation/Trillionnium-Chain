@@ -123,3 +123,12 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
     let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
     assert_eq!(parsed_compact.tx_hash, "0xdef456");
 }
+
+#[test]
+fn tx_query_parse_kv_accepts_angle_bracket_wrapped_inline_tokens() {
+    let noisy = "[rpc] <transactionHash:0xCAFE99> <status:COMMITTED> <error:null>";
+    let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xcafe99");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}

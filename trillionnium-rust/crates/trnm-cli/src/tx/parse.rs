@@ -164,6 +164,15 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     };
 
+    let key = key.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+    });
+    let value = value.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+    });
+
     if key.is_empty() {
         return None;
     }
@@ -173,7 +182,8 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let trimmed = token.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
@@ -192,7 +202,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         value
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
             })
             .trim_matches('"')
             .trim_matches('\'')
