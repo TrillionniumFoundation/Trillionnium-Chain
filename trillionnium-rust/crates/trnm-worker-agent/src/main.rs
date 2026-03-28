@@ -1001,7 +1001,7 @@ pub(crate) struct AdapterError {
 }
 
 fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
+    backoff_delay_ms(base_ms, attempt)
 }
 
 fn run_llm_adapter_once(
