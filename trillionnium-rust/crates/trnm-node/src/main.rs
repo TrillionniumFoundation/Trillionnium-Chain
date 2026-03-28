@@ -3312,6 +3312,38 @@ mod tests {
     }
 
     #[test]
+    fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
+        let mut node_ids = std::collections::HashSet::new();
+        let mut rpc_addrs = std::collections::HashSet::new();
+        let mut p2p_addrs = std::collections::HashSet::new();
+
+        for config_path in [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ] {
+            let cfg = load_config(config_path)
+                .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            assert!(
+                node_ids.insert(cfg.node_id.clone()),
+                "{config_path} reuses node_id {}",
+                cfg.node_id
+            );
+            assert!(
+                rpc_addrs.insert(cfg.rpc_addr.clone()),
+                "{config_path} reuses rpc_addr {}",
+                cfg.rpc_addr
+            );
+            assert!(
+                p2p_addrs.insert(cfg.p2p_addr.clone()),
+                "{config_path} reuses p2p_addr {}",
+                cfg.p2p_addr
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_blank_node_id_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-node-id-{}-{}.toml",
