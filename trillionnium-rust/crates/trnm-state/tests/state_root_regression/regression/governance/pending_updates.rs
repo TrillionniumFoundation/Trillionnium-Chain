@@ -387,6 +387,45 @@ fn restore_pending_gov_update_uppercase_bool_literal_emergency_pause_preserves_l
 }
 
 #[test]
+fn restore_pending_gov_update_blank_bool_literal_emergency_pause_preserves_live_binding_and_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_244, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let root_before = state.state_root();
+
+    state.restore_pending_gov_update(
+        "emergency_pause",
+        Some(PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: String::new(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("emergency_pause").is_none(),
+        "blank emergency_pause restore literals must fail closed instead of materializing a queued toggle"
+    );
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "rejecting a blank pending emergency_pause literal must preserve the live canonical pause binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "rejecting a blank pending emergency_pause literal must preserve the prior deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after rejecting a blank pending emergency_pause literal should deterministically reuse the preserved cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_zero_key_id_resolve_authority_scrubs_pending_resolve_and_rewinds_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
