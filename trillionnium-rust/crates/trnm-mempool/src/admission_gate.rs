@@ -61,4 +61,21 @@ mod tests {
         assert_eq!(gate.pop_ready(), None);
         assert!(gate.seen.contains(&7));
     }
+
+    #[test]
+    fn saturated_fresh_retry_recovers_as_first_admission_after_headroom_reopens() {
+        let mut gate = AdmissionGate::new(1);
+
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        // A fresh retry under saturation must stay backpressured without being
+        // inserted into duplicate tracking.
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+
+        // Once headroom reopens, that same id must still enter as a fresh tx.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Duplicate);
+    }
 }
