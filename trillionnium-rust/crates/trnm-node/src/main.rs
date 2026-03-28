@@ -1662,6 +1662,12 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         args.bft_max_rounds > 0,
         "invalid startup args: bft_max_rounds must be at least 1"
     );
+    anyhow::ensure!(
+        args.bft_round_change_backoff_max_ms >= args.bft_round_change_backoff_ms,
+        "invalid startup args: bft_round_change_backoff_max_ms ({}) must be >= bft_round_change_backoff_ms ({})",
+        args.bft_round_change_backoff_max_ms,
+        args.bft_round_change_backoff_ms
+    );
     Ok(())
 }
 
@@ -3841,6 +3847,71 @@ mod tests {
         assert!(err
             .to_string()
             .contains("bft_max_rounds must be at least 1"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_round_change_backoff_cap_below_base() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 4,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("round-change backoff cap below base must fail closed");
+        assert!(err.to_string().contains("bft_round_change_backoff_max_ms (4) must be >= bft_round_change_backoff_ms (5)"));
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_round_change_backoff_cap_equal_to_base() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 5,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("round-change backoff cap equal to base must remain bootstrappable");
     }
 
     #[test]
