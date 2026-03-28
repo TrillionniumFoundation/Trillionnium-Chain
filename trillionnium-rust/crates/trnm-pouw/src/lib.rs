@@ -19529,6 +19529,39 @@ mod tests {
     }
 
     #[test]
+    fn timeout_preflight_rejects_hidden_char_challenger_identity() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 81,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger\u{200b}".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, true, false)
+            .expect_err("timeout settlement must fail closed on hidden-char challenger identity");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
+    }
+
+    #[test]
     fn tee_proof_without_crypto_backend_rejects_reveal_and_preserves_committed_state() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7001, "alice".into(), 10).unwrap();
