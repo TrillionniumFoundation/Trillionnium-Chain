@@ -472,6 +472,36 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_reports_plural_checkpoint_lag_for_metadata_only_recovery() {
+        let wal_dir = temp_wal_dir("metadata-only-two-block-lag");
+        let recovered = RecoveredWalState {
+            next_height: 8,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 5,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(5),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("retained 2 committed WAL entries through height 7")
+                && err.contains("checkpoint lags retained WAL tip by 2 blocks")
+                && err.contains("last retained checkpoint: 5")
+                && err.contains("next startup height: 8"),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_fresh_or_fully_replayable_state() {
         let wal_dir = temp_wal_dir("recoverable-state-ok");
         let recovered = RecoveredWalState {
