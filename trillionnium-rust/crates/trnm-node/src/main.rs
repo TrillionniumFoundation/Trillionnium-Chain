@@ -440,6 +440,9 @@ fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let list: WalMetaList =
         toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
     Ok(list.entries)
@@ -471,6 +474,9 @@ fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
     canonicalize_checkpoint_meta(&mut list.checkpoints);
@@ -9152,6 +9158,27 @@ mod tests {
         let _ = fs::remove_dir_all(&wal_dir);
     }
 
+    fn assert_stale_consensus_wal_reset_after_recovery(wal_dir: &Path) {
+        let recovered = recover_wal_state(wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
+        let entries = load_wal_meta_entries(wal_dir).unwrap();
+        assert!(entries.is_empty());
+        let checkpoints = load_checkpoint_meta(wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+        let wal = fs::read_to_string(wal_file(wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+    }
+
     #[test]
     fn recover_resets_stale_consensus_wal_when_only_empty_wal_meta_file_exists() {
         let wal_dir = temp_wal_dir("recover-stale-consensus-wal-with-empty-wal-meta");
@@ -9168,24 +9195,28 @@ mod tests {
         .unwrap();
         persist_wal_meta_entries(&wal_dir, &[]).unwrap();
 
-        let recovered = recover_wal_state(&wal_dir).unwrap();
-        assert_eq!(recovered.next_height, 1);
-        assert!(recovered.restored_lock.is_none());
-        assert!(recovered.last_checkpoint.is_none());
-        assert!(recovered.truncated);
-        assert!(!recovered.metadata_only_recovery);
-        assert_eq!(recovered.wal_entries_retained, 0);
-        assert_eq!(recovered.checkpoint_height_retained, None);
+        assert_stale_consensus_wal_reset_after_recovery(&wal_dir);
 
-        let entries = load_wal_meta_entries(&wal_dir).unwrap();
-        assert!(entries.is_empty());
-        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
-        assert!(checkpoints.is_empty());
-        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
-        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
-        assert_eq!(wal.next_height, 1);
-        assert_eq!(wal.last_round, 0);
-        assert!(wal.locked_block_hash.is_none());
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_resets_stale_consensus_wal_when_only_blank_wal_meta_file_exists() {
+        let wal_dir = temp_wal_dir("recover-stale-consensus-wal-with-blank-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 23,
+                last_round: 5,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), "\n  \t").unwrap();
+
+        assert_stale_consensus_wal_reset_after_recovery(&wal_dir);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -9224,6 +9255,27 @@ mod tests {
         assert_eq!(wal.next_height, 1);
         assert_eq!(wal.last_round, 0);
         assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_resets_stale_consensus_wal_when_only_blank_checkpoint_file_exists() {
+        let wal_dir = temp_wal_dir("recover-stale-consensus-wal-with-blank-checkpoint-file");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 29,
+                last_round: 4,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), "  \n\t").unwrap();
+
+        assert_stale_consensus_wal_reset_after_recovery(&wal_dir);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
