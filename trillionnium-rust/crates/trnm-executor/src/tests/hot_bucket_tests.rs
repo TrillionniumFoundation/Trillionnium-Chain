@@ -1,4 +1,56 @@
 use super::*;
+use std::sync::{Mutex, MutexGuard, OnceLock};
+use trnm_types::{ObjectRef, Tx};
+
+fn o(id: u64) -> ObjectRef {
+    ObjectRef { id, version: 1 }
+}
+
+fn tx(id: u64, r: Vec<ObjectRef>, w: Vec<ObjectRef>) -> Tx {
+    Tx {
+        id,
+        read_set: r,
+        write_set: w,
+        payload: vec![],
+    }
+}
+
+fn env_lock() -> MutexGuard<'static, ()> {
+    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+        Ok(guard) => guard,
+        Err(err) => err.into_inner(),
+    }
+}
+
+struct EnvGuard {
+    key: &'static str,
+    old: Option<String>,
+}
+
+impl EnvGuard {
+    fn set(key: &'static str, value: &str) -> Self {
+        let old = std::env::var(key).ok();
+        unsafe {
+            std::env::set_var(key, value);
+        }
+        Self { key, old }
+    }
+}
+
+impl Drop for EnvGuard {
+    fn drop(&mut self) {
+        if let Some(v) = &self.old {
+            unsafe {
+                std::env::set_var(self.key, v);
+            }
+        } else {
+            unsafe {
+                std::env::remove_var(self.key);
+            }
+        }
+    }
+}
 
 #[test]
 fn hot_bucket_interleave_seeds_initial_round_from_first_hot_key() {

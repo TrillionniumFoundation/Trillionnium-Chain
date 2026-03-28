@@ -1,6 +1,10 @@
 use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
+#[cfg(test)]
+#[path = "tests/hot_bucket_tests.rs"]
+mod hot_bucket_tests;
+
 #[derive(Debug, Clone, Copy)]
 pub enum GroupingStrategy {
     Original,
