@@ -165,6 +165,15 @@ if ! grep -q 'bft_round_change_backoff_total_ms=' "$ROOT/run/parallel-sanity.log
   exit 3
 fi
 
+log "bft restart recovery drill"
+RECOVERY_RUNS="${RECOVERY_RUNS:-1}"
+RECOVERY_REPORT="$(RUNS="$RECOVERY_RUNS" ./scripts/check_bft_restart_recovery.sh | tee -a "$LOG" | tail -n 1 | sed 's/^.*: //')"
+if [ -z "$RECOVERY_REPORT" ] || [ ! -f "$RECOVERY_REPORT" ]; then
+  log "recovery drill failed: missing restart recovery report"
+  exit 12
+fi
+rollback_command="$rollback_command $(printf '%q' "$RECOVERY_REPORT")"
+
 cleanup_devnet() {
   if [ "${DEVNET_STARTED:-0}" -eq 1 ]; then
     ./scripts/devnet_down.sh | tee -a "$LOG" || true
