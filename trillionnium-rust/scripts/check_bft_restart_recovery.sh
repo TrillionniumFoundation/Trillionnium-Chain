@@ -6,6 +6,16 @@ cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 RUNS="${RUNS:-5}"
+case "$RUNS" in
+  ''|*[!0-9]*)
+    echo "RUNS must be a positive integer, got '$RUNS'" >&2
+    exit 64
+    ;;
+esac
+if [ "$RUNS" -lt 1 ]; then
+  echo "RUNS must be >= 1, got '$RUNS'" >&2
+  exit 64
+fi
 OUT_DIR="$ROOT/run"
 TS="$(date -u +%Y%m%d-%H%M%S)"
 REPORT="$OUT_DIR/bft-restart-recovery-$TS.txt"
