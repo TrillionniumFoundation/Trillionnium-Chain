@@ -69,6 +69,8 @@ cargo test -p trnm-state -p trnm-node
   - 读取建议：若 `truncated=true`，继续向上 grep `repaired WAL tail required truncation`；若 `metadata_only_recovery=true`，继续 grep `refusing metadata-only recovery` 以拿到带 `retained_wal_summary` 的完整拒绝原因；若 `checkpoint=none`，再结合 `retained no committed WAL entries` / `no retained checkpoint metadata` 判断这是 fresh start 还是 checkpoint 元数据缺失。
 - `[bft-wal] existing default WAL state detected at <A>; isolating this run in <B> (pass --bft-wal-mode reuse to recover prior state explicitly)`
   - 含义：节点发现默认 WAL 目录里已有旧状态，因此本次启动被自动隔离到新的 session 子目录；这通常是“为了避免误复用旧 WAL 的保护动作”，**不是**恢复成功信号。值班侧应立刻记录原目录 `<A>` 与自动隔离目录 `<B>`，避免把新进程产生的空白 WAL 误当成历史恢复结果。
+- `refusing to reuse existing BFT WAL state at <A> (pass --bft-wal-mode reuse to recover, or choose a fresh --bft-wal-dir)`
+  - 含义：节点以 fail-closed 方式拒绝复用已经存在状态的 WAL 目录；常见于值班侧显式传了 `--bft-wal-mode fail-if-exists`，或把原本应当新建的目录指到了历史恢复目录。它说明“启动前保护已触发”，**不是** WAL 校验失败，也不是自动修复已经发生。
 
 ## 推荐分诊顺序
 
