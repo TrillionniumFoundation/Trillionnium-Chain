@@ -43,6 +43,30 @@ fn load_node_events_parses_llm_metering_audit_block() {
 }
 
 #[test]
+fn load_node_events_normalizes_wrapped_metering_numeric_fields() {
+    let root = tempfile::tempdir().expect("tempdir");
+    let run = root.path().join("run");
+    fs::create_dir_all(&run).expect("create run dir");
+    let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version='1' metering_prompt_tokens='128,' metering_generated_tokens='32;' metering_decode_steps='(32)' metering_kv_bytes_moved='[4096]' metering_normalized_work_units='{192}' metering_prompt_token_weight='1' metering_generated_token_weight='1' metering_decode_step_weight='1' metering_kv_byte_weight='0' metering_min_accept_work_units='100' metering_challenge_success_bounty_base='1' metering_challenge_success_bounty_per_work_unit_num='1' metering_challenge_success_bounty_per_work_unit_den='192' metering_worker_completion_bonus_per_work_unit_num='1' metering_worker_completion_bonus_per_work_unit_den='256' metering_worker_slash_rebate_per_work_unit_num='1' metering_worker_slash_rebate_per_work_unit_den='384'
+";
+    fs::write(run.join("node1.log"), line).expect("write log");
+
+    let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+    assert_eq!(loaded.events.len(), 1);
+    let metering = loaded.events[0]
+        .metering
+        .as_ref()
+        .expect("wrapped metering expected");
+    assert_eq!(metering.prompt_tokens, 128);
+    assert_eq!(metering.generated_tokens, 32);
+    assert_eq!(metering.decode_steps, 32);
+    assert_eq!(metering.kv_bytes_moved, 4096);
+    assert_eq!(metering.normalized_work_units, 192);
+    assert_eq!(metering.policy.snapshot_version, 1);
+    assert_eq!(metering.derived.challenge_bonus_total, 2);
+}
+
+#[test]
 fn load_node_events_drops_invalid_metering_policy_with_zero_denominator() {
     let root = tempfile::tempdir().expect("tempdir");
     let run = root.path().join("run");
