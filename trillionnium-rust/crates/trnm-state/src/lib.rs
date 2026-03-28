@@ -4771,6 +4771,28 @@ mod tests {
     }
 
     #[test]
+    fn wal_content_hash_distinguishes_missing_prev_hash_from_literal_genesis_marker() {
+        let genesis = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        let forged = WalMeta {
+            prev_hash_hex: Some("genesis".into()),
+            ..genesis.clone()
+        };
+
+        assert_ne!(
+            genesis.content_hash_hex(),
+            forged.content_hash_hex(),
+            "WAL checkpoint evidence digest must distinguish a missing genesis predecessor from a literal \"genesis\" prev_hash payload so light-verifier linkage cannot alias forged genesis metadata"
+        );
+    }
+
+    #[test]
     fn checkpoint_evidence_surface_rejects_mixed_case_digest_encodings() {
         let wal_entry = WalMeta {
             height: 7,
