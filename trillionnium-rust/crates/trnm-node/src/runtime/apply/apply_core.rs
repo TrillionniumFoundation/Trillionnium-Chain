@@ -459,4 +459,57 @@ mod tests {
             "unexpected error: {p2p_unspecified_err:#}"
         );
     }
+
+    #[test]
+    fn validate_node_config_rejects_control_characters_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node\nalpha".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("control characters in node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must not contain control characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_internal_whitespace_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:70 00".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr internal whitespace must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain whitespace"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:70 01".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr internal whitespace must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain whitespace"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
 }
