@@ -302,6 +302,25 @@ fn hot_bucket_interleave_ignores_empty_access_noise_around_single_signaled_lane(
 }
 
 #[test]
+fn hot_bucket_interleave_ignores_empty_access_noise_around_single_role_flipped_mixed_lane() {
+    let mut txs = vec![
+        tx(95, vec![], vec![]),          // empty-access noise defaults to bucket 0
+        tx(96, vec![o(0)], vec![o(8)]),  // canonical mixed lane {0,8}
+        tx(97, vec![], vec![]),          // same empty-access noise
+        tx(98, vec![o(8)], vec![o(0)]),  // same mixed lane after read/write role flip
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs carry no lane signal, and equivalent mixed domains should
+    // keep one canonical bucket even when read/write roles flip. If all signaled
+    // traffic still belongs to that single lane, preserve ingress order.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![95, 96, 97, 98]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
