@@ -155,6 +155,13 @@ fn backoff_delay_stays_monotonic_after_saturation() {
 }
 
 #[test]
+fn backoff_delay_keeps_63rd_shift_for_small_base_before_saturating() {
+    assert_eq!(backoff_delay_ms(1, 62), 1u64 << 62);
+    assert_eq!(backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(backoff_delay_ms(2, 63), u64::MAX);
+}
+
+#[test]
 fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-duplicate-counter-{}-{}.txt",
