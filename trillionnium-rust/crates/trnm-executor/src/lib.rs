@@ -3776,6 +3776,20 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_preserves_high_bit_lane_mapping() {
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 55) + 3;
+        let t = tx(1, vec![o(high_a)], vec![o(high_b)]);
+        let buckets_n = 64usize;
+
+        // Keep the bitmask fast path in u64-space too so high-bit mixed-domain
+        // keys preserve their executor-lane mapping under power-of-two fanout.
+        let expected = ((high_a ^ high_b.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+        assert_eq!(hot_bucket_keys(&t), (high_a, high_b));
+        assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+    }
+
+    #[test]
     fn hot_bucket_keys_skip_duplicate_leading_refs_and_preserve_write_priority() {
         let t = tx(1, vec![o(77), o(88)], vec![o(42), o(42), o(99)]);
         assert_eq!(hot_bucket_keys(&t), (42, 99));
