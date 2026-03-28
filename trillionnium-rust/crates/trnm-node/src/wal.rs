@@ -608,6 +608,53 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_meta_roundtrip_preserves_canonical_bytes_for_light_verifier_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-roundtrip-bytes");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let original = toml::to_string(&CheckpointMetaList {
+            checkpoints: vec![
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), original).unwrap();
+
+        let canonicalized = load_checkpoint_meta(&wal_dir).unwrap();
+        persist_checkpoint_meta(&wal_dir, &canonicalized).unwrap();
+        let first_pass = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+
+        persist_checkpoint_meta(&wal_dir, &canonicalized).unwrap();
+        let second_pass = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+
+        assert_eq!(
+            first_pass, second_pass,
+            "checkpoint metadata should serialize to stable canonical bytes after load/persist roundtrip so light-verifier summaries and checkpoint evidence diffs do not flap"
+        );
+
+        let hash_a = first_pass.find("wal_entry_hash_hex = \"hash-a\"").unwrap();
+        let hash_c = first_pass.find("wal_entry_hash_hex = \"hash-c\"").unwrap();
+        let hash_b = first_pass.find("wal_entry_hash_hex = \"hash-b\"").unwrap();
+        assert!(hash_a < hash_c && hash_c < hash_b);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
