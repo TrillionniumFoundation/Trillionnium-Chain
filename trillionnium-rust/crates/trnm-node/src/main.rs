@@ -1629,7 +1629,16 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         args.byzantine < args.validators,
         "invalid startup args: byzantine must be less than validators"
     );
-    let min_validators_for_quorum = args.byzantine.saturating_mul(3).saturating_add(1);
+    let min_validators_for_quorum = args
+        .byzantine
+        .checked_mul(3)
+        .and_then(|value| value.checked_add(1))
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "invalid startup args: byzantine={} overflows 3f + 1 quorum sizing",
+                args.byzantine
+            )
+        })?;
     anyhow::ensure!(
         args.validators >= min_validators_for_quorum,
         "invalid startup args: validators must satisfy N >= 3f + 1 for byzantine={} (need at least {}, got {})",
@@ -3663,6 +3672,41 @@ mod tests {
         assert!(err
             .to_string()
             .contains("pouw_timeout_scan_every_blocks must be at least 1"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_quorum_overflow_for_extreme_byzantine_budget() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: usize::MAX,
+            byzantine: usize::MAX - 1,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("overflowed 3f+1 quorum sizing must fail closed");
+        assert!(err
+            .to_string()
+            .contains("overflows 3f + 1 quorum sizing"));
     }
 
     #[test]
