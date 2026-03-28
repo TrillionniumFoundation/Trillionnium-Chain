@@ -600,6 +600,54 @@ fn restore_pending_gov_update_placeholder_resolve_authority_scrubs_pending_resol
 }
 
 #[test]
+fn restore_pending_gov_update_uppercase_resolve_authority_scrubs_pending_resolve_and_rewinds_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .stage_or_confirm_resolve_approval(5_242, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("initial staged resolve approval should succeed");
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: staged pending resolve approval must perturb the root before uppercase resolve_authority replay"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_242).is_some(),
+        "sanity: pending resolve approval should exist before the fail-closed uppercase resolve_authority restore"
+    );
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7,
+            key: "resolve_authority".into(),
+            value: "resolver-a,RESOLVER-B".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "uppercase resolve_authority restore snapshots must fail closed instead of materializing a queued governance update"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_242).is_none(),
+        "rejecting an uppercase resolve_authority restore snapshot must scrub staged pending resolve metadata"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting an uppercase resolve_authority restore snapshot must rewind state_root to the pre-staged baseline"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after uppercase resolve_authority rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_none_rewinds_state_root_after_removing_timelocked_update() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
