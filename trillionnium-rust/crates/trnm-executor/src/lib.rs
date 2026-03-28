@@ -3419,6 +3419,25 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_ignores_empty_access_noise_when_only_one_real_lane_exists() {
+        let mut txs = vec![
+            tx(81, vec![], vec![o(8)]),
+            tx(82, vec![], vec![]),
+            tx(83, vec![], vec![o(16)]),
+            tx(84, vec![], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Empty-access ingress should not fabricate a second hot bucket. When all
+        // signaled traffic still lands in one real lane, keep stable input order
+        // and avoid round-robin churn from synthetic bucket-0 noise.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![81, 82, 83, 84]
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
