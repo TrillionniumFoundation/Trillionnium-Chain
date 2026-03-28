@@ -147,3 +147,27 @@ pub(crate) fn market_effective_score_with_config(
 pub(crate) fn market_effective_score(price: u128, reputation: i64) -> u128 {
     market_effective_score_with_config(price, reputation, market_score_config())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
+        let breakdown = market_score_breakdown(
+            3,
+            3,
+            MarketScoreConfig {
+                price_weight: 7,
+                reputation_weight: 7,
+                reputation_clamp: 10,
+            },
+        );
+
+        assert_eq!(breakdown.base_score, 21);
+        assert_eq!(breakdown.reputation_reward, 21);
+        assert_eq!(breakdown.effective_score, 0);
+        assert!(breakdown.score_floor_applied);
+        assert_eq!(market_reputation_score_delta(&breakdown), -21);
+    }
+}
