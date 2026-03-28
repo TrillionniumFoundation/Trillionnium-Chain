@@ -168,4 +168,30 @@ mod tests {
         assert!(summary.contains("bft_auth_reject_stale_nonce_total=8"));
         assert!(summary.contains("bft_leader_missed_proposals=[0, 2, 0, 1]"));
     }
+
+    #[test]
+    fn runtime_summary_line_keeps_round_change_backoff_share_aliases_operator_visible_once_each() {
+        let mut metrics = RuntimeMetrics::new(2);
+        metrics.bft_committed_heights = 2;
+        metrics.bft_round_change_backoff_total_ms = 17;
+        metrics.bft_round_change_backoff_active_heights = 1;
+        metrics.bft_round_change_backoff_max_ms = 17;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.bft_round_change_backoff_avg_ms = 17;
+        stats.bft_round_change_backoff_active_height_rate_ppm = 500_000;
+        stats.bft_round_change_backoff_density_avg_ms = 17;
+        stats.bft_round_change_backoff_density_avg_milli = 17_000;
+        stats.bft_round_change_backoff_wall_share_ppm = 340_000;
+        stats.bft_round_change_backoff_share_ppm = 340_000;
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        assert_eq!(summary.matches("bft_round_change_backoff_wall_share_ppm=").count(), 1);
+        assert_eq!(summary.matches("bft_round_change_backoff_share_ppm=").count(), 1);
+        assert!(summary.contains("bft_round_change_backoff_wall_share_ppm=340000"));
+        assert!(summary.contains("bft_round_change_backoff_share_ppm=340000"));
+        assert!(summary.contains("bft_round_change_backoff_density_avg_ms=17"));
+        assert!(summary.contains("bft_round_change_backoff_max_ms=17"));
+    }
 }

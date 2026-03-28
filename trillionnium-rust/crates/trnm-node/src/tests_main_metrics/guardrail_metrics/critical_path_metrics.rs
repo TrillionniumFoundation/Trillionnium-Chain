@@ -55,6 +55,27 @@ fn consensus_summary_backoff_field_list_keeps_wall_alias_separate_from_budget_sh
 }
 
 #[test]
+fn consensus_summary_backoff_review_bundle_keeps_alias_pair_next_to_density_and_spike_fields() {
+    let review_bundle = [
+        "bft_round_change_backoff_density_avg_ms",
+        "bft_round_change_backoff_density_avg_milli",
+        "bft_round_change_backoff_max_ms",
+        "bft_round_change_backoff_wall_share_ppm",
+        "bft_round_change_backoff_share_ppm",
+    ];
+
+    assert_eq!(review_bundle.len(), 5);
+    assert!(review_bundle[0].ends_with("_avg_ms"));
+    assert!(review_bundle[1].ends_with("_avg_milli"));
+    assert!(review_bundle[2].ends_with("_max_ms"));
+    assert!(review_bundle[3].ends_with("_share_ppm"));
+    assert!(review_bundle[4].ends_with("_share_ppm"));
+    assert_ne!(review_bundle[0], review_bundle[1]);
+    assert_ne!(review_bundle[2], review_bundle[3]);
+    assert_ne!(review_bundle[3], review_bundle[4]);
+}
+
+#[test]
 fn consensus_bursty_review_bundles_keep_commit_vs_observed_coverage_pair_near_active_height_rates()
 {
     let review_bundles: &[&[&str]] = &[
