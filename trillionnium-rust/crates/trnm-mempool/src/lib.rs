@@ -2632,6 +2632,38 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_probe_noise_keeps_qos_snapshot_and_queue_counts_flat() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate metadata under a temporary hard-stop.
+        g.normal.seen.insert(41);
+        g.seen_global.insert(41);
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        for class in [IngressClass::Normal, IngressClass::Critical, IngressClass::Normal] {
+            assert_eq!(g.admit(41, class), AdmitOutcome::Duplicate);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+
+        for class in [IngressClass::Critical, IngressClass::Normal, IngressClass::Critical] {
+            assert_eq!(g.admit(99, class), AdmitOutcome::Backpressured);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+    }
+
+    #[test]
     fn hard_stop_fresh_retry_burst_keeps_backpressure_guard_flat_across_classes() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
