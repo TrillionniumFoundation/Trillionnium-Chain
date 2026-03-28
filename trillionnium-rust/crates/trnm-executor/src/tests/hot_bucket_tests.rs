@@ -368,6 +368,31 @@ fn hot_bucket_hint_power_of_two_fast_path_stays_stable_for_high_bit_role_flips()
 }
 
 #[test]
+fn hot_bucket_hint_modulo_path_stays_stable_for_high_bit_role_flips() {
+    let high_a = 1u64 << 40;
+    let high_b = (1u64 << 55) + 3;
+    let high_c = (1u64 << 55) + 11;
+    let buckets_n = 97usize;
+    let write_heavy = tx(
+        93,
+        vec![o(high_b), o(high_c), o(high_c)],
+        vec![o(high_a), o(high_a), o(high_b)],
+    );
+    let read_heavy = tx(
+        94,
+        vec![o(high_a), o(high_a), o(high_b)],
+        vec![o(high_b), o(high_c), o(high_c)],
+    );
+    let expected = ((high_a ^ high_b.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // The non-power-of-two modulo path must preserve the same canonical
+    // object-domain lane for equivalent mixed domains even when read/write
+    // roles flip under wide high-bit keys.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
 fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
