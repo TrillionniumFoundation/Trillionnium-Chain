@@ -479,6 +479,27 @@ fn tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation() {
 }
 
 #[test]
+fn tx_retry_policy_falls_back_per_field_when_only_one_env_value_is_invalid() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("invalid"), Some(" 350 "));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: 350,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("5"), Some("invalid"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 5,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
 fn llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default() {
     let policy = LlmAdapterPolicy {
         retry: RetryPolicy {
