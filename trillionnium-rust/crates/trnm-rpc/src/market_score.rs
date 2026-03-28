@@ -185,6 +185,8 @@ mod tests {
         assert_eq!(output.reputation_clamp, 1);
         assert_eq!(output.max_effective_reputation, 1);
         assert_eq!(output.min_effective_reputation, -1);
+        assert_eq!(output.max_reputation_score_delta, 7);
+        assert_eq!(output.min_reputation_score_delta, -7);
     }
 
     #[test]
