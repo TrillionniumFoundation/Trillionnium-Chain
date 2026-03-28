@@ -23,6 +23,13 @@ normalize_branch_ref() {
   esac
 }
 
+canonicalize_path() {
+  local input="$1"
+  (
+    cd "$input" >/dev/null 2>&1 && pwd -P
+  )
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --expected-worktree-root)
@@ -55,6 +62,10 @@ done
 [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root" >&2; usage; exit 2; }
 [ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref" >&2; usage; exit 2; }
 EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+EXPECTED_WORKTREE_ROOT="$(canonicalize_path "$EXPECTED_WORKTREE_ROOT")" || {
+  printf 'worktree path is not accessible: %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+  exit 1
+}
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2
@@ -62,6 +73,10 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
 }
 
 CURRENT_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
+CURRENT_WORKTREE_ROOT="$(canonicalize_path "$CURRENT_WORKTREE_ROOT")" || {
+  printf 'current worktree path is not accessible: %s\n' "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
 CURRENT_BRANCH_NAME="$(git branch --show-current)"
 CURRENT_HEAD="$(git rev-parse HEAD)"
 
