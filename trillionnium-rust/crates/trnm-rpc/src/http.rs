@@ -365,4 +365,53 @@ mod tests {
             )
         );
     }
+
+    #[test]
+    fn parse_http_request_target_rejects_raw_and_encoded_dot_segments() {
+        assert_eq!(
+            parse_http_request_target("GET /query-events/../42?limit=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /query-events/%2e%2e/42?limit=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/%2E%2E/42?limit=1 HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_raw_and_encoded_dot_segments() {
+        let raw = parse_query_events_limit_from_path("/query-events/../42?limit=1");
+        assert!(raw.is_err());
+        assert_eq!(
+            raw.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+            )
+        );
+
+        let encoded = parse_query_events_limit_from_path("/query-events/%2e%2e/42?limit=1");
+        assert!(encoded.is_err());
+        assert_eq!(
+            encoded.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+            )
+        );
+
+        let mixed_case = parse_query_events_limit_from_path("/query-events/%2E%2e/42?limit=1");
+        assert!(mixed_case.is_err());
+        assert_eq!(
+            mixed_case.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+            )
+        );
+    }
 }
