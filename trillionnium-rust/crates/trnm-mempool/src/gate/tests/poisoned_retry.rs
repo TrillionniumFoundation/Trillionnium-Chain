@@ -72,3 +72,23 @@ fn admit_fast_path_clears_stale_retry_fifo_when_retry_set_is_empty() {
     assert_eq!(gate.retry_reservations, 0);
     assert_eq!(gate.last_fairness_deferred, None);
 }
+
+#[test]
+fn zero_capacity_clamp_clears_stale_retry_state_before_free_ingress_progress() {
+    let mut gate = AdmissionGate::new(0);
+
+    // Simulate restored/corrupted retry bookkeeping on a misconfigured public
+    // admission floor. Zero capacity is clamped to 1, so stale retry state must
+    // not keep the first free-ingress tx artificially backpressured.
+    gate.backpressured_fifo.extend([41, 42, 41]);
+    gate.backpressured_ids.clear();
+    gate.retry_reservations = 1;
+    gate.last_fairness_deferred = Some(41);
+
+    assert_eq!(gate.admit(100), AdmitOutcome::Accepted);
+    assert_eq!(gate.metrics().accepted, 1);
+    assert_eq!(gate.metrics().backpressured, 0);
+    assert!(gate.backpressured_fifo.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
+}
