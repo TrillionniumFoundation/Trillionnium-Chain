@@ -5,6 +5,8 @@
 Define the **smallest credible candidate stack** for a stage-1 internal devnet / RC-prep branch, based on already-validated path-scoped commits harvested from the current dirty main worktree.
 
 This document is intentionally conservative.
+It is also a **historical candidate-stack snapshot captured on 2026-03-24**, not a rolling truth source for the current repository tip.
+When reusing it for a fresh RC rehearsal, record the live `git rev-parse origin/main` output alongside this document instead of treating the embedded base commit below as a timeless reference.
 It answers:
 
 1. Which commits are already clean enough to form a candidate stack?
