@@ -150,6 +150,22 @@ fn settlement_request_rejects_revert_reason_that_becomes_empty_after_sanitize() 
 }
 
 #[test]
+fn settlement_request_collapses_interlinear_annotation_controls_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "proof\u{FFF9}mismatch\u{FFFA}target\u{FFFB}trail".to_string(),
+        )
+        .expect("interlinear annotation controls should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("proof mismatch target trail".to_string())
+    );
+}
+
+#[test]
 fn settlement_request_rejects_non_canonical_subject_with_word_joiner() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     let token = CapabilityToken {
