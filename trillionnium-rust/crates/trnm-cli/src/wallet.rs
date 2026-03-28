@@ -40,7 +40,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name == ".."
         || name.starts_with('.')
         || name.starts_with('-')
-        || name.contains(['/', '\\', ':', '='])
+        || name.contains(['/', '\\', ':', '=', '|', '&', '$'])
         || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
         || has_hidden_or_whitespace
     {
