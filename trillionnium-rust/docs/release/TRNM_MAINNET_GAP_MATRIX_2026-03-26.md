@@ -65,7 +65,7 @@ Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious 
 
 Fail-closed rule:
 - if either artifact path is unresolved, or any of the identity/truth-source fields drift across artifacts, treat the rehearsal as **evidence-incomplete** rather than "probably fine"
-- prefer `./scripts/v2/extract_release_handoff_fields.sh` so this comparison fails closed instead of depending on manual copy/paste
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` so this comparison fails closed instead of depending on manual copy/paste
 
 ---
 

@@ -261,10 +261,12 @@ Operator discipline:
 
 When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
 
-Preferred helper (fail-closed on missing paths or cross-artifact identity mismatches):
+Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, or drift from the lane/ticket-assigned worktree/ref when you provide them):
 
 ```bash
-./scripts/v2/extract_release_handoff_fields.sh
+./scripts/v2/extract_release_handoff_fields.sh \
+  --expected-worktree-root "/abs/path/from-ticket" \
+  --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:

@@ -3,18 +3,22 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF' >&2
-Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
+Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>] [--expected-worktree-root <path>] [--expected-branch-ref <ref>]
 
 Resolve the latest local-evidence summary and RC manifest under the current git
 toplevel (unless paths are provided explicitly), then print the canonical
 handoff fields directly from the artifacts. This is a fail-closed helper for
-validator/operator release handoff: it refuses to guess missing paths or
-silently continue when identity fields mismatch across artifacts.
+validator/operator release handoff: it refuses to guess missing paths,
+silently continue when identity fields mismatch across artifacts, or accept
+artifacts that drift from the lane/ticket-assigned worktree/ref when explicit
+expectations are provided.
 EOF
 }
 
 SUMMARY_PATH=""
 MANIFEST_PATH=""
+EXPECTED_WORKTREE_ROOT=""
+EXPECTED_BRANCH_REF=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -26,6 +30,16 @@ while [ "$#" -gt 0 ]; do
     --manifest-path)
       [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
       MANIFEST_PATH="$2"
+      shift 2
+      ;;
+    --expected-worktree-root)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_WORKTREE_ROOT="$2"
+      shift 2
+      ;;
+    --expected-branch-ref)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_BRANCH_REF="$2"
       shift 2
       ;;
     -h|--help)
@@ -112,8 +126,24 @@ assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'assigned worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
+  printf 'assigned branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+  exit 1
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'assigned_worktree=%s\n' "$EXPECTED_WORKTREE_ROOT"
+fi
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  printf 'assigned_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
+fi
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
