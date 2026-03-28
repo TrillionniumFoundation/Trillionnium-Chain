@@ -22,6 +22,17 @@ fn tx_retry_policy_mixes_partial_cli_overrides_with_env_fallbacks() {
 }
 
 #[test]
+fn tx_backoff_delay_saturates_without_overflow() {
+    assert_eq!(backoff_delay_ms(25, 0), 25);
+    assert_eq!(backoff_delay_ms(25, 1), 50);
+    assert_eq!(backoff_delay_ms(25, 2), 100);
+
+    // Very large attempts should saturate rather than overflow/panic.
+    assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    assert_eq!(backoff_delay_ms(1_000_000, 62), u64::MAX);
+}
+
+#[test]
 fn exp_backoff_delay_saturates_without_overflow() {
     assert_eq!(exp_backoff_delay_ms(25, 0), 25);
     assert_eq!(exp_backoff_delay_ms(25, 1), 50);
