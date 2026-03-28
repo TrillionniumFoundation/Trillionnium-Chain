@@ -117,6 +117,28 @@ fn hot_bucket_interleave_keeps_first_hint_when_it_is_already_sparse_seed() {
 }
 
 #[test]
+fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_clamped() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+    let mut txs = vec![
+        tx(431, vec![], vec![o(5)]),  // first hot hint bucket 1 (also sparse)
+        tx(432, vec![], vec![o(0)]),  // dominant bucket 0 depth 4
+        tx(433, vec![], vec![o(4)]),  // dominant bucket 0 depth 4
+        tx(434, vec![], vec![o(8)]),  // dominant bucket 0 depth 4
+        tx(435, vec![], vec![o(12)]), // dominant bucket 0 depth 4
+        tx(436, vec![], vec![o(6)]),  // equally sparse bucket 2 depth 1
+        tx(437, vec![], vec![o(7)]),  // equally sparse bucket 3 depth 1
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Even when ops trims fanout below the default 8 buckets, the sparse-seed
+    // anti-starvation path should still anchor to the first sparse hint instead
+    // of drifting toward another equally sparse bucket after modulo remapping.
+    assert_eq!(txs.first().map(|t| t.id), Some(431));
+}
+
+#[test]
 fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
     let mut txs = vec![
         tx(21, vec![], vec![o(8)]),
