@@ -2369,6 +2369,30 @@ mod tests {
     }
 
     #[test]
+    fn final_pop_clears_ghost_seen_global_when_drained_id_is_already_missing() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+
+        // Simulate restored-state skew right before the final dequeue: lane-wide
+        // cache lost the real queued id but still carries unrelated ghost state.
+        g.seen_global.remove(&7);
+        g.seen_global.insert(999);
+        assert_eq!(g.seen_global.len(), 1);
+
+        // Final dequeue should clear ghost lane-wide state even though remove(id)
+        // misses, because the authoritative queues become idle afterwards.
+        assert_eq!(g.pop_ready(), Some(7));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert!(g.seen_global.is_empty());
+
+        // The drained id must immediately re-enter as fresh instead of being
+        // poisoned by the earlier ghost cache skew.
+        assert_eq!(g.admit(7, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn full_drain_clears_stale_lane_local_seen_without_waiting_for_next_admit() {
         let mut g = LaneAdmissionGate::new(2, 1);
 
