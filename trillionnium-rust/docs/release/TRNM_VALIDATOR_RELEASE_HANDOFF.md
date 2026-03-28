@@ -238,7 +238,7 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
-| Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
+| Fast preflight | `run/preflight/go-no-go-latest.txt` | `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `lane_verify_command=`, `rollback_command=` | Did the local rehearsal fail fast on obvious safety blockers, and was it bound to the exact assigned lane worktree/branch? |
 | Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `git_head_state=`, `git_status_summary=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
 | RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
