@@ -3345,6 +3345,9 @@ impl StateStore {
             }
             None => {
                 self.clear_pending_gov_update_bindings(key, None);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
         }
     }

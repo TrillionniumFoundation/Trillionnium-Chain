@@ -295,6 +295,66 @@ fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
 }
 
 #[test]
+fn restore_pending_resolve_authority_none_scrubs_pending_resolve_approvals() {
+    // L03 restore-boundary hardening: replaying a `None` snapshot into the resolve_authority
+    // pending slot is still an authority-boundary rollback and must scrub any staged resolve
+    // quorum immediately instead of leaving approvals armed against the old pending keyset.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_360,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_380,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_381,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_984, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before restore removal");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_984), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    st.restore_pending_gov_update("resolve_authority", None);
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority").as_deref(),
+        Some("authority-a,authority-b")
+    );
+    assert_eq!(st.pending_resolve_approval(9_984), None);
+    assert_eq!(st.pending_resolve_first_approver(9_984), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_984), None);
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "restoring away a pending resolve_authority boundary must invalidate cached state root"
+    );
+}
+
+#[test]
 fn paused_resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
     // L03 paused-boundary hardening: cancelling a staged resolve_authority timelock while
     // emergency_pause is active is still an authority-boundary transition and must scrub any
