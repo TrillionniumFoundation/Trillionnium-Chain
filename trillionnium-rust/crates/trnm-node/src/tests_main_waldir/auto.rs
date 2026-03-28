@@ -15,9 +15,18 @@ fn resolve_wal_dir_auto_isolates_existing_builtin_default_state() {
     let (resolved, notice) = resolve_wal_dir(&args).unwrap();
     std::env::set_current_dir(cwd).unwrap();
 
+    let notice = notice.expect("auto mode should surface an operator notice when isolating default WAL state");
     assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
     assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
-    assert!(notice.unwrap().contains("isolating this run"));
+    assert!(
+        notice.contains("[bft-wal]")
+            && notice.contains("existing default WAL state detected")
+            && notice.contains(DEFAULT_BFT_WAL_DIR)
+            && notice.contains("isolating this run")
+            && notice.contains(&resolved.display().to_string())
+            && notice.contains("--bft-wal-mode reuse"),
+        "unexpected auto-mode notice: {notice}"
+    );
 
     let _ = fs::remove_dir_all(&root);
 }
