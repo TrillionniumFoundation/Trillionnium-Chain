@@ -36,3 +36,34 @@ fn resolve_wal_dir_auto_keeps_explicit_custom_dir_even_if_state_exists() {
 
     let _ = fs::remove_dir_all(&resolved);
 }
+
+#[test]
+fn resolve_wal_dir_auto_isolates_builtin_default_when_only_checkpoint_metadata_exists() {
+    let root = temp_wal_dir("default-wal-checkpoint-only-root");
+    let base = root.join(DEFAULT_BFT_WAL_DIR);
+    fs::create_dir_all(&base).unwrap();
+    persist_checkpoint_meta(
+        &base,
+        &[CheckpointMeta {
+            height: 7,
+            state_root_hex: "aa".repeat(32),
+            wal_entry_hash_hex: "bb".repeat(32),
+        }],
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(DEFAULT_BFT_WAL_DIR.into(), WalDirMode::Auto);
+
+    let cwd = std::env::current_dir().unwrap();
+    std::env::set_current_dir(&root).unwrap();
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    std::env::set_current_dir(cwd).unwrap();
+
+    assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+    assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
+    let notice = notice.expect("auto mode should emit checkpoint-only isolation notice");
+    assert!(notice.contains("isolating this run"));
+    assert!(notice.contains(DEFAULT_BFT_WAL_DIR));
+
+    let _ = fs::remove_dir_all(&root);
+}
