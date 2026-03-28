@@ -11,6 +11,27 @@ fn is_supported_http_version(version: &str) -> bool {
     matches!(version, "HTTP/1.0" | "HTTP/1.1")
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn contains_percent_encoded_control_or_space(value: &str) -> bool {
     let bytes = value.as_bytes();
     let mut idx = 0;
@@ -145,7 +166,7 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if contains_percent_encoded_control_or_space(path) {
+    if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path) {
         return None;
     }
 
@@ -185,6 +206,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || contains_malformed_percent_encoding(path_without_query)
         || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
@@ -215,6 +237,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || contains_malformed_percent_encoding(query)
         || contains_percent_encoded_control_or_space(query)
     {
         return Err(http_json_response(
@@ -279,8 +302,9 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
 #[cfg(test)]
 mod tests {
     use super::{
-        contains_percent_encoded_control_or_space, http_json_response, http_response_for_method,
-        parse_http_request_target, parse_query_events_limit_from_path,
+        contains_malformed_percent_encoding, contains_percent_encoded_control_or_space,
+        http_json_response, http_response_for_method, parse_http_request_target,
+        parse_query_events_limit_from_path,
     };
 
     #[test]
@@ -333,6 +357,16 @@ mod tests {
     }
 
     #[test]
+    fn malformed_percent_encoding_is_rejected_fail_closed() {
+        assert!(contains_malformed_percent_encoding("/health%"));
+        assert!(contains_malformed_percent_encoding("/health%2"));
+        assert!(contains_malformed_percent_encoding("/health%zz"));
+        assert!(contains_malformed_percent_encoding("/query-events/42?limit=7%4x"));
+        assert!(!contains_malformed_percent_encoding("/oracle?snapshot=%2Ftmp%2Fs.json"));
+        assert!(!contains_malformed_percent_encoding("/query-events/42?limit=7"));
+    }
+
+    #[test]
     fn encoded_c0_controls_and_space_are_rejected_case_insensitively() {
         assert!(contains_percent_encoded_control_or_space("/health%01check"));
         assert!(contains_percent_encoded_control_or_space("/health%1fcheck"));
@@ -354,6 +388,13 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_rejects_malformed_percent_encoding() {
+        assert_eq!(parse_http_request_target("GET /health% HTTP/1.1"), None);
+        assert_eq!(parse_http_request_target("GET /health%2 HTTP/1.1"), None);
+        assert_eq!(parse_http_request_target("HEAD /readyz%ZZ HTTP/1.1"), None);
+    }
+
+    #[test]
     fn parse_query_events_limit_rejects_other_encoded_c0_controls() {
         let response = parse_query_events_limit_from_path("/query-events/42?limit=1%01");
         assert!(response.is_err());
@@ -364,6 +405,27 @@ mod tests {
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
             )
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_malformed_percent_encoding() {
+        for path in [
+            "/query-events/42%?limit=7",
+            "/query-events/42%2?limit=7",
+            "/query-events/42?limit=7%",
+            "/query-events/42?limit=7%4x",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
     }
 
     #[test]
