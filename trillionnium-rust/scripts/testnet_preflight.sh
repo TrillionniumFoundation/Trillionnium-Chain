@@ -156,7 +156,12 @@ if grep -E '\[tx\] apply_error|rollback=true' "$ROOT/run/parallel-sanity.log" >/
 fi
 
 if ! grep -q '^\[consensus\] finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
-  log "parallel sanity failed: missing consensus finality/recovery metrics"
+  log "parallel sanity failed: missing consensus finality metric"
+  exit 3
+fi
+
+if ! grep -q 'bft_round_change_backoff_total_ms=' "$ROOT/run/parallel-sanity.log"; then
+  log "parallel sanity failed: missing consensus recovery metric (bft_round_change_backoff_total_ms)"
   exit 3
 fi
 

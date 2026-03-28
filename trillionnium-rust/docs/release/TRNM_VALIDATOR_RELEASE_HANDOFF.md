@@ -175,7 +175,8 @@ Expected outputs:
 A preflight run is a **No-Go** if any of the following occurs:
 - workspace tests fail
 - `parallel-sanity.log` contains `[tx] apply_error` or `rollback=true`
-- consensus summary line is missing
+- consensus finality summary line is missing
+- consensus recovery metric `bft_round_change_backoff_total_ms=` is missing
 - state-root audit reports mismatch or missing entries
 
 ### 2. Local release evidence capture
