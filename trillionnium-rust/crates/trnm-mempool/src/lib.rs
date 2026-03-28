@@ -1239,6 +1239,37 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_reopens_both_classes_immediately_after_one_reserve_only_drain() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        // Reserve-only mode routes both ingress classes through critical capacity,
+        // so once aggregate headroom reappears it should be advertised to both
+        // classes immediately without waiting for a full drain or idle poll.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 3, 3));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
     fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
