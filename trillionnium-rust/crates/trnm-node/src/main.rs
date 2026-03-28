@@ -3915,6 +3915,22 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_trimmed_identical_rpc_and_p2p_listener_addresses() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: " 127.0.0.1:26657\n".into(),
+                p2p_addr: "\t127.0.0.1:26657 ".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("identical rpc/p2p listener sockets must fail closed after trimming");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must differ"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_control_characters_in_operator_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
