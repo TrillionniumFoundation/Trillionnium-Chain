@@ -19,6 +19,9 @@ pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let mut list: WalMetaList =
         toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
     canonicalize_wal_meta(&mut list.entries);
@@ -51,6 +54,9 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
     canonicalize_checkpoint_meta(&mut list.checkpoints);
@@ -462,6 +468,18 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_treats_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "  \n\t").unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_recovery_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -504,6 +522,18 @@ mod tests {
             err.contains("unknown field") && err.contains("forged"),
             "unexpected parse error: {err}"
         );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "\n  \t").unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
