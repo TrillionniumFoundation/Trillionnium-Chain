@@ -56,7 +56,7 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
         .trim_matches(|c: char| {
             c.is_ascii_whitespace()
                 || c.is_control()
-                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}')
+                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';')
                 || matches!(
                     c,
                     '\u{200B}'
