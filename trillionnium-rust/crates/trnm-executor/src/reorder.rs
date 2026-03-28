@@ -11,6 +11,16 @@ pub(crate) fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
+    #[inline]
+    fn next_distinct_access_key(tx: &Tx, first: u64) -> u64 {
+        tx.write_set
+            .iter()
+            .chain(tx.read_set.iter())
+            .map(|obj| obj.id)
+            .find(|&id| id != first)
+            .unwrap_or(0)
+    }
+
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
     let key_a = tx
@@ -19,12 +29,7 @@ pub(crate) fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .or_else(|| tx.read_set.first())
         .map(|o| o.id)
         .unwrap_or(0);
-    let key_b = tx
-        .write_set
-        .get(1)
-        .or_else(|| tx.read_set.get(1))
-        .map(|o| o.id)
-        .unwrap_or(0);
+    let key_b = next_distinct_access_key(tx, key_a);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two

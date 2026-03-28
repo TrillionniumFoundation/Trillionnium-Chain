@@ -453,6 +453,21 @@ fn hot_bucket_hint_modulo_path_stays_stable_for_high_bit_role_flips() {
 }
 
 #[test]
+fn hot_bucket_hint_is_stable_for_single_write_single_read_role_flips() {
+    let buckets_n = 97usize;
+    let write_then_read = tx(951, vec![o(2)], vec![o(1)]);
+    let read_then_write = tx(952, vec![o(1)], vec![o(2)]);
+    let expected = ((1u64 ^ 2u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // Equivalent one-write/one-read mixed domains should stay in the same
+    // scheduler lane even when read/write roles flip. Previously the fallback
+    // second-key probe skipped the lone opposite-domain key and drifted.
+    assert_eq!(hot_bucket_hint(&write_then_read, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_then_write, buckets_n), expected);
+}
+
+
+#[test]
 fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
