@@ -101,6 +101,10 @@ def main(argv: list[str]) -> int:
             data = tomllib.loads(path.read_text(encoding="utf-8"))
         except FileNotFoundError:
             fail(f"missing node config: {path}")
+        except IsADirectoryError:
+            fail(f"invalid node config {path}: expected a file, got a directory")
+        except OSError as exc:
+            fail(f"read node config failed: {path}: {exc}")
         except tomllib.TOMLDecodeError as exc:
             fail(f"parse toml failed: {path}: {exc}")
 
