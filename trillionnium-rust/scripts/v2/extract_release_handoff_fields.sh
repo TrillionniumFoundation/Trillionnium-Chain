@@ -19,6 +19,7 @@ SUMMARY_PATH=""
 MANIFEST_PATH=""
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
+EXPECTED_BRANCH_REF_CANONICAL=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -84,6 +85,21 @@ require_key() {
   printf '%s' "$value"
 }
 
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    "")
+      printf '%s' ""
+      ;;
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
 assert_equal() {
   local field="$1"
   local left="$2"
@@ -93,6 +109,10 @@ assert_equal() {
     exit 1
   fi
 }
+
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+fi
 
 summary_branch="$(require_key "$SUMMARY_PATH" git_branch)"
 summary_head="$(require_key "$SUMMARY_PATH" git_head)"
@@ -139,8 +159,8 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_
   exit 1
 fi
 
-if [ -n "$EXPECTED_BRANCH_REF" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
-  printf 'assigned branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'assigned branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_worktree_branch_ref" >&2
   exit 1
 fi
 
@@ -149,8 +169,8 @@ printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'assigned_worktree=%s\n' "$EXPECTED_WORKTREE_ROOT"
 fi
-if [ -n "$EXPECTED_BRANCH_REF" ]; then
-  printf 'assigned_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'assigned_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
 fi
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
