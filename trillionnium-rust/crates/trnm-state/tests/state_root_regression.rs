@@ -7040,6 +7040,7 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
     let wal_summary = wal.evidence_summary();
     assert!(wal_summary.contains("wal_evidence_surface=wal-v1"));
     assert!(wal_summary.contains("wal_state_root_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_state_root_encoding=hex-lower"));
     assert!(wal_summary.contains("wal_state_root_bytes=32"));
     assert!(wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
     assert!(wal_summary.contains("wal_committed_encoding=u8"));
@@ -7047,7 +7048,9 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
     assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
     assert!(wal_summary.contains("wal_prev_hash_bytes=32"));
     assert!(wal_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+    assert!(wal_summary.contains("wal_prev_hash_encoding=hex-lower-or-none"));
     assert!(wal_summary.contains("wal_content_hash_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_content_hash_encoding=hex-lower"));
     assert!(wal_summary.contains("wal_content_hash_bytes=32"));
 }
 
