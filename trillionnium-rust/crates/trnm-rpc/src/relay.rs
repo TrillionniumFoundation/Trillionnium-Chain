@@ -1675,6 +1675,18 @@ mod tests {
         root_mismatch.segment_root_hex = "00".repeat(32);
         assert!(verify_session_proof(&root_mismatch).is_err());
 
+        let mut proof_count_mismatch = proof.clone();
+        proof_count_mismatch.proof_count += 1;
+        assert!(verify_session_proof(&proof_count_mismatch).is_err());
+
+        let mut total_steps_mismatch = proof.clone();
+        total_steps_mismatch.total_proof_steps += 1;
+        assert!(verify_session_proof(&total_steps_mismatch).is_err());
+
+        let mut max_depth_mismatch = proof.clone();
+        max_depth_mismatch.max_proof_depth += 1;
+        assert!(verify_session_proof(&max_depth_mismatch).is_err());
+
         let mut session_mismatch = proof.clone();
         session_mismatch.session_id = "sp2-other".to_string();
         assert!(verify_session_proof(&session_mismatch).is_err());
