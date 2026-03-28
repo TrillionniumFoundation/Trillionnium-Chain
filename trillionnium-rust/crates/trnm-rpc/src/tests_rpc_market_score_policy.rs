@@ -89,6 +89,8 @@ fn market_score_config_output_fail_closed_clamps_manual_reputation_ceiling() {
     assert_eq!(output.price_weight, 7);
     assert_eq!(output.reputation_weight, 11);
     assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MAX);
+    assert_eq!(output.max_effective_reputation, MARKET_REPUTATION_CLAMP_MAX);
+    assert_eq!(output.min_effective_reputation, -MARKET_REPUTATION_CLAMP_MAX);
     assert_eq!(
         output.max_reputation_score_delta,
         (MARKET_REPUTATION_CLAMP_MAX as u128) * 11
