@@ -26,6 +26,7 @@ fn tx_backoff_delay_saturates_without_overflow() {
     assert_eq!(backoff_delay_ms(25, 0), 25);
     assert_eq!(backoff_delay_ms(25, 1), 50);
     assert_eq!(backoff_delay_ms(25, 2), 100);
+    assert_eq!(backoff_delay_ms(0, u32::MAX), 0);
 
     // Very large attempts should saturate rather than overflow/panic.
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
@@ -48,6 +49,7 @@ fn exp_backoff_delay_saturates_without_overflow() {
     assert_eq!(exp_backoff_delay_ms(25, 0), 25);
     assert_eq!(exp_backoff_delay_ms(25, 1), 50);
     assert_eq!(exp_backoff_delay_ms(25, 2), 100);
+    assert_eq!(exp_backoff_delay_ms(0, u32::MAX), 0);
 
     // Very large attempts should saturate rather than overflow/panic.
     assert_eq!(exp_backoff_delay_ms(u64::MAX, 1), u64::MAX);
