@@ -4619,6 +4619,29 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_height_mismatch() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 8,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summary must fail closed when checkpoint height and WAL height diverge so checkpoint evidence cannot be rebound onto a different canonical slot"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_fails_closed_on_mixed_case_digests() {
         let wal = WalMeta {
             height: 7,
