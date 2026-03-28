@@ -518,6 +518,49 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_window_snapshot(
 }
 
 #[test]
+fn restore_task_rejects_slashed_retention_with_stale_challenge_start() {
+    let mut state = StateStore::new();
+
+    state.restore_task(
+        40831,
+        Some(TaskObject {
+            task_id: 40831,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained slash trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("90".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x73; 32]),
+            result_hash: Some([0x74; 32]),
+            reveal_salt: Some([0x75; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        state.get_task(40831).is_none(),
+        "restore_task must fail closed when slashed proof-retention metadata keeps a stale challenge start without live collateral context"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_zero_challenge_start() {
     let mut state = StateStore::new();
 
