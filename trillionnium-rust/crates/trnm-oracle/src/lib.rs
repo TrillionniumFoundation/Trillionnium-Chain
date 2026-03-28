@@ -520,7 +520,8 @@ pub fn validate_snapshot_observed(
         }
         Err(OracleError::InsufficientSources { .. })
         | Err(OracleError::InconsistentSampleCount { .. })
-        | Err(OracleError::DuplicateSources) => {
+        | Err(OracleError::DuplicateSources)
+        | Err(OracleError::NonCanonicalSourceOrdering { .. }) => {
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
@@ -1855,7 +1856,7 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_non_canonical_source_ordering_error_without_counter_drift() {
+    fn observed_report_classifies_non_canonical_source_ordering_as_quorum_failure() {
         let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
             "value": 100000,
@@ -1873,20 +1874,20 @@ mod tests {
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some("source ids must be sorted canonically: previous=coingecko, current=binance")
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 3);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert_eq!(report.classified_reject_total(), 1);
+        assert_eq!(report.classified_outcome_total(), 1);
+        assert!(report.classified_outcome_conserves_sample_count());
         assert!(report.observation_matches_metrics());
         assert!(report.bridge_contract_consistent());
     }
@@ -1992,20 +1993,20 @@ mod tests {
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some("source ids must be sorted canonically: previous=pyth, current=chainlink")
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 3);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert_eq!(report.classified_reject_total(), 1);
+        assert_eq!(report.classified_outcome_total(), 1);
+        assert!(report.classified_outcome_conserves_sample_count());
     }
 
     #[test]
