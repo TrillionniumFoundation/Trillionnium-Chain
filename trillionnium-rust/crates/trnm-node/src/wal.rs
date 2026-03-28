@@ -419,6 +419,62 @@ mod tests {
     }
 
     #[test]
+    fn wal_meta_roundtrip_preserves_canonical_bytes_for_prev_hash_audit_surfaces() {
+        let wal_dir = temp_wal_dir("wal-canonical-roundtrip-bytes");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let original = toml::to_string(&WalMetaList {
+            entries: vec![
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-c".into()),
+                },
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+                WalMeta {
+                    height: 9,
+                    round: 1,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), original).unwrap();
+
+        let canonicalized = load_wal_meta_entries(&wal_dir).unwrap();
+        persist_wal_meta_entries(&wal_dir, &canonicalized).unwrap();
+        let first_pass = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+
+        persist_wal_meta_entries(&wal_dir, &canonicalized).unwrap();
+        let second_pass = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+
+        assert_eq!(
+            first_pass, second_pass,
+            "wal metadata should serialize to stable canonical bytes after load/persist roundtrip so prev-hash audit summaries do not flap"
+        );
+
+        let none_idx = first_pass.find("height = 9").unwrap();
+        let prev_a_idx = first_pass.find("prev_hash_hex = \"prev-a\"").unwrap();
+        let prev_c_idx = first_pass.find("prev_hash_hex = \"prev-c\"").unwrap();
+        assert!(none_idx < prev_a_idx && prev_a_idx < prev_c_idx);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn persist_checkpoint_meta_canonicalizes_disk_order_for_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
         fs::create_dir_all(&wal_dir).unwrap();
