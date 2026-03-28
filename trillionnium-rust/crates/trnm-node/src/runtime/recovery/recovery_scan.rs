@@ -249,6 +249,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn retained_wal_summary_reports_zero_retained_entries_with_truncation() {
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries; repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
     fn retained_wal_summary_reports_missing_checkpoint_and_truncation() {
         let recovered = RecoveredWalState {
             next_height: 4,
