@@ -64,7 +64,14 @@ def validate_listener_addr(addr: str, field: str, path: Path) -> None:
     except ValueError:
         fail(f"invalid node config {path}: {field} port must be in 1..65535")
 
-    if parsed.scheme != "tcp" or parsed.path or parsed.query or parsed.fragment:
+    if (
+        parsed.scheme != "tcp"
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path
+        or parsed.query
+        or parsed.fragment
+    ):
         fail(
             f"invalid node config {path}: {field} must be a bare host:port listener address"
         )
