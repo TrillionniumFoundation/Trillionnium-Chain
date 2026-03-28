@@ -243,10 +243,15 @@ mod tests {
     use super::*;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
+        let now_nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
         std::env::temp_dir().join(format!(
-            "trnm-node-runtime-recovery-scan-{}-{}",
+            "trnm-node-runtime-recovery-scan-{}-{}-{}",
             name,
-            now_unix_ms()
+            std::process::id(),
+            now_nanos
         ))
     }
 

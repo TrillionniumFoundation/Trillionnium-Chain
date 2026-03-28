@@ -167,7 +167,16 @@ mod tests {
     use super::*;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
-        std::env::temp_dir().join(format!("trnm-node-wal-{}-{}", name, now_unix_ms()))
+        let now_nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        std::env::temp_dir().join(format!(
+            "trnm-node-wal-{}-{}-{}",
+            name,
+            std::process::id(),
+            now_nanos
+        ))
     }
 
     #[test]
