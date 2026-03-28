@@ -63,10 +63,10 @@ fn duplicate_commit_still_executes_reveal_gate() {
 }
 
 #[test]
-fn backoff_delay_is_linear_and_saturating() {
+fn backoff_delay_is_exponential_and_saturating() {
     assert_eq!(backoff_delay_ms(200, 0), 200);
     assert_eq!(backoff_delay_ms(200, 1), 400);
-    assert_eq!(backoff_delay_ms(200, 2), 600);
+    assert_eq!(backoff_delay_ms(200, 2), 800);
 
     // saturation guard (no overflow panic/wrap)
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
