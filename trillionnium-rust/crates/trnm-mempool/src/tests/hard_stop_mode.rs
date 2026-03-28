@@ -159,3 +159,25 @@ fn hard_stop_restored_duplicate_probes_keep_queue_accounting_flat() {
         assert_eq!(g.queued_counts(), (0, 0, 0));
     }
 }
+
+#[test]
+fn hard_stop_lane_wide_duplicates_survive_idle_polls_without_poisoning_fresh_retries() {
+    let mut g = LaneAdmissionGate::new(0, 0);
+
+    // Simulate recovery metadata that only restored the lane-wide seen cache.
+    // Idle scheduler polls and fresh retry noise must not degrade this tx back to
+    // Backpressured, nor may they accidentally poison new ids into Duplicate.
+    g.seen_global.insert(77);
+
+    for _ in 0..3 {
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(404, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(404, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(g.qos_snapshot().total_headroom, 0);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+    }
+}
