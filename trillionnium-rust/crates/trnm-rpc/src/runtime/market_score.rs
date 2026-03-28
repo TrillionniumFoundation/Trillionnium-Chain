@@ -146,3 +146,43 @@ pub(crate) fn market_effective_score_with_config(
 pub(crate) fn market_effective_score(price: u128, reputation: i64) -> u128 {
     market_effective_score_with_config(price, reputation, market_score_config())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn market_score_breakdown_keeps_zero_reputation_delta_neutral() {
+        let breakdown = market_score_breakdown(
+            42,
+            0,
+            MarketScoreConfig {
+                price_weight: 10,
+                reputation_weight: 100,
+                reputation_clamp: 25,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 0);
+        assert_eq!(breakdown.base_score, 420);
+        assert_eq!(breakdown.reputation_reward, 0);
+        assert_eq!(breakdown.penalty, 0);
+        assert_eq!(breakdown.effective_score, 420);
+        assert_eq!(market_reputation_score_delta(&breakdown), 0);
+        assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
+    fn market_score_config_output_reports_symmetric_fail_closed_reputation_bounds() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 1,
+            reputation_weight: 7,
+            reputation_clamp: 13,
+        });
+
+        assert_eq!(output.max_effective_reputation, 13);
+        assert_eq!(output.min_effective_reputation, -13);
+        assert_eq!(output.max_reputation_score_delta, 91);
+        assert_eq!(output.min_reputation_score_delta, -91);
+    }
+}
