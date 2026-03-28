@@ -71,6 +71,11 @@ mod tests {
     fn runtime_summary_line_keeps_alertable_bft_auth_and_recovery_counters_visible() {
         let mut metrics = RuntimeMetrics::new(4);
         metrics.apply_error_total = 9;
+        metrics.apply_error_preexec_conflict_miss_total = 2;
+        metrics.apply_error_version_conflict_total = 3;
+        metrics.apply_error_invalid_transition_total = 4;
+        metrics.apply_error_deadline_exceeded_total = 5;
+        metrics.apply_error_semantic_fail_total = 6;
         metrics.rollback_total = 2;
         metrics.timeout_migrated_total = 3;
         metrics.bft_observed_heights = 11;
@@ -88,6 +93,8 @@ mod tests {
 
         let mut stats = RuntimeSummaryStats::zeroed();
         stats.rollback_block_rate = 0.25;
+        stats.preexec_conflict_miss_share_bps = 2_222;
+        stats.apply_error_rollback_share_bps = 2_222;
         stats.recovery_error_rate = 0.5;
         stats.bft_commit_observed_height_rate_ppm = 636_363;
         stats.bft_skipped_height_total = 4;
@@ -117,7 +124,14 @@ mod tests {
         let summary = format_runtime_summary_line(&metrics, &stats);
 
         assert!(summary.contains("apply_error_total=9"));
+        assert!(summary.contains("apply_error_preexec_conflict_miss_total=2"));
+        assert!(summary.contains("preexec_conflict_miss_share_bps=2222"));
+        assert!(summary.contains("apply_error_version_conflict_total=3"));
+        assert!(summary.contains("apply_error_invalid_transition_total=4"));
+        assert!(summary.contains("apply_error_deadline_exceeded_total=5"));
+        assert!(summary.contains("apply_error_semantic_fail_total=6"));
         assert!(summary.contains("rollback_total=2"));
+        assert!(summary.contains("apply_error_rollback_share_bps=2222"));
         assert!(summary.contains("timeout_migrated_total=3"));
         assert!(summary.contains("recovery_error_rate=0.500000"));
         assert!(summary.contains("bft_commit_observed_height_rate_ppm=636363"));
