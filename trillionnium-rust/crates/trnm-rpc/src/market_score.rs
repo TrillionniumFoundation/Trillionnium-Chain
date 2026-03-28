@@ -254,4 +254,18 @@ mod tests {
         assert!(!breakdown.score_floor_applied);
         assert_eq!(market_reputation_score_delta(&breakdown), 0);
     }
+
+    #[test]
+    fn market_reputation_score_delta_keeps_zero_effective_reputation_neutral() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: 0,
+            base_score: 500,
+            reputation_reward: 77,
+            penalty: 88,
+            effective_score: 500,
+            score_floor_applied: false,
+        });
+
+        assert_eq!(delta, 0);
+    }
 }
