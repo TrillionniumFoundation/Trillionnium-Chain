@@ -6068,6 +6068,40 @@ fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_forged_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "genesis-proposal".into(),
+        committed: true,
+        state_root_hex: "ef".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some("01".repeat(32));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should summarize before the forged-prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "genesis WAL metadata with a forged prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_height_mismatch_surface() {
     let wal = WalMeta {
         height: 4,
