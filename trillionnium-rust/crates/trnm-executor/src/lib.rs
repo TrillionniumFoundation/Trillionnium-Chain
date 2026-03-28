@@ -2909,6 +2909,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_object_zero_secondary_stable_across_role_flips() {
+        let write_zero = tx(1, vec![o(0), o(11)], vec![o(17)]);
+        let read_zero = tx(2, vec![o(17)], vec![o(0), o(11)]);
+
+        // Object id 0 is a real lane key. Equivalent mixed domains touching
+        // {0, 11, 17} must keep the same secondary anchor even when read/write
+        // roles flip, otherwise hot-lane isolation can drift across retries.
+        assert_eq!(hot_bucket_keys(&write_zero), (0, 11));
+        assert_eq!(hot_bucket_keys(&read_zero), (0, 11));
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
