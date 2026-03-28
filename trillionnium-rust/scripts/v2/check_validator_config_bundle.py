@@ -108,6 +108,9 @@ def main(argv: list[str]) -> int:
         except tomllib.TOMLDecodeError as exc:
             fail(f"parse toml failed: {path}: {exc}")
 
+        if not isinstance(data, dict):
+            fail(f"invalid node config {path}: expected a top-level TOML table")
+
         missing = [field for field in REQUIRED_FIELDS if field not in data]
         if missing:
             fail(f"invalid node config {path}: missing required field(s): {', '.join(missing)}")
