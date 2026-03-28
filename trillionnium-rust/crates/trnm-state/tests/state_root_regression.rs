@@ -6610,6 +6610,10 @@ fn checkpoint_da_light_verifier_summary_accepts_max_length_canonical_wal_proposa
         "DA/light-verifier summary should report the exact max-length canonical WAL proposal_hash byte count"
     );
     assert!(
+        summary.contains("wal_proposal_hash_present=true"),
+        "DA/light-verifier summary should keep the max-length canonical WAL proposal surface explicitly marked present"
+    );
+    assert!(
         summary.contains("wal_proposal_hash_surface_canonical=true"),
         "DA/light-verifier summary should keep the WAL proposal surface marked canonical at the 256-byte boundary"
     );
