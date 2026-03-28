@@ -105,3 +105,33 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn recover_metadata_only_error_reports_multi_block_checkpoint_lag() {
+    let wal_dir = temp_wal_dir("recover-metadata-only-error-multi-block-lag");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 5,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: "h2".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: true,
+        wal_entries_retained: 4,
+        checkpoint_height_retained: Some(2),
+    };
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+    assert!(err.contains("retained 4 committed WAL entries through height 4"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 2 blocks"));
+    assert!(!err.contains("checkpoint lags retained WAL tip by 2 block)"));
+    assert!(err.contains("last retained checkpoint: 2"));
+    assert!(err.contains("next startup height: 5"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
