@@ -23,7 +23,7 @@ fn tx_query_parse_json_nested_result_payload() {
 }
 
 #[test]
-fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
+fn tx_query_parse_json_accepts_camel_transaction_and_hyphenated_hash_keys() {
     let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
     let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
     assert_eq!(parsed_camel.tx_hash, "0xabc");
@@ -33,6 +33,18 @@ fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
     let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
     assert_eq!(parsed_transaction.tx_hash, "0xdef");
     assert_eq!(parsed_transaction.status, "committed");
+
+    let hyphenated = "{\"result\":{\"tx-hash\":\"0xfeed01\",\"status\":\"success\"}}";
+    let parsed_hyphenated = parse_tx_query_response(hyphenated, "0xfallback").unwrap();
+    assert_eq!(parsed_hyphenated.tx_hash, "0xfeed01");
+    assert_eq!(parsed_hyphenated.status, "committed");
+
+    let transaction_hyphenated =
+        "{\"transaction-hash\":\"0xfeed02\",\"status\":\"committed\"}";
+    let parsed_transaction_hyphenated =
+        parse_tx_query_response(transaction_hyphenated, "0xfallback").unwrap();
+    assert_eq!(parsed_transaction_hyphenated.tx_hash, "0xfeed02");
+    assert_eq!(parsed_transaction_hyphenated.status, "committed");
 }
 
 #[test]

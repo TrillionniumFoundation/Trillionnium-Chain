@@ -66,8 +66,10 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     let direct = [
         "tx_hash",
         "txhash",
+        "tx-hash",
         "txHash",
         "transaction_hash",
+        "transaction-hash",
         "transactionHash",
     ];
     for key in direct {
@@ -351,13 +353,17 @@ pub(crate) fn parse_tx_query_response(
         let raw_tx_hash = primary
             .get("tx_hash")
             .or_else(|| primary.get("txhash"))
+            .or_else(|| primary.get("tx-hash"))
             .or_else(|| primary.get("txHash"))
             .or_else(|| primary.get("transaction_hash"))
+            .or_else(|| primary.get("transaction-hash"))
             .or_else(|| primary.get("transactionHash"))
             .or_else(|| payload.get("tx_hash"))
             .or_else(|| payload.get("txhash"))
+            .or_else(|| payload.get("tx-hash"))
             .or_else(|| payload.get("txHash"))
             .or_else(|| payload.get("transaction_hash"))
+            .or_else(|| payload.get("transaction-hash"))
             .or_else(|| payload.get("transactionHash"))
             .and_then(|x| x.as_str());
         let tx_hash = match raw_tx_hash {
