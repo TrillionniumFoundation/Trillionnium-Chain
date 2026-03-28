@@ -19250,6 +19250,52 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_hidden_char_challenger_identity_without_balance_mutation() {
+        let mut st = seeded_state();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(&worker_stake_lock_account(81), 10);
+
+        let task = TaskObject {
+            task_id: 81,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(false),
+            challenger: Some("challenger\u{200b}".into()),
+            version: 0,
+        };
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_lock = st.balance_of(&worker_stake_lock_account(81));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("resolve preflight must fail closed on hidden-char challenger identity");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(81)), before_lock);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
     fn timeout_preflight_rejects_challenger_without_posted_bond() {
         let st = seeded_state();
         let task = TaskObject {
