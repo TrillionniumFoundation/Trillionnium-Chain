@@ -180,24 +180,53 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
+    let lower = segment.to_ascii_lowercase();
+    lower.contains("%2f") || lower.contains("%5c")
+}
+
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
+        .and_then(|suffix| {
+            if suffix.is_empty() {
+                return None;
+            }
+            let trimmed = suffix.trim_end_matches('/');
+            let trailing_slashes = suffix.len().saturating_sub(trimmed.len());
+            if trailing_slashes > 1 {
+                return None;
+            }
+            Some(trimmed)
+        })
         .filter(|suffix| !suffix.is_empty())
         // Task/event lookups accept only a single decimal id path segment.
-        // Reject extra slash-delimited suffixes so malformed operator paths
-        // fail closed before numeric parsing.
+        // Reject raw or encoded slash-like separators so malformed operator
+        // paths fail closed before numeric parsing.
         .filter(|suffix| !suffix.contains('/'))
+        .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
+        .and_then(|suffix| {
+            if suffix.is_empty() {
+                return None;
+            }
+            let trimmed = suffix.trim_end_matches('/');
+            let trailing_slashes = suffix.len().saturating_sub(trimmed.len());
+            if trailing_slashes > 1 {
+                return None;
+            }
+            Some(trimmed)
+        })
         .filter(|suffix| !suffix.is_empty())
         // Capability subjects/tokens are single path segments. Reject extra
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
         .filter(|suffix| !suffix.contains('/'))
+        .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -468,12 +497,25 @@ mod tests {
         );
         assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
         assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-task/42//", "/query-task/"), None);
         assert_eq!(
             parse_path_u64_suffix("/query-task/42/extra", "/query-task/"),
             None
         );
         assert_eq!(
             parse_path_u64_suffix("/query-events/7/history", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-task/42\\extra", "/query-task/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7%2Fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7%5Chistory", "/query-events/"),
             None
         );
     }
@@ -503,6 +545,40 @@ mod tests {
             parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/alice//", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice\\extra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn ambiguous_path_segment_encoding_detects_encoded_separators() {
+        assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
     #[test]
