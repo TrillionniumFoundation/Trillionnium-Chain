@@ -374,6 +374,18 @@ mod tests {
             parse_path_u64_suffix("/query-events/42%5Chistory", "/query-events/"),
             None
         );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%2fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%5chistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%2Fhistory", "/query-events/"),
+            None
+        );
     }
 
     #[test]
@@ -432,6 +444,20 @@ mod tests {
         assert_eq!(
             parse_nonempty_path_suffix(
                 "/query-capability-audit/alice%5cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
                 "/query-capability-audit/"
             ),
             None
