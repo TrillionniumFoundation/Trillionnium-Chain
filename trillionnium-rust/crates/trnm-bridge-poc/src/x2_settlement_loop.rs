@@ -416,6 +416,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_directional_isolates_for_replay_stability() {
+        let raw = "target\u{2067} relay\u{2068} timeout\u{2069} signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_compensation_reason_strips_soft_hyphen_for_replay_stability() {
         let raw = "target\u{00AD}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
