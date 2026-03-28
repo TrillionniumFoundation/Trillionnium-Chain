@@ -1794,6 +1794,38 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_preserves_non_canonical_snapshot_hash_error_without_counter_drift() {
+        let mut snapshot = snapshot_with(100000, Some(100000), 10_000);
+        snapshot.snapshot_hash = format!(" {} ", snapshot.snapshot_hash.to_ascii_uppercase());
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some(
+                format!(
+                    "snapshot hash must be canonical lowercase+trim: raw= {} , canonical={}",
+                    snapshot.compute_hash().to_ascii_uppercase(),
+                    snapshot.compute_hash()
+                )
+                .as_str()
+            )
+        );
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_preserves_non_canonical_feed_id_error_without_counter_drift() {
         let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": " BTC/USD ",
