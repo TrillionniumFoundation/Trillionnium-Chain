@@ -47,3 +47,28 @@ fn fairness_marker_does_not_shadow_known_retry_id_admission() {
     assert_eq!(m.duplicates, 0);
     assert_eq!(m.backpressure_duplicates, 0);
 }
+
+#[test]
+fn stale_restored_retry_metadata_clears_before_fresh_ingress() {
+    let mut gate = AdmissionGate::new(2);
+
+    // Simulate restored/corrupted state that retained retry/fairness metadata even
+    // though no retry ids remain.
+    gate.retry_reservations = 2;
+    gate.last_fairness_deferred = Some(77);
+    gate.backpressured_fifo.extend([77, 88]);
+    gate.backpressured_ids.clear();
+
+    // Fresh ingress must stay on the no-retry fast path: admit successfully and
+    // scrub stale retry bookkeeping instead of inheriting a phantom deferral.
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+    assert_eq!(gate.queued(), 1);
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
+    assert!(gate.backpressured_fifo.is_empty());
+
+    let m = gate.metrics();
+    assert_eq!(m.accepted, 1);
+    assert_eq!(m.backpressured, 0);
+    assert_eq!(m.duplicates, 0);
+}
