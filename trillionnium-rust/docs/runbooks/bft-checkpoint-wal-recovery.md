@@ -52,6 +52,15 @@
 - `CheckpointMeta` 先按 `(height, state_root_hex, wal_entry_hash_hex)` 排序；
 - 因此 light-verifier / 审计脚本如果要输出“该高度的第一条/最后一条”摘要，必须先按上述顺序 canonicalize，再做索引或聚合。
 
+一个最小例子：
+
+- 若同一高度 `2` 下有两条 checkpoint：
+  - `(2, root-a, hash-a)`
+  - `(2, root-z, hash-b)`
+- canonical 排序后，light-verifier 的“first” 必须是 `(2, root-a, hash-a)`；
+- 同一份证据上的“last” 必须是 `(2, root-z, hash-b)`；
+- 不能把文件原始枚举顺序、TOML 反序列化顺序或哈希表遍历顺序当成 canonical 语义。
+
 否则，不同读取路径即便面对**同一组证据文件**，也可能因为枚举顺序不同而得出不同的“canonical checkpoint / predecessor linkage”摘要。
 
 ## 最小验证
