@@ -3211,9 +3211,20 @@ impl StateStore {
                     return;
                 }
 
+                if let Some((expected_key, _)) = governance_pinned_binding_for_id(snapshot_key_id) {
+                    if key != expected_key || snapshot.key != expected_key {
+                        self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                        self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
+                        if scrubs_resolve_quorum || expected_key == "resolve_authority" {
+                            self.pending_resolve_approvals.clear();
+                        }
+                        return;
+                    }
+                }
+
                 if key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID {
-                    self.clear_pending_gov_update_bindings(key, None);
-                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
+                    self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
                     if scrubs_resolve_quorum {
                         self.pending_resolve_approvals.clear();
                     }
@@ -3221,8 +3232,8 @@ impl StateStore {
                 }
 
                 if key == "emergency_pause" {
-                    self.clear_pending_gov_update_bindings(key, None);
-                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
+                    self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
                     if scrubs_resolve_quorum {
                         self.pending_resolve_approvals.clear();
                     }
@@ -10086,6 +10097,47 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "rejected pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "resolve_authority".into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 88_888,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            " emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: " emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "non-canonical reserved-key restore must not materialize the canonical emergency_pause slot"
+        );
+        assert!(
+            st.pending_gov_update(" emergency_pause").is_none(),
+            "non-canonical reserved-key restore must fail closed instead of persisting the alias slot"
+        );
+        assert!(
+            !st.pending_gov_updates.contains_key("resolve_authority"),
+            "reserved emergency_pause key-id rejection must scrub stale alias occupants even when the attempted key is non-canonical"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejecting a non-canonical reserved-key restore must not toggle effective emergency pause"
         );
     }
 
