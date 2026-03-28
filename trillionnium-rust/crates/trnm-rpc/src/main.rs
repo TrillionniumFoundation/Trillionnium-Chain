@@ -3238,6 +3238,7 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
             Some(trimmed)
         })
         .filter(|suffix| !suffix.is_empty())
+        .filter(|suffix| !matches!(*suffix, "." | ".."))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
@@ -5307,6 +5308,14 @@ mod tests {
                 "/query-capability-audit/alice\\extra",
                 "/query-capability-audit/"
             ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/.", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/..", "/query-capability-audit/"),
             None
         );
     }
