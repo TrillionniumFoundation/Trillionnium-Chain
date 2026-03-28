@@ -266,6 +266,8 @@ fn recover_resets_stale_consensus_wal_when_only_empty_checkpoint_file_exists() {
     assert!(entries.is_empty());
     let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
     assert!(checkpoints.is_empty());
+    assert!(checkpoint_file(&wal_dir).exists());
+    assert!(wal_file(&wal_dir).exists());
     let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
     let wal: ConsensusWal = toml::from_str(&wal).unwrap();
     assert_eq!(wal.next_height, 1);
