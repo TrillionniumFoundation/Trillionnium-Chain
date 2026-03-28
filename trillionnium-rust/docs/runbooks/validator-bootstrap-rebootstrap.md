@@ -30,6 +30,7 @@ Before starting, all of the following must be true:
 - the checked-out branch matches the lane/ticket branch exactly
 - `git status --short` is empty
 - the config bundle exists and is internally consistent for the node you intend to run
+- the intended genesis artifact/hash is named explicitly before startup or handoff
 - no second process is already using the same validator identity or listen ports
 - you can name the rollback action before touching the node
 
@@ -97,6 +98,7 @@ What this proves:
 - the named validator config bundle has no duplicate node identity or reused listen addresses
 - the validator config loader still compiles
 - operator-facing config validation logic is present before you attempt runtime startup
+- the bootstrap evidence can name which genesis artifact/hash this config bundle is expected to join
 
 If only shell automation changed, also syntax-check the touched script before using it:
 
@@ -162,6 +164,7 @@ When passing bootstrap status to another validator/operator, record:
 - worktree path
 - branch ref
 - HEAD commit
+- genesis artifact/hash expected by this bootstrap
 - config file used for bootstrap
 - commands run
 - pass/fail result
@@ -173,6 +176,7 @@ When passing bootstrap status to another validator/operator, record:
 
 Treat the bootstrap as **No-Go** if any of the following is true:
 - worktree or branch identity is not proven
+- the expected genesis artifact/hash cannot be named unambiguously
 - config files exist but were not actually the ones used at runtime
 - a second validator process may still own the signing context
 - bootstrap required unstaged edits or undocumented manual steps
