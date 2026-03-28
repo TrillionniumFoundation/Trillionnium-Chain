@@ -6416,6 +6416,28 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_
 }
 
 #[test]
+fn checkpoint_evidence_surface_accepts_max_length_canonical_wal_proposal_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "p".repeat(256),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "proposal_hash at the 256-byte canonical boundary should remain admissible for checkpoint/WAL audit surfaces"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_accepts_max_length_canonical_wal_proposal_hash_surface() {
     let wal = WalMeta {
         height: 4,
