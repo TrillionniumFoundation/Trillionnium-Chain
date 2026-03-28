@@ -153,6 +153,55 @@ mod tests {
     use super::*;
 
     #[test]
+    fn market_score_breakdown_normalizes_negative_manual_clamp_without_panic() {
+        let breakdown = market_score_breakdown(
+            50,
+            250,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: -10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 1);
+        assert_eq!(breakdown.base_score, 150);
+        assert_eq!(breakdown.reputation_reward, 7);
+        assert_eq!(breakdown.effective_score, 143);
+        assert_eq!(breakdown.penalty, 0);
+        assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
+    fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        });
+
+        assert_eq!(output.price_weight, 3);
+        assert_eq!(output.reputation_weight, 7);
+        assert_eq!(output.reputation_clamp, 1);
+        assert_eq!(output.max_effective_reputation, 1);
+        assert_eq!(output.min_effective_reputation, -1);
+    }
+
+    #[test]
+    fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: 1,
+            base_score: 0,
+            reputation_reward: (i128::MAX as u128) + 1,
+            penalty: 0,
+            effective_score: 0,
+            score_floor_applied: true,
+        });
+
+        assert_eq!(delta, i128::MIN);
+    }
+
+    #[test]
     fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
         let breakdown = market_score_breakdown(
             3,
