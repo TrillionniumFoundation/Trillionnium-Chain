@@ -166,6 +166,26 @@ fn settlement_request_collapses_interlinear_annotation_controls_in_revert_reason
 }
 
 #[test]
+fn settlement_audit_view_normalizes_plane14_tag_noise_from_legacy_revert_reason() {
+    let mut reverted = SettlementRequest::new(7, "0xlegacy-plane14".to_string());
+    reverted.status = BridgeStatus::Reverted(
+        "proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string(),
+    );
+
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xlegacy-plane14".to_string(),
+            status: "reverted",
+            is_terminal: true,
+            finalized_height: None,
+            revert_reason: Some("proof mismatch trail".to_string()),
+        }
+    );
+}
+
+#[test]
 fn settlement_request_rejects_non_canonical_subject_with_word_joiner() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     let token = CapabilityToken {
