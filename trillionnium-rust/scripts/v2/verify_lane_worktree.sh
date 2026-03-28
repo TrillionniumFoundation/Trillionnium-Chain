@@ -86,15 +86,31 @@ CURRENT_HEAD="$(git rev-parse HEAD)"
 }
 
 CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
-CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURRENT_WORKTREE_ROOT" '
-  BEGIN { in_match=0 }
-  /^worktree / {
-    path = substr($0, length("worktree ") + 1)
-    in_match = (path == target)
-  }
-  in_match { print }
-  in_match && /^$/ { exit }
-')"
+CURRENT_WORKTREE_ENTRY=""
+while IFS= read -r line || [ -n "$line" ]; do
+  case "$line" in
+    worktree\ *)
+      stanza_path="${line#worktree }"
+      stanza="${line}"
+      ;;
+    '')
+      if [ -n "${stanza:-}" ]; then
+        stanza_root="$(canonicalize_path "$stanza_path")" || stanza_root=""
+        if [ "$stanza_root" = "$CURRENT_WORKTREE_ROOT" ]; then
+          CURRENT_WORKTREE_ENTRY="$stanza"
+          break
+        fi
+      fi
+      stanza=""
+      stanza_path=""
+      ;;
+    *)
+      if [ -n "${stanza:-}" ]; then
+        stanza+=$'\n'"$line"
+      fi
+      ;;
+  esac
+done < <(git worktree list --porcelain; printf '\n')
 CURRENT_WORKTREE_ENTRY_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
 
 [ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
