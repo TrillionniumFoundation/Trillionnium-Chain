@@ -141,7 +141,15 @@ fn resolve_config_path(path: &str) -> PathBuf {
         .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
     let workspace_relative = workspace_root.join(requested);
     if workspace_relative.exists() {
-        return workspace_relative;
+        let canonical_workspace_root = workspace_root
+            .canonicalize()
+            .unwrap_or_else(|_| workspace_root.to_path_buf());
+        let canonical_workspace_relative = workspace_relative
+            .canonicalize()
+            .unwrap_or_else(|_| workspace_relative.clone());
+        if canonical_workspace_relative.starts_with(&canonical_workspace_root) {
+            return workspace_relative;
+        }
     }
 
     if requested.exists() {
@@ -198,6 +206,20 @@ mod tests {
         assert_eq!(cfg.node_id, "node-a");
         assert_eq!(cfg.rpc_addr, "127.0.0.1:7000");
         assert_eq!(cfg.p2p_addr, "127.0.0.1:7001");
+    }
+
+    #[test]
+    fn resolve_config_path_does_not_anchor_parent_traversal_outside_workspace_root() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let outside_path = workspace_root.join("../configs/node1.toml");
+        assert!(outside_path.exists(), "expected parent traversal fixture to exist");
+
+        let resolved = resolve_config_path("../configs/node1.toml");
+        assert_eq!(resolved, std::path::PathBuf::from("../configs/node1.toml"));
     }
 
     #[test]
