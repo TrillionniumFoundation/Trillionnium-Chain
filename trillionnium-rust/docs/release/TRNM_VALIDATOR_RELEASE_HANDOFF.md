@@ -285,7 +285,7 @@ printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
 awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command)=/ { print }' "$summary_path"
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
+awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
 Interpretation rule:

@@ -134,6 +134,7 @@ if awk -F= '$1 == "replay_env_trnm_challenge_reexec_entry" { found=1; exit } END
   summary_replay_env_challenge_reexec_entry="$(require_key "$SUMMARY_PATH" replay_env_trnm_challenge_reexec_entry)"
 fi
 
+manifest_toplevel="$(require_key "$MANIFEST_PATH" git_toplevel)"
 manifest_branch="$(require_key "$MANIFEST_PATH" git_branch)"
 manifest_head="$(require_key "$MANIFEST_PATH" git_head)"
 manifest_head_state="$(require_key "$MANIFEST_PATH" git_head_state)"
@@ -172,6 +173,7 @@ fi
 if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
   printf 'assigned_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
 fi
+printf 'manifest_git_toplevel=%s\n' "$manifest_toplevel"
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
