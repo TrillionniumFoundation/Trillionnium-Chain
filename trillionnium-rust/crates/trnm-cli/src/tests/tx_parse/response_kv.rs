@@ -122,6 +122,15 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
     let compact = "transactionHash=0xdef456\nstatus=committed\n";
     let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
     assert_eq!(parsed_compact.tx_hash, "0xdef456");
+
+    let hyphen = "tx-hash=0xface789\nstatus=committed\n";
+    let parsed_hyphen = parse_tx_query_response(hyphen, "0xfallback").unwrap();
+    assert_eq!(parsed_hyphen.tx_hash, "0xface789");
+
+    let transaction_hyphen = "transaction-hash: 0xdecafbad\nstatus=committed\n";
+    let parsed_transaction_hyphen =
+        parse_tx_query_response(transaction_hyphen, "0xfallback").unwrap();
+    assert_eq!(parsed_transaction_hyphen.tx_hash, "0xdecafbad");
 }
 
 #[test]

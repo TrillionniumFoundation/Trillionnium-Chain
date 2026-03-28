@@ -91,7 +91,8 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some((key, value)) = parse_kv_line(line) {
             match key.as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     if let Some(normalized) = normalize_tx_hash(&value) {
                         return Some(normalized);
                     }
@@ -114,9 +115,8 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
             match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
-                    normalize_tx_hash(v)
-                }
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => normalize_tx_hash(v),
                 _ => None,
             }
         }) {
@@ -137,7 +137,8 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
                 continue;
             }
             match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     if let Some(normalized) = normalize_tx_hash(value) {
                         return Some(normalized);
                     }
@@ -423,11 +424,10 @@ pub(crate) fn parse_tx_query_response(
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
-                    match normalize_tx_hash(&value) {
-                        Some(normalized) => tx_hash = Some(normalized),
-                        None => bail!("invalid tx_hash field in tx query response"),
-                    }
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => match normalize_tx_hash(&value) {
+                    Some(normalized) => tx_hash = Some(normalized),
+                    None => bail!("invalid tx_hash field in tx query response"),
                 }
                 "status" | "tx_status" | "txstatus" | "transaction_status"
                 | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"

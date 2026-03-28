@@ -43,6 +43,18 @@ fn extract_tx_hash_accepts_case_insensitive_keys_and_colon_separator() {
 }
 
 #[test]
+fn extract_tx_hash_accepts_hyphenated_key_aliases() {
+    assert_eq!(
+        extract_tx_hash("tx-hash=0xCAFE01").as_deref(),
+        Some("0xcafe01")
+    );
+    assert_eq!(
+        extract_tx_hash("transaction-hash: 0xBEEF02").as_deref(),
+        Some("0xbeef02")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_spaced_separators() {
     assert_eq!(
         extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
