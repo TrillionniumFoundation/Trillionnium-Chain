@@ -17,6 +17,14 @@ REPLAY_COMMAND="env RUNS='${RUNS}' ./scripts/check_bft_restart_recovery.sh"
 ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR") && find $(printf '%q' "$OUT_DIR") -maxdepth 1 -type f \\( -name 'bft-restart-pre-${TS}-*.log' -o -name 'bft-restart-post-${TS}-*.log' \\) -delete"
 mkdir -p "$OUT_DIR" "$WAL_DIR"
 
+cleanup_bg_node() {
+  if [ -n "${pid:-}" ]; then
+    kill -9 "$pid" >/dev/null 2>&1 || true
+    wait "$pid" >/dev/null 2>&1 || true
+    pid=""
+  fi
+}
+
 pass=0
 for i in $(seq 1 "$RUNS"); do
   pre="$OUT_DIR/bft-restart-pre-${TS}-${i}.log"
@@ -37,13 +45,14 @@ for i in $(seq 1 "$RUNS"); do
     --bft-fault-rounds 1 \
     --bft-wal-dir "$WAL_DIR" >"$pre" 2>&1 &
   pid=$!
+  trap cleanup_bg_node EXIT INT TERM
 
   for _ in $(seq 1 40); do
     [[ -f "$wal_file" ]] && break
     sleep 0.05
   done
-  kill -9 "$pid" >/dev/null 2>&1 || true
-  wait "$pid" >/dev/null 2>&1 || true
+  cleanup_bg_node
+  trap - EXIT INT TERM
 
   if [[ ! -f "$wal_file" ]]; then
     echo "[FAIL] restart recovery did not produce WAL run=$i wal=$wal_file pre=$pre" >&2
