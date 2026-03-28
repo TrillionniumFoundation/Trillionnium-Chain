@@ -1658,6 +1658,10 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         args.pouw_timeout_scan_every_blocks > 0,
         "invalid startup args: pouw_timeout_scan_every_blocks must be at least 1"
     );
+    anyhow::ensure!(
+        args.bft_max_rounds > 0,
+        "invalid startup args: bft_max_rounds must be at least 1"
+    );
     Ok(())
 }
 
@@ -3729,6 +3733,41 @@ mod tests {
         assert!(err
             .to_string()
             .contains("overflows 3f + 1 quorum sizing"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_zero_bft_max_rounds() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 0,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("zero bft_max_rounds must fail closed");
+        assert!(err
+            .to_string()
+            .contains("bft_max_rounds must be at least 1"));
     }
 
     #[test]
