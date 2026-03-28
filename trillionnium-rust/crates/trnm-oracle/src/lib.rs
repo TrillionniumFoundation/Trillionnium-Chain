@@ -780,6 +780,19 @@ mod tests {
     }
 
     #[test]
+    fn accepts_deserialized_snapshot_timestamp_exactly_at_window_end_boundary() {
+        let p = policy();
+        let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
+        snap.window_start_ms = 1_000;
+        snap.window_end_ms = 2_000;
+        snap.snapshot_ts_ms = 2_000;
+        snap.snapshot_hash = snap.compute_hash();
+
+        p.validate_snapshot(&snap, 2_000)
+            .expect("deserialized boundary-equal window end timestamp should validate");
+    }
+
+    #[test]
     fn rejects_deserialized_invalid_window_even_with_matching_hash() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
