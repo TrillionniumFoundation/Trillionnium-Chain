@@ -10,9 +10,11 @@ OUT_DIR="$ROOT/run"
 TS="$(date -u +%Y%m%d-%H%M%S)"
 REPORT="$OUT_DIR/bft-restart-recovery-$TS.txt"
 WAL_DIR="$OUT_DIR/consensus-wal-restart-$TS"
+PRE_LOG_GLOB="$OUT_DIR/bft-restart-pre-${TS}-*.log"
+POST_LOG_GLOB="$OUT_DIR/bft-restart-post-${TS}-*.log"
 GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 REPLAY_COMMAND="env RUNS='${RUNS}' ./scripts/check_bft_restart_recovery.sh"
-ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR")"
+ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR") && find $(printf '%q' "$OUT_DIR") -maxdepth 1 -type f \\( -name 'bft-restart-pre-${TS}-*.log' -o -name 'bft-restart-post-${TS}-*.log' \\) -delete"
 mkdir -p "$OUT_DIR" "$WAL_DIR"
 
 pass=0
