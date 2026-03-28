@@ -70,7 +70,7 @@ For multi-worktree validator rehearsals, prefer the shared fail-closed helper in
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_BRANCH_REF="lane/assigned-branch" # or refs/heads/lane/assigned-branch
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
