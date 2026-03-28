@@ -59,6 +59,7 @@ Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious 
 - a path-resolved `summary.txt` from `run/health/evidence-*`
 - a path-resolved `manifest.txt` from `release/rc-*`
 - matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, and `git_worktree_branch_ref=` across those artifacts
+- preserved `git_status_summary=clean` and generated timestamps next to those identity fields, so operators can prove the rehearsal came from a clean tree and quote the exact artifact generation moment instead of relying on shell memory
 - a direct comparison showing the artifact `git_worktree_path=` / `git_worktree_branch_ref=` also match the lane-assigned path/ref, not just each other
 - preserved `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` fields next to the quoted PASS/GO language
 - verbatim `rollback_command=` and `replay_command=` copied from the generated artifact, not rewritten from shell memory
@@ -408,7 +409,7 @@ Anything not required for the chosen day-1 promise must not be allowed to silent
 - adversarial spam/fairness rehearsal
 - incident rollback drill
 - go/no-go document for public launch
-- one path-resolved rehearsal evidence bundle that names the exact `summary.txt` / `manifest.txt` used for the decision, together with matching `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields; prefer `./scripts/v2/extract_release_handoff_fields.sh` so the handoff fails closed on missing artifacts or cross-artifact identity drift instead of relying on manually recopied field snippets
+- one path-resolved rehearsal evidence bundle that names the exact `summary.txt` / `manifest.txt` used for the decision, together with matching `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields; prefer `./scripts/v2/extract_release_handoff_fields.sh` so the handoff fails closed on missing artifacts or cross-artifact identity drift instead of relying on manually recopied field snippets
 
 Interpretation rule:
 - a Week-4 rehearsal is not "mainnet-ready evidence" unless the operator can point to concrete artifact paths and those identity fields agree across the local evidence summary and RC manifest;
