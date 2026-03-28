@@ -1825,8 +1825,9 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
         );
     }
 
-    let mut all_keys: Vec<u64> = write_keys.clone();
-    all_keys.extend(read_keys.iter());
+    let mut all_keys: Vec<u64> = Vec::with_capacity(write_keys.len() + read_keys.len());
+    all_keys.extend(write_keys.iter().copied());
+    all_keys.extend(read_keys.iter().copied());
     all_keys.sort_unstable();
     all_keys.dedup();
     if all_keys.is_empty() {
