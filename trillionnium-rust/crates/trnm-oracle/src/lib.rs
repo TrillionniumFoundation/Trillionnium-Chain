@@ -927,6 +927,45 @@ mod tests {
     }
 
     #[test]
+    fn rejects_duplicate_sources_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink"), source("coingecko")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot build should reject duplicate source ids");
+
+        assert_eq!(err, OracleError::DuplicateSources);
+    }
+
+    #[test]
+    fn sorts_sources_canonically_when_building_snapshot() {
+        let snapshot = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("pyth"), source("chainlink"), source("coingecko")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build should canonicalize source ordering");
+
+        assert_eq!(
+            snapshot.sources,
+            vec![source("chainlink"), source("coingecko"), source("pyth")]
+        );
+    }
+
+    #[test]
     fn rejects_sample_count_below_source_cardinality() {
         let err = OracleSnapshot::new(
             "btc/usd",
