@@ -1510,6 +1510,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain whitespace",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.chars().any(char::is_control),
+        "invalid node config {}: rpc_addr must not contain control characters",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1520,6 +1525,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_whitespace),
         "invalid node config {}: p2p_addr must not contain whitespace",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.chars().any(char::is_control),
+        "invalid node config {}: p2p_addr must not contain control characters",
         path
     );
 
@@ -3074,6 +3084,35 @@ mod tests {
         assert!(err
             .to_string()
             .contains("node_id must not contain control characters"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_control_characters_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657\u{0007}".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr control characters must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not contain control characters"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656\u{001b}".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr control characters must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not contain control characters"));
     }
 
     #[test]
