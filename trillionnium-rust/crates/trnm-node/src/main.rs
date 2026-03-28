@@ -4985,6 +4985,30 @@ mod tests {
     }
 
     #[test]
+    fn consensus_summary_incident_bundle_keeps_height_counters_after_recovery_rate() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+            "bft_committed_heights",
+            "bft_commit_observed_height_rate_ppm",
+        ];
+
+        assert_eq!(incident_bundle.len(), 8);
+        assert!(incident_bundle[4].ends_with("_rate"));
+        assert!(incident_bundle[5].ends_with("_heights"));
+        assert!(incident_bundle[6].ends_with("_heights"));
+        assert!(incident_bundle[7].ends_with("_rate_ppm"));
+        assert_eq!(incident_bundle[4], "recovery_error_rate");
+        assert_eq!(incident_bundle[5], "bft_observed_heights");
+        assert_eq!(incident_bundle[6], "bft_committed_heights");
+        assert_eq!(incident_bundle[7], "bft_commit_observed_height_rate_ppm");
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
