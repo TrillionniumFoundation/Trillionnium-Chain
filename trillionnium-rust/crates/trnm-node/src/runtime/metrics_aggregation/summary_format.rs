@@ -194,4 +194,40 @@ mod tests {
         assert!(summary.contains("bft_round_change_backoff_density_avg_ms=17"));
         assert!(summary.contains("bft_round_change_backoff_max_ms=17"));
     }
+
+    #[test]
+    fn runtime_summary_line_keeps_recovery_and_bft_auth_signal_cluster_in_operator_order() {
+        let mut metrics = RuntimeMetrics::new(2);
+        metrics.apply_error_total = 4;
+        metrics.rollback_total = 1;
+        metrics.timeout_migrated_total = 2;
+        metrics.bft_observed_heights = 5;
+        metrics.bft_committed_heights = 3;
+        metrics.bft_double_vote_total = 7;
+        metrics.bft_auth_reject_bad_sig_total = 11;
+        metrics.bft_auth_reject_replay_total = 13;
+        metrics.bft_auth_reject_stale_nonce_total = 17;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.recovery_error_rate = 0.25;
+        stats.bft_commit_observed_height_rate_ppm = 600_000;
+        stats.bft_skipped_height_total = 2;
+        stats.bft_skipped_observed_height_rate_ppm = 400_000;
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        let recovery_idx = summary.find("rollback_total=1").unwrap();
+        let timeout_idx = summary.find("timeout_migrated_total=2").unwrap();
+        let error_rate_idx = summary.find("recovery_error_rate=0.250000").unwrap();
+        let double_vote_idx = summary.find("bft_double_vote_total=7").unwrap();
+        let bad_sig_idx = summary.find("bft_auth_reject_bad_sig_total=11").unwrap();
+        let replay_idx = summary.find("bft_auth_reject_replay_total=13").unwrap();
+        let stale_nonce_idx = summary.find("bft_auth_reject_stale_nonce_total=17").unwrap();
+
+        assert!(recovery_idx < timeout_idx);
+        assert!(timeout_idx < error_rate_idx);
+        assert!(double_vote_idx < bad_sig_idx);
+        assert!(bad_sig_idx < replay_idx);
+        assert!(replay_idx < stale_nonce_idx);
+    }
 }
