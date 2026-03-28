@@ -101,6 +101,11 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
         );
     }
     fs::write(&f, format!("{}\n", priv_hex))?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&f, fs::Permissions::from_mode(0o600))?;
+    }
     Ok(f)
 }
 

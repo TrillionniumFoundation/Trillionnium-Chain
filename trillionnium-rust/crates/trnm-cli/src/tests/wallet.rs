@@ -112,6 +112,35 @@ fn write_key_refuses_to_overwrite_existing_wallet_file() {
 
 #[test]
 #[cfg(unix)]
+fn write_key_sets_owner_only_permissions() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let unique = format!(
+        "trnm-cli-wallet-perm-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+
+    let path = write_key(
+        &store,
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap();
+    let mode = std::fs::metadata(&path).unwrap().permissions().mode() & 0o777;
+    assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
+
+    let _ = std::fs::remove_file(&path);
+    let _ = std::fs::remove_dir(&store);
+}
+
+#[test]
+#[cfg(unix)]
 fn write_key_refuses_existing_dangling_symlink_wallet_path() {
     use std::os::unix::fs::symlink;
 
