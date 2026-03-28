@@ -763,6 +763,42 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_fail_closes_in_zero_capacity_hard_stop_mode() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_zero_reserve_recloses_after_critical_spillover_consumes_last_normal_slot() {
         let mut g = LaneAdmissionGate::new(2, 0);
 
