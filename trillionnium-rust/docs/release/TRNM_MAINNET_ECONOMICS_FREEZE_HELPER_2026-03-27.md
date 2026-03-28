@@ -107,6 +107,10 @@ consistency boundaries:
 - `cargo test -p trnm-mempool lane_qos_snapshot_zero_capacity_stability_bound -q`
   - proves hard-stop mode keeps public admission closed even under repeated cross-class
     probe noise
+- `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_refill_boundary_bound -q`
+  - proves duplicate sponsor/free-ingress probe noise stays classification-only while
+    reserve-only shared-lane mode still exposes the last real refill slot until fresh
+    work actually consumes it
 - `cargo test -p trnm-state retention_restore_regression -q`
   - proves retained proof/collateral metadata fails closed when challenge-window,
     challenger, or treasury identity snapshots are non-canonical
