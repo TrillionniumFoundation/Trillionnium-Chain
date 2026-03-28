@@ -43,6 +43,13 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     return value
 
 
+def validate_node_id(node_id: str, path: Path) -> None:
+    if any(ch.isspace() for ch in node_id):
+        fail(f"invalid node config {path}: node_id must not contain whitespace")
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in node_id):
+        fail(f"invalid node config {path}: node_id must not contain control characters")
+
+
 def validate_listener_addr(addr: str, field: str, path: Path) -> None:
     parsed = urlsplit(f"tcp://{addr}")
 
@@ -93,6 +100,7 @@ def main(argv: list[str]) -> int:
         rpc_addr = trimmed_string(data.get("rpc_addr"), "rpc_addr", path)
         p2p_addr = trimmed_string(data.get("p2p_addr"), "p2p_addr", path)
 
+        validate_node_id(node_id, path)
         validate_listener_addr(rpc_addr, "rpc_addr", path)
         validate_listener_addr(p2p_addr, "p2p_addr", path)
 
