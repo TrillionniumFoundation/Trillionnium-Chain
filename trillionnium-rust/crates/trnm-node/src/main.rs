@@ -3399,6 +3399,28 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv4_broadcast_p2p_listener_after_operator_trimming() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-broadcast-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \" 255.255.255.255:26656\\t\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("trimmed broadcast p2p listener must fail closed");
+        assert!(err
+            .to_string()
+            .contains("p2p_addr must not use the IPv4 broadcast address"));
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn validate_startup_args_rejects_zero_validators() {
         let args = Args {
             config: "configs/node1.toml".into(),
