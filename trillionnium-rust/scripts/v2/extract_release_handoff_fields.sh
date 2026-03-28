@@ -105,6 +105,14 @@ summary_evidence_scope="$(require_key "$SUMMARY_PATH" evidence_scope)"
 summary_result="$(require_key "$SUMMARY_PATH" result)"
 summary_rollback="$(require_key "$SUMMARY_PATH" rollback_command)"
 summary_replay="$(require_key "$SUMMARY_PATH" replay_command)"
+summary_challenge_reexec_entry=""
+summary_replay_env_challenge_reexec_entry=""
+if awk -F= '$1 == "challenge_reexec_entry" { found=1; exit } END { exit found ? 0 : 1 }' "$SUMMARY_PATH"; then
+  summary_challenge_reexec_entry="$(require_key "$SUMMARY_PATH" challenge_reexec_entry)"
+fi
+if awk -F= '$1 == "replay_env_trnm_challenge_reexec_entry" { found=1; exit } END { exit found ? 0 : 1 }' "$SUMMARY_PATH"; then
+  summary_replay_env_challenge_reexec_entry="$(require_key "$SUMMARY_PATH" replay_env_trnm_challenge_reexec_entry)"
+fi
 
 manifest_branch="$(require_key "$MANIFEST_PATH" git_branch)"
 manifest_head="$(require_key "$MANIFEST_PATH" git_head)"
@@ -153,6 +161,12 @@ printf 'truth_source=%s\n' "$summary_truth_source"
 printf 'historical_evidence_only=%s\n' "$summary_historical_evidence_only"
 printf 'evidence_scope=%s\n' "$summary_evidence_scope"
 printf 'summary_result=%s\n' "$summary_result"
+if [ -n "$summary_challenge_reexec_entry" ]; then
+  printf 'summary_challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"
+fi
+if [ -n "$summary_replay_env_challenge_reexec_entry" ]; then
+  printf 'summary_replay_env_trnm_challenge_reexec_entry=%s\n' "$summary_replay_env_challenge_reexec_entry"
+fi
 printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
 printf 'manifest_rollback_command=%s\n' "$manifest_rollback"
