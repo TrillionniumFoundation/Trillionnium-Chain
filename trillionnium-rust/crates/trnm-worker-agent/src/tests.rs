@@ -142,6 +142,19 @@ fn zero_backoff_delay_remains_zero_across_retries() {
 }
 
 #[test]
+fn backoff_delay_stays_monotonic_after_saturation() {
+    let near_cap = backoff_delay_ms(1_000_000, 62);
+    let beyond_cap = backoff_delay_ms(1_000_000, 63);
+    let max_attempt = backoff_delay_ms(1_000_000, u32::MAX);
+
+    assert_eq!(near_cap, u64::MAX);
+    assert_eq!(beyond_cap, u64::MAX);
+    assert_eq!(max_attempt, u64::MAX);
+    assert!(near_cap <= beyond_cap);
+    assert!(beyond_cap <= max_attempt);
+}
+
+#[test]
 fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-duplicate-counter-{}-{}.txt",
