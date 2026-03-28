@@ -161,6 +161,37 @@ fn recover_metadata_only_error_reports_missing_retained_checkpoint_metadata() {
 }
 
 #[test]
+fn recover_metadata_only_error_reports_fully_checkpointed_retained_tip_without_false_lag_hint() {
+    let wal_dir =
+        temp_wal_dir("recover-metadata-only-error-fully-checkpointed-retained-tip");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 3,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: "h2".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(2),
+    };
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+    assert!(err.contains("retained 2 committed WAL entries through height 2"));
+    assert!(err.contains("last retained checkpoint: 2"));
+    assert!(err.contains("next startup height: 3"));
+    assert!(!err.contains("checkpoint lags retained WAL tip"));
+    assert!(!err.contains("no retained checkpoint metadata"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
 fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
     let wal_dir = temp_wal_dir("recover-guard-metadata-only");
     fs::create_dir_all(&wal_dir).unwrap();
