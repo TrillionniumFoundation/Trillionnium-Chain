@@ -6201,6 +6201,10 @@ fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_m
         !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
         "checkpoint evidence surfaces must reject overlong WAL proposal identities even when state_root_hex and wal_entry_hash_hex otherwise match canonical digests"
     );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_none(),
+        "DA/light-verifier summaries must fail closed on overlong WAL proposal identities instead of surfacing non-canonical checkpoint evidence linkage"
+    );
 }
 
 #[test]
