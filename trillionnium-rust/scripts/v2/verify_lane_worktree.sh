@@ -16,6 +16,13 @@ EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
 
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --expected-worktree-root)
@@ -47,6 +54,7 @@ done
 
 [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root" >&2; usage; exit 2; }
 [ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref" >&2; usage; exit 2; }
+EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2

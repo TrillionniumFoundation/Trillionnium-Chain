@@ -21,7 +21,15 @@ replay_command="env TZ='${TZ}' LC_ALL='${LC_ALL}' LANG='${LANG}'"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
   replay_command="$replay_command EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
 fi
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
+
 if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
   replay_command="$replay_command EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
 fi
 if [ -n "${EXPECTED_HEAD:-}" ]; then
