@@ -9088,6 +9088,23 @@ mod tests {
     }
 
     #[test]
+    fn governance_pinned_key_registry_rejects_uppercase_alias_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[("Emergency_Pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("uppercase-padded pinned governance keys must fail closed");
+
+        assert!(
+            err.contains("pinned-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_validator_registry_rejects_membership_drift_fail_closed() {
         let err = validate_governance_registry_shape_lists(
             &["max_block_ms", "max_parallel_workers"],
