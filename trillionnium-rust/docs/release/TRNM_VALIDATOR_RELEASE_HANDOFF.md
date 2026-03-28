@@ -66,11 +66,11 @@ Interpretation rule:
 - `git status --short` must be empty for clean-tree release rehearsals
 - `git worktree list --porcelain` should show the current path attached to the branch you intend to rehearse; if branch/path pairing is different from expectation, stop instead of "fixing it later"
 
-For multi-worktree validator rehearsals, prefer the shared fail-closed helper instead of eyeballing the shell prompt or rewriting the assertion block by hand:
+For multi-worktree validator rehearsals, prefer the shared fail-closed helper instead of eyeballing the shell prompt or rewriting the assertion block by hand. **Important:** set the expected values from the ticket/lane assignment, not by re-reading the current shell state, otherwise the check only proves the current worktree is self-consistent:
 
 ```bash
-EXPECTED_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
-EXPECTED_BRANCH_REF="refs/heads/$(git branch --show-current)"
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
