@@ -131,7 +131,8 @@ pub(crate) fn task_metering_query_response(
         worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
         worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
     };
-    if policy.challenge_success_bounty_per_work_unit_den == 0
+    if policy.snapshot_version == 0
+        || policy.challenge_success_bounty_per_work_unit_den == 0
         || policy.worker_completion_bonus_per_work_unit_den == 0
         || policy.worker_slash_rebate_per_work_unit_den == 0
     {
@@ -192,6 +193,6 @@ pub(crate) fn query_task_from_state_snapshot(
             .metadata
             .as_ref()
             .and_then(|metadata| metadata.metering.as_ref())
-            .map(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
+            .and_then(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
     })
 }
