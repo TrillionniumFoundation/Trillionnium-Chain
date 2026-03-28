@@ -283,6 +283,25 @@ fn hot_bucket_interleave_short_circuits_single_mixed_domain_lane_without_role_fl
 }
 
 #[test]
+fn hot_bucket_interleave_ignores_empty_access_noise_around_single_signaled_lane() {
+    let mut txs = vec![
+        tx(91, vec![], vec![]),      // empty-access noise would default to bucket 0
+        tx(92, vec![], vec![o(1)]),  // real signaled lane bucket 1 under fanout=4
+        tx(93, vec![], vec![]),      // same empty-access noise
+        tx(94, vec![], vec![o(5)]),  // same real lane bucket 1 under fanout=4
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs carry no conflict-domain hint. If all signaled traffic is
+    // still a single lane, preserve ingress order instead of letting bucket-0
+    // empties manufacture a fake second lane and perturb isolation.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![91, 92, 93, 94]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);

@@ -97,6 +97,8 @@ pub(crate) fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             let mut bucket_depths = vec![0usize; buckets_n];
             let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
+            let mut signaled_non_empty_buckets = 0usize;
+            let mut signaled_bucket_seen = vec![false; buckets_n];
 
             for tx in txs.iter() {
                 // First pass: count occupancy only. This lets hotspot/singleton
@@ -107,12 +109,27 @@ pub(crate) fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     non_empty_buckets += 1;
                 }
                 bucket_depths[bucket] += 1;
+
+                // Empty-access txs do not carry any conflict-domain hint. Keep them
+                // from fabricating an extra bucket-0 lane in mixed batches when all
+                // signaled traffic still belongs to one actual hot bucket.
+                if !(tx.read_set.is_empty() && tx.write_set.is_empty()) && !signaled_bucket_seen[bucket]
+                {
+                    signaled_bucket_seen[bucket] = true;
+                    signaled_non_empty_buckets += 1;
+                }
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
             // round-robin interleave would reproduce the original order while paying
             // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
             if non_empty_buckets <= 1 {
+                return;
+            }
+            // Mixed batches with only one real conflict-domain lane and some empty-access
+            // txs also gain nothing from interleave. Empty txs should not synthesize a
+            // second bucket-0 lane that perturbs otherwise stable single-lane ingress.
+            if signaled_non_empty_buckets <= 1 {
                 return;
             }
             // Free-ingress fast path: when every non-empty bucket is singleton,
