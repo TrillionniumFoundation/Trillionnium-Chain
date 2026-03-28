@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
 OWNER="${1:-ProfAlexQI}"
 REPO="${2:-TrillionniumChain}"
 REQUIRED_STREAK="${3:-3}"
 
-OUT_DIR="$(pwd)/run/health"
+OUT_DIR="$ROOT/run/health"
 mkdir -p "$OUT_DIR"
-TS="$(date +%Y%m%d-%H%M%S)"
+TS="$(date -u +%Y%m%d-%H%M%S)"
 OUT_FILE="$OUT_DIR/industrial-readiness-${TS}.txt"
 
 {
