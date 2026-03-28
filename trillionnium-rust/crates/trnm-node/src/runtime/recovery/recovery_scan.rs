@@ -243,3 +243,52 @@ pub(crate) fn ensure_recoverable_wal_state(
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn retained_wal_summary_reports_missing_checkpoint_and_truncation() {
+        let recovered = RecoveredWalState {
+            next_height: 4,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: None,
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 1 committed WAL entry through height 3 (no retained checkpoint metadata); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_includes_operator_visible_summary() {
+        let recovered = RecoveredWalState {
+            next_height: 6,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 4,
+                state_root_hex: "root-4".into(),
+                wal_entry_hash_hex: "hash-4".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 5,
+            checkpoint_height_retained: Some(4),
+        };
+
+        let message = metadata_only_recovery_error(Path::new("/tmp/trnm-runtime-wal"), &recovered);
+
+        assert!(message.contains("refusing metadata-only recovery from /tmp/trnm-runtime-wal"));
+        assert!(message.contains("retained 5 committed WAL entries through height 5"));
+        assert!(message.contains("checkpoint lags retained WAL tip by 1 block"));
+        assert!(message.contains("repaired WAL tail required truncation"));
+        assert!(message.contains("last retained checkpoint: 4"));
+        assert!(message.contains("next startup height: 6"));
+    }
+}
