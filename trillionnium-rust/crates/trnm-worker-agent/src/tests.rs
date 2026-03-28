@@ -118,6 +118,21 @@ fn duplicate_commit_still_executes_reveal_gate() {
 }
 
 #[test]
+fn slo_violation_commit_skips_reveal_execution_gate() {
+    let commit_res = AdapterExecResult {
+        ok: false,
+        rc: RC_SLO_VIOLATION,
+        tx_hash: None,
+        terminal: true,
+    };
+
+    assert!(
+        !should_execute_reveal(&commit_res),
+        "slo_violation must not be treated as an idempotent duplicate"
+    );
+}
+
+#[test]
 fn backoff_delay_is_exponential_and_saturating() {
     assert_eq!(backoff_delay_ms(200, 0), 200);
     assert_eq!(backoff_delay_ms(200, 1), 400);
