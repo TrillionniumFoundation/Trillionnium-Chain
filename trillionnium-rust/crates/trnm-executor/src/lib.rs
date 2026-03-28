@@ -3368,6 +3368,28 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_short_circuits_single_bucket_hotspot_under_clamped_fanout() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+        let mut txs = vec![
+            tx(65, vec![], vec![o(4)]),
+            tx(66, vec![], vec![o(8)]),
+            tx(67, vec![], vec![o(12)]),
+            tx(68, vec![], vec![o(16)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // When ops clamps fanout below the default, a batch that still collapses
+        // into one effective bucket should remain in ingress order rather than
+        // paying round-robin overhead for a degenerate lane split.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![65, 66, 67, 68]
+        );
+    }
+
+    #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
