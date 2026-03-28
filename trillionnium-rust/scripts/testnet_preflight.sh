@@ -44,6 +44,20 @@ if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
+if [ -n "$CURRENT_WORKTREE_BRANCH_REF" ] && [ "$GIT_BRANCH_RAW" != "HEAD" ]; then
+  EXPECTED_WORKTREE_BRANCH_REF="refs/heads/$GIT_BRANCH_RAW"
+  if [ "$CURRENT_WORKTREE_BRANCH_REF" = "$EXPECTED_WORKTREE_BRANCH_REF" ]; then
+    WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+else
+  EXPECTED_WORKTREE_BRANCH_REF=""
+  WORKTREE_BRANCH_REF_MATCH="unknown"
+fi
+REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
+EVIDENCE_SCOPE="local_testnet_preflight_not_current_release_ready_claim"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
@@ -113,12 +127,17 @@ git_head_state=$GIT_HEAD_STATE
 git_status_summary=$GIT_STATUS_SUMMARY
 git_worktree_path=$GIT_TOPLEVEL
 git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+git_expected_worktree_branch_ref=${EXPECTED_WORKTREE_BRANCH_REF:-<unknown>}
+git_worktree_branch_ref_match=$WORKTREE_BRANCH_REF_MATCH
 git_worktree_entry_begin
 $CURRENT_WORKTREE_ENTRY
 git_worktree_entry_end
 git_status_short_begin
 $GIT_STATUS_SHORT
 git_status_short_end
+truth_source=$TRUTH_SOURCE
+historical_evidence_only=true
+evidence_scope=$EVIDENCE_SCOPE
 audit=$latest_audit
 bench_classic=$latest_bench
 bench_mixed=$latest_mixed
