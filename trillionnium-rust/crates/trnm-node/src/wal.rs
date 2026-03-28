@@ -476,7 +476,10 @@ mod tests {
 
         let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
         assert!(
-            err.contains("unknown field") && err.contains("forged"),
+            err.contains("parse checkpoint failed")
+                && err.contains("consensus-checkpoints.toml")
+                && err.contains("unknown field")
+                && err.contains("forged"),
             "unexpected parse error: {err}"
         );
 
@@ -501,7 +504,10 @@ mod tests {
 
         let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
         assert!(
-            err.contains("unknown field") && err.contains("forged"),
+            err.contains("parse checkpoint failed")
+                && err.contains("consensus-checkpoints.toml")
+                && err.contains("unknown field")
+                && err.contains("forged"),
             "unexpected parse error: {err}"
         );
 
@@ -523,7 +529,10 @@ mod tests {
 
         let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
         assert!(
-            err.contains("unknown field") && err.contains("forged"),
+            err.contains("parse wal meta failed")
+                && err.contains("consensus-wal-meta.toml")
+                && err.contains("unknown field")
+                && err.contains("forged"),
             "unexpected parse error: {err}"
         );
 
@@ -551,7 +560,10 @@ mod tests {
 
         let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
         assert!(
-            err.contains("unknown field") && err.contains("forged"),
+            err.contains("parse wal meta failed")
+                && err.contains("consensus-wal-meta.toml")
+                && err.contains("unknown field")
+                && err.contains("forged"),
             "unexpected parse error: {err}"
         );
 
