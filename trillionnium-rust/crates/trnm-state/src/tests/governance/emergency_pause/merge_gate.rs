@@ -153,3 +153,20 @@ fn emergency_pause_enforce_wrong_key_id_is_rejected_without_scrubbing_state() {
     assert_eq!(pending.value, "false");
     assert_eq!(pending.activate_at_height, 91_111);
 }
+
+#[test]
+fn emergency_pause_checked_path_rejects_non_canonical_key_before_key_id_policy() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param(9_112, 8_000, "Emergency_Pause".into(), "false".into())
+        .expect_err("non-canonical emergency_pause key spelling must fail before key-id policy");
+
+    assert!(err.contains("governance key not allowed"), "unexpected error: {err}");
+    assert!(
+        !err.contains("expected_id=7999"),
+        "non-canonical key spelling must fail before key-id mismatch handling: {err}"
+    );
+    assert!(!st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
