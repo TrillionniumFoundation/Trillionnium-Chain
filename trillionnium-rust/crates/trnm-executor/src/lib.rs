@@ -3221,6 +3221,9 @@ mod tests {
 
     #[test]
     fn hot_bucket_interleave_keeps_first_hint_when_skew_is_below_two_to_one_threshold() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
+
         let mut txs = vec![
             tx(391, vec![], vec![o(0)]),  // first hot hint bucket 0
             tx(392, vec![], vec![o(8)]),  // same bucket (depth 3)
