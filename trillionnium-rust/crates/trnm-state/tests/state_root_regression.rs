@@ -6696,6 +6696,44 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_wal_proposa
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_internal_tab() {
+    let wal = WalMeta {
+        height: 16,
+        round: 2,
+        proposal_hash: "proposal-16".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.proposal_hash = "proposal\t16".into();
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical WAL proposal_hash should keep checkpoint evidence audit-ready"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "checkpoint evidence surfaces must reject WAL proposal_hash values containing internal tab whitespace"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "DA/light-verifier summaries must fail closed when WAL proposal_hash contains internal tab whitespace"
+    );
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_noncanonical_non_genesis_prev_hash_even_when_hashes_match() {
     let wal = WalMeta {
         height: 2,
