@@ -148,6 +148,17 @@ impl OracleSnapshot {
     }
 
     pub fn validate_hash(&self) -> Result<(), OracleError> {
+        let canonical = self.snapshot_hash.trim().to_ascii_lowercase();
+        if canonical.is_empty() {
+            return Err(OracleError::EmptySnapshotHash);
+        }
+        if self.snapshot_hash != canonical {
+            return Err(OracleError::NonCanonicalSnapshotHash {
+                raw: self.snapshot_hash.clone(),
+                canonical,
+            });
+        }
+
         let expected = self.compute_hash();
         if self.snapshot_hash != expected {
             return Err(OracleError::SnapshotHashMismatch {
@@ -570,6 +581,10 @@ pub enum OracleError {
     DuplicateSources,
     #[error("source ids must be sorted canonically: previous={previous}, current={current}")]
     NonCanonicalSourceOrdering { previous: String, current: String },
+    #[error("snapshot hash is empty")]
+    EmptySnapshotHash,
+    #[error("snapshot hash must be canonical lowercase+trim: raw={raw}, canonical={canonical}")]
+    NonCanonicalSnapshotHash { raw: String, canonical: String },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
@@ -1080,7 +1095,7 @@ mod tests {
         let err = snapshot
             .validate_hash()
             .expect_err("uppercase digest surface must fail closed");
-        assert!(matches!(err, OracleError::SnapshotHashMismatch { .. }));
+        assert!(matches!(err, OracleError::NonCanonicalSnapshotHash { .. }));
     }
 
     #[test]
@@ -1698,6 +1713,46 @@ mod tests {
             .validate_snapshot(&snapshot, 10_100)
             .expect_err("deserialized blank feed id must fail guardrail");
         assert_eq!(err, OracleError::EmptyFeedId);
+    }
+
+    #[test]
+    fn rejects_deserialized_blank_snapshot_hash_before_digest_compare() {
+        let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["chainlink", "coingecko"],
+            "sample_count": 2,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "   "
+        }))
+        .expect("snapshot deserialize");
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("deserialized blank snapshot hash must fail guardrail");
+        assert_eq!(err, OracleError::EmptySnapshotHash);
+    }
+
+    #[test]
+    fn rejects_deserialized_non_canonical_snapshot_hash_before_digest_compare() {
+        let mut snapshot = snapshot_with(100000, Some(100000), 10_000);
+        snapshot.snapshot_hash = format!(" {} ", snapshot.snapshot_hash.to_ascii_uppercase());
+
+        let err = policy()
+            .validate_snapshot(&snapshot, 10_100)
+            .expect_err("non-canonical snapshot hash must fail canonicality guardrail");
+
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSnapshotHash {
+                raw: format!(" {} ", snapshot.compute_hash().to_ascii_uppercase()),
+                canonical: snapshot.compute_hash(),
+            }
+        );
     }
 
     #[test]
