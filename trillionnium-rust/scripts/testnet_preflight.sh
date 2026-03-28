@@ -76,6 +76,14 @@ if [ "$GIT_HEAD_STATE" = "attached" ] && [ -z "$CURRENT_WORKTREE_BRANCH_REF" ]; 
   exit 10
 fi
 
+if [ "$GIT_HEAD_STATE" = "attached" ] && [ -n "$CURRENT_WORKTREE_BRANCH_REF" ]; then
+  CURRENT_WORKTREE_BRANCH_NAME="${CURRENT_WORKTREE_BRANCH_REF#refs/heads/}"
+  if [ "$CURRENT_WORKTREE_BRANCH_NAME" != "$GIT_BRANCH" ]; then
+    log "preflight failed: git branch '$GIT_BRANCH' does not match git worktree branch binding '$CURRENT_WORKTREE_BRANCH_REF'"
+    exit 11
+  fi
+fi
+
 log "start testnet preflight"
 log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_status_summary=$GIT_STATUS_SUMMARY"
 
