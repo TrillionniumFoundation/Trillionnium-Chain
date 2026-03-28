@@ -15,7 +15,8 @@ LOG="$OUT_DIR/preflight-$TS.log"
 SUMMARY="$OUT_DIR/go-no-go-$TS.txt"
 mkdir -p "$OUT_DIR"
 
-rollback_command="rm -f $(printf '%q' "$LOG") $(printf '%q' "$SUMMARY") $(printf '%q' "$OUT_DIR/preflight-latest.log") $(printf '%q' "$OUT_DIR/go-no-go-latest.txt") $(printf '%q' "$ROOT/run/parallel-sanity.log")"
+rollback_command_base="rm -f $(printf '%q' "$LOG") $(printf '%q' "$SUMMARY") $(printf '%q' "$OUT_DIR/preflight-latest.log") $(printf '%q' "$OUT_DIR/go-no-go-latest.txt") $(printf '%q' "$ROOT/run/parallel-sanity.log")"
+rollback_command="$rollback_command_base"
 replay_command="env TZ='${TZ}' LC_ALL='${LC_ALL}' LANG='${LANG}'"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
   replay_command="$replay_command EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
@@ -187,6 +188,8 @@ if [ -z "$latest_profile" ]; then
   log "benchmark failed: missing executor profile summary under run/bench"
   exit 9
 fi
+
+rollback_command="$rollback_command_base $(printf '%q' "$latest_audit") $(printf '%q' "$latest_bench") $(printf '%q' "$latest_mixed") $(printf '%q' "$latest_profile")"
 
 cat > "$SUMMARY" <<EOF
 rust_l1_testnet_preflight
