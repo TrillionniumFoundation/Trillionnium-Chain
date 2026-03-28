@@ -140,6 +140,7 @@ pub(crate) fn parse_event_metering_query_response(
         .and_then(|v| parse_u128_kv_value(v))
         .and_then(|v| u8::try_from(v).ok())?;
 
+    let metering_path = normalize_opt_kv(kv, "to_status")?;
     let normalized_work_units = kv
         .get("metering_normalized_work_units")
         .and_then(|v| parse_u128_kv_value(v))?;
@@ -175,7 +176,7 @@ pub(crate) fn parse_event_metering_query_response(
     }
 
     Some(build_task_metering_query_response(
-        normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),
+        metering_path,
         workload_class,
         metering_schema,
         receipt_hash,
