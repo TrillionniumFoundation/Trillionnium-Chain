@@ -635,6 +635,34 @@ fn x3_prep_rejects_confirm_height_at_heartbeat_target_lower_boundary() {
 }
 
 #[test]
+fn x3_prep_rejects_saturated_confirm_height_at_heartbeat_target_lower_boundary() {
+    let mut request =
+        SettlementRequest::new(1, "0xconfirm-saturated-lower-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(u64::MAX, u64::MAX - 1, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed {
+            height: u64::MAX - 1,
+        },
+    )
+    .expect_err("saturated target-floor confirm height must fail closed");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight {
+            height: u64::MAX - 1,
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_accepts_confirm_height_at_heartbeat_source_boundary() {
     let mut request = SettlementRequest::new(1, "0xconfirm-source-boundary".to_string());
     let token = operator_token();
