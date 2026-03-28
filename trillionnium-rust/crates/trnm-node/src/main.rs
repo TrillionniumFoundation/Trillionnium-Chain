@@ -1638,6 +1638,10 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         args.validators
     );
     anyhow::ensure!(
+        args.block_ms > 0,
+        "invalid startup args: block_ms must be at least 1"
+    );
+    anyhow::ensure!(
         args.bft_checkpoint_interval > 0,
         "invalid startup args: bft_checkpoint_interval must be at least 1"
     );
@@ -3452,6 +3456,41 @@ mod tests {
         assert!(err
             .to_string()
             .contains("validators must be at least 1"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_block_zero_block_interval() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 0,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("zero block interval must fail closed");
+        assert!(err
+            .to_string()
+            .contains("block_ms must be at least 1"));
     }
 
     #[test]
