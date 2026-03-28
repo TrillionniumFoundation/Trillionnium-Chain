@@ -55,7 +55,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
 pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     let cleaned = s
         .trim_matches(|c: char| {
-            c.is_ascii_whitespace()
+            c.is_whitespace()
                 || c.is_control()
                 || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';')
                 || matches!(
