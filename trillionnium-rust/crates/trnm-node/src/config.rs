@@ -427,6 +427,53 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_multicast_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-multicast-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \" 239.1.2.3:7000\\n\"\np2p_addr = \"\\t127.0.0.1:7001 \"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed multicast rpc listener must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a multicast address"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-multicast-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \" [ff02::1]:7001\\t\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed multicast p2p listener must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a multicast address"),
+            "unexpected error: {p2p_err:#}"
+        );
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
     fn validate_node_config_rejects_invalid_socket_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
