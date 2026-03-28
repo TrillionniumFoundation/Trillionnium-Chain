@@ -6616,6 +6616,30 @@ fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_c
 }
 
 #[test]
+fn node_recovery_checkpoint_verification_rejects_proposal_hash_with_edge_whitespace() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: " proposal-1 ".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject WAL proposal identities with edge whitespace so restart-time checkpoint proofs stay canonical even when checkpoint fields otherwise match"
+    );
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_overlong_proposal_hash_even_when_hashes_match() {
     let wal = WalMeta {
         height: 1,
