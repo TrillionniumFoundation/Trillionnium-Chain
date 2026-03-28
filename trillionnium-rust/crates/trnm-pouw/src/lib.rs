@@ -1878,6 +1878,10 @@ pub fn apply_resolve_at_height(
                 .any(|member| member.eq_ignore_ascii_case(challenger))
         })
         .unwrap_or(false);
+    // Legacy-state hardening: task creator identity must remain canonical before
+    // creator-vs-adjudicator separation checks, otherwise malformed creator ids
+    // could silently bypass beneficiary/judge role separation.
+    require_canonical_actor_id_state(&task.creator, "creator account")?;
     // Minimal multi-party control: task creator (beneficiary of the work result)
     // must stay separate from adjudicator authority to avoid beneficiary+judge
     // role collapse when challenge settlement can decide bounty/slash outcomes.
@@ -2259,6 +2263,67 @@ mod tests {
         set_resolve_authority(&mut st, "authority,authority2");
         let err = apply_resolve(&mut st, r5, false, "alice".into(), "alice".into()).unwrap_err();
         assert!(matches!(err, PouwError::Unauthorized));
+    }
+
+    #[test]
+    fn resolve_rejects_noncanonical_legacy_creator_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let r1 = apply_create_task(&mut st, 421, "alice".into(), 100).unwrap();
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(421, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let mut bad_task = st.get_task(r5.id).unwrap();
+        bad_task.creator = " alice ".into();
+        let bad_ref = st
+            .update_task(
+                ObjectRef {
+                    id: r5.id,
+                    version: bad_task.version,
+                },
+                bad_task.clone(),
+            )
+            .unwrap();
+
+        set_resolve_authority(&mut st, "authority");
+        let before_task = st.get_task(bad_ref.id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_worker_slash = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(421));
+
+        let err = apply_resolve(
+            &mut st,
+            bad_ref,
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("non-canonical legacy creator must fail closed before resolve settlement");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical creator account")));
+        assert_eq!(st.pending_resolve_approval(421), None);
+
+        let after_task = st.get_task(421).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.creator, before_task.creator);
+        assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
+        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_worker_slash);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(421)), before_lock);
     }
 
     #[test]
