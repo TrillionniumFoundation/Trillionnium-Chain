@@ -202,6 +202,20 @@ mod tests {
     }
 
     #[test]
+    fn market_reputation_score_delta_saturates_negative_penalty_at_i128_max() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: -1,
+            base_score: 0,
+            reputation_reward: 0,
+            penalty: (i128::MAX as u128) + 1,
+            effective_score: u128::MAX,
+            score_floor_applied: false,
+        });
+
+        assert_eq!(delta, i128::MAX);
+    }
+
+    #[test]
     fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
         let breakdown = market_score_breakdown(
             3,
