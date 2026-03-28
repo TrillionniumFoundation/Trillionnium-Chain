@@ -152,6 +152,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn market_score_breakdown_normalizes_negative_manual_clamp_without_panic() {
+        let breakdown = market_score_breakdown(
+            50,
+            250,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: -10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 1);
+        assert_eq!(breakdown.base_score, 150);
+        assert_eq!(breakdown.reputation_reward, 7);
+        assert_eq!(breakdown.effective_score, 143);
+        assert_eq!(breakdown.penalty, 0);
+        assert!(!breakdown.score_floor_applied);
+    }
+
+    #[test]
     fn market_score_breakdown_keeps_zero_reputation_delta_neutral() {
         let breakdown = market_score_breakdown(
             42,
