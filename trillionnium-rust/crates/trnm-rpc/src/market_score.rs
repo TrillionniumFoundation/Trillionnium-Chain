@@ -188,6 +188,23 @@ mod tests {
     }
 
     #[test]
+    fn market_score_config_output_normalizes_zero_manual_clamp_to_symmetric_fail_closed_bounds() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 5,
+            reputation_weight: 11,
+            reputation_clamp: 0,
+        });
+
+        assert_eq!(output.price_weight, 5);
+        assert_eq!(output.reputation_weight, 11);
+        assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.max_effective_reputation, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.min_effective_reputation, -MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.max_reputation_score_delta, 11);
+        assert_eq!(output.min_reputation_score_delta, -11);
+    }
+
+    #[test]
     fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
         let delta = market_reputation_score_delta(&MarketScoreBreakdown {
             effective_reputation: 1,
