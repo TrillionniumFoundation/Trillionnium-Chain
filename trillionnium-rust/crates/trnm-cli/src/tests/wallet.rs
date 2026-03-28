@@ -38,6 +38,7 @@ fn wallet_name_rejects_path_like_values() {
         "--help",
         "alice/bob",
         "alice\\bob",
+        "alice:bob",
         "alice\n",
         "alice bob",
         " alice",
