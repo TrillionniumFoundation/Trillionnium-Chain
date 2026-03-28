@@ -2956,6 +2956,58 @@ mod tests {
     use super::*;
     use trnm_state::GovParamUpdateOutcome;
 
+    fn recovered_state(
+        next_height: u64,
+        wal_entries_retained: usize,
+        checkpoint_height_retained: Option<u64>,
+        truncated: bool,
+    ) -> RecoveredWalState {
+        RecoveredWalState {
+            next_height,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated,
+            metadata_only_recovery: false,
+            wal_entries_retained,
+            checkpoint_height_retained,
+        }
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_lag() {
+        let recovered = recovered_state(8, 3, Some(5), false);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 3 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 2 blocks)"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_missing_checkpoint_and_truncation() {
+        let recovered = recovered_state(4, 1, None, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 1 committed WAL entry through height 3 (no retained checkpoint metadata); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_includes_operator_visible_summary() {
+        let mut recovered = recovered_state(9, 2, Some(6), false);
+        recovered.metadata_only_recovery = true;
+
+        let message = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
+
+        assert!(message.contains("/tmp/trnm-wal"));
+        assert!(message.contains(
+            "verified WAL/checkpoint metadata retained 2 committed WAL entries through height 8 (checkpoint lags retained WAL tip by 2 blocks)"
+        ));
+        assert!(message.contains("last retained checkpoint: 6"));
+        assert!(message.contains("next startup height: 9"));
+    }
+
     #[test]
     fn resolve_hotspot_summary_includes_shared_treasury_and_approval_labels() {
         let mut state = StateStore::new();
