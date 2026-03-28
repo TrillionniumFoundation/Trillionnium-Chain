@@ -51,6 +51,11 @@ def validate_node_id(node_id: str, path: Path) -> None:
 
 
 def validate_listener_addr(addr: str, field: str, path: Path) -> None:
+    if any(ch.isspace() for ch in addr):
+        fail(f"invalid node config {path}: {field} must not contain whitespace")
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in addr):
+        fail(f"invalid node config {path}: {field} must not contain control characters")
+
     parsed = urlsplit(f"tcp://{addr}")
 
     try:
