@@ -3719,6 +3719,30 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_keeps_zero_primary_mixed_domains_lane_stable() {
+        let buckets_n = 64usize;
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 48) + 9;
+        let write_narrow = tx(1, vec![o(0), o(high_b)], vec![o(0), o(high_a)]);
+        let read_narrow = tx(2, vec![o(0), o(high_a)], vec![o(0), o(high_b)]);
+
+        // Keep the zero-primary lane anchor stable on the power-of-two bucket fast
+        // path as well: equivalent mixed domains that flip read/write ownership of
+        // high-bit suffixes must stay on the same executor lane instead of drifting
+        // after the bitmask reduction.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, high_a));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            hot_bucket_hint(&read_narrow, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            ((0u64 ^ high_a.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
