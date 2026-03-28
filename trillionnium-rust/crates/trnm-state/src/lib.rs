@@ -1151,7 +1151,10 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
             RESOLVE_ACTOR_ID_MAX_LEN
         ));
     }
-    if resolve_actor_has_forbidden_separator(trimmed) || !trimmed.is_ascii() {
+    if resolve_actor_has_forbidden_separator(trimmed)
+        || !trimmed.is_ascii()
+        || trimmed.chars().any(|ch| ch.is_ascii_uppercase())
+    {
         return Err("resolve approval approver must be a single canonical actor id".into());
     }
     if resolve_actor_is_reserved(trimmed) {
@@ -6031,6 +6034,48 @@ mod tests {
         assert!(
             st.get_task(4082).is_none(),
             "restore_task must fail closed when retained terminal collateral metadata keeps a non-canonical challenger identity that cannot anchor later proof/collateral audits"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_terminal_challenge_retention_with_mixed_case_challenger_identity() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 4083,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("BobSmith".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        };
+
+        st.restore_task(4083, Some(task));
+
+        assert!(
+            st.get_task(4083).is_none(),
+            "restore_task must fail closed when retained terminal collateral metadata keeps a mixed-case challenger identity instead of a lowercase canonical actor id for sponsor-funded retention audits"
         );
     }
 
