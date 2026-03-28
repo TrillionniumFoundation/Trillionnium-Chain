@@ -7,7 +7,7 @@ pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
         let before = cleaned.len();
         cleaned = cleaned
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
+                c.is_whitespace()
                     || c.is_control()
                     || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
                     || matches!(c, '.' | '!' | '?')
