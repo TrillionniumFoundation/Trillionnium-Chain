@@ -389,6 +389,8 @@ mod tests {
         assert_eq!(parse_path_u64_suffix("/query-events/.", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/..", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/.%2e", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E.", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/%2e%2E", "/query-events/"), None);
     }
 
@@ -490,6 +492,20 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix(
+                "/query-capability-audit/.%2e",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2E.",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
                 "/query-capability-audit/%2e%2E",
                 "/query-capability-audit/"
             ),
@@ -504,6 +520,8 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
         assert!(has_ambiguous_path_segment_encoding("%2E"));
+        assert!(has_ambiguous_path_segment_encoding(".%2e"));
+        assert!(has_ambiguous_path_segment_encoding("%2E."));
         assert!(has_ambiguous_path_segment_encoding("%2e%2E"));
         assert!(has_ambiguous_path_segment_encoding("."));
         assert!(has_ambiguous_path_segment_encoding(".."));
