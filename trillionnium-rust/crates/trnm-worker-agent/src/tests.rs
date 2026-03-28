@@ -338,6 +338,34 @@ fn run_adapter_with_retry_preserves_last_seen_tx_hash_after_successful_retry() {
 }
 
 #[test]
+fn run_adapter_with_retry_prefers_latest_success_receipt_hash_over_prior_retry_hash() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-success-newest-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234' if count == 0 else 'tx_hash=0xBEEF5678', file=sys.stderr); raise SystemExit(1 if count == 0 else 0)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return successful retry result with the latest receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env() {
     assert_eq!(
         resolve_u32(Some(0), Some("not-a-number"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
