@@ -854,8 +854,10 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     if name.is_empty()
         || name == "."
         || name == ".."
+        || name.starts_with('.')
         || name.starts_with('-')
-        || name.contains(['/', '\\'])
+        || name.contains(['/', '\\', ':', '='])
+        || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
         || has_hidden_or_whitespace
     {
         bail!(
@@ -1972,10 +1974,22 @@ mod tests {
             "",
             ".",
             "..",
+            ".alice",
             "-alice",
             "--help",
             "alice/bob",
             "alice\\bob",
+            "alice:bob",
+            "alice=debug",
+            "\"alice\"",
+            "'alice'",
+            "`alice`",
+            "<alice>",
+            "(alice)",
+            "[alice]",
+            "{alice}",
+            "alice,",
+            "alice;",
             "alice\n",
             "alice bob",
             " alice",
@@ -1984,6 +1998,9 @@ mod tests {
             "alice\u{200b}bob",
             "alice\u{2060}bob",
             "alice\u{feff}bob",
+            "alice\u{202e}bob",
+            "alice\u{2066}bob",
+            "alice\u{2069}bob",
             "alice\u{0007}bob",
         ] {
             let err = ensure_wallet_name(bad).unwrap_err();
