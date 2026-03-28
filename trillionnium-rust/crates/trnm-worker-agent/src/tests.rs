@@ -127,6 +127,11 @@ fn backoff_delay_is_exponential_and_saturating() {
     // saturation guard (no overflow panic/wrap)
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
     assert_eq!(backoff_delay_ms(1_000_000, 62), u64::MAX);
+    assert_eq!(
+        backoff_delay_ms(1_000_000, u32::MAX),
+        u64::MAX,
+        "attempts above the shift cap must stay saturated"
+    );
 }
 
 #[test]
