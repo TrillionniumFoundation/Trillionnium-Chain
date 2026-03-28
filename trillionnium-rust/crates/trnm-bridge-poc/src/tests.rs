@@ -122,6 +122,22 @@ fn settlement_request_collapses_bom_spacing_in_revert_reason() {
 }
 
 #[test]
+fn settlement_request_collapses_medium_math_and_ideographic_spacing_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{205F}relay\u{3000}timeout".to_string(),
+        )
+        .expect("medium math and ideographic spacing should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}
+
+#[test]
 fn settlement_request_rejects_revert_reason_that_becomes_empty_after_sanitize() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     let err = request.revert_authorized(
