@@ -7384,6 +7384,32 @@ fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_
 }
 
 #[test]
+fn wal_checkpoint_accepts_identical_duplicate_checkpoint_evidence() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+    let checkpoints = vec![checkpoint.clone(), checkpoint.clone()];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal_entry]).unwrap();
+
+    assert_eq!(
+        got,
+        Some(checkpoint),
+        "checkpoint recovery should accept byte-identical duplicate checkpoint tuples so duplicated canonical audit evidence does not fail closed merely because it was recorded twice"
+    );
+}
+
+#[test]
 fn node_recovery_accepts_identical_duplicate_checkpoint_evidence() {
     let wal_entry = WalMeta {
         height: 1,
