@@ -55,9 +55,11 @@ Interpretation rule:
 ### RC evidence integrity minimum checklist
 
 Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious launch decision input", require all of the following together:
+- the assigned worktree path and branch ref from the lane prompt / release ticket, recorded before any release script runs
 - a path-resolved `summary.txt` from `run/health/evidence-*`
 - a path-resolved `manifest.txt` from `release/rc-*`
 - matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, and `git_worktree_branch_ref=` across those artifacts
+- a direct comparison showing the artifact `git_worktree_path=` / `git_worktree_branch_ref=` also match the lane-assigned path/ref, not just each other
 - preserved `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` fields next to the quoted PASS/GO language
 - verbatim `rollback_command=` and `replay_command=` copied from the generated artifact, not rewritten from shell memory
 
