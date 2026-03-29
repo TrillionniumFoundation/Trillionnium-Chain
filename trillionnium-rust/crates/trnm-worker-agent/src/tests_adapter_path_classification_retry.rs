@@ -22,6 +22,23 @@ fn tx_retry_policy_mixes_partial_cli_overrides_with_env_fallbacks() {
 }
 
 #[test]
+fn tx_retry_policy_strips_invisible_fillers_around_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("\u{200b}6\u{2060}"),
+        Some("\u{feff}375\u{200d}"),
+    );
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 6,
+            backoff_ms: 375,
+        }
+    );
+}
+
+#[test]
 fn tx_backoff_delay_saturates_without_overflow() {
     assert_eq!(backoff_delay_ms(25, 0), 25);
     assert_eq!(backoff_delay_ms(25, 1), 50);

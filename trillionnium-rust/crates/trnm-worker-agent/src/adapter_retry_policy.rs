@@ -28,14 +28,45 @@ pub(crate) fn truncate_for_error(raw: &str, max_chars: usize) -> String {
     format!("{}…(truncated, {} chars total)", prefix, total)
 }
 
+fn is_invisible_filler(c: char) -> bool {
+    matches!(
+        c,
+        '\u{200B}'
+            | '\u{200C}'
+            | '\u{200D}'
+            | '\u{200E}'
+            | '\u{200F}'
+            | '\u{061C}'
+            | '\u{2060}'
+            | '\u{2061}'
+            | '\u{2062}'
+            | '\u{2063}'
+            | '\u{2064}'
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{00AD}'
+            | '\u{034F}'
+            | '\u{180E}'
+            | '\u{FE0E}'
+            | '\u{FE0F}'
+            | '\u{FEFF}'
+    )
+}
+
+fn trim_config_numeric_value(raw: &str) -> &str {
+    raw.trim_matches(|c: char| c.is_whitespace() || is_invisible_filler(c))
+}
+
 fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
-    raw.and_then(|s| s.trim().parse::<u32>().ok())
+    raw.and_then(|s| trim_config_numeric_value(s).parse::<u32>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
 
 fn parse_u64_with_min(raw: Option<&str>, default: u64, min: u64) -> u64 {
-    raw.and_then(|s| s.trim().parse::<u64>().ok())
+    raw.and_then(|s| trim_config_numeric_value(s).parse::<u64>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
