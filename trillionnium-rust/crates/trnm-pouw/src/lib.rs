@@ -771,6 +771,7 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
             if has_bond
                 || task.challenge_bond_forfeited.is_some()
                 || task.challenged_at_height.is_some()
+                || task.challenge_deadline_height.is_some()
                 || task.resolve_deadline_height.is_some()
             {
                 return Err(PouwError::State(format!(
@@ -9243,6 +9244,30 @@ mod tests {
 
         let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
+    }
+
+    #[test]
+    fn timeout_rejects_revealed_state_with_stale_challenge_deadline_height() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 390131, "alice".into(), 100).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(390131, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+
+        let mut bad = st.get_task(r4.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Revealed);
+        bad.challenge_deadline_height = Some(210);
+        let bad_ref = st.update_task(r4, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("stale challenge fields")));
     }
 
     #[test]
