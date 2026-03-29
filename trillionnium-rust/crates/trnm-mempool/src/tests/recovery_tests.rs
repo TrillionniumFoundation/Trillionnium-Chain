@@ -391,3 +391,43 @@ fn pop_self_heal_prunes_ghost_seen_global_so_cross_class_retry_can_admit_after_d
     // cross-class retry instead of remaining poisoned by stale lane-wide membership.
     assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn qos_snapshot_stays_guarded_under_seen_cache_skew_until_reserved_headroom_really_reopens() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    let guarded = LaneQosSnapshot {
+        normal_queued: 2,
+        critical_queued: 1,
+        total_queued: 3,
+        normal_headroom: 0,
+        critical_headroom: 1,
+        total_headroom: 1,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: true,
+    };
+    assert_eq!(g.qos_snapshot(), guarded);
+
+    // Simulate restored-state skew: queue contents stay authoritative, but both
+    // lane-local and lane-wide seen caches drift toward a ghost id.
+    g.normal.seen.remove(&2);
+    g.normal.seen.insert(999);
+    g.seen_global.remove(&2);
+    g.seen_global.insert(999);
+    assert_eq!(g.normal.seen.len() + g.critical.seen.len(), 3);
+    assert_eq!(g.seen_global.len(), 3);
+
+    // Sponsor/free-ingress observability must remain queue-derived: stale seen
+    // cache skew cannot advertise fresh normal headroom before the reserved slot
+    // truly reopens.
+    assert_eq!(g.qos_snapshot(), guarded);
+    assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.qos_snapshot(), guarded);
+
+    // The real queued id must still self-heal back to duplicate semantics.
+    assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+}

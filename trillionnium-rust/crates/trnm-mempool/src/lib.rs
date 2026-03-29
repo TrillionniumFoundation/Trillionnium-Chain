@@ -880,6 +880,46 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_seen_cache_skew_does_not_advertise_guarded_normal_headroom() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        // Fill dedicated normal capacity, then leave one reserved critical slot
+        // open so only critical ingress should still be advertised as fresh.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        let guarded = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded);
+
+        // Simulate restored-state skew: queue contents remain authoritative, but
+        // lane-local and lane-wide seen caches drift toward a ghost id.
+        g.normal.seen.remove(&2);
+        g.normal.seen.insert(999);
+        g.seen_global.remove(&2);
+        g.seen_global.insert(999);
+
+        // QoS observability must remain queue-derived: stale duplicate caches must
+        // not advertise sponsor/free-ingress headroom before the reserved slot
+        // truly reopens.
+        assert_eq!(g.qos_snapshot(), guarded);
+        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), guarded);
+
+        // The real queued id must still self-heal back to duplicate semantics.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn qos_snapshot_reports_borrowed_last_critical_slot_as_consumed() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
