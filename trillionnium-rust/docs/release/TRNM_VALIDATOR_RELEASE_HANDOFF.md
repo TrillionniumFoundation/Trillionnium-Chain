@@ -283,6 +283,10 @@ Preferred helper (fail-closed on missing paths or cross-artifact identity mismat
 ./scripts/v2/extract_release_handoff_fields.sh
 ```
 
+If a preflight summary already exists, the helper also prints and cross-checks its
+identity / replay / rollback fields. If no preflight artifact exists yet, it keeps
+working with local evidence + RC manifest only.
+
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
 
 ```bash
@@ -359,6 +363,8 @@ Record these fields in the release ticket or operator handoff note:
 - worktree branch ref:
 - preflight summary path:
 - preflight lane verify command:
+- preflight rollback command:
+- preflight replay command:
 - local evidence summary path:
 - local evidence truth_source:
 - rc manifest path:
@@ -374,6 +380,7 @@ Record these fields in the release ticket or operator handoff note:
 Do not improvise cleanup.
 
 Use the rollback command emitted by the script you just ran:
+- `testnet_preflight.sh` writes `rollback_command=` to `run/preflight/go-no-go-<timestamp>.txt`
 - `run_local_release_evidence.sh` writes `rollback_command=` to `summary.txt`
 - `release_rc.sh` writes `rollback_command=` to `manifest.txt`
 
@@ -382,10 +389,11 @@ If an operator cannot quote the exact rollback command from the generated artifa
 ## Replay discipline
 
 For deterministic re-runs, prefer the exact replay command emitted by the artifact:
+- `run/preflight/go-no-go-<timestamp>.txt` contains `replay_command=` for preflight rehearsal
 - `summary.txt` contains `replay_command=` for local evidence
 - `manifest.txt` contains `replay_command=` for RC rehearsal
 
-This prevents drift in locale, timezone, build-job parallelism, and output directory selection.
+This prevents drift in locale, timezone, build-job parallelism, output directory selection, and lane-bound identity assertions.
 
 ## Common failure interpretation
 

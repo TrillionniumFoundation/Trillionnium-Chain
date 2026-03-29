@@ -3,21 +3,29 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF' >&2
-Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
+Usage: extract_release_handoff_fields.sh [--preflight-path <path>] [--summary-path <path>] [--manifest-path <path>]
 
-Resolve the latest local-evidence summary and RC manifest (unless paths are
-provided explicitly), then print the canonical handoff fields directly from the
-artifacts. This is a fail-closed helper for validator/operator release handoff:
-it refuses to guess missing paths or silently continue when identity fields
-mismatch across artifacts.
+Resolve the latest local preflight summary, local-evidence summary, and RC
+manifest (unless paths are provided explicitly), then print the canonical
+handoff fields directly from the artifacts. The preflight artifact is optional:
+if no path is provided and no latest preflight summary exists, the helper keeps
+working with summary + manifest only. This is a fail-closed helper for
+validator/operator release handoff: it refuses to guess missing paths or
+silently continue when identity fields mismatch across artifacts.
 EOF
 }
 
+PREFLIGHT_PATH=""
 SUMMARY_PATH=""
 MANIFEST_PATH=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    --preflight-path)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      PREFLIGHT_PATH="$2"
+      shift 2
+      ;;
     --summary-path)
       [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
       SUMMARY_PATH="$2"
@@ -42,6 +50,13 @@ done
 
 ROOT="$(git rev-parse --show-toplevel)"
 
+if [ -z "$PREFLIGHT_PATH" ]; then
+  latest_preflight="$(find "$ROOT/run/preflight" -maxdepth 1 -type f -name 'go-no-go-*.txt' ! -name 'go-no-go-latest.txt' -print 2>/dev/null | sort | tail -n 1)"
+  if [ -n "$latest_preflight" ]; then
+    PREFLIGHT_PATH="$latest_preflight"
+  fi
+fi
+
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(find "$ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
   [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $ROOT/run/health" >&2; exit 1; }
@@ -54,6 +69,9 @@ if [ -z "$MANIFEST_PATH" ]; then
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
 fi
 
+if [ -n "$PREFLIGHT_PATH" ]; then
+  [ -f "$PREFLIGHT_PATH" ] || { echo "missing preflight file: $PREFLIGHT_PATH" >&2; exit 1; }
+fi
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
 [ -f "$MANIFEST_PATH" ] || { echo "missing manifest file: $MANIFEST_PATH" >&2; exit 1; }
 
@@ -75,6 +93,18 @@ assert_equal() {
     exit 1
   fi
 }
+
+if [ -n "$PREFLIGHT_PATH" ]; then
+  preflight_branch="$(require_key "$PREFLIGHT_PATH" git_branch)"
+  preflight_head="$(require_key "$PREFLIGHT_PATH" git_head)"
+  preflight_head_state="$(require_key "$PREFLIGHT_PATH" git_head_state)"
+  preflight_worktree_path="$(require_key "$PREFLIGHT_PATH" git_worktree_path)"
+  preflight_worktree_branch_ref="$(require_key "$PREFLIGHT_PATH" git_worktree_branch_ref)"
+  preflight_result="$(require_key "$PREFLIGHT_PATH" result)"
+  preflight_lane_verify_command="$(require_key "$PREFLIGHT_PATH" lane_verify_command)"
+  preflight_rollback="$(require_key "$PREFLIGHT_PATH" rollback_command)"
+  preflight_replay="$(require_key "$PREFLIGHT_PATH" replay_command)"
+fi
 
 summary_branch="$(require_key "$SUMMARY_PATH" git_branch)"
 summary_head="$(require_key "$SUMMARY_PATH" git_head)"
@@ -103,6 +133,21 @@ assert_equal git_worktree_path "$summary_worktree_path" "$manifest_worktree_path
 assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_worktree_branch_ref"
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 
+if [ -n "$PREFLIGHT_PATH" ]; then
+  assert_equal preflight.git_branch "$preflight_branch" "$summary_branch"
+  assert_equal preflight.git_head "$preflight_head" "$summary_head"
+  assert_equal preflight.git_head_state "$preflight_head_state" "$summary_head_state"
+  assert_equal preflight.git_worktree_path "$preflight_worktree_path" "$summary_worktree_path"
+  assert_equal preflight.git_worktree_branch_ref "$preflight_worktree_branch_ref" "$summary_worktree_branch_ref"
+fi
+
+if [ -n "$PREFLIGHT_PATH" ]; then
+  printf 'preflight_path=%s\n' "$PREFLIGHT_PATH"
+  printf 'preflight_result=%s\n' "$preflight_result"
+  printf 'preflight_lane_verify_command=%s\n' "$preflight_lane_verify_command"
+  printf 'preflight_rollback_command=%s\n' "$preflight_rollback"
+  printf 'preflight_replay_command=%s\n' "$preflight_replay"
+fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'git_branch=%s\n' "$summary_branch"
