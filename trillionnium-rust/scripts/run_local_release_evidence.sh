@@ -51,6 +51,17 @@ if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
+if [[ -n "$CURRENT_WORKTREE_BRANCH_REF" && "$GIT_BRANCH_RAW" != "HEAD" ]]; then
+  EXPECTED_WORKTREE_BRANCH_REF="refs/heads/$GIT_BRANCH_RAW"
+  if [[ "$CURRENT_WORKTREE_BRANCH_REF" == "$EXPECTED_WORKTREE_BRANCH_REF" ]]; then
+    WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+else
+  EXPECTED_WORKTREE_BRANCH_REF=""
+  WORKTREE_BRANCH_REF_MATCH="unknown"
+fi
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT_INPUT="${OUT_DIR:-$ROOT/run/health}"
@@ -147,6 +158,8 @@ find_challenge_reexec_entry() {
   echo "git_status_summary=$GIT_STATUS_SUMMARY"
   echo "git_worktree_path=$GIT_TOPLEVEL"
   echo "git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}"
+  echo "git_expected_worktree_branch_ref=${EXPECTED_WORKTREE_BRANCH_REF:-<unknown>}"
+  echo "git_worktree_branch_ref_match=$WORKTREE_BRANCH_REF_MATCH"
   echo "git_worktree_entry_begin"
   if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
     printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
