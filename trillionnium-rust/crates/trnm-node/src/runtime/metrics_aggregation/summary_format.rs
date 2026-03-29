@@ -196,6 +196,43 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_bft_height_counters_operator_visible_once_each() {
+        let mut metrics = RuntimeMetrics::new(2);
+        metrics.bft_observed_heights = 9;
+        metrics.bft_committed_heights = 6;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.bft_commit_observed_height_rate_ppm = 666_666;
+        stats.bft_skipped_height_total = 3;
+        stats.bft_skipped_observed_height_rate_ppm = 333_333;
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        assert_eq!(summary.matches("bft_observed_heights=").count(), 1);
+        assert_eq!(summary.matches("bft_committed_heights=").count(), 1);
+        assert!(summary.contains("bft_observed_heights=9"));
+        assert!(summary.contains("bft_committed_heights=6"));
+        assert!(summary.contains("bft_commit_observed_height_rate_ppm=666666"));
+        assert!(summary.contains("bft_skipped_height_total=3"));
+        assert!(summary.contains("bft_skipped_observed_height_rate_ppm=333333"));
+
+        let observed_idx = summary.find("bft_observed_heights=9").unwrap();
+        let committed_idx = summary.find("bft_committed_heights=6").unwrap();
+        let commit_rate_idx = summary
+            .find("bft_commit_observed_height_rate_ppm=666666")
+            .unwrap();
+        let skipped_total_idx = summary.find("bft_skipped_height_total=3").unwrap();
+        let skipped_rate_idx = summary
+            .find("bft_skipped_observed_height_rate_ppm=333333")
+            .unwrap();
+
+        assert!(observed_idx < committed_idx);
+        assert!(committed_idx < commit_rate_idx);
+        assert!(commit_rate_idx < skipped_total_idx);
+        assert!(skipped_total_idx < skipped_rate_idx);
+    }
+
+    #[test]
     fn runtime_summary_line_keeps_recovery_and_bft_auth_signal_cluster_in_operator_order() {
         let mut metrics = RuntimeMetrics::new(2);
         metrics.apply_error_total = 4;
