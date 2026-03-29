@@ -60,11 +60,13 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | `public_fee_like_classes` | Which tx classes must pay or spend explicit budget? |
 | `sponsor_allowed_callers` | Which actors/modules may sponsor ingress? |
 | `sponsor_epoch_budget` | What is the hard sponsor budget per epoch/account? |
+| `sponsor_epoch_refill_rule` | How and when does sponsor budget refill between epochs? |
 | `sponsor_revocation_path` | How is a sponsor disabled quickly and audibly? |
 | `sponsor_revocation_queue_disposition` | What happens to already-queued sponsored txs after revocation? |
 | `retention_window_blocks` | How long do proof/evidence snapshots remain queryable? |
 | `retention_payer_rule` | Who pays for long-tail retention? |
 | `retention_budget_exhaustion_fallback` | What payer or disable action applies when sponsor-funded retention budget runs dry? |
+| `retention_expiry_disposition` | What happens after the retention window expires: prune, checkpoint-only, or archive-only? |
 | `anti_spam_floor` | What minimum floor applies under sustained public load? |
 | `override_authority` | Who can change these values before launch? |
 | `override_timelock_or_bypass` | What timelock or emergency rule governs changes? |
