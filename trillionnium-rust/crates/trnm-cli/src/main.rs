@@ -907,6 +907,15 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    if fs::symlink_metadata(store)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
+            store.display()
+        );
+    }
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
     if fs::symlink_metadata(&f).is_ok() {
@@ -922,6 +931,15 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
 
 fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
+    if fs::symlink_metadata(store)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet store '{}' is a symlink; refusing to read keys through non-regular wallet store path",
+            store.display()
+        );
+    }
     let f = wallet_file(store, name);
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;

@@ -233,3 +233,75 @@ fn read_key_refuses_symlink_wallet_path() {
     let _ = std::fs::remove_file(&target);
     let _ = std::fs::remove_dir(&store);
 }
+
+#[test]
+#[cfg(unix)]
+fn write_key_refuses_symlink_wallet_store() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-store-write-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let root = std::env::temp_dir().join(unique);
+    let real_store = root.join("real-store");
+    let symlink_store = root.join("symlink-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_store, &symlink_store).unwrap();
+
+    let err = write_key(
+        &symlink_store,
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        err.to_string().contains("refusing to write keys through non-regular wallet store path"),
+        "unexpected error: {err}"
+    );
+    assert!(!wallet_file(&real_store, "alice").exists());
+
+    let _ = std::fs::remove_file(&symlink_store);
+    let _ = std::fs::remove_dir(&real_store);
+    let _ = std::fs::remove_dir(&root);
+}
+
+#[test]
+#[cfg(unix)]
+fn read_key_refuses_symlink_wallet_store() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-store-read-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let root = std::env::temp_dir().join(unique);
+    let real_store = root.join("real-store");
+    let symlink_store = root.join("symlink-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    std::fs::write(
+        wallet_file(&real_store, "alice"),
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    )
+    .unwrap();
+    symlink(&real_store, &symlink_store).unwrap();
+
+    let err = read_key(&symlink_store, "alice").unwrap_err();
+    assert!(
+        err.to_string().contains("refusing to read keys through non-regular wallet store path"),
+        "unexpected error: {err}"
+    );
+
+    let _ = std::fs::remove_file(wallet_file(&real_store, "alice"));
+    let _ = std::fs::remove_file(&symlink_store);
+    let _ = std::fs::remove_dir(&real_store);
+    let _ = std::fs::remove_dir(&root);
+}
