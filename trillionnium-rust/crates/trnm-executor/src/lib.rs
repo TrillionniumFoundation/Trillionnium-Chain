@@ -3836,6 +3836,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_zero_primary_lane_stable_under_duplicate_heavy_role_flips() {
+        let write_narrow = tx(1, vec![o(0), o(11), o(11), o(13)], vec![o(0), o(7), o(7)]);
+        let read_narrow = tx(2, vec![o(0), o(7), o(7)], vec![o(0), o(11), o(11), o(13)]);
+
+        // Even when duplicate-heavy mixed domains echo object 0 across both sides,
+        // keep the canonical lane anchor on the smallest distinct global suffix so
+        // executor lane isolation does not drift when read/write ownership flips.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, 7));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
