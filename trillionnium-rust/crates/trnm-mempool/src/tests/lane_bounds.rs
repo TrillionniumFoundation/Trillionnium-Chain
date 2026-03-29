@@ -147,6 +147,52 @@ fn critical_refill_after_idle_last_slot_borrow_recloses_further_normal_spillover
 }
 
 #[test]
+fn qos_snapshot_recloses_normal_admissibility_when_critical_refills_after_idle_last_slot_borrow() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    // Fill the dedicated normal lane and borrow one of the still-idle critical
+    // slots so the public QoS surface advertises one last fresh normal slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        }
+    );
+
+    // Drain one dedicated normal item to reopen shared aggregate headroom, then
+    // refill the final reserved critical slot. Once critical backlog owns the last
+    // reserved slot again, fresh normal ingress must fail closed immediately.
+    assert_eq!(g.pop_ready(), Some(1));
+    assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 1,
+            critical_queued: 2,
+            total_queued: 3,
+            normal_headroom: 1,
+            critical_headroom: 0,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        }
+    );
+
+    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
     let mut g = LaneAdmissionGate::new(1, 1);
 
