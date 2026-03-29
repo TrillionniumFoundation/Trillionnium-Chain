@@ -4305,12 +4305,15 @@ fn main() -> Result<()> {
             worker,
             price,
         } => {
-            if worker.trim().is_empty() {
+            let Some(normalized_worker) = normalize_market_worker_key(&worker) else {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "worker-id-invalid",
-                    message: format!("market bid worker must be non-empty for task {}", task_id),
+                    message: format!(
+                        "market bid worker must contain at least one visible identifier character for task {}",
+                        task_id
+                    ),
                 }));
-            }
+            };
             if price == 0 {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "bid-price-invalid",
@@ -4320,8 +4323,6 @@ fn main() -> Result<()> {
                     ),
                 }));
             }
-            let normalized_worker =
-                normalize_market_worker_key(&worker).expect("worker checked non-empty");
             let bid = {
                 // Acquire task lock first and keep it through bid persist so task
                 // status checks and bid append are linearizable with match_task.
@@ -5754,6 +5755,35 @@ mod tests {
         );
 
         let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn normalize_market_worker_key_rejects_invisible_only_worker_ids() {
+        assert_eq!(normalize_market_worker_key(" \u{200B}\u{2060}\u{00AD}\u{0007} "), None);
+    }
+
+    #[test]
+    fn market_submit_bid_rejects_invisible_only_worker_ids_without_panicking() {
+        let err = (|| -> Result<()> {
+            let worker = " \u{200B}\u{2060}\u{00AD}\u{0007} ".to_string();
+            let Some(_normalized_worker) = normalize_market_worker_key(&worker) else {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "worker-id-invalid",
+                    message: format!(
+                        "market bid worker must contain at least one visible identifier character for task {}",
+                        20_001
+                    ),
+                }));
+            };
+            Ok(())
+        })()
+        .expect_err("invisible-only worker ids must fail closed");
+        let rendered = err.to_string();
+        assert!(rendered.contains("worker-id-invalid"), "{rendered}");
+        assert!(
+            rendered.contains("visible identifier character"),
+            "{rendered}"
+        );
     }
 
     #[test]
