@@ -6695,6 +6695,43 @@ fn checkpoint_da_light_verifier_summary_accepts_max_length_canonical_wal_proposa
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_accepts_uppercase_ascii_wal_proposal_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "PROPOSAL-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("uppercase canonical ASCII WAL proposal_hash should remain audit-summary eligible");
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "uppercase ASCII proposal identities should remain admissible because WAL proposal_hash is an opaque canonical ASCII token rather than a lowercase hex digest"
+    );
+    assert!(
+        summary.contains("wal_proposal_hash=PROPOSAL-4"),
+        "DA/light-verifier summary should preserve uppercase canonical ASCII proposal identities verbatim"
+    );
+    assert!(
+        summary.contains("wal_proposal_hash_kind=opaque-ascii"),
+        "DA/light-verifier summary should continue classifying uppercase canonical proposal identities as opaque ASCII"
+    );
+    assert!(
+        summary.contains("wal_proposal_hash_surface_canonical=true"),
+        "DA/light-verifier summary should mark uppercase canonical ASCII proposal identities as canonical surfaces"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface() {
     let wal = WalMeta {
         height: 4,
