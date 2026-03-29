@@ -190,6 +190,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{FFFB}'
     )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
@@ -313,6 +314,13 @@ mod tests {
     fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability()
     {
         let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_plane14_tag_chars_for_replay_stability() {
+        let raw = "target\u{E0001}relay\u{E0020}timeout\u{E007F}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
