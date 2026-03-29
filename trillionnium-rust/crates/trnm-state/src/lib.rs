@@ -571,7 +571,7 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
     ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
     ("llm_meter_worker_slash_rebate_per_work_unit_num", "1000000000001"),
     ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-    ("resolve_authority", "   "),
+    ("resolve_authority", "resolver-a,governance.resolve_authority"),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
