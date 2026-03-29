@@ -124,6 +124,34 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_t
 }
 
 #[test]
+fn run_adapter_with_retry_prefers_latest_slo_violation_receipt_hash_and_stops() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-slo-violation-newest-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234' if count == 0 else 'tx_hash=0xBEEF5678', file=sys.stderr); raise SystemExit(1 if count == 0 else 11)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal slo_violation result with the latest receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_SLO_VIOLATION);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn llm_adapter_retry_succeeds_within_budget() {
     let mut attempt = 0u32;
     let mut slept = vec![];
