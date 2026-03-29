@@ -526,6 +526,20 @@ fn hot_bucket_hint_treats_object_zero_as_real_canonical_lane_under_role_flips() 
 }
 
 #[test]
+fn hot_bucket_hint_power_of_two_path_keeps_zero_primary_stable_under_asymmetric_role_flips() {
+    let buckets_n = 64usize;
+    let write_heavy = tx(973, vec![o(0), o(17), o(33), o(33)], vec![o(0), o(9), o(9)]);
+    let read_heavy = tx(974, vec![o(0), o(9), o(9)], vec![o(0), o(17), o(33), o(33)]);
+    let expected = ((0u64 ^ 9u64.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+
+    // The power-of-two reduction path should preserve the same canonical lane
+    // when object id 0 is the primary execution-domain key and the echoed
+    // non-primary footprint is asymmetric across read/write role flips.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
 fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
