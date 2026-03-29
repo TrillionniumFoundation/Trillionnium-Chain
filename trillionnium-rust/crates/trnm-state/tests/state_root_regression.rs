@@ -62,6 +62,31 @@ fn node_recovery_checkpoint_rejects_wal_entry_hash_with_edge_whitespace() {
     );
 }
 
+#[test]
+fn node_recovery_checkpoint_rejects_wal_entry_hash_with_zero_width_layout_drift() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let mut checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+    checkpoint.wal_entry_hash_hex.push('\u{200B}');
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint wal_entry_hash_hex with zero-width layout drift so restart-time checkpoint proofs preserve byte-canonical WAL digest surfaces"
+    );
+}
+
 fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
     state.restore_task(
         task_id,
