@@ -6,8 +6,9 @@ use crate::GroupingStrategy;
 pub(crate) fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     // Defensive guard: keep helper total for misconfigured callers and tests.
     // Production reorder path always uses buckets_n>=1, but this preserves
-    // fail-closed deterministic behavior if future call sites pass zero.
-    if buckets_n == 0 {
+    // fail-closed deterministic behavior if future call sites collapse fanout
+    // to zero/one bucket.
+    if buckets_n <= 1 {
         return 0;
     }
 
