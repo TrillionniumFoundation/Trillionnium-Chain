@@ -5032,17 +5032,23 @@ mod tests {
             "bft_observed_heights",
             "bft_committed_heights",
             "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
         ];
 
-        assert_eq!(incident_bundle.len(), 8);
+        assert_eq!(incident_bundle.len(), 10);
         assert!(incident_bundle[4].ends_with("_rate"));
         assert!(incident_bundle[5].ends_with("_heights"));
         assert!(incident_bundle[6].ends_with("_heights"));
         assert!(incident_bundle[7].ends_with("_rate_ppm"));
+        assert!(incident_bundle[8].ends_with("_total"));
+        assert!(incident_bundle[9].ends_with("_rate_ppm"));
         assert_eq!(incident_bundle[4], "recovery_error_rate");
         assert_eq!(incident_bundle[5], "bft_observed_heights");
         assert_eq!(incident_bundle[6], "bft_committed_heights");
         assert_eq!(incident_bundle[7], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(incident_bundle[8], "bft_skipped_height_total");
+        assert_eq!(incident_bundle[9], "bft_skipped_observed_height_rate_ppm");
     }
 
     #[test]
