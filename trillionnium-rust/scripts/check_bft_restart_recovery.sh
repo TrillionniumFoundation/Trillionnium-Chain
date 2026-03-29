@@ -1,6 +1,35 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+usage() {
+  cat <<'EOF'
+Usage: check_bft_restart_recovery.sh [--help]
+
+Runs the BFT restart-recovery drill against configs/node1.toml.
+
+Environment:
+  RUNS   Number of restart-recovery rehearsal cycles to execute (default: 5)
+
+Outputs:
+  Writes a PASS report under run/bft-restart-recovery-<timestamp>.txt
+  The report includes replay_command and rollback_command fields.
+EOF
+}
+
+case "${1:-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  "")
+    ;;
+  *)
+    echo "unexpected argument: $1" >&2
+    usage >&2
+    exit 64
+    ;;
+esac
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
