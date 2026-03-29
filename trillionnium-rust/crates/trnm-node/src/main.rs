@@ -1614,16 +1614,20 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     })
 }
 
+fn workspace_root() -> &'static Path {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node")
+}
+
 fn resolve_config_path(path: &str) -> PathBuf {
     let requested = Path::new(path);
     if requested.is_absolute() {
         return requested.to_path_buf();
     }
 
-    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .ancestors()
-        .nth(2)
-        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+    let workspace_root = workspace_root();
     let workspace_relative = workspace_root.join(requested);
     if workspace_relative.exists() {
         let canonical_workspace_root = workspace_root
@@ -1644,8 +1648,39 @@ fn resolve_config_path(path: &str) -> PathBuf {
     requested.to_path_buf()
 }
 
+fn ensure_relative_config_path_stays_within_allowed_roots(
+    requested: &str,
+    resolved: &Path,
+) -> Result<()> {
+    if Path::new(requested).is_absolute() || !resolved.exists() {
+        return Ok(());
+    }
+
+    let canonical_resolved = resolved
+        .canonicalize()
+        .unwrap_or_else(|_| resolved.to_path_buf());
+    let workspace_root = workspace_root()
+        .canonicalize()
+        .unwrap_or_else(|_| workspace_root().to_path_buf());
+    let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+    let canonical_current_dir = current_dir
+        .canonicalize()
+        .unwrap_or_else(|_| current_dir.clone());
+
+    anyhow::ensure!(
+        canonical_resolved.starts_with(&workspace_root)
+            || canonical_resolved.starts_with(&canonical_current_dir),
+        "read config failed: {} resolves outside allowed roots (resolved: {})",
+        requested,
+        canonical_resolved.display()
+    );
+
+    Ok(())
+}
+
 fn load_config(path: &str) -> Result<NodeConfig> {
     let resolved = resolve_config_path(path);
+    ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -3428,6 +3463,47 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_relative_symlink_escape_outside_workspace_and_cwd() {
+        use std::os::unix::fs::symlink;
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-symlink-escape-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let escape_dir = temp_root.join("escape");
+        std::fs::create_dir_all(workspace_shadow.join("configs"))
+            .expect("workspace shadow should be creatable");
+        std::fs::create_dir_all(&escape_dir).expect("escape dir should be creatable");
+        std::fs::write(
+            escape_dir.join("outside.toml"),
+            "node_id = \"node-escape\"\nrpc_addr = \"127.0.0.1:30001\"\np2p_addr = \"127.0.0.1:30000\"\n",
+        )
+        .expect("outside config should be writable");
+        symlink(
+            escape_dir.join("outside.toml"),
+            workspace_shadow.join("configs/escaped.toml"),
+        )
+        .expect("escape symlink should be creatable");
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
+        let err = load_config("configs/escaped.toml")
+            .expect_err("relative symlink escape should fail closed");
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        assert!(
+            err.to_string().contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::net::{IpAddr, Ipv4Addr};
 
@@ -3539,10 +3615,8 @@ mod tests {
         );
 
         for window in shipped_nodes.windows(2) {
-            let [
-                (prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket),
-                (config_path, node_id, rpc_socket, p2p_socket),
-            ] = window
+            let [(prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket), (config_path, node_id, rpc_socket, p2p_socket)] =
+                window
             else {
                 continue;
             };
@@ -4205,9 +4279,9 @@ mod tests {
 
         let err = validate_startup_args(&args)
             .expect_err("fault_rounds >= max_rounds must fail closed before startup");
-        assert!(err.to_string().contains(
-            "bft_fault_rounds (3) must be less than bft_max_rounds (3)"
-        ));
+        assert!(err
+            .to_string()
+            .contains("bft_fault_rounds (3) must be less than bft_max_rounds (3)"));
     }
 
     #[test]
@@ -4490,9 +4564,7 @@ mod tests {
                 "node.toml",
             )
             .expect_err("node_id dot segments must fail closed");
-            assert!(err
-                .to_string()
-                .contains("node_id must not be '.' or '..'"));
+            assert!(err.to_string().contains("node_id must not be '.' or '..'"));
         }
     }
 
