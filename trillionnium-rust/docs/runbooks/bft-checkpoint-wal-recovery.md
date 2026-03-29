@@ -35,15 +35,17 @@
 - `CheckpointMeta.wal_entry_hash_hex`
 - `WalMeta.prev_hash_hex`（把当前 WAL 条目接回前一个已确认条目）
 
-推荐把它理解为两层约束：
+推荐把它理解为三层约束：
 
 1. **checkpoint 锚点**：`(height, state_root_hex, wal_entry_hash_hex)` 必须命中同一条已提交 WAL 元数据。
 2. **链式连续性**：命中的 WAL 条目还必须通过 `prev_hash_hex` 与前序条目形成连续哈希链。
+3. **冲突 fail-closed**：若某个候选 checkpoint 的 `wal_entry_hash_hex` 命中 retained WAL 条目，但 `state_root_hex` 与该条目的已验证状态根不一致，则它不能被当作“同一锚点的等价副本”接受，必须回退到更早且仍可交叉验证的 checkpoint。
 
 这意味着 light-verifier 或人工审计都不能只看 `height` 或只看 `state_root_hex`：
 
 - 只有高度相同，不足以证明命中的是同一条 canonical WAL 记录；
 - 只有 `state_root_hex` 相同，不足以证明前序提交链没有漂移；
+- 即便 `wal_entry_hash_hex` 相同，只要 `state_root_hex` 不一致，也必须按冲突证据处理，不能把它当作同一检查点的可接受变体；
 - 必须同时检查 checkpoint 三元组与 `prev_hash_hex` 连续性，才能确认恢复锚点既命中正确状态，又命中正确提交历史。
 
 对于**同一高度出现多条候选元数据**的情况，还要维持跨 surface 一致的 canonical 排序语义：
