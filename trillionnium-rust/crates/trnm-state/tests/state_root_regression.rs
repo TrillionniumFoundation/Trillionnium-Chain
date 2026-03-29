@@ -835,6 +835,54 @@ fn restore_pending_gov_update_rejects_non_sensitive_emergency_pause_snapshot_and
 }
 
 #[test]
+fn restore_pending_gov_update_rejects_bare_emergency_pause_alias_in_resolve_authority_snapshot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .stage_or_confirm_resolve_approval(5_241_1, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("initial staged resolve approval should succeed");
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: staged pending resolve approval must perturb the root before bare emergency_pause alias replay"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_241_1).is_some(),
+        "sanity: pending resolve approval should exist before the fail-closed bare emergency_pause alias restore"
+    );
+
+    state.restore_pending_gov_update(
+        "resolve_authority",
+        Some(PendingGovParamUpdate {
+            key_id: 7,
+            key: "resolve_authority".into(),
+            value: "resolver-a,Emergency_Pause".into(),
+            activate_at_height: 320,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("resolve_authority").is_none(),
+        "bare emergency_pause alias resolve_authority restore snapshots must fail closed instead of materializing a queued governance update"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_241_1).is_none(),
+        "rejecting a bare emergency_pause alias resolve_authority restore snapshot must scrub staged pending resolve metadata"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "rejecting a bare emergency_pause alias resolve_authority restore snapshot must rewind state_root to the pre-staged baseline"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after bare emergency_pause alias resolve_authority rejection should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_rejects_snapshot_key_id_shadowing_live_governance_metadata() {
     let mut state = StateStore::new();
 
