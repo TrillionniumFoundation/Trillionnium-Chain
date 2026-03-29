@@ -145,6 +145,19 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
             f.display()
         );
     }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = meta.permissions().mode() & 0o777;
+        if mode & 0o077 != 0 {
+            bail!(
+                "wallet '{}' at {} has insecure permissions {:o}; expected owner-only access",
+                name,
+                f.display(),
+                mode
+            );
+        }
+    }
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())
