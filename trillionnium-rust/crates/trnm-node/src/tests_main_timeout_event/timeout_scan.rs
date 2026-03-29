@@ -206,6 +206,7 @@ fn timeout_scan_skips_challenged_task_while_paused_without_mutating_staged_resol
         .and_then(|t| t.resolve_deadline_height)
         .expect("resolve deadline must be present after challenge");
     let before_task = st.get_task(7006).expect("challenged task must exist");
+    let before_root = st.state_root();
     let before_escrow = st.balance_of("treasury.challenge_escrow");
     let before_forfeit = st.balance_of("treasury.challenge_forfeits");
     let before_worker_slash = st.balance_of("treasury.worker_slashes");
@@ -240,4 +241,14 @@ fn timeout_scan_skips_challenged_task_while_paused_without_mutating_staged_resol
         before_worker_slash
     );
     assert_eq!(st.balance_of("challenger7006"), before_challenger);
+    assert_eq!(
+        st.state_root(),
+        before_root,
+        "paused timeout skip must preserve the deterministic state_root exactly"
+    );
+    assert_eq!(
+        st.state_root(),
+        before_root,
+        "repeated reads after paused timeout skip should deterministically reuse the unchanged root"
+    );
 }
