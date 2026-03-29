@@ -81,4 +81,45 @@ mod tests {
             "unexpected parse error: {err}"
         );
     }
+
+    #[test]
+    fn checkpoint_meta_rejects_duplicate_fields_for_auditable_surfaces() {
+        let err = toml::from_str::<CheckpointMeta>(
+            r#"
+                height = 7
+                state_root_hex = "aa"
+                state_root_hex = "bb"
+                wal_entry_hash_hex = "cc"
+            "#,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("duplicate") && err.contains("state_root_hex"),
+            "unexpected parse error: {err}"
+        );
+    }
+
+    #[test]
+    fn wal_meta_rejects_duplicate_fields_for_auditable_surfaces() {
+        let err = toml::from_str::<WalMeta>(
+            r#"
+                height = 7
+                round = 1
+                proposal_hash = "proposal-7"
+                committed = true
+                state_root_hex = "aa"
+                prev_hash_hex = "bb"
+                prev_hash_hex = "cc"
+            "#,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("duplicate") && err.contains("prev_hash_hex"),
+            "unexpected parse error: {err}"
+        );
+    }
 }
