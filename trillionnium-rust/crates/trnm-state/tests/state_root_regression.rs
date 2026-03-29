@@ -6162,6 +6162,7 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains("wal_height_bytes=8"));
     assert!(summary.contains("wal_round=3"));
     assert!(summary.contains("wal_round_encoding=le-u64"));
+    assert!(summary.contains("wal_round_kind=bft-round-u64"));
     assert!(summary.contains("wal_round_bytes=8"));
     assert!(summary.contains("wal_state_root_kind=canonical-hex-32b"));
     assert!(summary.contains("wal_state_root_bytes=32"));
