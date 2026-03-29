@@ -771,13 +771,28 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
             if has_bond
                 || task.challenge_bond_forfeited.is_some()
                 || task.challenged_at_height.is_some()
-                || task.challenge_deadline_height.is_some()
                 || task.resolve_deadline_height.is_some()
             {
                 return Err(PouwError::State(format!(
                     "stale challenge fields for non-challenged status: status={:?}",
                     task.status
                 )));
+            }
+            let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
+                PouwError::State("revealed status requires challenge_deadline_height".into())
+            })?;
+            if challenge_deadline == 0 {
+                return Err(PouwError::State(
+                    "revealed status has invalid challenge_deadline_height".into(),
+                ));
+            }
+            if task
+                .challenge_window_blocks_snapshot
+                .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "revealed status has invalid challenge_window_blocks_snapshot".into(),
+                ));
             }
         }
         TaskStatus::Challenged => {
