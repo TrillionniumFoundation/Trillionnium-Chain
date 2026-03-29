@@ -468,6 +468,20 @@ fn hot_bucket_hint_is_stable_for_single_write_single_read_role_flips() {
 
 
 #[test]
+fn hot_bucket_hint_treats_object_zero_as_real_canonical_lane_under_role_flips() {
+    let buckets_n = 97usize;
+    let write_heavy = tx(971, vec![o(0), o(9), o(9)], vec![o(0), o(5), o(5)]);
+    let read_heavy = tx(972, vec![o(0), o(5), o(5)], vec![o(0), o(9), o(9)]);
+    let expected = ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // Object id 0 is a valid execution-domain key, not a sentinel. Equivalent
+    // mixed domains should keep the same canonical lane even when read/write
+    // roles flip and duplicate-heavy echoes surround the zero-key object.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
 fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
