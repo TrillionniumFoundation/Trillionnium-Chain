@@ -250,3 +250,71 @@ pub(crate) fn ensure_recoverable_wal_state(
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{metadata_only_recovery_error, retained_wal_summary};
+    use crate::types::RecoveredWalState;
+    use std::path::Path;
+
+    fn recovered_state(
+        wal_entries_retained: usize,
+        next_height: u64,
+        checkpoint_height_retained: Option<u64>,
+        truncated: bool,
+        metadata_only_recovery: bool,
+    ) -> RecoveredWalState {
+        RecoveredWalState {
+            next_height,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated,
+            metadata_only_recovery,
+            wal_entries_retained,
+            checkpoint_height_retained,
+        }
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_lag_for_retained_tip() {
+        let recovered = recovered_state(3, 8, Some(5), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 3 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 2 blocks)"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_missing_checkpoint_metadata() {
+        let recovered = recovered_state(1, 9, None, false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 1 committed WAL entry through height 8 (no retained checkpoint metadata)"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_appends_truncation_notice() {
+        let recovered = recovered_state(0, 1, None, true, false);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries; repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_includes_operator_facing_summary() {
+        let recovered = recovered_state(2, 12, Some(10), true, true);
+        let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
+
+        assert!(error.contains("/tmp/trnm-wal"));
+        assert!(error.contains(
+            "retained 2 committed WAL entries through height 11 (checkpoint lags retained WAL tip by 1 block); repaired WAL tail required truncation"
+        ));
+        assert!(error.contains("last retained checkpoint: 10"));
+        assert!(error.contains("next startup height: 12"));
+    }
+}
