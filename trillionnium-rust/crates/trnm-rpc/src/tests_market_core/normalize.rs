@@ -36,8 +36,9 @@ fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
 }
 
 #[test]
-fn normalize_tx_hash_lookup_trims_sentence_period_after_hash_value() {
+fn normalize_tx_hash_lookup_trims_trailing_sentence_punctuation_after_hash_value() {
     assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123."), "0xabc123");
+    assert_eq!(normalize_tx_hash_lookup("tx_hash=0xDeF456:"), "0xdef456");
 }
 
 #[test]
