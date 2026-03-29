@@ -13057,6 +13057,50 @@ locked_block_hash = "stale-lock"
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_state() {
+        let wal_dir = temp_wal_dir("fail-if-exists-checkpoint-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "existing").unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: wal_dir.display().to_string(),
+            bft_wal_mode: WalDirMode::FailIfExists,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = resolve_wal_dir(&args).unwrap_err().to_string();
+        assert!(
+            err.contains("refusing to reuse existing BFT WAL state")
+                && err.contains(&wal_dir.display().to_string())
+                && err.contains("--bft-wal-mode reuse")
+                && err.contains("--bft-wal-dir"),
+            "unexpected checkpoint-only fail-if-exists error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
 
 fn main() -> Result<()> {
