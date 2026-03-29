@@ -46,6 +46,7 @@
 - 只有高度相同，不足以证明命中的是同一条 canonical WAL 记录；
 - 只有 `state_root_hex` 相同，不足以证明前序提交链没有漂移；
 - 即便 `wal_entry_hash_hex` 相同，只要 `state_root_hex` 不一致，也必须按冲突证据处理，不能把它当作同一检查点的可接受变体；
+- 对 light-verifier / DA 摘要面，这种“`wal_entry_hash_hex` 命中但 `state_root_hex` 冲突”的情况必须标记为 **unavailable / fail-closed**，而不是降级成“弱匹配”或“同哈希可接受变体”；
 - 必须同时检查 checkpoint 三元组与 `prev_hash_hex` 连续性，才能确认恢复锚点既命中正确状态，又命中正确提交历史。
 
 对于**同一高度出现多条候选元数据**的情况，还要维持跨 surface 一致的 canonical 排序语义：
