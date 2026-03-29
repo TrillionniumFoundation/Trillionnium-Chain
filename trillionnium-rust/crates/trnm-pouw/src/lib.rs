@@ -2079,6 +2079,10 @@ pub fn apply_timeout(
         && task.challenge_deadline_height.is_none()
         && task.resolve_deadline_height.is_none()
     {
+        // Terminal no-op timeout paths must still scrub any stale staged resolve quorum
+        // residue so legacy/corrupt snapshots cannot retain authority approvals after the
+        // challenge evidence surface has already been reduced to a terminal retained stub.
+        st.clear_pending_resolve_approval(task_ref.id);
         return Ok(task_ref);
     }
 
