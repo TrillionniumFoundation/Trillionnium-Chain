@@ -119,6 +119,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
+    anyhow::ensure!(
+        rpc_socket.is_ipv4() == p2p_socket.is_ipv4(),
+        "invalid node config {}: rpc_addr and p2p_addr must use the same IP family",
+        path
+    );
+    anyhow::ensure!(
+        rpc_socket.ip() == p2p_socket.ip(),
+        "invalid node config {}: rpc_addr and p2p_addr must bind the same IP",
+        path
+    );
 
     Ok(NodeConfig {
         node_id: node_id.to_string(),
@@ -479,6 +489,42 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("node_id must not contain control characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_mixed_ip_families() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "[::1]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("mixed IPv4/IPv6 listener families must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must use the same IP family"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_distinct_listener_ips_within_same_family() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.2:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("distinct same-family listener IPs must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must bind the same IP"),
             "unexpected error: {err:#}"
         );
     }
