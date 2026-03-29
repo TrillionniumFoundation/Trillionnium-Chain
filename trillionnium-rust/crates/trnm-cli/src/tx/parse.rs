@@ -12,7 +12,7 @@ pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
                     || matches!(
                         c,
                         ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
-                            | '"' | '\'' | '`'
+                            | '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
                     )
                     || matches!(c, '.' | '!' | '?')
                     || matches!(

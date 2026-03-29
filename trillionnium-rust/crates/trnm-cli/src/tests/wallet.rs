@@ -24,6 +24,12 @@ fn wallet_import_hex_check() {
     .unwrap();
     assert_eq!(punctuated, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+    let smart_quoted = ensure_hex_32_bytes(
+        "“0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA”",
+    )
+    .unwrap();
+    assert_eq!(smart_quoted, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
     let unicode_spaced = ensure_hex_32_bytes(
         "\u{00a0}\u{2003}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{00a0}\u{2002}",
     )
