@@ -252,6 +252,43 @@ mod tests {
     }
 
     #[test]
+    fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: 1,
+            base_score: 0,
+            reputation_reward: (i128::MAX as u128) + 1,
+            penalty: 0,
+            effective_score: 0,
+            score_floor_applied: true,
+        });
+
+        assert_eq!(delta, i128::MIN);
+    }
+
+    #[test]
+    fn market_reputation_score_delta_uses_effective_reputation_sign_fail_closed() {
+        let reward_breakdown = MarketScoreBreakdown {
+            effective_reputation: 3,
+            base_score: 100,
+            reputation_reward: 21,
+            penalty: 999,
+            effective_score: 79,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&reward_breakdown), -21);
+
+        let penalty_breakdown = MarketScoreBreakdown {
+            effective_reputation: -3,
+            base_score: 100,
+            reputation_reward: 999,
+            penalty: 21,
+            effective_score: 121,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&penalty_breakdown), 21);
+    }
+
+    #[test]
     fn market_reputation_score_delta_saturates_negative_penalty_at_i128_max() {
         let delta = market_reputation_score_delta(&MarketScoreBreakdown {
             effective_reputation: -1,
