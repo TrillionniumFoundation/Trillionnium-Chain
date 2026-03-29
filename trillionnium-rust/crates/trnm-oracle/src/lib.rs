@@ -535,6 +535,7 @@ pub fn validate_snapshot_observed(
         | Err(OracleError::NonCanonicalSourceId { .. })
         | Err(OracleError::InsufficientSources { .. })
         | Err(OracleError::InconsistentSampleCount { .. })
+        | Err(OracleError::InvalidPolicy("sample_count must be > 0"))
         | Err(OracleError::DuplicateSources)
         | Err(OracleError::NonCanonicalSourceOrdering { .. }) => {
             observation.quorum_reject_total = 1;
@@ -2308,16 +2309,13 @@ mod tests {
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some("invalid policy: sample_count must be > 0")
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
