@@ -10,17 +10,7 @@ pub struct OracleSourceId(String);
 
 impl OracleSourceId {
     pub fn parse(raw: impl AsRef<str>) -> Result<Self, OracleError> {
-        let raw = raw.as_ref();
-        if raw.trim().is_empty() {
-            return Err(OracleError::EmptySourceId);
-        }
-        let canonical = raw.trim().to_ascii_lowercase();
-        if raw != canonical {
-            return Err(OracleError::NonCanonicalSourceId {
-                raw: raw.to_string(),
-                canonical,
-            });
-        }
+        let canonical = validate_canonical_source_id(raw.as_ref())?;
         Ok(Self(canonical))
     }
 
@@ -73,17 +63,7 @@ impl OracleSnapshot {
         }
 
         for source in &sources {
-            let raw = source.as_str();
-            if raw.trim().is_empty() {
-                return Err(OracleError::EmptySourceId);
-            }
-            let canonical = raw.trim().to_ascii_lowercase();
-            if raw != canonical {
-                return Err(OracleError::NonCanonicalSourceId {
-                    raw: raw.to_string(),
-                    canonical,
-                });
-            }
+            validate_canonical_source_id(source.as_str())?;
         }
 
         sources.sort();
@@ -310,6 +290,20 @@ impl OraclePolicy {
     }
 }
 
+fn validate_canonical_source_id(raw: &str) -> Result<String, OracleError> {
+    let canonical = raw.trim().to_ascii_lowercase();
+    if canonical.is_empty() {
+        return Err(OracleError::EmptySourceId);
+    }
+    if raw != canonical {
+        return Err(OracleError::NonCanonicalSourceId {
+            raw: raw.to_string(),
+            canonical,
+        });
+    }
+    Ok(canonical)
+}
+
 fn validate_canonical_feed_id(raw: &str) -> Result<(), OracleError> {
     let canonical = raw.trim().to_ascii_lowercase();
     if canonical.is_empty() {
@@ -410,17 +404,7 @@ fn validate_snapshot_sources(snapshot: &OracleSnapshot) -> Result<(), OracleErro
     let mut canonical_sources = BTreeSet::new();
 
     for source in &snapshot.sources {
-        let raw = source.as_str();
-        if raw.trim().is_empty() {
-            return Err(OracleError::EmptySourceId);
-        }
-        let canonical = raw.trim().to_ascii_lowercase();
-        if raw != canonical {
-            return Err(OracleError::NonCanonicalSourceId {
-                raw: raw.to_string(),
-                canonical,
-            });
-        }
+        let canonical = validate_canonical_source_id(source.as_str())?;
         if !canonical_sources.insert(canonical.clone()) {
             return Err(OracleError::DuplicateSources);
         }
