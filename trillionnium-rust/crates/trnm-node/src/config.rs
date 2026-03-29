@@ -797,6 +797,20 @@ mod tests {
                 "{config_path} p2p_addr {} must stay on loopback for shipped local bootstrap configs",
                 cfg.p2p_addr
             );
+            assert_eq!(
+                rpc_socket.is_ipv4(),
+                p2p_socket.is_ipv4(),
+                "{config_path} rpc_addr {} and p2p_addr {} must stay in the same IP family",
+                cfg.rpc_addr,
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.port(),
+                p2p_socket.port() + 1,
+                "{config_path} rpc_addr {} must stay exactly one port above p2p_addr {} for the shipped local bootstrap topology",
+                cfg.rpc_addr,
+                cfg.p2p_addr
+            );
         }
     }
 }
