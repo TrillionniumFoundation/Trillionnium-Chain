@@ -220,6 +220,49 @@ fn full_critical_reserve_allows_normal_to_use_free_headroom_while_critical_busy(
 }
 
 #[test]
+fn oversized_critical_reserve_clamp_keeps_qos_fail_closed_once_shared_headroom_is_consumed() {
+    let mut g = LaneAdmissionGate::new(2, 5);
+
+    // reserve > total clamps to reserve-only semantics. While one shared slot
+    // remains, both classes should still observe fresh admissibility.
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 1,
+            total_queued: 1,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        }
+    );
+
+    // A normal tx may borrow the final shared slot under the reserve clamp, but
+    // once that slot is consumed the public QoS surface must fail closed for both
+    // classes instead of advertising phantom dedicated normal headroom.
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 2,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        }
+    );
+
+    assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(13, IngressClass::Critical), AdmitOutcome::Backpressured);
+}
+
+#[test]
 fn reserve_only_normal_borrowing_does_not_preempt_critical_drain_order() {
     let mut g = LaneAdmissionGate::new(3, 3);
 
