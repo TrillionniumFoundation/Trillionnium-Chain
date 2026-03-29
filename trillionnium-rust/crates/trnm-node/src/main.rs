@@ -3424,18 +3424,30 @@ mod tests {
 
     #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
+        use std::net::{IpAddr, Ipv4Addr};
+
         let mut node_ids = std::collections::HashSet::new();
         let mut rpc_addrs = std::collections::HashSet::new();
         let mut p2p_addrs = std::collections::HashSet::new();
+        let mut all_listener_addrs = std::collections::HashSet::new();
+        let mut bootstrap_loopback_ips = std::collections::HashSet::new();
+        let mut shipped_nodes = Vec::new();
 
-        for config_path in [
+        for (index, config_path) in [
             "configs/node1.toml",
             "configs/node2.toml",
             "configs/node3.toml",
             "configs/node4.toml",
-        ] {
+        ]
+        .into_iter()
+        .enumerate()
+        {
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let config_slot = index + 1;
+            let expected_node_id = format!("node{}", config_slot);
+            let expected_p2p_port = 26_656 + (index as u16) * 1_000;
+            let expected_rpc_port = expected_p2p_port + 1;
             let rpc_socket: SocketAddr = cfg
                 .rpc_addr
                 .parse()
@@ -3444,6 +3456,10 @@ mod tests {
                 .p2p_addr
                 .parse()
                 .unwrap_or_else(|err| panic!("{config_path} p2p_addr should parse: {err}"));
+            assert_eq!(
+                cfg.node_id, expected_node_id,
+                "{config_path} must keep the deterministic shipped bootstrap node_id for slot {config_slot}"
+            );
             assert!(
                 node_ids.insert(cfg.node_id.clone()),
                 "{config_path} reuses node_id {}",
@@ -3460,18 +3476,94 @@ mod tests {
                 cfg.p2p_addr
             );
             assert!(
-                rpc_socket.ip().is_loopback(),
-                "{config_path} rpc_addr {} must stay on loopback for shipped local bootstrap configs",
+                all_listener_addrs.insert(cfg.rpc_addr.clone()),
+                "{config_path} rpc_addr {} collides with another shipped listener address",
                 cfg.rpc_addr
             );
             assert!(
-                p2p_socket.ip().is_loopback(),
-                "{config_path} p2p_addr {} must stay on loopback for shipped local bootstrap configs",
+                all_listener_addrs.insert(cfg.p2p_addr.clone()),
+                "{config_path} p2p_addr {} collides with another shipped listener address",
                 cfg.p2p_addr
             );
-            assert_ne!(
-                rpc_socket, p2p_socket,
-                "{config_path} must not reuse the same socket for rpc and p2p"
+            assert_eq!(
+                rpc_socket.ip(),
+                IpAddr::V4(Ipv4Addr::LOCALHOST),
+                "{config_path} rpc_addr {} must stay pinned to 127.0.0.1 for deterministic shipped bootstrap peer dialing",
+                cfg.rpc_addr
+            );
+            assert_eq!(
+                p2p_socket.ip(),
+                IpAddr::V4(Ipv4Addr::LOCALHOST),
+                "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for deterministic shipped bootstrap peer dialing",
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.ip(),
+                p2p_socket.ip(),
+                "{config_path} rpc_addr {} and p2p_addr {} must bind the same loopback IP",
+                cfg.rpc_addr,
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.port(),
+                expected_rpc_port,
+                "{config_path} rpc_addr {} must keep the deterministic shipped bootstrap RPC port for slot {config_slot}",
+                cfg.rpc_addr
+            );
+            assert_eq!(
+                p2p_socket.port(),
+                expected_p2p_port,
+                "{config_path} p2p_addr {} must keep the deterministic shipped bootstrap P2P port for slot {config_slot}",
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.port(),
+                p2p_socket.port() + 1,
+                "{config_path} rpc_addr {} must stay exactly one port above p2p_addr {}",
+                cfg.rpc_addr,
+                cfg.p2p_addr
+            );
+            bootstrap_loopback_ips.insert(rpc_socket.ip());
+            shipped_nodes.push((config_path, cfg.node_id, rpc_socket, p2p_socket));
+        }
+
+        assert_eq!(
+            bootstrap_loopback_ips.len(),
+            1,
+            "shipped local bootstrap configs must all stay on the same loopback IP for deterministic peer dialing"
+        );
+
+        for window in shipped_nodes.windows(2) {
+            let [
+                (prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket),
+                (config_path, node_id, rpc_socket, p2p_socket),
+            ] = window
+            else {
+                continue;
+            };
+
+            assert_eq!(
+                p2p_socket.port() - prev_p2p_socket.port(),
+                1000,
+                "{config_path} p2p_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({})",
+                p2p_socket,
+                prev_node_id,
+                prev_config_path
+            );
+            assert_eq!(
+                rpc_socket.port() - prev_rpc_socket.port(),
+                1000,
+                "{config_path} rpc_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({})",
+                rpc_socket,
+                prev_node_id,
+                prev_config_path
+            );
+            assert!(
+                node_id > prev_node_id,
+                "{config_path} node_id {} must remain lexically ordered after prior shipped bootstrap peer {} ({})",
+                node_id,
+                prev_node_id,
+                prev_config_path
             );
         }
     }
