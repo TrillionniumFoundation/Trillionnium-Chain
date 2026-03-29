@@ -1704,6 +1704,12 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         "invalid startup args: bft_max_rounds must be at least 1"
     );
     anyhow::ensure!(
+        args.bft_fault_rounds < args.bft_max_rounds,
+        "invalid startup args: bft_fault_rounds ({}) must be less than bft_max_rounds ({}) so startup cannot guarantee a no-quorum stall",
+        args.bft_fault_rounds,
+        args.bft_max_rounds
+    );
+    anyhow::ensure!(
         args.bft_round_change_backoff_max_ms >= args.bft_round_change_backoff_ms,
         "invalid startup args: bft_round_change_backoff_max_ms ({}) must be >= bft_round_change_backoff_ms ({})",
         args.bft_round_change_backoff_max_ms,
@@ -4043,6 +4049,73 @@ mod tests {
         assert!(err
             .to_string()
             .contains("bft_max_rounds must be at least 1"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_fault_rounds_that_guarantee_no_quorum_stall() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 3,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("fault_rounds >= max_rounds must fail closed before startup");
+        assert!(err.to_string().contains(
+            "bft_fault_rounds (3) must be less than bft_max_rounds (3)"
+        ));
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_fault_round_budget_below_max_rounds() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 2,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("fault_rounds below max_rounds must remain bootstrappable");
     }
 
     #[test]
