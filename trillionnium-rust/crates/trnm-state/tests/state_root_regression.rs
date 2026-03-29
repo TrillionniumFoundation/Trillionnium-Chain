@@ -6192,6 +6192,36 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_exposes_canonical_hex_encoding_metadata() {
+    let wal = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "proposal-7".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let summary = checkpoint_da_light_verifier_summary(&checkpoint, &wal)
+        .expect("canonical checkpoint/WAL evidence should expose canonical encoding metadata");
+
+    assert!(summary.contains("da_state_commitment_encoding=hex-lower"));
+    assert!(summary.contains("da_checkpoint_commitment_encoding=hex-lower"));
+    assert!(summary.contains("da_wal_content_hash_encoding=hex-lower"));
+    assert!(summary.contains("checkpoint_commitment_encoding=hex-lower"));
+    assert!(summary.contains("checkpoint_state_root_encoding=hex-lower"));
+    assert!(summary.contains("checkpoint_wal_entry_hash_encoding=hex-lower"));
+    assert!(summary.contains("wal_state_root_encoding=hex-lower"));
+    assert!(summary.contains("wal_content_hash_encoding=hex-lower"));
+    assert!(summary.contains("wal_prev_hash_encoding=hex-lower-or-none"));
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_marks_genesis_prev_hash_surface() {
     let wal = WalMeta {
         height: 1,
