@@ -181,7 +181,12 @@ if ! grep -q '^status=PASS$' "$RECOVERY_REPORT"; then
   log "recovery drill failed: restart recovery report is not PASS ($RECOVERY_REPORT)"
   exit 12
 fi
-rollback_command="$rollback_command $(printf '%q' "$RECOVERY_REPORT")"
+RECOVERY_ROLLBACK_COMMAND="$(awk -F= '/^rollback_command=/ { sub(/^rollback_command=/, ""); print; exit }' "$RECOVERY_REPORT")"
+if [ -z "$RECOVERY_ROLLBACK_COMMAND" ]; then
+  log "recovery drill failed: missing rollback_command in restart recovery report ($RECOVERY_REPORT)"
+  exit 12
+fi
+rollback_command="$rollback_command && $RECOVERY_ROLLBACK_COMMAND"
 
 cleanup_devnet() {
   if [ "${DEVNET_STARTED:-0}" -eq 1 ]; then
