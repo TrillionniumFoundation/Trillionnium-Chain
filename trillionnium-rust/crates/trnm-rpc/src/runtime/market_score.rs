@@ -193,6 +193,23 @@ mod tests {
     }
 
     #[test]
+    fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_minimum() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: -10,
+        });
+
+        assert_eq!(output.price_weight, 3);
+        assert_eq!(output.reputation_weight, 7);
+        assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.max_effective_reputation, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.min_effective_reputation, -MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.max_reputation_score_delta, 7);
+        assert_eq!(output.min_reputation_score_delta, -7);
+    }
+
+    #[test]
     fn market_score_config_output_reports_symmetric_fail_closed_reputation_bounds() {
         let output = MarketScoreConfigOutput::from(MarketScoreConfig {
             price_weight: 1,
