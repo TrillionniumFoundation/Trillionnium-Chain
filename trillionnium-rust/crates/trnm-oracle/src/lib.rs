@@ -1548,6 +1548,40 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_preserves_snapshot_hash_mismatch_details_without_counter_drift() {
+        let p = policy();
+        let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
+        let expected = snap.compute_hash();
+        snap.snapshot_hash.push('x');
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some(
+                format!(
+                    "snapshot hash mismatch: expected={}, actual={}",
+                    expected, snap.snapshot_hash
+                )
+                .as_str()
+            )
+        );
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.has_explicit_unclassified_failure_accounting());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_preserves_canonical_source_cardinality_under_empty_feed_guard() {
         let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "   ",
