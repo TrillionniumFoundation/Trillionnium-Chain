@@ -46,6 +46,7 @@ fn wallet_name_rejects_path_like_values() {
         ".",
         "..",
         ".alice",
+        "alice.",
         "-alice",
         "--help",
         "alice/bob",
