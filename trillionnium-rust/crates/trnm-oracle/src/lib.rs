@@ -57,16 +57,8 @@ impl OracleSnapshot {
         snapshot_ts_ms: u64,
     ) -> Result<Self, OracleError> {
         let raw_feed_id = feed_id.into();
-        let feed_id = raw_feed_id.trim().to_ascii_lowercase();
-        if feed_id.is_empty() {
-            return Err(OracleError::EmptyFeedId);
-        }
-        if raw_feed_id != feed_id {
-            return Err(OracleError::NonCanonicalFeedId {
-                raw: raw_feed_id,
-                canonical: feed_id,
-            });
-        }
+        validate_canonical_feed_id(&raw_feed_id)?;
+        let feed_id = raw_feed_id;
         if window_end_ms < window_start_ms {
             return Err(OracleError::InvalidWindow {
                 start_ms: window_start_ms,
@@ -243,16 +235,7 @@ impl OraclePolicy {
     ) -> Result<(), OracleError> {
         self.validate()?;
 
-        let canonical_feed_id = snapshot.feed_id.trim().to_ascii_lowercase();
-        if canonical_feed_id.is_empty() {
-            return Err(OracleError::EmptyFeedId);
-        }
-        if snapshot.feed_id != canonical_feed_id {
-            return Err(OracleError::NonCanonicalFeedId {
-                raw: snapshot.feed_id.clone(),
-                canonical: canonical_feed_id,
-            });
-        }
+        validate_canonical_feed_id(&snapshot.feed_id)?;
         if snapshot.window_end_ms < snapshot.window_start_ms {
             return Err(OracleError::InvalidWindow {
                 start_ms: snapshot.window_start_ms,
@@ -325,6 +308,20 @@ impl OraclePolicy {
 
         Ok(())
     }
+}
+
+fn validate_canonical_feed_id(raw: &str) -> Result<(), OracleError> {
+    let canonical = raw.trim().to_ascii_lowercase();
+    if canonical.is_empty() {
+        return Err(OracleError::EmptyFeedId);
+    }
+    if raw != canonical {
+        return Err(OracleError::NonCanonicalFeedId {
+            raw: raw.to_string(),
+            canonical,
+        });
+    }
+    Ok(())
 }
 
 fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
@@ -725,7 +722,10 @@ mod tests {
         let err = OracleSnapshot::new(
             "btc/usd",
             100_000,
-            vec![OracleSourceId(" ChainLink ".to_string()), source("coingecko")],
+            vec![
+                OracleSourceId(" ChainLink ".to_string()),
+                source("coingecko"),
+            ],
             2,
             Some(100_000),
             Some(120),
@@ -1017,7 +1017,11 @@ mod tests {
         let err = OracleSnapshot::new(
             "btc/usd",
             100_000,
-            vec![source("coingecko"), source("chainlink"), source("coingecko")],
+            vec![
+                source("coingecko"),
+                source("chainlink"),
+                source("coingecko"),
+            ],
             3,
             Some(100_000),
             Some(120),
@@ -1833,7 +1837,8 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_quorum_failure() {
+    fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_quorum_failure()
+    {
         let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
             "value": 100000,
