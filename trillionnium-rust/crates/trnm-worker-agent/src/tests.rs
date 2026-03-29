@@ -335,6 +335,32 @@ fn run_adapter_with_retry_retries_with_exponential_backoff_schedule() {
 }
 
 #[test]
+fn run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        3,
+        25,
+        || {
+            attempt += 1;
+            Ok(std::process::Command::new("python3")
+                .args(["-c", "print('tx_hash=0xDEADBEEF', file=__import__('sys').stderr); raise SystemExit(10)"])
+                .output()
+                .expect("python3 deterministic rejection probe should run"))
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should stop on deterministic rejection");
+
+    assert_eq!(attempt, 1, "deterministic rejections must not retry");
+    assert!(slept.is_empty(), "deterministic rejections must not sleep before stopping");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_terminal_stop() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-slo-last-tx-hash-counter-{}-{}.txt",
