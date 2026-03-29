@@ -949,14 +949,16 @@ mod tests {
                 "{config_path} p2p_addr {} collides with another shipped listener address",
                 cfg.p2p_addr
             );
-            assert!(
-                rpc_socket.ip().is_loopback(),
-                "{config_path} rpc_addr {} must stay on loopback for shipped local bootstrap configs",
+            assert_eq!(
+                rpc_socket.ip(),
+                std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
+                "{config_path} rpc_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
                 cfg.rpc_addr
             );
-            assert!(
-                p2p_socket.ip().is_loopback(),
-                "{config_path} p2p_addr {} must stay on loopback for shipped local bootstrap configs",
+            assert_eq!(
+                p2p_socket.ip(),
+                std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
+                "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
                 cfg.p2p_addr
             );
             assert_eq!(
