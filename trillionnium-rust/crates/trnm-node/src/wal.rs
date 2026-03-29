@@ -711,6 +711,56 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_meta_roundtrip_keeps_lower_height_ahead_of_equal_height_light_verifier_block() {
+        let wal_dir = temp_wal_dir("checkpoint-canonical-roundtrip-mixed-heights");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let original = toml::to_string(&CheckpointMetaList {
+            checkpoints: vec![
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+                CheckpointMeta {
+                    height: 8,
+                    state_root_hex: "root-z".into(),
+                    wal_entry_hash_hex: "hash-z".into(),
+                },
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-c".into(),
+                },
+                CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(checkpoint_file(&wal_dir), original).unwrap();
+
+        let canonicalized = load_checkpoint_meta(&wal_dir).unwrap();
+        persist_checkpoint_meta(&wal_dir, &canonicalized).unwrap();
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+
+        let h8_idx = raw.find("height = 8").unwrap();
+        let root_z_idx = raw.find("state_root_hex = \"root-z\"").unwrap();
+        let h9_root_a_idx = raw.find("state_root_hex = \"root-a\"").unwrap();
+        let hash_a_idx = raw.find("wal_entry_hash_hex = \"hash-a\"").unwrap();
+        let hash_c_idx = raw.find("wal_entry_hash_hex = \"hash-c\"").unwrap();
+        let root_b_idx = raw.find("state_root_hex = \"root-b\"").unwrap();
+
+        assert!(h8_idx < h9_root_a_idx, "lower checkpoint heights must remain ahead of later evidence blocks so light-verifier summaries anchor from the earliest canonical checkpoint first");
+        assert!(root_z_idx < h9_root_a_idx, "lower-height checkpoint evidence must serialize before equal-height linkage entries");
+        assert!(hash_a_idx < hash_c_idx && hash_c_idx < root_b_idx, "equal-height checkpoint linkage must remain canonical within the later-height evidence block");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
