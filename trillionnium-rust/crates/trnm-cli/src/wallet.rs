@@ -42,6 +42,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.ends_with('.')
         || name.starts_with('-')
         || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?'])
+        || name.contains(['：', '＝', '｜', '＆', '？'])
         || name.contains(['∕', '⁄', '／', '＼', '⧵'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
