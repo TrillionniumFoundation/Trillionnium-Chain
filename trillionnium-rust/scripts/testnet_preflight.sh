@@ -174,6 +174,10 @@ if [ -z "$RECOVERY_REPORT" ] || [ ! -f "$RECOVERY_REPORT" ]; then
   log "recovery drill failed: missing restart recovery report"
   exit 12
 fi
+if ! grep -q '^status=PASS$' "$RECOVERY_REPORT"; then
+  log "recovery drill failed: restart recovery report is not PASS ($RECOVERY_REPORT)"
+  exit 12
+fi
 rollback_command="$rollback_command $(printf '%q' "$RECOVERY_REPORT")"
 
 cleanup_devnet() {
