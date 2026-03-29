@@ -123,6 +123,12 @@ consistency boundaries:
   - specifically covers reserved sponsor/audit identities (`System`, governance pause /
     resolve placeholders, and treasury escrow/forfeit/slash accounts) so retention
     snapshots cannot masquerade as valid third-party challengers
+- `cargo test -p trnm-state restore_task_rejects_terminal_challenge_retention_with_mixed_case_challenger_identity -q`
+  - proves sponsor-funded retention trails reject mixed-case challenger aliases instead
+    of silently canonicalizing them at restore time
+  - keeps the freeze packet explicit that retained challenger identities are part of the
+    economics boundary, not just cosmetic metadata, because downstream audit/refund
+    attribution must key off a single lowercase actor id
 
 These are not a substitute for the final frozen parameter sheet, but they give launch review
 an auditable starting point: public ingress policy must stay explicitly bounded, and retained
