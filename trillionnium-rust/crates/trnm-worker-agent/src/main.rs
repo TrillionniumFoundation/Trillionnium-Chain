@@ -906,14 +906,18 @@ fn truncate_for_error(raw: &str, max_chars: usize) -> String {
     format!("{}…(truncated, {} chars total)", prefix, total)
 }
 
+fn trim_config_numeric_value(raw: &str) -> &str {
+    raw.trim_matches(|c: char| c.is_whitespace() || is_invisible_filler(c))
+}
+
 fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
-    raw.and_then(|s| s.trim().parse::<u32>().ok())
+    raw.and_then(|s| trim_config_numeric_value(s).parse::<u32>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
 
 fn parse_u64_with_min(raw: Option<&str>, default: u64, min: u64) -> u64 {
-    raw.and_then(|s| s.trim().parse::<u64>().ok())
+    raw.and_then(|s| trim_config_numeric_value(s).parse::<u64>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
