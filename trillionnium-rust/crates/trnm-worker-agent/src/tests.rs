@@ -1,8 +1,14 @@
 use super::*;
 use crate::{assigned::assigned_skip_reason, proof_adapter::StandardProofAdapter};
+use std::sync::{Mutex, OnceLock};
 
 #[path = "tests_adapter_path_classification.rs"]
 mod tests_adapter_path_classification;
+
+fn tx_retry_policy_env_lock() -> &'static Mutex<()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
 
 #[test]
 fn assigned_skip_reason_reports_devnet_smoke_gating_causes() {
@@ -688,6 +694,47 @@ fn tx_retry_policy_allows_per_field_cli_override_while_preserving_other_env_valu
             backoff_ms: 125,
         }
     );
+}
+
+#[test]
+fn tx_retry_policy_reads_process_env_and_preserves_cli_precedence() {
+    let _guard = tx_retry_policy_env_lock()
+        .lock()
+        .expect("tx retry policy env mutex should not be poisoned");
+    let prev_max = std::env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok();
+    let prev_backoff = std::env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok();
+
+    unsafe {
+        std::env::set_var(TX_ADAPTER_MAX_RETRIES_ENV, " 8\n");
+        std::env::set_var(TX_ADAPTER_BACKOFF_MS_ENV, "\t650 ");
+    }
+
+    let env_policy = resolve_tx_retry_policy(None, None);
+    assert_eq!(
+        env_policy,
+        RetryPolicy {
+            max_retries: 8,
+            backoff_ms: 650,
+        }
+    );
+
+    let cli_policy = resolve_tx_retry_policy(Some(1), Some(25));
+    assert_eq!(
+        cli_policy,
+        RetryPolicy {
+            max_retries: 1,
+            backoff_ms: 25,
+        }
+    );
+
+    match prev_max {
+        Some(value) => unsafe { std::env::set_var(TX_ADAPTER_MAX_RETRIES_ENV, value) },
+        None => unsafe { std::env::remove_var(TX_ADAPTER_MAX_RETRIES_ENV) },
+    }
+    match prev_backoff {
+        Some(value) => unsafe { std::env::set_var(TX_ADAPTER_BACKOFF_MS_ENV, value) },
+        None => unsafe { std::env::remove_var(TX_ADAPTER_BACKOFF_MS_ENV) },
+    }
 }
 
 #[test]
