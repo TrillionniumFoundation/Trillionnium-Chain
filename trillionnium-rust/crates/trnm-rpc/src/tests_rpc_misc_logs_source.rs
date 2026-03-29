@@ -66,3 +66,41 @@ fn load_node_event_log_sources_prefers_manifest_and_env_over_fixed_defaults() {
 
     let _ = fs::remove_dir_all(root);
 }
+
+#[test]
+fn load_node_event_log_sources_deduplicates_overlapping_manifest_and_relative_env_entries() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-dedupe", "dir");
+    let manifest_dir = root.join("cfg");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let shared_log = root.join("shared.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&shared_log, "").expect("write shared log");
+    fs::write(&manifest, format!("{}\n", shared_log.display())).expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "shared.log");
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(got, vec![shared_log], "overlapping sources should collapse to one path");
+
+    let _ = fs::remove_dir_all(root);
+}
