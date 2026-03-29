@@ -419,6 +419,28 @@ mod tests {
     }
 
     #[test]
+    fn wal_content_hash_distinguishes_missing_prev_hash_from_literal_genesis_marker_for_audit_surfaces() {
+        let genesis_boundary = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "aa".repeat(32),
+            prev_hash_hex: None,
+        };
+        let forged_literal = WalMeta {
+            prev_hash_hex: Some("genesis".into()),
+            ..genesis_boundary.clone()
+        };
+
+        assert_ne!(
+            genesis_boundary.content_hash_hex(),
+            forged_literal.content_hash_hex(),
+            "audit-facing WAL content hashes must distinguish a missing genesis predecessor from a literal \"genesis\" prev_hash payload"
+        );
+    }
+
+    #[test]
     fn wal_meta_roundtrip_preserves_canonical_bytes_for_prev_hash_audit_surfaces() {
         let wal_dir = temp_wal_dir("wal-canonical-roundtrip-bytes");
         fs::create_dir_all(&wal_dir).unwrap();
