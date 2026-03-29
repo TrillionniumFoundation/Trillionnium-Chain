@@ -466,6 +466,28 @@ fn hot_bucket_hint_is_stable_for_single_write_single_read_role_flips() {
     assert_eq!(hot_bucket_hint(&read_then_write, buckets_n), expected);
 }
 
+#[test]
+fn hot_bucket_hint_stays_stable_when_echoed_primary_has_asymmetric_secondary_width() {
+    let buckets_n = 97usize;
+    let write_heavy = tx(
+        961,
+        vec![o(5), o(9), o(11), o(11)],
+        vec![o(5), o(7), o(7)],
+    );
+    let read_heavy = tx(
+        962,
+        vec![o(5), o(7), o(7)],
+        vec![o(5), o(9), o(11), o(11)],
+    );
+    let expected = ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // If the canonical primary key is echoed across read/write domains but one
+    // side contributes a narrower non-primary footprint, role flips must still
+    // preserve the same lane anchor instead of drifting to the wider side's
+    // local secondary.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
 
 #[test]
 fn hot_bucket_hint_treats_object_zero_as_real_canonical_lane_under_role_flips() {
