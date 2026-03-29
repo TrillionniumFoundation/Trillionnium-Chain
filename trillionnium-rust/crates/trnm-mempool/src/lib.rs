@@ -879,6 +879,36 @@ mod tests {
     }
 
     #[test]
+    fn zero_reserve_full_shared_queue_keeps_qos_flat_across_cross_class_duplicate_and_retry_noise() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        let saturated_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 0,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+
+        // Under zero reserve, a queued normal id retried through the critical path
+        // must stay Duplicate, while a fresh critical retry must stay Backpressured.
+        // Neither probe may perturb queue accounting or the public QoS surface.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+    }
+
+    #[test]
     fn qos_snapshot_tracks_critical_spillover_into_free_normal_headroom() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
