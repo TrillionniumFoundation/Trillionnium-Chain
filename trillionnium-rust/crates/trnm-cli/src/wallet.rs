@@ -126,14 +126,31 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
 
 pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
+    let store_meta = fs::symlink_metadata(store)
+        .map_err(|e| anyhow!("failed to inspect wallet store '{}': {e}", store.display()))?;
+    if store_meta.file_type().is_symlink() {
         bail!(
             "wallet store '{}' is a symlink; refusing to read keys through non-regular wallet store path",
             store.display()
         );
+    }
+    if !store_meta.file_type().is_dir() {
+        bail!(
+            "wallet store '{}' is not a directory; refusing to read keys through non-regular wallet store path",
+            store.display()
+        );
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = store_meta.permissions().mode() & 0o777;
+        if mode & 0o077 != 0 {
+            bail!(
+                "wallet store '{}' has insecure permissions {:o}; expected owner-only access",
+                store.display(),
+                mode
+            );
+        }
     }
     let f = wallet_file(store, name);
     let meta = fs::symlink_metadata(&f)
