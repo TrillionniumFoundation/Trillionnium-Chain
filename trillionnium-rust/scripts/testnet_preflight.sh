@@ -128,7 +128,9 @@ bash -n ./scripts/release_rc.sh
 bash -n ./scripts/run_local_release_evidence.sh
 bash -n ./scripts/run_industrial_readiness_check.sh
 bash -n ./scripts/check_nightly_green_streak.sh
+bash -n ./scripts/check_parallel_flaky.sh
 bash -n ./scripts/run_phasea_fault_injection_suite.sh
+bash -n ./scripts/enforce_ci_thresholds.sh
 bash -n ./scripts/v2/verify_lane_worktree.sh
 bash -n ./scripts/v2/extract_release_handoff_fields.sh
 bash -n ./scripts/devnet_up.sh
