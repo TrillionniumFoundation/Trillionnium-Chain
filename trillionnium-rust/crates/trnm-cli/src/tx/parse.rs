@@ -186,6 +186,10 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
         (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
+        (k.trim(), v.trim())
     } else {
         return None;
     };
@@ -214,6 +218,10 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
         (k.trim(), v.trim())
     } else {
         return None;

@@ -134,6 +134,20 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
 }
 
 #[test]
+fn tx_query_parse_kv_accepts_fullwidth_separators() {
+    let fullwidth_equals = "tx_hash＝0xabc987\nstatus＝committed\nerror＝null\n";
+    let parsed_fullwidth_equals = parse_tx_query_response(fullwidth_equals, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_equals.tx_hash, "0xabc987");
+    assert_eq!(parsed_fullwidth_equals.status, "committed");
+    assert_eq!(parsed_fullwidth_equals.error, None);
+
+    let fullwidth_colon = "transactionHash：0xdef654\nstatus：COMMITTED\n";
+    let parsed_fullwidth_colon = parse_tx_query_response(fullwidth_colon, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_colon.tx_hash, "0xdef654");
+    assert_eq!(parsed_fullwidth_colon.status, "committed");
+}
+
+#[test]
 fn tx_query_parse_kv_accepts_angle_bracket_wrapped_inline_tokens() {
     let noisy = "[rpc] <transactionHash:0xCAFE99> <status:COMMITTED> <error:null>";
     let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();

@@ -79,6 +79,18 @@ fn extract_tx_hash_accepts_spaced_separators() {
 }
 
 #[test]
+fn extract_tx_hash_accepts_fullwidth_separators() {
+    assert_eq!(
+        extract_tx_hash("tx_hash＝0xFEED77").as_deref(),
+        Some("0xfeed77")
+    );
+    assert_eq!(
+        extract_tx_hash("transactionHash：0xBEEF88").as_deref(),
+        Some("0xbeef88")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_angle_bracket_wrapped_hashes() {
     assert_eq!(
         extract_tx_hash("tx_hash=<0xBEEF42>").as_deref(),
