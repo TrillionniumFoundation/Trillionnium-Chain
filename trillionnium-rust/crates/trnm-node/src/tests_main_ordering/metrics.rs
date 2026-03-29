@@ -45,21 +45,25 @@ fn preexec_reject_density_metrics_expose_concentrated_guardrail_pressure() {
 
 #[test]
 fn preexec_reject_metric_names_keep_height_coverage_and_budget_semantics_distinct() {
+    let total_field_name = "preexec_reject_total";
     let active_height_count_field_name = "preexec_reject_active_heights";
     let active_height_rate_field_name = "preexec_reject_active_height_rate_ppm";
     let active_observed_height_rate_field_name = "preexec_reject_active_observed_height_rate_ppm";
     let active_height_share_field_name = "preexec_reject_active_height_share_ppm";
+    let density_avg_field_name = "preexec_reject_density_avg";
     let density_avg_milli_field_name = "preexec_reject_density_avg_milli";
+    let budget_share_field_name = "preexec_reject_share_bps";
 
+    assert!(total_field_name.ends_with("_total"));
     assert!(active_height_count_field_name.ends_with("_heights"));
     assert!(active_height_rate_field_name.ends_with("_height_rate_ppm"));
     assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
     assert!(active_height_share_field_name.ends_with("_share_ppm"));
+    assert!(density_avg_field_name.ends_with("_avg"));
     assert!(density_avg_milli_field_name.ends_with("_avg_milli"));
-    assert_ne!(
-        active_height_count_field_name,
-        active_height_rate_field_name
-    );
+    assert!(budget_share_field_name.ends_with("_share_bps"));
+    assert_ne!(total_field_name, active_height_count_field_name);
+    assert_ne!(active_height_count_field_name, active_height_rate_field_name);
     assert_ne!(
         active_height_rate_field_name,
         active_observed_height_rate_field_name
@@ -68,7 +72,9 @@ fn preexec_reject_metric_names_keep_height_coverage_and_budget_semantics_distinc
         active_observed_height_rate_field_name,
         active_height_share_field_name
     );
-    assert_ne!(active_height_share_field_name, density_avg_milli_field_name);
+    assert_ne!(active_height_share_field_name, density_avg_field_name);
+    assert_ne!(density_avg_field_name, density_avg_milli_field_name);
+    assert_ne!(density_avg_milli_field_name, budget_share_field_name);
 }
 
 #[test]
