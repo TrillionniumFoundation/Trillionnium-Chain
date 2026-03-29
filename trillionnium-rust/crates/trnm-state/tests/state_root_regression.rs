@@ -6930,6 +6930,48 @@ fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_internal_tab() {
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_carriage_return() {
+    let wal = WalMeta {
+        height: 16,
+        round: 2,
+        proposal_hash: "proposal-16".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.proposal_hash = "proposal-16\r".into();
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical WAL proposal_hash should keep checkpoint evidence audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical WAL proposal_hash should still produce a DA/light-verifier summary"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "checkpoint evidence surfaces must reject WAL proposal_hash values containing carriage-return control characters"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "DA/light-verifier summaries must fail closed when WAL proposal_hash contains carriage-return control characters"
+    );
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_noncanonical_non_genesis_prev_hash_even_when_hashes_match() {
     let wal = WalMeta {
         height: 2,
