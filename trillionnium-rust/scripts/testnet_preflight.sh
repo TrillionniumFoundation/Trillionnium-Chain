@@ -139,6 +139,7 @@ bash -n ./scripts/run_bench_mixed_matrix.sh
 log "check script prerequisites"
 command -v python3 >/dev/null
 python3 -m py_compile ./scripts/executor_profile_report.py
+python3 -m py_compile ./scripts/render_benchmark_closeout.py
 python3 -m py_compile ./scripts/validate_benchmark_closeout.py
 
 log "check rust toolchain"
