@@ -235,6 +235,32 @@ fn read_key_refuses_symlink_wallet_path() {
 }
 
 #[test]
+fn read_key_refuses_directory_wallet_path() {
+    let unique = format!(
+        "trnm-cli-wallet-read-dir-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+    let existing = wallet_file(&store, "alice");
+    std::fs::create_dir(&existing).unwrap();
+
+    let err = read_key(&store, "alice").unwrap_err();
+    assert!(
+        err.to_string().contains("not a regular file")
+            || err.to_string().contains("refusing to follow non-regular wallet path"),
+        "unexpected error: {err}"
+    );
+
+    let _ = std::fs::remove_dir(&existing);
+    let _ = std::fs::remove_dir(&store);
+}
+
+#[test]
 #[cfg(unix)]
 fn write_key_refuses_symlink_wallet_store() {
     use std::os::unix::fs::symlink;
