@@ -11574,6 +11574,40 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_checked_path_rejects_non_strict_bool_without_mutating_live_binding() {
+        let mut st = StateStore::new();
+        st.set_gov_param(8_051, 7_999, "emergency_pause".into(), "true".into())
+            .expect("baseline checked emergency_pause=true should apply immediately");
+
+        let live_before = st.gov_param_snapshot("emergency_pause");
+        let root_before = st.state_root();
+
+        let err = st
+            .set_gov_param(8_052, 7_999, "emergency_pause".into(), "TRUE".into())
+            .expect_err("checked path must reject non-strict bool literal");
+
+        assert!(err.contains("expected strict bool"), "{err}");
+        assert_eq!(
+            st.gov_param_snapshot("emergency_pause"),
+            live_before,
+            "invalid checked write must preserve the live canonical emergency_pause object"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "invalid checked write must not silently unpause the live emergency brake"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejecting a non-strict checked emergency_pause literal must preserve the prior deterministic root"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "invalid checked write must not materialize a pending emergency_pause entry"
+        );
+    }
+
+    #[test]
     fn emergency_pause_checked_path_repairs_same_key_registry_drift_via_single_source_binding() {
         let mut st = StateStore::new();
         st.gov_param_key_index
