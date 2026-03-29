@@ -2981,6 +2981,27 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn parse_query_normalized_audit_events_query_from_path(
     path: &str,
 ) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
@@ -3002,6 +3023,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -3045,6 +3067,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_query.contains("%0c")
         || normalized_query.contains("%20")
         || normalized_query.contains("%7f")
+        || contains_malformed_percent_encoding(query)
     {
         return Err(http_json_response(
             "400 Bad Request",

@@ -138,6 +138,23 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_cursor_valu
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_malformed_percent_encoding() {
+    for path in [
+        "/query-normalized-audit-events%",
+        "/query-normalized-audit-events%2?source=trnm.task",
+        "/query-normalized-audit-events%zz?source=trnm.task",
+        "/query-normalized-audit-events?source=trnm.task%",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%2",
+        "/query-normalized-audit-events?limit=3%zz",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("malformed percent encoding should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_c0_controls_and_del() {
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
