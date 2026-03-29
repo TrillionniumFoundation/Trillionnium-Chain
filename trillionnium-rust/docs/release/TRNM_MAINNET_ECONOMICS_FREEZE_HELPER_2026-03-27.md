@@ -117,6 +117,10 @@ consistency boundaries:
   - proves duplicate sponsor/free-ingress probe noise stays classification-only while
     reserve-only shared-lane mode still exposes the last real refill slot until fresh
     work actually consumes it
+- `cargo test -p trnm-mempool lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
+  - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
+    immediately after the borrowed occupant drains, without requiring an extra idle
+    scheduler poll to reopen the public admission surface
 - `cargo test -p trnm-state retention_restore_regression -q`
   - proves retained proof/collateral metadata fails closed when challenge-window,
     challenger, or treasury identity snapshots are non-canonical
