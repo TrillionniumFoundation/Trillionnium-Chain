@@ -19865,7 +19865,10 @@ mod tests {
 
     #[test]
     fn timeout_preflight_rejects_hidden_char_challenger_identity() {
-        let st = seeded_state();
+        let mut st = seeded_state();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 7);
+
         let task = TaskObject {
             task_id: 81,
             creator: "alice".into(),
@@ -19889,10 +19892,18 @@ mod tests {
             version: 0,
         };
 
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
         let err = preflight_timeout_transfers(&st, &task, true, false)
             .expect_err("timeout settlement must fail closed on hidden-char challenger identity");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
         );
     }
 
