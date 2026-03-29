@@ -312,6 +312,20 @@ fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
 }
 
 #[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn write_first_grouping_rejects_mixed_domain_version_skew() {
+    let txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+    let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteFirst);
+}
+
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn write_last_grouping_rejects_mixed_domain_version_skew() {
+    let txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+    let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteLast);
+}
+
+#[test]
 fn grouping_profile_retry_metrics_stay_zero_fail_closed_on_empty_denominators() {
     let profile = GroupingProfile {
         tx_count: 0,
