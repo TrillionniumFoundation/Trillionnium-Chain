@@ -2348,4 +2348,106 @@ mod tests {
             BridgeStatus::Reverted("heartbeat degraded: relay heartbeat retry pending".to_string())
         );
     }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_invalid_heartbeat_progression_with_fullwidth_colon_allows_fail_closed_revert() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-fullwidth-colon".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 3,
+                target_height: 9,
+                latency_ms: 55,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "Invalid heartbeat progression：target height exceeded source sample".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 10 },
+        )
+        .expect("declared invalid heartbeat progression with fullwidth colon should still fail closed via compensation revert");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: Invalid heartbeat progression：target height exceeded source sample".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: Invalid heartbeat progression：target height exceeded source sample".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted(
+                "heartbeat degraded: Invalid heartbeat progression：target height exceeded source sample".to_string(),
+            )
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_invalid_heartbeat_height_with_case_insensitive_prefix_allows_fail_closed_revert() {
+        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-casefold-prefix".to_string());
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 0,
+                target_height: 4,
+                latency_ms: 21,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Failed {
+                reason: "target confirm timeout".to_string(),
+            },
+        )
+        .expect("case-insensitive invalid heartbeat height prefix should preserve fail-closed compensation path");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted(
+                "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+            )
+        );
+    }
 }
