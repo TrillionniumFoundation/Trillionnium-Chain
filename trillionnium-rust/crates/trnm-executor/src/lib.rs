@@ -1918,17 +1918,26 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Derive the bucket hint from the canonical object-scoped domain rather than
-    // a role-local secondary choice. Once the smallest key is fixed, hash over the
-    // two smallest distinct access keys so equivalent read/write role flips stay on
-    // the same Avalanche-style execution lane even when writes carry a larger local
-    // secondary than reads.
+    // Singleton access domains dominate simple transfer-like batches. Keep that
+    // hot path allocation-light by avoiding the global sort/dedup pass when the
+    // canonical execution lane is already a one-key object domain.
     let mut domain_keys = tx_access_domain_keys(tx);
-    domain_keys.sort_unstable();
-    domain_keys.dedup();
-    let key_a = domain_keys.first().copied().unwrap_or(0);
-    let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
-    let mixed = key_a ^ key_b.rotate_left(7);
+    let mixed = match domain_keys.len() {
+        0 => 0,
+        1 => domain_keys[0],
+        _ => {
+            // Derive the bucket hint from the canonical object-scoped domain rather than
+            // a role-local secondary choice. Once the smallest key is fixed, hash over the
+            // two smallest distinct access keys so equivalent read/write role flips stay on
+            // the same Avalanche-style execution lane even when writes carry a larger local
+            // secondary than reads.
+            domain_keys.sort_unstable();
+            domain_keys.dedup();
+            let key_a = domain_keys[0];
+            let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
+            key_a ^ key_b.rotate_left(7)
+        }
+    };
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
         // high-bit object ids cannot truncate on 32-bit targets before bucket
@@ -3907,6 +3916,20 @@ mod tests {
     fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 0), 0);
+    }
+
+    #[test]
+    fn hot_bucket_hint_singleton_domain_matches_direct_bucket_mapping() {
+        let write_only = tx(998, vec![], vec![o(42)]);
+        let read_only = tx(997, vec![o(42)], vec![]);
+
+        // One-key execution domains should hash directly to that object key without
+        // needing the broader two-key sort/dedup path. This keeps simple transfer-
+        // like lanes aligned across read-only and write-only singleton footprints.
+        assert_eq!(hot_bucket_hint(&write_only, 97), (42u64 % 97) as usize);
+        assert_eq!(hot_bucket_hint(&read_only, 97), (42u64 % 97) as usize);
+        assert_eq!(hot_bucket_hint(&write_only, 64), (42u64 & 63u64) as usize);
+        assert_eq!(hot_bucket_hint(&read_only, 64), (42u64 & 63u64) as usize);
     }
 
     #[test]
