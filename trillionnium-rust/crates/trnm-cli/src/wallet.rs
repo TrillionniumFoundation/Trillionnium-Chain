@@ -118,6 +118,16 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
 pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
     let f = wallet_file(store, name);
+    if fs::symlink_metadata(&f)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet '{}' at {} is a symlink; refusing to follow non-regular wallet path",
+            name,
+            f.display()
+        );
+    }
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())

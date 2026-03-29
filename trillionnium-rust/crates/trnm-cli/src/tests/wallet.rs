@@ -197,3 +197,39 @@ fn write_key_refuses_existing_dangling_symlink_wallet_path() {
     let _ = std::fs::remove_file(&existing);
     let _ = std::fs::remove_dir(&store);
 }
+
+#[test]
+#[cfg(unix)]
+fn read_key_refuses_symlink_wallet_path() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-read-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+    let target = store.join("target.key");
+    std::fs::write(
+        &target,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    )
+    .unwrap();
+    let existing = wallet_file(&store, "alice");
+    symlink(&target, &existing).unwrap();
+
+    let err = read_key(&store, "alice").unwrap_err();
+    assert!(
+        err.to_string().contains("refusing to follow non-regular wallet path"),
+        "unexpected error: {err}"
+    );
+    assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
+
+    let _ = std::fs::remove_file(&existing);
+    let _ = std::fs::remove_file(&target);
+    let _ = std::fs::remove_dir(&store);
+}
