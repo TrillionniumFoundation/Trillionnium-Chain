@@ -180,6 +180,16 @@ fi
 
 log "bft restart recovery drill"
 RECOVERY_RUNS="${RECOVERY_RUNS:-1}"
+case "$RECOVERY_RUNS" in
+  ''|*[!0-9]*)
+    log "recovery drill failed: RECOVERY_RUNS must be a positive integer (got '$RECOVERY_RUNS')"
+    exit 12
+    ;;
+esac
+if [ "$RECOVERY_RUNS" -lt 1 ]; then
+  log "recovery drill failed: RECOVERY_RUNS must be >= 1 (got '$RECOVERY_RUNS')"
+  exit 12
+fi
 RECOVERY_REPORT="$(RUNS="$RECOVERY_RUNS" ./scripts/check_bft_restart_recovery.sh | tee -a "$LOG" | tail -n 1 | sed 's/^.*: //')"
 if [ -z "$RECOVERY_REPORT" ] || [ ! -f "$RECOVERY_REPORT" ]; then
   log "recovery drill failed: missing restart recovery report"
@@ -272,6 +282,7 @@ audit=$latest_audit
 bench_classic=$latest_bench
 bench_mixed=$latest_mixed
 executor_profile=$latest_profile
+recovery_runs=$RECOVERY_RUNS
 replay_command=$replay_command
 lane_verify_command=${lane_verify_command:-<not-run>}
 rollback_command=$rollback_command
