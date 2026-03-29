@@ -366,7 +366,8 @@ pub(crate) fn parse_tx_query_response(
         });
         let nested_response_data = json_get_alias(payload, &["response"])
             .and_then(|r| json_get_alias(r, &["data"]))
-            .or_else(|| json_get_alias(payload, &["responseData"]));
+            .or_else(|| json_get_alias(payload, &["responseData"]))
+            .or_else(|| json_get_alias(payload, &["data"]));
         let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
         let raw_tx_hash = json_get_alias(
             primary,
