@@ -518,6 +518,7 @@ fn is_disallowed_risk_source_char(ch: char) -> bool {
                 | '\u{FFFB}'
         )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
@@ -2701,6 +2702,13 @@ mod tests {
         // quota accounting can't be split across visually identical aliases.
         let canonical_bidi = canonicalize_risk_source(Some("relay\u{2060}\u{200d}source"));
         assert_eq!(canonical_bidi, "relay source");
+
+        // Tag/BOM/variation-selector noise must also collapse into the same proof
+        // attribution bucket instead of creating visually identical aliases.
+        let canonical_tag_noise = canonicalize_risk_source(Some(
+            "proof\u{FEFF}\u{E0020}\u{FE0F}source",
+        ));
+        assert_eq!(canonical_tag_noise, "proof source");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
         assert_eq!(
