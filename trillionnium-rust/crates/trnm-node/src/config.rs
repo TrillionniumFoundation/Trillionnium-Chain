@@ -777,6 +777,7 @@ mod tests {
         let mut rpc_addrs = HashSet::new();
         let mut p2p_addrs = HashSet::new();
         let mut all_listener_addrs = HashSet::new();
+        let mut shipped_nodes = Vec::new();
 
         for config_path in [
             "trillionnium-rust/configs/node1.toml",
@@ -843,6 +844,41 @@ mod tests {
                 "{config_path} rpc_addr {} must stay exactly one port above p2p_addr {} for the shipped local bootstrap topology",
                 cfg.rpc_addr,
                 cfg.p2p_addr
+            );
+            shipped_nodes.push((config_path, cfg.node_id, rpc_socket, p2p_socket));
+        }
+
+        for window in shipped_nodes.windows(2) {
+            let [
+                (prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket),
+                (config_path, node_id, rpc_socket, p2p_socket),
+            ] = window
+            else {
+                continue;
+            };
+
+            assert_eq!(
+                p2p_socket.port() - prev_p2p_socket.port(),
+                1000,
+                "{config_path} p2p_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({}) to keep the local multi-node topology deterministic",
+                p2p_socket,
+                prev_node_id,
+                prev_config_path
+            );
+            assert_eq!(
+                rpc_socket.port() - prev_rpc_socket.port(),
+                1000,
+                "{config_path} rpc_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({}) to keep the local multi-node topology deterministic",
+                rpc_socket,
+                prev_node_id,
+                prev_config_path
+            );
+            assert!(
+                node_id > prev_node_id,
+                "{config_path} node_id {} must remain lexically ordered after prior shipped bootstrap peer {} ({})",
+                node_id,
+                prev_node_id,
+                prev_config_path
             );
         }
     }
