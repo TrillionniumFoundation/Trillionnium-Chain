@@ -311,7 +311,7 @@ fn validate_sample_count_against_sources(
     actual_sources: u32,
 ) -> Result<(), OracleError> {
     if sample_count == 0 {
-        return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
+        return Err(OracleError::InvalidSampleCount);
     }
     if sample_count < actual_sources {
         return Err(OracleError::InconsistentSampleCount {
@@ -535,7 +535,7 @@ pub fn validate_snapshot_observed(
         | Err(OracleError::NonCanonicalSourceId { .. })
         | Err(OracleError::InsufficientSources { .. })
         | Err(OracleError::InconsistentSampleCount { .. })
-        | Err(OracleError::InvalidPolicy("sample_count must be > 0"))
+        | Err(OracleError::InvalidSampleCount)
         | Err(OracleError::DuplicateSources)
         | Err(OracleError::NonCanonicalSourceOrdering { .. }) => {
             observation.quorum_reject_total = 1;
@@ -594,6 +594,8 @@ pub enum OracleError {
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
+    #[error("invalid sample count: must be > 0")]
+    InvalidSampleCount,
     #[error("future snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}")]
     FutureSnapshot { snapshot_ts_ms: u64, now_ts_ms: u64 },
     #[error(
@@ -934,7 +936,7 @@ mod tests {
 
         assert!(matches!(
             err,
-            OracleError::InvalidPolicy("sample_count must be > 0")
+            OracleError::InvalidSampleCount
         ));
     }
 
@@ -2377,7 +2379,7 @@ mod tests {
         let err = policy()
             .validate_snapshot(&snapshot, 10_100)
             .expect_err("deserialized zero sample count must fail guardrail");
-        assert_eq!(err, OracleError::InvalidPolicy("sample_count must be > 0"));
+        assert_eq!(err, OracleError::InvalidSampleCount);
     }
 
     #[test]
