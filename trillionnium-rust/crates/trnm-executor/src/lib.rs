@@ -1715,7 +1715,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         let tx = &txs[idx];
         let key = {
             let (key_a, key_b) = hot_bucket_keys(tx);
-            if key_a == 0 && key_b == 0 {
+            if tx.read_set.is_empty() && tx.write_set.is_empty() {
                 None
             } else if tx.read_set.is_empty() || tx.write_set.is_empty() {
                 Some((key_a, key_b))
@@ -4219,6 +4219,31 @@ mod tests {
             !decision.use_hot_bucket,
             "distinct mixed execution domains should not collapse onto one hotspot hint"
         );
+    }
+
+    #[test]
+    fn auto_adaptive_treats_object_zero_as_real_singleton_hotspot_key() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs: Vec<Tx> = (0..64u64)
+            .map(|id| tx(id, vec![], vec![o(0)]))
+            .collect();
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "object id 0 is a real execution-domain key and should trigger hotspot detection"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!((d.hot_key_share - 1.0).abs() < f64::EPSILON);
+        assert!((d.streak_ratio - 1.0).abs() < f64::EPSILON);
     }
 
     #[test]
