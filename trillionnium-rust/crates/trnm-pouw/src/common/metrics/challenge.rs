@@ -91,6 +91,22 @@ pub(crate) fn validate_challenge_accounting_invariants(task: &TaskObject) -> Res
                     task.status
                 )));
             }
+            let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
+                PouwError::State("revealed status requires challenge_deadline_height".into())
+            })?;
+            if challenge_deadline == 0 {
+                return Err(PouwError::State(
+                    "revealed status has invalid challenge_deadline_height".into(),
+                ));
+            }
+            if task
+                .challenge_window_blocks_snapshot
+                .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+            {
+                return Err(PouwError::State(
+                    "revealed status has invalid challenge_window_blocks_snapshot".into(),
+                ));
+            }
         }
         TaskStatus::Challenged => {
             if !has_bond {
