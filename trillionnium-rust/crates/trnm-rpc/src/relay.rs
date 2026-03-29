@@ -2025,6 +2025,12 @@ mod tests {
     }
 
     #[test]
+    fn relay_proof_query_accepts_exact_max_span() {
+        assert!(validate_proof_query_range(1, MAX_PROOF_QUERY_SPAN).is_ok());
+        assert!(validate_proof_query_range(41, 40 + MAX_PROOF_QUERY_SPAN).is_ok());
+    }
+
+    #[test]
     fn relay_proof_query_rejects_span_overflow() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
