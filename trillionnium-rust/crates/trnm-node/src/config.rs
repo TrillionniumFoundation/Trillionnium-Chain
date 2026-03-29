@@ -754,6 +754,7 @@ mod tests {
         let mut node_ids = HashSet::new();
         let mut rpc_addrs = HashSet::new();
         let mut p2p_addrs = HashSet::new();
+        let mut all_listener_addrs = HashSet::new();
 
         for config_path in [
             "trillionnium-rust/configs/node1.toml",
@@ -785,6 +786,16 @@ mod tests {
             assert!(
                 p2p_addrs.insert(cfg.p2p_addr.clone()),
                 "{config_path} reuses p2p_addr {}",
+                cfg.p2p_addr
+            );
+            assert!(
+                all_listener_addrs.insert(cfg.rpc_addr.clone()),
+                "{config_path} rpc_addr {} collides with another shipped listener address",
+                cfg.rpc_addr
+            );
+            assert!(
+                all_listener_addrs.insert(cfg.p2p_addr.clone()),
+                "{config_path} p2p_addr {} collides with another shipped listener address",
                 cfg.p2p_addr
             );
             assert!(
