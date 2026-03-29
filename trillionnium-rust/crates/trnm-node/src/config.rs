@@ -778,6 +778,7 @@ mod tests {
         let mut p2p_addrs = HashSet::new();
         let mut all_listener_addrs = HashSet::new();
         let mut shipped_nodes = Vec::new();
+        let mut bootstrap_loopback_ips = HashSet::new();
 
         for config_path in [
             "trillionnium-rust/configs/node1.toml",
@@ -839,6 +840,14 @@ mod tests {
                 cfg.p2p_addr
             );
             assert_eq!(
+                rpc_socket.ip(),
+                p2p_socket.ip(),
+                "{config_path} rpc_addr {} and p2p_addr {} must bind the same loopback IP for deterministic shipped bootstrap peer formation",
+                cfg.rpc_addr,
+                cfg.p2p_addr
+            );
+            bootstrap_loopback_ips.insert(rpc_socket.ip());
+            assert_eq!(
                 rpc_socket.port(),
                 p2p_socket.port() + 1,
                 "{config_path} rpc_addr {} must stay exactly one port above p2p_addr {} for the shipped local bootstrap topology",
@@ -847,6 +856,12 @@ mod tests {
             );
             shipped_nodes.push((config_path, cfg.node_id, rpc_socket, p2p_socket));
         }
+
+        assert_eq!(
+            bootstrap_loopback_ips.len(),
+            1,
+            "shipped local bootstrap configs must all stay on the same loopback IP for deterministic peer dialing"
+        );
 
         for window in shipped_nodes.windows(2) {
             let [
