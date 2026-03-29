@@ -97,4 +97,5 @@ cargo test -p trnm-state -p trnm-node
 - `default_wal_isolation_triggered`: `<yes|no>`
 - `original_default_wal_dir`: `<path|n/a>`
 - `isolated_run_dir`: `<path|n/a>`
+- `recovery_summary_line`: ``<[bft-recover] restored height=...>`（原样抄录结构化摘要行，便于和告警/日志查询关联）
 - `retained_wal_summary`: `<原始摘要短语>`
