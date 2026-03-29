@@ -4755,6 +4755,34 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_prev_hash_surfaces() {
+        let canonical_wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: canonical_wal.state_root_hex.clone(),
+            wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+        };
+
+        for invalid_prev_hash in [Some("EF".repeat(32)), Some(format!("{}\n", "ef".repeat(32))), None] {
+            let mut wal = canonical_wal.clone();
+            wal.prev_hash_hex = invalid_prev_hash;
+
+            assert_eq!(
+                checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+                None,
+                "DA/light-verifier summary must fail closed when wal prev_hash surface is noncanonical or missing for non-genesis linkage"
+            );
+        }
+    }
+
+    #[test]
     fn wal_evidence_summary_is_deterministic_and_hash_backed() {
         let wal = WalMeta {
             height: 7,
