@@ -7223,6 +7223,30 @@ fn wal_checkpoint_verification_rejects_noncanonical_wal_prev_hash_surface() {
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_short_non_genesis_wal_prev_hash_even_when_checkpoint_matches(
+) {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(31)),
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 2,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject short non-genesis WAL prev_hash_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
