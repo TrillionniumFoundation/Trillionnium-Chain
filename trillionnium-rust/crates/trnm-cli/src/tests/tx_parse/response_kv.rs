@@ -111,6 +111,16 @@ fn tx_query_parse_normalizes_quoted_or_punctuated_tx_hash() {
     let sentence_noise = "tx_hash=0xC0FFEE42?!\nstatus=committed\n";
     let parsed_sentence_noise = parse_tx_query_response(sentence_noise, "0xfallback").unwrap();
     assert_eq!(parsed_sentence_noise.tx_hash, "0xc0ffee42");
+
+    let cjk_sentence_noise = "tx_hash=0xC0FFEE43。\nstatus=committed\n";
+    let parsed_cjk_sentence_noise =
+        parse_tx_query_response(cjk_sentence_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_cjk_sentence_noise.tx_hash, "0xc0ffee43");
+
+    let fullwidth_dot_noise = "tx_hash=0xC0FFEE44．\nstatus=committed\n";
+    let parsed_fullwidth_dot_noise =
+        parse_tx_query_response(fullwidth_dot_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_dot_noise.tx_hash, "0xc0ffee44");
 }
 
 #[test]
