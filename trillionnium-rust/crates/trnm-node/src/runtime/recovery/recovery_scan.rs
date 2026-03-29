@@ -285,6 +285,28 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_reports_single_block_checkpoint_lag() {
+        let recovered = RecoveredWalState {
+            next_height: 6,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 4,
+                state_root_hex: "root-4".into(),
+                wal_entry_hash_hex: "hash-4".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(4),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 5 (checkpoint lags retained WAL tip by 1 block)"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_visible_summary() {
         let recovered = RecoveredWalState {
             next_height: 6,

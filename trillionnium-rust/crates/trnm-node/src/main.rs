@@ -2994,6 +2994,16 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_reports_single_block_checkpoint_lag() {
+        let recovered = recovered_state(6, 2, Some(4), false);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 5 (checkpoint lags retained WAL tip by 1 block)"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_visible_summary() {
         let mut recovered = recovered_state(9, 2, Some(6), false);
         recovered.metadata_only_recovery = true;
