@@ -3346,6 +3346,24 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_input_clamped() {
+        let mut txs = vec![
+            tx(441, vec![], vec![o(1)]),  // first hot hint bucket 1 (also sparse)
+            tx(442, vec![], vec![o(0)]),  // dominant bucket 0 depth 3 after len-clamp to 5 buckets
+            tx(443, vec![], vec![o(5)]),  // dominant bucket 0 depth 3
+            tx(444, vec![], vec![o(10)]), // dominant bucket 0 depth 3
+            tx(445, vec![], vec![o(2)]),  // equally sparse bucket 2 depth 1
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Input-size clamping (`min(TRNM_HOT_BUCKETS, txs.len())`) should preserve
+        // the same sparse-seed anti-starvation contract: if the first hot hint is
+        // already one of the sparsest buckets, keep it as the lane seed instead of
+        // drifting after the effective bucket fanout shrinks with the batch size.
+        assert_eq!(txs.first().map(|t| t.id), Some(441));
+    }
+
+    #[test]
     fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
         let mut txs = vec![
             tx(21, vec![], vec![o(8)]),
