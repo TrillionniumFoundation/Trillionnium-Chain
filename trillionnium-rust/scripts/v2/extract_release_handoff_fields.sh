@@ -101,6 +101,7 @@ assert_equal git_head "$summary_head" "$manifest_head"
 assert_equal git_head_state "$summary_head_state" "$manifest_head_state"
 assert_equal git_worktree_path "$summary_worktree_path" "$manifest_worktree_path"
 assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_worktree_branch_ref"
+assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
