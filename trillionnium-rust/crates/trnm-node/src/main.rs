@@ -12937,7 +12937,12 @@ locked_block_hash = "stale-lock"
 
         assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
         assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
-        assert!(notice.unwrap().contains("isolating this run"));
+        let notice = notice.expect("auto mode should emit an operator-facing isolation notice");
+        assert!(notice.contains("[bft-wal] existing default WAL state detected at"));
+        assert!(notice.contains(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.contains(&resolved.display().to_string()));
+        assert!(notice.contains("isolating this run"));
+        assert!(notice.contains("--bft-wal-mode reuse"));
 
         let _ = fs::remove_dir_all(&root);
     }
@@ -13116,10 +13121,11 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = resolve_wal_dir(&args).unwrap_err();
-        assert!(err
-            .to_string()
-            .contains("refusing to reuse existing BFT WAL state"));
+        let err = resolve_wal_dir(&args).unwrap_err().to_string();
+        assert!(err.contains("refusing to reuse existing BFT WAL state at"));
+        assert!(err.contains(&wal_dir.display().to_string()));
+        assert!(err.contains("--bft-wal-mode reuse"));
+        assert!(err.contains("--bft-wal-dir"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
