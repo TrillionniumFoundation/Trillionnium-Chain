@@ -4314,6 +4314,48 @@ fn restore_gov_param_rejects_noncanonical_emergency_pause_key_id_without_aliasin
 }
 
 #[test]
+fn restore_gov_param_rejects_invalid_false_emergency_pause_literal_without_deleting_live_canonical_param() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(98_205, 7_999, "emergency_pause".into(), "true".into())
+        .expect("canonical emergency_pause must be set first");
+    let live_snapshot = state
+        .get_param(7_999)
+        .expect("live canonical emergency_pause object must exist");
+    let root_before = state.state_root();
+
+    state.restore_gov_param(
+        7_999,
+        Some(GovParamObject {
+            key_id: 7_999,
+            key: "emergency_pause".to_string(),
+            value: "False".to_string(),
+            version: live_snapshot.version,
+        }),
+    );
+
+    let after = state
+        .get_param(7_999)
+        .expect("invalid false restore must not delete the live canonical governance object");
+    assert_eq!(after.key, live_snapshot.key);
+    assert_eq!(after.value, live_snapshot.value);
+    assert_eq!(
+        state.gov_param_string("emergency_pause"),
+        Some("true".to_string()),
+        "invalid false restore must preserve the canonical governance registry binding"
+    );
+    assert!(
+        state.is_emergency_paused(),
+        "invalid false restore must preserve the active pause state"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "invalid false restore must preserve the prior deterministic root instead of mutating the live canonical governance slot"
+    );
+}
+
+#[test]
 fn restore_gov_param_rejects_noncanonical_snapshot_without_deleting_live_canonical_param() {
     let mut state = StateStore::new();
     state
