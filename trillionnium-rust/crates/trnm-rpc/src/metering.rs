@@ -54,7 +54,11 @@ pub(crate) fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 pub(crate) fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
         let normalized = trim_wrapped_log_text(v);
-        if normalized.is_empty() || normalized == "-" {
+        let placeholder = normalized.to_ascii_lowercase();
+        if normalized.is_empty()
+            || normalized == "-"
+            || matches!(placeholder.as_str(), "null" | "none" | "n/a" | "na")
+        {
             None
         } else {
             Some(normalized.to_string())

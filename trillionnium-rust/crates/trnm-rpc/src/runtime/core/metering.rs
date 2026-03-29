@@ -50,7 +50,11 @@ fn trim_wrapped_log_text(raw: &str) -> &str {
 pub(crate) fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
         let normalized = trim_wrapped_log_text(v);
-        if normalized.is_empty() || normalized == "-" {
+        let placeholder = normalized.to_ascii_lowercase();
+        if normalized.is_empty()
+            || normalized == "-"
+            || matches!(placeholder.as_str(), "null" | "none" | "n/a" | "na")
+        {
             None
         } else {
             Some(normalized.to_string())
@@ -338,6 +342,21 @@ mod tests {
             normalize_opt_kv(&kv, "metering_receipt_hash").as_deref(),
             Some("0xabc123")
         );
+    }
+
+    #[test]
+    fn normalize_opt_kv_treats_common_placeholder_text_as_missing() {
+        let kv = BTreeMap::from([
+            ("null".to_string(), "  NULL  ".to_string()),
+            ("none".to_string(), " [none] ".to_string()),
+            ("na".to_string(), " {N/A} ".to_string()),
+            ("real".to_string(), " completed ".to_string()),
+        ]);
+
+        assert_eq!(normalize_opt_kv(&kv, "null"), None);
+        assert_eq!(normalize_opt_kv(&kv, "none"), None);
+        assert_eq!(normalize_opt_kv(&kv, "na"), None);
+        assert_eq!(normalize_opt_kv(&kv, "real").as_deref(), Some("completed"));
     }
 
     #[test]

@@ -153,6 +153,24 @@ fn load_node_events_treats_trimmed_dash_metering_fields_as_missing() {
 }
 
 #[test]
+fn load_node_events_treats_common_placeholder_text_as_missing() {
+    let root = tempfile::tempdir().expect("tempdir");
+    let run = root.path().join("run");
+    fs::create_dir_all(&run).expect("create run dir");
+    let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=' N/A ' actor=authority signer=authority challenger=' none ' tx_hash=' NULL ' tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=' none ' metering_schema=' N/A ' metering_receipt_hash=' null ' metering_policy_snapshot_version=1 metering_prompt_tokens=128 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=192 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384
+";
+    fs::write(run.join("node1.log"), line).expect("write log");
+
+    let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+    assert_eq!(loaded.events.len(), 1);
+    let event = &loaded.events[0];
+    assert_eq!(event.to_status.as_deref(), None);
+    assert_eq!(event.challenger.as_deref(), None);
+    assert_eq!(event.tx_hash.as_deref(), None);
+    assert!(event.metering.is_none());
+}
+
+#[test]
 fn load_node_events_drops_metering_when_to_status_is_missing_but_audit_fields_exist() {
     let root = tempfile::tempdir().expect("tempdir");
     let run = root.path().join("run");

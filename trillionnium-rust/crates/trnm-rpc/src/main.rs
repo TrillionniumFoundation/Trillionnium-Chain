@@ -568,7 +568,11 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
         let normalized = v.trim();
-        if normalized.is_empty() || normalized == "-" {
+        let placeholder = normalized.to_ascii_lowercase();
+        if normalized.is_empty()
+            || normalized == "-"
+            || matches!(placeholder.as_str(), "null" | "none" | "n/a" | "na")
+        {
             None
         } else {
             Some(normalized.to_string())
@@ -1326,7 +1330,9 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .metadata
             .as_ref()
             .and_then(|metadata| metadata.metering.as_ref())
-            .and_then(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
+            .and_then(|snapshot| {
+                task_metering_query_response(snapshot, task_status_path(task.status))
+            }),
     })
 }
 
@@ -1681,14 +1687,15 @@ struct MarketScoreBreakdown {
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
         let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
-        let max_reputation_score_delta = (reputation_clamp as u128)
-            .saturating_mul(value.reputation_weight);
+        let max_reputation_score_delta =
+            (reputation_clamp as u128).saturating_mul(value.reputation_weight);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
             reputation_clamp,
             max_reputation_score_delta,
-            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
+            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128)
+                as i128),
         }
     }
 }
@@ -5121,7 +5128,8 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls() {
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
+    ) {
         for path in [
             "/query-normalized-audit-events?source=trnm.task%00shadow",
             "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
