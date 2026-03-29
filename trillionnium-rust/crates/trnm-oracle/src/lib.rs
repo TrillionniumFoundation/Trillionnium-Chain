@@ -49,18 +49,7 @@ impl OracleSnapshot {
         let raw_feed_id = feed_id.into();
         validate_canonical_feed_id(&raw_feed_id)?;
         let feed_id = raw_feed_id;
-        if window_end_ms < window_start_ms {
-            return Err(OracleError::InvalidWindow {
-                start_ms: window_start_ms,
-                end_ms: window_end_ms,
-            });
-        }
-        if snapshot_ts_ms < window_end_ms {
-            return Err(OracleError::InvalidWindowTimestamp {
-                window_end_ms,
-                snapshot_ts_ms,
-            });
-        }
+        validate_snapshot_window(window_start_ms, window_end_ms, snapshot_ts_ms)?;
 
         for source in &sources {
             validate_canonical_source_id(source.as_str())?;
@@ -216,18 +205,11 @@ impl OraclePolicy {
         self.validate()?;
 
         validate_canonical_feed_id(&snapshot.feed_id)?;
-        if snapshot.window_end_ms < snapshot.window_start_ms {
-            return Err(OracleError::InvalidWindow {
-                start_ms: snapshot.window_start_ms,
-                end_ms: snapshot.window_end_ms,
-            });
-        }
-        if snapshot.snapshot_ts_ms < snapshot.window_end_ms {
-            return Err(OracleError::InvalidWindowTimestamp {
-                window_end_ms: snapshot.window_end_ms,
-                snapshot_ts_ms: snapshot.snapshot_ts_ms,
-            });
-        }
+        validate_snapshot_window(
+            snapshot.window_start_ms,
+            snapshot.window_end_ms,
+            snapshot.snapshot_ts_ms,
+        )?;
 
         validate_snapshot_sources(snapshot)?;
 
@@ -313,6 +295,26 @@ fn validate_canonical_feed_id(raw: &str) -> Result<(), OracleError> {
         return Err(OracleError::NonCanonicalFeedId {
             raw: raw.to_string(),
             canonical,
+        });
+    }
+    Ok(())
+}
+
+fn validate_snapshot_window(
+    window_start_ms: u64,
+    window_end_ms: u64,
+    snapshot_ts_ms: u64,
+) -> Result<(), OracleError> {
+    if window_end_ms < window_start_ms {
+        return Err(OracleError::InvalidWindow {
+            start_ms: window_start_ms,
+            end_ms: window_end_ms,
+        });
+    }
+    if snapshot_ts_ms < window_end_ms {
+        return Err(OracleError::InvalidWindowTimestamp {
+            window_end_ms,
+            snapshot_ts_ms,
         });
     }
     Ok(())
