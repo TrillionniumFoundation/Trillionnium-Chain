@@ -92,14 +92,19 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
-        bail!(
-            "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
-            store.display()
-        );
+    if let Ok(meta) = fs::symlink_metadata(store) {
+        if meta.file_type().is_symlink() {
+            bail!(
+                "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
+        if !meta.file_type().is_dir() {
+            bail!(
+                "wallet store '{}' is not a directory; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
     }
     fs::create_dir_all(store)?;
     #[cfg(unix)]
