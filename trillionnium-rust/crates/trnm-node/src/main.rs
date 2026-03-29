@@ -3556,6 +3556,34 @@ mod tests {
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::net::{IpAddr, Ipv4Addr};
 
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let shipped_config_dir = workspace_root.join("configs");
+        let shipped_node_configs = std::fs::read_dir(&shipped_config_dir)
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap config discovery: {err}",
+                    shipped_config_dir.display()
+                )
+            })
+            .filter_map(|entry| entry.ok())
+            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .filter(|name| name.starts_with("node") && name.ends_with(".toml"))
+            .collect::<std::collections::HashSet<_>>();
+        let expected_shipped_node_configs = std::collections::HashSet::from([
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+        assert_eq!(
+            shipped_node_configs, expected_shipped_node_configs,
+            "shipped bootstrap config set must stay exactly node1.toml..node4.toml to keep deterministic peer formation fixtures intact"
+        );
+
         let mut node_ids = std::collections::HashSet::new();
         let mut rpc_addrs = std::collections::HashSet::new();
         let mut p2p_addrs = std::collections::HashSet::new();
