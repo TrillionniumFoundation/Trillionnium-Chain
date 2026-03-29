@@ -43,7 +43,7 @@ fn proof_quota_source_attribution_aliases_share_boundary() {
             session_id: "proof-src-s1".into(),
             from_seq: 1,
             to_seq: 1,
-            source: Some("  proof-src  ".into()),
+            source: Some("  `\"proof-src\"`  ".into()),
         })
         .unwrap();
     let trimmed_alias_err = relay

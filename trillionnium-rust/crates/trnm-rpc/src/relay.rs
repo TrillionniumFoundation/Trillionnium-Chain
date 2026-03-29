@@ -534,7 +534,16 @@ fn elide_risk_error_key(key: &str) -> String {
 }
 
 fn canonicalize_risk_source(source: Option<&str>) -> String {
-    let source = source.unwrap_or("anon").trim();
+    let mut source = source.unwrap_or("anon").trim();
+    while source.len() >= 2 {
+        let wrapped_by_quotes = (source.starts_with('"') && source.ends_with('"'))
+            || (source.starts_with('\'') && source.ends_with('\''))
+            || (source.starts_with('`') && source.ends_with('`'));
+        if !wrapped_by_quotes {
+            break;
+        }
+        source = source[1..source.len() - 1].trim();
+    }
     if source.is_empty() {
         return "anon".to_string();
     }
