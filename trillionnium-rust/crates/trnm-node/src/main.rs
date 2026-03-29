@@ -4871,6 +4871,43 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_observed_height_coverage_triplets_adjacent_for_triage() {
+        let critical_committed = "critical_wait_active_height_rate_ppm=500000";
+        let critical_observed = "critical_wait_active_observed_height_rate_ppm=400000";
+        let rollback_committed = "rollback_active_height_rate_ppm=750000";
+        let rollback_observed = "rollback_active_observed_height_rate_ppm=600000";
+        let commit_observed = "bft_commit_observed_height_rate_ppm=600000";
+        let skipped_total = "bft_skipped_height_total=2";
+        let skipped_observed = "bft_skipped_observed_height_rate_ppm=400000";
+
+        let summary = format!(
+            "[consensus] {} {} {} {} {} {} {}",
+            critical_committed,
+            critical_observed,
+            rollback_committed,
+            rollback_observed,
+            commit_observed,
+            skipped_total,
+            skipped_observed
+        );
+
+        let critical_committed_idx = summary.find(critical_committed).unwrap();
+        let critical_observed_idx = summary.find(critical_observed).unwrap();
+        let rollback_committed_idx = summary.find(rollback_committed).unwrap();
+        let rollback_observed_idx = summary.find(rollback_observed).unwrap();
+        let commit_observed_idx = summary.find(commit_observed).unwrap();
+        let skipped_total_idx = summary.find(skipped_total).unwrap();
+        let skipped_observed_idx = summary.find(skipped_observed).unwrap();
+
+        assert!(critical_committed_idx < critical_observed_idx);
+        assert!(rollback_committed_idx < rollback_observed_idx);
+        assert!(commit_observed_idx < skipped_total_idx);
+        assert!(skipped_total_idx < skipped_observed_idx);
+        assert!(critical_observed_idx < rollback_committed_idx);
+        assert!(rollback_observed_idx < commit_observed_idx);
+    }
+
+    #[test]
     fn fairness_and_guardrail_review_bundles_keep_skipped_width_adjacent_to_skip_rate() {
         let review_bundles: &[&[&str]] = &[
             &[
