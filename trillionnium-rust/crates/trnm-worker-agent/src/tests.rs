@@ -302,6 +302,39 @@ fn run_adapter_with_retry_keeps_last_seen_tx_hash_after_retriable_exhaustion() {
 }
 
 #[test]
+fn run_adapter_with_retry_retries_with_exponential_backoff_schedule() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        25,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "raise SystemExit(1)"])
+                    .output()
+                    .expect("python3 retriable probe should run"))
+            } else {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "print('tx_hash=0xBEEFCAFE')"])
+                    .output()
+                    .expect("python3 success probe should run"))
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should succeed within retry budget");
+
+    assert_eq!(attempt, 3);
+    assert_eq!(slept, vec![25, 50]);
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beefcafe"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_terminal_stop() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-slo-last-tx-hash-counter-{}-{}.txt",

@@ -803,21 +803,21 @@ fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
     Ok((program, args))
 }
 
-pub(crate) fn run_adapter_with_retry(
-    adapter_cmd: &str,
-    action_args: &[String],
+fn run_adapter_with_retry_inner<F, S>(
     max_retries: u32,
     backoff_ms: u64,
-) -> Result<AdapterExecResult> {
-    let (program, base_args) = parse_command_spec(adapter_cmd)?;
+    mut exec_attempt: F,
+    mut sleeper: S,
+) -> Result<AdapterExecResult>
+where
+    F: FnMut() -> Result<Output>,
+    S: FnMut(Duration),
+{
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new(&program)
-            .args(&base_args)
-            .args(action_args)
-            .output()?;
+        let out = exec_attempt()?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
@@ -848,7 +848,7 @@ pub(crate) fn run_adapter_with_retry(
         }
 
         if attempt < max_retries {
-            thread::sleep(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
+            sleeper(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
         }
     }
 
@@ -858,6 +858,26 @@ pub(crate) fn run_adapter_with_retry(
         tx_hash: last_tx_hash,
         terminal: false,
     })
+}
+
+pub(crate) fn run_adapter_with_retry(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+) -> Result<AdapterExecResult> {
+    let (program, base_args) = parse_command_spec(adapter_cmd)?;
+    run_adapter_with_retry_inner(
+        max_retries,
+        backoff_ms,
+        || {
+            Ok(ProcCommand::new(&program)
+                .args(&base_args)
+                .args(action_args)
+                .output()?)
+        },
+        thread::sleep,
+    )
 }
 
 #[derive(Debug, Deserialize)]
