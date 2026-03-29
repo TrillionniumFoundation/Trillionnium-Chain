@@ -42,6 +42,12 @@ fn wallet_import_hex_check() {
     .unwrap();
     assert_eq!(punctuated_sentence, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+    let fullwidth_wrapped = ensure_hex_32_bytes(
+        "（《0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA》）；",
+    )
+    .unwrap();
+    assert_eq!(fullwidth_wrapped, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
     assert!(ensure_hex_32_bytes("0x1234").is_err());
 }
 
