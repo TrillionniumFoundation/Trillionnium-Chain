@@ -361,4 +361,27 @@ mod tests {
         assert_eq!(market_reputation_score_delta(&breakdown), 0);
     }
 
+    #[test]
+    fn market_score_breakdown_clamps_out_of_range_reputation_symmetrically() {
+        let cfg = MarketScoreConfig {
+            price_weight: 10,
+            reputation_weight: 3,
+            reputation_clamp: 5,
+        };
+
+        let reward = market_score_breakdown(20, 999, cfg);
+        assert_eq!(reward.effective_reputation, 5);
+        assert_eq!(reward.reputation_reward, 15);
+        assert_eq!(reward.penalty, 0);
+        assert_eq!(reward.effective_score, 185);
+        assert_eq!(market_reputation_score_delta(&reward), -15);
+
+        let penalty = market_score_breakdown(20, -999, cfg);
+        assert_eq!(penalty.effective_reputation, -5);
+        assert_eq!(penalty.reputation_reward, 0);
+        assert_eq!(penalty.penalty, 15);
+        assert_eq!(penalty.effective_score, 215);
+        assert_eq!(market_reputation_score_delta(&penalty), 15);
+    }
+
 }
