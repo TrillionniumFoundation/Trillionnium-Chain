@@ -6490,6 +6490,10 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_wal_proposal_
         "sanity: canonical checkpoint/WAL evidence should summarize before the zero-width regression mutation"
     );
     assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "checkpoint evidence surfaces must reject zero-width WAL proposal_hash values so audit-ready checkpoint proofs cannot rely on visually hidden proposal identity drift"
+    );
+    assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
         "zero-width WAL proposal_hash surfaces must fail closed instead of emitting a DA/light-verifier summary"
     );
