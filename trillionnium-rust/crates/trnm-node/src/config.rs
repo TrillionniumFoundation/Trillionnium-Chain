@@ -849,14 +849,21 @@ mod tests {
         let mut shipped_nodes = Vec::new();
         let mut bootstrap_loopback_ips = HashSet::new();
 
-        for config_path in [
+        for (index, config_path) in [
             "trillionnium-rust/configs/node1.toml",
             "trillionnium-rust/configs/node2.toml",
             "trillionnium-rust/configs/node3.toml",
             "trillionnium-rust/configs/node4.toml",
-        ] {
+        ]
+        .into_iter()
+        .enumerate()
+        {
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let expected_node_id = format!("node{}", index + 1);
+            let expected_p2p_port = 26_656 + (index as u16) * 1_000;
+            let expected_rpc_port = expected_p2p_port + 1;
+            let config_slot = index + 1;
             let rpc_socket: SocketAddr = cfg
                 .rpc_addr
                 .parse()
@@ -866,6 +873,10 @@ mod tests {
                 .parse()
                 .unwrap_or_else(|err| panic!("{config_path} p2p_addr should parse: {err}"));
 
+            assert_eq!(
+                cfg.node_id, expected_node_id,
+                "{config_path} must keep the deterministic shipped bootstrap node_id for slot {config_slot}"
+            );
             assert!(
                 node_ids.insert(cfg.node_id.clone()),
                 "{config_path} reuses node_id {}",
@@ -916,6 +927,18 @@ mod tests {
                 cfg.p2p_addr
             );
             bootstrap_loopback_ips.insert(rpc_socket.ip());
+            assert_eq!(
+                p2p_socket.port(),
+                expected_p2p_port,
+                "{config_path} p2p_addr {} must keep the deterministic shipped bootstrap port for slot {config_slot}",
+                cfg.p2p_addr,
+            );
+            assert_eq!(
+                rpc_socket.port(),
+                expected_rpc_port,
+                "{config_path} rpc_addr {} must keep the deterministic shipped bootstrap RPC port for slot {config_slot}",
+                cfg.rpc_addr,
+            );
             assert_eq!(
                 rpc_socket.port(),
                 p2p_socket.port() + 1,
