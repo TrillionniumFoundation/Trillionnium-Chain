@@ -1175,6 +1175,39 @@ mod tests {
     }
 
     #[test]
+    fn borrowed_last_critical_slot_same_class_duplicate_probe_keeps_qos_snapshot_flat() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the final idle critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        let borrowed_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+
+        // Same-class duplicate probes for the borrowed normal occupant must stay
+        // Duplicate and must not perturb queue accounting or the public QoS surface.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // Fresh normal retry noise must also stay fail-closed while the borrowed
+        // reserved slot remains occupied.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+    }
+
+    #[test]
     fn qos_snapshot_keeps_last_reserved_critical_slot_guarded_under_active_backlog() {
         let mut g = LaneAdmissionGate::new(4, 2);
 
