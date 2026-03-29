@@ -7631,6 +7631,36 @@ fn genesis_checkpoint_and_wal_evidence_summaries_mark_boundary_and_prev_hash_abs
 }
 
 #[test]
+fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() {
+    let wal = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "PROPOSAL-09/A".into(),
+        committed: true,
+        state_root_hex: "34".repeat(32),
+        prev_hash_hex: Some("56".repeat(32)),
+    };
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_evidence_surface=wal-v1"));
+    assert!(wal_summary.contains("wal_height=9"));
+    assert!(wal_summary.contains("wal_height_encoding=le-u64"));
+    assert!(wal_summary.contains("wal_height_bytes=8"));
+    assert!(wal_summary.contains("wal_round=4"));
+    assert!(wal_summary.contains("wal_round_encoding=le-u64"));
+    assert!(wal_summary.contains("wal_round_bytes=8"));
+    assert!(wal_summary.contains("wal_proposal_hash=PROPOSAL-09/A"));
+    assert!(wal_summary.contains("wal_proposal_hash_present=true"));
+    assert!(wal_summary.contains("wal_proposal_hash_kind=opaque-ascii"));
+    assert!(wal_summary.contains("wal_proposal_hash_bytes=13"));
+    assert!(wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
+    assert!(wal_summary.contains("wal_prev_hash_present=true"));
+    assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
+    assert!(wal_summary.contains("wal_committed=true"));
+    assert!(wal_summary.contains(&format!("wal_entry_hash={}", wal.content_hash_hex())));
+}
+
+#[test]
 fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
     let e1 = WalMeta {
         height: 1,
