@@ -664,6 +664,63 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_meta_keeps_conflicting_state_roots_distinct_for_same_wal_hash() {
+        let wal_dir = temp_wal_dir("checkpoint-conflicting-state-root-same-wal-hash");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 11,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "shared-hash".into(),
+                },
+                CheckpointMeta {
+                    height: 11,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "shared-hash".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            checkpoints,
+            vec![
+                CheckpointMeta {
+                    height: 11,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "shared-hash".into(),
+                },
+                CheckpointMeta {
+                    height: 11,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "shared-hash".into(),
+                },
+            ],
+            "conflicting checkpoint state roots must remain distinct even when they point at the same wal_entry_hash so light-verifier evidence surfaces stay fail-closed"
+        );
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        let root_a_idx = raw.find("state_root_hex = \"root-a\"").unwrap();
+        let root_b_idx = raw.find("state_root_hex = \"root-b\"").unwrap();
+        let shared_hash_count = raw.matches("wal_entry_hash_hex = \"shared-hash\"").count();
+
+        assert!(
+            root_a_idx < root_b_idx,
+            "conflicting state_root variants for the same wal hash must serialize in canonical state_root order"
+        );
+        assert_eq!(
+            shared_hash_count, 2,
+            "conflicting checkpoint evidence must not be collapsed just because wal_entry_hash matches"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn checkpoint_meta_roundtrip_preserves_canonical_bytes_for_light_verifier_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-roundtrip-bytes");
         fs::create_dir_all(&wal_dir).unwrap();
