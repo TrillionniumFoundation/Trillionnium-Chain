@@ -1072,6 +1072,42 @@ mod tests {
     }
 
     #[test]
+    fn borrowed_last_critical_slot_probe_noise_keeps_qos_snapshot_flat_until_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the final idle critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        let borrowed_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+
+        // Duplicate probes for the borrowed occupant and fresh critical retry noise
+        // must not perturb the public QoS surface while the last reserved slot stays
+        // consumed by borrowed normal work.
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // After the borrowed occupant drains, that same critical tx id should admit
+        // cleanly again and QoS should reopen immediately.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+    }
+
+    #[test]
     fn qos_snapshot_keeps_last_reserved_critical_slot_guarded_under_active_backlog() {
         let mut g = LaneAdmissionGate::new(4, 2);
 
