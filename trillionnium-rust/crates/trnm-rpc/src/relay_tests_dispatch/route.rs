@@ -8,7 +8,7 @@ fn proof_quota_source_attribution_aliases_share_boundary() {
         router,
         RiskQuotaConfig {
             window_ms: 1_000,
-            per_session_limit: 6,
+            per_session_limit: 9,
             per_source_limit: 2,
         },
     );
@@ -56,6 +56,37 @@ fn proof_quota_source_attribution_aliases_share_boundary() {
         })
         .unwrap_err();
     assert!(trimmed_alias_err
+        .to_string()
+        .contains("too_many_requests/quota_exceeded"));
+
+    relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "proof-src-s1".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: Some("proof\u{200B}src".into()),
+        })
+        .unwrap();
+    relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "proof-src-s1".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: Some("PROOF\u{2060}SRC".into()),
+        })
+        .unwrap();
+    let invisible_alias_err = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "proof-src-s1".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: Some("proof src".into()),
+        })
+        .unwrap_err();
+    assert!(invisible_alias_err
         .to_string()
         .contains("too_many_requests/quota_exceeded"));
 
