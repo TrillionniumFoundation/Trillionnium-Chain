@@ -1512,6 +1512,51 @@ mod tests {
     }
 
     #[test]
+    fn oversized_critical_reserve_clamps_to_reserve_only_without_leaking_fake_normal_headroom() {
+        let mut g = LaneAdmissionGate::new(2, 99);
+
+        // Misconfigured reserve > total must clamp into reserve-only mode rather
+        // than exposing impossible dedicated normal headroom or admitting past the
+        // aggregate anti-spam cap.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 2,
+                total_headroom: 2,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        // Under the clamped reserve-only split, queued ids must still dedupe
+        // globally while fresh retries remain fail-closed until a real drain.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
