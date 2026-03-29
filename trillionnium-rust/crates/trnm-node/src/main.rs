@@ -3374,6 +3374,14 @@ mod tests {
         ] {
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let rpc_socket: SocketAddr = cfg
+                .rpc_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{config_path} rpc_addr should parse: {err}"));
+            let p2p_socket: SocketAddr = cfg
+                .p2p_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{config_path} p2p_addr should parse: {err}"));
             assert!(
                 node_ids.insert(cfg.node_id.clone()),
                 "{config_path} reuses node_id {}",
@@ -3388,6 +3396,20 @@ mod tests {
                 p2p_addrs.insert(cfg.p2p_addr.clone()),
                 "{config_path} reuses p2p_addr {}",
                 cfg.p2p_addr
+            );
+            assert!(
+                rpc_socket.ip().is_loopback(),
+                "{config_path} rpc_addr {} must stay on loopback for shipped local bootstrap configs",
+                cfg.rpc_addr
+            );
+            assert!(
+                p2p_socket.ip().is_loopback(),
+                "{config_path} p2p_addr {} must stay on loopback for shipped local bootstrap configs",
+                cfg.p2p_addr
+            );
+            assert_ne!(
+                rpc_socket, p2p_socket,
+                "{config_path} must not reuse the same socket for rpc and p2p"
             );
         }
     }
