@@ -22,6 +22,20 @@ export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"
 export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+EXPECTED_WORKTREE_ROOT_INPUT="${TRNM_EXPECTED_WORKTREE_ROOT:-}"
+EXPECTED_BRANCH_REF_INPUT="${TRNM_EXPECTED_BRANCH_REF:-}"
+EXPECTED_HEAD_INPUT="${TRNM_EXPECTED_HEAD:-}"
+
+if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; then
+  VERIFY_LANE_CMD=("$ROOT/scripts/v2/verify_lane_worktree.sh" --expected-worktree-root "$EXPECTED_WORKTREE_ROOT_INPUT" --expected-branch-ref "$EXPECTED_BRANCH_REF_INPUT")
+  if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
+    VERIFY_LANE_CMD+=(--expected-head "$EXPECTED_HEAD_INPUT")
+  fi
+  VERIFY_LANE_OUTPUT="$(${VERIFY_LANE_CMD[@]})"
+else
+  VERIFY_LANE_OUTPUT=""
+fi
+
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH_RAW="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 if [[ "$GIT_BRANCH_RAW" == "HEAD" ]]; then
@@ -170,6 +184,14 @@ find_challenge_reexec_entry() {
     printf '%s\n' "$GIT_STATUS_SHORT"
   fi
   echo "git_status_short_end"
+  echo "expected_worktree_root=${EXPECTED_WORKTREE_ROOT_INPUT:-<unset>}"
+  echo "expected_branch_ref=${EXPECTED_BRANCH_REF_INPUT:-<unset>}"
+  echo "expected_head=${EXPECTED_HEAD_INPUT:-<unset>}"
+  echo "verify_lane_worktree_output_begin"
+  if [[ -n "$VERIFY_LANE_OUTPUT" ]]; then
+    printf '%s\n' "$VERIFY_LANE_OUTPUT"
+  fi
+  echo "verify_lane_worktree_output_end"
   echo "evidence_dir=$EVIDENCE_DIR"
   echo "replay_out_dir=$BASE_OUT"
   echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"
@@ -241,10 +263,17 @@ replay_challenge_entry="$CHALLENGE_REEXEC_ENTRY"
   else
     echo "result=FAIL"
   fi
+  replay_lane_env=""
+  if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; then
+    replay_lane_env+=" TRNM_EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT_INPUT}' TRNM_EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF_INPUT}'"
+  fi
+  if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
+    replay_lane_env+=" TRNM_EXPECTED_HEAD='${EXPECTED_HEAD_INPUT}'"
+  fi
   if [[ -n "$replay_challenge_entry" ]]; then
-    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}'${replay_lane_env} TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
   else
-    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}'${replay_lane_env} ./scripts/run_local_release_evidence.sh"
   fi
   echo "rollback_command=$rollback_cmd"
   echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
