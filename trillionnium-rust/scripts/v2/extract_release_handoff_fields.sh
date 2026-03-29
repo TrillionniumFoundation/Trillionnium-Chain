@@ -120,6 +120,8 @@ summary_head="$(require_key "$SUMMARY_PATH" git_head)"
 summary_head_state="$(require_key "$SUMMARY_PATH" git_head_state)"
 summary_worktree_path="$(require_key "$SUMMARY_PATH" git_worktree_path)"
 summary_worktree_branch_ref="$(require_key "$SUMMARY_PATH" git_worktree_branch_ref)"
+summary_expected_worktree_branch_ref="$(require_key "$SUMMARY_PATH" git_expected_worktree_branch_ref)"
+summary_worktree_branch_ref_match="$(require_key "$SUMMARY_PATH" git_worktree_branch_ref_match)"
 summary_truth_source="$(require_key "$SUMMARY_PATH" truth_source)"
 summary_historical_evidence_only="$(require_key "$SUMMARY_PATH" historical_evidence_only)"
 summary_evidence_scope="$(require_key "$SUMMARY_PATH" evidence_scope)"
@@ -143,6 +145,8 @@ manifest_head="$(require_key "$MANIFEST_PATH" git_head)"
 manifest_head_state="$(require_key "$MANIFEST_PATH" git_head_state)"
 manifest_worktree_path="$(require_key "$MANIFEST_PATH" git_worktree_path)"
 manifest_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_worktree_branch_ref)"
+manifest_expected_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_expected_worktree_branch_ref)"
+manifest_worktree_branch_ref_match="$(require_key "$MANIFEST_PATH" git_worktree_branch_ref_match)"
 manifest_truth_source="$(require_key "$MANIFEST_PATH" truth_source)"
 manifest_historical_evidence_only="$(require_key "$MANIFEST_PATH" historical_evidence_only)"
 manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
@@ -157,6 +161,8 @@ assert_equal git_head "$summary_head" "$manifest_head"
 assert_equal git_head_state "$summary_head_state" "$manifest_head_state"
 assert_equal git_worktree_path "$summary_worktree_path" "$manifest_worktree_path"
 assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_worktree_branch_ref"
+assert_equal git_expected_worktree_branch_ref "$summary_expected_worktree_branch_ref" "$manifest_expected_worktree_branch_ref"
+assert_equal git_worktree_branch_ref_match "$summary_worktree_branch_ref_match" "$manifest_worktree_branch_ref_match"
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
@@ -169,6 +175,16 @@ fi
 
 if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
   printf 'assigned branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_worktree_branch_ref" >&2
+  exit 1
+fi
+
+if [ "$summary_worktree_branch_ref_match" != "true" ]; then
+  printf 'artifact worktree-branch match is not true: %s\n' "$summary_worktree_branch_ref_match" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_expected_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'artifact expected branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_expected_worktree_branch_ref" >&2
   exit 1
 fi
 
@@ -187,6 +203,8 @@ printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
 printf 'git_worktree_path=%s\n' "$summary_worktree_path"
 printf 'git_worktree_branch_ref=%s\n' "$summary_worktree_branch_ref"
+printf 'git_expected_worktree_branch_ref=%s\n' "$summary_expected_worktree_branch_ref"
+printf 'git_worktree_branch_ref_match=%s\n' "$summary_worktree_branch_ref_match"
 printf 'git_status_summary=%s\n' "$summary_git_status_summary"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"
 printf 'manifest_generated_at=%s\n' "$manifest_generated_at"
