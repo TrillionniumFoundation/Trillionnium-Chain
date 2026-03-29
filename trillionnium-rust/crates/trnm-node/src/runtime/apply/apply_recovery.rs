@@ -142,10 +142,10 @@ pub(crate) fn restore_pending_resolve_approval_from_snapshot(
     if snapshot.confirmations != 1 {
         return;
     }
-    let snapshot_first_approver = snapshot.first_approver.trim().to_ascii_lowercase();
-    if !is_canonical_resolve_approver_snapshot(&snapshot_first_approver) {
+    if !is_canonical_resolve_approver_snapshot(&snapshot.first_approver) {
         return;
     }
+    let snapshot_first_approver = snapshot.first_approver.to_ascii_lowercase();
 
     let Some(snapshot_authority_set) =
         canonicalize_resolve_authority_snapshot(&snapshot.authority_set)
