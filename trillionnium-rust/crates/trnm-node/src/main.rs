@@ -1628,7 +1628,12 @@ fn resolve_config_path(path: &str) -> PathBuf {
     }
 
     let workspace_root = workspace_root();
-    let workspace_relative = workspace_root.join(requested);
+    let workspace_anchor = workspace_root
+        .file_name()
+        .map(Path::new)
+        .and_then(|anchor| requested.strip_prefix(anchor).ok())
+        .unwrap_or(requested);
+    let workspace_relative = workspace_root.join(workspace_anchor);
     if workspace_relative.exists() {
         let canonical_workspace_root = workspace_root
             .canonicalize()
@@ -3452,6 +3457,50 @@ mod tests {
         assert_ne!(loaded.p2p_addr, "127.0.0.1:39998");
         assert_eq!(
             resolve_config_path("configs/node1.toml"),
+            workspace_root.join("configs/node1.toml")
+        );
+    }
+
+    #[test]
+    fn load_config_prefers_workspace_root_repo_relative_path_over_cwd_shadow_tree() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let expected = load_config("trillionnium-rust/configs/node1.toml")
+            .expect("repo-root-relative shipped node1 config should load");
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-shadow-prefixed-{}-{}",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        let shadow_dir = temp_root.join("trillionnium-rust/configs");
+        std::fs::create_dir_all(&shadow_dir).expect("create shadow prefixed config dir");
+        std::fs::write(
+            shadow_dir.join("node1.toml"),
+            "node_id = \"shadow-prefixed-node\"\nrpc_addr = \"127.0.0.1:48999\"\np2p_addr = \"127.0.0.1:48998\"\n",
+        )
+        .expect("write prefixed cwd shadow config");
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&temp_root).expect("enter shadow cwd");
+
+        let loaded = load_config("trillionnium-rust/configs/node1.toml")
+            .expect("repo-root-relative path should keep resolving to shipped workspace config");
+
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        assert_eq!(loaded.node_id, expected.node_id);
+        assert_eq!(loaded.rpc_addr, expected.rpc_addr);
+        assert_eq!(loaded.p2p_addr, expected.p2p_addr);
+        assert_ne!(loaded.node_id, "shadow-prefixed-node");
+        assert_ne!(loaded.rpc_addr, "127.0.0.1:48999");
+        assert_ne!(loaded.p2p_addr, "127.0.0.1:48998");
+        assert_eq!(
+            resolve_config_path("trillionnium-rust/configs/node1.toml"),
             workspace_root.join("configs/node1.toml")
         );
     }

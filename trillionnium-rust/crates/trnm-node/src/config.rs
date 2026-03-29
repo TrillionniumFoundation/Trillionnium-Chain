@@ -175,7 +175,12 @@ fn resolve_config_path(path: &str) -> PathBuf {
         .ancestors()
         .nth(2)
         .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
-    let workspace_relative = workspace_root.join(requested);
+    let workspace_anchor = workspace_root
+        .file_name()
+        .map(Path::new)
+        .and_then(|anchor| requested.strip_prefix(anchor).ok())
+        .unwrap_or(requested);
+    let workspace_relative = workspace_root.join(workspace_anchor);
     if workspace_relative.exists() {
         let canonical_workspace_root = workspace_root
             .canonicalize()
