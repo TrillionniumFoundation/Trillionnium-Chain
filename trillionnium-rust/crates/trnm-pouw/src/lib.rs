@@ -19930,6 +19930,51 @@ mod tests {
     }
 
     #[test]
+    fn timeout_preflight_rejects_conflicting_refund_and_forfeit_modes_without_balance_mutation() {
+        let mut st = seeded_state();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 7);
+
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = preflight_timeout_transfers(&st, &task, true, true).expect_err(
+            "timeout settlement must fail closed when refund and forfeit modes are both requested",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("transfer mode conflict")));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn timeout_preflight_rejects_underfunded_challenge_escrow() {
         let st = seeded_state();
         let task = TaskObject {
