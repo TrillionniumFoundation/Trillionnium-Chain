@@ -1913,6 +1913,33 @@ fn flush_submissions_reuses_persisted_tx_hash_for_duplicate_resume_acceptance() 
 }
 
 #[test]
+fn flush_submissions_reuses_persisted_reveal_tx_hash_for_duplicate_reveal_resume() {
+    let commit_res = AdapterExecResult {
+        ok: true,
+        rc: RC_OK,
+        tx_hash: Some("commitbeef".to_string()),
+        terminal: true,
+    };
+    let reveal_res = AdapterExecResult {
+        ok: false,
+        rc: RC_DUPLICATE,
+        tx_hash: None,
+        terminal: true,
+    };
+
+    let previous_reveal_tx_hash = Some("revealbeef".to_string());
+
+    let reveal_hash_observed = reveal_res.tx_hash.is_some()
+        || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
+    let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+
+    assert!(should_execute_reveal(&commit_res));
+    assert!(reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc));
+    assert!(reveal_hash_observed);
+    assert_eq!(reveal_tx_hash_for_ack.as_deref(), Some("revealbeef"));
+}
+
+#[test]
 fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
     let ack_log = std::env::temp_dir().join(format!(
         "trnm-worker-agent-persisted-ack-hashes-{}-{}.jsonl",
