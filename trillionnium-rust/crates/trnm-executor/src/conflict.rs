@@ -499,4 +499,25 @@ mod tests {
         // inflate scheduler map reservations and blur lane-isolation telemetry.
         assert_eq!(access_map_capacity_hint(&txs), 107);
     }
+
+    #[test]
+    fn access_map_capacity_hint_is_stable_for_role_flipped_mixed_domains() {
+        let write_heavy = tx(
+            1,
+            vec![o(5), o(9), o(11), o(11)],
+            vec![o(5), o(7), o(7)],
+        );
+        let read_heavy = tx(
+            2,
+            vec![o(5), o(7), o(7)],
+            vec![o(5), o(9), o(11), o(11)],
+        );
+
+        // Capacity sizing should be anchored to the mixed execution domain's
+        // unique object footprint, not whichever side currently carries the
+        // wider role. Otherwise equivalent lanes can drift after read/write
+        // role flips and over-reserve scheduler conflict maps.
+        assert_eq!(access_map_capacity_hint(&[write_heavy]), 64);
+        assert_eq!(access_map_capacity_hint(&[read_heavy]), 64);
+    }
 }
