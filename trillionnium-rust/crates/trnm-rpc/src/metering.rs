@@ -14,6 +14,31 @@ fn trim_wrapped_log_numeric(raw: &str) -> &str {
     })
 }
 
+fn trim_wrapped_log_text(raw: &str) -> &str {
+    let mut value = raw.trim();
+    loop {
+        let trimmed = value.trim();
+        let next = if trimmed.len() >= 2 {
+            match (trimmed.as_bytes().first().copied(), trimmed.as_bytes().last().copied()) {
+                (Some(b'"'), Some(b'"'))
+                | (Some(b'\''), Some(b'\''))
+                | (Some(b'`'), Some(b'`'))
+                | (Some(b'('), Some(b')'))
+                | (Some(b'['), Some(b']'))
+                | (Some(b'{'), Some(b'}')) => &trimmed[1..trimmed.len() - 1],
+                _ => break,
+            }
+        } else {
+            break;
+        };
+        if next == value {
+            break;
+        }
+        value = next;
+    }
+    value.trim()
+}
+
 pub(crate) fn parse_u64_kv_value(raw: &str) -> Option<u64> {
     trim_wrapped_log_numeric(raw).parse::<u64>().ok()
 }
@@ -28,7 +53,7 @@ pub(crate) fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 
 pub(crate) fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
-        let normalized = v.trim();
+        let normalized = trim_wrapped_log_text(v);
         if normalized.is_empty() || normalized == "-" {
             None
         } else {
