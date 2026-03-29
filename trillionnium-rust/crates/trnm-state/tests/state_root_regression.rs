@@ -7549,6 +7549,22 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
     };
 
     let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_state_root_source=checkpoint.state_root_hex"));
+    assert!(checkpoint_summary.contains(&format!(
+        "checkpoint_state_root={}",
+        checkpoint.state_root_hex
+    )));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_source=checkpoint.wal_entry_hash_hex"));
+    assert!(checkpoint_summary.contains(&format!(
+        "checkpoint_wal_entry_hash={}",
+        checkpoint.wal_entry_hash_hex
+    )));
+    assert!(checkpoint_summary.contains("checkpoint_commitment_source=checkpoint.commitment_hex"));
+    assert!(checkpoint_summary.contains(&format!(
+        "checkpoint_commitment={}",
+        checkpoint.commitment_hex()
+    )));
+    assert!(checkpoint_summary.contains("checkpoint_evidence_surface=checkpoint-v1"));
     assert!(checkpoint_summary.contains("checkpoint_evidence_surface=checkpoint-v1"));
     assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=non-genesis"));
     assert!(checkpoint_summary.contains("checkpoint_state_root_kind=canonical-hex-32b"));
