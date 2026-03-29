@@ -12943,6 +12943,62 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn resolve_wal_dir_auto_isolates_existing_builtin_default_wal_meta_only_state() {
+        let root = temp_wal_dir("default-wal-meta-root");
+        let base = root.join(DEFAULT_BFT_WAL_DIR);
+        fs::create_dir_all(&base).unwrap();
+        fs::write(wal_meta_file(&base), "existing").unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let cwd = std::env::current_dir().unwrap();
+        std::env::set_current_dir(&root).unwrap();
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        std::env::set_current_dir(cwd).unwrap();
+
+        let notice = notice.expect(
+            "auto mode should surface an operator notice when wal-meta-only default WAL state triggers isolation",
+        );
+        assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
+        assert!(
+            notice.contains("[bft-wal]")
+                && notice.contains("existing default WAL state detected")
+                && notice.contains(DEFAULT_BFT_WAL_DIR)
+                && notice.contains("isolating this run")
+                && notice.contains(&resolved.display().to_string())
+                && notice.contains("--bft-wal-mode reuse"),
+            "unexpected auto-mode notice: {notice}"
+        );
+
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
     fn resolve_wal_dir_auto_keeps_explicit_custom_dir_even_if_state_exists() {
         let wal_dir = temp_wal_dir("custom-reuse");
         fs::create_dir_all(&wal_dir).unwrap();
