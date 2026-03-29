@@ -3262,6 +3262,10 @@ mod tests {
         );
         assert_eq!(PouwError::Unauthorized.stable_code(), "Unauthorized");
         assert_eq!(
+            PouwError::ResolveApprovalStaged.stable_code(),
+            "ResolveApprovalStaged"
+        );
+        assert_eq!(
             PouwError::InsufficientStake.stable_code(),
             "InsufficientStake"
         );
