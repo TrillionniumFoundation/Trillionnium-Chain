@@ -193,6 +193,43 @@ fn qos_snapshot_recloses_normal_admissibility_when_critical_refills_after_idle_l
 }
 
 #[test]
+fn qos_snapshot_stays_fail_closed_for_normal_after_critical_refill_probe_noise() {
+    let mut g = LaneAdmissionGate::new(4, 2);
+
+    // Fill dedicated normal capacity, then borrow one idle reserved slot so a
+    // later critical refill can reclose fresh normal ingress against the final
+    // reserved headroom.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    assert_eq!(g.pop_ready(), Some(1));
+    assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    let guarded_snapshot = LaneQosSnapshot {
+        normal_queued: 1,
+        critical_queued: 2,
+        total_queued: 3,
+        normal_headroom: 1,
+        critical_headroom: 0,
+        total_headroom: 1,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: true,
+    };
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+    // Once critical backlog owns the final reserved slot again, repeated fresh
+    // normal probes must stay backpressured without perturbing public QoS
+    // observability, while the queued critical id still dedupes.
+    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+    assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+    assert_eq!(g.admit(5, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+}
+
+#[test]
 fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
     let mut g = LaneAdmissionGate::new(1, 1);
 
