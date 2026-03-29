@@ -90,6 +90,7 @@ cargo test -p trnm-state -p trnm-node
 ## Incident note 最小模板
 
 - `wal_dir`: `<path>`
+- `startup_wal_mode`: `<reuse|fail-if-exists|isolated-default>`
 - `last_retained_checkpoint`: `<height|none>`
 - `next_startup_height`: `<height>`
 - `wal_tail_truncated`: `<yes|no>`
