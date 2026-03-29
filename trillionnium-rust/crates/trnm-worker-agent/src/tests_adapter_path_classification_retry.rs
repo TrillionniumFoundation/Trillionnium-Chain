@@ -175,6 +175,38 @@ fn run_adapter_with_retry_prefers_latest_slo_violation_receipt_hash_and_stops() 
 }
 
 #[test]
+fn run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keeps_last_seen_hash() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-nonce-malformed-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 10)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal nonce_rejected result while preserving the last valid receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("abcd1234"),
+        "malformed nonce_rejected receipt hashes must not clobber the last valid tx hash"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
 fn llm_adapter_retry_succeeds_within_budget() {
     let mut attempt = 0u32;
     let mut slept = vec![];
