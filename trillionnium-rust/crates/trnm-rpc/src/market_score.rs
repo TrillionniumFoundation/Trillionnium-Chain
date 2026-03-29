@@ -182,11 +182,25 @@ mod tests {
 
         assert_eq!(output.price_weight, 3);
         assert_eq!(output.reputation_weight, 7);
-        assert_eq!(output.reputation_clamp, 1);
-        assert_eq!(output.max_effective_reputation, 1);
-        assert_eq!(output.min_effective_reputation, -1);
+        assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.max_effective_reputation, MARKET_REPUTATION_CLAMP_MIN);
+        assert_eq!(output.min_effective_reputation, -MARKET_REPUTATION_CLAMP_MIN);
         assert_eq!(output.max_reputation_score_delta, 7);
         assert_eq!(output.min_reputation_score_delta, -7);
+    }
+
+    #[test]
+    fn market_score_config_output_reports_symmetric_fail_closed_reputation_bounds() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 1,
+            reputation_weight: 7,
+            reputation_clamp: 13,
+        });
+
+        assert_eq!(output.max_effective_reputation, 13);
+        assert_eq!(output.min_effective_reputation, -13);
+        assert_eq!(output.max_reputation_score_delta, 91);
+        assert_eq!(output.min_reputation_score_delta, -91);
     }
 
     #[test]
@@ -221,6 +235,20 @@ mod tests {
     }
 
     #[test]
+    fn market_reputation_score_delta_keeps_zero_effective_reputation_neutral() {
+        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
+            effective_reputation: 0,
+            base_score: 500,
+            reputation_reward: 77,
+            penalty: 88,
+            effective_score: 500,
+            score_floor_applied: false,
+        });
+
+        assert_eq!(delta, 0);
+    }
+
+    #[test]
     fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
         let delta = market_reputation_score_delta(&MarketScoreBreakdown {
             effective_reputation: 1,
@@ -232,6 +260,29 @@ mod tests {
         });
 
         assert_eq!(delta, i128::MIN);
+    }
+
+    #[test]
+    fn market_reputation_score_delta_uses_effective_reputation_sign_fail_closed() {
+        let reward_breakdown = MarketScoreBreakdown {
+            effective_reputation: 3,
+            base_score: 100,
+            reputation_reward: 21,
+            penalty: 999,
+            effective_score: 79,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&reward_breakdown), -21);
+
+        let penalty_breakdown = MarketScoreBreakdown {
+            effective_reputation: -3,
+            base_score: 100,
+            reputation_reward: 999,
+            penalty: 21,
+            effective_score: 121,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&penalty_breakdown), 21);
     }
 
     #[test]
@@ -251,10 +302,10 @@ mod tests {
     #[test]
     fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
         let breakdown = market_score_breakdown(
-            3,
+            7,
             3,
             MarketScoreConfig {
-                price_weight: 7,
+                price_weight: 3,
                 reputation_weight: 7,
                 reputation_clamp: 10,
             },
@@ -262,6 +313,7 @@ mod tests {
 
         assert_eq!(breakdown.base_score, 21);
         assert_eq!(breakdown.reputation_reward, 21);
+        assert_eq!(breakdown.penalty, 0);
         assert_eq!(breakdown.effective_score, 0);
         assert!(breakdown.score_floor_applied);
         assert_eq!(market_reputation_score_delta(&breakdown), -21);
@@ -309,17 +361,4 @@ mod tests {
         assert_eq!(market_reputation_score_delta(&breakdown), 0);
     }
 
-    #[test]
-    fn market_reputation_score_delta_keeps_zero_effective_reputation_neutral() {
-        let delta = market_reputation_score_delta(&MarketScoreBreakdown {
-            effective_reputation: 0,
-            base_score: 500,
-            reputation_reward: 77,
-            penalty: 88,
-            effective_score: 500,
-            score_floor_applied: false,
-        });
-
-        assert_eq!(delta, 0);
-    }
 }
