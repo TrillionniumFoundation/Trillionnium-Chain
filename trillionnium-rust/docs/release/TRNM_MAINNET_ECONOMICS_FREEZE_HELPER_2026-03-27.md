@@ -117,6 +117,10 @@ consistency boundaries:
   - proves duplicate sponsor/free-ingress probe noise stays classification-only while
     reserve-only shared-lane mode still exposes the last real refill slot until fresh
     work actually consumes it
+- `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_multi_refill_probe_stability_bound -q`
+  - proves the same classification-only duplicate behavior when reserve-only mode has
+    reopened more than one shared slot, so sponsor/free-ingress observability stays
+    honest across partial drains instead of only at the final refill boundary
 - `cargo test -p trnm-mempool lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
   - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
     immediately after the borrowed occupant drains, without requiring an extra idle
