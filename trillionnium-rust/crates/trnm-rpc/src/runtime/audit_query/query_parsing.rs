@@ -165,6 +165,27 @@ fn default_normalized_audit_events_query() -> QueryNormalizedAuditEventsQuery {
     }
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn contains_percent_encoded_control_or_space(value: &str) -> bool {
     let bytes = value.as_bytes();
     let mut idx = 0;
@@ -199,6 +220,7 @@ fn validate_path_prefix<'a>(
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || contains_malformed_percent_encoding(path_without_query)
         || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
@@ -231,6 +253,7 @@ fn extract_validated_query<'a>(
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || contains_malformed_percent_encoding(query)
         || contains_percent_encoded_control_or_space(query)
     {
         return Err(bad_request(error_body));
