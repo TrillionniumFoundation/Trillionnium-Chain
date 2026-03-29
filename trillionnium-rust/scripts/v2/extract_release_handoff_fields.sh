@@ -123,6 +123,8 @@ summary_worktree_branch_ref="$(require_key "$SUMMARY_PATH" git_worktree_branch_r
 summary_truth_source="$(require_key "$SUMMARY_PATH" truth_source)"
 summary_historical_evidence_only="$(require_key "$SUMMARY_PATH" historical_evidence_only)"
 summary_evidence_scope="$(require_key "$SUMMARY_PATH" evidence_scope)"
+summary_git_status_summary="$(require_key "$SUMMARY_PATH" git_status_summary)"
+summary_generated_at="$(require_key "$SUMMARY_PATH" generated_at)"
 summary_result="$(require_key "$SUMMARY_PATH" result)"
 summary_rollback="$(require_key "$SUMMARY_PATH" rollback_command)"
 summary_replay="$(require_key "$SUMMARY_PATH" replay_command)"
@@ -144,6 +146,8 @@ manifest_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_worktree_branch
 manifest_truth_source="$(require_key "$MANIFEST_PATH" truth_source)"
 manifest_historical_evidence_only="$(require_key "$MANIFEST_PATH" historical_evidence_only)"
 manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
+manifest_git_status_summary="$(require_key "$MANIFEST_PATH" git_status_summary)"
+manifest_generated_at="$(require_key "$MANIFEST_PATH" generated_at)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
@@ -156,6 +160,7 @@ assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_w
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
+assert_equal git_status_summary "$summary_git_status_summary" "$manifest_git_status_summary"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'assigned worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
@@ -182,6 +187,9 @@ printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
 printf 'git_worktree_path=%s\n' "$summary_worktree_path"
 printf 'git_worktree_branch_ref=%s\n' "$summary_worktree_branch_ref"
+printf 'git_status_summary=%s\n' "$summary_git_status_summary"
+printf 'summary_generated_at=%s\n' "$summary_generated_at"
+printf 'manifest_generated_at=%s\n' "$manifest_generated_at"
 printf 'truth_source=%s\n' "$summary_truth_source"
 printf 'historical_evidence_only=%s\n' "$summary_historical_evidence_only"
 printf 'evidence_scope=%s\n' "$summary_evidence_scope"
