@@ -22,9 +22,34 @@ pub(crate) fn parse_i128_kv_value(raw: &str) -> Option<i128> {
     trim_wrapped_log_numeric(raw).parse::<i128>().ok()
 }
 
+fn trim_wrapped_log_text(raw: &str) -> &str {
+    let mut value = raw.trim();
+    loop {
+        let trimmed = value.trim();
+        let next = if trimmed.len() >= 2 {
+            match (trimmed.as_bytes().first().copied(), trimmed.as_bytes().last().copied()) {
+                (Some(b'"'), Some(b'"'))
+                | (Some(b'\''), Some(b'\''))
+                | (Some(b'`'), Some(b'`'))
+                | (Some(b'('), Some(b')'))
+                | (Some(b'['), Some(b']'))
+                | (Some(b'{'), Some(b'}')) => &trimmed[1..trimmed.len() - 1],
+                _ => break,
+            }
+        } else {
+            break;
+        };
+        if next == value {
+            break;
+        }
+        value = next;
+    }
+    value.trim()
+}
+
 pub(crate) fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
-        let normalized = v.trim();
+        let normalized = trim_wrapped_log_text(v);
         if normalized.is_empty() || normalized == "-" {
             None
         } else {
@@ -286,4 +311,104 @@ pub(crate) fn query_task_from_state_snapshot(
             .and_then(|metadata| metadata.metering.as_ref())
             .map(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_opt_kv_unwraps_nested_wrapped_text_values() {
+        let kv = BTreeMap::from([
+            (
+                "metering_schema".to_string(),
+                "  \"[llm_token_meter_v1]\"  ".to_string(),
+            ),
+            (
+                "metering_receipt_hash".to_string(),
+                " ('0xabc123') ".to_string(),
+            ),
+        ]);
+
+        assert_eq!(
+            normalize_opt_kv(&kv, "metering_schema").as_deref(),
+            Some("llm_token_meter_v1")
+        );
+        assert_eq!(
+            normalize_opt_kv(&kv, "metering_receipt_hash").as_deref(),
+            Some("0xabc123")
+        );
+    }
+
+    #[test]
+    fn parse_event_metering_query_response_normalizes_wrapped_text_fields() {
+        let kv = BTreeMap::from([
+            (
+                "metering_workload_class".to_string(),
+                " \"[llm-inference]\" ".to_string(),
+            ),
+            (
+                "metering_schema".to_string(),
+                " ('llm_token_meter_v1') ".to_string(),
+            ),
+            (
+                "metering_receipt_hash".to_string(),
+                " [`0xdeadbeef`] ".to_string(),
+            ),
+            ("metering_policy_snapshot_version".to_string(), "1".to_string()),
+            ("to_status".to_string(), " {Completed} ".to_string()),
+            (
+                "metering_normalized_work_units".to_string(),
+                "192".to_string(),
+            ),
+            (
+                "metering_min_accept_work_units".to_string(),
+                "64".to_string(),
+            ),
+            (
+                "metering_challenge_success_bounty_base".to_string(),
+                "1".to_string(),
+            ),
+            (
+                "metering_challenge_success_bounty_per_work_unit_num".to_string(),
+                "1".to_string(),
+            ),
+            (
+                "metering_challenge_success_bounty_per_work_unit_den".to_string(),
+                "192".to_string(),
+            ),
+            (
+                "metering_worker_completion_bonus_per_work_unit_num".to_string(),
+                "3".to_string(),
+            ),
+            (
+                "metering_worker_completion_bonus_per_work_unit_den".to_string(),
+                "64".to_string(),
+            ),
+            (
+                "metering_worker_slash_rebate_per_work_unit_num".to_string(),
+                "1".to_string(),
+            ),
+            (
+                "metering_worker_slash_rebate_per_work_unit_den".to_string(),
+                "96".to_string(),
+            ),
+            ("metering_prompt_tokens".to_string(), "100".to_string()),
+            ("metering_generated_tokens".to_string(), "200".to_string()),
+            ("metering_decode_steps".to_string(), "50".to_string()),
+            ("metering_kv_bytes_moved".to_string(), "4096".to_string()),
+            ("metering_prompt_token_weight".to_string(), "1".to_string()),
+            ("metering_generated_token_weight".to_string(), "2".to_string()),
+            ("metering_decode_step_weight".to_string(), "3".to_string()),
+            ("metering_kv_byte_weight".to_string(), "4".to_string()),
+        ]);
+
+        let response = parse_event_metering_query_response(&kv).expect("metering response");
+
+        assert_eq!(response.workload_class, "llm-inference");
+        assert_eq!(response.metering_schema, "llm_token_meter_v1");
+        assert_eq!(response.receipt_hash, "0xdeadbeef");
+        assert_eq!(response.derived.path, "Completed");
+        assert!(response.derived.accept_floor_pass);
+    }
 }
