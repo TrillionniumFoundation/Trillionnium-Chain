@@ -1571,6 +1571,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
     );
+    anyhow::ensure!(
+        rpc_socket.is_ipv4() == p2p_socket.is_ipv4(),
+        "invalid node config {}: rpc_addr and p2p_addr must use the same IP family",
+        path
+    );
 
     Ok(NodeConfig {
         node_id: node_id.to_string(),
@@ -3993,6 +3998,22 @@ mod tests {
         assert!(err
             .to_string()
             .contains("rpc_addr and p2p_addr must differ"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_mixed_ip_families() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "[::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("mixed IPv4/IPv6 listener sockets must fail closed");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must use the same IP family"));
     }
 
     #[test]
