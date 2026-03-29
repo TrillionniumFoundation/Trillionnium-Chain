@@ -252,13 +252,69 @@ pub(crate) fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
         .trim_matches(|c: char| {
-            c.is_ascii_whitespace()
+            c.is_whitespace()
+                || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':'
+                    '"'
+                        | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '<'
+                        | '>'
+                        | ','
+                        | ';'
+                        | ':'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                        | '，'
+                        | '；'
+                        | '：'
+                        | '！'
+                        | '？'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
                 )
         })
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_end_matches(|c: char| c.is_ascii_punctuation() || matches!(c, '！' | '？' | '，' | '；' | '：'))
         .to_ascii_lowercase();
     let canonical = cleaned
         .chars()
@@ -286,10 +342,62 @@ pub(crate) fn normalize_tx_status(raw: &str) -> Option<String> {
 fn is_nullish_kv_value(raw: &str) -> bool {
     let cleaned = raw
         .trim()
-        .trim_matches('"')
-        .trim_matches('\'')
-        .trim_matches('`')
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_matches(|c: char| {
+            c.is_whitespace()
+                || c.is_control()
+                || matches!(
+                    c,
+                    '"'
+                        | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '<'
+                        | '>'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        .trim_end_matches(|c: char| c.is_ascii_punctuation() || matches!(c, '！' | '？' | '，' | '；' | '：'))
         .to_ascii_lowercase();
     cleaned.is_empty() || cleaned == "null"
 }
