@@ -7551,6 +7551,52 @@ fn wal_checkpoint_accepts_identical_duplicate_checkpoint_evidence() {
 }
 
 #[test]
+fn node_recovery_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "11".repeat(32),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "22".repeat(32),
+        prev_hash_hex: Some(h1.clone()),
+    };
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: e1.state_root_hex.clone(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: e2.state_root_hex.clone(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: e2.state_root_hex.clone(),
+            wal_entry_hash_hex: "33".repeat(32),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[e1, e2]).unwrap();
+    assert_eq!(
+        got.map(|cp| cp.height),
+        Some(1),
+        "node recovery must fail closed back to the last unambiguous checkpoint when same-height checkpoint tuples disagree on wal_entry_hash_hex even if state_root_hex matches"
+    );
+}
+
+#[test]
 fn node_recovery_accepts_identical_duplicate_checkpoint_evidence() {
     let wal_entry = WalMeta {
         height: 1,

@@ -4391,9 +4391,14 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
 
-        let matching_hash_checkpoints: Vec<&CheckpointMeta> = checkpoints
+        let checkpoints_at_height: Vec<&CheckpointMeta> = checkpoints
             .iter()
-            .filter(|cp| cp.height == e.height && cp.wal_entry_hash_hex == cur_hash)
+            .filter(|cp| cp.height == e.height)
+            .collect();
+        let matching_hash_checkpoints: Vec<&CheckpointMeta> = checkpoints_at_height
+            .iter()
+            .copied()
+            .filter(|cp| cp.wal_entry_hash_hex == cur_hash)
             .collect();
         let mut matching_hash_roots: Vec<&str> = matching_hash_checkpoints
             .iter()
@@ -4405,6 +4410,13 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
         if !matching_hash_checkpoints.is_empty()
+            && checkpoints_at_height
+                .iter()
+                .any(|cp| cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash)
+        {
+            return Ok(best_checkpoint);
+        }
+        if !matching_hash_checkpoints.is_empty()
             && !matching_hash_checkpoints
                 .iter()
                 .all(|cp| checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash))
@@ -4412,7 +4424,7 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
 
-        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+        for cp in checkpoints_at_height {
             if checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash) {
                 let should_replace = best_checkpoint
                     .as_ref()
