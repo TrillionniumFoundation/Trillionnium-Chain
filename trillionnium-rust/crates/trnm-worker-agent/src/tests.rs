@@ -539,6 +539,27 @@ fn tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation() {
 }
 
 #[test]
+fn tx_retry_policy_allows_per_field_cli_override_while_preserving_other_env_value() {
+    let policy = resolve_tx_retry_policy_from_sources(Some(2), None, Some("9"), Some("450"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 2,
+            backoff_ms: 450,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, Some(125), Some("7"), Some("900"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 125,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_falls_back_per_field_when_only_one_env_value_is_invalid() {
     let policy = resolve_tx_retry_policy_from_sources(None, None, Some("invalid"), Some(" 350 "));
     assert_eq!(
