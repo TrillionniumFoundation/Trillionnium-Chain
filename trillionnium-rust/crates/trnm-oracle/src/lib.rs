@@ -527,6 +527,7 @@ pub fn validate_snapshot_observed(
         }
         Err(OracleError::StaleSnapshot { .. })
         | Err(OracleError::FutureSnapshot { .. })
+        | Err(OracleError::InvalidWindow { .. })
         | Err(OracleError::InvalidWindowTimestamp { .. }) => {
             observation.stale_reject_total = 1;
             Some("stale".to_string())
@@ -2489,7 +2490,7 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_invalid_window_error_without_counter_drift() {
+    fn observed_report_maps_invalid_window_to_stale_without_counter_drift() {
         let mut snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
             "value": 100000,
@@ -2507,12 +2508,12 @@ mod tests {
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(report.error.as_deref(), Some("invalid window: start=2001, end=2000"));
-        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.error.as_deref(), Some("stale"));
+        assert_eq!(report.observation.stale_reject_total, 1);
         assert_eq!(report.observation.quorum_reject_total, 0);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
-        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 1);
         assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
