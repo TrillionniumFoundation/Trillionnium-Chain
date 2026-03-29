@@ -59,15 +59,7 @@ impl OracleSnapshot {
         if sources.windows(2).any(|w| w[0] == w[1]) {
             return Err(OracleError::DuplicateSources);
         }
-        if sample_count == 0 {
-            return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
-        }
-        if sample_count < sources.len() as u32 {
-            return Err(OracleError::InconsistentSampleCount {
-                sample_count,
-                actual_sources: sources.len() as u32,
-            });
-        }
+        validate_sample_count_against_sources(sample_count, sources.len() as u32)?;
 
         let mut snapshot = Self {
             feed_id,
@@ -230,22 +222,16 @@ impl OraclePolicy {
             });
         }
 
-        if snapshot.sample_count == 0 {
-            return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
-        }
+        validate_sample_count_against_sources(
+            snapshot.sample_count,
+            snapshot.sources.len() as u32,
+        )?;
 
         if snapshot.sources.len() < self.min_sources as usize
             || snapshot.sample_count < self.min_sources
         {
             return Err(OracleError::InsufficientSources {
                 min_sources: self.min_sources,
-                actual_sources: snapshot.sources.len() as u32,
-                sample_count: snapshot.sample_count,
-            });
-        }
-
-        if snapshot.sample_count < snapshot.sources.len() as u32 {
-            return Err(OracleError::InconsistentSampleCount {
                 actual_sources: snapshot.sources.len() as u32,
                 sample_count: snapshot.sample_count,
             });
@@ -315,6 +301,22 @@ fn validate_snapshot_window(
         return Err(OracleError::InvalidWindowTimestamp {
             window_end_ms,
             snapshot_ts_ms,
+        });
+    }
+    Ok(())
+}
+
+fn validate_sample_count_against_sources(
+    sample_count: u32,
+    actual_sources: u32,
+) -> Result<(), OracleError> {
+    if sample_count == 0 {
+        return Err(OracleError::InvalidPolicy("sample_count must be > 0"));
+    }
+    if sample_count < actual_sources {
+        return Err(OracleError::InconsistentSampleCount {
+            actual_sources,
+            sample_count,
         });
     }
     Ok(())
