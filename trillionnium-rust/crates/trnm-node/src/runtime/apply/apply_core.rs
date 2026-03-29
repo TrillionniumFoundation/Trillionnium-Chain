@@ -23,6 +23,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain whitespace",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains(',') && !node_id.contains(';') && !node_id.contains('|'),
+        "invalid node config {}: node_id must not contain list separators (, ; |)",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -474,6 +479,24 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("node_id must not contain control characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_list_separators_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node|alpha".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("list separators in node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must not contain list separators (, ; |)"),
             "unexpected error: {err:#}"
         );
     }
