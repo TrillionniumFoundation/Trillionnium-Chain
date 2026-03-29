@@ -181,3 +181,47 @@ fn hard_stop_lane_wide_duplicates_survive_idle_polls_without_poisoning_fresh_ret
         assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
     }
 }
+
+#[test]
+fn hard_stop_mixed_restored_duplicate_sources_stay_fail_closed_through_idle_polls() {
+    let mut g = LaneAdmissionGate::new(0, 0);
+
+    // Simulate a restored hard-stop lane where duplicate knowledge is split across
+    // lane-local caches while lane-wide metadata carries an unrelated ghost id.
+    // Idle polls must preserve Duplicate classification for restored ids without
+    // fabricating queue occupancy or poisoning fresh retry bursts.
+    g.normal.seen.insert(41);
+    g.critical.seen.insert(42);
+    g.seen_global.insert(99);
+    g.critical_served_streak = 5;
+
+    let expected = LaneQosSnapshot {
+        normal_queued: 0,
+        critical_queued: 0,
+        total_queued: 0,
+        normal_headroom: 0,
+        critical_headroom: 0,
+        total_headroom: 0,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: false,
+    };
+
+    for _ in 0..2 {
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(404, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(404, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+    }
+
+    // Idle self-heal may reset fairness bookkeeping, but must not change the
+    // hard-stop duplicate/backpressure contract.
+    assert_eq!(g.critical_served_streak, 0);
+}
