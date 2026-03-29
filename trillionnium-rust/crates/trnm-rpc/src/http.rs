@@ -455,6 +455,7 @@ mod tests {
         for path in [
             "/query-events/42\t?limit=1",
             "/query-events/42\n?limit=1",
+            "/query-events/42\r?limit=1",
             "/query-events/4 2?limit=1",
         ] {
             let response = parse_query_events_limit_from_path(path);
