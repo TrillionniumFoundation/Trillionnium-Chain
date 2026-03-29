@@ -39,6 +39,31 @@ fn same_object_different_versions_land_in_separate_groups() {
 }
 
 #[test]
+fn object_zero_different_versions_land_in_separate_groups() {
+    let txs = vec![
+        Tx {
+            id: 10,
+            read_set: vec![ObjectRef { id: 0, version: 1 }],
+            write_set: vec![],
+            payload: vec![],
+        },
+        Tx {
+            id: 11,
+            read_set: vec![],
+            write_set: vec![ObjectRef { id: 0, version: 2 }],
+            payload: vec![],
+        },
+    ];
+
+    // Object id 0 is a real execution-domain key, not a sentinel. Mixed-domain
+    // version skew on object 0 must still force separate groups.
+    let groups = build_parallel_groups(&txs);
+    assert_eq!(groups.len(), 2);
+    assert_eq!(groups[0][0].id, 10);
+    assert_eq!(groups[1][0].id, 11);
+}
+
+#[test]
 fn read_only_same_object_different_versions_share_one_group() {
     let txs = vec![
         Tx {
