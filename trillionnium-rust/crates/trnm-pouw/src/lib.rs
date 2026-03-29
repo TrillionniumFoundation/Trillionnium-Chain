@@ -1690,6 +1690,13 @@ pub fn apply_challenge_at_height(
     if task.status != TaskStatus::Revealed {
         return Err(PouwError::InvalidTransition);
     }
+    if matches!(task.challenge_window_blocks_snapshot, Some(snapshot) if snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+    {
+        // Legacy/corrupt revealed snapshots with zero challenge-window metadata
+        // are canonicalized at first live challenge entry instead of being
+        // rejected before the fallback window can be frozen into task state.
+        task.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+    }
     validate_challenge_accounting_invariants(&task)?;
     let _ = validate_task_metering_snapshot(&task)?;
     // Safety boundary: emergency pause must also freeze new challenged-state
@@ -2066,6 +2073,16 @@ pub fn apply_timeout(
         // invariant/audit checks so timeout settlement cannot leak challenged-state
         // accounting details while escrow movement paths are frozen.
         return Err(PouwError::InvalidTransition);
+    }
+
+    if matches!(task.status, TaskStatus::Revealed)
+        && task
+            .challenge_window_blocks_snapshot
+            .is_some_and(|snapshot| snapshot < MIN_CHALLENGE_WINDOW_BLOCKS)
+    {
+        return Err(PouwError::State(
+            "revealed task has invalid retained challenge_window_blocks_snapshot".into(),
+        ));
     }
 
     validate_challenge_accounting_invariants(&task)?;
