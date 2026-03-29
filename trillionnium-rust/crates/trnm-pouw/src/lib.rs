@@ -14330,6 +14330,55 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_stays_on_refund_path_when_timeout_slash_key_is_blocked() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        let err = st
+            .set_gov_param_bootstrap_unchecked(
+                40_080,
+                "default_slash_on_unresolved_challenge".into(),
+                "true".into(),
+            )
+            .expect_err("timeout-slash governance key should stay blocked by the allowlist");
+        assert!(err.contains("governance key not allowed: default_slash_on_unresolved_challenge"));
+
+        let r1 = apply_create_task(&mut st, 40_081, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_081, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let before_challenger = st.balance_of("challenger");
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let next = apply_timeout(&mut st, r5, 221).unwrap();
+        let task = st.get_task(next.id).unwrap();
+
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), before_challenger + 10);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+    }
+
+    #[test]
     fn parse_governed_bool_param_rejects_blank_governance_value_fail_closed() {
         let err = parse_governed_bool_param("", "default_slash_on_unresolved_challenge")
             .expect_err("blank timeout-slash governance value must be rejected");
