@@ -1246,6 +1246,29 @@ mod tests {
     }
 
     #[test]
+    fn validate_hash_rejects_whitespace_padded_snapshot_digest_surface() {
+        let mut snapshot = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(99_900),
+            Some(10),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot");
+
+        snapshot.snapshot_hash = format!(" {} ", snapshot.snapshot_hash);
+
+        let err = snapshot
+            .validate_hash()
+            .expect_err("whitespace-padded digest surface must fail closed");
+        assert!(matches!(err, OracleError::NonCanonicalSnapshotHash { .. }));
+    }
+
+    #[test]
     fn rejects_future_snapshot_timestamp() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_001);
