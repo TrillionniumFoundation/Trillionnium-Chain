@@ -5935,6 +5935,46 @@ fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_forbidden_layout()
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_rejects_mixed_case_non_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "proposal-7".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should expose a DA/light-verifier summary"
+    );
+
+    let mut mixed_case_prev_hash_wal = wal.clone();
+    mixed_case_prev_hash_wal.prev_hash_hex = Some("cd".repeat(32).to_uppercase());
+    let mixed_case_checkpoint = CheckpointMeta {
+        height: mixed_case_prev_hash_wal.height,
+        state_root_hex: mixed_case_prev_hash_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: mixed_case_prev_hash_wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&mixed_case_checkpoint, &mixed_case_prev_hash_wal),
+        "checkpoint evidence surfaces must reject mixed-case prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links stay canonical"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(&mixed_case_checkpoint, &mixed_case_prev_hash_wal),
+        None,
+        "DA/light-verifier summaries must fail closed when non-genesis prev_hash_hex is encoded with mixed-case digest surfaces"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     let wal = WalMeta {
         height: 7,
