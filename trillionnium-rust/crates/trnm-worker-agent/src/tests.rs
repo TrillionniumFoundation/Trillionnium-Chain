@@ -732,6 +732,24 @@ fn tx_retry_policy_trims_bom_and_invisible_fillers_around_env_values() {
 }
 
 #[test]
+fn tx_retry_policy_trims_control_wrappers_around_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("\0\u{0007}8\r"),
+        Some("\n150\u{001b}"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 8,
+            backoff_ms: 150,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation() {
     let env_policy = resolve_tx_retry_policy_from_sources(None, None, Some(" 4\n"), Some("\t250 "));
     assert_eq!(
