@@ -177,6 +177,53 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_rejects_duplicate_top_level_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-duplicate-top-level-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                checkpoints = []
+                checkpoints = []
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") && err.contains("checkpoints"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_rejects_duplicate_entry_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-duplicate-entry-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "aa"
+                state_root_hex = "bb"
+                wal_entry_hash_hex = "cc"
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") && err.contains("state_root_hex"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_rejects_unknown_top_level_fields_for_recovery_surfaces() {
         let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -220,6 +267,56 @@ mod tests {
         let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
         assert!(
             err.contains("unknown field") && err.contains("forged"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_rejects_duplicate_top_level_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-duplicate-top-level-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            r#"
+                entries = []
+                entries = []
+            "#,
+        )
+        .unwrap();
+
+        let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") && err.contains("entries"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_rejects_duplicate_entry_fields_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-duplicate-entry-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            r#"
+                [[entries]]
+                height = 7
+                round = 1
+                proposal_hash = "proposal-7"
+                committed = true
+                state_root_hex = "aa"
+                state_root_hex = "bb"
+                prev_hash_hex = "cc"
+            "#,
+        )
+        .unwrap();
+
+        let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") && err.contains("state_root_hex"),
             "unexpected parse error: {err}"
         );
 
