@@ -1015,6 +1015,9 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
         }
     }
 
+    if cleaned.starts_with("0X") {
+        cleaned.replace_range(..2, "0x");
+    }
     cleaned = cleaned.to_ascii_lowercase();
 
     if cleaned.starts_with("0x") && cleaned.len() > 2 {

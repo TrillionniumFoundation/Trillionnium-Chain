@@ -22,6 +22,18 @@ fn extract_tx_hash_trims_quotes_and_trailing_punctuation() {
 }
 
 #[test]
+fn extract_tx_hash_accepts_uppercase_0x_prefix() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=0XABCD1234").as_deref(),
+        Some("0xabcd1234")
+    );
+    assert_eq!(
+        extract_tx_hash("{\"tx_hash\":\"0XBEEF42\"}").as_deref(),
+        Some("0xbeef42")
+    );
+}
+
+#[test]
 fn extract_tx_hash_rejects_non_hex_prefixed_values() {
     assert_eq!(extract_tx_hash("tx_hash=0xzz99").as_deref(), None);
     assert_eq!(
