@@ -303,6 +303,29 @@ mod tests {
     }
 
     #[test]
+    fn market_reputation_score_delta_uses_effective_reputation_sign_fail_closed() {
+        let reward_breakdown = MarketScoreBreakdown {
+            effective_reputation: 3,
+            base_score: 100,
+            reputation_reward: 21,
+            penalty: 999,
+            effective_score: 79,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&reward_breakdown), -21);
+
+        let penalty_breakdown = MarketScoreBreakdown {
+            effective_reputation: -3,
+            base_score: 100,
+            reputation_reward: 999,
+            penalty: 21,
+            effective_score: 121,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_score_delta(&penalty_breakdown), 21);
+    }
+
+    #[test]
     fn market_score_breakdown_marks_exact_floor_match_as_floor_applied() {
         let breakdown = market_score_breakdown(
             7,
