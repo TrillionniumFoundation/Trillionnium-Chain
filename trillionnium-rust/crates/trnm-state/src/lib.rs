@@ -13193,6 +13193,26 @@ mod tests {
     }
 
     #[test]
+    fn restore_gov_param_rejects_noncanonical_emergency_pause_alias_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            7_999,
+            Some(GovParamObject {
+                key_id: 7_999,
+                key: "emergency_pause ".into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(7_999).is_none());
+        assert!(st.gov_param_string("emergency_pause").is_none());
+        assert!(st.gov_param_string("emergency_pause ").is_none());
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
     fn restore_gov_param_rejects_schema_invalid_allowed_key_fail_closed() {
         let mut st = StateStore::new();
 
