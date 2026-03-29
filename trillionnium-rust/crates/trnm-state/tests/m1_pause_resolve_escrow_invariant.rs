@@ -7825,3 +7825,47 @@ fn restore_pending_resolve_authority_update_scrubs_staged_resolve_quorum() {
     assert_eq!(pending.value, "authority-c,authority-d");
     assert_eq!(pending.activate_at_height, 98_401);
 }
+
+#[test]
+fn canonical_unpause_preserves_staged_first_approver_metadata_and_escrow_conservation() {
+    // M1 micro-hardening: a canonical emergency_pause exit must not silently scrub the
+    // staged first approver metadata that binds an in-flight 2-of-N resolve quorum.
+    let mut st = StateStore::new();
+    st.set_balance("treasury.challenge_escrow", 64_100);
+    st.set_balance("treasury.challenge_forfeits", 941);
+
+    st.set_gov_param(98_402, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(
+        9_996,
+        1,
+        true,
+        "authority-a",
+        "authority-a,authority-b",
+    )
+    .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_996), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_996).as_deref(),
+        Some("authority-a")
+    );
+
+    let escrow_before = st.balance_of("treasury.challenge_escrow");
+    let forfeits_before = st.balance_of("treasury.challenge_forfeits");
+
+    st.set_gov_param(98_403, 7_999, "emergency_pause".into(), "false".into())
+        .expect("canonical unpause must apply immediately");
+
+    assert!(!st.is_emergency_paused());
+    assert_eq!(st.pending_resolve_approval(9_996), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_996).as_deref(),
+        Some("authority-a"),
+        "canonical unpause must preserve staged first-approver metadata"
+    );
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+    assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeits_before);
+}
