@@ -3234,9 +3234,7 @@ impl StateStore {
                 if key == "emergency_pause" {
                     self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
                     self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
-                    if scrubs_resolve_quorum {
-                        self.pending_resolve_approvals.clear();
-                    }
+                    self.pending_resolve_approvals.clear();
                     return;
                 }
 
@@ -12132,6 +12130,17 @@ mod tests {
                 activate_at_height: 88_888,
             },
         );
+        st.pending_resolve_approvals.insert(
+            123,
+            PendingResolveApproval {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+                stored_as_canonical: true,
+            },
+        );
 
         st.restore_pending_gov_update(
             "emergency_pause",
@@ -12150,6 +12159,10 @@ mod tests {
         assert!(
             !st.pending_gov_updates.contains_key("resolve_authority"),
             "reserved emergency_pause key-id rejection must scrub stale alias occupants sharing id=7999"
+        );
+        assert!(
+            st.pending_resolve_approvals.is_empty(),
+            "scrubbing a stale reserved-id resolve_authority alias must also clear dependent pending resolve approvals"
         );
         assert!(!st.is_emergency_paused());
     }
