@@ -746,4 +746,57 @@ mod tests {
             "unexpected error: {p2p_err:#}"
         );
     }
+
+    #[test]
+    fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
+        use std::{collections::HashSet, net::SocketAddr};
+
+        let mut node_ids = HashSet::new();
+        let mut rpc_addrs = HashSet::new();
+        let mut p2p_addrs = HashSet::new();
+
+        for config_path in [
+            "trillionnium-rust/configs/node1.toml",
+            "trillionnium-rust/configs/node2.toml",
+            "trillionnium-rust/configs/node3.toml",
+            "trillionnium-rust/configs/node4.toml",
+        ] {
+            let cfg = load_config(config_path)
+                .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let rpc_socket: SocketAddr = cfg
+                .rpc_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{config_path} rpc_addr should parse: {err}"));
+            let p2p_socket: SocketAddr = cfg
+                .p2p_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{config_path} p2p_addr should parse: {err}"));
+
+            assert!(
+                node_ids.insert(cfg.node_id.clone()),
+                "{config_path} reuses node_id {}",
+                cfg.node_id
+            );
+            assert!(
+                rpc_addrs.insert(cfg.rpc_addr.clone()),
+                "{config_path} reuses rpc_addr {}",
+                cfg.rpc_addr
+            );
+            assert!(
+                p2p_addrs.insert(cfg.p2p_addr.clone()),
+                "{config_path} reuses p2p_addr {}",
+                cfg.p2p_addr
+            );
+            assert!(
+                rpc_socket.ip().is_loopback(),
+                "{config_path} rpc_addr {} must stay on loopback for shipped local bootstrap configs",
+                cfg.rpc_addr
+            );
+            assert!(
+                p2p_socket.ip().is_loopback(),
+                "{config_path} p2p_addr {} must stay on loopback for shipped local bootstrap configs",
+                cfg.p2p_addr
+            );
+        }
+    }
 }
