@@ -969,6 +969,43 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_borrowed_last_slot_probe_noise_keeps_qos_snapshot_flat_until_drain() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // In reserve-only mode, normal ingress borrows critical capacity. Once the
+        // final slot is consumed by borrowed normal traffic, both classes must
+        // observe the lane as fail-closed until a dequeue reopens headroom.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        let borrowed_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 2,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+
+        // Duplicate probes for the borrowed occupant and fresh retry noise from the
+        // opposite class must not perturb operator-facing QoS while the final slot
+        // remains consumed.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), borrowed_snapshot);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+
+        // After one borrowed occupant drains, both classes should immediately see
+        // reserve-only headroom reopen for fresh ingress.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+    }
+
+    #[test]
     fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
