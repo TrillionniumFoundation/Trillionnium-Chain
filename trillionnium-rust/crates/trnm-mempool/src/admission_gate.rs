@@ -78,4 +78,27 @@ mod tests {
         assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
         assert_eq!(gate.admit(2), AdmitOutcome::Duplicate);
     }
+
+    #[test]
+    fn saturated_probe_noise_does_not_disturb_fifo_or_seen_contract() {
+        let mut gate = AdmissionGate::new(2);
+
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
+
+        // Once saturated, duplicate and fresh probe noise must not mutate queue
+        // order or poison future admission for still-fresh ids.
+        assert_eq!(gate.admit(10), AdmitOutcome::Duplicate);
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(10), AdmitOutcome::Duplicate);
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+
+        assert_eq!(gate.pop_ready(), Some(10));
+        assert_eq!(gate.pop_ready(), Some(11));
+        assert_eq!(gate.pop_ready(), None);
+
+        // The previously backpressured id must remain fresh after the queue drains.
+        assert_eq!(gate.admit(12), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(12), AdmitOutcome::Duplicate);
+    }
 }
