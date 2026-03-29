@@ -37,6 +37,31 @@ fn restore_pending_gov_update_with_base(
     state.restore_pending_gov_update(key, Some(snapshot));
 }
 
+#[test]
+fn node_recovery_checkpoint_rejects_wal_entry_hash_with_edge_whitespace() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let mut checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+    checkpoint.wal_entry_hash_hex = format!(" {} ", checkpoint.wal_entry_hash_hex);
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint wal_entry_hash_hex with edge whitespace so restart-time checkpoint proofs preserve canonical digest surfaces"
+    );
+}
+
 fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
     state.restore_task(
         task_id,
