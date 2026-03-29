@@ -36,6 +36,12 @@ fn wallet_import_hex_check() {
     .unwrap();
     assert_eq!(unicode_spaced, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+    let punctuated_sentence = ensure_hex_32_bytes(
+        "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?!.",
+    )
+    .unwrap();
+    assert_eq!(punctuated_sentence, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
     assert!(ensure_hex_32_bytes("0x1234").is_err());
 }
 
