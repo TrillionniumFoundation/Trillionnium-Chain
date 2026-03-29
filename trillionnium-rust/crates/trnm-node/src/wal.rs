@@ -455,8 +455,14 @@ mod tests {
 
         let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
         let first = raw.find("root-a").unwrap();
+        let hash_a = raw.find("hash-a").unwrap();
+        let hash_c = raw.find("hash-c").unwrap();
         let second = raw.rfind("root-b").unwrap();
         assert!(first < second);
+        assert!(
+            hash_a < hash_c,
+            "equal-height checkpoint audit surfaces should serialize wal_entry_hash_hex in canonical order"
+        );
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
