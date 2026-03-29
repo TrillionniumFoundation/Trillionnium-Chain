@@ -28,6 +28,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain list separators (, ; |)",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
+        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(

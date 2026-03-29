@@ -1485,6 +1485,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain list separators (, ; |)",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
+        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -4336,6 +4341,22 @@ mod tests {
         assert!(err
             .to_string()
             .contains("node_id must not contain list separators (, ; |)"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_path_separators_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node/alpha".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("node_id path separators must fail closed");
+        assert!(err
+            .to_string()
+            .contains("node_id must not contain path separators"));
     }
 
     #[test]
