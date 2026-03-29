@@ -234,7 +234,7 @@ if [ -z "$latest_profile" ]; then
   exit 9
 fi
 
-rollback_command="$rollback_command $(printf '%q' "$latest_audit") $(printf '%q' "$latest_bench") $(printf '%q' "$latest_mixed") $(printf '%q' "$latest_profile")"
+rollback_command="$rollback_command && rm -f $(printf '%q' "$latest_audit") $(printf '%q' "$latest_bench") $(printf '%q' "$latest_mixed") $(printf '%q' "$latest_profile")"
 
 cat > "$SUMMARY" <<EOF
 rust_l1_testnet_preflight
