@@ -35,7 +35,7 @@ pub(crate) fn run_adapter_with_retry(
             return Ok(AdapterExecResult {
                 ok: true,
                 rc: RC_OK,
-                tx_hash,
+                tx_hash: tx_hash.or(last_tx_hash),
                 terminal: true,
             });
         }

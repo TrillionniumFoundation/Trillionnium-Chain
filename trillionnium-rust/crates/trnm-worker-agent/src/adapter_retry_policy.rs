@@ -10,7 +10,13 @@ use crate::{
 };
 
 pub(crate) fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
+    if base_ms == 0 {
+        return 0;
+    }
+    if attempt >= 64 {
+        return u64::MAX;
+    }
+    base_ms.saturating_mul(1u64 << attempt)
 }
 
 pub(crate) fn truncate_for_error(raw: &str, max_chars: usize) -> String {
@@ -94,5 +100,5 @@ pub(crate) fn resolve_llm_adapter_policy(
 }
 
 pub(crate) fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
+    backoff_delay_ms(base_ms, attempt)
 }
