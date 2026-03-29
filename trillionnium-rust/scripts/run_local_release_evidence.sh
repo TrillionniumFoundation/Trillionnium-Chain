@@ -31,7 +31,11 @@ if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; 
   if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
     VERIFY_LANE_CMD+=(--expected-head "$EXPECTED_HEAD_INPUT")
   fi
-  VERIFY_LANE_OUTPUT="$(${VERIFY_LANE_CMD[@]})"
+  if ! VERIFY_LANE_OUTPUT="$(${VERIFY_LANE_CMD[@]})"; then
+    printf 'lane worktree verification failed\n' >&2
+    printf '%s\n' "$VERIFY_LANE_OUTPUT" >&2
+    exit 2
+  fi
 else
   VERIFY_LANE_OUTPUT=""
 fi
