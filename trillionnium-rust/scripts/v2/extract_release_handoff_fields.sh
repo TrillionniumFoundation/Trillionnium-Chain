@@ -114,6 +114,7 @@ if [ -n "$EXPECTED_BRANCH_REF" ]; then
   EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
 fi
 
+summary_toplevel="$(require_key "$SUMMARY_PATH" git_toplevel)"
 summary_branch="$(require_key "$SUMMARY_PATH" git_branch)"
 summary_head="$(require_key "$SUMMARY_PATH" git_head)"
 summary_head_state="$(require_key "$SUMMARY_PATH" git_head_state)"
@@ -146,6 +147,7 @@ manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
+assert_equal git_toplevel "$summary_toplevel" "$manifest_toplevel"
 assert_equal git_branch "$summary_branch" "$manifest_branch"
 assert_equal git_head "$summary_head" "$manifest_head"
 assert_equal git_head_state "$summary_head_state" "$manifest_head_state"
@@ -173,6 +175,7 @@ fi
 if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
   printf 'assigned_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
 fi
+printf 'summary_git_toplevel=%s\n' "$summary_toplevel"
 printf 'manifest_git_toplevel=%s\n' "$manifest_toplevel"
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
