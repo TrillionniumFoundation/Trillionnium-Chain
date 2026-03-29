@@ -4438,7 +4438,7 @@ fn main() -> Result<()> {
             let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
             let winner_reputation_effective = breakdown.effective_reputation;
             let base_score = breakdown.base_score;
-            let reputation_weight = breakdown.reputation_reward;
+            let reputation_reward = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
             let reputation_score_delta = market_reputation_score_delta(&breakdown);
             let winner_score = breakdown.effective_score;
@@ -4464,8 +4464,9 @@ fn main() -> Result<()> {
                 "base_score": base_score,
                 "price_component": base_score,
                 "reputation_weight_unit": score_cfg.reputation_weight,
-                "reputation_weight": reputation_weight,
-                "reputation_reward": reputation_weight,
+                "reputation_weight": reputation_reward,
+                "reputation_reward": reputation_reward,
+                "reputation_reward_amount": reputation_reward,
                 "penalty": penalty,
                 "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
