@@ -4542,6 +4542,33 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_summary_marks_genesis_boundary_canonically() {
+        let checkpoint = CheckpointMeta {
+            height: 1,
+            state_root_hex: "12".repeat(32),
+            wal_entry_hash_hex: "34".repeat(32),
+        };
+
+        let summary = checkpoint.evidence_summary();
+        assert!(
+            summary.contains("checkpoint_height_boundary_kind=genesis"),
+            "genesis checkpoint summaries must advertise the genesis boundary for light-verifier consumers: {summary}"
+        );
+        assert!(
+            summary.contains("checkpoint_height=1"),
+            "genesis checkpoint summaries must keep the exact retained height visible: {summary}"
+        );
+        assert!(
+            summary.contains("checkpoint_surface_canonical=true"),
+            "genesis checkpoint summaries must remain canonical evidence surfaces: {summary}"
+        );
+        assert!(
+            summary.contains(&format!("checkpoint_commitment={}", checkpoint.commitment_hex())),
+            "genesis checkpoint summaries must expose the recomputable checkpoint commitment: {summary}"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage() {
         let wal = WalMeta {
             height: 7,
