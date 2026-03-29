@@ -1923,6 +1923,36 @@
     }
 
     #[test]
+    fn consensus_summary_incident_bundle_keeps_height_counters_after_recovery_rate() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+            "bft_committed_heights",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+        ];
+
+        assert_eq!(incident_bundle.len(), 10);
+        assert!(incident_bundle[4].ends_with("_rate"));
+        assert!(incident_bundle[5].ends_with("_heights"));
+        assert!(incident_bundle[6].ends_with("_heights"));
+        assert!(incident_bundle[7].ends_with("_rate_ppm"));
+        assert!(incident_bundle[8].ends_with("_total"));
+        assert!(incident_bundle[9].ends_with("_rate_ppm"));
+        assert_eq!(incident_bundle[4], "recovery_error_rate");
+        assert_eq!(incident_bundle[5], "bft_observed_heights");
+        assert_eq!(incident_bundle[6], "bft_committed_heights");
+        assert_eq!(incident_bundle[7], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(incident_bundle[8], "bft_skipped_height_total");
+        assert_eq!(incident_bundle[9], "bft_skipped_observed_height_rate_ppm");
+    }
+
+    #[test]
     fn recovery_error_rate_uses_finality_sample_count_as_denominator() {
         let apply_error_total = 3u64;
         let finality_samples_ms = [12u64, 18, 24, 30, 36];
