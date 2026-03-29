@@ -1,5 +1,23 @@
 use super::*;
 
+fn canonical_json_key(key: &str) -> String {
+    key.chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
+fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+    let object = value.as_object()?;
+    object.iter().find_map(|(key, value)| {
+        let canonical = canonical_json_key(key);
+        aliases
+            .iter()
+            .any(|alias| canonical == canonical_json_key(alias))
+            .then_some(value)
+    })
+}
+
 pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
     let mut cleaned = raw.to_string();
 
@@ -79,16 +97,14 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
         "transaction-hash",
         "transactionHash",
     ];
-    for key in direct {
-        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
-            if let Some(normalized) = normalize_tx_hash(h) {
-                return Some(normalized);
-            }
+    if let Some(h) = json_get_alias(v, &direct).and_then(|x| x.as_str()) {
+        if let Some(normalized) = normalize_tx_hash(h) {
+            return Some(normalized);
         }
     }
 
     for key in ["result", "tx_response", "txResponse", "response", "data"] {
-        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+        if let Some(found) = json_get_alias(v, &[key]).and_then(json_value_tx_hash) {
             return Some(found);
         }
     }
@@ -344,75 +360,85 @@ pub(crate) fn parse_tx_query_response(
     requested_tx_hash: &str,
 ) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
-        let payload = v.get("result").unwrap_or(&v);
-        let nested_tx_response = payload
-            .get("tx_response")
-            .or_else(|| payload.get("txResponse"))
-            .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
-            .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
-        let nested_response_data = payload
-            .get("response")
-            .and_then(|r| r.get("data"))
-            .or_else(|| payload.get("responseData"));
-        let primary = nested_tx_response
-            .or(nested_response_data)
-            .unwrap_or(payload);
-        let raw_tx_hash = primary
-            .get("tx_hash")
-            .or_else(|| primary.get("txhash"))
-            .or_else(|| primary.get("tx-hash"))
-            .or_else(|| primary.get("txHash"))
-            .or_else(|| primary.get("transaction_hash"))
-            .or_else(|| primary.get("transaction-hash"))
-            .or_else(|| primary.get("transactionHash"))
-            .or_else(|| payload.get("tx_hash"))
-            .or_else(|| payload.get("txhash"))
-            .or_else(|| payload.get("tx-hash"))
-            .or_else(|| payload.get("txHash"))
-            .or_else(|| payload.get("transaction_hash"))
-            .or_else(|| payload.get("transaction-hash"))
-            .or_else(|| payload.get("transactionHash"))
-            .and_then(|x| x.as_str());
+        let payload = json_get_alias(&v, &["result"]).unwrap_or(&v);
+        let nested_tx_response = json_get_alias(payload, &["tx_response", "txResponse"]).or_else(|| {
+            json_get_alias(payload, &["response"]).and_then(|r| json_get_alias(r, &["tx_response", "txResponse"]))
+        });
+        let nested_response_data = json_get_alias(payload, &["response"])
+            .and_then(|r| json_get_alias(r, &["data"]))
+            .or_else(|| json_get_alias(payload, &["responseData"]));
+        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let raw_tx_hash = json_get_alias(
+            primary,
+            &[
+                "tx_hash",
+                "txhash",
+                "tx-hash",
+                "txHash",
+                "transaction_hash",
+                "transaction-hash",
+                "transactionHash",
+            ],
+        )
+        .or_else(|| {
+            json_get_alias(
+                payload,
+                &[
+                    "tx_hash",
+                    "txhash",
+                    "tx-hash",
+                    "txHash",
+                    "transaction_hash",
+                    "transaction-hash",
+                    "transactionHash",
+                ],
+            )
+        })
+        .and_then(|x| x.as_str());
         let tx_hash = match raw_tx_hash {
             Some(raw_hash) => normalize_tx_hash(raw_hash)
                 .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
-        let status = primary
-            .get("status")
-            .or_else(|| primary.get("tx_status"))
-            .or_else(|| primary.get("txStatus"))
-            .or_else(|| primary.get("transaction_status"))
-            .or_else(|| primary.get("transactionStatus"))
-            .or_else(|| primary.get("state"))
-            .or_else(|| primary.get("tx_state"))
-            .or_else(|| primary.get("txState"))
-            .or_else(|| primary.get("transaction_state"))
-            .or_else(|| primary.get("transactionState"))
-            .or_else(|| payload.get("status"))
-            .or_else(|| payload.get("tx_status"))
-            .or_else(|| payload.get("txStatus"))
-            .or_else(|| payload.get("transaction_status"))
-            .or_else(|| payload.get("transactionStatus"))
-            .or_else(|| payload.get("state"))
-            .or_else(|| payload.get("tx_state"))
-            .or_else(|| payload.get("txState"))
-            .or_else(|| payload.get("transaction_state"))
-            .or_else(|| payload.get("transactionState"))
-            .and_then(normalize_json_status)
+        let status = json_get_alias(
+            primary,
+            &[
+                "status",
+                "tx_status",
+                "txStatus",
+                "transaction_status",
+                "transactionStatus",
+                "state",
+                "tx_state",
+                "txState",
+                "transaction_state",
+                "transactionState",
+            ],
+        )
+        .or_else(|| {
+            json_get_alias(
+                payload,
+                &[
+                    "status",
+                    "tx_status",
+                    "txStatus",
+                    "transaction_status",
+                    "transactionStatus",
+                    "state",
+                    "tx_state",
+                    "txState",
+                    "transaction_state",
+                    "transactionState",
+                ],
+            )
+        })
+        .and_then(normalize_json_status)
             .or_else(|| infer_json_tx_status(primary))
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
-        let error = primary
-            .get("error")
-            .or_else(|| primary.get("raw_log"))
-            .or_else(|| primary.get("rawLog"))
-            .or_else(|| primary.get("log"))
-            .or_else(|| payload.get("error"))
-            .or_else(|| payload.get("raw_log"))
-            .or_else(|| payload.get("rawLog"))
-            .or_else(|| payload.get("log"))
+        let error = json_get_alias(primary, &["error", "raw_log", "rawLog", "log"])
+            .or_else(|| json_get_alias(payload, &["error", "raw_log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,

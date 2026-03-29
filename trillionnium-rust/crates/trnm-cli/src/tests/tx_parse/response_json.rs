@@ -48,6 +48,15 @@ fn tx_query_parse_json_accepts_camel_transaction_and_hyphenated_hash_keys() {
 }
 
 #[test]
+fn tx_query_parse_json_accepts_case_and_separator_insensitive_keys() {
+    let json = "{\"RESULT\":{\"TX_HASH\":\"0xABCD\",\"TX-STATUS\":\"SUCCESS\",\"RAW-LOG\":\"NULL\"}}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xabcd");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_json_treats_nullish_error_variants_as_empty() {
     let json = "{\"tx_hash\":\"0x777\",\"status\":\"committed\",\"error\":\"NULL,\"}";
     let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
