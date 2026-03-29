@@ -1,6 +1,6 @@
 use super::*;
 
-fn canonicalize_wal_meta(entries: &mut [WalMeta]) {
+fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
     entries.sort_by(|a, b| {
         a.height
             .cmp(&b.height)
@@ -10,6 +10,7 @@ fn canonicalize_wal_meta(entries: &mut [WalMeta]) {
             .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
             .then_with(|| a.prev_hash_hex.cmp(&b.prev_hash_hex))
     });
+    entries.dedup_by(|a, b| a == b);
 }
 
 pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
@@ -363,6 +364,55 @@ mod tests {
         assert_eq!(entries[0].prev_hash_hex, None);
         assert_eq!(entries[1].prev_hash_hex.as_deref(), Some("prev-a"));
         assert_eq!(entries[2].prev_hash_hex.as_deref(), Some("prev-z"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn persist_wal_meta_deduplicates_identical_entries_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let entry = WalMeta {
+            height: 7,
+            round: 1,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "aa".repeat(32),
+            prev_hash_hex: Some("bb".repeat(32)),
+        };
+        persist_wal_meta_entries(&wal_dir, &[entry.clone(), entry.clone()]).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries, vec![entry.clone()]);
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        assert_eq!(raw.matches("height = 7").count(), 1, "unexpected raw WAL file: {raw}");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_deduplicates_identical_disk_entries_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("wal-load-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let entry = WalMeta {
+            height: 9,
+            round: 0,
+            proposal_hash: "proposal-9".into(),
+            committed: true,
+            state_root_hex: "cc".repeat(32),
+            prev_hash_hex: Some("dd".repeat(32)),
+        };
+        let raw = toml::to_string(&WalMetaList {
+            entries: vec![entry.clone(), entry.clone()],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), raw).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries, vec![entry]);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
