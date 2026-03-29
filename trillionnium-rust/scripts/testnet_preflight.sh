@@ -115,6 +115,8 @@ fi
 log "check shell syntax"
 bash -n ./scripts/testnet_preflight.sh
 bash -n ./scripts/check_bft_restart_recovery.sh
+bash -n ./scripts/run_consensus_fault_matrix.sh
+bash -n ./scripts/run_consensus_security_matrix.sh
 bash -n ./scripts/release_rc.sh
 bash -n ./scripts/run_local_release_evidence.sh
 bash -n ./scripts/run_industrial_readiness_check.sh
