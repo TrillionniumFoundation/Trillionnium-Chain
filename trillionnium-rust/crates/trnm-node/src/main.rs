@@ -1502,6 +1502,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain control characters",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
+        "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
+        path
+    );
     let rpc_socket: SocketAddr = rpc_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: rpc_addr must be a valid socket address",
@@ -1543,6 +1548,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
+        "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
         path
     );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
@@ -3211,7 +3221,9 @@ mod tests {
             "node.toml",
         )
         .expect_err("rpc_addr with internal whitespace must be rejected");
-        assert!(rpc_err.to_string().contains("rpc_addr must not contain whitespace"));
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not contain whitespace"));
 
         let rpc_port_zero_err = validate_node_config(
             NodeConfig {
@@ -3235,7 +3247,9 @@ mod tests {
             "node.toml",
         )
         .expect_err("p2p_addr with embedded control whitespace must be rejected");
-        assert!(p2p_err.to_string().contains("p2p_addr must not contain whitespace"));
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not contain whitespace"));
 
         let p2p_port_zero_err = validate_node_config(
             NodeConfig {
@@ -3464,8 +3478,8 @@ mod tests {
         )
         .expect("write config");
 
-        let err = load_config(path.to_str().expect("utf8 path"))
-            .expect_err("blank node_id must fail");
+        let err =
+            load_config(path.to_str().expect("utf8 path")).expect_err("blank node_id must fail");
         assert!(err.to_string().contains("node_id must not be empty"));
 
         let _ = std::fs::remove_file(path);
@@ -3484,8 +3498,8 @@ mod tests {
         )
         .expect("write config");
 
-        let err = load_config(path.to_str().expect("utf8 path"))
-            .expect_err("blank rpc_addr must fail");
+        let err =
+            load_config(path.to_str().expect("utf8 path")).expect_err("blank rpc_addr must fail");
         assert!(err.to_string().contains("rpc_addr must not be empty"));
 
         let _ = std::fs::remove_file(path);
@@ -3504,8 +3518,8 @@ mod tests {
         )
         .expect("write config");
 
-        let err = load_config(path.to_str().expect("utf8 path"))
-            .expect_err("blank p2p_addr must fail");
+        let err =
+            load_config(path.to_str().expect("utf8 path")).expect_err("blank p2p_addr must fail");
         assert!(err.to_string().contains("p2p_addr must not be empty"));
 
         let _ = std::fs::remove_file(path);
@@ -3691,9 +3705,7 @@ mod tests {
         };
 
         let err = validate_startup_args(&args).expect_err("zero validators must fail closed");
-        assert!(err
-            .to_string()
-            .contains("validators must be at least 1"));
+        assert!(err.to_string().contains("validators must be at least 1"));
     }
 
     #[test]
@@ -3724,11 +3736,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero block interval must fail closed");
-        assert!(err
-            .to_string()
-            .contains("block_ms must be at least 1"));
+        let err = validate_startup_args(&args).expect_err("zero block interval must fail closed");
+        assert!(err.to_string().contains("block_ms must be at least 1"));
     }
 
     #[test]
@@ -3759,8 +3768,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("byzantine >= validators must fail closed");
+        let err =
+            validate_startup_args(&args).expect_err("byzantine >= validators must fail closed");
         assert!(err
             .to_string()
             .contains("byzantine must be less than validators"));
@@ -3794,8 +3803,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("validator quorum below 3f+1 must fail closed");
+        let err =
+            validate_startup_args(&args).expect_err("validator quorum below 3f+1 must fail closed");
         assert!(err
             .to_string()
             .contains("validators must satisfy N >= 3f + 1"));
@@ -3861,8 +3870,7 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero parallel_workers must fail closed");
+        let err = validate_startup_args(&args).expect_err("zero parallel_workers must fail closed");
         assert!(err
             .to_string()
             .contains("parallel_workers must be at least 1"));
@@ -3896,11 +3904,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero txs_per_block must fail closed");
-        assert!(err
-            .to_string()
-            .contains("txs_per_block must be at least 1"));
+        let err = validate_startup_args(&args).expect_err("zero txs_per_block must fail closed");
+        assert!(err.to_string().contains("txs_per_block must be at least 1"));
     }
 
     #[test]
@@ -3931,8 +3936,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero checkpoint interval must fail closed");
+        let err =
+            validate_startup_args(&args).expect_err("zero checkpoint interval must fail closed");
         assert!(err
             .to_string()
             .contains("bft_checkpoint_interval must be at least 1"));
@@ -3966,8 +3971,8 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero timeout scan cadence must fail closed");
+        let err =
+            validate_startup_args(&args).expect_err("zero timeout scan cadence must fail closed");
         assert!(err
             .to_string()
             .contains("pouw_timeout_scan_every_blocks must be at least 1"));
@@ -4003,9 +4008,7 @@ mod tests {
 
         let err = validate_startup_args(&args)
             .expect_err("overflowed 3f+1 quorum sizing must fail closed");
-        assert!(err
-            .to_string()
-            .contains("overflows 3f + 1 quorum sizing"));
+        assert!(err.to_string().contains("overflows 3f + 1 quorum sizing"));
     }
 
     #[test]
@@ -4036,8 +4039,7 @@ mod tests {
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = validate_startup_args(&args)
-            .expect_err("zero bft_max_rounds must fail closed");
+        let err = validate_startup_args(&args).expect_err("zero bft_max_rounds must fail closed");
         assert!(err
             .to_string()
             .contains("bft_max_rounds must be at least 1"));
@@ -4073,7 +4075,9 @@ mod tests {
 
         let err = validate_startup_args(&args)
             .expect_err("round-change backoff cap below base must fail closed");
-        assert!(err.to_string().contains("bft_round_change_backoff_max_ms (4) must be >= bft_round_change_backoff_ms (5)"));
+        assert!(err.to_string().contains(
+            "bft_round_change_backoff_max_ms (4) must be >= bft_round_change_backoff_ms (5)"
+        ));
     }
 
     #[test]
@@ -4185,6 +4189,34 @@ mod tests {
             .contains("p2p_addr must not contain control characters"));
     }
 
+    #[test]
+    fn validate_node_config_rejects_list_separators_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657,127.0.0.1:26659".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr list separators must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not contain list separators (, ; |)"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656|127.0.0.1:26658".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr list separators must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not contain list separators (, ; |)"));
+    }
     #[test]
     fn validate_node_config_rejects_control_characters_in_node_id() {
         let err = validate_node_config(
