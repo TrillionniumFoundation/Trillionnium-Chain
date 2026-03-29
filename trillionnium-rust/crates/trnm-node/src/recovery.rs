@@ -213,6 +213,10 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
                     base, lag, blocks
                 )
             }
+            Some(checkpoint_height) if checkpoint_height > tip_height => format!(
+                "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
+                base, checkpoint_height, tip_height
+            ),
             None => format!("{} (no retained checkpoint metadata)", base),
             Some(_) => base,
         }
@@ -292,6 +296,16 @@ mod tests {
         assert_eq!(
             retained_wal_summary(&recovered),
             "retained 1 committed WAL entry through height 8 (no retained checkpoint metadata)"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_ahead_of_retained_tip() {
+        let recovered = recovered_state(2, 12, Some(15), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch)"
         );
     }
 
