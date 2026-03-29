@@ -343,6 +343,28 @@ fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_
 }
 
 #[test]
+fn hot_bucket_interleave_fails_closed_to_stable_order_when_fanout_collapses_to_one_bucket() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
+
+    let mut txs = vec![
+        tx(111, vec![], vec![]),
+        tx(112, vec![o(5), o(13)], vec![o(7)]),
+        tx(113, vec![], vec![o(1 + (1u64 << 40))]),
+        tx(114, vec![o(7)], vec![o(5)]),
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // When ops clamps hot-bucket fanout to a single bucket, interleave should
+    // fail closed to stable ingress order instead of fabricating pseudo-lanes
+    // from mixed-domain or high-bit keys.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![111, 112, 113, 114]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
