@@ -746,6 +746,47 @@ fn x3_prep_accepts_confirm_height_at_heartbeat_source_boundary() {
 }
 
 #[test]
+fn x3_prep_accepts_source_plus_one_confirm_when_target_has_reached_source_head() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-head-plus-one-boundary".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .expect("source+1 overlay boundary should remain confirmable even when target has reached source head");
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 701,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(700),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(701),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(701));
+}
+
+#[test]
 fn x3_prep_rejects_confirm_height_behind_heartbeat_target_height() {
     let mut request = SettlementRequest::new(1, "0xstale-confirm-height".to_string());
     let token = operator_token();
