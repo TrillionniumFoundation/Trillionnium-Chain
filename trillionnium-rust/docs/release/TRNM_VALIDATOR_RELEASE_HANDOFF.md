@@ -215,6 +215,8 @@ Manifest/evidence identity fields to verify before handoff:
 - `git_branch=`, `git_head=`, and `git_head_state=` match the branch/commit attachment state under review
 - `git_worktree_path=` matches the exact worktree path you intended to run from
 - `git_worktree_branch_ref=` matches the branch binding shown by `git worktree list --porcelain`
+- `git_expected_worktree_branch_ref=` matches the lane/ticket-assigned ref you expected to review
+- `git_worktree_branch_ref_match=true` (treat `false` / `unknown` as a stop signal rather than a soft warning)
 - `git_worktree_entry_begin` … `git_worktree_entry_end` contains the current worktree stanza, so path/branch binding can be audited from the artifact itself
 - `git_status_summary=clean`
 - `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals

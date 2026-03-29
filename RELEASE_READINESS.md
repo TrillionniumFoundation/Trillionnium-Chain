@@ -80,7 +80,7 @@
 - **环境字段判读**：`summary.txt` 中的 `env_*` 表示本次实际执行时生效的环境，可能保留调用者外层 shell 的预设值；`replay_env_*` 才是用于二次复放/审计引用的确定性基线。需要复跑或在文档中引用命令时，应优先采用 `replay_env_*` 与 `replay_command=`，不要把一次性本地继承环境当作统一发布口径。
 - **challenge reexec 入口字段引用**：若引用 `summary.txt` 中的 challenge reexec 入口相关字段，必须原样保留 `replay_env_trnm_challenge_reexec_entry=` 与 `challenge_reexec_entry=`；若本轮未解析到入口，也必须原样保留 `<entry_not_found>`，不要省略、改写或润色成“待补”。
 - **RC manifest 引用边界**：若引用 `trillionnium-rust/scripts/release_rc.sh` 生成的 `manifest.txt`，必须连同 `truth_source=`、`historical_evidence_only=true`、`evidence_scope=` 一起引用；不得只摘录产物或 PASS 日志并把 RC 产物表述成“当前 release-ready 证明”。
-- **跨产物身份一致性**：若同时引用 `summary.txt` 与 `manifest.txt`，必须核对 `git_branch=`、`git_head=`、`git_head_state=`、`git_worktree_path=`、`git_worktree_branch_ref=` 一致；任一 artifact path 未解析到，或这些字段跨产物漂移，一律按 **evidence-incomplete** 处理，不得用“应该没问题”放行。
+- **跨产物身份一致性**：若同时引用 `summary.txt` 与 `manifest.txt`，必须核对 `git_branch=`、`git_head=`、`git_head_state=`、`git_worktree_path=`、`git_worktree_branch_ref=`、`git_expected_worktree_branch_ref=`、`git_worktree_branch_ref_match=` 一致；其中 `git_worktree_branch_ref_match` 必须为 `true`，不能把 `false` / `unknown` 当作可放行状态。任一 artifact path 未解析到，或这些字段跨产物漂移，一律按 **evidence-incomplete** 处理，不得用“应该没问题”放行。
 - **优先使用 fail-closed helper**：做 handoff / 审计引用时，优先运行 `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh`（在 `trillionnium-rust/` 下可写成 `./scripts/v2/extract_release_handoff_fields.sh`），不要凭 shell scrollback 手抄字段，以免把缺失产物、错误 worktree，或 identity drift 误当成可发布证据。
 - **回滚命令**：每轮必须给出单行回滚命令（例如 `git revert <commit>` 或文档改动的 `git checkout -- <file>`）。
 - **根因标签**：失败时使用统一标签（建议：`CI_FLAKE` / `ENV_DRIFT` / `DOC_DRIFT` / `MISSING_FIXTURE` / `NON_DETERMINISTIC_TEST`）。
