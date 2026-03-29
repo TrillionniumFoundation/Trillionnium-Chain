@@ -865,6 +865,28 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_rejects_duplicate_top_level_fields_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-duplicate-top-level-field");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                checkpoints = []
+                checkpoints = []
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") && err.contains("checkpoints"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_duplicate_entry_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-duplicate-entry-field");
         fs::create_dir_all(&wal_dir).unwrap();
