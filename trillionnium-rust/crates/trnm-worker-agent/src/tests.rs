@@ -613,6 +613,27 @@ fn tx_retry_policy_falls_back_per_field_when_only_one_env_value_is_invalid() {
 }
 
 #[test]
+fn tx_retry_policy_rejects_negative_env_values_per_field() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("-1"), Some("-250"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("6"), Some("-250"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 6,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
 fn llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default() {
     let policy = LlmAdapterPolicy {
         retry: RetryPolicy {
