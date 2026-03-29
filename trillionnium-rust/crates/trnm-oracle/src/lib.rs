@@ -80,6 +80,20 @@ impl OracleSnapshot {
             });
         }
 
+        for source in &sources {
+            let raw = source.as_str();
+            if raw.trim().is_empty() {
+                return Err(OracleError::EmptySourceId);
+            }
+            let canonical = raw.trim().to_ascii_lowercase();
+            if raw != canonical {
+                return Err(OracleError::NonCanonicalSourceId {
+                    raw: raw.to_string(),
+                    canonical,
+                });
+            }
+        }
+
         sources.sort();
         if sources.windows(2).any(|w| w[0] == w[1]) {
             return Err(OracleError::DuplicateSources);
@@ -704,6 +718,30 @@ mod tests {
         .expect_err("snapshot build should reject blank feed id");
 
         assert_eq!(err, OracleError::EmptyFeedId);
+    }
+
+    #[test]
+    fn rejects_non_canonical_source_id_when_building_snapshot() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![OracleSourceId(" ChainLink ".to_string()), source("coingecko")],
+            2,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("snapshot build should reject non-canonical source ids");
+
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSourceId {
+                raw: " ChainLink ".to_string(),
+                canonical: "chainlink".to_string(),
+            }
+        );
     }
 
     #[test]
