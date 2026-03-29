@@ -310,6 +310,50 @@ fn restore_gov_param_invalid_emergency_pause_literal_preserves_live_binding_and_
 }
 
 #[test]
+fn restore_gov_param_invalid_resolve_authority_literal_preserves_live_binding_and_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(
+            98_247,
+            7_998,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("canonical resolve_authority must be set first");
+    let canonical_snapshot = state
+        .get_param(7_998)
+        .expect("live canonical resolve_authority object must exist");
+    let canonical_root = state.state_root();
+
+    state.restore_gov_param(
+        7_998,
+        Some(GovParamObject {
+            key_id: 7_998,
+            key: "resolve_authority".into(),
+            value: "authority-a, authority-a".into(),
+            version: canonical_snapshot.version,
+        }),
+    );
+
+    assert_eq!(
+        state.gov_param_string("resolve_authority"),
+        Some("authority-a,authority-b".into()),
+        "rejecting an invalid applied resolve_authority literal must preserve the live canonical authority binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "rejecting an invalid applied resolve_authority literal must preserve the prior deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "repeated reads after rejecting an invalid applied resolve_authority literal should deterministically reuse the preserved cached root"
+    );
+}
+
+#[test]
 fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
 ) {
     let mut original = StateStore::new();
