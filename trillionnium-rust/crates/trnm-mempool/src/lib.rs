@@ -838,6 +838,47 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_zero_reserve_recloses_after_normal_ingress_consumes_last_shared_slot() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+
+        // Zero-reserve mode routes both ingress classes through shared normal
+        // headroom, so a plain normal occupant should also consume public
+        // admissibility exactly like critical spillover does.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 1,
+                critical_queued: 0,
+                total_queued: 1,
+                normal_headroom: 1,
+                critical_headroom: 0,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Once the final shared slot is consumed by normal ingress, QoS must fail
+        // closed for both classes because zero-reserve mode exposes no hidden
+        // critical-only headroom.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn qos_snapshot_tracks_critical_spillover_into_free_normal_headroom() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
