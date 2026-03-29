@@ -958,6 +958,13 @@ fn preflight_resolve_transfers(
             "resolve challenge settlement requested without posted challenge bond".into(),
         ));
     }
+    if let Some(challenge_bond_forfeited) = task.challenge_bond_forfeited {
+        if challenge_bond_forfeited == slash_worker {
+            return Err(PouwError::State(
+                "resolve challenge settlement marker conflicts with slash outcome".into(),
+            ));
+        }
+    }
 
     let mut sim = st.clone();
     let mut settlement_preview = task.clone();
@@ -1062,6 +1069,16 @@ fn preflight_timeout_transfers(
         return Err(PouwError::State(
             "timeout challenge settlement requested without posted challenge bond".into(),
         ));
+    }
+    if let Some(challenge_bond_forfeited) = task.challenge_bond_forfeited {
+        let marker_conflicts = (forfeit_challenge_bond && !challenge_bond_forfeited)
+            || (refund_challenge_bond && challenge_bond_forfeited)
+            || (!forfeit_challenge_bond && !refund_challenge_bond);
+        if marker_conflicts {
+            return Err(PouwError::State(
+                "timeout challenge settlement marker conflicts with transfer mode".into(),
+            ));
+        }
     }
 
     let mut sim = st.clone();
@@ -19518,6 +19535,37 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_inconsistent_terminal_marker_for_slash_outcome() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 80,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(true),
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("resolve preflight must fail closed when retained forfeiture marker disagrees with slash outcome");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with slash outcome")));
+    }
+
+    #[test]
     fn resolve_preflight_rejects_non_canonical_challenger_identity() {
         let mut st = seeded_state();
         st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
@@ -19781,6 +19829,37 @@ mod tests {
         let err = preflight_timeout_transfers(&st, &task, true, false)
             .expect_err("timeout settlement must fail closed on zero challenge bond metadata");
         assert!(matches!(err, PouwError::State(msg) if msg.contains("zero challenge bond")));
+    }
+
+    #[test]
+    fn timeout_preflight_rejects_inconsistent_terminal_marker_for_transfer_mode() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(false),
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, true, false)
+            .expect_err("timeout settlement must fail closed when retained marker disagrees with forfeit mode");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode")));
     }
 
     #[test]
