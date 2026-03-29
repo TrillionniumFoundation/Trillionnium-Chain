@@ -102,6 +102,34 @@ fn auto_adaptive_read_only_keyless_gaps_break_same_key_streaks_fail_closed() {
 }
 
 #[test]
+fn auto_adaptive_large_sample_keyless_gaps_do_not_manufacture_false_hotspots() {
+    let _env = env_lock();
+    let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+    let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+    let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+    let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+    let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+    // Mirror the keyless-gap fail-closed guard on the large-batch sampled path.
+    // Even when adaptive mode samples 2048 positions across a wide queue,
+    // empty-access gaps must keep identical write keys from appearing adjacent
+    // in the hotspot probe.
+    let mut txs = Vec::with_capacity(3_000);
+    for i in 0..1_500u64 {
+        txs.push(tx(i * 2, vec![], vec![o(42)]));
+        txs.push(tx(i * 2 + 1, vec![], vec![]));
+    }
+
+    let d = auto_adaptive_decision(&txs);
+    assert_eq!(d.sample_len, 2048);
+    assert_eq!(d.hot_key_share, 0.0);
+    assert_eq!(d.streak_ratio, 0.0);
+    assert!(!d.use_hot_bucket);
+    assert_eq!(d.reason, "insufficient_sample");
+    assert_eq!(d.expected_gain_score, 0.0);
+}
+
+#[test]
 fn auto_adaptive_prefers_write_hotspot_signal_over_shared_read_domains() {
     let _env = env_lock();
     let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
