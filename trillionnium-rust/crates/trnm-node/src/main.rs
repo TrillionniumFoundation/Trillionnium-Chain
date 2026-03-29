@@ -1581,6 +1581,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr and p2p_addr must use the same IP family",
         path
     );
+    anyhow::ensure!(
+        rpc_socket.ip() == p2p_socket.ip(),
+        "invalid node config {}: rpc_addr and p2p_addr must bind the same IP",
+        path
+    );
 
     Ok(NodeConfig {
         node_id: node_id.to_string(),
@@ -3529,6 +3534,28 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_distinct_same_family_listener_ips() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-distinct-ip-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:26657\\n\"\np2p_addr = \"\\t127.0.0.2:26656 \"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("distinct same-family listener IPs must fail closed after trimming");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must bind the same IP"));
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_ipv4_broadcast_rpc_listener_after_operator_trimming() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-broadcast-rpc-listener-{}-{}.toml",
@@ -4019,6 +4046,22 @@ mod tests {
         assert!(err
             .to_string()
             .contains("rpc_addr and p2p_addr must use the same IP family"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_distinct_listener_ips_within_same_family() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.2:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("distinct same-family listener IPs must fail closed");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must bind the same IP"));
     }
 
     #[test]
