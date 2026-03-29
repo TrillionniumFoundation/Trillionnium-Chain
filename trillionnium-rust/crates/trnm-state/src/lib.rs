@@ -14729,6 +14729,46 @@ mod tests {
     }
 
     #[test]
+    fn state_root_changes_when_slashed_terminal_proof_window_snapshot_changes() {
+        let mut st_a = StateStore::new();
+        let slashed_task = TaskObject {
+            task_id: 426,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([4u8; 32]),
+            result_hash: Some([5u8; 32]),
+            reveal_salt: Some([6u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        st_a.put_task_new(slashed_task.clone()).unwrap();
+
+        let mut st_b = StateStore::new();
+        let mut changed = slashed_task;
+        changed.challenge_window_blocks_snapshot = Some(41);
+        st_b.put_task_new(changed).unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "slashed terminal proof-window retention snapshot must contribute to state root so retained slash-audit trails cannot hash identically"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_pending_resolve_first_approver_changes() {
         let mut st_a = StateStore::new();
         st_a.stage_or_confirm_resolve_approval(
