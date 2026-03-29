@@ -71,6 +71,11 @@ pub(crate) fn persist_checkpoint_meta(
     let f = checkpoint_file(wal_dir);
     let mut checkpoints = checkpoints.to_vec();
     canonicalize_checkpoint_meta(&mut checkpoints);
+    checkpoints.dedup_by(|a, b| {
+        a.height == b.height
+            && a.state_root_hex == b.state_root_hex
+            && a.wal_entry_hash_hex == b.wal_entry_hash_hex
+    });
     let raw = toml::to_string(&CheckpointMetaList { checkpoints })?;
     fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
     Ok(())
@@ -463,6 +468,48 @@ mod tests {
                 },
             ]
         );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn persist_checkpoint_meta_deduplicates_identical_entries_for_recovery_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 8,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 7);
+        assert_eq!(checkpoints[0].state_root_hex, "root-a");
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-a");
+        assert_eq!(checkpoints[1].height, 8);
+        assert_eq!(checkpoints[1].state_root_hex, "root-b");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-b");
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        assert_eq!(raw.matches("height = 7").count(), 1, "unexpected raw checkpoint file: {raw}");
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
