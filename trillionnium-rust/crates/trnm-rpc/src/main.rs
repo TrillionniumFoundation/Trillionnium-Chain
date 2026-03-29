@@ -4437,6 +4437,8 @@ fn main() -> Result<()> {
                 .unwrap_or(0);
             let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
             let winner_reputation_effective = breakdown.effective_reputation;
+            let winner_reputation_clamp_max = normalized_reputation_clamp(score_cfg.reputation_clamp);
+            let winner_reputation_clamp_min = -winner_reputation_clamp_max;
             let base_score = breakdown.base_score;
             let reputation_reward = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
@@ -4457,7 +4459,9 @@ fn main() -> Result<()> {
                 "winner_reputation_lookup_key": winner_reputation_lookup_key,
                 "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
                 "winner_reputation_effective": winner_reputation_effective,
-                "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
+                "winner_reputation_clamp_min": winner_reputation_clamp_min,
+                "winner_reputation_clamp_max": winner_reputation_clamp_max,
+                "winner_reputation_clamp_limit": winner_reputation_clamp_max,
                 "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
                 "score_floor_applied": breakdown.score_floor_applied,
                 "price_weight_unit": score_cfg.price_weight,
