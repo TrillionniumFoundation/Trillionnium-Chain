@@ -274,4 +274,5 @@ cp -f "$LOG" "$OUT_DIR/preflight-latest.log"
 
 log "[OK] testnet preflight passed"
 log "summary: $SUMMARY"
-echo "$LOG"
+log "log: $LOG"
+echo "$SUMMARY"
