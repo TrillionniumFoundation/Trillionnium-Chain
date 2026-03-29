@@ -112,6 +112,30 @@ fn node_recovery_checkpoint_rejects_state_root_with_zero_width_layout_drift() {
     );
 }
 
+#[test]
+fn node_recovery_checkpoint_rejects_state_root_with_edge_whitespace() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "state-root-1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: format!(" {} ", wal_entry.state_root_hex),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint state_root_hex with edge whitespace so restart-time checkpoint proofs preserve canonical digest surfaces"
+    );
+}
+
 fn install_pending_resolve_root_task(state: &mut StateStore, task_id: u64, version: u64) {
     state.restore_task(
         task_id,
