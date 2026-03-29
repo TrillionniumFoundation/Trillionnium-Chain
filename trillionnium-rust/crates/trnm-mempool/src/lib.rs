@@ -2992,6 +2992,50 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_cross_class_duplicate_and_fresh_probe_noise_keeps_qos_flat_through_idle_poll() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by the opposite lane.
+        // Cross-class replay probes must stay Duplicate while fresh retries remain
+        // Backpressured, and QoS must stay pinned to fail-closed semantics.
+        g.critical.seen.insert(55);
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        assert_eq!(g.qos_snapshot(), expected);
+
+        for class in [IngressClass::Normal, IngressClass::Critical, IngressClass::Normal] {
+            assert_eq!(g.admit(55, class), AdmitOutcome::Duplicate);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+
+        for class in [
+            IngressClass::Critical,
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+        ] {
+            assert_eq!(g.admit(99, class), AdmitOutcome::Backpressured);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(g.qos_snapshot(), expected);
+    }
+
+    #[test]
     fn hard_stop_fresh_retry_burst_keeps_backpressure_guard_flat_across_classes() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
