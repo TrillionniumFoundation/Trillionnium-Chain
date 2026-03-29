@@ -154,6 +154,12 @@ fn write_key_sets_owner_only_permissions() {
     let mode = std::fs::metadata(&path).unwrap().permissions().mode() & 0o777;
     assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
 
+    let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
+    assert_eq!(
+        store_mode, 0o700,
+        "unexpected wallet store mode: {:o}", store_mode
+    );
+
     let _ = std::fs::remove_file(&path);
     let _ = std::fs::remove_dir(&store);
 }

@@ -93,6 +93,11 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
     fs::create_dir_all(store)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(store, fs::Permissions::from_mode(0o700))?;
+    }
     let f = wallet_file(store, name);
     if fs::symlink_metadata(&f).is_ok() {
         bail!(
