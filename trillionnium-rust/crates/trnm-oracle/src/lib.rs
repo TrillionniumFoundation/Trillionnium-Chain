@@ -848,6 +848,30 @@ mod tests {
     }
 
     #[test]
+    fn accepts_deserialized_zero_width_window_at_boundary_with_matching_hash() {
+        let p = policy();
+        let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
+        snap.window_start_ms = 2_000;
+        snap.window_end_ms = 2_000;
+        snap.snapshot_ts_ms = 2_000;
+        snap.snapshot_hash = snap.compute_hash();
+
+        p.validate_snapshot(&snap, 2_000)
+            .expect("deserialized zero-width window at the boundary should validate");
+
+        let report = validate_snapshot_observed(&p, &snap, 2_000);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.classified_reject_total(), 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn rejects_deserialized_invalid_window_even_with_matching_hash() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
