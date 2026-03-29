@@ -19648,6 +19648,52 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_hidden_char_challenger_identity_on_refund_path_without_balance_mutation() {
+        let mut st = seeded_state();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+
+        let task = TaskObject {
+            task_id: 82,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(true),
+            challenger: Some("challenger\u{200b}".into()),
+            version: 0,
+        };
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+        let before_forfeit_treasury = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let err = preflight_resolve_transfers(&st, &task, false).expect_err(
+            "resolve refund preflight must fail closed on hidden-char challenger identity",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit_treasury
+        );
+    }
+
+    #[test]
     fn timeout_preflight_rejects_challenger_without_posted_bond() {
         let st = seeded_state();
         let task = TaskObject {
