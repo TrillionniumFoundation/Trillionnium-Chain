@@ -13,6 +13,7 @@ EOF
 }
 
 EXPECTED_WORKTREE_ROOT=""
+EXPECTED_WORKTREE_ROOT_RAW=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
 
@@ -61,9 +62,10 @@ done
 
 [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root" >&2; usage; exit 2; }
 [ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref" >&2; usage; exit 2; }
+EXPECTED_WORKTREE_ROOT_RAW="$EXPECTED_WORKTREE_ROOT"
 EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
 EXPECTED_WORKTREE_ROOT="$(canonicalize_path "$EXPECTED_WORKTREE_ROOT")" || {
-  printf 'worktree path is not accessible: %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+  printf 'worktree path is not accessible: %s\n' "$EXPECTED_WORKTREE_ROOT_RAW" >&2
   exit 1
 }
 
