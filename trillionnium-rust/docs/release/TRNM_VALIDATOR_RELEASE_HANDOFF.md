@@ -298,7 +298,7 @@ manifest_path="$latest_rc_dir/manifest.txt"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|result|lane_verify_command|rollback_command|replay_command)=/ { print }' "$summary_path"
+awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
 awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
