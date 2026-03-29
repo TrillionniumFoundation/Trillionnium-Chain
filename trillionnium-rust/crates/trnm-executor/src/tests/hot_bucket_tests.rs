@@ -343,6 +343,26 @@ fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_
 }
 
 #[test]
+fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fanout_with_empty_noise() {
+    let mut txs = vec![
+        tx(103, vec![], vec![]),      // empty-access noise defaults to bucket 0
+        tx(104, vec![], vec![o(1)]),  // only signaled lane once fanout clamps to len=5
+        tx(105, vec![], vec![]),      // same empty-access noise
+        tx(106, vec![], vec![o(6)]),  // same signaled lane under input-clamped fanout=5
+        tx(107, vec![], vec![]),      // same empty-access noise
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Input-size fanout clamping (`min(TRNM_HOT_BUCKETS, txs.len())`) must keep
+    // empty-access bucket-0 noise from fabricating a second lane when all
+    // signaled traffic still belongs to one real lane.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![103, 104, 105, 106, 107]
+    );
+}
+
+#[test]
 fn hot_bucket_interleave_fails_closed_to_stable_order_when_fanout_collapses_to_one_bucket() {
     let _env = env_lock();
     let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
