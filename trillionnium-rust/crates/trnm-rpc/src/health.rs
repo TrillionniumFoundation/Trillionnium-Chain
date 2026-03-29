@@ -311,7 +311,9 @@ mod tests {
         assert!(is_health_probe_path("/-/healthz"));
         assert!(is_health_probe_path("/-/healthz/"));
         assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/live/"));
         assert!(is_health_probe_path("/-/livez"));
+        assert!(is_health_probe_path("/-/livez/"));
         assert!(is_health_probe_path("/-/ready"));
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
