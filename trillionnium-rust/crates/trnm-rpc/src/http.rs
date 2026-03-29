@@ -160,6 +160,9 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
@@ -384,6 +387,18 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_raw_path_whitespace_and_controls() {
+        assert_eq!(
+            parse_http_request_target("GET /health\tcheck HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz\u{000b}shadow HTTP/1.1"),
             None
         );
     }
