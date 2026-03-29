@@ -7596,6 +7596,41 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
 }
 
 #[test]
+fn genesis_checkpoint_and_wal_evidence_summaries_mark_boundary_and_prev_hash_absence() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-genesis".into(),
+        committed: true,
+        state_root_hex: "12".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=genesis"));
+    assert!(checkpoint_summary.contains("checkpoint_height=1"));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_commitment_bytes=32"));
+    assert!(checkpoint_summary.contains("checkpoint_surface_canonical=true"));
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_prev_hash=none"));
+    assert!(wal_summary.contains("wal_prev_hash_present=false"));
+    assert!(wal_summary.contains("wal_prev_hash_kind=genesis"));
+    assert!(wal_summary.contains("wal_prev_hash_bytes=0"));
+    assert!(wal_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+    assert!(wal_summary.contains("wal_prev_hash_encoding=hex-lower-or-none"));
+    assert!(wal_summary.contains("wal_content_hash_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_content_hash_bytes=32"));
+}
+
+#[test]
 fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
     let e1 = WalMeta {
         height: 1,
