@@ -8,6 +8,14 @@
 ./scripts/run_local_release_evidence.sh
 ```
 
+若本轮是 lane / ticket 绑定演练，脚本也支持与 `testnet_preflight.sh` 同风格的 fail-closed 绑定校验；只要传入任一 `EXPECTED_*` 变量，就必须至少同时提供 `EXPECTED_WORKTREE_ROOT` 与 `EXPECTED_BRANCH_REF`：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket-or-lane" \
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch" \
+./scripts/run_local_release_evidence.sh
+```
+
 脚本会串联以下检查：
 
 > 注意：该脚本生成的是 **release evidence bundle**，不是“必定通过”的绿色证明。任一步骤失败时，脚本会 **fail-closed**，并在 `summary.txt` 中把对应步骤记为 `FAIL(...)`；是否可用于当前 release/readiness 判断，必须结合仓库根 `RELEASE_READINESS.md` 与本次 `summary.txt` 一起看。
