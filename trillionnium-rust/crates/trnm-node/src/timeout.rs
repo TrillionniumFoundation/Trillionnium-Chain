@@ -234,6 +234,45 @@ mod tests {
     }
 
     #[test]
+    fn timeout_skip_reason_and_scan_gate_stay_exact_complements_across_status_matrix() {
+        let cases = [
+            (TaskStatus::Created, false, Some("status_not_timeout_eligible")),
+            (TaskStatus::Created, true, Some("status_not_timeout_eligible")),
+            (TaskStatus::Assigned, false, None),
+            (TaskStatus::Assigned, true, None),
+            (TaskStatus::Committed, false, None),
+            (TaskStatus::Committed, true, None),
+            (TaskStatus::Revealed, false, None),
+            (TaskStatus::Revealed, true, None),
+            (TaskStatus::Challenged, false, None),
+            (
+                TaskStatus::Challenged,
+                true,
+                Some("emergency_pause_challenged"),
+            ),
+            (TaskStatus::Completed, false, Some("status_not_timeout_eligible")),
+            (TaskStatus::Completed, true, Some("status_not_timeout_eligible")),
+            (TaskStatus::Resolved, false, Some("status_not_timeout_eligible")),
+            (TaskStatus::Resolved, true, Some("status_not_timeout_eligible")),
+            (TaskStatus::Slashed, false, Some("status_not_timeout_eligible")),
+            (TaskStatus::Slashed, true, Some("status_not_timeout_eligible")),
+        ];
+
+        for (status, paused, expected_reason) in cases {
+            assert_eq!(
+                timeout_skip_reason(&status, paused),
+                expected_reason,
+                "skip reason drifted for status={status:?} paused={paused}"
+            );
+            assert_eq!(
+                should_scan_timeout(&status, paused),
+                expected_reason.is_none(),
+                "scan gate must remain the exact complement of skip reasons for status={status:?} paused={paused}"
+            );
+        }
+    }
+
+    #[test]
     fn timeout_bond_disposition_only_surfaces_challenged_settlement_outcomes() {
         assert_eq!(timeout_bond_disposition(false, Some(true)), None);
         assert_eq!(timeout_bond_disposition(true, Some(false)), Some("refunded"));
