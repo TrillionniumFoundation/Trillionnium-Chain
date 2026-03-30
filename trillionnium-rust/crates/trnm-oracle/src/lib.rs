@@ -173,6 +173,11 @@ impl OraclePolicy {
                 "max_update_rate_per_window must be > 0",
             ));
         }
+        if self.min_sources > self.max_update_rate_per_window {
+            return Err(OracleError::InvalidPolicy(
+                "min_sources must be <= max_update_rate_per_window",
+            ));
+        }
         Ok(())
     }
 
@@ -700,6 +705,23 @@ mod tests {
                 raw: " BTC/USD ".to_string(),
                 canonical: "btc/usd".to_string(),
             }
+        );
+    }
+
+    #[test]
+    fn rejects_policy_when_min_sources_exceeds_update_rate_cap() {
+        let err = OraclePolicy {
+            min_sources: 61,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 60,
+        }
+        .validate()
+        .expect_err("policy should fail closed when quorum floor exceeds update rate cap");
+
+        assert_eq!(
+            err,
+            OracleError::InvalidPolicy("min_sources must be <= max_update_rate_per_window")
         );
     }
 
