@@ -33,3 +33,43 @@ impl LaneAdmissionGate {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn active_critical_backlog_guards_last_reserved_slot_from_normal_borrow() {
+        let mut gate = LaneAdmissionGate::new(3, 1);
+
+        // Leave exactly one aggregate slot free, but keep it reserved for fresh
+        // critical ingress because backlog is already active.
+        assert_eq!(gate.admit(1, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+
+        assert_eq!(gate.critical_free_slots(), 0);
+        assert!(!gate.can_normal_borrow_critical_slot(0));
+
+        gate.critical.pop_ready();
+
+        // The final critical slot reopens, but backlog is still active because the
+        // critical queue will refill before normal traffic may borrow it.
+        gate.critical.seen.insert(99);
+        assert_eq!(gate.critical_free_slots(), 1);
+        assert!(!gate.can_normal_borrow_critical_slot(1));
+    }
+
+    #[test]
+    fn reserve_only_mode_allows_borrowing_any_reopened_critical_slot() {
+        let gate = LaneAdmissionGate::new(2, 2);
+
+        // With no dedicated normal capacity, reserve-only mode intentionally keeps
+        // free ingress live by letting normal traffic borrow any truly free critical
+        // slot.
+        assert_eq!(gate.normal.capacity, 0);
+        assert!(gate.can_normal_borrow_critical_slot(1));
+        assert!(gate.can_normal_borrow_critical_slot(2));
+        assert!(!gate.can_normal_borrow_critical_slot(0));
+    }
+}
