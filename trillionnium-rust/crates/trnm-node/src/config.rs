@@ -113,6 +113,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        rpc_socket.port() >= 1024,
+        "invalid node config {}: rpc_addr must not use a privileged port below 1024",
+        path
+    );
+    anyhow::ensure!(
         !rpc_socket.ip().is_multicast(),
         "invalid node config {}: rpc_addr must not use a multicast address",
         path
@@ -136,6 +141,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        p2p_socket.port() >= 1024,
+        "invalid node config {}: p2p_addr must not use a privileged port below 1024",
         path
     );
     anyhow::ensure!(
@@ -777,6 +787,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not use port 0"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_privileged_listener_ports() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:443".into(),
+                p2p_addr: "127.0.0.1:17001".into(),
+            },
+            "inline",
+        )
+        .expect_err("privileged rpc_addr port must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a privileged port below 1024"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:17000".into(),
+                p2p_addr: "127.0.0.1:443".into(),
+            },
+            "inline",
+        )
+        .expect_err("privileged p2p_addr port must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a privileged port below 1024"),
             "unexpected error: {p2p_err:#}"
         );
     }
