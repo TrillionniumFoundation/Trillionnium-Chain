@@ -3134,6 +3134,46 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_lane_local_duplicates_keep_qos_fail_closed_through_idle_polls() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge that survived only in lane-local
+        // caches. Idle polls may cold-reset fairness bookkeeping, but they must not
+        // reopen QoS, fabricate queue occupancy, or degrade restored duplicates into
+        // Backpressured.
+        g.normal.seen.insert(55);
+        g.critical.seen.insert(56);
+        g.critical_served_streak = 3;
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        for _ in 0..2 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+
+            assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(56, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(404, IngressClass::Normal), AdmitOutcome::Backpressured);
+            assert_eq!(g.admit(404, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+        }
+
+        assert_eq!(g.critical_served_streak, 0);
+    }
+
+    #[test]
     fn hard_stop_cross_class_duplicate_and_fresh_probe_noise_keeps_qos_flat_through_idle_poll() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
