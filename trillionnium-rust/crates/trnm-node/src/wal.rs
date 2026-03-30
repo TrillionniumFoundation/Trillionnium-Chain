@@ -572,6 +572,32 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wal_dir_fail_if_exists_rejects_existing_state_with_operator_guidance() {
+        let wal_dir = temp_wal_dir("fail-if-exists-rejects-existing-state");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_file(&wal_dir), "next_height = 5\nlast_round = 1\n").unwrap();
+
+        let args = Args::parse_from([
+            "trnm-node",
+            "--bft-wal-dir",
+            wal_dir.to_str().unwrap(),
+            "--bft-wal-mode",
+            "fail-if-exists",
+        ]);
+        let err = resolve_wal_dir(&args).unwrap_err().to_string();
+
+        assert!(
+            err.contains("refusing to reuse existing BFT WAL state")
+                && err.contains(&wal_dir.display().to_string())
+                && err.contains("--bft-wal-mode reuse")
+                && err.contains("fresh --bft-wal-dir"),
+            "unexpected fail-if-exists error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
