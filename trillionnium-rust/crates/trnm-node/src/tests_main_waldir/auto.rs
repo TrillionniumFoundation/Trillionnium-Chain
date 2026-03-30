@@ -32,6 +32,36 @@ fn resolve_wal_dir_auto_isolates_existing_builtin_default_state() {
 }
 
 #[test]
+fn resolve_wal_dir_auto_isolates_existing_builtin_default_wal_meta_only_state() {
+    let root = temp_wal_dir("default-wal-meta-root");
+    let base = root.join(DEFAULT_BFT_WAL_DIR);
+    fs::create_dir_all(&base).unwrap();
+    fs::write(wal_meta_file(&base), "existing").unwrap();
+
+    let args = args_with_wal_dir(DEFAULT_BFT_WAL_DIR.into(), WalDirMode::Auto);
+
+    let cwd = std::env::current_dir().unwrap();
+    std::env::set_current_dir(&root).unwrap();
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    std::env::set_current_dir(cwd).unwrap();
+
+    let notice = notice.expect("auto mode should surface an operator notice when wal-meta-only default WAL state triggers isolation");
+    assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+    assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
+    assert!(
+        notice.contains("[bft-wal]")
+            && notice.contains("existing default WAL state detected")
+            && notice.contains(DEFAULT_BFT_WAL_DIR)
+            && notice.contains("isolating this run")
+            && notice.contains(&resolved.display().to_string())
+            && notice.contains("--bft-wal-mode reuse"),
+        "unexpected auto-mode notice: {notice}"
+    );
+
+    let _ = fs::remove_dir_all(&root);
+}
+
+#[test]
 fn resolve_wal_dir_auto_isolates_existing_builtin_default_checkpoint_only_state() {
     let root = temp_wal_dir("default-checkpoint-root");
     let base = root.join(DEFAULT_BFT_WAL_DIR);
