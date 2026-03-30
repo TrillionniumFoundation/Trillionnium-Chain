@@ -42,6 +42,8 @@
 - `EXPECTED_BRANCH_REF`
 - `EXPECTED_HEAD`（可选，但建议在 handoff / 复盘时带上）
 
+其中 `EXPECTED_BRANCH_REF` 可以写成短分支名（如 `lane/mn08-ops-preflight-recovery-drill`）或完整 ref（如 `refs/heads/lane/mn08-ops-preflight-recovery-drill`）；脚本会统一规范化为 `refs/heads/*` 后再校验。
+
 这样脚本会在 worktree、branch、HEAD 任一不匹配时直接失败，而不是在错误 worktree 上误做恢复演练。
 
 ## 标准恢复演练
