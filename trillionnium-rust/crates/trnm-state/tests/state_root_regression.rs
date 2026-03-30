@@ -88,6 +88,30 @@ fn node_recovery_checkpoint_rejects_wal_entry_hash_with_zero_width_layout_drift(
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_blank_wal_entry_hash() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: String::new(),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject blank checkpoint wal_entry_hash_hex so restart-time checkpoint proofs cannot bind to a missing WAL digest surface"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_state_root_with_zero_width_layout_drift() {
     let wal_entry = WalMeta {
         height: 1,
