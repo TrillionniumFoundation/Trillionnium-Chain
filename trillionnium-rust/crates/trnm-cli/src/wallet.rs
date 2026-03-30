@@ -3,13 +3,32 @@ use super::*;
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     let mut normalized = raw.trim();
     while normalized.len() >= 2 {
-        let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
-            || (normalized.starts_with('\'') && normalized.ends_with('\''))
-            || (normalized.starts_with('`') && normalized.ends_with('`'));
+        let wrapped_by_quotes = matches!(
+            (normalized.chars().next(), normalized.chars().last()),
+            (Some('"'), Some('"'))
+                | (Some('\''), Some('\''))
+                | (Some('`'), Some('`'))
+                | (Some('“'), Some('”'))
+                | (Some('‘'), Some('’'))
+                | (Some('«'), Some('»'))
+                | (Some('‹'), Some('›'))
+                | (Some('「'), Some('」'))
+                | (Some('『'), Some('』'))
+                | (Some('《'), Some('》'))
+                | (Some('〈'), Some('〉'))
+                | (Some('｢'), Some('｣'))
+                | (Some('（'), Some('）'))
+                | (Some('［'), Some('］'))
+                | (Some('｛'), Some('｝'))
+                | (Some('＜'), Some('＞'))
+                | (Some('【'), Some('】'))
+        );
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[1..normalized.len() - 1].trim();
+        normalized = normalized[normalized.chars().next().unwrap().len_utf8()
+            ..normalized.len() - normalized.chars().last().unwrap().len_utf8()]
+            .trim();
     }
     (!normalized.is_empty()).then_some(normalized)
 }
