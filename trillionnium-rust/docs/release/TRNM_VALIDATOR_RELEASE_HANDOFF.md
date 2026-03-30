@@ -294,7 +294,7 @@ awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|gi
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
 - preserve both `summary_generated_at=` and `manifest_generated_at=` from the artifacts/helper output; they do **not** need to be identical, but they must both exist so operators can audit when each artifact was generated instead of collapsing them into one hand-copied timestamp
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
