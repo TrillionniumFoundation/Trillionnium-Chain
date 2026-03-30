@@ -577,6 +577,10 @@ pub fn validate_snapshot_observed(
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
+        Err(OracleError::SnapshotHashMismatch { .. }) => {
+            observation.quorum_reject_total = 1;
+            Some(result.as_ref().err().expect("error result").to_string())
+        }
         Err(OracleError::DeviationExceeded { .. }) => {
             observation.drift_reject_total = 1;
             Some("drift".to_string())
@@ -1733,7 +1737,7 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_unmapped_bridge_error_string_without_counter_drift() {
+    fn observed_report_preserves_snapshot_hash_mismatch_details_with_quorum_accounting() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
         let replacement = if snap.snapshot_hash.starts_with('0') { "1" } else { "0" };
@@ -1746,20 +1750,22 @@ mod tests {
             Some(err) if err.starts_with("snapshot hash mismatch:")
         ));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_matches_metrics());
         assert!(report.bridge_contract_consistent());
     }
 
     #[test]
-    fn observed_report_preserves_snapshot_hash_mismatch_details_without_counter_drift() {
+    fn observed_report_preserves_snapshot_hash_mismatch_details_with_classified_quorum_failure() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
         let expected = snap.compute_hash();
@@ -1779,17 +1785,18 @@ mod tests {
             )
         );
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
         assert!(report.observation_matches_metrics());
-        assert!(report.has_explicit_unclassified_failure_accounting());
+        assert!(!report.has_explicit_unclassified_failure_accounting());
         assert!(report.bridge_contract_consistent());
     }
 
