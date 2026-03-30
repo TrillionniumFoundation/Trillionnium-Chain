@@ -6015,6 +6015,19 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         "WAL proposal_hash must be a non-empty canonical token so checkpoint evidence surfaces cannot claim audit-ready provenance with blank proposal identity"
     );
 
+    let mut whitespace_proposal_hash_wal = wal.clone();
+    whitespace_proposal_hash_wal.proposal_hash = " proposal-1 ".into();
+    let mut whitespace_proposal_hash_checkpoint = checkpoint.clone();
+    whitespace_proposal_hash_checkpoint.wal_entry_hash_hex =
+        whitespace_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &whitespace_proposal_hash_checkpoint,
+            &whitespace_proposal_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject edge-whitespace WAL proposal_hash values so audit-ready provenance cannot smuggle trim-sensitive proposal identities into canonical checkpoint bindings"
+    );
+
     let mut forged_genesis_prev_hash_wal = wal.clone();
     forged_genesis_prev_hash_wal.prev_hash_hex = Some("01".repeat(32));
     let mut forged_genesis_prev_hash_checkpoint = checkpoint.clone();
