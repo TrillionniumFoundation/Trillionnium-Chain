@@ -2936,6 +2936,33 @@ mod tests {
     }
 
     #[test]
+    fn saturated_cross_lane_and_seen_global_skew_keeps_real_duplicate_and_ghost_retry_distinct() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(200, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 1, 2));
+
+        // Simulate restored-state skew under saturation where lane-local membership
+        // is swapped across lanes and lane-wide membership preserves cardinality by
+        // replacing one real queued id with a ghost id.
+        g.normal.seen.remove(&200);
+        g.critical.seen.remove(&100);
+        g.normal.seen.insert(100);
+        g.critical.seen.insert(200);
+        g.seen_global.remove(&200);
+        g.seen_global.insert(999);
+        assert_eq!(g.normal.seen.len() + g.critical.seen.len(), 2);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // The real queued id must stay Duplicate even though both lane-local and
+        // lane-wide caches drifted, while the ghost id must remain merely fresh and
+        // therefore Backpressured under aggregate saturation.
+        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn seen_global_duplicate_without_lane_local_membership_self_heals_and_stays_duplicate() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
