@@ -1086,6 +1086,10 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         return false;
     }
 
+    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true) {
+        return false;
+    }
+
     if has_bond {
         let Some(challenged_at_height) = task.challenged_at_height else {
             return false;
