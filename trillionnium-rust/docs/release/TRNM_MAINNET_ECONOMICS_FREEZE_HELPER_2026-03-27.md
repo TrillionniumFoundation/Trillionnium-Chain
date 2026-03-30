@@ -127,6 +127,32 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
    - exact prelaunch action for moving from `CONDITIONAL GO` back to `NO-GO`
    - preferred rollback bias: disable sponsorship first, then tighten free-ingress exposure, then shorten retention/query surface if storage payer remains undefined
 
+### Copy-paste freeze packet stub
+
+Use the following stub when a release review needs one artifact that captures the day-1
+admission / sponsorship / retention boundary in one place:
+
+```text
+TRNM mainnet economics freeze review
+- tuple source of truth:
+- tuple owner of record:
+- operator inspection command:
+- ingress split (free-ingress / fee-like / sponsor-only):
+- sponsor authority + budget:
+- sponsor revocation path + queued-tx disposition:
+- retention window + payer of record:
+- retention budget exhaustion fallback:
+- anti-spam floor / sustained-load rule:
+- override authority:
+- mempool evidence gate(s):
+- state evidence gate(s):
+- tightening rollback action:
+- review result (GO / CONDITIONAL GO / NO-GO):
+```
+
+This keeps freeze review from scattering across issue comments or oral history and makes the
+operator handoff auditable even before a dedicated runtime/config query exists.
+
 ## Initial evidence hooks already in tree
 
 Until the final launch parameter surface exists, freeze review should at minimum point to
