@@ -363,6 +363,29 @@ fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fano
 }
 
 #[test]
+fn hot_bucket_interleave_keeps_real_two_lane_rotation_despite_empty_access_noise() {
+    let _env = env_lock();
+
+    let mut txs = vec![
+        tx(108, vec![], vec![]),     // empty-access noise bucket 0
+        tx(109, vec![], vec![]),     // same empty-access noise bucket 0
+        tx(110, vec![], vec![o(1)]), // real signaled lane bucket 1 under fanout=6
+        tx(111, vec![], vec![o(7)]), // same real signaled lane bucket 1 under fanout=6
+        tx(112, vec![], vec![o(2)]), // second real signaled lane bucket 2 under fanout=6
+        tx(113, vec![], vec![o(8)]), // same second signaled lane bucket 2 under fanout=6
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs should not suppress interleave once there are two real
+    // signaled lanes. Keep the stable bucket-0 noise, but still rotate between
+    // the actual signaled lanes so lane isolation is preserved.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![108, 110, 112, 111, 113, 109]
+    );
+}
+
+#[test]
 fn hot_bucket_interleave_fails_closed_to_stable_order_when_fanout_collapses_to_one_bucket() {
     let _env = env_lock();
     let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
