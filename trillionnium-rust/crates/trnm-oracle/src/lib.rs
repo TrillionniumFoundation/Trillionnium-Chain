@@ -689,6 +689,19 @@ mod tests {
         }
     }
 
+    #[test]
+    fn source_id_parse_rejects_non_canonical_whitespace_and_uppercase() {
+        let err = OracleSourceId::parse(" ChainLink ")
+            .expect_err("source ids should fail closed unless already lowercase+trim");
+        assert_eq!(
+            err,
+            OracleError::NonCanonicalSourceId {
+                raw: " ChainLink ".to_string(),
+                canonical: "chainlink".to_string(),
+            }
+        );
+    }
+
     fn snapshot_with(value: i128, median: Option<i128>, snapshot_ts_ms: u64) -> OracleSnapshot {
         OracleSnapshot::new(
             "btc/usd",
