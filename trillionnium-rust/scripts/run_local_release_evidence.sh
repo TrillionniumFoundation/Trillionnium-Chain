@@ -26,6 +26,18 @@ EXPECTED_WORKTREE_ROOT_INPUT="${TRNM_EXPECTED_WORKTREE_ROOT:-}"
 EXPECTED_BRANCH_REF_INPUT="${TRNM_EXPECTED_BRANCH_REF:-}"
 EXPECTED_HEAD_INPUT="${TRNM_EXPECTED_HEAD:-}"
 
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
 if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; then
   VERIFY_LANE_CMD=("$ROOT/scripts/v2/verify_lane_worktree.sh" --expected-worktree-root "$EXPECTED_WORKTREE_ROOT_INPUT" --expected-branch-ref "$EXPECTED_BRANCH_REF_INPUT")
   if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
@@ -36,8 +48,10 @@ if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; 
     printf '%s\n' "$VERIFY_LANE_OUTPUT" >&2
     exit 2
   fi
+  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF_INPUT")"
 else
   VERIFY_LANE_OUTPUT=""
+  EXPECTED_BRANCH_REF_CANONICAL=""
 fi
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
@@ -69,12 +83,23 @@ if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
-if [[ -n "$CURRENT_WORKTREE_BRANCH_REF" && "$GIT_BRANCH_RAW" != "HEAD" ]]; then
-  EXPECTED_WORKTREE_BRANCH_REF="refs/heads/$GIT_BRANCH_RAW"
-  if [[ "$CURRENT_WORKTREE_BRANCH_REF" == "$EXPECTED_WORKTREE_BRANCH_REF" ]]; then
-    WORKTREE_BRANCH_REF_MATCH="true"
+if [[ -n "$CURRENT_WORKTREE_BRANCH_REF" ]]; then
+  if [[ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]]; then
+    EXPECTED_WORKTREE_BRANCH_REF="$EXPECTED_BRANCH_REF_CANONICAL"
+  elif [[ "$GIT_BRANCH_RAW" != "HEAD" ]]; then
+    EXPECTED_WORKTREE_BRANCH_REF="refs/heads/$GIT_BRANCH_RAW"
   else
-    WORKTREE_BRANCH_REF_MATCH="false"
+    EXPECTED_WORKTREE_BRANCH_REF=""
+  fi
+
+  if [[ -n "$EXPECTED_WORKTREE_BRANCH_REF" ]]; then
+    if [[ "$CURRENT_WORKTREE_BRANCH_REF" == "$EXPECTED_WORKTREE_BRANCH_REF" ]]; then
+      WORKTREE_BRANCH_REF_MATCH="true"
+    else
+      WORKTREE_BRANCH_REF_MATCH="false"
+    fi
+  else
+    WORKTREE_BRANCH_REF_MATCH="unknown"
   fi
 else
   EXPECTED_WORKTREE_BRANCH_REF=""
