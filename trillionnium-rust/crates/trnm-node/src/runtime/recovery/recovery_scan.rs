@@ -331,4 +331,29 @@ mod tests {
         assert!(message.contains("last retained checkpoint: 4"));
         assert!(message.contains("next startup height: 6"));
     }
+
+    #[test]
+    fn metadata_only_recovery_error_reports_missing_checkpoint_metadata_when_wal_is_retained() {
+        let recovered = RecoveredWalState {
+            next_height: 8,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: None,
+        };
+
+        let message =
+            metadata_only_recovery_error(Path::new("/tmp/trnm-runtime-wal-missing-checkpoint"), &recovered);
+
+        assert!(message.contains(
+            "refusing metadata-only recovery from /tmp/trnm-runtime-wal-missing-checkpoint"
+        ));
+        assert!(message.contains(
+            "retained 1 committed WAL entry through height 7 (no retained checkpoint metadata)"
+        ));
+        assert!(message.contains("last retained checkpoint: none"));
+        assert!(message.contains("next startup height: 8"));
+    }
 }
