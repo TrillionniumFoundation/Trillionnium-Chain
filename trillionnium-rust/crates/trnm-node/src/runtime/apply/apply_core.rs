@@ -9,6 +9,11 @@ pub(crate) fn hash32_hex(data: &[u8]) -> String {
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
+        cfg.node_id == node_id,
+        "invalid node config {}: node_id must not contain leading or trailing whitespace",
+        path
+    );
+    anyhow::ensure!(
         !node_id.is_empty(),
         "invalid node config {}: node_id must not be empty",
         path
@@ -40,6 +45,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
 
     let rpc_addr = cfg.rpc_addr.trim();
+    anyhow::ensure!(
+        cfg.rpc_addr == rpc_addr,
+        "invalid node config {}: rpc_addr must not contain leading or trailing whitespace",
+        path
+    );
     anyhow::ensure!(
         !rpc_addr.is_empty(),
         "invalid node config {}: rpc_addr must not be empty",
@@ -77,6 +87,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        rpc_socket.port() >= 1024,
+        "invalid node config {}: rpc_addr must not use a privileged port below 1024",
+        path
+    );
+    anyhow::ensure!(
         !rpc_socket.ip().is_multicast(),
         "invalid node config {}: rpc_addr must not use a multicast address",
         path
@@ -93,6 +108,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
 
     let p2p_addr = cfg.p2p_addr.trim();
+    anyhow::ensure!(
+        cfg.p2p_addr == p2p_addr,
+        "invalid node config {}: p2p_addr must not contain leading or trailing whitespace",
+        path
+    );
     anyhow::ensure!(
         !p2p_addr.is_empty(),
         "invalid node config {}: p2p_addr must not be empty",
@@ -127,6 +147,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
+        path
+    );
+    anyhow::ensure!(
+        p2p_socket.port() >= 1024,
+        "invalid node config {}: p2p_addr must not use a privileged port below 1024",
         path
     );
     anyhow::ensure!(
@@ -167,17 +192,26 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     })
 }
 
+fn workspace_root() -> &'static std::path::Path {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node")
+}
+
 fn resolve_config_path(path: &str) -> std::path::PathBuf {
     let requested = std::path::Path::new(path);
     if requested.is_absolute() {
         return requested.to_path_buf();
     }
 
-    let workspace_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .ancestors()
-        .nth(2)
-        .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
-    let workspace_relative = workspace_root.join(requested);
+    let workspace_root = workspace_root();
+    let workspace_anchor = workspace_root
+        .file_name()
+        .map(std::path::Path::new)
+        .and_then(|anchor| requested.strip_prefix(anchor).ok())
+        .unwrap_or(requested);
+    let workspace_relative = workspace_root.join(workspace_anchor);
     if workspace_relative.exists() {
         let canonical_workspace_root = workspace_root
             .canonicalize()
@@ -197,8 +231,39 @@ fn resolve_config_path(path: &str) -> std::path::PathBuf {
     requested.to_path_buf()
 }
 
+fn ensure_relative_config_path_stays_within_allowed_roots(
+    requested: &str,
+    resolved: &std::path::Path,
+) -> Result<()> {
+    if std::path::Path::new(requested).is_absolute() || !resolved.exists() {
+        return Ok(());
+    }
+
+    let canonical_resolved = resolved
+        .canonicalize()
+        .unwrap_or_else(|_| resolved.to_path_buf());
+    let workspace_root = workspace_root()
+        .canonicalize()
+        .unwrap_or_else(|_| workspace_root().to_path_buf());
+    let current_dir = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    let canonical_current_dir = current_dir
+        .canonicalize()
+        .unwrap_or_else(|_| current_dir.clone());
+
+    anyhow::ensure!(
+        canonical_resolved.starts_with(&workspace_root)
+            || canonical_resolved.starts_with(&canonical_current_dir),
+        "read config failed: {} resolves outside allowed roots (resolved: {})",
+        requested,
+        canonical_resolved.display()
+    );
+
+    Ok(())
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     let resolved = resolve_config_path(path);
+    ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -454,7 +519,19 @@ pub(crate) fn missed_proposals_added_since(previous: &[u64], current: &[u64]) ->
 
 #[cfg(test)]
 mod tests {
-    use super::{resolve_config_path, validate_node_config, NodeConfig};
+    use super::{load_config, resolve_config_path, validate_node_config, NodeConfig};
+
+    #[test]
+    fn resolve_config_path_anchors_workspace_prefixed_paths_to_workspace_root() {
+        let resolved = resolve_config_path("trillionnium-rust/configs/node1.toml");
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        assert_eq!(resolved, workspace_root.join("configs/node1.toml"));
+        assert!(resolved.is_file(), "expected shipped node1 config to exist");
+    }
 
     #[test]
     fn resolve_config_path_does_not_anchor_parent_traversal_outside_workspace_root() {
@@ -468,6 +545,100 @@ mod tests {
 
         let resolved = resolve_config_path("../configs/node1.toml");
         assert_eq!(resolved, std::path::PathBuf::from("../configs/node1.toml"));
+    }
+
+    #[test]
+    fn load_config_rejects_relative_symlink_escape_outside_workspace_and_cwd() {
+        use std::os::unix::fs::symlink;
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-apply-config-symlink-escape-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let escape_dir = temp_root.join("escape");
+        std::fs::create_dir_all(workspace_shadow.join("configs"))
+            .expect("workspace shadow should be creatable");
+        std::fs::create_dir_all(&escape_dir).expect("escape dir should be creatable");
+        std::fs::write(
+            escape_dir.join("outside.toml"),
+            "node_id = \"node-escape\"\nrpc_addr = \"127.0.0.1:30001\"\np2p_addr = \"127.0.0.1:30000\"\n",
+        )
+        .expect("outside config should be writable");
+        symlink(
+            escape_dir.join("outside.toml"),
+            workspace_shadow.join("configs/escaped.toml"),
+        )
+        .expect("escape symlink should be creatable");
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
+        let err = load_config("configs/escaped.toml")
+            .expect_err("relative symlink escape should fail closed");
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        assert!(
+            err.to_string().contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
+        let cfg = NodeConfig {
+            node_id: "  node-a  ".into(),
+            rpc_addr: " 127.0.0.1:7000\n".into(),
+            p2p_addr: "\t127.0.0.1:7001 ".into(),
+        };
+
+        let err = validate_node_config(cfg, "inline")
+            .expect_err("boundary whitespace in apply config must fail closed");
+        let err_surface = err.to_string();
+        assert!(
+            err_surface.contains("node_id must not contain leading or trailing whitespace"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_privileged_listener_ports() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:443".into(),
+                p2p_addr: "127.0.0.1:17001".into(),
+            },
+            "inline",
+        )
+        .expect_err("privileged rpc_addr port must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a privileged port below 1024"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:17000".into(),
+                p2p_addr: "127.0.0.1:80".into(),
+            },
+            "inline",
+        )
+        .expect_err("privileged p2p_addr port must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a privileged port below 1024"),
+            "unexpected error: {p2p_err:#}"
+        );
     }
 
     #[test]
