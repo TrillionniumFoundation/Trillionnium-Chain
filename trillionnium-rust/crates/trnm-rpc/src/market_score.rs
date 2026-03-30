@@ -460,6 +460,7 @@ mod tests {
         assert_eq!(breakdown.effective_score, 420);
         assert!(!breakdown.score_floor_applied);
         assert_eq!(market_reputation_score_delta(&breakdown), 0);
+        assert_eq!(market_reputation_component_applied(&breakdown), 0);
     }
 
     #[test]
