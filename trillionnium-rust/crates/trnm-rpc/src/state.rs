@@ -37,13 +37,33 @@ pub(crate) fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
-    if session_id.trim() != session_id || session_id.chars().any(|ch| ch.is_control()) {
+    if session_id.trim() != session_id
+        || !session_id
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '-' | '_' | '.'))
+    {
         return Err(bad_request(
             "invalid_session",
             format!("{field} must be canonical"),
         ));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::validate_session_id;
+
+    #[test]
+    fn validate_session_id_rejects_zero_width_space() {
+        let err = validate_session_id("sp\u{200B}canonical", "session_id").unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
+    }
+
+    #[test]
+    fn validate_session_id_accepts_canonical_ascii_tokens() {
+        validate_session_id("sp-canonical_01.v2", "session_id").unwrap();
+    }
 }
 
 pub(crate) fn validate_proof_query_range(from_seq: u64, to_seq: u64) -> Result<()> {
