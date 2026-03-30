@@ -106,6 +106,14 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
         Some("/tmp/trnm-wallets")
     );
     assert_eq!(
+        normalize_wallet_store_env(" <\"/tmp/trnm-wallets\"> "),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
+        normalize_wallet_store_env(" ＜《/tmp/trnm-wallets》＞ "),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
         normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
         Some("/tmp/trnm-wallets")
     );
