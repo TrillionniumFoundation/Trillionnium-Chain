@@ -1069,12 +1069,37 @@ impl RelayService {
     }
 }
 
+fn is_hex_wrapper_noise(ch: char) -> bool {
+    ch.is_whitespace()
+        || ch.is_control()
+        || matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2060}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{FEFF}'
+        )
+}
+
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
-    let normalized = input.trim();
+    let normalized = input.trim_matches(is_hex_wrapper_noise);
     let canonical = normalized
         .strip_prefix("0x")
         .or_else(|| normalized.strip_prefix("0X"))
-        .unwrap_or(normalized);
+        .unwrap_or(normalized)
+        .trim_matches(is_hex_wrapper_noise);
     let bytes = hex::decode(canonical).map_err(|e| anyhow!("invalid {field} hex: {e}"))?;
     if bytes.len() != 32 {
         bail!("{field} must be 32 bytes");

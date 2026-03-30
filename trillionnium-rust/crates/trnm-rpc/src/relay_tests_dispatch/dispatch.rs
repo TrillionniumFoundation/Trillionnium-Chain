@@ -418,6 +418,48 @@ fn relay_session_proof_accepts_whitespace_wrapped_hash_hex() {
 }
 
 #[test]
+fn relay_session_proof_accepts_invisible_wrapper_noise_around_hash_hex() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp3-invisible-wrapper-noise".into(),
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp3-invisible-wrapper-noise".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let mut proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 7,
+            session_id: "sp3-invisible-wrapper-noise".into(),
+            from_seq: 1,
+            to_seq: 2,
+            source: None,
+        })
+        .unwrap();
+
+    proof.segment_root_hex = format!("\u{{FEFF}}0x{}\u{{2060}}", proof.segment_root_hex);
+    for entry in proof.proofs.iter_mut() {
+        entry.leaf_hash_hex = format!("\u{{200B}}0X{}\u{{202E}}", entry.leaf_hash_hex);
+        for step in entry.proof.iter_mut() {
+            step.sibling_hash_hex = format!("\u{{2066}}{}\u{{2069}}", step.sibling_hash_hex);
+        }
+    }
+
+    verify_session_proof(&proof).unwrap();
+}
+
+#[test]
 fn relay_session_proof_accepts_uppercase_segment_root_hex() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);
