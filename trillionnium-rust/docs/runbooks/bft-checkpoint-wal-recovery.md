@@ -40,7 +40,7 @@
 
 - `EXPECTED_WORKTREE_ROOT`
 - `EXPECTED_BRANCH_REF`
-- `EXPECTED_HEAD`（可选，但建议在 handoff / 复盘时带上）
+- `EXPECTED_HEAD`（建议默认带上；这样可把“同 worktree / 同分支但 HEAD 已漂移”的情况也 fail-closed 掉）
 
 其中 `EXPECTED_BRANCH_REF` 可以写成短分支名（如 `lane/mn08-ops-preflight-recovery-drill`）或完整 ref（如 `refs/heads/lane/mn08-ops-preflight-recovery-drill`）；脚本会统一规范化为 `refs/heads/*` 后再校验。
 
@@ -52,11 +52,14 @@
 
 ```bash
 cd /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN08-ops-preflight-recovery-drill/trillionnium-rust
+EXPECTED_HEAD="$(git rev-parse HEAD)" \
 EXPECTED_WORKTREE_ROOT=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN08-ops-preflight-recovery-drill \
 EXPECTED_BRANCH_REF=lane/mn08-ops-preflight-recovery-drill \
 RUNS=3 \
 ./scripts/check_bft_restart_recovery.sh
 ```
+
+如果是 supervisor / cron 已经分配了固定 commit，优先直接把该 SHA 写进 `EXPECTED_HEAD`；不要依赖人工复制当前终端里的 `git rev-parse HEAD` 结果。
 
 预期结果：
 
@@ -78,6 +81,7 @@ RUNS=3 \
 
 ```bash
 cd /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN08-ops-preflight-recovery-drill/trillionnium-rust
+EXPECTED_HEAD="$(git rev-parse HEAD)" \
 EXPECTED_WORKTREE_ROOT=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN08-ops-preflight-recovery-drill \
 EXPECTED_BRANCH_REF=lane/mn08-ops-preflight-recovery-drill \
 RECOVERY_RUNS=1 \
@@ -101,7 +105,7 @@ RECOVERY_RUNS=1 \
 - `replay_command`：用于在相同 lane 绑定条件下重跑演练
 - `rollback_command`：用于删除本次演练产生的 report / WAL / 日志等临时工件
 
-建议复盘时直接从报告中提取，而不是手写路径：
+建议复盘时直接从报告中提取，而不是手写路径；脚本产出的 `replay_command=` 会保留规范化后的 lane 绑定参数（含 `refs/heads/*` 形式的分支 ref）：
 
 ```bash
 report="run/bft-restart-recovery-<timestamp>.txt"
