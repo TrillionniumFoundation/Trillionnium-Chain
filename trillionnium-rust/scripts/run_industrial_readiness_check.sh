@@ -4,6 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+export TZ="${TZ:-UTC}"
+export LC_ALL="${LC_ALL:-C}"
+export LANG="${LANG:-C}"
+
 OWNER="${1:-ProfAlexQI}"
 REPO="${2:-TrillionniumChain}"
 REQUIRED_STREAK="${3:-3}"
@@ -23,7 +27,7 @@ mkdir -p "$OUT_DIR"
 TS="$(date -u +%Y%m%d-%H%M%S)"
 GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 OUT_FILE="$OUT_DIR/industrial-readiness-${TS}.txt"
-REPLAY_COMMAND="./scripts/run_industrial_readiness_check.sh $(printf '%q' "$OWNER") $(printf '%q' "$REPO") $(printf '%q' "$REQUIRED_STREAK")"
+REPLAY_COMMAND="env TZ='${TZ}' LC_ALL='${LC_ALL}' LANG='${LANG}' ./scripts/run_industrial_readiness_check.sh $(printf '%q' "$OWNER") $(printf '%q' "$REPO") $(printf '%q' "$REQUIRED_STREAK")"
 ROLLBACK_COMMAND="rm -f $(printf '%q' "$OUT_FILE")"
 
 {
