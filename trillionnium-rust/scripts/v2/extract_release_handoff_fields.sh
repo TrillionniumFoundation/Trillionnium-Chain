@@ -55,12 +55,6 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[ -n "$GIT_TOPLEVEL" ] || {
-  echo "extract_release_handoff_fields.sh must run inside the intended git worktree (or use --summary-path/--manifest-path from there)" >&2
-  exit 1
-}
-
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TRNM_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
