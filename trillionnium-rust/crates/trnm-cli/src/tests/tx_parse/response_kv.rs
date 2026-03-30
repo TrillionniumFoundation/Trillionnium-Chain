@@ -183,3 +183,21 @@ fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
     assert_eq!(parsed.status, "committed");
     assert_eq!(parsed.error, None);
 }
+
+#[test]
+fn tx_query_parse_kv_infers_status_from_hyphenated_code_aliases() {
+    let tx_code = "tx_hash=0x704\ntx-code=0\n";
+    let parsed_tx_code = parse_tx_query_response(tx_code, "0xfallback").unwrap();
+    assert_eq!(parsed_tx_code.tx_hash, "0x704");
+    assert_eq!(parsed_tx_code.status, "committed");
+
+    let deliver = "tx_hash=0x705\ndeliver-tx-code=19\n";
+    let parsed_deliver = parse_tx_query_response(deliver, "0xfallback").unwrap();
+    assert_eq!(parsed_deliver.tx_hash, "0x705");
+    assert_eq!(parsed_deliver.status, "fail");
+
+    let check = "transaction-hash: 0x706\ncheck-tx-code: \"0\"\n";
+    let parsed_check = parse_tx_query_response(check, "0xfallback").unwrap();
+    assert_eq!(parsed_check.tx_hash, "0x706");
+    assert_eq!(parsed_check.status, "committed");
+}

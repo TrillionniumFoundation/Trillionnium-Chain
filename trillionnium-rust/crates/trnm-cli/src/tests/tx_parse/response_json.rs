@@ -86,6 +86,24 @@ fn tx_query_parse_json_preserves_non_string_error_payloads() {
 }
 
 #[test]
+fn tx_query_parse_json_infers_status_from_hyphenated_code_aliases() {
+    let root = "{\"tx_hash\":\"0x701\",\"tx-code\":0}";
+    let parsed_root = parse_tx_query_response(root, "0xfallback").unwrap();
+    assert_eq!(parsed_root.tx_hash, "0x701");
+    assert_eq!(parsed_root.status, "committed");
+
+    let nested = "{\"result\":{\"tx_hash\":\"0x702\",\"deliver-tx\":{\"code\":\"12\"}}}";
+    let parsed_nested = parse_tx_query_response(nested, "0xfallback").unwrap();
+    assert_eq!(parsed_nested.tx_hash, "0x702");
+    assert_eq!(parsed_nested.status, "fail");
+
+    let check = "{\"result\":{\"tx_hash\":\"0x703\",\"check-tx-code\":0}}";
+    let parsed_check = parse_tx_query_response(check, "0xfallback").unwrap();
+    assert_eq!(parsed_check.tx_hash, "0x703");
+    assert_eq!(parsed_check.status, "committed");
+}
+
+#[test]
 fn tx_query_parse_rejects_invalid_tx_hash_if_field_is_present() {
     let bad_json = "{\"tx_hash\":\"not-a-hash\",\"status\":\"committed\"}";
     let err_json = parse_tx_query_response(bad_json, "0xabc").unwrap_err();

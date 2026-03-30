@@ -534,11 +534,8 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
     }
 }
 
-fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
-    let mut current = value;
-    for key in path {
-        current = current.get(*key)?;
-    }
+fn json_u64_alias(value: &serde_json::Value, aliases: &[&str]) -> Option<u64> {
+    let current = json_get_alias(value, aliases)?;
     match current {
         serde_json::Value::Number(n) => n.as_u64(),
         serde_json::Value::String(s) => s.trim().parse::<u64>().ok(),
@@ -547,17 +544,27 @@ fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
 }
 
 fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
-    for path in [
-        ["tx_result", "code"].as_slice(),
-        ["deliver_tx", "code"].as_slice(),
-        ["check_tx", "code"].as_slice(),
+    let nested = [
+        ["tx_result", "tx-result"].as_slice(),
+        ["deliver_tx", "deliver-tx"].as_slice(),
+        ["check_tx", "check-tx"].as_slice(),
+    ];
+    for container_aliases in nested {
+        if let Some(container) = json_get_alias(value, container_aliases) {
+            if let Some(code) = json_u64_alias(container, &["code"]) {
+                return Some(if code == 0 { "committed" } else { "fail" }.to_string());
+            }
+        }
+    }
+
+    for aliases in [
         ["code"].as_slice(),
-        ["tx_code"].as_slice(),
-        ["transaction_code"].as_slice(),
-        ["deliver_tx_code"].as_slice(),
-        ["check_tx_code"].as_slice(),
+        ["tx_code", "tx-code"].as_slice(),
+        ["transaction_code", "transaction-code"].as_slice(),
+        ["deliver_tx_code", "deliver-tx-code"].as_slice(),
+        ["check_tx_code", "check-tx-code"].as_slice(),
     ] {
-        if let Some(code) = json_u64_at_path(value, path) {
+        if let Some(code) = json_u64_alias(value, aliases) {
             return Some(if code == 0 { "committed" } else { "fail" }.to_string());
         }
     }
@@ -566,8 +573,10 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
 
 fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
     match key {
-        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+        "code" | "tx_code" | "txcode" | "tx-code" | "transaction_code"
+        | "transactioncode" | "transaction-code" | "deliver_tx_code"
+        | "delivertxcode" | "deliver-tx-code" | "check_tx_code" | "checktxcode"
+        | "check-tx-code" => {
             let cleaned = value
                 .trim()
                 .trim_matches('"')
@@ -702,8 +711,10 @@ pub(crate) fn parse_tx_query_response(
                         status = Some(normalized);
                     }
                 }
-                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+                "code" | "tx_code" | "txcode" | "tx-code" | "transaction_code"
+                | "transactioncode" | "transaction-code" | "deliver_tx_code"
+                | "delivertxcode" | "deliver-tx-code" | "check_tx_code"
+                | "checktxcode" | "check-tx-code" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
