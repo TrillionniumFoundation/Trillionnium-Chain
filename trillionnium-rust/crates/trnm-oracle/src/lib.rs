@@ -47,8 +47,7 @@ impl OracleSnapshot {
         snapshot_ts_ms: u64,
     ) -> Result<Self, OracleError> {
         let raw_feed_id = feed_id.into();
-        validate_canonical_feed_id(&raw_feed_id)?;
-        let feed_id = raw_feed_id;
+        let feed_id = validate_canonical_feed_id(&raw_feed_id)?;
         validate_snapshot_window(window_start_ms, window_end_ms, snapshot_ts_ms)?;
 
         for source in &sources {
@@ -282,7 +281,7 @@ fn validate_canonical_source_id(raw: &str) -> Result<String, OracleError> {
     Ok(canonical)
 }
 
-fn validate_canonical_feed_id(raw: &str) -> Result<(), OracleError> {
+fn validate_canonical_feed_id(raw: &str) -> Result<String, OracleError> {
     let canonical = raw.trim().to_ascii_lowercase();
     if canonical.is_empty() {
         return Err(OracleError::EmptyFeedId);
@@ -293,7 +292,7 @@ fn validate_canonical_feed_id(raw: &str) -> Result<(), OracleError> {
             canonical,
         });
     }
-    Ok(())
+    Ok(canonical)
 }
 
 fn validate_snapshot_window(
