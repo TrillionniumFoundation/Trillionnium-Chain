@@ -79,7 +79,7 @@ fn degraded_reason_matches_prefix(normalized: &str, expected: &str) -> bool {
                 .map(|ch| {
                     matches!(
                         ch,
-                        ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '。' | '(' | ')' | '[' | ']' | '{' | '}'
+                        ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '．' | '。' | '(' | ')' | '[' | ']' | '{' | '}'
                             | '（' | '）' | '［' | '］' | '｛' | '｝' | ' ' | '-' | '–' | '—'
                     )
                 })
@@ -545,6 +545,13 @@ mod tests {
     fn degraded_reason_allows_invalid_embedded_metrics_for_cjk_punctuation_suffix() {
         assert!(degraded_reason_allows_invalid_embedded_metrics(
             "invalid heartbeat height：源高度为零"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_fullwidth_full_stop_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression．target height exceeded source sample"
         ));
     }
 
