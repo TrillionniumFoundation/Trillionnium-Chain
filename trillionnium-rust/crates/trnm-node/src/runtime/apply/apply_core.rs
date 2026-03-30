@@ -33,6 +33,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain path separators (/ \\ :)",
         path
     );
+    anyhow::ensure!(
+        node_id != "." && node_id != "..",
+        "invalid node config {}: node_id must not be '.' or '..'",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -53,6 +58,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_addr.contains('/') && !rpc_addr.contains('\\'),
+        "invalid node config {}: rpc_addr must not contain path separators (/ \\)",
         path
     );
     let rpc_socket: std::net::SocketAddr = rpc_addr.parse().with_context(|| {
@@ -101,6 +111,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains('/') && !p2p_addr.contains('\\'),
+        "invalid node config {}: p2p_addr must not contain path separators (/ \\)",
         path
     );
     let p2p_socket: std::net::SocketAddr = p2p_addr.parse().with_context(|| {
@@ -563,6 +578,26 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_dot_segments_in_node_id() {
+        for node_id in [".", ".."] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("dot-segment node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not be '.' or '..'"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_internal_whitespace_in_operator_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
@@ -628,6 +663,41 @@ mod tests {
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not contain list separators (, ; |)"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_path_separators_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1/7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr path separators must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain path separators"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1\\7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr path separators must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain path separators"),
             "unexpected error: {p2p_err:#}"
         );
     }
