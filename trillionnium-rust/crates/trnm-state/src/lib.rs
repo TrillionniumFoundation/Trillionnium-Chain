@@ -4715,6 +4715,15 @@ mod tests {
             "DA/light-verifier summary must reject mixed-case checkpoint state_root_hex so proof surfaces stay on canonical lowercase digests"
         );
 
+        let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
+            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&uppercase_checkpoint_wal_hash, &wal),
+            None,
+            "DA/light-verifier summary must reject mixed-case checkpoint wal_entry_hash_hex so proof surfaces stay on canonical lowercase digests"
+        );
+
         let mut uppercase_wal = wal.clone();
         uppercase_wal.state_root_hex = uppercase_wal.state_root_hex.to_uppercase();
         let mut uppercase_wal_checkpoint = checkpoint.clone();
