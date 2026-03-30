@@ -348,6 +348,27 @@ mod tests {
     }
 
     #[test]
+    fn market_score_breakdown_keeps_zero_reputation_neutral_when_manual_clamp_is_invalid() {
+        let breakdown = market_score_breakdown(
+            9,
+            0,
+            MarketScoreConfig {
+                price_weight: 13,
+                reputation_weight: 17,
+                reputation_clamp: -99,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 0);
+        assert_eq!(breakdown.base_score, 117);
+        assert_eq!(breakdown.reputation_reward, 0);
+        assert_eq!(breakdown.penalty, 0);
+        assert_eq!(breakdown.effective_score, 117);
+        assert!(!breakdown.score_floor_applied);
+        assert_eq!(market_reputation_score_delta(&breakdown), 0);
+    }
+
+    #[test]
     fn market_reputation_score_delta_saturates_positive_reward_at_i128_min() {
         let delta = market_reputation_score_delta(&MarketScoreBreakdown {
             effective_reputation: 1,
