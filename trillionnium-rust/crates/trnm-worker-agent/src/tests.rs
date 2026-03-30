@@ -1354,6 +1354,19 @@ fn parse_tx_hash_accepts_shell_escaped_quote_wrapped_receipt_values() {
 }
 
 #[test]
+fn parse_tx_hash_accepts_nested_shell_escaped_and_localized_quote_wrapped_receipts() {
+    let shell_escaped_smart =
+        parse_tx_hash(r#"adapter stdout: {\"transaction hash\": \"“0xDEADBEEF”\"}"#)
+            .expect("shell-escaped smart-quoted transaction hash should parse");
+    assert_eq!(shell_escaped_smart, "deadbeef");
+
+    let shell_escaped_guillemet =
+        parse_tx_hash(r#"adapter stdout: {\"tx_hash\": \"«0xFACECAFE»\"}"#)
+            .expect("shell-escaped guillemet-wrapped tx hash should parse");
+    assert_eq!(shell_escaped_guillemet, "facecafe");
+}
+
+#[test]
 fn parse_tx_hash_accepts_json_receipts_embedded_in_log_lines() {
     let json =
         parse_tx_hash("info: adapter response payload={\"tx_hash\": \"deadbeef\"} next=cleanup")
