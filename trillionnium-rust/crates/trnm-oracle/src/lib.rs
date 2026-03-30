@@ -562,7 +562,10 @@ pub fn validate_snapshot_observed(
         | Err(OracleError::InconsistentSampleCount { .. })
         | Err(OracleError::InvalidSampleCount)
         | Err(OracleError::DuplicateSources)
-        | Err(OracleError::NonCanonicalSourceOrdering { .. }) => {
+        | Err(OracleError::NonCanonicalSourceOrdering { .. })
+        | Err(OracleError::EmptySnapshotHash)
+        | Err(OracleError::NonCanonicalSnapshotHash { .. })
+        | Err(OracleError::InvalidSnapshotHashFormat { .. }) => {
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
@@ -2262,7 +2265,7 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_empty_snapshot_hash_error_without_counter_drift() {
+    fn observed_report_classifies_empty_snapshot_hash_as_quorum_failure() {
         let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
             "feed_id": "btc/usd",
             "value": 100000,
@@ -2279,13 +2282,13 @@ mod tests {
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(report.error.as_deref(), Some("snapshot hash is empty"));
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
@@ -2295,29 +2298,19 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_non_canonical_snapshot_hash_error_without_counter_drift() {
+    fn observed_report_classifies_non_canonical_snapshot_hash_as_quorum_failure() {
         let mut snapshot = snapshot_with(100000, Some(100000), 10_000);
         snapshot.snapshot_hash = format!(" {} ", snapshot.snapshot_hash.to_ascii_uppercase());
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some(
-                format!(
-                    "snapshot hash must be canonical lowercase+trim: raw= {} , canonical={}",
-                    snapshot.compute_hash().to_ascii_uppercase(),
-                    snapshot.compute_hash()
-                )
-                .as_str()
-            )
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
@@ -2327,22 +2320,19 @@ mod tests {
     }
 
     #[test]
-    fn observed_report_preserves_invalid_snapshot_hash_format_without_counter_drift() {
+    fn observed_report_classifies_invalid_snapshot_hash_format_as_quorum_failure() {
         let mut snapshot = snapshot_with(100000, Some(100000), 10_000);
         snapshot.snapshot_hash = "g".repeat(64);
 
         let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
         assert!(!report.ok);
-        assert_eq!(
-            report.error.as_deref(),
-            Some("snapshot hash must be a 64-char lowercase hex digest: raw=gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg")
-        );
+        assert_eq!(report.error.as_deref(), Some("quorum"));
         assert_eq!(report.observation.stale_reject_total, 0);
-        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 1);
         assert_eq!(report.observation.drift_reject_total, 0);
         assert_eq!(report.observation.accepted_total, 0);
         assert_eq!(report.metrics.oracle_stale_reject_total, 0);
-        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
