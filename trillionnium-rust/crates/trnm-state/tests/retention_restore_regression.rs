@@ -476,6 +476,49 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_worker_slash
 }
 
 #[test]
+fn restore_task_rejects_terminal_collateral_retention_with_exact_reserved_worker_slashes_treasury_identity() {
+    let mut state = StateStore::new();
+
+    state.restore_task(
+        408041,
+        Some(TaskObject {
+            task_id: 408041,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("21".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0xab; 32]),
+            result_hash: Some([0xbc; 32]),
+            reveal_salt: Some([0xcd; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("treasury.worker_slashes".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        state.get_task(408041).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata aliases the challenger to the exact reserved worker-slashes treasury account"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_reserved_pause_identity() {
     let mut state = StateStore::new();
 
