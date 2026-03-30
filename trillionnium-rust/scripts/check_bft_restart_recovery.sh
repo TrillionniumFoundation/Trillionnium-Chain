@@ -88,6 +88,28 @@ else
   GIT_HEAD_STATE="detached"
 fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_WORKTREE_ROOT" '
+  BEGIN { in_match=0 }
+  /^worktree / {
+    path = substr($0, length("worktree ") + 1)
+    in_match = (path == target)
+  }
+  in_match { print }
+  in_match && /^$/ { exit }
+' || true)"
+if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
+  GIT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
+else
+  GIT_WORKTREE_BRANCH_REF=""
+fi
+if [ "$GIT_HEAD_STATE" = "attached" ] && [ -z "$GIT_WORKTREE_BRANCH_REF" ]; then
+  echo "attached HEAD is missing git worktree branch binding" >&2
+  exit 67
+fi
+if [ "$GIT_HEAD_STATE" = "attached" ] && [ "$GIT_WORKTREE_BRANCH_REF" != "$GIT_BRANCH_REF" ]; then
+  echo "git worktree branch binding mismatch: expected $GIT_BRANCH_REF got ${GIT_WORKTREE_BRANCH_REF:-<missing>}" >&2
+  exit 67
+fi
 GIT_STATUS_SUMMARY="clean"
 replay_args=(env RUNS="$RUNS")
 REPLAY_COMMAND=""
@@ -205,7 +227,7 @@ done
   echo "git_worktree_path=$GIT_WORKTREE_ROOT"
   echo "git_branch=${GIT_BRANCH_NAME:-<detached>}"
   echo "git_branch_ref=$GIT_BRANCH_REF"
-  echo "git_worktree_branch_ref=$GIT_BRANCH_REF"
+  echo "git_worktree_branch_ref=${GIT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}"
   echo "git_head=$GIT_HEAD"
   echo "git_head_state=$GIT_HEAD_STATE"
   echo "git_status_summary=$GIT_STATUS_SUMMARY"
