@@ -2164,6 +2164,29 @@ mod tests {
     }
 
     #[test]
+    fn reserve_guarded_fresh_normal_retry_stays_fresh_until_critical_backlog_clears() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // Fresh normal ingress is blocked by the final reserved critical slot, but the
+        // rejected tx id must stay fresh rather than poisoning cross-class dedupe.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // Once the active critical backlog drains, the previously guarded tx id should
+        // admit cleanly instead of being misclassified as a duplicate.
+        assert_eq!(g.pop_ready(), Some(70));
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+    }
+
+    #[test]
     fn fairness_warmup_does_not_slow_critical_when_normal_lane_drains() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
