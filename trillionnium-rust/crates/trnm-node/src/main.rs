@@ -3798,7 +3798,7 @@ mod tests {
 
     #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
-        use std::net::{IpAddr, Ipv4Addr};
+        use std::{collections::HashSet, net::SocketAddr};
 
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
@@ -3816,8 +3816,8 @@ mod tests {
             .filter_map(|entry| entry.ok())
             .map(|entry| entry.file_name().to_string_lossy().into_owned())
             .filter(|name| name.starts_with("node") && name.ends_with(".toml"))
-            .collect::<std::collections::HashSet<_>>();
-        let expected_shipped_node_configs = std::collections::HashSet::from([
+            .collect::<HashSet<_>>();
+        let expected_shipped_node_configs = HashSet::from([
             String::from("node1.toml"),
             String::from("node2.toml"),
             String::from("node3.toml"),
@@ -3828,24 +3828,41 @@ mod tests {
             "shipped bootstrap config set must stay exactly node1.toml..node4.toml to keep deterministic peer formation fixtures intact"
         );
 
-        let mut node_ids = std::collections::HashSet::new();
-        let mut rpc_addrs = std::collections::HashSet::new();
-        let mut p2p_addrs = std::collections::HashSet::new();
-        let mut all_listener_addrs = std::collections::HashSet::new();
-        let mut bootstrap_loopback_ips = std::collections::HashSet::new();
+        let mut node_ids = HashSet::new();
+        let mut rpc_addrs = HashSet::new();
+        let mut p2p_addrs = HashSet::new();
+        let mut all_listener_addrs = HashSet::new();
+        let mut bootstrap_loopback_ips = HashSet::new();
         let mut shipped_nodes = Vec::new();
 
-        for (index, config_path) in [
-            "configs/node1.toml",
-            "configs/node2.toml",
-            "configs/node3.toml",
-            "configs/node4.toml",
+        for (index, (config_path, workspace_relative_path)) in [
+            ("trillionnium-rust/configs/node1.toml", "configs/node1.toml"),
+            ("trillionnium-rust/configs/node2.toml", "configs/node2.toml"),
+            ("trillionnium-rust/configs/node3.toml", "configs/node3.toml"),
+            ("trillionnium-rust/configs/node4.toml", "configs/node4.toml"),
         ]
         .into_iter()
         .enumerate()
         {
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let workspace_relative_cfg = load_config(workspace_relative_path).unwrap_or_else(|err| {
+                panic!(
+                    "{workspace_relative_path} should remain loadable for bootstrap/rejoin path anchoring: {err:#}"
+                )
+            });
+            assert_eq!(
+                workspace_relative_cfg.node_id, cfg.node_id,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
+            );
+            assert_eq!(
+                workspace_relative_cfg.rpc_addr, cfg.rpc_addr,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap rpc_addr as {config_path}"
+            );
+            assert_eq!(
+                workspace_relative_cfg.p2p_addr, cfg.p2p_addr,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
+            );
             let config_slot = index + 1;
             let expected_node_id = format!("node{}", config_slot);
             let expected_p2p_port = 26_656 + (index as u16) * 1_000;
@@ -3889,14 +3906,33 @@ mod tests {
             );
             assert_eq!(
                 rpc_socket.ip(),
-                IpAddr::V4(Ipv4Addr::LOCALHOST),
+                std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
                 "{config_path} rpc_addr {} must stay pinned to 127.0.0.1 for deterministic shipped bootstrap peer dialing",
                 cfg.rpc_addr
             );
             assert_eq!(
+                cfg.rpc_addr,
+                rpc_socket.to_string(),
+                "{config_path} rpc_addr {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
+                cfg.rpc_addr
+            );
+            assert_eq!(
                 p2p_socket.ip(),
-                IpAddr::V4(Ipv4Addr::LOCALHOST),
+                std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
                 "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for deterministic shipped bootstrap peer dialing",
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                cfg.p2p_addr,
+                p2p_socket.to_string(),
+                "{config_path} p2p_addr {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.is_ipv4(),
+                p2p_socket.is_ipv4(),
+                "{config_path} rpc_addr {} and p2p_addr {} must stay in the same IP family",
+                cfg.rpc_addr,
                 cfg.p2p_addr
             );
             assert_eq!(
