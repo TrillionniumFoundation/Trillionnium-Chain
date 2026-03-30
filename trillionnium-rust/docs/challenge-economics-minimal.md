@@ -34,3 +34,4 @@ This patch upgrades challenge handling from **status-only markers** to **minimal
 - Challenge submission is bounded by reveal-derived `challenge_deadline_height`; late challenges are rejected.
 - For legacy Revealed tasks without `challenge_window_blocks_snapshot`, first accepted challenge freezes the effective window into snapshot to keep downstream timing deterministic.
 - Challenge/resolve/timeout paths use preflight transfer feasibility checks and centralized challenge-field invariants to fail early on malformed/corrupt states without partial side-effects.
+- Terminal proof/collateral retention snapshots are part of the economics boundary, not cosmetic metadata: restore must fail closed if retained challenger identities are non-canonical/reserved or if retained challenge-window / deadline anchors are zeroed, because sponsor-funded audit/refund trails depend on a single canonical payer/challenger record.
