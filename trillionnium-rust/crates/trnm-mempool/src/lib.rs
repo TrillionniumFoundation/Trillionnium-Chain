@@ -807,6 +807,46 @@ mod tests {
     }
 
     #[test]
+    fn zero_capacity_hard_stop_duplicate_probe_noise_keeps_qos_snapshot_flat() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge while the lane remains fail-closed.
+        // Duplicate probes from either ingress class must not fabricate queue or
+        // headroom state, and fresh retry noise must remain pure backpressure.
+        g.normal.seen.insert(41);
+
+        let hard_stop_snapshot = g.qos_snapshot();
+        assert_eq!(
+            hard_stop_snapshot,
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+    }
+
+    #[test]
     fn qos_snapshot_zero_reserve_recloses_after_critical_spillover_consumes_last_normal_slot() {
         let mut g = LaneAdmissionGate::new(2, 0);
 
