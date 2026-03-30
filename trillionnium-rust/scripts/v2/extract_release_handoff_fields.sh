@@ -55,21 +55,29 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[ -n "$ROOT" ] || {
-  echo "extract_release_handoff_fields.sh must run inside the intended trillionnium-rust git worktree (or use --summary-path/--manifest-path from there)" >&2
+GIT_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$GIT_TOPLEVEL" ] || {
+  echo "extract_release_handoff_fields.sh must run inside the intended git worktree (or use --summary-path/--manifest-path from there)" >&2
   exit 1
 }
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TRNM_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+if [ ! -d "$TRNM_ROOT/scripts" ]; then
+  printf 'failed to resolve trillionnium-rust root from script path: %s\n' "$TRNM_ROOT" >&2
+  exit 1
+fi
+
 if [ -z "$SUMMARY_PATH" ]; then
-  latest_evidence_dir="$(ls -dt "$ROOT"/run/health/evidence-* 2>/dev/null | head -n 1)"
-  [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $ROOT/run/health" >&2; exit 1; }
+  latest_evidence_dir="$(ls -dt "$TRNM_ROOT"/run/health/evidence-* 2>/dev/null | head -n 1)"
+  [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $TRNM_ROOT/run/health" >&2; exit 1; }
   SUMMARY_PATH="$latest_evidence_dir/summary.txt"
 fi
 
 if [ -z "$MANIFEST_PATH" ]; then
-  latest_rc_dir="$(ls -dt "$ROOT"/release/rc-* 2>/dev/null | head -n 1)"
-  [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $ROOT/release" >&2; exit 1; }
+  latest_rc_dir="$(ls -dt "$TRNM_ROOT"/release/rc-* 2>/dev/null | head -n 1)"
+  [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $TRNM_ROOT/release" >&2; exit 1; }
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
 fi
 
