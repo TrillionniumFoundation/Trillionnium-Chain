@@ -5168,7 +5168,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_trimmed_identical_rpc_and_p2p_listener_addresses() {
+    fn validate_node_config_rejects_boundary_whitespace_before_shared_listener_detection() {
         let err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -5177,10 +5177,10 @@ bootstrap_peers = ["127.0.0.1:27656"]
             },
             "node.toml",
         )
-        .expect_err("identical rpc/p2p listener sockets must fail closed after trimming");
+        .expect_err("boundary whitespace must fail closed before shared listener detection");
         assert!(err
             .to_string()
-            .contains("rpc_addr and p2p_addr must differ"));
+            .contains("rpc_addr must not contain leading or trailing whitespace"));
     }
 
     #[test]
