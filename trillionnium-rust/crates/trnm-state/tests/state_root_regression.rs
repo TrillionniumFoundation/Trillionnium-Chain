@@ -6081,6 +6081,21 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
             .is_none(),
         "forged genesis WAL prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
     );
+
+    let literal_genesis_wal = WalMeta {
+        prev_hash_hex: Some("genesis".into()),
+        ..wal.clone()
+    };
+    let literal_genesis_checkpoint = CheckpointMeta {
+        height: literal_genesis_wal.height,
+        state_root_hex: literal_genesis_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: literal_genesis_wal.content_hash_hex(),
+    };
+    assert!(
+        checkpoint_da_light_verifier_summary(&literal_genesis_checkpoint, &literal_genesis_wal)
+            .is_none(),
+        "literal \"genesis\" prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary because genesis linkage is represented only by None on canonical audit surfaces"
+    );
 }
 
 #[test]
