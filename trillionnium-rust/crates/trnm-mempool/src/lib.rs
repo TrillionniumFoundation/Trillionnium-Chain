@@ -1462,6 +1462,52 @@ mod tests {
     }
 
     #[test]
+    fn guarded_last_reserved_slot_recloses_qos_after_fresh_critical_claims_it() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        // Leave one aggregate slot free, but keep it reserved exclusively for fresh
+        // critical ingress while dedicated normal capacity is already exhausted.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Once a fresh critical tx claims the final reserved slot, QoS must
+        // immediately fail closed for both classes.
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        let saturated_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 2,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+
+        // Under the now-saturated lane, a queued critical id must still dedupe and
+        // a fresh normal probe must remain backpressured without perturbing QoS.
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+    }
+
+    #[test]
     fn guarded_last_reserved_slot_keeps_queued_normal_retry_duplicate() {
         let mut g = LaneAdmissionGate::new(4, 2);
 
