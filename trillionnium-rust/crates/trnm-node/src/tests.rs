@@ -3024,6 +3024,36 @@
     }
 
     #[test]
+    fn critical_guard_full_queue_budget_keeps_mixed_backlog_fifo() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 51,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 51,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 51,
+                worker: "w1".into(),
+            },
+        ]);
+
+        // When the block budget can absorb the whole queue, the selector should
+        // keep FIFO dequeue semantics even for mixed-class backlogs instead of
+        // taking the fairness/reordering path unnecessarily.
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 51, .. }));
+        assert!(matches!(picked[1], MockTx::Challenge { task_id: 51, .. }));
+        assert!(matches!(picked[2], MockTx::AcceptTask { task_id: 51, .. }));
+        assert!(mempool.is_empty());
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
