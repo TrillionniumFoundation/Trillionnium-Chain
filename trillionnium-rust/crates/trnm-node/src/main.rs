@@ -3609,6 +3609,15 @@ mod tests {
     }
 
     #[test]
+    fn load_config_accepts_curdir_prefixed_repo_root_default_path() {
+        let cfg = load_config("./configs/node1.toml")
+            .expect("curdir-prefixed repo-root bootstrap config should resolve");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
     fn load_config_prefers_workspace_root_default_over_cwd_shadow_config() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
