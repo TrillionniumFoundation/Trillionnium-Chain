@@ -395,6 +395,8 @@ For deterministic re-runs, prefer the exact replay command emitted by the artifa
 
 This prevents drift in locale, timezone, build-job parallelism, output directory selection, and lane-bound identity assertions.
 
+For restart-recovery drills, also quote `config_path=` from the generated report so the receiving operator knows exactly which node config the WAL recovery was exercised against.
+
 ## Common failure interpretation
 
 - `nightly green streak insufficient`: process/policy blocker, not necessarily a code regression

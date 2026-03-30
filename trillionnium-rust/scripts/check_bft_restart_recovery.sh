@@ -12,7 +12,7 @@ Environment:
 
 Outputs:
   Writes a PASS report under run/bft-restart-recovery-<timestamp>.txt
-  The report includes replay_command and rollback_command fields.
+  The report includes config_path, replay_command, and rollback_command fields.
 EOF
 }
 
@@ -129,6 +129,7 @@ done
   echo "runs=$RUNS"
   echo "pass=$pass"
   echo "generated_at=$GENERATED_AT"
+  echo "config_path=$CONFIG_PATH"
   echo "report=$REPORT"
   echo "wal_dir=$WAL_DIR"
   echo "pre_log_glob=$OUT_DIR/bft-restart-pre-${TS}-*.log"
