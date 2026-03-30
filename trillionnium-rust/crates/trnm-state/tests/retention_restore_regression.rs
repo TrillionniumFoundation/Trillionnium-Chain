@@ -261,6 +261,49 @@ fn restore_task_rejects_terminal_collateral_retention_with_overlong_challenger_i
 }
 
 #[test]
+fn restore_task_rejects_terminal_collateral_retention_with_mixed_case_challenger_identity() {
+    let mut state = StateStore::new();
+
+    state.restore_task(
+        408096,
+        Some(TaskObject {
+            task_id: 408096,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("af".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x3a; 32]),
+            result_hash: Some([0x4b; 32]),
+            reveal_salt: Some([0x5c; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("BobSmith".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        }),
+    );
+
+    assert!(
+        state.get_task(408096).is_none(),
+        "restore_task must fail closed when retained terminal collateral metadata keeps a mixed-case challenger identity instead of a lowercase canonical actor id for sponsor-funded retention audits"
+    );
+}
+
+#[test]
 fn restore_task_rejects_terminal_collateral_retention_with_reserved_system_identity() {
     let mut state = StateStore::new();
 
