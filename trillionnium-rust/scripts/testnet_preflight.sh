@@ -211,6 +211,11 @@ if ! grep -q '^status=PASS$' "$RECOVERY_REPORT"; then
   log "recovery drill failed: restart recovery report is not PASS ($RECOVERY_REPORT)"
   exit 12
 fi
+RECOVERY_REPLAY_COMMAND="$(awk -F= '/^replay_command=/ { sub(/^replay_command=/, ""); print; exit }' "$RECOVERY_REPORT")"
+if [ -z "$RECOVERY_REPLAY_COMMAND" ]; then
+  log "recovery drill failed: missing replay_command in restart recovery report ($RECOVERY_REPORT)"
+  exit 12
+fi
 RECOVERY_ROLLBACK_COMMAND="$(awk -F= '/^rollback_command=/ { sub(/^rollback_command=/, ""); print; exit }' "$RECOVERY_REPORT")"
 if [ -z "$RECOVERY_ROLLBACK_COMMAND" ]; then
   log "recovery drill failed: missing rollback_command in restart recovery report ($RECOVERY_REPORT)"
@@ -295,6 +300,7 @@ bench_classic=$latest_bench
 bench_mixed=$latest_mixed
 executor_profile=$latest_profile
 recovery_runs=$RECOVERY_RUNS
+recovery_replay_command=$RECOVERY_REPLAY_COMMAND
 replay_command=$replay_command
 lane_verify_command=${lane_verify_command:-<not-run>}
 rollback_command=$rollback_command
