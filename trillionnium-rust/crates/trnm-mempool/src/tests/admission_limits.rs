@@ -97,6 +97,27 @@ fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure()
 }
 
 #[test]
+fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
+    let mut g = AdmissionGate::new(2);
+
+    assert_eq!(g.admit(21), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22), AdmitOutcome::Accepted);
+
+    // Simulate restored-state skew: metadata retains a ghost id that is not
+    // actually queued. Once the authoritative queue fully drains, the next
+    // batch must start fresh rather than inheriting stale duplicate poison.
+    g.seen.insert(999);
+
+    assert_eq!(g.pop_ready(), Some(21));
+    assert_eq!(g.pop_ready(), Some(22));
+    assert_eq!(g.pop_ready(), None);
+    assert!(g.seen.is_empty());
+
+    assert_eq!(g.admit(999), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(999), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn zero_total_capacity_lane_gate_backpressures_all_ingress_without_poisoning_seen_ids() {
     let mut g = LaneAdmissionGate::new(0, 0);
 
