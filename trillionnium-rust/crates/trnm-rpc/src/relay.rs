@@ -1070,10 +1070,11 @@ impl RelayService {
 }
 
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
-    let canonical = input
+    let normalized = input.trim();
+    let canonical = normalized
         .strip_prefix("0x")
-        .or_else(|| input.strip_prefix("0X"))
-        .unwrap_or(input);
+        .or_else(|| normalized.strip_prefix("0X"))
+        .unwrap_or(normalized);
     let bytes = hex::decode(canonical).map_err(|e| anyhow!("invalid {field} hex: {e}"))?;
     if bytes.len() != 32 {
         bail!("{field} must be 32 bytes");

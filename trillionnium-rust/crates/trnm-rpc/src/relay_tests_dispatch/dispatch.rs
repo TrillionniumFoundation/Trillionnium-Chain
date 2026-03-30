@@ -376,6 +376,48 @@ fn relay_session_proof_accepts_0x_prefixed_hash_hex() {
 }
 
 #[test]
+fn relay_session_proof_accepts_whitespace_wrapped_hash_hex() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp3-whitespace".into(),
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp3-whitespace".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let mut proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 7,
+            session_id: "sp3-whitespace".into(),
+            from_seq: 1,
+            to_seq: 2,
+            source: None,
+        })
+        .unwrap();
+
+    proof.segment_root_hex = format!("  \n{}\t  ", proof.segment_root_hex);
+    for entry in proof.proofs.iter_mut() {
+        entry.leaf_hash_hex = format!("  {}  ", entry.leaf_hash_hex);
+        for step in entry.proof.iter_mut() {
+            step.sibling_hash_hex = format!("\n{}\r", step.sibling_hash_hex);
+        }
+    }
+
+    verify_session_proof(&proof).unwrap();
+}
+
+#[test]
 fn relay_session_proof_accepts_uppercase_segment_root_hex() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);
