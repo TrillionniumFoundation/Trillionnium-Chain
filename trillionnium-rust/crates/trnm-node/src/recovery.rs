@@ -377,4 +377,19 @@ mod tests {
         assert!(error.contains("wal_entries_retained=1"));
         assert!(error.contains("wal_tail_truncated=false"));
     }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_checkpoint_ahead_mismatch_for_triage() {
+        let recovered = recovered_state(2, 12, Some(15), false, true);
+        let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
+
+        assert!(error.contains(
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch)"
+        ));
+        assert!(error.contains("last retained checkpoint: 15"));
+        assert!(error.contains("next startup height: 12"));
+        assert!(error.contains("incident clue: metadata_only_recovery=1"));
+        assert!(error.contains("wal_entries_retained=2"));
+        assert!(error.contains("wal_tail_truncated=false"));
+    }
 }
