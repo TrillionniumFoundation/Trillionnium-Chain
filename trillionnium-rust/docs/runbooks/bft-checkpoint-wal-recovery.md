@@ -72,6 +72,9 @@ cargo test -p trnm-state -p trnm-node
   - 读取建议：若同时出现 `no retained checkpoint metadata`，优先把这里的原始值原样记入 incident note；若这里是具体高度，再与 `[bft-recover] restored ... checkpoint=<C>` 互相核对，二者不一致时应优先回查是否发生了 WAL 尾部截断、checkpoint 漂移或目录看错。
 - `verified WAL/checkpoint metadata`
   - 含义：恢复流程已经确认当前保留下来的 WAL/checkpoint 元数据链自洽；它只说明“元数据校验通过”，**不**等于应用状态已经恢复完成，必须和 `refusing metadata-only recovery` / `next startup height` 一起解读。
+- `incident clue: metadata_only_recovery=1 wal_entries_retained=<N> wal_tail_truncated=<true|false>`
+  - 含义：这是 metadata-only recovery 拒绝报错里最适合直接抄进告警注释或 incident note 的固定 clue 串；`wal_entries_retained` 表示恢复扫描最终还能确认保留的已提交 WAL 条数，`wal_tail_truncated` 表示本次恢复前是否发生了 fail-closed 尾部截断。
+  - 读取建议：若 `wal_entries_retained=0`，优先按 fresh start / 空目录 / 元数据全失配方向排查；若 `wal_tail_truncated=true`，把它与 `repaired WAL tail required truncation` 绑定记录，不要只记“metadata-only recovery 被拒绝”而漏掉已发生过自动截断。
 - `[bft-recover] restored height=<H> lock=<L> checkpoint=<C> truncated=<true|false> metadata_only_recovery=<true|false>`
   - 含义：这是恢复扫描结束后的结构化摘要行，适合值班侧第一眼确认“节点准备从哪个高度继续、是否带锁恢复、是否发生过截断、当前是否落入 metadata-only recovery 拒绝路径”。
   - 读取建议：若 `truncated=true`，继续向上 grep `repaired WAL tail required truncation`；若 `metadata_only_recovery=true`，继续 grep `refusing metadata-only recovery` 以拿到带 `retained_wal_summary` 的完整拒绝原因；若 `checkpoint=none`，再结合 `retained no committed WAL entries` / `no retained checkpoint metadata` 判断这是 fresh start 还是 checkpoint 元数据缺失。
