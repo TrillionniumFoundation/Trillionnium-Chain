@@ -134,20 +134,10 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
 
         let tokens = line.split_whitespace().collect::<Vec<_>>();
         if let Some(v) = tokens.iter().find_map(|w| {
-            let trimmed = w.trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
-            });
-            let (k, v) = trimmed
-                .split_once('=')
-                .or_else(|| trimmed.split_once(':'))?;
-            let key = k.trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
-            });
-            match key.to_ascii_lowercase().as_str() {
+            let (key, value) = parse_inline_kv_token(w)?;
+            match key.as_str() {
                 "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => normalize_tx_hash(v),
+                | "transaction-hash" => normalize_tx_hash(&value),
                 _ => None,
             }
         }) {
