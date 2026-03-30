@@ -30,6 +30,18 @@ canonicalize_branch_ref() {
   esac
 }
 
+if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; then
+  VERIFY_LANE_CMD=("$ROOT/scripts/v2/verify_lane_worktree.sh" --expected-worktree-root "$EXPECTED_WORKTREE_ROOT_INPUT" --expected-branch-ref "$EXPECTED_BRANCH_REF_INPUT")
+  if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
+    VERIFY_LANE_CMD+=(--expected-head "$EXPECTED_HEAD_INPUT")
+  fi
+  VERIFY_LANE_OUTPUT="$(${VERIFY_LANE_CMD[@]})"
+  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF_INPUT")"
+else
+  VERIFY_LANE_OUTPUT=""
+  EXPECTED_BRANCH_REF_CANONICAL=""
+fi
+
 # Keep RC evidence timestamps/log formatting deterministic across runners/locales.
 export TZ="${TZ:-$replay_tz}"
 export LC_ALL="${LC_ALL:-$replay_lc_all}"
@@ -102,18 +114,6 @@ fi
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
 EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
-
-if [[ -n "$EXPECTED_WORKTREE_ROOT_INPUT" && -n "$EXPECTED_BRANCH_REF_INPUT" ]]; then
-  VERIFY_LANE_CMD=("$ROOT/scripts/v2/verify_lane_worktree.sh" --expected-worktree-root "$EXPECTED_WORKTREE_ROOT_INPUT" --expected-branch-ref "$EXPECTED_BRANCH_REF_INPUT")
-  if [[ -n "$EXPECTED_HEAD_INPUT" ]]; then
-    VERIFY_LANE_CMD+=(--expected-head "$EXPECTED_HEAD_INPUT")
-  fi
-  VERIFY_LANE_OUTPUT="$(${VERIFY_LANE_CMD[@]})"
-  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF_INPUT")"
-else
-  VERIFY_LANE_OUTPUT=""
-  EXPECTED_BRANCH_REF_CANONICAL=""
-fi
 
 echo "[rc] output=$OUT"
 
