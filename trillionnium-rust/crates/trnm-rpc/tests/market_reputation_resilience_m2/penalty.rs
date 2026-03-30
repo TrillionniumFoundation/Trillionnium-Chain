@@ -104,6 +104,14 @@ fn market_match_clamps_negative_reputation_penalty_explainability_to_configured_
     assert_eq!(base_score, 80);
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 4u128 * reputation_weight_unit);
+    assert_eq!(
+        matched["reputation_penalty"].as_u64().expect("reputation_penalty") as u128,
+        penalty
+    );
+    assert_eq!(
+        matched["penalty_amount"].as_u64().expect("penalty_amount") as u128,
+        penalty
+    );
     assert_eq!(matched["reputation_score_delta"], 8);
     assert_eq!(final_score, base_score + penalty);
     assert_eq!(effective_score, final_score);
@@ -218,6 +226,14 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(base_score, 80);
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 3u128 * reputation_weight_unit);
+    assert_eq!(
+        matched["reputation_penalty"].as_u64().expect("reputation_penalty") as u128,
+        penalty
+    );
+    assert_eq!(
+        matched["penalty_amount"].as_u64().expect("penalty_amount") as u128,
+        penalty
+    );
     assert_eq!(matched["reputation_score_delta"], 6);
     assert_eq!(final_score, base_score + penalty);
     assert_eq!(effective_score, final_score);

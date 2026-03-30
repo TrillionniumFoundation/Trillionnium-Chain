@@ -4475,6 +4475,8 @@ fn main() -> Result<()> {
                 "reputation_reward": reputation_reward,
                 "reputation_reward_amount": reputation_reward,
                 "penalty": penalty,
+                "reputation_penalty": penalty,
+                "penalty_amount": penalty,
                 "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
                 "effective_score": winner_score,
