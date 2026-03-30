@@ -1054,17 +1054,34 @@ mod tests {
         let mut shipped_nodes = Vec::new();
         let mut bootstrap_loopback_ips = HashSet::new();
 
-        for (index, config_path) in [
-            "trillionnium-rust/configs/node1.toml",
-            "trillionnium-rust/configs/node2.toml",
-            "trillionnium-rust/configs/node3.toml",
-            "trillionnium-rust/configs/node4.toml",
+        for (index, (config_path, workspace_relative_path)) in [
+            ("trillionnium-rust/configs/node1.toml", "configs/node1.toml"),
+            ("trillionnium-rust/configs/node2.toml", "configs/node2.toml"),
+            ("trillionnium-rust/configs/node3.toml", "configs/node3.toml"),
+            ("trillionnium-rust/configs/node4.toml", "configs/node4.toml"),
         ]
         .into_iter()
         .enumerate()
         {
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
+            let workspace_relative_cfg = load_config(workspace_relative_path).unwrap_or_else(|err| {
+                panic!(
+                    "{workspace_relative_path} should remain loadable for bootstrap/rejoin path anchoring: {err:#}"
+                )
+            });
+            assert_eq!(
+                workspace_relative_cfg.node_id, cfg.node_id,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
+            );
+            assert_eq!(
+                workspace_relative_cfg.rpc_addr, cfg.rpc_addr,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap rpc_addr as {config_path}"
+            );
+            assert_eq!(
+                workspace_relative_cfg.p2p_addr, cfg.p2p_addr,
+                "{workspace_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
+            );
             let expected_node_id = format!("node{}", index + 1);
             let expected_p2p_port = 26_656 + (index as u16) * 1_000;
             let expected_rpc_port = expected_p2p_port + 1;
