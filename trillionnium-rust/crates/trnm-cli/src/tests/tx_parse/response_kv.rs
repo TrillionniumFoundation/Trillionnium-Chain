@@ -200,6 +200,15 @@ fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
 }
 
 #[test]
+fn tx_query_parse_kv_tolerates_guillemet_and_lenticular_wrapped_status() {
+    let kv = "transactionHash=0xBEEF43\nstatus=«confirmed»\nerror=【null】\n";
+    let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xbeef43");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_kv_infers_status_from_hyphenated_code_aliases() {
     let tx_code = "tx_hash=0x704\ntx-code=0\n";
     let parsed_tx_code = parse_tx_query_response(tx_code, "0xfallback").unwrap();
