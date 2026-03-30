@@ -172,7 +172,7 @@ mod tests {
     }
 
     #[test]
-    fn market_score_breakdown_keeps_zero_reputation_delta_neutral() {
+    fn market_score_breakdown_keeps_zero_reputation_delta_neutral_runtime_surface() {
         let breakdown = market_score_breakdown(
             42,
             0,
