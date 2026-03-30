@@ -84,6 +84,37 @@ fi
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
 [ -f "$MANIFEST_PATH" ] || { echo "missing manifest file: $MANIFEST_PATH" >&2; exit 1; }
 
+canonical_path() {
+  local path="$1"
+  if [ -d "$path" ]; then
+    (cd "$path" && pwd -P)
+  else
+    local dir base
+    dir="$(cd "$(dirname "$path")" && pwd -P)"
+    base="$(basename "$path")"
+    printf '%s/%s\n' "$dir" "$base"
+  fi
+}
+
+assert_path_under_root() {
+  local label="$1"
+  local path="$2"
+  local root="$3"
+  local canonical root_canonical
+  canonical="$(canonical_path "$path")"
+  root_canonical="$(canonical_path "$root")"
+  case "$canonical" in
+    "$root_canonical"/*) ;;
+    *)
+      printf '%s escapes resolved TRNM root: %s (root=%s)\n' "$label" "$canonical" "$root_canonical" >&2
+      exit 1
+      ;;
+  esac
+}
+
+assert_path_under_root summary "$SUMMARY_PATH" "$TRNM_ROOT"
+assert_path_under_root manifest "$MANIFEST_PATH" "$TRNM_ROOT"
+
 require_key() {
   local path="$1"
   local key="$2"
