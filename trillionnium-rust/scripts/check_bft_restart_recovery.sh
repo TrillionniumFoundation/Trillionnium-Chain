@@ -8,11 +8,14 @@ Usage: check_bft_restart_recovery.sh [--help]
 Runs the BFT restart-recovery drill against configs/node1.toml.
 
 Environment:
-  RUNS   Number of restart-recovery rehearsal cycles to execute (default: 5)
+  RUNS                   Number of restart-recovery rehearsal cycles to execute (default: 5)
+  EXPECTED_WORKTREE_ROOT Optional fail-closed worktree root to capture in replay metadata
+  EXPECTED_BRANCH_REF    Optional fail-closed branch ref to capture in replay metadata
+  EXPECTED_HEAD          Optional fail-closed HEAD sha to capture in replay metadata
 
 Outputs:
   Writes a PASS report under run/bft-restart-recovery-<timestamp>.txt
-  The report includes config_path, replay_command, and rollback_command fields.
+  The report includes config_path, replay_command, rollback_command, and resolved git identity fields.
 EOF
 }
 
@@ -33,6 +36,13 @@ esac
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
 
 CONFIG_PATH="configs/node1.toml"
 [ -f "$CONFIG_PATH" ] || {
@@ -58,7 +68,26 @@ WAL_DIR="$OUT_DIR/consensus-wal-restart-$TS"
 PRE_LOG_GLOB="$OUT_DIR/bft-restart-pre-${TS}-*.log"
 POST_LOG_GLOB="$OUT_DIR/bft-restart-post-${TS}-*.log"
 GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-REPLAY_COMMAND="env RUNS='${RUNS}' ./scripts/check_bft_restart_recovery.sh"
+GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH_NAME="$(git branch --show-current 2>/dev/null || true)"
+if [ -n "$GIT_BRANCH_NAME" ]; then
+  GIT_BRANCH_REF="refs/heads/$GIT_BRANCH_NAME"
+else
+  GIT_BRANCH_REF="<detached>"
+fi
+GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+REPLAY_COMMAND="env RUNS='${RUNS}'"
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
+  REPLAY_COMMAND+=" EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
+fi
+if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  REPLAY_COMMAND+=" EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
+fi
+if [ -n "${EXPECTED_HEAD:-}" ]; then
+  REPLAY_COMMAND+=" EXPECTED_HEAD='${EXPECTED_HEAD}'"
+fi
+REPLAY_COMMAND+=" ./scripts/check_bft_restart_recovery.sh"
 ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR") && find $(printf '%q' "$OUT_DIR") -maxdepth 1 -type f \\( -name 'bft-restart-pre-${TS}-*.log' -o -name 'bft-restart-post-${TS}-*.log' \\) -delete"
 mkdir -p "$OUT_DIR" "$WAL_DIR"
 
@@ -132,6 +161,12 @@ done
   echo "config_path=$CONFIG_PATH"
   echo "report=$REPORT"
   echo "wal_dir=$WAL_DIR"
+  echo "git_worktree_root=$GIT_WORKTREE_ROOT"
+  echo "git_branch_ref=$GIT_BRANCH_REF"
+  echo "git_head=$GIT_HEAD"
+  echo "expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}"
+  echo "expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}"
+  echo "expected_head=${EXPECTED_HEAD:-<unset>}"
   echo "pre_log_glob=$OUT_DIR/bft-restart-pre-${TS}-*.log"
   echo "post_log_glob=$OUT_DIR/bft-restart-post-${TS}-*.log"
   echo "replay_command=$REPLAY_COMMAND"
