@@ -6499,6 +6499,29 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_wal_state_root_with_edge
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_wal_state_root() {
+    let canonical_root = "ab".repeat(32);
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: format!("{}\u{200B}", canonical_root),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_none(),
+        "DA/light-verifier summaries must fail closed on zero-width WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex mirror the same bytes"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_wal_state_root_with_edge_whitespace_even_when_checkpoint_matches() {
     let canonical_root = "ab".repeat(32);
     let wal = WalMeta {
