@@ -76,3 +76,43 @@ fn reserve_only_normal_borrow_keeps_queue_counts_and_seen_global_in_sync() {
     assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.seen_global.len(), 0);
 }
+
+#[test]
+fn reserve_guarded_cross_class_duplicate_probe_keeps_qos_and_counts_flat() {
+    let mut g = LaneAdmissionGate::new(5, 2);
+
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (3, 1, 4));
+
+    let guarded_snapshot = LaneQosSnapshot {
+        normal_queued: 3,
+        critical_queued: 1,
+        total_queued: 4,
+        normal_headroom: 0,
+        critical_headroom: 1,
+        total_headroom: 1,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: true,
+    };
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+    // Fresh normal ingress is blocked by the final reserved critical slot, but a
+    // queued normal tx retried through the critical path must still stay Duplicate
+    // and must not perturb operator-facing QoS/accounting.
+    assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), guarded_snapshot);
+    assert_eq!(g.queued_counts(), (3, 1, 4));
+    assert_eq!(g.seen_global.len(), 4);
+
+    // Once the original queued normal copy drains, the same tx id may re-enter as
+    // fresh through the opposite class.
+    assert_eq!(g.pop_ready(), Some(70));
+    assert_eq!(g.pop_ready(), Some(1));
+    assert_eq!(g.pop_ready(), Some(2));
+    assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+}
