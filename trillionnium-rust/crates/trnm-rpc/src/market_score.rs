@@ -110,17 +110,18 @@ pub(crate) fn market_score_breakdown(
 ) -> MarketScoreBreakdown {
     let effective_reputation = clamp_reputation_for_market(reputation, cfg);
     let base_score = price.saturating_mul(cfg.price_weight);
-    if effective_reputation > 0 {
+    if effective_reputation >= 0 {
         let reputation_reward = (effective_reputation as u128).saturating_mul(cfg.reputation_weight);
+        let score_floor_applied = effective_reputation > 0 && reputation_reward >= base_score;
         MarketScoreBreakdown {
             effective_reputation,
             base_score,
             reputation_reward,
             penalty: 0,
             effective_score: base_score.saturating_sub(reputation_reward),
-            score_floor_applied: reputation_reward >= base_score,
+            score_floor_applied,
         }
-    } else if effective_reputation < 0 {
+    } else {
         let penalty = (effective_reputation.unsigned_abs() as u128)
             .saturating_mul(cfg.reputation_weight);
         MarketScoreBreakdown {
@@ -129,15 +130,6 @@ pub(crate) fn market_score_breakdown(
             reputation_reward: 0,
             penalty,
             effective_score: base_score.saturating_add(penalty),
-            score_floor_applied: false,
-        }
-    } else {
-        MarketScoreBreakdown {
-            effective_reputation,
-            base_score,
-            reputation_reward: 0,
-            penalty: 0,
-            effective_score: base_score,
             score_floor_applied: false,
         }
     }
