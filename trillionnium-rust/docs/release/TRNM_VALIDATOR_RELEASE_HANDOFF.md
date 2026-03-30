@@ -253,6 +253,8 @@ printf 'manifest_path=%s\n' "$manifest_path"
 Operator rule:
 - if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
 - quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
+- path resolution alone is **not** lane-identity proof: after resolving the files, also verify the artifact `git_worktree_path=` / `git_worktree_branch_ref=` against the lane-assigned worktree/ref from the ticket instead of assuming “latest artifact under this checkout” is automatically the assigned lane
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step
 
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
