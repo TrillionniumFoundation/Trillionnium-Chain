@@ -595,9 +595,9 @@ pub fn validate_snapshot_observed(
             observation.quorum_reject_total = 1;
             Some("quorum".to_string())
         }
-        Err(OracleError::SnapshotHashMismatch { .. }) => {
+        Err(err @ OracleError::SnapshotHashMismatch { .. }) => {
             observation.quorum_reject_total = 1;
-            Some(result.as_ref().err().expect("error result").to_string())
+            Some(err.to_string())
         }
         Err(OracleError::DeviationExceeded { .. }) => {
             observation.drift_reject_total = 1;
