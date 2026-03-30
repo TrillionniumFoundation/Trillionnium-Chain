@@ -65,6 +65,9 @@ cargo test -p trnm-state -p trnm-node
 - `next startup height: <H>`
   - 含义：这是 metadata-only recovery 拒绝路径里最值得记录的恢复落点，表示**如果后续改为可恢复路径或补齐状态快照，节点理论上会从哪个高度继续**。
   - 读取建议：把它与 `[bft-recover] restored height=<H0> ...` 一起抄进 incident note；若两者不一致，优先以拒绝报错里的 `next startup height` 作为“预期继续高度”，再回查是否发生了 WAL 尾部截断或 checkpoint 漂移。
+- `last retained checkpoint: <H|none>`
+  - 含义：这是 metadata-only recovery 拒绝报错里最直接的 checkpoint 落点字段，表示恢复扫描最终认定还能一起保留的 checkpoint 高度；`none` 说明当前只能依赖保留的 WAL 元数据继续判断，不能假设存在可直接落脚的 checkpoint。
+  - 读取建议：若同时出现 `no retained checkpoint metadata`，优先把这里的原始值原样记入 incident note；若这里是具体高度，再与 `[bft-recover] restored ... checkpoint=<C>` 互相核对，二者不一致时应优先回查是否发生了 WAL 尾部截断、checkpoint 漂移或目录看错。
 - `verified WAL/checkpoint metadata`
   - 含义：恢复流程已经确认当前保留下来的 WAL/checkpoint 元数据链自洽；它只说明“元数据校验通过”，**不**等于应用状态已经恢复完成，必须和 `refusing metadata-only recovery` / `next startup height` 一起解读。
 - `[bft-recover] restored height=<H> lock=<L> checkpoint=<C> truncated=<true|false> metadata_only_recovery=<true|false>`
