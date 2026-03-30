@@ -144,6 +144,7 @@ if [ -n "$PREFLIGHT_PATH" ]; then
   assert_equal preflight.git_head_state preflight "$preflight_head_state" summary "$summary_head_state"
   assert_equal preflight.git_worktree_path preflight "$preflight_worktree_path" summary "$summary_worktree_path"
   assert_equal preflight.git_worktree_branch_ref preflight "$preflight_worktree_branch_ref" summary "$summary_worktree_branch_ref"
+  assert_equal preflight.lane_verify_command preflight "$preflight_lane_verify_command" summary "$summary_lane_verify_command"
 fi
 
 if [ -n "$PREFLIGHT_PATH" ]; then
