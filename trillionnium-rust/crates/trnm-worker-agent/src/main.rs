@@ -779,7 +779,7 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
         if trimmed.is_empty() {
             None
         } else {
-            Some(trimmed)
+            normalize_candidate_tx_hash(&trimmed).or(Some(trimmed))
         }
     })
 }
