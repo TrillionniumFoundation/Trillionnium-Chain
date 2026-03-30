@@ -3410,6 +3410,16 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_workspace_prefixed_defaults_to_workspace_configs_dir() {
+        let resolved = resolve_config_path("trillionnium-rust/configs/node1.toml");
+        assert!(
+            resolved.ends_with(std::path::Path::new("trillionnium-rust/configs/node1.toml")),
+            "resolved path should preserve workspace-prefixed bootstrap defaults: {}",
+            resolved.display()
+        );
+    }
+
+    #[test]
     fn load_config_accepts_legacy_repo_root_relative_default_path() {
         let cfg = load_config("configs/node1.toml")
             .expect("repo-root launches should resolve legacy default config path");
