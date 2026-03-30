@@ -696,6 +696,92 @@ fn task_metering_schema_should_affect_state_root_even_when_receipt_and_policy_ma
 }
 
 #[test]
+fn task_metering_work_units_should_affect_state_root_even_when_receipt_metadata_matches() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 8_004_2,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("checkpoint-linked verifier task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test".into()),
+                produced_at: Some("2026-03-12T06:45:00Z".into()),
+                provenance_index: Some("prov-metering-2b".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "da-light-verifier".into(),
+                metering_schema: "metering.v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 120,
+                generated_tokens: 45,
+                decode_steps: 17,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 88,
+                prompt_token_weight: 2,
+                generated_token_weight: 3,
+                decode_step_weight: 5,
+                kv_byte_weight: 7,
+                min_accept_work_units: 55,
+                challenge_success_bounty_base: 13,
+                challenge_success_bounty_per_work_unit_num: 2,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 3,
+                worker_completion_bonus_per_work_unit_den: 2,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 4,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .unwrap()
+        .metering
+        .as_mut()
+        .unwrap()
+        .normalized_work_units = 89;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root must include metering normalized_work_units so DA light-verifier checkpoint evidence with different audited work-unit totals cannot hash identically when receipt metadata matches"
+    );
+}
+
+#[test]
 fn task_provenance_privacy_tier_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
