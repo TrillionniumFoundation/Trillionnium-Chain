@@ -5225,6 +5225,42 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_empty_access_samples_break_hot_streak_continuity() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.656");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.30");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..16u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+        for i in 16..32u64 {
+            txs.push(tx(i, vec![], vec![]));
+        }
+        for i in 32..48u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+        for i in 48..64u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "below_streak_budget");
+        assert!((d.hot_key_share - (32.0 / 48.0)).abs() < 1e-12);
+        assert!((d.streak_ratio - (30.0 / 46.0)).abs() < 1e-12);
+        assert!(
+            d.streak_ratio < d.streak_threshold + d.min_margin,
+            "empty-access samples must break streak continuity instead of stitching hotspot runs together"
+        );
+    }
+
+    #[test]
     fn auto_adaptive_sub_min_batch_hotspots_stay_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
