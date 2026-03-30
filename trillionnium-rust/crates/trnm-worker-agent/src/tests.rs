@@ -1109,6 +1109,17 @@ fn parse_tx_hash_accepts_angle_bracket_wrapped_receipts() {
 }
 
 #[test]
+fn parse_tx_hash_accepts_fullwidth_bracket_wrapped_receipts() {
+    let shell = parse_tx_hash("[adapter] commit accepted tx_hash=（0xDEADBEEF）")
+        .expect("fullwidth parenthesis shell receipt hash should parse");
+    assert_eq!(shell, "deadbeef");
+
+    let json = parse_tx_hash("adapter stdout: {\"tx_hash\": \"【0xFACECAFE】\"}")
+        .expect("fullwidth bracket json receipt hash should parse");
+    assert_eq!(json, "facecafe");
+}
+
+#[test]
 fn parse_tx_hash_accepts_short_failure_receipts_without_0x_prefix() {
     let parsed = parse_tx_hash("[adapter] simulated failure tx_hash=deadbeef")
         .expect("short failure receipt hash should parse");

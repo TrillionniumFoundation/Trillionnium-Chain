@@ -438,20 +438,46 @@ fn is_receipt_quote_wrapper(ch: char) -> bool {
     )
 }
 
+fn is_receipt_bracket_wrapper(ch: char) -> bool {
+    matches!(
+        ch,
+        '(' | ')'
+            | '['
+            | ']'
+            | '{'
+            | '}'
+            | '<'
+            | '>'
+            | '（'
+            | '）'
+            | '［'
+            | '］'
+            | '｛'
+            | '｝'
+            | '＜'
+            | '＞'
+            | '【'
+            | '】'
+            | '〔'
+            | '〕'
+            | '〖'
+            | '〗'
+    )
+}
+
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(
-                    c,
-                    ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<'
-                )
+                || is_receipt_bracket_wrapper(c)
+                || matches!(c, ',' | ';' | '.' | ':' | '，' | '；' | '。' | '：')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
         .trim_end_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(c, ',' | ';' | '}' | ']' | '>')
+                || is_receipt_bracket_wrapper(c)
+                || matches!(c, ',' | ';' | '，' | '；')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
@@ -633,7 +659,7 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                     || ch.is_control()
                     || is_invisible_filler(ch)
                     || is_receipt_quote_wrapper(ch)
-                    || matches!(ch, '(' | '[' | '{' | '<')
+                    || is_receipt_bracket_wrapper(ch)
             });
             if let Some(rest) = candidate.strip_prefix('\\') {
                 if rest.chars().next().is_some_and(is_receipt_quote_wrapper) {
@@ -715,7 +741,12 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                 if let Some(parsed) = parse_hash_from_suffix(suffix) {
                     return Some(parsed);
                 }
-                remainder = &suffix[1.min(suffix.len())..];
+                let advance = suffix
+                    .char_indices()
+                    .nth(1)
+                    .map(|(idx, _)| idx)
+                    .unwrap_or(suffix.len());
+                remainder = &suffix[advance..];
             }
         }
     }
