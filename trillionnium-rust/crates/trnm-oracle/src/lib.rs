@@ -496,9 +496,18 @@ impl OracleValidationReport {
             .is_some_and(|label| !label.is_empty())
     }
 
+    fn has_explicit_unclassified_error_label(&self) -> bool {
+        self.error
+            .as_deref()
+            .map(str::trim)
+            .is_some_and(|label| {
+                !label.is_empty() && !matches!(label, "stale" | "quorum" | "drift")
+            })
+    }
+
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
         !self.ok
-            && self.has_non_empty_error_label()
+            && self.has_explicit_unclassified_error_label()
             && self.metrics.accepted_total == 0
             && self.classified_reject_total() == 0
             && self.observation_classified_reject_total() == 0
@@ -3163,6 +3172,33 @@ mod tests {
         assert!(report.error.is_some());
         report.error = Some(" \n\t ".to_string());
 
+        assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_classified_error_label_without_classified_counters() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert_eq!(report.error.as_deref(), Some("rate"));
+        report.error = Some("quorum".to_string());
+
+        assert_eq!(report.metrics.classified_reject_total(), 0);
+        assert_eq!(report.observation.classified_reject_total(), 0);
         assert!(!report.bridge_contract_consistent());
     }
 }
