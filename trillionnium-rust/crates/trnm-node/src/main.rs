@@ -1519,6 +1519,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !rpc_addr.contains("://"),
+        "invalid node config {}: rpc_addr must be a raw socket address, not a URL",
+        path
+    );
+    anyhow::ensure!(
         !rpc_addr.contains('/') && !rpc_addr.contains('\\'),
         "invalid node config {}: rpc_addr must not contain path separators (/ \\)",
         path
@@ -1569,6 +1574,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains("://"),
+        "invalid node config {}: p2p_addr must be a raw socket address, not a URL",
         path
     );
     anyhow::ensure!(
@@ -4042,6 +4052,47 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must not contain path separators"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_url_style_operator_addresses() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-url-style-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"http://127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("URL-style rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must be a raw socket address, not a URL"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-url-style-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"tcp://127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("URL-style p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must be a raw socket address, not a URL"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
