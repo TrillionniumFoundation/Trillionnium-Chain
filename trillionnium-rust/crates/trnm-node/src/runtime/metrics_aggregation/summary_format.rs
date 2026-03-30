@@ -235,6 +235,46 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_rollback_height_alias_operator_visible_once_each() {
+        let mut metrics = RuntimeMetrics::new(3);
+        metrics.rollback_block_total = 2;
+        metrics.bft_observed_heights = 5;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.rollback_active_heights = 2;
+        stats.rollback_block_rate = 0.666_667;
+        stats.rollback_block_rate_ppm = 666_666;
+        stats.rollback_active_height_rate_ppm = 666_666;
+        stats.rollback_active_observed_height_rate_ppm = 400_000;
+        stats.rollback_density_avg = 3;
+        stats.rollback_density_avg_milli = 3_500;
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        assert_eq!(summary.matches("rollback_block_total=").count(), 1);
+        assert_eq!(summary.matches("rollback_active_heights=").count(), 1);
+        assert!(summary.contains("rollback_block_total=2"));
+        assert!(summary.contains("rollback_active_heights=2"));
+        assert!(summary.contains("rollback_block_rate=0.666667"));
+        assert!(summary.contains("rollback_block_rate_ppm=666666"));
+        assert!(summary.contains("rollback_active_height_rate_ppm=666666"));
+        assert!(summary.contains("rollback_active_observed_height_rate_ppm=400000"));
+        assert!(summary.contains("rollback_density_avg=3"));
+        assert!(summary.contains("rollback_density_avg_milli=3500"));
+
+        let block_total_idx = summary.find("rollback_block_total=2").unwrap();
+        let active_heights_idx = summary.find("rollback_active_heights=2").unwrap();
+        let block_rate_idx = summary.find("rollback_block_rate=0.666667").unwrap();
+        let block_rate_ppm_idx = summary.find("rollback_block_rate_ppm=666666").unwrap();
+        let active_rate_idx = summary.find("rollback_active_height_rate_ppm=666666").unwrap();
+
+        assert!(block_total_idx < active_heights_idx);
+        assert!(active_heights_idx < block_rate_idx);
+        assert!(block_rate_idx < block_rate_ppm_idx);
+        assert!(block_rate_ppm_idx < active_rate_idx);
+    }
+
+    #[test]
     fn runtime_summary_line_keeps_stale_auth_reject_alias_operator_visible_once_each() {
         let mut metrics = RuntimeMetrics::new(2);
         metrics.bft_auth_reject_stale_nonce_total = 17;
