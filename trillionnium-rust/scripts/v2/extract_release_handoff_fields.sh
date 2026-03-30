@@ -160,6 +160,7 @@ manifest_status_summary="$(require_key "$MANIFEST_PATH" git_status_summary)"
 manifest_worktree_path="$(require_key "$MANIFEST_PATH" git_worktree_path)"
 manifest_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_worktree_branch_ref)"
 manifest_truth_source="$(require_key "$MANIFEST_PATH" truth_source)"
+manifest_lane_verify_command="$(require_key "$MANIFEST_PATH" lane_verify_command)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
@@ -170,6 +171,7 @@ assert_equal git_status_summary summary "$summary_status_summary" manifest "$man
 assert_equal git_worktree_path summary "$summary_worktree_path" manifest "$manifest_worktree_path"
 assert_equal git_worktree_branch_ref summary "$summary_worktree_branch_ref" manifest "$manifest_worktree_branch_ref"
 assert_equal truth_source summary "$summary_truth_source" manifest "$manifest_truth_source"
+assert_equal lane_verify_command summary "$summary_lane_verify_command" manifest "$manifest_lane_verify_command"
 
 if [ -n "$PREFLIGHT_PATH" ]; then
   assert_equal preflight.git_branch preflight "$preflight_branch" summary "$summary_branch"
@@ -203,5 +205,6 @@ printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
 printf 'manifest_git_status_summary=%s\n' "$manifest_status_summary"
 printf 'manifest_truth_source=%s\n' "$manifest_truth_source"
+printf 'manifest_lane_verify_command=%s\n' "$manifest_lane_verify_command"
 printf 'manifest_rollback_command=%s\n' "$manifest_rollback"
 printf 'manifest_replay_command=%s\n' "$manifest_replay"
