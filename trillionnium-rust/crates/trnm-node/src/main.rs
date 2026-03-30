@@ -1467,6 +1467,11 @@ fn hash32_hex(data: &[u8]) -> String {
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
+        cfg.node_id == node_id,
+        "invalid node config {}: node_id must not contain leading or trailing whitespace",
+        path
+    );
+    anyhow::ensure!(
         !node_id.is_empty(),
         "invalid node config {}: node_id must not be empty",
         path
@@ -1498,6 +1503,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
 
     let rpc_addr = cfg.rpc_addr.trim();
+    anyhow::ensure!(
+        cfg.rpc_addr == rpc_addr,
+        "invalid node config {}: rpc_addr must not contain leading or trailing whitespace",
+        path
+    );
     anyhow::ensure!(
         !rpc_addr.is_empty(),
         "invalid node config {}: rpc_addr must not be empty",
@@ -1556,6 +1566,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
 
     let p2p_addr = cfg.p2p_addr.trim();
+    anyhow::ensure!(
+        cfg.p2p_addr == p2p_addr,
+        "invalid node config {}: p2p_addr must not contain leading or trailing whitespace",
+        path
+    );
     anyhow::ensure!(
         !p2p_addr.is_empty(),
         "invalid node config {}: p2p_addr must not be empty",
@@ -3283,19 +3298,45 @@ mod tests {
     }
 
     #[test]
-    fn validate_node_config_trims_outer_whitespace_but_rejects_internal_addr_whitespace() {
-        let cfg = validate_node_config(
+    fn validate_node_config_rejects_outer_and_internal_whitespace_fail_closed() {
+        let node_id_boundary_err = validate_node_config(
             NodeConfig {
                 node_id: " node-a ".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("outer node_id whitespace must be rejected");
+        assert!(node_id_boundary_err
+            .to_string()
+            .contains("node_id must not contain leading or trailing whitespace"));
+
+        let rpc_boundary_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
                 rpc_addr: " 127.0.0.1:26657\t".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("outer rpc whitespace must be rejected");
+        assert!(rpc_boundary_err
+            .to_string()
+            .contains("rpc_addr must not contain leading or trailing whitespace"));
+
+        let p2p_boundary_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
                 p2p_addr: "\n127.0.0.1:26656 ".into(),
             },
             "node.toml",
         )
-        .expect("outer whitespace should be trimmed");
-        assert_eq!(cfg.node_id, "node-a");
-        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
-        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+        .expect_err("outer p2p whitespace must be rejected");
+        assert!(p2p_boundary_err
+            .to_string()
+            .contains("p2p_addr must not contain leading or trailing whitespace"));
 
         let rpc_err = validate_node_config(
             NodeConfig {

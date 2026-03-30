@@ -17,6 +17,11 @@ pub(crate) struct NodeConfig {
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
+        cfg.node_id == node_id,
+        "invalid node config {}: node_id must not contain leading or trailing whitespace",
+        path
+    );
+    anyhow::ensure!(
         !node_id.is_empty(),
         "invalid node config {}: node_id must not be empty",
         path
@@ -49,6 +54,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
+        cfg.rpc_addr == rpc_addr,
+        "invalid node config {}: rpc_addr must not contain leading or trailing whitespace",
+        path
+    );
+    anyhow::ensure!(
         !rpc_addr.is_empty(),
         "invalid node config {}: rpc_addr must not be empty",
         path
@@ -76,6 +86,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
 
     let p2p_addr = cfg.p2p_addr.trim();
+    anyhow::ensure!(
+        cfg.p2p_addr == p2p_addr,
+        "invalid node config {}: p2p_addr must not contain leading or trailing whitespace",
+        path
+    );
     anyhow::ensure!(
         !p2p_addr.is_empty(),
         "invalid node config {}: p2p_addr must not be empty",
@@ -961,6 +976,26 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_leading_or_trailing_whitespace_in_node_id() {
+        for node_id in [" node-a", "node-a ", "\tnode-a\n"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("node_id boundary whitespace must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain leading or trailing whitespace"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_list_separators_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
@@ -1047,6 +1082,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not contain whitespace"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_leading_or_trailing_whitespace_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: " 127.0.0.1:7000 ".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr boundary whitespace must fail");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain leading or trailing whitespace"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "\t127.0.0.1:7001\n".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr boundary whitespace must fail");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain leading or trailing whitespace"),
             "unexpected error: {p2p_err:#}"
         );
     }
