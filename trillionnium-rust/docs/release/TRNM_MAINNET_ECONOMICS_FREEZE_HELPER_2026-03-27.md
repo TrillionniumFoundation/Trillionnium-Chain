@@ -168,6 +168,10 @@ consistency boundaries:
 - `cargo test -p trnm-mempool lane_qos_snapshot_zero_capacity_stability_bound -q`
   - proves hard-stop mode keeps public admission closed even under repeated cross-class
     probe noise
+- `cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
+  - proves a fully hard-stopped lane keeps both sponsor-backed and free-ingress retries
+    backpressured across repeated cross-class probes without poisoning tx ids into
+    duplicate state or fabricating any queued admission surface
 - `cargo test -p trnm-mempool lane_zero_capacity_idle_duplicate_metadata_bound -q`
   - proves a zero-budget / hard-stop lane can preserve restored duplicate knowledge for
     already-seen ids without fabricating queue state or re-opening sponsor/free-ingress
@@ -184,6 +188,10 @@ consistency boundaries:
   - proves the first reopened shared slot in reserve-only mode closes again as soon as
     fresh sponsor-backed work actually consumes it, and that later cross-class fresh or
     duplicate probes remain classification-only instead of re-advertising phantom headroom
+- `cargo test -p trnm-mempool lane_qos_snapshot_guarded_reopen_probe_stability_bound -q`
+  - proves partially reopened capacity does not falsely widen free-ingress observability:
+    when the last reserved critical slot is still guarded, repeated fresh-normal and
+    cross-class probe noise stays classification-only and cannot advertise phantom headroom
 - `cargo test -p trnm-mempool lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
   - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
     immediately after the borrowed occupant drains, without requiring an extra idle
