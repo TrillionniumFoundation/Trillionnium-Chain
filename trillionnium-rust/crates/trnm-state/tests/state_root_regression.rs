@@ -6109,6 +6109,26 @@ fn checkpoint_commitment_and_wal_content_hash_length_frame_adjacent_fields() {
 }
 
 #[test]
+fn wal_content_hash_committed_bit_must_affect_checkpoint_evidence_digest() {
+    let committed = WalMeta {
+        height: 12,
+        round: 3,
+        proposal_hash: "proposal-12".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let mut uncommitted = committed.clone();
+    uncommitted.committed = false;
+
+    assert_ne!(
+        committed.content_hash_hex(),
+        uncommitted.content_hash_hex(),
+        "WAL checkpoint evidence digest must include the committed bit so proof-facing metadata cannot hash the same across committed and speculative entries"
+    );
+}
+
+#[test]
 fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_forbidden_layout() {
     let wal = WalMeta {
         height: 9,
