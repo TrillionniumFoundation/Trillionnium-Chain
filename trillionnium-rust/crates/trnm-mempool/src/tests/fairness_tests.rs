@@ -46,6 +46,26 @@ fn reserve_only_mode_keeps_fairness_streak_cold_during_spillover_drains() {
 }
 
 #[test]
+fn oversized_reserve_clamp_keeps_reserve_only_fairness_cold() {
+    let mut g = LaneAdmissionGate::new(2, 99);
+
+    // Misconfigured reserve > total must clamp into reserve-only mode rather than
+    // fabricating dedicated normal capacity or warm fairness state.
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.critical_served_streak, 0);
+
+    // Even if stale fairness state leaked in from recovery, reserve-only dequeue
+    // order must not synthesize a normal turn from the misconfigured split.
+    g.critical_served_streak = g.critical_burst_limit;
+    assert_eq!(g.pop_ready(), Some(10));
+    assert_eq!(g.critical_served_streak, 0);
+    assert_eq!(g.pop_ready(), Some(11));
+    assert_eq!(g.critical_served_streak, 0);
+}
+
+#[test]
 fn critical_spillover_warms_normal_fairness_like_direct_normal_admission() {
     let mut g = LaneAdmissionGate::new(4, 2);
 
