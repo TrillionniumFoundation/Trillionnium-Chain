@@ -13369,6 +13369,30 @@ locked_block_hash = "stale-lock"
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn persist_consensus_wal_surfaces_write_path_for_operator_triage() {
+        let wal_dir = temp_wal_dir("persist-wal-write-failure");
+        fs::create_dir_all(wal_file(&wal_dir)).unwrap();
+
+        let wal_path = wal_file(&wal_dir);
+        let err = persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 3,
+                last_round: 1,
+                locked_block_hash: Some("ab".repeat(32)),
+            },
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("write wal failed") && err.contains(&wal_path.display().to_string()),
+            "unexpected write error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
 
 fn main() -> Result<()> {
