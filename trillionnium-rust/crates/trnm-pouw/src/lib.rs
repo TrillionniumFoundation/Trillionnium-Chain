@@ -2085,7 +2085,16 @@ pub fn apply_timeout(
         ));
     }
 
-    validate_challenge_accounting_invariants(&task)?;
+    if let Err(err) = validate_challenge_accounting_invariants(&task) {
+        if matches!(task.status, TaskStatus::Challenged) {
+            // Fail closed on challenged-task metadata drift: timeout cannot
+            // proceed, and any previously staged multisig resolve approval must
+            // be scrubbed so stale partial authorizations do not survive the
+            // now-invalid dispute record.
+            st.clear_pending_resolve_approval(task_ref.id);
+        }
+        return Err(err);
+    }
 
     if matches!(task.status, TaskStatus::Completed | TaskStatus::Slashed)
         && task.challenge_window_blocks_snapshot.is_some()
