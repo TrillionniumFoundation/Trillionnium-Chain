@@ -945,6 +945,19 @@ fn tx_retry_policy_accepts_fullwidth_digits_and_signs_from_env_values() {
 }
 
 #[test]
+fn tx_retry_policy_trims_fullwidth_spaces_around_unicode_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("　＋３　"), Some("　４５０　"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 3,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_ignores_embedded_invisible_fillers_in_env_values() {
     let policy = resolve_tx_retry_policy_from_sources(
         None,
