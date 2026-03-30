@@ -85,6 +85,23 @@ require_key() {
   printf '%s' "$value"
 }
 
+require_block() {
+  local path="$1"
+  local begin_key="$2"
+  local end_key="$3"
+  local value
+  value="$(awk -v begin="$begin_key" -v end="$end_key" '
+    $0 == begin { in_block=1; found_begin=1; next }
+    $0 == end { found_end=1; in_block=0; exit }
+    in_block { print }
+    END { if (!found_begin || !found_end) exit 1 }
+  ' "$path")" || {
+    printf 'missing %s/%s block in %s\n' "$begin_key" "$end_key" "$path" >&2
+    exit 1
+  }
+  printf '%s' "$value"
+}
+
 canonicalize_branch_ref() {
   local ref="$1"
   case "$ref" in
@@ -122,6 +139,7 @@ summary_worktree_path="$(require_key "$SUMMARY_PATH" git_worktree_path)"
 summary_worktree_branch_ref="$(require_key "$SUMMARY_PATH" git_worktree_branch_ref)"
 summary_expected_worktree_branch_ref="$(require_key "$SUMMARY_PATH" git_expected_worktree_branch_ref)"
 summary_worktree_branch_ref_match="$(require_key "$SUMMARY_PATH" git_worktree_branch_ref_match)"
+summary_worktree_entry="$(require_block "$SUMMARY_PATH" git_worktree_entry_begin git_worktree_entry_end)"
 summary_truth_source="$(require_key "$SUMMARY_PATH" truth_source)"
 summary_historical_evidence_only="$(require_key "$SUMMARY_PATH" historical_evidence_only)"
 summary_evidence_scope="$(require_key "$SUMMARY_PATH" evidence_scope)"
@@ -147,6 +165,7 @@ manifest_worktree_path="$(require_key "$MANIFEST_PATH" git_worktree_path)"
 manifest_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_worktree_branch_ref)"
 manifest_expected_worktree_branch_ref="$(require_key "$MANIFEST_PATH" git_expected_worktree_branch_ref)"
 manifest_worktree_branch_ref_match="$(require_key "$MANIFEST_PATH" git_worktree_branch_ref_match)"
+manifest_worktree_entry="$(require_block "$MANIFEST_PATH" git_worktree_entry_begin git_worktree_entry_end)"
 manifest_truth_source="$(require_key "$MANIFEST_PATH" truth_source)"
 manifest_historical_evidence_only="$(require_key "$MANIFEST_PATH" historical_evidence_only)"
 manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
@@ -163,6 +182,7 @@ assert_equal git_worktree_path "$summary_worktree_path" "$manifest_worktree_path
 assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_worktree_branch_ref"
 assert_equal git_expected_worktree_branch_ref "$summary_expected_worktree_branch_ref" "$manifest_expected_worktree_branch_ref"
 assert_equal git_worktree_branch_ref_match "$summary_worktree_branch_ref_match" "$manifest_worktree_branch_ref_match"
+assert_equal git_worktree_entry "$summary_worktree_entry" "$manifest_worktree_entry"
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
@@ -205,6 +225,11 @@ printf 'git_worktree_path=%s\n' "$summary_worktree_path"
 printf 'git_worktree_branch_ref=%s\n' "$summary_worktree_branch_ref"
 printf 'git_expected_worktree_branch_ref=%s\n' "$summary_expected_worktree_branch_ref"
 printf 'git_worktree_branch_ref_match=%s\n' "$summary_worktree_branch_ref_match"
+printf 'git_worktree_entry_begin\n'
+if [ -n "$summary_worktree_entry" ]; then
+  printf '%s\n' "$summary_worktree_entry"
+fi
+printf 'git_worktree_entry_end\n'
 printf 'git_status_summary=%s\n' "$summary_git_status_summary"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"
 printf 'manifest_generated_at=%s\n' "$manifest_generated_at"
