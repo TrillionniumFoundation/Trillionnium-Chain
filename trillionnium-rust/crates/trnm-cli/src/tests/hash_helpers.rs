@@ -34,6 +34,27 @@ fn extract_tx_hash_accepts_uppercase_0x_prefix() {
 }
 
 #[test]
+fn extract_tx_hash_accepts_uppercase_prefixed_hashes_and_json_aliases() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=0xDEADBEEFCAFEBABE").as_deref(),
+        Some("0xdeadbeefcafebabe")
+    );
+    assert_eq!(
+        extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
+        Some("abcdef012345")
+    );
+}
+
+#[test]
+fn extract_tx_hash_accepts_nested_json_wrappers() {
+    let wrapped = "{\"result\":{\"tx_response\":{\"txhash\":\"0xABC123\"}}}";
+    assert_eq!(extract_tx_hash(wrapped).as_deref(), Some("0xabc123"));
+
+    let response = "{\"response\":{\"data\":{\"transactionHash\":\"BEEF4567\"}}}";
+    assert_eq!(extract_tx_hash(response).as_deref(), Some("beef4567"));
+}
+
+#[test]
 fn extract_tx_hash_rejects_non_hex_prefixed_values() {
     assert_eq!(extract_tx_hash("tx_hash=0xzz99").as_deref(), None);
     assert_eq!(
