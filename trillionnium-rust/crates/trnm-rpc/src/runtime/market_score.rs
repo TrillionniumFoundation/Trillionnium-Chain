@@ -440,6 +440,27 @@ mod tests {
     }
 
     #[test]
+    fn market_score_breakdown_marks_zero_price_positive_reputation_as_floor_applied() {
+        let breakdown = market_score_breakdown(
+            0,
+            5,
+            MarketScoreConfig {
+                price_weight: 11,
+                reputation_weight: 13,
+                reputation_clamp: 10,
+            },
+        );
+
+        assert_eq!(breakdown.effective_reputation, 5);
+        assert_eq!(breakdown.base_score, 0);
+        assert_eq!(breakdown.reputation_reward, 65);
+        assert_eq!(breakdown.penalty, 0);
+        assert_eq!(breakdown.effective_score, 0);
+        assert!(breakdown.score_floor_applied);
+        assert_eq!(market_reputation_score_delta(&breakdown), -65);
+    }
+
+    #[test]
     fn market_score_breakdown_clamps_out_of_range_reputation_symmetrically() {
         let cfg = MarketScoreConfig {
             price_weight: 10,
