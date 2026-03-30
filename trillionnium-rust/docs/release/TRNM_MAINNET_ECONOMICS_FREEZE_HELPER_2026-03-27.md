@@ -147,6 +147,7 @@ TRNM mainnet economics freeze review
 - retention budget exhaustion fallback:
 - anti-spam floor / sustained-load rule:
 - override authority:
+- override timelock or emergency bypass:
 - mempool evidence gate(s):
 - state evidence gate(s):
 - tightening rollback action:
