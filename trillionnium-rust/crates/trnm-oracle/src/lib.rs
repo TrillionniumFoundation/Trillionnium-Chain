@@ -3115,6 +3115,33 @@ mod tests {
     }
 
     #[test]
+    fn bridge_contract_consistent_accepts_unclassified_update_rate_fail_closed_report() {
+        let report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("rate"));
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.classified_reject_total(), 0);
+        assert!(report.has_explicit_unclassified_failure_accounting());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn bridge_contract_consistent_rejects_blank_unclassified_error_label() {
         let mut report = validate_snapshot_observed(
             &policy(),
