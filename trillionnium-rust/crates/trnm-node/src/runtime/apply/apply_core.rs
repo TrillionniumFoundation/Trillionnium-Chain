@@ -82,6 +82,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         )
     })?;
     anyhow::ensure!(
+        rpc_addr == rpc_socket.to_string(),
+        "invalid node config {}: rpc_addr must use a canonical socket address literal",
+        path
+    );
+    anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
         path
@@ -145,6 +150,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         )
     })?;
     anyhow::ensure!(
+        p2p_addr == p2p_socket.to_string(),
+        "invalid node config {}: p2p_addr must use a canonical socket address literal",
+        path
+    );
+    anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
         path
@@ -206,10 +216,17 @@ fn resolve_config_path(path: &str) -> std::path::PathBuf {
     }
 
     let workspace_root = workspace_root();
-    let workspace_anchor = workspace_root
-        .file_name()
-        .map(std::path::Path::new)
-        .and_then(|anchor| requested.strip_prefix(anchor).ok())
+    let workspace_anchor = workspace_root.file_name().map(std::path::Path::new);
+    let workspace_anchor = workspace_anchor
+        .and_then(|anchor| {
+            requested.strip_prefix(anchor).ok().or_else(|| {
+                requested
+                    .strip_prefix(std::path::Path::new("."))
+                    .ok()?
+                    .strip_prefix(anchor)
+                    .ok()
+            })
+        })
         .unwrap_or(requested);
     let workspace_relative = workspace_root.join(workspace_anchor);
     if workspace_relative.exists() {
@@ -534,6 +551,27 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_curdir_prefixed_workspace_path_to_workspace_root() {
+        let resolved = resolve_config_path("./trillionnium-rust/configs/node1.toml");
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        assert_eq!(resolved, workspace_root.join("configs/node1.toml"));
+        assert!(resolved.is_file(), "expected shipped node1 config to exist");
+    }
+
+    #[test]
+    fn load_config_accepts_curdir_prefixed_workspace_path_for_shipped_bootstrap_config() {
+        let cfg = load_config("./trillionnium-rust/configs/node1.toml")
+            .expect("curdir-prefixed workspace bootstrap config should resolve");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
     fn resolve_config_path_does_not_anchor_parent_traversal_outside_workspace_root() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
@@ -603,6 +641,41 @@ mod tests {
         assert!(
             err_surface.contains("node_id must not contain leading or trailing whitespace"),
             "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_noncanonical_socket_literals() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:026657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("noncanonical rpc_addr literals must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must use a canonical socket address literal"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[0:0:0:0:0:0:0:1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("noncanonical p2p_addr literals must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must use a canonical socket address literal"),
+            "unexpected error: {p2p_err:#}"
         );
     }
 
