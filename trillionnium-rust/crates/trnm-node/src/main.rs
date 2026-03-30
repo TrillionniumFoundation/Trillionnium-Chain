@@ -4952,6 +4952,33 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_stale_auth_aliases_adjacent_for_operator_triage() {
+        let bad_sig = "bft_auth_reject_bad_sig_total=4";
+        let replay = "bft_auth_reject_replay_total=6";
+        let stale = "bft_auth_reject_stale_total=8";
+        let stale_nonce = "bft_auth_reject_stale_nonce_total=8";
+
+        let summary = format!(
+            "[consensus] {} {} {} {}",
+            bad_sig, replay, stale, stale_nonce
+        );
+
+        assert_eq!(summary.matches("bft_auth_reject_stale_total=").count(), 1);
+        assert_eq!(summary.matches("bft_auth_reject_stale_nonce_total=").count(), 1);
+        assert!(summary.contains(stale));
+        assert!(summary.contains(stale_nonce));
+
+        let bad_sig_idx = summary.find(bad_sig).unwrap();
+        let replay_idx = summary.find(replay).unwrap();
+        let stale_idx = summary.find(stale).unwrap();
+        let stale_nonce_idx = summary.find(stale_nonce).unwrap();
+
+        assert!(bad_sig_idx < replay_idx);
+        assert!(replay_idx < stale_idx);
+        assert!(stale_idx < stale_nonce_idx);
+    }
+
+    #[test]
     fn fairness_and_guardrail_review_bundles_keep_skipped_width_adjacent_to_skip_rate() {
         let review_bundles: &[&[&str]] = &[
             &[
