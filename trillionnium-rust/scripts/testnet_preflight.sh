@@ -194,7 +194,17 @@ if [ "$RECOVERY_RUNS" -lt 1 ]; then
   exit 12
 fi
 replay_command="$replay_command RECOVERY_RUNS='${RECOVERY_RUNS}'"
-RECOVERY_REPORT="$(RUNS="$RECOVERY_RUNS" ./scripts/check_bft_restart_recovery.sh | tee -a "$LOG" | tail -n 1 | sed 's/^.*: //')"
+recovery_env=(RUNS="$RECOVERY_RUNS")
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
+  recovery_env+=(EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT")
+fi
+if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  recovery_env+=(EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF")
+fi
+if [ -n "${EXPECTED_HEAD:-}" ]; then
+  recovery_env+=(EXPECTED_HEAD="$EXPECTED_HEAD")
+fi
+RECOVERY_REPORT="$(env "${recovery_env[@]}" ./scripts/check_bft_restart_recovery.sh | tee -a "$LOG" | tail -n 1 | sed 's/^.*: //')"
 if [ -z "$RECOVERY_REPORT" ] || [ ! -f "$RECOVERY_REPORT" ]; then
   log "recovery drill failed: missing restart recovery report"
   exit 12
