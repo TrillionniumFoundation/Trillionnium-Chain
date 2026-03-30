@@ -1019,6 +1019,29 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_rejects_missing_state_root_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-missing-state-root");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                [[checkpoints]]
+                height = 7
+                wal_entry_hash_hex = "bb"
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("missing field") && err.contains("state_root_hex"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
