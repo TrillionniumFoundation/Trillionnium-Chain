@@ -78,6 +78,18 @@ fn wallet_import_hex_check() {
     .unwrap();
     assert_eq!(lenticular_wrapped, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+    let vertical_wrapped = ensure_hex_32_bytes(
+        "〝0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA〞",
+    )
+    .unwrap();
+    assert_eq!(vertical_wrapped, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+    let vertical_single_sided = ensure_hex_32_bytes(
+        "〟0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA〟",
+    )
+    .unwrap();
+    assert_eq!(vertical_single_sided, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
     let corner_quoted = ensure_hex_32_bytes(
         "｢0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA｣",
     )
