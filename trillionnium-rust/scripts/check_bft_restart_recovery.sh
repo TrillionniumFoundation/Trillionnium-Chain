@@ -195,6 +195,7 @@ done
   echo "wal_dir=$WAL_DIR"
   echo "git_worktree_root=$GIT_WORKTREE_ROOT"
   echo "git_worktree_path=$GIT_WORKTREE_ROOT"
+  echo "git_branch=${GIT_BRANCH_NAME:-<detached>}"
   echo "git_branch_ref=$GIT_BRANCH_REF"
   echo "git_worktree_branch_ref=$GIT_BRANCH_REF"
   echo "git_head=$GIT_HEAD"
