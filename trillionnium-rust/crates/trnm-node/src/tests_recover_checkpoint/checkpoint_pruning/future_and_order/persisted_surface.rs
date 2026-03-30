@@ -101,3 +101,57 @@ fn checkpoint_surface_roundtrip_keeps_conflicting_state_roots_distinct_for_same_
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn checkpoint_surface_roundtrip_keeps_same_state_root_distinct_for_different_wal_hashes() {
+    let wal_dir = temp_wal_dir("checkpoint-surface-same-state-root-distinct-wal-hashes");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let original = toml::to_string(&CheckpointMetaList {
+        checkpoints: vec![
+            CheckpointMeta {
+                height: 12,
+                state_root_hex: "root-a".into(),
+                wal_entry_hash_hex: "hash-z".into(),
+            },
+            CheckpointMeta {
+                height: 12,
+                state_root_hex: "root-a".into(),
+                wal_entry_hash_hex: "hash-a".into(),
+            },
+        ],
+    })
+    .unwrap();
+    fs::write(checkpoint_file(&wal_dir), original).unwrap();
+
+    let canonicalized = load_checkpoint_meta(&wal_dir).unwrap();
+    assert_eq!(canonicalized.len(), 2);
+    assert_eq!(canonicalized[0].state_root_hex, "root-a");
+    assert_eq!(canonicalized[1].state_root_hex, "root-a");
+    assert_eq!(canonicalized[0].wal_entry_hash_hex, "hash-a");
+    assert_eq!(canonicalized[1].wal_entry_hash_hex, "hash-z");
+
+    persist_checkpoint_meta(&wal_dir, &canonicalized).unwrap();
+    let first_pass = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+    persist_checkpoint_meta(&wal_dir, &canonicalized).unwrap();
+    let second_pass = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+
+    assert_eq!(
+        first_pass, second_pass,
+        "checkpoint surface must serialize to stable canonical bytes even when one state_root links to multiple wal hashes so DA/light-verifier linkage evidence does not flap"
+    );
+
+    let hash_a_idx = first_pass.find("wal_entry_hash_hex = \"hash-a\"").unwrap();
+    let hash_z_idx = first_pass.find("wal_entry_hash_hex = \"hash-z\"").unwrap();
+    let root_a_count = first_pass.matches("state_root_hex = \"root-a\"").count();
+    assert!(
+        hash_a_idx < hash_z_idx,
+        "same-state-root checkpoint evidence must remain canonically ordered by wal hash for persisted light-verifier surfaces"
+    );
+    assert_eq!(
+        root_a_count, 2,
+        "distinct wal-hash checkpoint evidence must not collapse just because the state_root matches on roundtrip"
+    );
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
