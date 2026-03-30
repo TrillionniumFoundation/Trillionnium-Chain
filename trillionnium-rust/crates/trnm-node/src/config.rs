@@ -307,17 +307,20 @@ mod tests {
     }
 
     #[test]
-    fn validate_node_config_trims_operator_addresses() {
+    fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
         let cfg = NodeConfig {
             node_id: "  node-a  ".into(),
             rpc_addr: " 127.0.0.1:7000\n".into(),
             p2p_addr: "\t127.0.0.1:7001 ".into(),
         };
 
-        let cfg = validate_node_config(cfg, "inline").expect("trimmed config should validate");
-        assert_eq!(cfg.node_id, "node-a");
-        assert_eq!(cfg.rpc_addr, "127.0.0.1:7000");
-        assert_eq!(cfg.p2p_addr, "127.0.0.1:7001");
+        let err = validate_node_config(cfg, "inline")
+            .expect_err("boundary whitespace in node bootstrap config must fail closed");
+        let err_surface = err.to_string();
+        assert!(
+            err_surface.contains("node_id must not contain leading or trailing whitespace"),
+            "unexpected error: {err:#}"
+        );
     }
 
     #[test]
