@@ -197,7 +197,7 @@ In this order:
 ### Step 3 — bind the rehearsal to the assigned worktree/ref before any RC script
 Before `testnet_preflight.sh`, `run_local_release_evidence.sh`, or `release_rc.sh`, record the exact lane/ticket worktree and branch from the release note instead of deriving expectations from the current shell prompt.
 
-Recommended fail-closed helper:
+Recommended fail-closed helper (`--expected-branch-ref` accepts either a short branch name like `rc/stage1-devnet-20260324` or a full ref like `refs/heads/rc/stage1-devnet-20260324`):
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
