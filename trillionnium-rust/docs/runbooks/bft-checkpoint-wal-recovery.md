@@ -95,6 +95,7 @@ cargo test -p trnm-state -p trnm-node
    - 优先判定为正常 checkpoint 粒度差，而不是 WAL 损坏。
 4. 若看到 `[bft-wal] existing default WAL state detected ... isolating this run in ...`：
    - 先确认值班人员当前查看的是旧目录还是自动隔离后的新目录；如果目录搞混，后续所有“是否真的恢复到历史 tip”的判断都会失真。
+   - 立刻继续 grep 同次启动里的 `[bft-wal] using wal_dir=<PATH>`，并把该 `<PATH>` 记为本次 incident 的 `wal_dir`；不要继续沿用旧默认目录或手工猜测的 session 子目录。
 5. 若只看到 `retained no committed WAL entries`：
    - 结合 `--bft-wal-dir` 是否为新目录、是否预期从 fresh start 启动来判断；单独出现它不等于数据损坏。
 6. 若看到 `refusing to reuse existing BFT WAL state at ...`：
@@ -103,7 +104,7 @@ cargo test -p trnm-state -p trnm-node
 
 ## Incident note 最小模板
 
-- `wal_dir`: `<path>`
+- `wal_dir`: `<path>`（优先填写同次启动日志里的 `[bft-wal] using wal_dir=<PATH>`）
 - `startup_wal_mode`: `<reuse|fail-if-exists|isolated-default>`
 - `last_retained_checkpoint`: `<height|none>`
 - `next_startup_height`: `<height>`
