@@ -910,14 +910,26 @@ fn trim_config_numeric_value(raw: &str) -> &str {
     raw.trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
 }
 
+fn normalize_config_numeric_value(raw: &str) -> String {
+    trim_config_numeric_value(raw)
+        .chars()
+        .map(|ch| match ch {
+            '０'..='９' => char::from_u32('0' as u32 + (ch as u32 - '０' as u32)).unwrap_or(ch),
+            '＋' => '+',
+            '－' | '−' => '-',
+            other => other,
+        })
+        .collect()
+}
+
 fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
-    raw.and_then(|s| trim_config_numeric_value(s).parse::<u32>().ok())
+    raw.and_then(|s| normalize_config_numeric_value(s).parse::<u32>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
 
 fn parse_u64_with_min(raw: Option<&str>, default: u64, min: u64) -> u64 {
-    raw.and_then(|s| trim_config_numeric_value(s).parse::<u64>().ok())
+    raw.and_then(|s| normalize_config_numeric_value(s).parse::<u64>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
