@@ -273,6 +273,25 @@ fn node_recovery_checkpoint_rejects_missing_non_genesis_prev_hash() {
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_zero_width_layout_drift() {
+    let wal_entry = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some(format!("{}{}", "01".repeat(32), '\u{200B}')),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject non-genesis WAL prev_hash_hex with zero-width layout drift so restart-time checkpoint linkage preserves byte-canonical predecessor bindings"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_uppercase_hex_drift() {
     let wal_entry = WalMeta {
         height: 2,
