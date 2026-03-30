@@ -243,6 +243,60 @@ fn x3_prep_degraded_invalid_heartbeat_progression_prefix_allows_compensation_rev
 }
 
 #[test]
+fn x3_prep_degraded_invalid_heartbeat_progression_parenthesized_suffix_allows_compensation_revert() {
+    let mut request = SettlementRequest::new(
+        1,
+        "0xdegraded-invalid-progression-parenthesized-suffix".to_string(),
+    );
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 310,
+            target_height: 999,
+            latency_ms: 25,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "Invalid heartbeat progression (target height exceeded source sample)"
+            .to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 411 },
+    )
+    .expect("parenthesized invalid heartbeat progression should fail closed via compensation revert");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)"
+                        .to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)"
+                .to_string(),
+        )
+    );
+}
+
+#[test]
 fn x3_prep_degraded_invalid_heartbeat_metrics_fail_closed_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdegraded-invalid-metrics".to_string());
     let token = operator_token();
