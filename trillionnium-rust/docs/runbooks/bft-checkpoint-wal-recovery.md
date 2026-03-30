@@ -56,6 +56,8 @@ cargo test -p trnm-state -p trnm-node
   - 含义：恢复扫描确认了可保留的已提交 WAL 尾部高度。
 - `checkpoint lags retained WAL tip by <N> block(s)`
   - 含义：checkpoint 仍然有效，但比保留的已提交 WAL 末端更旧；这不是损坏信号，本质上是在提示 checkpoint 粒度落后于已验证 WAL tip。
+- `retained checkpoint height <C> is ahead of retained WAL tip height <H>; investigate WAL/checkpoint mismatch`
+  - 含义：恢复扫描发现“还能保留的 checkpoint 高度”反而高于“还能保留的已提交 WAL tip”，这通常意味着值班侧正在看一组彼此不一致的 WAL/checkpoint 元数据，或此前目录切换 / 尾部截断后留下了漂移痕迹；应按 mismatch 事件处理，而不是继续假设这是正常 lag。
 - `no retained checkpoint metadata`
   - 含义：找到了可保留的已提交 WAL，但没有可一同保留的 checkpoint 元数据；需要结合 `metadata-only recovery` 语义判断是否可安全启动。
 - `repaired WAL tail required truncation`
