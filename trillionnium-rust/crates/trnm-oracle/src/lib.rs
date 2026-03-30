@@ -125,12 +125,7 @@ impl OracleSnapshot {
                 canonical,
             });
         }
-        if self.snapshot_hash.len() != 64
-            || !self
-                .snapshot_hash
-                .bytes()
-                .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
-        {
+        if !is_canonical_lower_hex_digest(&self.snapshot_hash) {
             return Err(OracleError::InvalidSnapshotHashFormat {
                 raw: self.snapshot_hash.clone(),
             });
@@ -335,6 +330,13 @@ fn validate_sample_count_against_sources(
         });
     }
     Ok(())
+}
+
+fn is_canonical_lower_hex_digest(raw: &str) -> bool {
+    raw.len() == 64
+        && raw
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
 }
 
 fn deviation_reaches_boundary(deviation_bps: u32, max_deviation_bps: u32) -> bool {
