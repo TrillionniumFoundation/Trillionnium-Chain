@@ -62,6 +62,7 @@ cargo test -p trnm-state -p trnm-node
   - 含义：找到了可保留的已提交 WAL，但没有可一同保留的 checkpoint 元数据；需要结合 `metadata-only recovery` 语义判断是否可安全启动。
 - `repaired WAL tail required truncation`
   - 含义：检测到了损坏 / 重复 / 断链尾部，恢复流程已执行 fail-closed 截断；这是需要记入 incident note 的明确信号。
+  - 联合判读：若它与 `retained no committed WAL entries` 以及 `last retained checkpoint: <H>` 同时出现，不要误记成“完全空目录”。这更可能表示**可保留的已提交 WAL 已归零，但仍保留了一个可识别的 checkpoint 落点**；值班记录里应同时抄下 `last retained checkpoint` 与 `next startup height`，避免把“checkpoint-only retained after truncation”误判成 genesis 重启。
 - `refusing metadata-only recovery`
   - 含义：当前节点实现仍然不会仅凭元数据恢复 `StateStore` 快照或重放已提交块；即使 WAL/checkpoint 元数据链本身通过校验，也会拒绝继续启动。
 - `next startup height: <H>`
