@@ -60,6 +60,14 @@ impl AdmissionGate {
     pub fn pop_ready(&mut self) -> Option<u64> {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
+
+        if self.queue.is_empty() && !self.seen.is_empty() {
+            // Defensive self-heal for restored-state skew in standalone gate usage:
+            // once the authoritative queue fully drains, no duplicate metadata
+            // should survive to poison the next fresh admission batch.
+            self.seen.clear();
+        }
+
         Some(id)
     }
 }
@@ -2317,6 +2325,27 @@ mod tests {
         assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
         assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), None);
+    }
+
+    #[test]
+    fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
+        let mut g = AdmissionGate::new(2);
+
+        assert_eq!(g.admit(21), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(22), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: metadata retains a ghost id that is not
+        // actually queued. Once the authoritative queue fully drains, the next
+        // batch must start fresh rather than inheriting stale duplicate poison.
+        g.seen.insert(999);
+
+        assert_eq!(g.pop_ready(), Some(21));
+        assert_eq!(g.pop_ready(), Some(22));
+        assert_eq!(g.pop_ready(), None);
+        assert!(g.seen.is_empty());
+
+        assert_eq!(g.admit(999), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(999), AdmitOutcome::Duplicate);
     }
 
     #[test]
