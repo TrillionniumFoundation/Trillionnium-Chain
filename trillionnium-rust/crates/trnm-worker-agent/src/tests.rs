@@ -2106,6 +2106,20 @@ fn exp_backoff_delay_saturates_without_overflow() {
 }
 
 #[test]
+fn exp_backoff_delay_keeps_63rd_shift_for_small_base_before_saturating() {
+    assert_eq!(exp_backoff_delay_ms(1, 62), 1u64 << 62);
+    assert_eq!(exp_backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(exp_backoff_delay_ms(2, 63), u64::MAX);
+}
+
+#[test]
+fn exp_backoff_delay_saturates_at_attempt_64_even_for_small_base() {
+    assert_eq!(exp_backoff_delay_ms(1, 64), u64::MAX);
+    assert_eq!(exp_backoff_delay_ms(1, 65), u64::MAX);
+    assert_eq!(exp_backoff_delay_ms(1, u32::MAX), u64::MAX);
+}
+
+#[test]
 fn llm_adapter_retry_succeeds_within_budget() {
     let mut attempt = 0u32;
     let mut slept = vec![];
