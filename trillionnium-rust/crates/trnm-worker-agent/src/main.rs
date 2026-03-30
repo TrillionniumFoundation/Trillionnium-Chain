@@ -771,6 +771,19 @@ pub(crate) fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
     commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
 }
 
+fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
+    hash.and_then(|value| {
+        let trimmed = value
+            .trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
+            .to_string();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed)
+        }
+    })
+}
+
 pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
@@ -782,10 +795,10 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> 
             continue;
         }
         if hashes.commit_tx_hash.is_none() {
-            hashes.commit_tx_hash = ack.commit_tx_hash;
+            hashes.commit_tx_hash = normalize_persisted_tx_hash(ack.commit_tx_hash);
         }
         if hashes.reveal_tx_hash.is_none() {
-            hashes.reveal_tx_hash = ack.reveal_tx_hash;
+            hashes.reveal_tx_hash = normalize_persisted_tx_hash(ack.reveal_tx_hash);
         }
         if hashes.commit_tx_hash.is_some() && hashes.reveal_tx_hash.is_some() {
             break;
