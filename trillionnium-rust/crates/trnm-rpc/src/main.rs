@@ -4444,6 +4444,18 @@ fn main() -> Result<()> {
             let reputation_reward = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
             let reputation_score_delta = market_reputation_score_delta(&breakdown);
+            let reputation_adjustment_amount = if reputation_score_delta < 0 {
+                reputation_reward
+            } else {
+                penalty
+            };
+            let reputation_adjustment_direction = if reputation_score_delta < 0 {
+                "reward"
+            } else if reputation_score_delta > 0 {
+                "penalty"
+            } else {
+                "neutral"
+            };
             let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
@@ -4477,6 +4489,8 @@ fn main() -> Result<()> {
                 "penalty": penalty,
                 "reputation_penalty": penalty,
                 "penalty_amount": penalty,
+                "reputation_adjustment_direction": reputation_adjustment_direction,
+                "reputation_adjustment_amount": reputation_adjustment_amount,
                 "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
                 "effective_score": winner_score,
