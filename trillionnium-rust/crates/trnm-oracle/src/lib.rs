@@ -1172,6 +1172,41 @@ mod tests {
     }
 
     #[test]
+    fn source_order_canonicalization_stabilizes_snapshot_hash() {
+        let canonical = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("chainlink"), source("coingecko"), source("pyth")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("canonical snapshot should build");
+
+        let permuted = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("pyth"), source("chainlink"), source("coingecko")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("permuted snapshot should canonicalize before hashing");
+
+        assert_eq!(permuted.sources, canonical.sources);
+        assert_eq!(permuted.snapshot_hash, canonical.snapshot_hash);
+        permuted
+            .validate_hash()
+            .expect("canonicalized snapshot hash should validate");
+    }
+
+    #[test]
     fn rejects_sample_count_below_source_cardinality() {
         let err = OracleSnapshot::new(
             "btc/usd",
