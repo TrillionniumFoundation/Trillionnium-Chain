@@ -335,6 +335,39 @@ fn run_adapter_with_retry_retries_with_exponential_backoff_schedule() {
 }
 
 #[test]
+fn run_adapter_with_retry_skips_zero_backoff_sleep_between_retriable_attempts() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        0,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "raise SystemExit(1)"])
+                    .output()
+                    .expect("python3 zero-backoff probe should run"))
+            } else {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "print('tx_hash=0xBEEFCAFE')"])
+                    .output()
+                    .expect("python3 zero-backoff success probe should run"))
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should succeed within retry budget without sleeping");
+
+    assert_eq!(attempt, 3);
+    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beefcafe"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection() {
     let mut attempt = 0u32;
     let mut slept = vec![];

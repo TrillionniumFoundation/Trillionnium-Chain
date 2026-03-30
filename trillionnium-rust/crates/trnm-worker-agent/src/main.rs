@@ -853,7 +853,10 @@ where
         }
 
         if attempt < max_retries {
-            sleeper(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
+            let delay_ms = backoff_delay_ms(backoff_ms, attempt);
+            if delay_ms > 0 {
+                sleeper(Duration::from_millis(delay_ms));
+            }
         }
     }
 
