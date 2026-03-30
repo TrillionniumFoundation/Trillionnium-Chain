@@ -918,6 +918,7 @@ fn trim_config_numeric_value(raw: &str) -> &str {
 fn normalize_config_numeric_value(raw: &str) -> String {
     trim_config_numeric_value(raw)
         .chars()
+        .filter(|ch| !ch.is_control() && !is_invisible_filler(*ch))
         .map(|ch| match ch {
             '０'..='９' => char::from_u32('0' as u32 + (ch as u32 - '０' as u32)).unwrap_or(ch),
             '＋' => '+',
