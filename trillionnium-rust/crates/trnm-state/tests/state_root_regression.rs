@@ -8207,6 +8207,35 @@ fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() 
 }
 
 #[test]
+fn checkpoint_and_wal_evidence_summaries_mark_noncanonical_surfaces_false() {
+    let wal = WalMeta {
+        height: 2,
+        round: 1,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32).to_uppercase()),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.to_uppercase(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_surface_canonical=false"));
+    assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=non-genesis"));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_encoding=hex-lower"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_encoding=hex-lower"));
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_surface_canonical=false"));
+    assert!(wal_summary.contains("wal_prev_hash_present=true"));
+    assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
+    assert!(wal_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+}
+
+#[test]
 fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
     let e1 = WalMeta {
         height: 1,
