@@ -2031,6 +2031,36 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_deduplicates_mixed_alias_blank_and_duplicate_sources_for_cardinality() {
+        let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": [" ChainLink ", "chainlink", "   ", "pyth", "PYTH"],
+            "sample_count": 5,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("quorum"));
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_quorum_failure()
     {
         let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
