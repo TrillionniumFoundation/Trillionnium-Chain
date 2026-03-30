@@ -999,6 +999,47 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_stops_advertising_fresh_normal_after_reserve_only_critical_consumes_last_slot() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // In reserve-only mode, all ingress shares the critical queue, so the
+        // public QoS contract must fail closed regardless of which class consumes
+        // the final shared slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Once the last shared slot is consumed by critical ingress, both classes
+        // must see the reserve-only lane as closed to fresh admission.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn reserve_only_borrowed_last_slot_probe_noise_keeps_qos_snapshot_flat_until_drain() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
