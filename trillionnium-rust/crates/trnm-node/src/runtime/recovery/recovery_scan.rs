@@ -206,6 +206,10 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
                     base, lag, blocks
                 )
             }
+            Some(checkpoint_height) if checkpoint_height > tip_height => format!(
+                "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
+                base, checkpoint_height, tip_height
+            ),
             None => format!("{} (no retained checkpoint metadata)", base),
             Some(_) => base,
         }
@@ -223,7 +227,7 @@ pub(crate) fn metadata_only_recovery_error(
     recovered: &RecoveredWalState,
 ) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -231,6 +235,8 @@ pub(crate) fn metadata_only_recovery_error(
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
+        recovered.wal_entries_retained,
+        recovered.truncated,
     )
 }
 
@@ -307,6 +313,28 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_reports_checkpoint_ahead_of_retained_tip() {
+        let recovered = RecoveredWalState {
+            next_height: 6,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "root-8".into(),
+                wal_entry_hash_hex: "hash-8".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(8),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 5 (retained checkpoint height 8 is ahead of retained WAL tip height 5; investigate WAL/checkpoint mismatch)"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_visible_summary() {
         let recovered = RecoveredWalState {
             next_height: 6,
@@ -330,6 +358,9 @@ mod tests {
         assert!(message.contains("repaired WAL tail required truncation"));
         assert!(message.contains("last retained checkpoint: 4"));
         assert!(message.contains("next startup height: 6"));
+        assert!(message.contains("incident clue: metadata_only_recovery=1"));
+        assert!(message.contains("wal_entries_retained=5"));
+        assert!(message.contains("wal_tail_truncated=true"));
     }
 
     #[test]
