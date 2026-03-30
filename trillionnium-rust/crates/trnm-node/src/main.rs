@@ -12872,6 +12872,38 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_reports_checkpoint_ahead_of_retained_wal_tip() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-checkpoint-ahead-of-retained-wal-tip");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 15,
+                state_root_hex: "r15".into(),
+                wal_entry_hash_hex: "h15".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(15),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 11"));
+        assert!(err.contains(
+            "retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch"
+        ));
+        assert!(err.contains("last retained checkpoint: 15"));
+        assert!(err.contains("next startup height: 12"));
+        assert!(!err.contains("checkpoint lags retained WAL tip"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
         let wal_dir = temp_wal_dir("recover-guard-metadata-only");
         fs::create_dir_all(&wal_dir).unwrap();
