@@ -1048,6 +1048,64 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_active_critical_backlog_fresh_normal_retry_keeps_qos_snapshot_flat() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        // Reserve-only mode routes both classes through the shared critical lane.
+        // While aggregate headroom remains, both classes should still see fresh
+        // admission as available.
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        let open_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 1,
+            total_queued: 1,
+            normal_headroom: 0,
+            critical_headroom: 2,
+            total_headroom: 2,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), open_snapshot);
+
+        // Additional critical backlog should keep the same operator-facing QoS
+        // contract open until the shared reserve-only queue actually saturates.
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        let still_open_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 2,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), still_open_snapshot);
+
+        // Fresh normal retry noise while headroom remains must admit cleanly and
+        // only then consume the final shared slot, rather than perturbing the open
+        // snapshot beforehand.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+        let saturated_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 3,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+
+        // Once saturated, repeated fresh normal retries must stay backpressured and
+        // leave the public QoS surface flat until a real drain reopens capacity.
+        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), saturated_snapshot);
+        assert_eq!(g.queued_counts(), (0, 3, 3));
+    }
+
+    #[test]
     fn reserve_only_borrowed_last_slot_probe_noise_keeps_qos_snapshot_flat_until_drain() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
