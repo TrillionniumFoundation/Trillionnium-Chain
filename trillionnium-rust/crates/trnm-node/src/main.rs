@@ -1778,6 +1778,15 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         "invalid startup args: bft_wal_dir must not contain control characters"
     );
     anyhow::ensure!(
+        !Path::new(&args.bft_wal_dir).components().any(|component| {
+            matches!(
+                component,
+                std::path::Component::CurDir | std::path::Component::ParentDir
+            )
+        }),
+        "invalid startup args: bft_wal_dir must not contain '.' or '..' path segments"
+    );
+    anyhow::ensure!(
         args.block_ms > 0,
         "invalid startup args: block_ms must be at least 1"
     );
@@ -4474,6 +4483,76 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(err
             .to_string()
             .contains("bft_wal_dir must not contain leading or trailing whitespace"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_current_dir_bft_wal_dir() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: "./run/consensus-wal".into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("current-dir wal path segments must fail closed");
+        assert!(err
+            .to_string()
+            .contains("bft_wal_dir must not contain '.' or '..' path segments"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_parent_dir_bft_wal_dir() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: "../run/consensus-wal".into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("parent-dir wal path segments must fail closed");
+        assert!(err
+            .to_string()
+            .contains("bft_wal_dir must not contain '.' or '..' path segments"));
     }
 
     #[test]
