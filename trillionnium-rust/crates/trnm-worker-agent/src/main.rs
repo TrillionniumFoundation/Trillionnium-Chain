@@ -799,10 +799,9 @@ fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     if base_ms == 0 {
         return 0;
     }
-    if attempt >= 64 {
-        return u64::MAX;
-    }
-    base_ms.saturating_mul(1u64 << attempt)
+
+    let multiplier = 1u64.checked_shl(attempt).unwrap_or(u64::MAX);
+    base_ms.saturating_mul(multiplier)
 }
 
 fn is_forbidden_shell_program(program: &str) -> bool {
