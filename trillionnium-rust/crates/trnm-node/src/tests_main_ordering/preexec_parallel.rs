@@ -47,6 +47,14 @@ fn preexec_replay_sample_bounds_output_when_duplicates_are_noisy() {
 }
 
 #[test]
+fn preexec_replay_sample_omitted_suffix_counts_duplicate_events_not_unique_ids() {
+    assert_eq!(
+        format_replayed_group_id_sample(&[7, 3, 7, 7, 7], 1),
+        "[7]+2more"
+    );
+}
+
+#[test]
 fn preexec_group_normalization_preserves_first_seen_order_and_counts_replays() {
     let (normalized, replayed) = normalize_group_ids_for_preexec(&[4, 2, 4, 3, 2, 4]);
 
