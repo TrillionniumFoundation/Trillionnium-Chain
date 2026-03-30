@@ -3356,6 +3356,8 @@ mod tests {
 
     #[test]
     fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_input_clamped() {
+        let _env = env_lock();
+
         let mut txs = vec![
             tx(441, vec![], vec![o(1)]),  // first hot hint bucket 1 (also sparse)
             tx(442, vec![], vec![o(0)]),  // dominant bucket 0 depth 3 after len-clamp to 5 buckets
