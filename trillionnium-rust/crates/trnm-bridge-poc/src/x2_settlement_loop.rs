@@ -80,7 +80,7 @@ fn degraded_reason_matches_prefix(normalized: &str, expected: &str) -> bool {
                     matches!(
                         ch,
                         ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '。' | '(' | ')' | '[' | ']' | '{' | '}'
-                            | '（' | '）' | '［' | '］' | '｛' | '｝' | ' ' | '-'
+                            | '（' | '）' | '［' | '］' | '｛' | '｝' | ' ' | '-' | '–' | '—'
                     )
                 })
                 .unwrap_or(false)
@@ -1184,6 +1184,62 @@ mod tests {
     }
 
     #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_em_dash_suffix_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-heartbeat-em-dash-suffix".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 700,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "invalid heartbeat progression — target 701 > source 700".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("em-dash-delimited diagnostic suffix on invalid progression should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: invalid heartbeat progression — target 701 > source 700"
+                    .to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: invalid heartbeat progression — target 701 > source 700"
+                            .to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted(
+                "heartbeat degraded: invalid heartbeat progression — target 701 > source 700"
+                    .to_string(),
+            )
+        );
+    }
+
+    #[test]
     fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_bracketed_suffix_still_compensates() {
         let mut request = SettlementRequest::new(
             1,
@@ -1828,6 +1884,61 @@ mod tests {
             request.status,
             BridgeStatus::Reverted(
                 "heartbeat degraded: invalid heartbeat height; source=0 target=701".to_string(),
+            )
+        );
+    }
+
+    #[test]
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_en_dash_suffix_still_compensates() {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-height-en-dash".to_string(),
+        );
+        let token = CapabilityToken {
+            subject: "did:trn:settlement-operator".to_string(),
+            capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+        };
+        let heartbeat = HeartbeatOutcome {
+            heartbeat: Some(RelayHeartbeat {
+                source_height: 0,
+                target_height: 701,
+                latency_ms: 19,
+            }),
+            should_retry: false,
+            degraded: true,
+            message: "invalid heartbeat height – source=0 target=701".to_string(),
+        };
+
+        let out = drive_minimal_settlement(
+            &mut request,
+            &token,
+            &heartbeat,
+            SettlementConfirm::Confirmed { height: 701 },
+        )
+        .expect("en-dash suffix on invalid heartbeat height should remain terminal compensation");
+
+        assert_eq!(
+            out,
+            SettlementStep::Compensated {
+                reason: "heartbeat degraded: invalid heartbeat height – source=0 target=701"
+                    .to_string(),
+                event: SettlementEvent {
+                    phase: "relay_heartbeat_degraded",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "heartbeat degraded: invalid heartbeat height – source=0 target=701"
+                            .to_string(),
+                    ),
+                },
+            }
+        );
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted(
+                "heartbeat degraded: invalid heartbeat height – source=0 target=701".to_string(),
             )
         );
     }
