@@ -227,6 +227,19 @@ mod tests {
     use super::{normalize_failure_reason, RelayHeartbeatConfig, RelayHeartbeatMonitor};
 
     #[test]
+    fn record_success_invalid_zero_height_fails_closed_without_retry_window() {
+        let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(30, 3));
+
+        let outcome = monitor.record_success(0, 42, 18);
+
+        assert!(outcome.degraded);
+        assert!(!outcome.should_retry);
+        assert!(outcome.heartbeat.is_none());
+        assert_eq!(outcome.message, "invalid heartbeat height");
+        assert_eq!(monitor.consecutive_failures(), 3);
+    }
+
+    #[test]
     fn record_success_invalid_progression_fails_closed_without_retry_window() {
         let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(30, 3));
 
