@@ -4470,6 +4470,7 @@ fn main() -> Result<()> {
                 "price_component": base_score,
                 "reputation_weight_unit": score_cfg.reputation_weight,
                 "reputation_weight": reputation_reward,
+                "reputation_weight_applied": reputation_reward,
                 "reputation_component": reputation_reward,
                 "reputation_reward": reputation_reward,
                 "reputation_reward_amount": reputation_reward,
