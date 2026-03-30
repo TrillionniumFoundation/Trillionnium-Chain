@@ -840,6 +840,24 @@ fn tx_retry_policy_ignores_embedded_invisible_fillers_in_env_values() {
 }
 
 #[test]
+fn tx_retry_policy_ignores_embedded_bom_fillers_in_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("2\u{feff}5"),
+        Some("4\u{feff}5\u{feff}0"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 25,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_rejects_negative_fullwidth_env_values() {
     let policy = resolve_tx_retry_policy_from_sources(None, None, Some("－２"), Some("－４５０"));
 

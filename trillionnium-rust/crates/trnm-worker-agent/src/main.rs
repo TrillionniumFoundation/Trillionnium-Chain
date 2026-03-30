@@ -1149,7 +1149,8 @@ pub(crate) fn run_llm_adapter_with_retry(
 fn is_invisible_filler(c: char) -> bool {
     matches!(
         c,
-        '\u{200B}' // ZERO WIDTH SPACE
+        '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
+            | '\u{200B}' // ZERO WIDTH SPACE
             | '\u{200C}' // ZERO WIDTH NON-JOINER
             | '\u{200D}' // ZERO WIDTH JOINER
             | '\u{200E}' // LEFT-TO-RIGHT MARK
@@ -1167,7 +1168,6 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{034F}' // COMBINING GRAPHEME JOINER (non-rendering)
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
-            | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
             | '\u{FE0E}' // VARIATION SELECTOR-15 (text presentation)
             | '\u{FE0F}' // VARIATION SELECTOR-16 (emoji presentation)
     )
