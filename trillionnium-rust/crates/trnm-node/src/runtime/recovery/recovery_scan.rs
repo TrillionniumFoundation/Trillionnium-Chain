@@ -194,7 +194,13 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     };
 
     let summary = if recovered.wal_entries_retained == 0 {
-        base
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) => format!(
+                "{} (last retained checkpoint height {})",
+                base, checkpoint_height
+            ),
+            None => base,
+        }
     } else {
         let tip_height = recovered.next_height.saturating_sub(1);
         match recovered.checkpoint_height_retained {
