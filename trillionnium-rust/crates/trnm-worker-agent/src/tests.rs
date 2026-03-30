@@ -361,6 +361,32 @@ fn run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection(
 }
 
 #[test]
+fn run_adapter_with_retry_does_not_sleep_after_retry_budget_exhaustion() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        25,
+        || {
+            attempt += 1;
+            Ok(std::process::Command::new("python3")
+                .args(["-c", "raise SystemExit(1)"])
+                .output()
+                .expect("python3 retriable exhaustion probe should run"))
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should return exhausted retriable result");
+
+    assert_eq!(attempt, 3, "retry loop should attempt initial run plus the configured retries");
+    assert_eq!(slept, vec![25, 50], "sleep should happen only between attempts, never after the final exhausted attempt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, 1);
+    assert_eq!(res.tx_hash, None);
+    assert!(!res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_terminal_stop() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-slo-last-tx-hash-counter-{}-{}.txt",
