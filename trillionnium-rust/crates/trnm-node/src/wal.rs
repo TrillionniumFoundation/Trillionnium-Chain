@@ -495,6 +495,22 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_surfaces_read_path_for_operator_triage() {
+        let wal_dir = temp_wal_dir("checkpoint-read-failure");
+        fs::create_dir_all(checkpoint_file(&wal_dir)).unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("read checkpoint failed")
+                && err.contains("consensus-checkpoints.toml")
+                && err.contains("Is a directory"),
+            "unexpected read error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_entry_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-entry-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -617,6 +633,22 @@ mod tests {
                 && err.contains("unknown field")
                 && err.contains("forged"),
             "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_surfaces_read_path_for_operator_triage() {
+        let wal_dir = temp_wal_dir("wal-read-failure");
+        fs::create_dir_all(wal_meta_file(&wal_dir)).unwrap();
+
+        let err = load_wal_meta_entries(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("read wal meta failed")
+                && err.contains("consensus-wal-meta.toml")
+                && err.contains("Is a directory"),
+            "unexpected read error: {err}"
         );
 
         let _ = fs::remove_dir_all(&wal_dir);
