@@ -7607,6 +7607,30 @@ fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash_even_whe
 }
 
 #[test]
+fn node_recovery_checkpoint_verification_rejects_control_char_proposal_hash_even_when_checkpoint_matches() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal\n1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject WAL proposal identities with embedded control characters so restart-time checkpoint proofs cannot hide layout drift inside otherwise matching checkpoint tuples"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_verification_rejects_zero_width_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
