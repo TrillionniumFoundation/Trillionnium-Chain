@@ -107,6 +107,22 @@ Minimal template:
 
 - `sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
 
+## Incident note 最小模板
+
+把下面字段原样抄进告警注释、交接 ticket 或值班 handoff，可避免不同 dashboard 命名不一致时丢上下文：
+
+- `summary_line`: `<直接使用上面的 operator-visible summary line>`
+- `sample_count`: `<n>`
+- `accepted_total`: `<n>`
+- `oracle_stale_reject_total`: `<n>`
+- `oracle_quorum_reject_total`: `<n>`
+- `oracle_drift_reject_total`: `<n>`
+- `oracle_source_cardinality`: `<n|unknown>`
+- `oracle_ingest_latency_ms`: `<n|unknown>`
+- `conservation_invariant_ok`: `<yes|no>`
+- `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `first_check`: `<clock-skew|provider-loss|source-dedup-collapse|symbol-mapping-drift|metrics-schema-regression>`
+
 Interpretation hints:
 
 - choose `contract-drift` first if the conservation invariant breaks, even if another reject class is elevated;
