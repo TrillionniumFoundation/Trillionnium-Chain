@@ -5988,6 +5988,20 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         "checkpoint evidence surfaces must reject mixed-case prev_hash_hex on non-genesis WAL metadata so audit-ready state-root proofs cannot encode predecessor links with non-canonical digest surfaces"
     );
 
+    let mut whitespace_prev_hash_wal = wal.clone();
+    whitespace_prev_hash_wal.height = 2;
+    whitespace_prev_hash_wal.prev_hash_hex = Some(format!(" {} ", "ab".repeat(32)));
+    let mut whitespace_prev_hash_checkpoint = checkpoint.clone();
+    whitespace_prev_hash_checkpoint.height = 2;
+    whitespace_prev_hash_checkpoint.wal_entry_hash_hex = whitespace_prev_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &whitespace_prev_hash_checkpoint,
+            &whitespace_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject edge-whitespace prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links cannot hide non-canonical digest framing behind trim-sensitive surfaces"
+    );
+
     let mut zero_width_prev_hash_wal = wal.clone();
     zero_width_prev_hash_wal.height = 2;
     zero_width_prev_hash_wal.prev_hash_hex = Some(format!("{}\u{200b}", "ab".repeat(32)));
