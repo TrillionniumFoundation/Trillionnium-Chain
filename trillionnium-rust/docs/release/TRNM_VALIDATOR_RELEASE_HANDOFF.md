@@ -76,6 +76,8 @@ EXPECTED_BRANCH_REF="lane/assigned-branch" # or refs/heads/lane/assigned-branch
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
 
+After the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` output verbatim in the ticket / handoff note before generating evidence artifacts. Those three lines are the pre-run identity anchor that later `summary.txt` / `manifest.txt` fields must match; do not replace them with paraphrases like "same branch as before".
+
 If you need the raw shell assertions for an air-gapped/debugging context, the equivalent block is:
 
 ```bash
