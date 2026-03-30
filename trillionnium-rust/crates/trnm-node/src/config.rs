@@ -1229,9 +1229,21 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 cfg.rpc_addr
             );
             assert_eq!(
+                cfg.rpc_addr,
+                rpc_socket.to_string(),
+                "{config_path} rpc_addr {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
+                cfg.rpc_addr
+            );
+            assert_eq!(
                 p2p_socket.ip(),
                 std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
                 "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                cfg.p2p_addr,
+                p2p_socket.to_string(),
+                "{config_path} p2p_addr {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
                 cfg.p2p_addr
             );
             assert_eq!(
