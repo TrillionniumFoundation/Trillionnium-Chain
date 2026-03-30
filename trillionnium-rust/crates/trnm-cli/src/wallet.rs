@@ -50,6 +50,10 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('｛'), Some('｝'))
                 | (Some('＜'), Some('＞'))
                 | (Some('【'), Some('】'))
+                | (Some('〔'), Some('〕'))
+                | (Some('〖'), Some('〗'))
+                | (Some('〘'), Some('〙'))
+                | (Some('〚'), Some('〛'))
         );
         if !wrapped_by_quotes {
             break;
