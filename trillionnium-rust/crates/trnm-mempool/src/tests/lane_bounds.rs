@@ -316,6 +316,41 @@ fn reserve_only_normal_borrowing_does_not_preempt_critical_drain_order() {
 }
 
 #[test]
+fn oversized_critical_reserve_clamp_reopens_shared_headroom_immediately_after_one_drain() {
+    let mut g = LaneAdmissionGate::new(2, 5);
+
+    // reserve > total clamps into reserve-only mode, so both classes share the
+    // same critical-backed headroom until the aggregate cap is consumed.
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+    assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+    // One real drain must immediately reopen fresh admission for both classes
+    // under the clamp, without waiting for a full drain or idle self-heal.
+    assert_eq!(g.pop_ready(), Some(10));
+    assert_eq!(g.queued_counts(), (0, 1, 1));
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 1,
+            total_queued: 1,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        }
+    );
+
+    // The previously backpressured id must still be fresh after the clamp reopens.
+    assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn critical_spillover_can_fill_normal_lane_until_global_capacity() {
     let mut g = LaneAdmissionGate::new(4, 2);
 
