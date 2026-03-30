@@ -125,6 +125,16 @@ impl OracleSnapshot {
                 canonical,
             });
         }
+        if self.snapshot_hash.len() != 64
+            || !self
+                .snapshot_hash
+                .bytes()
+                .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+        {
+            return Err(OracleError::InvalidSnapshotHashFormat {
+                raw: self.snapshot_hash.clone(),
+            });
+        }
 
         let expected = self.compute_hash();
         if self.snapshot_hash != expected {
@@ -594,6 +604,8 @@ pub enum OracleError {
     NonCanonicalSnapshotHash { raw: String, canonical: String },
     #[error("snapshot hash mismatch: expected={expected}, actual={actual}")]
     SnapshotHashMismatch { expected: String, actual: String },
+    #[error("snapshot hash must be a 64-char lowercase hex digest: raw={raw}")]
+    InvalidSnapshotHashFormat { raw: String },
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
     #[error("invalid sample count: must be > 0")]
@@ -1269,6 +1281,62 @@ mod tests {
     }
 
     #[test]
+    fn validate_hash_rejects_non_hex_snapshot_digest_surface() {
+        let mut snapshot = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(99_900),
+            Some(10),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot");
+
+        snapshot.snapshot_hash = "g".repeat(64);
+
+        let err = snapshot
+            .validate_hash()
+            .expect_err("non-hex digest surface must fail closed");
+        assert_eq!(
+            err,
+            OracleError::InvalidSnapshotHashFormat {
+                raw: "g".repeat(64),
+            }
+        );
+    }
+
+    #[test]
+    fn validate_hash_rejects_short_snapshot_digest_surface() {
+        let mut snapshot = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            2,
+            Some(99_900),
+            Some(10),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot");
+
+        snapshot.snapshot_hash.truncate(63);
+
+        let err = snapshot
+            .validate_hash()
+            .expect_err("short digest surface must fail closed");
+        assert_eq!(
+            err,
+            OracleError::InvalidSnapshotHashFormat {
+                raw: snapshot.snapshot_hash.clone(),
+            }
+        );
+    }
+
+    #[test]
     fn rejects_future_snapshot_timestamp() {
         let p = policy();
         let snap = snapshot_with(100_000, Some(100_100), 10_001);
@@ -1581,7 +1649,8 @@ mod tests {
     fn observed_report_preserves_unmapped_bridge_error_string_without_counter_drift() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
-        snap.snapshot_hash.push('x');
+        let replacement = if snap.snapshot_hash.starts_with('0') { "1" } else { "0" };
+        snap.snapshot_hash.replace_range(..1, replacement);
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
         assert!(!report.ok);
@@ -1607,7 +1676,8 @@ mod tests {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
         let expected = snap.compute_hash();
-        snap.snapshot_hash.push('x');
+        let replacement = if snap.snapshot_hash.starts_with('0') { "1" } else { "0" };
+        snap.snapshot_hash.replace_range(..1, replacement);
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
         assert!(!report.ok);
