@@ -505,6 +505,11 @@ impl OracleValidationReport {
 
     pub fn bridge_contract_consistent(&self) -> bool {
         let non_empty_sample = self.metrics.sample_count > 0;
+        let source_cardinality_consistent = if self.metrics.accepted_total > 0 {
+            self.metrics.oracle_source_cardinality > 0
+        } else {
+            true
+        };
         let result_label_consistent = if self.ok {
             self.error.is_none() && self.metrics.accepted_total == self.metrics.sample_count
         } else {
@@ -514,6 +519,7 @@ impl OracleValidationReport {
             && self.observation_classified_outcome_conserves_sample_count();
 
         non_empty_sample
+            && source_cardinality_consistent
             && self.observation_matches_metrics()
             && result_label_consistent
             && (outcome_accounting_consistent
@@ -3008,6 +3014,23 @@ mod tests {
         report.metrics.accepted_total = 0;
         report.metrics.oracle_stale_reject_total = 0;
         report.metrics.sample_count = 0;
+
+        assert!(report.observation_matches_metrics());
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_classified_outcome_conserves_sample_count());
+        assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_accepted_report_with_zero_source_cardinality() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            10_100,
+        );
+
+        assert!(report.bridge_contract_consistent());
+        report.metrics.oracle_source_cardinality = 0;
 
         assert!(report.observation_matches_metrics());
         assert!(report.classified_outcome_conserves_sample_count());
