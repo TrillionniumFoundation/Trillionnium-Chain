@@ -1917,13 +1917,16 @@ mod tests {
         };
 
         assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
 
         // Cross-class restored duplicate probes must remain classification-only and
         // must not perturb the externally visible hard-stop snapshot.
         assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
 
         for _ in 0..2 {
             assert_eq!(
@@ -1931,11 +1934,14 @@ mod tests {
                 AdmitOutcome::Backpressured
             );
             assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.pop_ready(), None);
             assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
             assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
             assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
         }
     }
 
