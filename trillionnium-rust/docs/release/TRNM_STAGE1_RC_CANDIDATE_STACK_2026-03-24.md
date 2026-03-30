@@ -211,6 +211,7 @@ Interpretation rule:
 - do not replace `EXPECTED_*` with values copied back out of the current shell session; use the lane assignment / ticket values
 - if the helper fails, stop instead of continuing to release evidence generation
 - after the helper passes, record `git rev-parse HEAD` together with the verified worktree/ref in the handoff note so later `summary.txt` / `manifest.txt` identity checks have an explicit pre-run anchor
+- even after path-resolving the latest `run/health/evidence-*` or `release/rc-*` artifact, still compare `git_worktree_path=` / `git_worktree_branch_ref=` inside those files against the ticket-assigned worktree/ref; “latest artifact under this checkout” is not by itself lane-identity proof
 
 ### Step 4 — run minimum replay verification on the clean branch
 Required:
