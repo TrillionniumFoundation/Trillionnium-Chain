@@ -773,9 +773,38 @@ pub(crate) fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
 
 fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     hash.and_then(|value| {
-        let trimmed = value
+        let mut trimmed = value
             .trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
             .to_string();
+
+        loop {
+            let mut chars = trimmed.chars();
+            let Some('\\') = chars.next() else {
+                break;
+            };
+            let Some(start_quote) = chars.next() else {
+                break;
+            };
+            if !is_receipt_quote_wrapper(start_quote) {
+                break;
+            }
+
+            let mut rev_chars = trimmed.chars().rev();
+            let Some(end_quote) = rev_chars.next() else {
+                break;
+            };
+            let Some('\\') = rev_chars.next() else {
+                break;
+            };
+            if !is_receipt_quote_wrapper(end_quote) {
+                break;
+            }
+
+            let start = '\\'.len_utf8() + start_quote.len_utf8();
+            let end = trimmed.len() - ('\\'.len_utf8() + end_quote.len_utf8());
+            trimmed = trimmed[start..end].to_string();
+        }
+
         if trimmed.is_empty() {
             None
         } else {

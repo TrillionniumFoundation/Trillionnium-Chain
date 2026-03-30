@@ -2772,6 +2772,33 @@ fn persisted_ack_hashes_for_task_canonicalizes_legacy_wrapped_hex_receipts() {
 }
 
 #[test]
+fn persisted_ack_hashes_for_task_canonicalizes_shell_escaped_quote_wrapped_hex_receipts() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-shell-escaped-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        791,
+        "accepted",
+        Some(r#"\"0xABCD1234\""#.to_string()),
+        Some(r#"\"<0XFACEBEEF>\""#.to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write shell-escaped wrapped legacy ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 791);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
 fn task_lock_prevents_parallel_replay_for_same_task() {
     let ack_log = std::env::temp_dir().join(format!(
         "trnm-worker-agent-ack-lock-{}-{}.jsonl",
