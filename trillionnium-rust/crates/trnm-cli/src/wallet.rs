@@ -22,6 +22,10 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         )
 }
 
+fn is_single_sided_env_quote(c: char) -> bool {
+    matches!(c, '"' | '\'' | '`' | '“' | '”' | '‘' | '’')
+}
+
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
     loop {
@@ -56,11 +60,20 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('〘'), Some('〙'))
                 | (Some('〚'), Some('〛'))
         );
-        if !wrapped_by_quotes {
+        if wrapped_by_quotes {
+            normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
+                .trim_matches(is_hidden_env_wrapper);
+            continue;
+        }
+
+        let trimmed_single_sided = normalized
+            .trim_start_matches(is_single_sided_env_quote)
+            .trim_end_matches(is_single_sided_env_quote)
+            .trim_matches(is_hidden_env_wrapper);
+        if trimmed_single_sided.len() == normalized.len() {
             break;
         }
-        normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
-            .trim_matches(is_hidden_env_wrapper);
+        normalized = trimmed_single_sided;
     }
     (!normalized.is_empty()).then_some(normalized)
 }
