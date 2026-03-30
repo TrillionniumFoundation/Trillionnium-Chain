@@ -5,13 +5,13 @@ usage() {
   cat <<'EOF' >&2
 Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>] [--expected-worktree-root <path>] [--expected-branch-ref <ref>]
 
-Resolve the latest local-evidence summary and RC manifest under the current git
-toplevel (unless paths are provided explicitly), then print the canonical
-handoff fields directly from the artifacts. This is a fail-closed helper for
-validator/operator release handoff: it refuses to guess missing paths,
-silently continue when identity fields mismatch across artifacts, or accept
-artifacts that drift from the lane/ticket-assigned worktree/ref when explicit
-expectations are provided.
+Resolve the latest local-evidence summary and RC manifest under the
+trillionnium-rust root derived from this script path (unless paths are
+provided explicitly), then print the canonical handoff fields directly from
+the artifacts. This is a fail-closed helper for validator/operator release
+handoff: it refuses to guess missing paths, silently continue when identity
+fields mismatch across artifacts, or accept artifacts that drift from the
+lane/ticket-assigned worktree/ref when explicit expectations are provided.
 EOF
 }
 
