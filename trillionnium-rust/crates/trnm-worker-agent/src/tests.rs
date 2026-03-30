@@ -1094,6 +1094,17 @@ fn parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value() {
 }
 
 #[test]
+fn parse_tx_hash_ignores_invisible_fillers_inside_receipt_key() {
+    let json = parse_tx_hash("receipt={\"tx\u{200b}_hash\":\"0xDEADBEEF\"}")
+        .expect("json receipt hash should parse despite invisible fillers in the key");
+    assert_eq!(json, "deadbeef");
+
+    let shell = parse_tx_hash("\u{feff}tx_hash\u{2060}=0xFACECAFE")
+        .expect("shell receipt hash should parse despite invisible fillers around the key");
+    assert_eq!(shell, "facecafe");
+}
+
+#[test]
 fn parse_tx_hash_accepts_hyphenated_json_receipt_keys() {
     let json = parse_tx_hash("{\"tx-hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
         .expect("hyphenated json receipt hash should parse");

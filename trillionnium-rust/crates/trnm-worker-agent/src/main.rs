@@ -696,12 +696,17 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             last_was_space = false;
         }
     }
+    let normalized_receipt_fillers = normalized_whitespace
+        .chars()
+        .filter(|ch| !ch.is_control() && !is_invisible_filler(*ch))
+        .collect::<String>();
 
     for haystack in [
         text,
         normalized_key_quotes.as_str(),
         normalized_delimiters.as_str(),
         normalized_whitespace.as_str(),
+        normalized_receipt_fillers.as_str(),
     ] {
         for prefix in PREFIXES {
             let mut remainder = haystack;
