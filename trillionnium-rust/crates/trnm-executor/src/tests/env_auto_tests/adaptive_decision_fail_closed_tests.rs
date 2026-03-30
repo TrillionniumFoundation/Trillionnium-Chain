@@ -183,6 +183,39 @@ fn auto_adaptive_large_sample_prefers_write_signal_over_shared_read_domains() {
 }
 
 #[test]
+fn auto_adaptive_canonicalizes_duplicate_heavy_mixed_domains_before_hotspot_probe() {
+    let _env = env_lock();
+    let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+    let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+    let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+    let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+    let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+    let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+    let mut txs = Vec::with_capacity(64);
+    for i in 0..64u64 {
+        let tx_id = 140_000 + i;
+        if i % 2 == 0 {
+            txs.push(tx(tx_id, vec![o(41), o(13)], vec![o(13), o(29), o(29)]));
+        } else {
+            txs.push(tx(tx_id, vec![o(13), o(41), o(41)], vec![o(29), o(13), o(29)]));
+        }
+    }
+
+    // Equivalent mixed domains with duplicate-heavy echoes should collapse to the
+    // same canonical write-lane key before adaptive hotspot scoring. Otherwise
+    // harmless ingress ordering differences fragment one executor lane into two
+    // alternating pseudo-hot keys and suppress a real hotspot switch.
+    let d = auto_adaptive_decision(&txs);
+    assert_eq!(d.sample_len, 64);
+    assert!(d.use_hot_bucket);
+    assert_eq!(d.reason, "hotspot_detected");
+    assert_eq!(d.hot_key_share, 1.0);
+    assert_eq!(d.streak_ratio, 1.0);
+    assert_eq!(d.expected_gain_score, 1.0);
+}
+
+#[test]
 fn auto_adaptive_detects_write_hotspots_even_with_shared_read_domains() {
     let _env = env_lock();
     let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");

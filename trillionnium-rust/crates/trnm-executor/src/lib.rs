@@ -845,7 +845,7 @@ fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
     keys
 }
 
-fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
+pub(crate) fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
     // Fail-closed if a tx carries mixed read/write footprints for the same object id
     // with mismatched versions.
     assert_tx_access_domain_versions_are_consistent(tx);
