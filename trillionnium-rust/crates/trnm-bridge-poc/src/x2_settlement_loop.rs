@@ -175,7 +175,7 @@ pub fn drive_minimal_settlement(
         return Ok(SettlementStep::Compensated { reason, event });
     }
 
-    if heartbeat.should_retry {
+    if heartbeat.should_retry && !matches!(confirm, SettlementConfirm::Failed { .. }) {
         return Err(SettlementError::HeartbeatRetryPending {
             reason: normalize_compensation_reason(
                 &heartbeat.message,
@@ -2495,7 +2495,7 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_also_prefers_retry_pending() {
+    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_compensates_terminal_failure() {
         let mut request = SettlementRequest::new(1, "0xretry-failed-confirm".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -2508,7 +2508,7 @@ mod tests {
             message: "relay heartbeat retry pending".to_string(),
         };
 
-        let err = drive_minimal_settlement(
+        let out = drive_minimal_settlement(
             &mut request,
             &token,
             &heartbeat,
@@ -2516,15 +2516,28 @@ mod tests {
                 reason: "target confirm timeout".to_string(),
             },
         )
-        .unwrap_err();
+        .expect("terminal confirm failure should compensate even if heartbeat is retry-pending");
 
         assert_eq!(
-            err,
-            SettlementError::HeartbeatRetryPending {
-                reason: "relay heartbeat retry pending".to_string(),
+            out,
+            SettlementStep::Compensated {
+                reason: "settlement confirm failed: target confirm timeout".to_string(),
+                event: SettlementEvent {
+                    phase: "settlement_confirm_failed",
+                    heartbeat_source_height: None,
+                    heartbeat_target_height: None,
+                    heartbeat_latency_ms: None,
+                    confirm_height: None,
+                    confirm_reason: Some(
+                        "settlement confirm failed: target confirm timeout".to_string(),
+                    ),
+                },
             }
         );
-        assert_eq!(request.status, BridgeStatus::Pending);
+        assert_eq!(
+            request.status,
+            BridgeStatus::Reverted("settlement confirm failed: target confirm timeout".to_string())
+        );
     }
 
     #[test]

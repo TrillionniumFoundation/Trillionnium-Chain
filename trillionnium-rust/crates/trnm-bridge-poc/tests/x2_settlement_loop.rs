@@ -2285,3 +2285,52 @@ fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_termin
 
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+
+#[test]
+fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_compensation() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-confirm-failure".to_string());
+    let token = operator_token();
+
+    let retry_pending = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 699,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .expect("terminal confirm failure should compensate even if heartbeat is retry-pending");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target confirm timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target confirm timeout".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: target confirm timeout".to_string())
+    );
+}
