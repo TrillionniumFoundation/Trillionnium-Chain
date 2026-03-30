@@ -328,6 +328,16 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_omits_extra_note_when_checkpoint_matches_retained_tip() {
+        let recovered = recovered_state(2, 12, Some(11), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11"
+        );
+    }
+
+    #[test]
     fn retained_wal_summary_appends_truncation_notice() {
         let recovered = recovered_state(0, 1, None, true, false);
 
