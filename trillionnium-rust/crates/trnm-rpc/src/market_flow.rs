@@ -5,7 +5,8 @@ use crate::market_io::{
     save_market_bids, save_market_tasks,
 };
 use crate::market_score::{
-    clamp_reputation_for_market, market_effective_score_with_config, market_score_breakdown,
+    clamp_reputation_for_market, market_effective_score_with_config,
+    market_reputation_component_applied, market_reputation_score_delta, market_score_breakdown,
     market_score_config, MarketScoreConfigOutput,
 };
 use crate::{MarketBid, MarketTask};
@@ -213,6 +214,7 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
     let base_score = breakdown.base_score;
     let reputation_weight = breakdown.reputation_reward;
     let penalty = breakdown.penalty;
+    let reputation_component_applied = market_reputation_component_applied(&breakdown);
     let reputation_score_delta = market_reputation_score_delta(&breakdown);
     let winner_score = breakdown.effective_score;
 
@@ -240,8 +242,8 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "price_component": base_score,
         "reputation_weight_unit": score_cfg.reputation_weight,
         "reputation_weight": reputation_weight,
-        "reputation_weight_applied": reputation_weight,
-        "reputation_component": reputation_weight,
+        "reputation_weight_applied": reputation_component_applied,
+        "reputation_component": reputation_component_applied,
         "reputation_reward": reputation_weight,
         "reputation_reward_amount": reputation_weight,
         "penalty": penalty,
