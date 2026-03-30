@@ -97,6 +97,9 @@ cargo test -p trnm-state -p trnm-node
    - 先确认值班人员当前查看的是旧目录还是自动隔离后的新目录；如果目录搞混，后续所有“是否真的恢复到历史 tip”的判断都会失真。
 5. 若只看到 `retained no committed WAL entries`：
    - 结合 `--bft-wal-dir` 是否为新目录、是否预期从 fresh start 启动来判断；单独出现它不等于数据损坏。
+6. 若看到 `refusing to reuse existing BFT WAL state at ...`：
+   - 优先判定为启动前保护命中，而不是 WAL 校验失败；先记录当次 `--bft-wal-mode`、被拒绝的目录路径，以及值班侧本来是否预期复用旧状态。
+   - 只有在确认本次确实要恢复历史 WAL 时，才切到 `--bft-wal-mode reuse` 重试；否则应改用新的 `--bft-wal-dir`，避免把“目录复用策略错误”误报成数据损坏 incident。
 
 ## Incident note 最小模板
 
