@@ -300,6 +300,16 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_uses_singular_block_for_single_height_lag() {
+        let recovered = recovered_state(2, 12, Some(10), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (checkpoint lags retained WAL tip by 1 block)"
+        );
+    }
+
+    #[test]
     fn retained_wal_summary_reports_checkpoint_ahead_of_retained_tip() {
         let recovered = recovered_state(2, 12, Some(15), false, true);
 
