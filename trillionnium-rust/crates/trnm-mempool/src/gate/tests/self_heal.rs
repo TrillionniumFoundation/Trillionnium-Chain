@@ -72,3 +72,41 @@ fn stale_restored_retry_metadata_clears_before_fresh_ingress() {
     assert_eq!(m.backpressured, 0);
     assert_eq!(m.duplicates, 0);
 }
+
+#[test]
+fn idle_pop_after_last_known_retry_acceptance_stays_cold_and_admits_fresh_ingress() {
+    let mut gate = AdmissionGate::new(2);
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+    // Open one reserved slot, then fairness-defer a fresh id while the known retry
+    // still owns the next admission opportunity.
+    assert_eq!(gate.pop_ready(), Some(1));
+    assert_eq!(gate.admit(20), AdmitOutcome::Backpressured);
+    assert_eq!(gate.last_fairness_deferred, Some(20));
+
+    // Once the final known retry is accepted, retry bookkeeping should cold-reset
+    // immediately and stay cold across later empty-pop loops.
+    assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    assert!(gate.backpressured_ids.is_empty());
+    assert!(gate.backpressured_fifo.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
+
+    assert_eq!(gate.pop_ready(), Some(2));
+    assert_eq!(gate.pop_ready(), Some(9));
+    assert_eq!(gate.pop_ready(), None);
+    assert_eq!(gate.pop_ready(), None);
+
+    // The earlier fairness-deferred id must remain fresh after the queue fully drains
+    // and idle polls continue.
+    assert_eq!(gate.admit(20), AdmitOutcome::Accepted);
+
+    let m = gate.metrics();
+    assert_eq!(m.accepted, 4);
+    assert_eq!(m.backpressured, 2);
+    assert_eq!(m.duplicates, 0);
+    assert_eq!(m.backpressure_duplicates, 0);
+    assert_eq!(m.fairness_deferrals, 1);
+}
