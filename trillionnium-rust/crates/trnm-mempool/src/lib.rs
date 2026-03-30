@@ -1897,6 +1897,49 @@ mod tests {
     }
 
     #[test]
+    fn qos_snapshot_stays_hard_stopped_when_only_lane_local_restored_duplicates_exist() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge that exists only in lane-local
+        // caches while lane-wide seen metadata is temporarily absent.
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        assert_eq!(g.qos_snapshot(), expected);
+
+        // Cross-class restored duplicate probes must remain classification-only and
+        // must not perturb the externally visible hard-stop snapshot.
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), expected);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), expected);
+
+        for _ in 0..2 {
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), expected);
+            assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+    }
+
+    #[test]
     fn duplicate_stays_duplicate_when_lane_is_globally_full() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
