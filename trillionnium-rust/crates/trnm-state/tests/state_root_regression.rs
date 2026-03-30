@@ -6212,6 +6212,33 @@ fn checkpoint_evidence_surface_rejects_wal_proposal_hash_with_forbidden_layout()
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_rejects_zero_width_proposal_hash_surface() {
+    let wal = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: format!("proposal-9{}", '\u{200b}'),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject zero-width WAL proposal_hash values so audit-ready checkpoint proofs cannot rely on visually identical but non-canonical proposal identities"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+        None,
+        "DA/light-verifier summaries must fail closed when WAL proposal_hash carries zero-width layout drift even if the tuple still hashes to canonical lowercase hex"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_rejects_mixed_case_non_genesis_prev_hash_surface() {
     let wal = WalMeta {
         height: 7,
