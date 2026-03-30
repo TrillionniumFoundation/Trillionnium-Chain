@@ -5077,6 +5077,53 @@ mod tests {
     }
 
     #[test]
+    fn consensus_summary_incident_bundle_keeps_recovery_and_height_triplet_contiguous() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+            "bft_committed_heights",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+        ];
+
+        let recovery_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "recovery_error_rate")
+            .expect("recovery error rate must stay present in incident bundle");
+        let observed_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "bft_observed_heights")
+            .expect("observed heights must stay present in incident bundle");
+        let committed_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "bft_committed_heights")
+            .expect("committed heights must stay present in incident bundle");
+        let committed_rate_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "bft_commit_observed_height_rate_ppm")
+            .expect("commit observed rate must stay present in incident bundle");
+        let skipped_total_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "bft_skipped_height_total")
+            .expect("skipped total must stay present in incident bundle");
+        let skipped_rate_idx = incident_bundle
+            .iter()
+            .position(|field| *field == "bft_skipped_observed_height_rate_ppm")
+            .expect("skipped observed rate must stay present in incident bundle");
+
+        assert_eq!(observed_idx, recovery_idx + 1);
+        assert_eq!(committed_idx, observed_idx + 1);
+        assert_eq!(committed_rate_idx, committed_idx + 1);
+        assert_eq!(skipped_total_idx, committed_rate_idx + 1);
+        assert_eq!(skipped_rate_idx, skipped_total_idx + 1);
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
