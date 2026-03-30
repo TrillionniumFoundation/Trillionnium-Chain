@@ -7640,6 +7640,29 @@ fn checkpoint_evidence_surface_rejects_proposal_hash_with_embedded_tab_even_when
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_proposal_hash_with_zero_width_layout_drift_even_when_hashes_match(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: format!("proposal-1{}", '\u{200B}'),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject WAL proposal identities with zero-width layout drift so audit-ready checkpoint proofs cannot hide visually identical proposal surfaces inside otherwise matching hashes"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_proposal_hash_with_edge_whitespace_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
