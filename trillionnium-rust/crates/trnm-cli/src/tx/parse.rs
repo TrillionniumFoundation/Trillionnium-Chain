@@ -749,6 +749,9 @@ pub(crate) fn parse_tx_query_response(
 pub(crate) fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for query (expected 0x-prefixed hex tx hash)");
+    }
 
     if let Some(status) = query_local_tx_status(&requested) {
         return Ok(TxQueryResponse {

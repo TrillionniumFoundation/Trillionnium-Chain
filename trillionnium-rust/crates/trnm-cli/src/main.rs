@@ -1199,7 +1199,7 @@ fn run_template(cmd: &str) -> Result<String> {
         return Ok(txh);
     }
 
-    Ok(hash(&["fallback", &merged]))
+    Ok(format!("0x{}", hash(&["fallback", &merged])))
 }
 
 fn run_template_raw(cmd: &str) -> Result<String> {
@@ -1617,6 +1617,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for query (expected 0x-prefixed hex tx hash)");
+    }
 
     if let Some(status) = query_local_tx_status(&requested) {
         return Ok(TxQueryResponse {
@@ -1718,6 +1721,9 @@ where
 
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for wait (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for wait (expected 0x-prefixed hex tx hash)");
+    }
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
@@ -1893,13 +1899,16 @@ fn main() -> Result<()> {
                     let tx_hash = run_template(&cmd)?;
                     emit_pending_tx_hash(&tx_hash)?;
                 } else {
-                    let tx_hash = hash(&[
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&[
                         "commit-result",
                         &task_id.to_string(),
                         &worker,
                         &commit_hash,
                         &nonce.to_string(),
-                    ]);
+                    ])
+                    );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
             }
@@ -1916,12 +1925,15 @@ fn main() -> Result<()> {
                     let tx_hash = run_template(&cmd)?;
                     emit_pending_tx_hash(&tx_hash)?;
                 } else {
-                    let tx_hash = hash(&[
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&[
                         "reveal-result",
                         &task_id.to_string(),
                         &result_hash,
                         &salt_hex,
-                    ]);
+                    ])
+                    );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
             }
@@ -1981,7 +1993,10 @@ fn main() -> Result<()> {
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
-                    let tx_hash = hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom]);
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom])
+                    );
                     persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
