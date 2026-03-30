@@ -568,6 +568,35 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_duplicate_termin
 }
 
 #[test]
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_duplicate_hash_is_malformed() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-stderr-fallback-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should preserve stderr fallback when stdout duplicate hash is malformed",
+    );
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn run_adapter_with_retry_preserves_last_seen_tx_hash_after_successful_retry() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-success-last-tx-hash-counter-{}-{}.txt",
