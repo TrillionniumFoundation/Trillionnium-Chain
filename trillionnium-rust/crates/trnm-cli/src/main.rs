@@ -1198,12 +1198,24 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
     };
 
     let key = key.trim_matches(|c: char| {
-        c.is_ascii_whitespace()
-            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
     });
     let value = value.trim_matches(|c: char| {
-        c.is_ascii_whitespace()
-            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
     });
 
     if key.is_empty() {
@@ -1215,8 +1227,14 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let trimmed = token.trim_matches(|c: char| {
-        c.is_ascii_whitespace()
-            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
@@ -1238,12 +1256,16 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         key.to_ascii_lowercase(),
         value
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+                c.is_whitespace()
+                    || c.is_control()
+                    || matches!(
+                        c,
+                        ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                            | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                            | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                    )
             })
-            .trim_matches('"')
-            .trim_matches('\'')
-            .trim_matches('`')
+            .trim_matches(|c| matches!(c, '"' | '\'' | '`' | '“' | '”' | '‘' | '’'))
             .to_string(),
     ))
 }
@@ -1252,13 +1274,38 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
         .trim_matches(|c: char| {
-            c.is_ascii_whitespace()
+            c.is_whitespace()
+                || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':'
+                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
+                        | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
+                        | ',' | ';' | ':' | '!' | '?'
+                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                        | '，' | '；' | '：' | '！' | '？'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
                 )
         })
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_end_matches(|c: char| {
+            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+        })
         .to_ascii_lowercase();
     let canonical = cleaned
         .chars()
@@ -1286,10 +1333,37 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
 fn is_nullish_kv_value(raw: &str) -> bool {
     let cleaned = raw
         .trim()
-        .trim_matches('"')
-        .trim_matches('\'')
-        .trim_matches('`')
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_matches(|c: char| {
+            c.is_whitespace()
+                || c.is_control()
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
+                        | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        .trim_end_matches(|c: char| {
+            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+        })
         .to_ascii_lowercase();
     cleaned.is_empty() || cleaned == "null"
 }
@@ -2847,6 +2921,24 @@ mod tests {
         assert_eq!(parsed_backtick.tx_hash, "0x778");
         assert_eq!(parsed_backtick.status, "committed");
         assert_eq!(parsed_backtick.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
+        let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xbeef42");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
+        let noisy = "【rpc】 《transactionHash：0xCAFE98》 《status：COMMITTED》 《error：NULL》";
+        let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xcafe98");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
     }
 
     #[test]
