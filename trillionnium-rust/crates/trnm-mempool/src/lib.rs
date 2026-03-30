@@ -853,6 +853,52 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_qos_snapshot_stays_queue_derived_under_equal_cardinality_seen_skew() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Reserve-only mode routes both ingress classes through the shared critical
+        // queue, so QoS observability must remain derived from queue occupancy even
+        // if restored-state seen caches drift toward an equal-cardinality ghost id.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        let reopened = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 1,
+            total_queued: 1,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), reopened);
+
+        // Simulate restored-state skew with preserved cardinality.
+        g.critical.seen.remove(&1);
+        g.critical.seen.insert(99);
+        g.seen_global.remove(&1);
+        g.seen_global.insert(99);
+        assert_eq!(g.qos_snapshot(), reopened);
+
+        // Fresh ghost ingress must stay fresh/admissible, and the real queued tx id
+        // must recover duplicate semantics after the inline self-heal.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 2,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
