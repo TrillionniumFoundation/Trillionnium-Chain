@@ -56,6 +56,23 @@ fn tx_retry_policy_treats_invisible_filler_only_env_values_as_missing() {
 }
 
 #[test]
+fn tx_retry_policy_strips_bidi_isolates_and_variation_selectors_inside_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("\u{2066}1\u{fe0f}2\u{2069}"),
+        Some("\u{2068}4\u{fe0e}5\u{2067}0\u{2069}"),
+    );
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 12,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
 fn tx_backoff_delay_saturates_without_overflow() {
     assert_eq!(backoff_delay_ms(25, 0), 25);
     assert_eq!(backoff_delay_ms(25, 1), 50);
