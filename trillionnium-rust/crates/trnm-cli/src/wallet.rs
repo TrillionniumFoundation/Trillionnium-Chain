@@ -1,8 +1,24 @@
 use super::*;
 
+pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
+    let mut normalized = raw.trim();
+    while normalized.len() >= 2 {
+        let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
+            || (normalized.starts_with('\'') && normalized.ends_with('\''))
+            || (normalized.starts_with('`') && normalized.ends_with('`'));
+        if !wrapped_by_quotes {
+            break;
+        }
+        normalized = normalized[1..normalized.len() - 1].trim();
+    }
+    (!normalized.is_empty()).then_some(normalized)
+}
+
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
-        return PathBuf::from(p);
+        if let Some(normalized) = normalize_wallet_store_env(&p) {
+            return PathBuf::from(normalized);
+        }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home).join(".trnm").join("wallets")

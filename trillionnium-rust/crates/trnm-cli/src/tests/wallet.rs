@@ -88,6 +88,23 @@ fn wallet_import_hex_check() {
 }
 
 #[test]
+fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
+    assert_eq!(
+        normalize_wallet_store_env("  \"/tmp/trnm-wallets\"  "),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
+        normalize_wallet_store_env("' /tmp/trnm-wallets '") ,
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
+        normalize_wallet_store_env("`\"/tmp/trnm-wallets\"`") ,
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
+}
+
+#[test]
 fn wallet_name_rejects_path_like_values() {
     for bad in [
         "",
