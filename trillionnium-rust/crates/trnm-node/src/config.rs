@@ -545,6 +545,30 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn load_config_rejects_mixed_ip_families_after_operator_trimming() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-mixed-ip-families-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:7000\\n\"\np2p_addr = \"\\t[::1]:7001 \"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("trimmed mixed-family listener addresses must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must use the same IP family"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_unspecified_listener_after_operator_trimming() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-unspecified-listener-{}-{}.toml",
