@@ -201,7 +201,13 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     };
 
     let summary = if recovered.wal_entries_retained == 0 {
-        base
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) => format!(
+                "{} (last retained checkpoint height {})",
+                base, checkpoint_height
+            ),
+            None => base,
+        }
     } else {
         let tip_height = recovered.next_height.saturating_sub(1);
         match recovered.checkpoint_height_retained {
@@ -328,6 +334,16 @@ mod tests {
         assert_eq!(
             retained_wal_summary(&recovered),
             "retained no committed WAL entries; repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_height_without_retained_wal_entries() {
+        let recovered = recovered_state(0, 9, Some(8), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries (last retained checkpoint height 8)"
         );
     }
 
