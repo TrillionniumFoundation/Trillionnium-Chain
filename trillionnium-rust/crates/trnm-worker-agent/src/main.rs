@@ -1146,9 +1146,9 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{034F}' // COMBINING GRAPHEME JOINER (non-rendering)
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
+            | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
             | '\u{FE0E}' // VARIATION SELECTOR-15 (text presentation)
             | '\u{FE0F}' // VARIATION SELECTOR-16 (emoji presentation)
-            | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
     )
 }
 
