@@ -299,7 +299,8 @@ fn resolve_multisig_member_reordering_preserves_staging_before_terminal_settleme
 #[test]
 fn resolve_multisig_to_single_authority_rotation_clears_stale_staging_before_terminal_settlement() {
     // Minimal multi-party control: downgrading resolver membership from multisig
-    // to single authority must not allow inheriting partially-approved state.
+    // to single authority must fail closed by clearing stale staged approvals,
+    // and governance must restage a fresh quorum if multisig is later restored.
     let mut st = seeded_state();
     st.set_balance("challenger", 100);
     set_resolve_authority(&mut st, "authority-a,authority-b");
@@ -329,8 +330,6 @@ fn resolve_multisig_to_single_authority_rotation_clears_stale_staging_before_ter
     assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
     assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
-    // Governance downgrade to a singleton must now be rejected, leaving the
-    // staged multisig approval intact until a distinct second signer completes it.
     set_resolve_authority(&mut st, "authority-a");
 
     let singleton_followup = apply_resolve(
@@ -338,11 +337,20 @@ fn resolve_multisig_to_single_authority_rotation_clears_stale_staging_before_ter
         r5.clone(),
         true,
         "authority-a".into(),
-        "authority-a,authority-b".into(),
+        "authority-a".into(),
     )
-    .expect_err("duplicate signer replay must not consume staged multisig approval");
+    .expect_err("singleton downgrade must reject inherited staged multisig approval");
     assert!(matches!(singleton_followup, PouwError::Unauthorized));
-    assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_approval(r5.id),
+        None,
+        "singleton downgrade must clear stale staged approval",
+    );
+    assert_eq!(
+        st.pending_resolve_first_approver(r5.id),
+        None,
+        "singleton downgrade must clear stale first approver metadata",
+    );
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
     assert_eq!(
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -350,14 +358,31 @@ fn resolve_multisig_to_single_authority_rotation_clears_stale_staging_before_ter
     );
     assert_eq!(st.balance_of("challenger"), before_challenger);
 
-    let r6 = apply_resolve(
+    set_resolve_authority(&mut st, "authority-a,authority-b");
+
+    let restaged_err = apply_resolve(
         &mut st,
-        r5,
+        r5.clone(),
         true,
         "authority-b".into(),
         "authority-b".into(),
     )
-    .expect("second multisig signer should settle after singleton downgrade is rejected");
+    .expect_err("restored multisig must start from a fresh staged approval");
+    assert!(matches!(restaged_err, PouwError::ResolveApprovalStaged));
+    assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(r5.id).as_deref(),
+        Some("authority-b")
+    );
+
+    let r6 = apply_resolve(
+        &mut st,
+        r5,
+        true,
+        "authority-a".into(),
+        "authority-a".into(),
+    )
+    .expect("restored multisig should finalize only after a fresh distinct second approval");
     assert_eq!(st.pending_resolve_approval(r6.id), None);
     let task = st.get_task(r6.id).expect("resolved task must persist");
     assert_eq!(task.status, TaskStatus::Slashed);
