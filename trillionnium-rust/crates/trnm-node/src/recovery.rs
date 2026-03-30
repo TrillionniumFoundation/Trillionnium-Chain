@@ -402,4 +402,19 @@ mod tests {
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=false"));
     }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_checkpoint_without_retained_wal_for_triage() {
+        let recovered = recovered_state(0, 9, Some(8), false, true);
+        let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
+
+        assert!(error.contains(
+            "retained no committed WAL entries (last retained checkpoint height 8)"
+        ));
+        assert!(error.contains("last retained checkpoint: 8"));
+        assert!(error.contains("next startup height: 9"));
+        assert!(error.contains("incident clue: metadata_only_recovery=1"));
+        assert!(error.contains("wal_entries_retained=0"));
+        assert!(error.contains("wal_tail_truncated=false"));
+    }
 }
