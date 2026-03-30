@@ -89,7 +89,8 @@ else
 fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 GIT_STATUS_SUMMARY="clean"
-REPLAY_COMMAND="env RUNS='${RUNS}'"
+replay_args=(env RUNS="$RUNS")
+REPLAY_COMMAND=""
 LANE_VERIFY_COMMAND="<not-run>"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
   [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
@@ -110,16 +111,23 @@ if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || 
   ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" >/dev/null
 fi
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
-  REPLAY_COMMAND+=" EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
+  replay_args+=(EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT")
 fi
 if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
   EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
-  REPLAY_COMMAND+=" EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
+  replay_args+=(EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF")
 fi
 if [ -n "${EXPECTED_HEAD:-}" ]; then
-  REPLAY_COMMAND+=" EXPECTED_HEAD='${EXPECTED_HEAD}'"
+  replay_args+=(EXPECTED_HEAD="$EXPECTED_HEAD")
 fi
-REPLAY_COMMAND+=" ./scripts/check_bft_restart_recovery.sh"
+replay_args+=(./scripts/check_bft_restart_recovery.sh)
+for arg in "${replay_args[@]}"; do
+  printf -v quoted_arg '%q' "$arg"
+  if [ -n "$REPLAY_COMMAND" ]; then
+    REPLAY_COMMAND+=" "
+  fi
+  REPLAY_COMMAND+="$quoted_arg"
+done
 ROLLBACK_COMMAND="rm -rf $(printf '%q' "$REPORT") $(printf '%q' "$WAL_DIR") && find $(printf '%q' "$OUT_DIR") -maxdepth 1 -type f \\( -name 'bft-restart-pre-${TS}-*.log' -o -name 'bft-restart-post-${TS}-*.log' \\) -delete"
 mkdir -p "$OUT_DIR" "$WAL_DIR"
 
