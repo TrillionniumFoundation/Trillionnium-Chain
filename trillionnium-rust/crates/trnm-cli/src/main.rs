@@ -972,10 +972,62 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
         let before = cleaned.len();
         cleaned = cleaned
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
+                c.is_whitespace()
                     || c.is_control()
-                    || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
-                    || matches!(c, '.' | '!' | '?')
+                    || matches!(
+                        c,
+                        ','
+                            | ';'
+                            | ':'
+                            | '('
+                            | ')'
+                            | '['
+                            | ']'
+                            | '{'
+                            | '}'
+                            | '<'
+                            | '>'
+                            | '"'
+                            | '\''
+                            | '`'
+                            | '.'
+                            | '!'
+                            | '?'
+                            | '“'
+                            | '”'
+                            | '‘'
+                            | '’'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '＜'
+                            | '＞'
+                            | '「'
+                            | '」'
+                            | '『'
+                            | '』'
+                            | '《'
+                            | '》'
+                            | '〈'
+                            | '〉'
+                            | '｢'
+                            | '｣'
+                            | '【'
+                            | '】'
+                            | '，'
+                            | '；'
+                            | '：'
+                            | '！'
+                            | '？'
+                            | '。'
+                            | '｡'
+                            | '．'
+                            | '﹒'
+                            | '․'
+                    )
                     || matches!(
                         c,
                         '\u{200B}'
@@ -996,20 +1048,6 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
             })
             .to_string();
 
-        if cleaned.len() >= 2 {
-            let q = cleaned.chars().next().unwrap();
-            let last = cleaned.chars().last().unwrap();
-            if (q == '"' || q == '\'' || q == '`') && q == last {
-                cleaned = cleaned[1..cleaned.len() - 1].to_string();
-                continue;
-            }
-            // Add check for mismatched quotes or remaining punctuation inside?
-            // The test case has (`"0xBEEF42"`,)
-            // parse_kv_line -> (`"0xBEEF42"`
-            // normalize -> "0xBEEF42" (trims parens)
-            // then quotes are stripped -> 0xBEEF42
-            // Seems correct?
-        }
         if cleaned.len() == before {
             break;
         }
@@ -2353,6 +2391,30 @@ mod tests {
         );
         assert_eq!(
             extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_unicode_whitespace_and_smart_quote_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=\u{00a0}“0xABCD1234”\u{2003}").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash: ‘0xBEEF42’?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_fullwidth_wrapper_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=（《0xABCD1234》）；").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash：『0xBEEF42』！？").as_deref(),
             Some("0xbeef42")
         );
     }
