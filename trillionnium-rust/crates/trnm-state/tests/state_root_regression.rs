@@ -8410,6 +8410,26 @@ fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() 
 }
 
 #[test]
+fn wal_evidence_summary_marks_overlong_proposal_hash_surface_noncanonical() {
+    let wal = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "p".repeat(257),
+        committed: true,
+        state_root_hex: "34".repeat(32),
+        prev_hash_hex: Some("56".repeat(32)),
+    };
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_proposal_hash_present=true"));
+    assert!(wal_summary.contains("wal_proposal_hash_bytes=257"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "wal evidence summary must fail closed when proposal_hash exceeds the canonical 256-byte audit surface bound"
+    );
+}
+
+#[test]
 fn checkpoint_and_wal_evidence_summaries_mark_noncanonical_surfaces_false() {
     let wal = WalMeta {
         height: 2,
