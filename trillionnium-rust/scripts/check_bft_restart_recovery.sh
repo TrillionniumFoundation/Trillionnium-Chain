@@ -54,6 +54,13 @@ normalize_branch_ref() {
   esac
 }
 
+canonicalize_path() {
+  local input="$1"
+  (
+    cd "$input" >/dev/null 2>&1 && pwd -P
+  )
+}
+
 CONFIG_PATH="configs/node1.toml"
 [ -f "$CONFIG_PATH" ] || {
   echo "missing config: $CONFIG_PATH" >&2
@@ -88,6 +95,10 @@ else
   GIT_HEAD_STATE="detached"
 fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+GIT_WORKTREE_ROOT="$(canonicalize_path "$GIT_WORKTREE_ROOT")" || {
+  printf 'current worktree path is not accessible: %s\n' "$GIT_WORKTREE_ROOT" >&2
+  exit 67
+}
 CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_WORKTREE_ROOT" '
   BEGIN { in_match=0 }
   /^worktree / {
