@@ -2799,6 +2799,33 @@ fn persisted_ack_hashes_for_task_canonicalizes_shell_escaped_quote_wrapped_hex_r
 }
 
 #[test]
+fn persisted_ack_hashes_for_task_extracts_tx_hash_from_receipt_blob_entries() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-receipt-blob-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        792,
+        "accepted",
+        Some(" {\"tx_hash\": \"0xABCD1234\", \"status\": \"accepted\"} ".to_string()),
+        Some(" {'tx_hash': '0xFACEBEEF', 'status': 'accepted'} ".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-blob".to_string()),
+    )
+    .expect("write receipt-blob ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 792);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
 fn task_lock_prevents_parallel_replay_for_same_task() {
     let ack_log = std::env::temp_dir().join(format!(
         "trnm-worker-agent-ack-lock-{}-{}.jsonl",
