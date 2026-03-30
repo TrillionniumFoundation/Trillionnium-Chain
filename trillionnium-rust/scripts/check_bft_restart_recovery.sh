@@ -34,6 +34,12 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+CONFIG_PATH="configs/node1.toml"
+[ -f "$CONFIG_PATH" ] || {
+  echo "missing config: $CONFIG_PATH" >&2
+  exit 66
+}
+
 RUNS="${RUNS:-5}"
 case "$RUNS" in
   ''|*[!0-9]*)
