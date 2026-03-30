@@ -58,9 +58,9 @@ Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious 
 - the assigned worktree path and branch ref from the lane prompt / release ticket, recorded before any release script runs
 - a path-resolved `summary.txt` from `run/health/evidence-*`
 - a path-resolved `manifest.txt` from `release/rc-*`
-- matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, and `git_worktree_branch_ref=` across those artifacts
+- matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` across those artifacts
 - preserved `git_status_summary=clean` and generated timestamps next to those identity fields, so operators can prove the rehearsal came from a clean tree and quote the exact artifact generation moment instead of relying on shell memory
-- a direct comparison showing the artifact `git_worktree_path=` / `git_worktree_branch_ref=` also match the lane-assigned path/ref, not just each other
+- a direct comparison showing the artifact `git_worktree_path=` / `git_worktree_branch_ref=` also match the lane-assigned path/ref, with `git_expected_worktree_branch_ref=` preserving the ticket-assigned target and `git_worktree_branch_ref_match=true` required instead of treated as a soft warning
 - preserved `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` fields next to the quoted PASS/GO language
 - verbatim `rollback_command=` and `replay_command=` copied from the generated artifact, not rewritten from shell memory
 
