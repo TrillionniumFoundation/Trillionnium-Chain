@@ -81,6 +81,7 @@ cargo test -p trnm-state -p trnm-node
   - 读取建议：若 `truncated=true`，继续向上 grep `repaired WAL tail required truncation`；若 `metadata_only_recovery=true`，继续 grep `refusing metadata-only recovery` 以拿到带 `retained_wal_summary` 的完整拒绝原因；若 `checkpoint=none`，再结合 `retained no committed WAL entries` / `no retained checkpoint metadata` 判断这是 fresh start 还是 checkpoint 元数据缺失。
 - `[bft-wal] existing default WAL state detected at <A>; isolating this run in <B> (pass --bft-wal-mode reuse to recover prior state explicitly)`
   - 含义：节点发现默认 WAL 目录里已有旧状态，因此本次启动被自动隔离到新的 session 子目录；这通常是“为了避免误复用旧 WAL 的保护动作”，**不是**恢复成功信号。值班侧应立刻记录原目录 `<A>` 与自动隔离目录 `<B>`，避免把新进程产生的空白 WAL 误当成历史恢复结果。
+  - 触发边界：这里的“已有旧状态”不只指 `consensus-wal.toml` 本体；**单独残留**的 `consensus-wal-meta.toml` 或 `consensus-checkpoints.toml` 也会触发同样的默认目录隔离。值班侧若只看到 checkpoint / wal-meta 文件而误以为“WAL 本体已经没了，所以不算历史状态”，很容易把一次正常保护动作误判成新进程异常改写目录。
 - `[bft-wal] using wal_dir=<PATH>`
   - 含义：这是**本次进程实际使用的 WAL 目录**，应当作为值班排障时引用路径的唯一准绳。只要上面出现过自动隔离提示，就必须以这里的 `<PATH>` 为准，而不是继续沿用配置文件里的默认目录或历史截图里的旧目录。
 - `refusing to reuse existing BFT WAL state at <A> (pass --bft-wal-mode reuse to recover, or choose a fresh --bft-wal-dir)`
