@@ -361,3 +361,45 @@ fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
         "state_root should be deterministic for equivalent pending governance queues regardless of restore/insertion order"
     );
 }
+
+#[test]
+fn checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface() {
+    let checkpoint = CheckpointMeta {
+        height: 2,
+        state_root_hex: "ab".repeat(32),
+        wal_entry_hash_hex: "cd".repeat(32),
+    };
+    let canonical_wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: checkpoint.state_root_hex.clone(),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let canonical_checkpoint = CheckpointMeta {
+        wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+        ..checkpoint.clone()
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &canonical_wal),
+        "sanity: canonical checkpoint/WAL evidence should remain audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &canonical_wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should emit an audit summary"
+    );
+
+    let mut drifted_wal = canonical_wal.clone();
+    drifted_wal.prev_hash_hex = Some("01".repeat(32).to_uppercase());
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &drifted_wal),
+        "checkpoint audit surfaces must reject uppercase prev_hash_hex drift so non-genesis WAL linkage stays byte-canonical"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &drifted_wal).is_none(),
+        "audit summaries must fail closed when WAL predecessor linkage is not canonical lower hex"
+    );
+}
