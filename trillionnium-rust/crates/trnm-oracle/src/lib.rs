@@ -1482,6 +1482,27 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_maps_future_snapshot_to_stale_error_label() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 9_999);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("stale"));
+        assert_eq!(report.observation.stale_reject_total, 1);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_quorum_rejection_to_stable_error_label() {
         let p = policy();
         let snap = OracleSnapshot::new(
