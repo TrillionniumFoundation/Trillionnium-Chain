@@ -176,6 +176,87 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
     None
 }
 
+fn trim_kv_key_noise(raw: &str) -> &str {
+    raw.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ','
+                    | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '“'
+                    | '”'
+                    | '‘'
+                    | '’'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '«'
+                    | '»'
+                    | '‹'
+                    | '›'
+                    | '【'
+                    | '】'
+                    | '〔'
+                    | '〕'
+                    | '〖'
+                    | '〗'
+                    | '〘'
+                    | '〙'
+                    | '〚'
+                    | '〛'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '！'
+                    | '？'
+            )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
+    })
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -190,10 +271,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     };
 
-    let key = key.trim_matches(|c: char| {
-        c.is_ascii_whitespace()
-            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
-    });
+    let key = trim_kv_key_noise(key);
     let value = value.trim_matches(|c: char| {
         c.is_ascii_whitespace()
             || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
@@ -276,6 +354,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         return None;
     };
 
+    let key = trim_kv_key_noise(key);
     if key.is_empty() || value.is_empty() {
         return None;
     }

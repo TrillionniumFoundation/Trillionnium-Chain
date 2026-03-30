@@ -167,6 +167,21 @@ fn tx_query_parse_kv_accepts_angle_bracket_wrapped_inline_tokens() {
 }
 
 #[test]
+fn tx_query_parse_kv_accepts_quoted_and_unicode_wrapped_keys() {
+    let quoted = "\"tx_hash\"=0xCAFE77\n'status'=COMMITTED\n`error`=null\n";
+    let parsed_quoted = parse_tx_query_response(quoted, "0xfallback").unwrap();
+    assert_eq!(parsed_quoted.tx_hash, "0xcafe77");
+    assert_eq!(parsed_quoted.status, "committed");
+    assert_eq!(parsed_quoted.error, None);
+
+    let unicode_wrapped = "《transactionHash》：0xCAFE78\n【status】：SUCCESS\n『error』：NULL\n";
+    let parsed_unicode = parse_tx_query_response(unicode_wrapped, "0xfallback").unwrap();
+    assert_eq!(parsed_unicode.tx_hash, "0xcafe78");
+    assert_eq!(parsed_unicode.status, "committed");
+    assert_eq!(parsed_unicode.error, None);
+}
+
+#[test]
 fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
     let noisy = "【rpc】 《transactionHash：0xCAFE98》 《status：COMMITTED》 《error：NULL》";
     let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
