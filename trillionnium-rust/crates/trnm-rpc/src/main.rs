@@ -1738,6 +1738,14 @@ fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
     }
 }
 
+fn market_reputation_component_applied(breakdown: &MarketScoreBreakdown) -> u128 {
+    if breakdown.effective_reputation < 0 {
+        breakdown.penalty
+    } else {
+        breakdown.reputation_reward
+    }
+}
+
 fn market_score_breakdown(
     price: u128,
     reputation: i64,
@@ -4456,6 +4464,7 @@ fn main() -> Result<()> {
             } else {
                 "neutral"
             };
+            let reputation_component_applied = market_reputation_component_applied(&breakdown);
             let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
@@ -4482,8 +4491,8 @@ fn main() -> Result<()> {
                 "price_component": base_score,
                 "reputation_weight_unit": score_cfg.reputation_weight,
                 "reputation_weight": reputation_reward,
-                "reputation_weight_applied": reputation_reward,
-                "reputation_component": reputation_reward,
+                "reputation_weight_applied": reputation_component_applied,
+                "reputation_component": reputation_component_applied,
                 "reputation_reward": reputation_reward,
                 "reputation_reward_amount": reputation_reward,
                 "penalty": penalty,
@@ -6191,6 +6200,39 @@ mod tests {
         });
 
         assert_eq!(delta, i128::MAX);
+    }
+
+    #[test]
+    fn market_reputation_component_applied_tracks_active_adjustment_path() {
+        let reward = MarketScoreBreakdown {
+            effective_reputation: 4,
+            base_score: 100,
+            reputation_reward: 17,
+            penalty: 999,
+            effective_score: 83,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_component_applied(&reward), 17);
+
+        let penalty = MarketScoreBreakdown {
+            effective_reputation: -4,
+            base_score: 100,
+            reputation_reward: 999,
+            penalty: 23,
+            effective_score: 123,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_component_applied(&penalty), 23);
+
+        let neutral = MarketScoreBreakdown {
+            effective_reputation: 0,
+            base_score: 100,
+            reputation_reward: 77,
+            penalty: 88,
+            effective_score: 100,
+            score_floor_applied: false,
+        };
+        assert_eq!(market_reputation_component_applied(&neutral), 77);
     }
 
     #[test]
