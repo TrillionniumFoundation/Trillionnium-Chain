@@ -1718,6 +1718,42 @@ mod tests {
     }
 
     #[test]
+    fn oversized_critical_reserve_clamp_reopens_both_classes_after_one_drain() {
+        let mut g = LaneAdmissionGate::new(2, 99);
+
+        // Oversized reserve clamps into reserve-only mode, so once the aggregate
+        // queue saturates, draining a single occupant must immediately reopen the
+        // shared admission surface for both ingress classes.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // The remaining queued id must still dedupe globally across classes, while
+        // the reopened shared slot admits fresh work again.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+    }
+
+    #[test]
     fn oversized_critical_reserve_clamps_to_reserve_only_without_leaking_fake_normal_headroom() {
         let mut g = LaneAdmissionGate::new(2, 99);
 
