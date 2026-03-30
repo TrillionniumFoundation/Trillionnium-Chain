@@ -163,6 +163,30 @@ fn node_recovery_checkpoint_rejects_state_root_with_uppercase_hex_drift() {
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_proposal_hash_with_edge_whitespace() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: " proposal-1 ".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject WAL proposal identities with edge whitespace so restart-time checkpoint proofs cannot accept non-canonical proposal surfaces"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_proposal_hash_with_zero_width_layout_drift() {
     let wal_entry = WalMeta {
         height: 1,
