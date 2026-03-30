@@ -2447,6 +2447,41 @@ fn llm_adapter_retry_budget_exhausted_returns_last_error() {
 }
 
 #[test]
+fn llm_adapter_retry_skips_zero_backoff_sleep_between_retriable_attempts() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_llm_adapter_with_retry_inner(
+        2,
+        0,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Err(AdapterError {
+                    kind: AdapterErrorKind::Retriable,
+                    context: format!("transient-{}", attempt),
+                })
+            } else {
+                Ok(LlmAdapterResponse {
+                    output_text: "ok".to_string(),
+                    provider_request_id: None,
+                    provider: None,
+                    model: None,
+                    adapter: None,
+                    agent_protocol: None,
+                    compliance_profile: None,
+                })
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .unwrap();
+
+    assert_eq!(res.output_text, "ok");
+    assert_eq!(attempt, 3);
+    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
+}
+
+#[test]
 fn llm_adapter_non_retriable_fails_fast() {
     let mut attempt = 0u32;
     let mut slept = vec![];

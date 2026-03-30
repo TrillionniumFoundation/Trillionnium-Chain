@@ -1159,9 +1159,10 @@ where
                 let should_retry = err.kind == AdapterErrorKind::Retriable && attempt < max_retries;
                 last_error = Some(err);
                 if should_retry {
-                    sleeper(Duration::from_millis(exp_backoff_delay_ms(
-                        backoff_ms, attempt,
-                    )));
+                    let delay_ms = exp_backoff_delay_ms(backoff_ms, attempt);
+                    if delay_ms > 0 {
+                        sleeper(Duration::from_millis(delay_ms));
+                    }
                     continue;
                 }
                 break;
