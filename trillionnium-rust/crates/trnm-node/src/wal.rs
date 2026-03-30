@@ -165,6 +165,8 @@ pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::args::{Args, DEFAULT_BFT_WAL_DIR};
+    use clap::Parser;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
         std::env::temp_dir().join(format!("trnm-node-wal-{}-{}", name, now_unix_ms()))
@@ -518,6 +520,55 @@ mod tests {
         );
 
         let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_isolates_builtin_default_with_operator_visible_notice() {
+        let wal_dir = temp_wal_dir("auto-default-isolates");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_file(&wal_dir), "next_height = 2\nlast_round = 1\n").unwrap();
+
+        let args = Args::parse_from([
+            "trnm-node",
+            "--bft-wal-dir",
+            wal_dir.to_str().unwrap(),
+            "--bft-wal-mode",
+            "auto",
+        ]);
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+
+        assert_eq!(resolved, wal_dir);
+        assert!(
+            notice.is_none(),
+            "explicit custom WAL paths should preserve restart-recovery behavior without auto-isolation"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_isolates_existing_builtin_default_state() {
+        let wal_dir = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let _ = fs::remove_dir_all(&wal_dir);
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_file(&wal_dir), "next_height = 9\nlast_round = 2\n").unwrap();
+
+        let args = Args::parse_from(["trnm-node", "--bft-wal-mode", "auto"]);
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        let notice = notice.expect("existing builtin default WAL state should emit isolation notice");
+
+        assert_ne!(resolved, wal_dir);
+        assert_eq!(resolved.parent(), Some(wal_dir.as_path()));
+        assert!(
+            notice.contains("existing default WAL state detected")
+                && notice.contains(&wal_dir.display().to_string())
+                && notice.contains(&resolved.display().to_string())
+                && notice.contains("--bft-wal-mode reuse"),
+            "unexpected isolation notice: {notice}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+        let _ = fs::remove_dir_all(&resolved);
     }
 
     #[test]
