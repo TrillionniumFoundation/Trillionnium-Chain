@@ -234,6 +234,18 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
         matched["penalty_amount"].as_u64().expect("penalty_amount") as u128,
         penalty
     );
+    assert_eq!(
+        matched["reputation_weight_applied"]
+            .as_u64()
+            .expect("reputation_weight_applied") as u128,
+        penalty
+    );
+    assert_eq!(
+        matched["reputation_component"]
+            .as_u64()
+            .expect("reputation_component") as u128,
+        penalty
+    );
     assert_eq!(matched["reputation_score_delta"], 6);
     assert_eq!(final_score, base_score + penalty);
     assert_eq!(effective_score, final_score);
