@@ -95,6 +95,9 @@ fi
 if [ -n "${EXPECTED_HEAD:-}" ]; then
   REPLAY_COMMAND+=" EXPECTED_HEAD='${EXPECTED_HEAD}'"
 fi
+if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+fi
 REPLAY_COMMAND+=" ./scripts/run_industrial_readiness_check.sh $(printf '%q' "$OWNER") $(printf '%q' "$REPO") $(printf '%q' "$REQUIRED_STREAK")"
 ROLLBACK_COMMAND="rm -f $(printf '%q' "$OUT_FILE")"
 
