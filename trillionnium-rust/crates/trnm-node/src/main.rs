@@ -1552,6 +1552,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         )
     })?;
     anyhow::ensure!(
+        rpc_addr == rpc_socket.to_string(),
+        "invalid node config {}: rpc_addr must use a canonical socket literal",
+        path
+    );
+    anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
         path
@@ -1619,6 +1624,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
+    anyhow::ensure!(
+        p2p_addr == p2p_socket.to_string(),
+        "invalid node config {}: p2p_addr must use a canonical socket literal",
+        path
+    );
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
@@ -4256,6 +4266,47 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must be a raw socket address, not a URL"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_noncanonical_socket_literals() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-noncanonical-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[0:0:0:0:0:0:0:1]:26657\"\np2p_addr = \"[::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("noncanonical rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must use a canonical socket literal"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-noncanonical-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[0:0:0:0:0:0:0:1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("noncanonical p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must use a canonical socket literal"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
