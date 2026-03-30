@@ -1697,7 +1697,8 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     match normalize_tx_hash(&value) {
                         Some(normalized) => tx_hash = Some(normalized),
                         None => bail!("invalid tx_hash field in tx query response"),
@@ -3461,6 +3462,14 @@ mod tests {
         let compact = "transactionHash=0xdef456\nstatus=committed\n";
         let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
         assert_eq!(parsed_compact.tx_hash, "0xdef456");
+
+        let hyphenated = "transaction-hash=0xdef457\nstatus=committed\n";
+        let parsed_hyphenated = parse_tx_query_response(hyphenated, "0xfallback").unwrap();
+        assert_eq!(parsed_hyphenated.tx_hash, "0xdef457");
+
+        let tx_hyphenated = "tx-hash=0xabc124\nstatus=committed\n";
+        let parsed_tx_hyphenated = parse_tx_query_response(tx_hyphenated, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_hyphenated.tx_hash, "0xabc124");
 
         let tx_status_snake = "tx_hash=0xaaa111\ntx_status=queued\n";
         let parsed_tx_status_snake =
