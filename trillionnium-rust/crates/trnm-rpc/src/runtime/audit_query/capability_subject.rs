@@ -1,8 +1,7 @@
 use super::*;
 
 pub(crate) fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
+    let normalized = normalize_wrapped_env_value(raw)
         .chars()
         .filter_map(|ch| match ch {
             '\u{061C}'

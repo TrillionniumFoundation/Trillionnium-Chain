@@ -66,6 +66,39 @@ fn resolve_capability_token_subject_or_token_rejects_noncanonical_subject_alias(
 }
 
 #[test]
+fn resolve_capability_token_subject_or_token_accepts_wrapped_operator_input() {
+    let mut registry = IdentityRegistry::default();
+    registry
+        .register_did(
+            "did:org:lane-xi".to_string(),
+            "org:lane-xi-admin".to_string(),
+            10,
+        )
+        .expect("register did");
+    let token_id = registry
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+
+    assert_eq!(
+        resolve_capability_token_subject_or_token(&registry, " \"did:org:lane-xi\" "),
+        Some(token_id),
+        "quoted subject DIDs should resolve like unwrapped operator input"
+    );
+    let wrapped_token = format!(" '`{token_id}`' ");
+    assert_eq!(
+        resolve_capability_token_subject_or_token(&registry, &wrapped_token),
+        Some(token_id),
+        "quoted numeric token ids should resolve like unwrapped operator input"
+    );
+}
+
+#[test]
 fn resolve_capability_token_subject_or_token_fail_closed_without_structured_token() {
     let mut registry = IdentityRegistry::default();
     registry
