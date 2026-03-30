@@ -123,6 +123,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         )
     })?;
     anyhow::ensure!(
+        rpc_addr == rpc_socket.to_string(),
+        "invalid node config {}: rpc_addr must use a canonical socket address literal",
+        path
+    );
+    anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
         path
@@ -153,6 +158,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
+    anyhow::ensure!(
+        p2p_addr == p2p_socket.to_string(),
+        "invalid node config {}: p2p_addr must use a canonical socket address literal",
+        path
+    );
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
@@ -770,6 +780,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
             p2p_err
                 .to_string()
                 .contains("p2p_addr must be a valid socket address"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_noncanonical_socket_literals() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:026657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("noncanonical rpc_addr literals must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must use a canonical socket address literal"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[0:0:0:0:0:0:0:1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("noncanonical p2p_addr literals must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must use a canonical socket address literal"),
             "unexpected error: {p2p_err:#}"
         );
     }
