@@ -1067,7 +1067,8 @@ fn extract_tx_hash(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some((key, value)) = parse_kv_line(line) {
             match key.as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     if let Some(normalized) = normalize_tx_hash(&value) {
                         return Some(normalized);
                     }
@@ -1084,15 +1085,16 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             });
             let (k, v) = trimmed
                 .split_once('=')
-                .or_else(|| trimmed.split_once(':'))?;
+                .or_else(|| trimmed.split_once(':'))
+                .or_else(|| trimmed.split_once('＝'))
+                .or_else(|| trimmed.split_once('：'))?;
             let key = k.trim_matches(|c: char| {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
             match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
-                    normalize_tx_hash(v)
-                }
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => normalize_tx_hash(v),
                 _ => None,
             }
         }) {
@@ -1109,11 +1111,12 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            if !matches!(sep, "=" | ":") {
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
                 continue;
             }
             match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     if let Some(normalized) = normalize_tx_hash(value) {
                         return Some(normalized);
                     }
@@ -1186,9 +1189,22 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
         (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
+        (k.trim(), v.trim())
     } else {
         return None;
     };
+
+    let key = key.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+    });
+    let value = value.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+    });
 
     if key.is_empty() {
         return None;
@@ -1199,11 +1215,16 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let trimmed = token.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
         (k.trim(), v.trim())
     } else {
         return None;
@@ -1218,7 +1239,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         value
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
             })
             .trim_matches('"')
             .trim_matches('\'')
@@ -2178,6 +2199,30 @@ mod tests {
         assert_eq!(
             extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
             Some("0xfeed55")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_hyphenated_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx-hash=0xCAFE01").as_deref(),
+            Some("0xcafe01")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction-hash: 0xBEEF02").as_deref(),
+            Some("0xbeef02")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_fullwidth_separators() {
+        assert_eq!(
+            extract_tx_hash("tx_hash＝0xFEED77").as_deref(),
+            Some("0xfeed77")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction-hash：0xBEEF88").as_deref(),
+            Some("0xbeef88")
         );
     }
 
