@@ -66,6 +66,14 @@
 
 否则，不同读取路径即便面对**同一组证据文件**，也可能因为枚举顺序不同而得出不同的“canonical checkpoint / predecessor linkage”摘要。
 
+另外，解析这两份元数据文件时也应保持 **fail-closed**：
+
+- 缺失 `CheckpointMeta.state_root_hex` 或 `CheckpointMeta.wal_entry_hash_hex` 时，不能默默补默认值；
+- 出现未知字段、重复字段或结构歧义时，不能“尽力继续”并产出 light-verifier 摘要；
+- 对 DA / light-verifier 面，更安全的行为是把该证据批次标记为 **invalid / unavailable**，等待人工修复或节点重写 canonical 元数据，而不是输出看似完整但语义不可信的摘要。
+
+这能避免下游把“字段残缺的 checkpoint 证据”误当作可验证锚点，从而把本该显式暴露的证据损坏静默吞掉。
+
 ## 最小验证
 
 ```bash
