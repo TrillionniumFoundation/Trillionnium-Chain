@@ -1163,3 +1163,46 @@ fn restore_task_rejects_slashed_retention_with_reserved_worker_slash_treasury_al
         "restore_task must fail closed when slashed proof-retention metadata aliases the challenger to the reserved worker-slash treasury, even through mixed-case input"
     );
 }
+
+#[test]
+fn restore_task_rejects_slashed_retention_with_exact_reserved_worker_slashes_treasury_alias() {
+    let mut state = StateStore::new();
+
+    state.restore_task(
+        40840,
+        Some(TaskObject {
+            task_id: 40840,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained slash trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("99".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x90; 32]),
+            result_hash: Some([0x91; 32]),
+            reveal_salt: Some([0x92; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("Treasury.Worker_Slashes".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        state.get_task(40840).is_none(),
+        "restore_task must fail closed when slashed proof-retention metadata aliases the challenger to the exact reserved worker-slashes treasury account, even through mixed-case input"
+    );
+}
