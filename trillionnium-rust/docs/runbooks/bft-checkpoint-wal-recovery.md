@@ -55,6 +55,7 @@
 对于**同一高度出现多条候选元数据**的情况，还要维持跨 surface 一致的 canonical 排序语义：
 
 - `WalMeta` 先按 `(height, round, proposal_hash, committed, state_root_hex, prev_hash_hex)` 排序；
+- 其中 `prev_hash_hex` 仍保留 `Option` 语义：字段缺失/`None` 的 genesis/链首边界必须排在任何显式字符串载荷之前，不能把 `None`、`"genesis"`、`""` 这三类证据压平成同一种“前驱占位值”；
 - `CheckpointMeta` 先按 `(height, state_root_hex, wal_entry_hash_hex)` 排序；
 - 因此 light-verifier / 审计脚本如果要输出“该高度的第一条/最后一条”摘要，必须先按上述顺序 canonicalize，再做索引或聚合。
 
