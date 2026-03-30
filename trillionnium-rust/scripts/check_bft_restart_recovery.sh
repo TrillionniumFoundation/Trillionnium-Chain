@@ -90,6 +90,7 @@ fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 GIT_STATUS_SUMMARY="clean"
 REPLAY_COMMAND="env RUNS='${RUNS}'"
+LANE_VERIFY_COMMAND="<not-run>"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
   [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
   [ -n "${EXPECTED_BRANCH_REF:-}" ] || { echo "lane identity failed: EXPECTED_BRANCH_REF is required when lane binding is enabled" >&2; exit 4; }
@@ -101,6 +102,11 @@ if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || 
   if [ -n "${EXPECTED_HEAD:-}" ]; then
     lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
   fi
+  LANE_VERIFY_COMMAND="./scripts/v2/verify_lane_worktree.sh"
+  for arg in "${lane_verify_args[@]}"; do
+    printf -v quoted_arg '%q' "$arg"
+    LANE_VERIFY_COMMAND+=" $quoted_arg"
+  done
   ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" >/dev/null
 fi
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
@@ -200,6 +206,7 @@ done
   echo "pre_log_glob=$OUT_DIR/bft-restart-pre-${TS}-*.log"
   echo "post_log_glob=$OUT_DIR/bft-restart-post-${TS}-*.log"
   echo "replay_command=$REPLAY_COMMAND"
+  echo "lane_verify_command=$LANE_VERIFY_COMMAND"
   echo "rollback_command=$ROLLBACK_COMMAND"
   echo "status=PASS"
 } > "$REPORT"
