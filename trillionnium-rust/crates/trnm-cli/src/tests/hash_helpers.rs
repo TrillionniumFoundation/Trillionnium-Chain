@@ -220,6 +220,18 @@ fn extract_tx_hash_trims_guillemet_and_lenticular_wrappers() {
 }
 
 #[test]
+fn extract_tx_hash_trims_vertical_presentation_quotes() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=〝0xABCD1234〞").as_deref(),
+        Some("0xabcd1234")
+    );
+    assert_eq!(
+        extract_tx_hash("transactionHash: 〟0xBEEF42〟?!").as_deref(),
+        Some("0xbeef42")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_inline_fullwidth_separators() {
     assert_eq!(
         extract_tx_hash("INFO tx_hash＝0xFEED77 done").as_deref(),
