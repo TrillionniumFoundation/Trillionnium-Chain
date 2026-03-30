@@ -17,7 +17,8 @@ Environment:
 
 Outputs:
   Writes a PASS report under run/bft-restart-recovery-<timestamp>.txt
-  The report includes config_path, replay_command, rollback_command, and resolved git identity fields.
+  The report includes config_path, replay_command, rollback_command, and resolved git identity fields
+  (including git_head_state and git_status_summary for handoff-grade audit context).
 EOF
 }
 
@@ -81,10 +82,13 @@ GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH_NAME="$(git branch --show-current 2>/dev/null || true)"
 if [ -n "$GIT_BRANCH_NAME" ]; then
   GIT_BRANCH_REF="refs/heads/$GIT_BRANCH_NAME"
+  GIT_HEAD_STATE="attached"
 else
   GIT_BRANCH_REF="<detached>"
+  GIT_HEAD_STATE="detached"
 fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+GIT_STATUS_SUMMARY="clean"
 REPLAY_COMMAND="env RUNS='${RUNS}'"
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
   [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
@@ -188,6 +192,8 @@ done
   echo "git_branch_ref=$GIT_BRANCH_REF"
   echo "git_worktree_branch_ref=$GIT_BRANCH_REF"
   echo "git_head=$GIT_HEAD"
+  echo "git_head_state=$GIT_HEAD_STATE"
+  echo "git_status_summary=$GIT_STATUS_SUMMARY"
   echo "expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}"
   echo "expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}"
   echo "expected_head=${EXPECTED_HEAD:-<unset>}"
