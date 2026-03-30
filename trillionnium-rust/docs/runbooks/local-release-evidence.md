@@ -16,6 +16,15 @@ EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch" \
 ./scripts/run_local_release_evidence.sh
 ```
 
+若 handoff / ticket 还额外锁定了提交点，再显式带上 `EXPECTED_HEAD`；若该值未知，就保持未设置，不要凭记忆补填：
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket-or-lane" \
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch" \
+EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>" \
+./scripts/run_local_release_evidence.sh
+```
+
 脚本会串联以下检查：
 
 > 注意：该脚本生成的是 **release evidence bundle**，不是“必定通过”的绿色证明。任一步骤失败时，脚本会 **fail-closed**，并在 `summary.txt` 中把对应步骤记为 `FAIL(...)`；是否可用于当前 release/readiness 判断，必须结合仓库根 `RELEASE_READINESS.md` 与本次 `summary.txt` 一起看。
@@ -58,14 +67,17 @@ OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket-or-lane"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>" # 未锁定提交时留空/不传
 
 bash -n ./scripts/v2/verify_lane_worktree.sh
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
+# 若 ticket 明确锁定提交，再追加：
+#   --expected-head "$EXPECTED_HEAD"
 ```
 
-   - 该 helper 除了校验当前 `git rev-parse --show-toplevel` 与 `git branch --show-current` 外，还会 fail-closed 校验 `git worktree list --porcelain` 中当前 stanza 的 branch 绑定是否一致，避免“分支名看起来对，但 worktree 绑定不对”的误交接。
+   - 该 helper 除了校验当前 `git rev-parse --show-toplevel` 与 `git branch --show-current` 外，还会 fail-closed 校验 `git worktree list --porcelain` 中当前 stanza 的 branch 绑定是否一致，避免“分支名看起来对，但 worktree 绑定不对”的误交接；若 handoff 还锁定了 `HEAD`，则必须把 `--expected-head` 一并带上，避免在正确 worktree/branch 上误引用了错误提交的证据包。
    - 只有在上述 helper 通过后，才开始 `./scripts/run_local_release_evidence.sh` / `./scripts/release_rc.sh`，避免把错误 worktree 上生成的 artifact 误交接给 validator/operator。
 
 1. **先看 `summary.txt` / `manifest.txt`，不要凭终端滚屏口述结论。**
