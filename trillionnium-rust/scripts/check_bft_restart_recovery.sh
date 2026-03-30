@@ -37,6 +37,13 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+GIT_STATUS_SHORT="$(git status --short 2>/dev/null || true)"
+if [ -n "$GIT_STATUS_SHORT" ]; then
+  printf 'dirty worktree: restart recovery drill requires clean git status --short\n' >&2
+  printf '%s\n' "$GIT_STATUS_SHORT" >&2
+  exit 65
+fi
+
 normalize_branch_ref() {
   case "$1" in
     refs/*) printf '%s\n' "$1" ;;
