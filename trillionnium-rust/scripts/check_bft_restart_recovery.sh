@@ -9,9 +9,11 @@ Runs the BFT restart-recovery drill against configs/node1.toml.
 
 Environment:
   RUNS                   Number of restart-recovery rehearsal cycles to execute (default: 5)
-  EXPECTED_WORKTREE_ROOT Optional fail-closed worktree root to capture in replay metadata
-  EXPECTED_BRANCH_REF    Optional fail-closed branch ref to capture in replay metadata
-  EXPECTED_HEAD          Optional fail-closed HEAD sha to capture in replay metadata
+  EXPECTED_WORKTREE_ROOT Optional fail-closed worktree root; when any EXPECTED_* is set,
+                         this and EXPECTED_BRANCH_REF are required and verified
+  EXPECTED_BRANCH_REF    Optional fail-closed branch ref; normalized to refs/heads/* and
+                         verified when lane binding is enabled
+  EXPECTED_HEAD          Optional fail-closed HEAD sha verified when provided
 
 Outputs:
   Writes a PASS report under run/bft-restart-recovery-<timestamp>.txt
@@ -84,6 +86,19 @@ else
 fi
 GIT_WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 REPLAY_COMMAND="env RUNS='${RUNS}'"
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
+  [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
+  [ -n "${EXPECTED_BRANCH_REF:-}" ] || { echo "lane identity failed: EXPECTED_BRANCH_REF is required when lane binding is enabled" >&2; exit 4; }
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  lane_verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "${EXPECTED_HEAD:-}" ]; then
+    lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}" >/dev/null
+fi
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
   REPLAY_COMMAND+=" EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
 fi
