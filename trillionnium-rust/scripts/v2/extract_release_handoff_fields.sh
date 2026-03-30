@@ -50,6 +50,28 @@ done
 
 ROOT="$(git rev-parse --show-toplevel)"
 
+resolve_repo_path() {
+  local path="$1"
+  case "$path" in
+    /*)
+      printf '%s' "$path"
+      ;;
+    *)
+      printf '%s/%s' "$ROOT" "$path"
+      ;;
+  esac
+}
+
+if [ -n "$PREFLIGHT_PATH" ]; then
+  PREFLIGHT_PATH="$(resolve_repo_path "$PREFLIGHT_PATH")"
+fi
+if [ -n "$SUMMARY_PATH" ]; then
+  SUMMARY_PATH="$(resolve_repo_path "$SUMMARY_PATH")"
+fi
+if [ -n "$MANIFEST_PATH" ]; then
+  MANIFEST_PATH="$(resolve_repo_path "$MANIFEST_PATH")"
+fi
+
 if [ -z "$PREFLIGHT_PATH" ]; then
   latest_preflight="$(find "$ROOT/run/preflight" -maxdepth 1 -type f -name 'go-no-go-*.txt' ! -name 'go-no-go-latest.txt' -print 2>/dev/null | sort | tail -n 1)"
   if [ -n "$latest_preflight" ]; then
