@@ -65,6 +65,28 @@ fn proof_quota_source_attribution_aliases_share_boundary() {
             session_id: "proof-src-s1".into(),
             from_seq: 1,
             to_seq: 1,
+            source: Some("«proof-src»".into()),
+        })
+        .unwrap();
+    let unicode_wrapped_alias_err = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "proof-src-s1".into(),
+            from_seq: 1,
+            to_seq: 1,
+            source: Some("proof-src".into()),
+        })
+        .unwrap_err();
+    assert!(unicode_wrapped_alias_err
+        .to_string()
+        .contains("too_many_requests/quota_exceeded"));
+
+    relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "proof-src-s1".into(),
+            from_seq: 1,
+            to_seq: 1,
             source: Some("proof\u{200B}src".into()),
         })
         .unwrap();

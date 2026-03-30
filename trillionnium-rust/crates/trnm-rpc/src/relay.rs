@@ -534,15 +534,29 @@ fn elide_risk_error_key(key: &str) -> String {
 }
 
 fn canonicalize_risk_source(source: Option<&str>) -> String {
+    fn quote_wrapper_len(source: &str) -> Option<(usize, usize)> {
+        const QUOTE_WRAPPERS: [(&str, &str); 7] = [
+            ("\"", "\""),
+            ("'", "'"),
+            ("`", "`"),
+            ("“", "”"),
+            ("‘", "’"),
+            ("«", "»"),
+            ("「", "」"),
+        ];
+
+        QUOTE_WRAPPERS.iter().find_map(|(open, close)| {
+            source
+                .starts_with(open)
+                .then_some(())
+                .filter(|_| source.ends_with(close))
+                .map(|_| (open.len(), close.len()))
+        })
+    }
+
     let mut source = source.unwrap_or("anon").trim();
-    while source.len() >= 2 {
-        let wrapped_by_quotes = (source.starts_with('"') && source.ends_with('"'))
-            || (source.starts_with('\'') && source.ends_with('\''))
-            || (source.starts_with('`') && source.ends_with('`'));
-        if !wrapped_by_quotes {
-            break;
-        }
-        source = source[1..source.len() - 1].trim();
+    while let Some((prefix_len, suffix_len)) = quote_wrapper_len(source) {
+        source = source[prefix_len..source.len() - suffix_len].trim();
     }
     if source.is_empty() {
         return "anon".to_string();
