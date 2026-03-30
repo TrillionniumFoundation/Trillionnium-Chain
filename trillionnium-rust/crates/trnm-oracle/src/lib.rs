@@ -732,6 +732,18 @@ mod tests {
     }
 
     #[test]
+    fn accepts_policy_when_min_sources_matches_update_rate_cap() {
+        OraclePolicy {
+            min_sources: 60,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 60,
+        }
+        .validate()
+        .expect("policy boundary should accept a quorum floor exactly at the update-rate cap");
+    }
+
+    #[test]
     fn rejects_empty_feed_id_when_building_snapshot() {
         let err = OracleSnapshot::new(
             "   ",
