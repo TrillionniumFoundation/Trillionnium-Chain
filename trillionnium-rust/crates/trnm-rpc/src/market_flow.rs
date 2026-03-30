@@ -78,12 +78,15 @@ pub(crate) fn handle_market_submit_bid(
     price: u128,
     now_unix_ms: u128,
 ) -> Result<()> {
-    if worker.trim().is_empty() {
+    let Some(normalized_worker) = normalize_market_worker_key(&worker) else {
         return Err(rpc_fail(RpcErrorResponse {
             code: "worker-id-invalid",
-            message: format!("market bid worker must be non-empty for task {}", task_id),
+            message: format!(
+                "market bid worker must contain at least one visible identifier character for task {}",
+                task_id
+            ),
         }));
-    }
+    };
     if price == 0 {
         return Err(rpc_fail(RpcErrorResponse {
             code: "bid-price-invalid",
@@ -93,7 +96,6 @@ pub(crate) fn handle_market_submit_bid(
             ),
         }));
     }
-    let normalized_worker = normalize_market_worker_key(&worker).expect("worker checked non-empty");
     let bid = {
         let tasks_path = market_tasks_file();
         let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
