@@ -223,7 +223,7 @@ impl OraclePolicy {
             });
         }
 
-        if now_ts_ms - snapshot.snapshot_ts_ms > self.max_staleness_ms {
+        if now_ts_ms.saturating_sub(snapshot.snapshot_ts_ms) > self.max_staleness_ms {
             return Err(OracleError::StaleSnapshot {
                 snapshot_ts_ms: snapshot.snapshot_ts_ms,
                 now_ts_ms,
