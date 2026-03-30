@@ -227,9 +227,13 @@ assert_equal historical_evidence_only "$summary_historical_evidence_only" "$mani
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
 assert_equal git_status_summary "$summary_git_status_summary" "$manifest_git_status_summary"
 
-if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
-  printf 'assigned worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
-  exit 1
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  expected_worktree_root_canonical="$(canonical_path "$EXPECTED_WORKTREE_ROOT")"
+  summary_worktree_path_canonical="$(canonical_path "$summary_worktree_path")"
+  if [ "$summary_worktree_path_canonical" != "$expected_worktree_root_canonical" ]; then
+    printf 'assigned worktree mismatch: expected %s got %s\n' "$expected_worktree_root_canonical" "$summary_worktree_path_canonical" >&2
+    exit 1
+  fi
 fi
 
 if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
