@@ -4804,6 +4804,7 @@ mod tests {
 
         for invalid_prev_hash in [
             Some("EF".repeat(32)),
+            Some(format!(" {} ", "ef".repeat(32))),
             Some(format!("{}\n", "ef".repeat(32))),
             Some(String::new()),
             None,
