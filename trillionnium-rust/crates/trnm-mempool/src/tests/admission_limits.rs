@@ -171,6 +171,33 @@ fn borrowed_last_idle_critical_slot_preserves_cross_class_duplicate_and_fresh_ba
 }
 
 #[test]
+fn borrowed_last_idle_critical_slot_preserves_same_class_duplicate_without_queue_drift() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    // Fill dedicated normal capacity first, then borrow the final idle critical slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+
+    // Same-class replay of the borrowed occupant must stay Duplicate and must not
+    // perturb accounting while the last idle critical slot remains consumed.
+    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+
+    // Fresh same-class retry noise must also stay fail-closed until the borrowed
+    // slot drains, without poisoning future admission.
+    assert_eq!(g.admit(88, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+
+    assert_eq!(g.pop_ready(), Some(77));
+    assert_eq!(g.admit(88, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn duplicate_semantics_survive_stale_seen_global_under_saturation() {
     let mut g = LaneAdmissionGate::new(2, 1);
 
