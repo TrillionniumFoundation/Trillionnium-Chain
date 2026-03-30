@@ -204,6 +204,20 @@ mod tests {
     }
 
     #[test]
+    fn market_score_config_output_saturates_min_reputation_delta_at_i128_min() {
+        let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+            price_weight: 1,
+            reputation_weight: (i128::MAX as u128) + 1,
+            reputation_clamp: 1,
+        });
+
+        assert_eq!(output.max_effective_reputation, 1);
+        assert_eq!(output.min_effective_reputation, -1);
+        assert_eq!(output.max_reputation_score_delta, (i128::MAX as u128) + 1);
+        assert_eq!(output.min_reputation_score_delta, i128::MIN);
+    }
+
+    #[test]
     fn market_score_config_output_clamps_oversized_manual_clamp_to_fail_closed_maximum() {
         let output = MarketScoreConfigOutput::from(MarketScoreConfig {
             price_weight: 2,
