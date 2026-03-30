@@ -1232,6 +1232,44 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn shipped_bootstrap_configs_keep_a_minimal_fail_closed_schema() {
+        use std::collections::BTreeSet;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for config_name in ["node1.toml", "node2.toml", "node3.toml", "node4.toml"] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap schema checks: {err}",
+                    config_path.display()
+                )
+            });
+            let table: toml::Table = raw.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain valid TOML for shipped bootstrap schema checks: {err}",
+                    config_path.display()
+                )
+            });
+            let actual_keys = table.keys().cloned().collect::<BTreeSet<_>>();
+            let expected_keys = BTreeSet::from([
+                String::from("node_id"),
+                String::from("rpc_addr"),
+                String::from("p2p_addr"),
+            ]);
+            assert_eq!(
+                actual_keys, expected_keys,
+                "{} must keep the minimal shipped bootstrap schema so peer formation fixtures stay deterministic and fail closed",
+                config_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
