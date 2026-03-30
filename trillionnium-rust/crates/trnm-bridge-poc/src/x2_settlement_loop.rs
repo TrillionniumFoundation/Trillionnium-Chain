@@ -355,8 +355,8 @@ pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
 #[cfg(test)]
 mod tests {
     use super::{
-        drive_minimal_settlement, normalize_compensation_reason, SettlementConfirm,
-        SettlementEvent, SettlementStep,
+        degraded_reason_allows_invalid_embedded_metrics, drive_minimal_settlement,
+        normalize_compensation_reason, SettlementConfirm, SettlementEvent, SettlementStep,
     };
     use crate::bridge_status::{
         BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
@@ -532,6 +532,20 @@ mod tests {
         let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_english_punctuation_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression: target height exceeded source sample"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_cjk_punctuation_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat height：源高度为零"
+        ));
     }
 
     #[test]
