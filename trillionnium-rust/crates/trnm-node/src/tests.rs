@@ -478,6 +478,43 @@
     }
 
     #[test]
+    fn critical_guard_mixed_backlog_drains_fifo_when_capacity_covers_queue() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 11,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 11,
+                challenger: "c11".into(),
+                bond: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 11,
+                worker: "w11".into(),
+            },
+            MockTx::Resolve {
+                task_id: 11,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+        ]);
+
+        // Even for heterogeneous backlog, once block budget can absorb the whole
+        // queue we should stay on the fast path: drain FIFO and skip lane-fairness
+        // reordering/bookkeeping entirely.
+        let picked = pick_txs_with_critical_guard(&mut mempool, 4);
+
+        assert!(mempool.is_empty());
+        assert_eq!(picked.len(), 4);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 11, .. }));
+        assert!(matches!(picked[1], MockTx::Challenge { task_id: 11, .. }));
+        assert!(matches!(picked[2], MockTx::AcceptTask { task_id: 11, .. }));
+        assert!(matches!(picked[3], MockTx::Resolve { task_id: 11, .. }));
+    }
+
+    #[test]
     fn critical_guard_zero_block_budget_is_noop_and_preserves_queue_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
