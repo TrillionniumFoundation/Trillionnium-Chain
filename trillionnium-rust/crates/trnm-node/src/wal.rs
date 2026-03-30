@@ -790,6 +790,46 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_meta_roundtrip_keeps_duplicate_evidence_entries_visible() {
+        let wal_dir = temp_wal_dir("checkpoint-duplicate-evidence-roundtrip");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let duplicate = CheckpointMeta {
+            height: 12,
+            state_root_hex: "root-dup".into(),
+            wal_entry_hash_hex: "hash-dup".into(),
+        };
+
+        persist_checkpoint_meta(&wal_dir, &[duplicate.clone(), duplicate.clone()]).unwrap();
+
+        let loaded = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(
+            loaded,
+            vec![duplicate.clone(), duplicate.clone()],
+            "checkpoint load/persist must not silently collapse duplicate evidence rows because audit surfaces need to preserve duplicate-entry corruption signals"
+        );
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        assert_eq!(
+            raw.matches("height = 12").count(),
+            2,
+            "checkpoint roundtrip must keep both duplicate checkpoint evidence entries visible on disk"
+        );
+        assert_eq!(
+            raw.matches("state_root_hex = \"root-dup\"").count(),
+            2,
+            "duplicate checkpoint state_root evidence must remain visible for light-verifier audit diffs"
+        );
+        assert_eq!(
+            raw.matches("wal_entry_hash_hex = \"hash-dup\"").count(),
+            2,
+            "duplicate checkpoint wal_entry_hash evidence must remain visible for checkpoint linkage audits"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn checkpoint_meta_roundtrip_keeps_lower_height_ahead_of_equal_height_light_verifier_block() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-roundtrip-mixed-heights");
         fs::create_dir_all(&wal_dir).unwrap();
