@@ -959,7 +959,12 @@ fn truncate_for_error(raw: &str, max_chars: usize) -> String {
 }
 
 fn trim_config_numeric_value(raw: &str) -> &str {
-    raw.trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
+    raw.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || is_invisible_filler(c)
+            || is_receipt_quote_wrapper(c)
+    })
 }
 
 fn normalize_config_numeric_value(raw: &str) -> String {
