@@ -472,6 +472,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
+        let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_compensation_reason_collapses_general_punctuation_spaces() {
         let raw = "target\u{2000}relay\u{2001}timeout\u{2002}signal\u{2003}confirm\u{2004}lag\u{2005}audit\u{2006}trail";
         let normalized = normalize_compensation_reason(raw, "fallback");
@@ -518,13 +525,6 @@ mod tests {
         let raw = "target\u{E0001}relay\u{E0020}timeout\u{E007F}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
-    }
-
-    #[test]
-    fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
-        let raw = "target\u{1680}relay timeout";
-        let normalized = normalize_compensation_reason(raw, "fallback");
-        assert_eq!(normalized, "target relay timeout");
     }
 
     #[test]
