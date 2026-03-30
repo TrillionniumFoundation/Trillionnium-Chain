@@ -55,7 +55,10 @@ pub(crate) fn run_adapter_with_retry(
         }
 
         if attempt < max_retries {
-            thread::sleep(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
+            let delay_ms = backoff_delay_ms(backoff_ms, attempt);
+            if delay_ms > 0 {
+                thread::sleep(Duration::from_millis(delay_ms));
+            }
         }
     }
 
