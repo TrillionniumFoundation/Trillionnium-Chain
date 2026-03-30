@@ -1501,6 +1501,13 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    anyhow::ensure!(
+        !node_id.eq_ignore_ascii_case("localhost")
+            && node_id.parse::<std::net::IpAddr>().is_err()
+            && node_id.parse::<SocketAddr>().is_err(),
+        "invalid node config {}: node_id must not look like a host or socket literal",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -5110,6 +5117,25 @@ bootstrap_peers = ["127.0.0.1:27656"]
             )
             .expect_err("node_id dot segments must fail closed");
             assert!(err.to_string().contains("node_id must not be '.' or '..'"));
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_host_like_node_id_literals() {
+        for node_id in ["localhost", "LOCALHOST", "127.0.0.1"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("host-like node_id literals must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not look like a host or socket literal")
+            );
         }
     }
 
