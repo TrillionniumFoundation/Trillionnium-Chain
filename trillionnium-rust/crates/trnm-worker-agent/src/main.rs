@@ -873,7 +873,8 @@ where
             last_tx_hash = tx_hash;
         }
 
-        // deterministic rejections (duplicate/nonce_rejected) should not retry.
+        // deterministic terminal rejections (duplicate/nonce_rejected/slo_violation)
+        // should not retry.
         if is_deterministic_rejection(rc) {
             return Ok(AdapterExecResult {
                 ok: false,
