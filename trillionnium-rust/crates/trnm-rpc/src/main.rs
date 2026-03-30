@@ -1741,8 +1741,10 @@ fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
 fn market_reputation_component_applied(breakdown: &MarketScoreBreakdown) -> u128 {
     if breakdown.effective_reputation < 0 {
         breakdown.penalty
-    } else {
+    } else if breakdown.effective_reputation > 0 {
         breakdown.reputation_reward
+    } else {
+        0
     }
 }
 
@@ -6232,7 +6234,7 @@ mod tests {
             effective_score: 100,
             score_floor_applied: false,
         };
-        assert_eq!(market_reputation_component_applied(&neutral), 77);
+        assert_eq!(market_reputation_component_applied(&neutral), 0);
     }
 
     #[test]
