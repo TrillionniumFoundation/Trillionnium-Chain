@@ -142,6 +142,29 @@ fn tx_backoff_delay_stays_monotonic_across_shift_cap_and_saturation() {
 }
 
 #[test]
+fn exp_backoff_delay_stays_monotonic_across_shift_cap_and_saturation() {
+    let delays = [
+        exp_backoff_delay_ms(1, 62),
+        exp_backoff_delay_ms(1, 63),
+        exp_backoff_delay_ms(1, 64),
+        exp_backoff_delay_ms(3, 63),
+        exp_backoff_delay_ms(3, 64),
+        exp_backoff_delay_ms(3, u32::MAX),
+    ];
+
+    assert_eq!(delays[0], 1u64 << 62);
+    assert_eq!(delays[1], 1u64 << 63);
+    assert_eq!(delays[2], u64::MAX);
+    assert_eq!(delays[3], 3u64.saturating_mul(1u64 << 63));
+    assert_eq!(delays[4], u64::MAX);
+    assert_eq!(delays[5], u64::MAX);
+    assert!(
+        delays.windows(2).all(|pair| pair[0] <= pair[1]),
+        "exp backoff must remain monotonic across the shift cap: {delays:?}"
+    );
+}
+
+#[test]
 fn run_adapter_with_retry_prefers_latest_nonce_rejected_receipt_hash_and_stops() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-nonce-rejected-newest-tx-hash-counter-{}-{}.txt",
