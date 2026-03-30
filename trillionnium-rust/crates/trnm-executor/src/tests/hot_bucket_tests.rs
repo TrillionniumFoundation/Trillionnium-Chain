@@ -344,6 +344,9 @@ fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_
 
 #[test]
 fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fanout_with_empty_noise() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
+
     let mut txs = vec![
         tx(103, vec![], vec![]),      // empty-access noise defaults to bucket 0
         tx(104, vec![], vec![o(1)]),  // only signaled lane once fanout clamps to len=5
@@ -382,6 +385,30 @@ fn hot_bucket_interleave_keeps_real_two_lane_rotation_despite_empty_access_noise
     assert_eq!(
         txs.iter().map(|t| t.id).collect::<Vec<_>>(),
         vec![108, 110, 112, 111, 113, 109]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_preserves_single_modulo_signaled_lane_with_empty_noise() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "6");
+
+    let mut txs = vec![
+        tx(114, vec![], vec![]),      // empty-access noise bucket 0
+        tx(115, vec![], vec![o(5)]),  // real signaled lane bucket 5 under fanout=6
+        tx(116, vec![], vec![]),      // more empty-access noise bucket 0
+        tx(117, vec![], vec![o(11)]), // same real signaled lane bucket 5 via modulo path
+        tx(118, vec![], vec![o(17)]), // same real signaled lane bucket 5 via modulo path
+        tx(119, vec![], vec![]),      // keeps input len >= requested modulo fanout
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Non-power-of-two fanout still uses the modulo reduction path. Empty-access
+    // noise must not fabricate a second lane when all signaled traffic lands on
+    // the same real bucket there.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![114, 115, 116, 117, 118, 119]
     );
 }
 
