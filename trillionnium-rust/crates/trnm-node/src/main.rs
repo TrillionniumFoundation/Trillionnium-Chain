@@ -1770,6 +1770,10 @@ fn validate_startup_args(args: &Args) -> Result<()> {
         "invalid startup args: bft_wal_dir must not be empty"
     );
     anyhow::ensure!(
+        args.bft_wal_dir == args.bft_wal_dir.trim(),
+        "invalid startup args: bft_wal_dir must not contain leading or trailing whitespace"
+    );
+    anyhow::ensure!(
         !args.bft_wal_dir.chars().any(char::is_control),
         "invalid startup args: bft_wal_dir must not contain control characters"
     );
@@ -4435,6 +4439,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(err
             .to_string()
             .contains("bft_wal_dir must not contain control characters"));
+    }
+
+    #[test]
+    fn validate_startup_args_rejects_bft_wal_dir_with_outer_whitespace() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: " run/consensus-wal ".into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = validate_startup_args(&args)
+            .expect_err("outer whitespace in bft_wal_dir must fail closed");
+        assert!(err
+            .to_string()
+            .contains("bft_wal_dir must not contain leading or trailing whitespace"));
     }
 
     #[test]
