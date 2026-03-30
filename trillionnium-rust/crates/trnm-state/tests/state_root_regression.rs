@@ -6525,6 +6525,15 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_surfaces() 
         "mixed-case checkpoint wal_entry_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
     );
 
+    let mut zero_width_wal_hash_checkpoint = checkpoint.clone();
+    zero_width_wal_hash_checkpoint
+        .wal_entry_hash_hex
+        .push('\u{200b}');
+    assert!(
+        checkpoint_da_light_verifier_summary(&zero_width_wal_hash_checkpoint, &wal).is_none(),
+        "zero-width checkpoint wal_entry_hash_hex surfaces must fail closed instead of emitting a DA/light-verifier summary"
+    );
+
     let mut bad_wal = wal.clone();
     bad_wal.proposal_hash = "proposal\n4".into();
     bad_checkpoint = checkpoint.clone();
