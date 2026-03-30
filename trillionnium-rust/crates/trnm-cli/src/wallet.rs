@@ -1,10 +1,38 @@
 use super::*;
 
+fn is_hidden_env_wrapper(c: char) -> bool {
+    c.is_whitespace()
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+        )
+}
+
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
-    let mut normalized = raw.trim();
-    while normalized.len() >= 2 {
+    let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
+    loop {
+        let Some(first) = normalized.chars().next() else {
+            return None;
+        };
+        let Some(last) = normalized.chars().last() else {
+            return None;
+        };
         let wrapped_by_quotes = matches!(
-            (normalized.chars().next(), normalized.chars().last()),
+            (Some(first), Some(last)),
             (Some('"'), Some('"'))
                 | (Some('\''), Some('\''))
                 | (Some('`'), Some('`'))
@@ -26,9 +54,8 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[normalized.chars().next().unwrap().len_utf8()
-            ..normalized.len() - normalized.chars().last().unwrap().len_utf8()]
-            .trim();
+        normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
+            .trim_matches(is_hidden_env_wrapper);
     }
     (!normalized.is_empty()).then_some(normalized)
 }

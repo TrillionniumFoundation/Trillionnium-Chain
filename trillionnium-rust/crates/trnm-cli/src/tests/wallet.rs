@@ -109,8 +109,17 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
         normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
         Some("/tmp/trnm-wallets")
     );
+    assert_eq!(
+        normalize_wallet_store_env("\u{2068} \"/tmp/trnm-wallets\" \u{2069}"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
+        normalize_wallet_store_env("\u{feff}《/tmp/trnm-wallets》\u{200b}"),
+        Some("/tmp/trnm-wallets")
+    );
     assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
     assert_eq!(normalize_wallet_store_env("  “”  "), None);
+    assert_eq!(normalize_wallet_store_env("\u{2068}\u{2069}"), None);
 }
 
 #[test]
