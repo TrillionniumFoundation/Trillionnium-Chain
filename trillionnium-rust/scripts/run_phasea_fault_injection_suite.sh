@@ -203,7 +203,17 @@ run_node_restart_recovery() {
 
   {
     echo "[case] $name"
-    RUNS="${RUNS:-3}" ./scripts/check_bft_restart_recovery.sh
+    local recovery_env=(RUNS="${RUNS:-3}")
+    if [[ -n "${EXPECTED_WORKTREE_ROOT:-}" ]]; then
+      recovery_env+=(EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT")
+    fi
+    if [[ -n "${EXPECTED_BRANCH_REF:-}" ]]; then
+      recovery_env+=(EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF")
+    fi
+    if [[ -n "${EXPECTED_HEAD:-}" ]]; then
+      recovery_env+=(EXPECTED_HEAD="$EXPECTED_HEAD")
+    fi
+    env "${recovery_env[@]}" ./scripts/check_bft_restart_recovery.sh
     local latest
     latest="$(ls -t "$ROOT"/run/bft-restart-recovery-*.txt 2>/dev/null | head -n1 || true)"
     if [[ -z "$latest" ]]; then
