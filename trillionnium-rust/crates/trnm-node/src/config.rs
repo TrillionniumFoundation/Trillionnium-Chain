@@ -68,6 +68,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.contains('/') && !rpc_addr.contains('\\'),
+        "invalid node config {}: rpc_addr must not contain path separators (/ \\)",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -88,6 +93,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains('/') && !p2p_addr.contains('\\'),
+        "invalid node config {}: p2p_addr must not contain path separators (/ \\)",
         path
     );
     let rpc_socket: SocketAddr = rpc_addr.parse().with_context(|| {
@@ -1015,6 +1025,42 @@ mod tests {
             "unexpected error: {p2p_err:#}"
         );
     }
+
+    #[test]
+    fn validate_node_config_rejects_path_separators_in_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1/7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr path separators must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not contain path separators"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1\\7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr path separators must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not contain path separators"),
+            "unexpected error: {p2p_err:#}"
+        );
+    }
+
     #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};

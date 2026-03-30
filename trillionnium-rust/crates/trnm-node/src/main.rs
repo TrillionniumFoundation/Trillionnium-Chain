@@ -1517,6 +1517,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
         path
     );
+    anyhow::ensure!(
+        !rpc_addr.contains('/') && !rpc_addr.contains('\\'),
+        "invalid node config {}: rpc_addr must not contain path separators (/ \\)",
+        path
+    );
     let rpc_socket: SocketAddr = rpc_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: rpc_addr must be a valid socket address",
@@ -1563,6 +1568,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains('/') && !p2p_addr.contains('\\'),
+        "invalid node config {}: p2p_addr must not contain path separators (/ \\)",
         path
     );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
@@ -3963,6 +3973,47 @@ mod tests {
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must not use a multicast address"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_path_style_operator_addresses() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-path-style-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1/26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("path-style rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not contain path separators"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-path-style-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1\\\\26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("path-style p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not contain path separators"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
