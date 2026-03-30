@@ -733,6 +733,49 @@ fn restore_task_rejects_slashed_retention_with_stale_challenger_identity() {
 }
 
 #[test]
+fn restore_task_rejects_slashed_retention_with_blank_challenger_identity() {
+    let mut state = StateStore::new();
+
+    state.restore_task(
+        40835,
+        Some(TaskObject {
+            task_id: 40835,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: Some("retained slash trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("94".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x80; 32]),
+            result_hash: Some([0x81; 32]),
+            reveal_salt: Some([0x82; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("   ".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    assert!(
+        state.get_task(40835).is_none(),
+        "restore_task must fail closed when slashed proof-retention metadata keeps a blank challenger identity without live collateral context"
+    );
+}
+
+#[test]
 fn restore_task_rejects_slashed_retention_with_reserved_system_identity() {
     let mut state = StateStore::new();
 
