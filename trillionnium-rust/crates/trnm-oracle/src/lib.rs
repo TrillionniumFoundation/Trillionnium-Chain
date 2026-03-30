@@ -500,7 +500,9 @@ impl OracleValidationReport {
             .as_deref()
             .map(str::trim)
             .is_some_and(|label| {
-                !label.is_empty() && !matches!(label, "stale" | "quorum" | "drift")
+                !label.is_empty()
+                    && !matches!(label, "stale" | "quorum" | "drift")
+                    && !label.starts_with("snapshot hash mismatch:")
             })
     }
 
@@ -511,6 +513,21 @@ impl OracleValidationReport {
             && self.classified_reject_total() == 0
             && self.observation_classified_reject_total() == 0
             && self.metrics.sample_count > 0
+    }
+
+    fn error_label_matches_accounting(&self) -> bool {
+        if self.ok {
+            return self.error.is_none();
+        }
+
+        if self.has_explicit_unclassified_error_label() {
+            return self.classified_reject_total() == 0
+                && self.observation_classified_reject_total() == 0;
+        }
+
+        self.has_non_empty_error_label()
+            && self.classified_reject_total() > 0
+            && self.observation_classified_reject_total() > 0
     }
 
     pub fn bridge_contract_consistent(&self) -> bool {
@@ -532,6 +549,7 @@ impl OracleValidationReport {
             && source_cardinality_consistent
             && self.observation_matches_metrics()
             && result_label_consistent
+            && self.error_label_matches_accounting()
             && (outcome_accounting_consistent
                 || self.has_explicit_unclassified_failure_accounting())
     }
@@ -3218,6 +3236,34 @@ mod tests {
 
         assert_eq!(report.metrics.classified_reject_total(), 0);
         assert_eq!(report.observation.classified_reject_total(), 0);
+        assert!(!report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_unclassified_error_label_with_classified_counters() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko")],
+                1,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert_eq!(report.error.as_deref(), Some("quorum"));
+        assert_eq!(report.metrics.classified_reject_total(), 1);
+        assert_eq!(report.observation.classified_reject_total(), 1);
+
+        report.error = Some("rate".to_string());
+
         assert!(!report.bridge_contract_consistent());
     }
 }
