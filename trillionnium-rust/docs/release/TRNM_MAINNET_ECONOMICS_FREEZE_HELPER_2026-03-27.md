@@ -177,6 +177,10 @@ consistency boundaries:
   - proves the same classification-only duplicate behavior when reserve-only mode has
     reopened more than one shared slot, so sponsor/free-ingress observability stays
     honest across partial drains instead of only at the final refill boundary
+- `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_reopen_probe_stability_bound -q`
+  - proves the first reopened shared slot in reserve-only mode closes again as soon as
+    fresh sponsor-backed work actually consumes it, and that later cross-class fresh or
+    duplicate probes remain classification-only instead of re-advertising phantom headroom
 - `cargo test -p trnm-mempool lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
   - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
     immediately after the borrowed occupant drains, without requiring an extra idle
