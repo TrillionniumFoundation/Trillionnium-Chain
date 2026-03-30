@@ -900,6 +900,19 @@ fn tx_retry_policy_rejects_negative_fullwidth_env_values() {
 }
 
 #[test]
+fn tx_retry_policy_rejects_negative_unicode_minus_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("−2"), Some("−450"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation() {
     let env_policy = resolve_tx_retry_policy_from_sources(None, None, Some(" 4\n"), Some("\t250 "));
     assert_eq!(
