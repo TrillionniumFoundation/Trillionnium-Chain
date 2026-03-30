@@ -4779,7 +4779,12 @@ mod tests {
             wal_entry_hash_hex: canonical_wal.content_hash_hex(),
         };
 
-        for invalid_prev_hash in [Some("EF".repeat(32)), Some(format!("{}\n", "ef".repeat(32))), None] {
+        for invalid_prev_hash in [
+            Some("EF".repeat(32)),
+            Some(format!("{}\n", "ef".repeat(32))),
+            Some(String::new()),
+            None,
+        ] {
             let mut wal = canonical_wal.clone();
             wal.prev_hash_hex = invalid_prev_hash;
 
