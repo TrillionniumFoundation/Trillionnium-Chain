@@ -385,6 +385,30 @@ fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_uppercase_hex_dri
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_blank_state_root() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "state-root-1".into(),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: String::new(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject blank checkpoint state_root_hex so restart-time checkpoint proofs cannot bind to a missing state-root surface"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_state_root_with_edge_whitespace() {
     let wal_entry = WalMeta {
         height: 1,
