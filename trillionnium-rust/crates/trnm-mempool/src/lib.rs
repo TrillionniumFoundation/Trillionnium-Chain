@@ -3363,6 +3363,53 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_idle_polls_preserve_mixed_restored_duplicate_sources_and_flat_qos() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Mix lane-local and lane-wide restored duplicate metadata the way recovery
+        // skew can surface it, then verify idle polls keep QoS fail-closed while
+        // preserving duplicate-vs-backpressure classification across classes.
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+        g.seen_global.insert(41);
+        g.critical_served_streak = 3;
+
+        let expected = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        for _ in 0..2 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert_eq!(g.qos_snapshot(), expected);
+
+            assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(
+                g.admit(99, IngressClass::Critical),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(g.qos_snapshot(), expected);
+        }
+
+        assert_eq!(g.critical_served_streak, 0);
+        assert!(g.normal.seen.contains(&41));
+        assert!(g.critical.seen.contains(&42));
+        assert!(g.seen_global.contains(&41));
+    }
+
+    #[test]
     fn hard_stop_idle_polls_preserve_lane_local_duplicates_without_reviving_queue_state() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
