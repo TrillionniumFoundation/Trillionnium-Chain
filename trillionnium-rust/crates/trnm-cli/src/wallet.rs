@@ -66,6 +66,9 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〙'
             | '〚'
             | '〛'
+            | '〝'
+            | '〞'
+            | '〟'
     )
 }
 
@@ -102,6 +105,8 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('〖'), Some('〗'))
                 | (Some('〘'), Some('〙'))
                 | (Some('〚'), Some('〛'))
+                | (Some('〝'), Some('〞'))
+                | (Some('〟'), Some('〟'))
         );
         if wrapped_by_quotes {
             normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
