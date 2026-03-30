@@ -50,16 +50,26 @@ done
 
 ROOT="$(git rev-parse --show-toplevel)"
 
+canonicalize_path() {
+  local path="$1"
+  (
+    cd "$(dirname "$path")" >/dev/null 2>&1 &&
+      printf '%s/%s\n' "$(pwd -P)" "$(basename "$path")"
+  )
+}
+
 resolve_repo_path() {
   local path="$1"
+  local resolved_path
   case "$path" in
     /*)
-      printf '%s' "$path"
+      resolved_path="$path"
       ;;
     *)
-      printf '%s/%s' "$ROOT" "$path"
+      resolved_path="$ROOT/$path"
       ;;
   esac
+  canonicalize_path "$resolved_path"
 }
 
 if [ -n "$PREFLIGHT_PATH" ]; then
@@ -75,20 +85,20 @@ fi
 if [ -z "$PREFLIGHT_PATH" ]; then
   latest_preflight="$(find "$ROOT/run/preflight" -maxdepth 1 -type f -name 'go-no-go-*.txt' ! -name 'go-no-go-latest.txt' -print 2>/dev/null | sort | tail -n 1)"
   if [ -n "$latest_preflight" ]; then
-    PREFLIGHT_PATH="$latest_preflight"
+    PREFLIGHT_PATH="$(canonicalize_path "$latest_preflight")"
   fi
 fi
 
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(find "$ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
   [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $ROOT/run/health" >&2; exit 1; }
-  SUMMARY_PATH="$latest_evidence_dir/summary.txt"
+  SUMMARY_PATH="$(canonicalize_path "$latest_evidence_dir/summary.txt")"
 fi
 
 if [ -z "$MANIFEST_PATH" ]; then
   latest_rc_dir="$(find "$ROOT/release" -maxdepth 1 -type d -name 'rc-*' -print 2>/dev/null | sort | tail -n 1)"
   [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $ROOT/release" >&2; exit 1; }
-  MANIFEST_PATH="$latest_rc_dir/manifest.txt"
+  MANIFEST_PATH="$(canonicalize_path "$latest_rc_dir/manifest.txt")"
 fi
 
 if [ -n "$PREFLIGHT_PATH" ]; then
