@@ -116,3 +116,36 @@ fn reserve_guarded_cross_class_duplicate_probe_keeps_qos_and_counts_flat() {
     assert_eq!(g.queued_counts(), (2, 1, 3));
     assert_eq!(g.seen_global.len(), 3);
 }
+
+#[test]
+fn non_reserve_only_normal_never_borrows_when_no_critical_headroom_remains() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.critical_free_slots(), 0);
+
+    // Once the last reserved slot is actually consumed, fresh normal ingress must
+    // fail closed instead of borrowing past critical anti-spam backpressure.
+    assert!(!g.can_normal_borrow_critical_slot(g.critical_free_slots()));
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+}
+
+#[test]
+fn reserve_only_mode_can_still_borrow_the_last_truly_idle_critical_slot() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    assert_eq!(g.critical_free_slots(), 2);
+    assert!(g.can_normal_borrow_critical_slot(g.critical_free_slots()));
+
+    // Reserve-only mode has no dedicated normal lane, so the last idle critical
+    // slot remains borrowable until it is actually consumed.
+    assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.critical_free_slots(), 1);
+    assert!(g.can_normal_borrow_critical_slot(g.critical_free_slots()));
+    assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.critical_free_slots(), 0);
+    assert!(!g.can_normal_borrow_critical_slot(g.critical_free_slots()));
+}
