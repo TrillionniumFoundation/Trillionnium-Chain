@@ -4488,6 +4488,7 @@ fn main() -> Result<()> {
                 "reputation_reward_amount": reputation_reward,
                 "penalty": penalty,
                 "reputation_penalty": penalty,
+                "reputation_penalty_amount": penalty,
                 "penalty_amount": penalty,
                 "reputation_adjustment_direction": reputation_adjustment_direction,
                 "reputation_adjustment_amount": reputation_adjustment_amount,
