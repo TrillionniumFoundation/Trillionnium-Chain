@@ -167,6 +167,15 @@ fn tx_query_parse_kv_accepts_angle_bracket_wrapped_inline_tokens() {
 }
 
 #[test]
+fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
+    let noisy = "【rpc】 《transactionHash：0xCAFE98》 《status：COMMITTED》 《error：NULL》";
+    let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xcafe98");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
     let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
     let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();

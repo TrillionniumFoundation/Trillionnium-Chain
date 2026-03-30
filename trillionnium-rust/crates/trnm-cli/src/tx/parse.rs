@@ -216,8 +216,61 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let trimmed = token.trim_matches(|c: char| {
-        c.is_ascii_whitespace()
-            || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ','
+                    | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '！'
+                    | '？'
+            )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
@@ -239,8 +292,61 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         key.to_ascii_lowercase(),
         value
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>')
+                c.is_whitespace()
+                    || c.is_control()
+                    || matches!(
+                        c,
+                        ','
+                            | ';'
+                            | '{'
+                            | '}'
+                            | '['
+                            | ']'
+                            | '('
+                            | ')'
+                            | '<'
+                            | '>'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '＜'
+                            | '＞'
+                            | '「'
+                            | '」'
+                            | '『'
+                            | '』'
+                            | '《'
+                            | '》'
+                            | '〈'
+                            | '〉'
+                            | '｢'
+                            | '｣'
+                            | '，'
+                            | '；'
+                            | '：'
+                            | '！'
+                            | '？'
+                    )
+                    || matches!(
+                        c,
+                        '\u{200B}'
+                            | '\u{200C}'
+                            | '\u{200D}'
+                            | '\u{2060}'
+                            | '\u{FEFF}'
+                            | '\u{202A}'
+                            | '\u{202B}'
+                            | '\u{202C}'
+                            | '\u{202D}'
+                            | '\u{202E}'
+                            | '\u{2066}'
+                            | '\u{2067}'
+                            | '\u{2068}'
+                            | '\u{2069}'
+                    )
             })
             .trim_matches('"')
             .trim_matches('\'')
