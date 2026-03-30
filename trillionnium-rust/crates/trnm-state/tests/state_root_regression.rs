@@ -112,6 +112,30 @@ fn node_recovery_checkpoint_rejects_blank_wal_entry_hash() {
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_wal_entry_hash_with_non_hex_ascii_drift() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: "zz".repeat(32),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint wal_entry_hash_hex with non-hex ascii drift so restart-time checkpoint proofs preserve canonical digest encoding"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_wal_entry_hash_with_newline_control_drift() {
     let wal_entry = WalMeta {
         height: 1,
