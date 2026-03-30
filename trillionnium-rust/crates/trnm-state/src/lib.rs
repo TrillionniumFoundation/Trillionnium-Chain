@@ -4669,6 +4669,29 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_state_root_mismatch() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: "cd".repeat(32),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summary must fail closed when checkpoint state_root and committed WAL state_root diverge so checkpoint evidence cannot be rebound onto a foreign state commitment"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal() {
         let wal = WalMeta {
             height: 7,
