@@ -198,6 +198,15 @@ if [ -z "$RECOVERY_REPORT" ] || [ ! -f "$RECOVERY_REPORT" ]; then
   log "recovery drill failed: missing restart recovery report"
   exit 12
 fi
+RECOVERY_REPORT_DIR="$(cd "$(dirname "$RECOVERY_REPORT")" && pwd -P)"
+RECOVERY_REPORT_CANON="$RECOVERY_REPORT_DIR/$(basename "$RECOVERY_REPORT")"
+case "$RECOVERY_REPORT_CANON" in
+  "$ROOT/run/"*) ;;
+  *)
+    log "recovery drill failed: restart recovery report escaped run/ ($RECOVERY_REPORT_CANON)"
+    exit 12
+    ;;
+esac
 if ! grep -q '^status=PASS$' "$RECOVERY_REPORT"; then
   log "recovery drill failed: restart recovery report is not PASS ($RECOVERY_REPORT)"
   exit 12
