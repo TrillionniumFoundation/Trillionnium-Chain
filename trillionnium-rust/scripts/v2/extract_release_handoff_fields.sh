@@ -86,10 +86,12 @@ require_key() {
 
 assert_equal() {
   local field="$1"
-  local left="$2"
-  local right="$3"
+  local left_label="$2"
+  local left="$3"
+  local right_label="$4"
+  local right="$5"
   if [ "$left" != "$right" ]; then
-    printf 'artifact mismatch for %s: summary=%s manifest=%s\n' "$field" "$left" "$right" >&2
+    printf 'artifact mismatch for %s: %s=%s %s=%s\n' "$field" "$left_label" "$left" "$right_label" "$right" >&2
     exit 1
   fi
 }
@@ -126,19 +128,19 @@ manifest_truth_source="$(require_key "$MANIFEST_PATH" truth_source)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
-assert_equal git_branch "$summary_branch" "$manifest_branch"
-assert_equal git_head "$summary_head" "$manifest_head"
-assert_equal git_head_state "$summary_head_state" "$manifest_head_state"
-assert_equal git_worktree_path "$summary_worktree_path" "$manifest_worktree_path"
-assert_equal git_worktree_branch_ref "$summary_worktree_branch_ref" "$manifest_worktree_branch_ref"
-assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
+assert_equal git_branch summary "$summary_branch" manifest "$manifest_branch"
+assert_equal git_head summary "$summary_head" manifest "$manifest_head"
+assert_equal git_head_state summary "$summary_head_state" manifest "$manifest_head_state"
+assert_equal git_worktree_path summary "$summary_worktree_path" manifest "$manifest_worktree_path"
+assert_equal git_worktree_branch_ref summary "$summary_worktree_branch_ref" manifest "$manifest_worktree_branch_ref"
+assert_equal truth_source summary "$summary_truth_source" manifest "$manifest_truth_source"
 
 if [ -n "$PREFLIGHT_PATH" ]; then
-  assert_equal preflight.git_branch "$preflight_branch" "$summary_branch"
-  assert_equal preflight.git_head "$preflight_head" "$summary_head"
-  assert_equal preflight.git_head_state "$preflight_head_state" "$summary_head_state"
-  assert_equal preflight.git_worktree_path "$preflight_worktree_path" "$summary_worktree_path"
-  assert_equal preflight.git_worktree_branch_ref "$preflight_worktree_branch_ref" "$summary_worktree_branch_ref"
+  assert_equal preflight.git_branch preflight "$preflight_branch" summary "$summary_branch"
+  assert_equal preflight.git_head preflight "$preflight_head" summary "$summary_head"
+  assert_equal preflight.git_head_state preflight "$preflight_head_state" summary "$summary_head_state"
+  assert_equal preflight.git_worktree_path preflight "$preflight_worktree_path" summary "$summary_worktree_path"
+  assert_equal preflight.git_worktree_branch_ref preflight "$preflight_worktree_branch_ref" summary "$summary_worktree_branch_ref"
 fi
 
 if [ -n "$PREFLIGHT_PATH" ]; then
