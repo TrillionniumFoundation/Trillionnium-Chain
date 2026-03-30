@@ -290,14 +290,16 @@ manifest_path="$latest_rc_dir/manifest.txt"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command)=/ { print }' "$summary_path"
+awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command|challenge_reexec_entry|replay_env_trnm_challenge_reexec_entry)=/ { print }' "$summary_path"
 awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- treat `git_worktree_branch_ref_match=true` as mandatory; `false` / `unknown` is a stop signal even if the rest of the fields look plausible
 - preserve both `summary_generated_at=` and `manifest_generated_at=` from the artifacts/helper output; they do **not** need to be identical, but they must both exist so operators can audit when each artifact was generated instead of collapsing them into one hand-copied timestamp
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `replay_command=` instead of dropping them from the handoff note
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Forbidden operator shortcuts
