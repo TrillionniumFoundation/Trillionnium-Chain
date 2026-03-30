@@ -36,3 +36,20 @@ fn pop_ready_compacts_oversized_retry_fifo_when_retry_memory_is_non_empty() {
     // Dequeue boundary should compact stale retry markers even before retry admission.
     assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
 }
+
+#[test]
+fn empty_pop_compacts_oversized_retry_fifo_when_retry_memory_is_non_empty() {
+    let mut gate = AdmissionGate::new(2);
+
+    // Simulate restored/churned state after the queue already drained: active retry ids
+    // remain, but stale FIFO markers are oversized and only idle polls are happening.
+    gate.backpressured_ids.extend([10, 11]);
+    gate.backpressured_fifo
+        .extend([10, 11, 10, 11, 10, 11, 10, 11, 10, 11]);
+    assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+    assert_eq!(gate.pop_ready(), None);
+
+    // Empty-pop polling should still compact stale retry markers to keep bounded memory.
+    assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+}

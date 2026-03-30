@@ -84,7 +84,20 @@ impl AdmissionGate {
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
-        let id = self.queue.pop_front()?;
+        let Some(id) = self.queue.pop_front() else {
+            let known_retry_count = self.backpressured_ids.len();
+            self.clear_stale_retry_state_if_empty(known_retry_count);
+            if known_retry_count != 0
+                && self.backpressured_fifo.len() > self.capacity.saturating_mul(4)
+            {
+                // Idle poll loops can repeatedly probe an already-drained queue while
+                // restored/churned retry bookkeeping still carries stale FIFO markers.
+                // Compact on empty-pop boundaries too so anti-spam memory stays bounded
+                // even before any new admission arrives.
+                self.compact_backpressured_fifo();
+            }
+            return None;
+        };
         self.seen.remove(&id);
         self.update_retry_reservations_on_pop();
         // Keep retry memory across partial drain so repeated retries stay idempotent
