@@ -2627,6 +2627,53 @@ fn persisted_ack_hashes_for_task_ignores_blank_wrapped_hash_entries() {
 }
 
 #[test]
+fn persisted_ack_hashes_for_task_ignores_newer_other_task_records() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-other-task-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        80,
+        "accepted",
+        Some("commit-target".to_string()),
+        None,
+        Some("idempotent_ok".to_string()),
+        Some("run-target-1".to_string()),
+    )
+    .expect("write target commit ack");
+    append_ack(
+        &ack_log,
+        81,
+        "accepted",
+        Some("commit-other".to_string()),
+        Some("reveal-other".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-other".to_string()),
+    )
+    .expect("write newer other-task ack");
+    append_ack(
+        &ack_log,
+        80,
+        "accepted",
+        None,
+        Some("reveal-target".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-target-2".to_string()),
+    )
+    .expect("write target reveal ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 80);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-target"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-target"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
 fn persisted_ack_hashes_for_task_canonicalizes_legacy_wrapped_hex_receipts() {
     let ack_log = std::env::temp_dir().join(format!(
         "trnm-worker-agent-persisted-ack-canonical-hashes-{}-{}.jsonl",
