@@ -50,6 +50,7 @@
 - `prev_hash_hex` 的**缺失**只表示“该条目没有前驱链接”（典型是 genesis/链首），不能和显式字符串载荷混为一谈：字面值 `"genesis"`、空字符串 `""`、以及真正的字段缺失/`None` 在审计与 light-verifier 语义上必须视为三种不同证据；
 - 因此任何摘要、指纹或 content-hash 计算都必须保留这种区分，不能为了“显示友好”把缺失 `prev_hash_hex` 归一成某个占位字符串；
 - 必须同时检查 checkpoint 三元组与 `prev_hash_hex` 连续性，才能确认恢复锚点既命中正确状态，又命中正确提交历史。
+- 若同一高度出现 replay/重复 WAL 元数据，它最多只能作为“这一高度存在重复证据”的信号来维持链式连续性；在没有**唯一且可交叉验证**的 `(height, state_root_hex, wal_entry_hash_hex)` 命中前，不能把它当成新的 checkpoint 提升依据。
 
 对于**同一高度出现多条候选元数据**的情况，还要维持跨 surface 一致的 canonical 排序语义：
 
