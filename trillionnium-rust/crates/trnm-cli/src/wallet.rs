@@ -99,6 +99,8 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                         | '》'
                         | '〈'
                         | '〉'
+                        | '｢'
+                        | '｣'
                         | '，'
                         | '；'
                         | '：'
