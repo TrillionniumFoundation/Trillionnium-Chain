@@ -1885,6 +1885,35 @@ mod tests {
     }
 
     #[test]
+    fn oversized_critical_reserve_clamp_preserves_zero_capacity_hard_stop() {
+        let mut g = LaneAdmissionGate::new(0, 99);
+
+        // A misconfigured reserve larger than total capacity must still collapse
+        // into the same fail-closed zero-capacity posture: no hidden headroom,
+        // fresh ingress backpressured, restored duplicates preserved.
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        g.seen_global.insert(42);
+
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot().total_headroom, 0);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+    }
+
+    #[test]
     fn stale_dual_lane_seen_flags_do_not_poison_fresh_admission() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
