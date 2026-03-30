@@ -816,9 +816,137 @@ fn sha256_hex(data: &[u8]) -> String {
     hex::encode(h.finalize())
 }
 
+fn is_hidden_env_wrapper(c: char) -> bool {
+    c.is_whitespace()
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+        )
+}
+
+fn is_single_sided_env_quote(c: char) -> bool {
+    matches!(
+        c,
+        '"'
+            | '\''
+            | '`'
+            | '“'
+            | '”'
+            | '‘'
+            | '’'
+            | '«'
+            | '»'
+            | '‹'
+            | '›'
+            | '「'
+            | '」'
+            | '『'
+            | '』'
+            | '《'
+            | '》'
+            | '〈'
+            | '〉'
+            | '｢'
+            | '｣'
+            | '（'
+            | '）'
+            | '［'
+            | '］'
+            | '｛'
+            | '｝'
+            | '<'
+            | '>'
+            | '＜'
+            | '＞'
+            | '【'
+            | '】'
+            | '〔'
+            | '〕'
+            | '〖'
+            | '〗'
+            | '〘'
+            | '〙'
+            | '〚'
+            | '〛'
+            | '〝'
+            | '〞'
+            | '〟'
+    )
+}
+
+fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
+    let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
+    loop {
+        let Some(first) = normalized.chars().next() else {
+            return None;
+        };
+        let Some(last) = normalized.chars().last() else {
+            return None;
+        };
+        let wrapped_by_quotes = matches!(
+            (Some(first), Some(last)),
+            (Some('"'), Some('"'))
+                | (Some('\''), Some('\''))
+                | (Some('`'), Some('`'))
+                | (Some('“'), Some('”'))
+                | (Some('‘'), Some('’'))
+                | (Some('«'), Some('»'))
+                | (Some('‹'), Some('›'))
+                | (Some('「'), Some('」'))
+                | (Some('『'), Some('』'))
+                | (Some('《'), Some('》'))
+                | (Some('〈'), Some('〉'))
+                | (Some('｢'), Some('｣'))
+                | (Some('（'), Some('）'))
+                | (Some('［'), Some('］'))
+                | (Some('｛'), Some('｝'))
+                | (Some('<'), Some('>'))
+                | (Some('＜'), Some('＞'))
+                | (Some('【'), Some('】'))
+                | (Some('〔'), Some('〕'))
+                | (Some('〖'), Some('〗'))
+                | (Some('〘'), Some('〙'))
+                | (Some('〚'), Some('〛'))
+                | (Some('〝'), Some('〞'))
+                | (Some('〟'), Some('〟'))
+        );
+        if wrapped_by_quotes {
+            normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
+                .trim_matches(is_hidden_env_wrapper);
+            continue;
+        }
+
+        let trimmed_single_sided = normalized
+            .trim_start_matches(is_single_sided_env_quote)
+            .trim_end_matches(is_single_sided_env_quote)
+            .trim_matches(is_hidden_env_wrapper);
+        if trimmed_single_sided.len() == normalized.len() {
+            break;
+        }
+        normalized = trimmed_single_sided;
+    }
+    (!normalized.is_empty()).then_some(normalized)
+}
+
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
-        return PathBuf::from(p);
+        if let Some(normalized) = normalize_wallet_store_env(&p) {
+            return PathBuf::from(normalized);
+        }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home).join(".trnm").join("wallets")
@@ -2135,6 +2263,23 @@ mod tests {
         assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         assert!(ensure_hex_32_bytes("0x1234").is_err());
+    }
+
+    #[test]
+    fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
+        assert_eq!(
+            normalize_wallet_store_env("  \"/tmp/trnm-wallets\"  "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env(" “《/tmp/trnm-wallets》” "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{2068} \"/tmp/trnm-wallets\" \u{2069}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
     }
 
     #[test]
