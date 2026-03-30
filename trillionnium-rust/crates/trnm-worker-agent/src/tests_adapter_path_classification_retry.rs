@@ -401,6 +401,45 @@ fn run_adapter_with_retry_zero_backoff_retries_without_observable_wait() {
 }
 
 #[test]
+fn run_adapter_with_retry_stops_after_retriable_failure_followed_by_deterministic_rejection() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        3,
+        25,
+        || {
+            attempt += 1;
+            if attempt == 1 {
+                Ok(std::process::Command::new("python3")
+                    .args([
+                        "-c",
+                        "print('tx_hash=0xABCD1234', file=__import__('sys').stderr); raise SystemExit(1)",
+                    ])
+                    .output()
+                    .expect("python3 retriable probe should run"))
+            } else {
+                Ok(std::process::Command::new("python3")
+                    .args([
+                        "-c",
+                        "print('tx_hash=0xBEEF5678'); raise SystemExit(10)",
+                    ])
+                    .output()
+                    .expect("python3 deterministic rejection probe should run"))
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should stop once the deterministic rejection is observed");
+
+    assert_eq!(attempt, 2, "retry loop should stop immediately after the terminal rejection");
+    assert_eq!(slept, vec![25], "sleep should happen only before the second attempt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
 fn llm_adapter_retry_succeeds_within_budget() {
     let mut attempt = 0u32;
     let mut slept = vec![];
