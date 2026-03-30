@@ -192,6 +192,10 @@ consistency boundaries:
   - proves drain-only style duplicate retention stays classification-only after the shared
     lane drains, so already-seen sponsored ids cannot reopen sponsor/free-ingress headroom
     before fresh work actually re-consumes capacity
+- `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q`
+  - proves the same drained-retry boundary closes the externally visible sponsor/free-ingress
+    snapshot again as soon as the drained id is re-admitted, so freeze review covers both the
+    classification-only duplicate phase and the immediate re-saturation phase of shared-lane reuse
 - `cargo test -p trnm-mempool lane_qos_snapshot_guarded_reopen_probe_stability_bound -q`
   - proves partially reopened capacity does not falsely widen free-ingress observability:
     when the last reserved critical slot is still guarded, repeated fresh-normal and
