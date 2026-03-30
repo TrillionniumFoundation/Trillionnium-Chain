@@ -1691,10 +1691,14 @@ fn resolve_config_path(path: &str) -> PathBuf {
     }
 
     let workspace_root = workspace_root();
-    let workspace_anchor = workspace_root
-        .file_name()
-        .map(Path::new)
-        .and_then(|anchor| requested.strip_prefix(anchor).ok())
+    let workspace_anchor = workspace_root.file_name().map(Path::new);
+    let workspace_anchor = workspace_anchor
+        .and_then(|anchor| {
+            requested
+                .strip_prefix(anchor)
+                .ok()
+                .or_else(|| requested.strip_prefix(Path::new(".")).ok()?.strip_prefix(anchor).ok())
+        })
         .unwrap_or(requested);
     let workspace_relative = workspace_root.join(workspace_anchor);
     if workspace_relative.exists() {
@@ -3577,9 +3581,28 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_curdir_prefixed_workspace_defaults_to_workspace_configs_dir() {
+        let resolved = resolve_config_path("./trillionnium-rust/configs/node1.toml");
+        assert!(
+            resolved.ends_with(std::path::Path::new("trillionnium-rust/configs/node1.toml")),
+            "resolved path should normalize curdir-prefixed workspace bootstrap defaults: {}",
+            resolved.display()
+        );
+    }
+
+    #[test]
     fn load_config_accepts_legacy_repo_root_relative_default_path() {
         let cfg = load_config("configs/node1.toml")
             .expect("repo-root launches should resolve legacy default config path");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
+    fn load_config_accepts_curdir_prefixed_workspace_default_path() {
+        let cfg = load_config("./trillionnium-rust/configs/node1.toml")
+            .expect("curdir-prefixed workspace bootstrap config should resolve");
         assert_eq!(cfg.node_id, "node1");
         assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
         assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
