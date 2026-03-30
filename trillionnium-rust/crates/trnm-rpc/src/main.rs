@@ -6298,6 +6298,27 @@ mod tests {
     }
 
     #[test]
+    fn market_score_breakdown_exact_floor_match_keeps_reputation_adjustment_explainable() {
+        let breakdown = market_score_breakdown(
+            7,
+            3,
+            MarketScoreConfig {
+                price_weight: 3,
+                reputation_weight: 7,
+                reputation_clamp: 10,
+            },
+        );
+
+        assert_eq!(breakdown.base_score, 21);
+        assert_eq!(breakdown.reputation_reward, 21);
+        assert_eq!(breakdown.penalty, 0);
+        assert_eq!(breakdown.effective_score, 0);
+        assert!(breakdown.score_floor_applied);
+        assert_eq!(market_reputation_score_delta(&breakdown), -21);
+        assert_eq!(market_reputation_component_applied(&breakdown), 21);
+    }
+
+    #[test]
     fn normalize_tx_hash_lookup_tolerates_shell_wrapped_quotes() {
         assert_eq!(normalize_tx_hash_lookup("  \"0xAbC123\"  "), "0xabc123");
         assert_eq!(normalize_tx_hash_lookup(" '0xDeF456'\n"), "0xdef456");
