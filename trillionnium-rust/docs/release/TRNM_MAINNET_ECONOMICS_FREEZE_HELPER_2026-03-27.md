@@ -137,6 +137,25 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
 If this packet aborts before `result=PASS`, treat the freeze review as non-green and attach the
 failing command + rollback/tightening action directly to the same review artifact.
 
+### Inspect a captured rehearsal artifact
+
+Once `trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt` exists, reviewers
+should inspect the same artifact instead of re-running ad hoc shell history.
+
+```bash
+sed -n '1,160p' \
+  trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt
+```
+
+Expected fields visible in the capture:
+- `generated_at=` for evidence timing
+- `worktree=` and `branch=` for identity
+- `command[n]=...` lines for the exact rehearsal packet
+- terminal `result=PASS` only when the full slice finished green
+
+If the artifact is missing any of those fields, or the file ends before `result=PASS`, treat the
+freeze review as evidence-incomplete rather than silently accepting a partial rehearsal.
+
 ## Temporary operator inspection path (until a first-class config surface lands)
 
 Until TRNM exposes a dedicated runtime/config query for the economics tuple, launch review
