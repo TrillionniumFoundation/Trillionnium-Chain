@@ -180,9 +180,17 @@ Until a first-class release wrapper lands, the following minimal capture pattern
 mkdir -p trillionnium-rust/run/mainnet-economics-freeze
 (
   set -euo pipefail
+  status_summary="$(git status --short)"
+  if [ -n "$status_summary" ]; then
+    printf 'git_status_summary=dirty\n'
+    printf '%s\n' "$status_summary"
+    echo 'result=FAIL_DIRTY_WORKTREE'
+    exit 1
+  fi
   date -u +"generated_at=%Y-%m-%dT%H:%M:%SZ"
   printf 'worktree=%s\n' "$(pwd)"
   printf 'branch=%s\n' "$(git branch --show-current)"
+  echo 'git_status_summary=clean'
   printf 'command[1]=cargo check -p trnm-mempool -p trnm-pouw -q\n'
   cargo check -p trnm-mempool -p trnm-pouw -q
   printf 'command[2]=cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q\n'
@@ -213,13 +221,15 @@ sed -n '1,160p' \
 Expected fields visible in the capture:
 - `generated_at=` for evidence timing
 - `worktree=` and `branch=` for identity
+- `git_status_summary=clean` for fail-closed clean-tree evidence before the packet runs
 - `command[n]=...` lines for the exact rehearsal packet
 - `command[4]=cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` so sponsor borrowed-slot backpressure evidence is explicitly present in the recorded freeze packet
 - `command[5]=cargo test -p trnm-state --test retention_restore_regression -q` so the packet still captures the retention-side fail-closed restore evidence instead of only admission-side checks
 - terminal `result=PASS` only when the full slice finished green
 
-If the artifact is missing any of those fields, or the file ends before `result=PASS`, treat the
-freeze review as evidence-incomplete rather than silently accepting a partial rehearsal.
+If the artifact is missing any of those fields, if it records `git_status_summary=dirty`, or the
+file ends before `result=PASS`, treat the freeze review as evidence-incomplete rather than
+silently accepting a partial rehearsal.
 
 ## Temporary operator inspection path (until a first-class config surface lands)
 
