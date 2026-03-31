@@ -1322,20 +1322,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_list_separators_in_node_id() {
-        let err = validate_node_config(
-            NodeConfig {
-                node_id: "node,a".into(),
-                rpc_addr: "127.0.0.1:7000".into(),
-                p2p_addr: "127.0.0.1:7001".into(),
-            },
-            "inline",
-        )
-        .expect_err("node_id list separators must fail closed");
-        assert!(
-            err.to_string()
-                .contains("node_id must not contain list separators (, ; |)"),
-            "unexpected error: {err:#}"
-        );
+        for node_id in ["node,a", "node;a", "node|a"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("node_id list separators must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain list separators (, ; |)"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
     }
 
     #[test]
@@ -1568,37 +1570,49 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_list_separators_in_operator_addresses() {
-        let rpc_err = validate_node_config(
-            NodeConfig {
-                node_id: "node-a".into(),
-                rpc_addr: "127.0.0.1:7000,127.0.0.1:7002".into(),
-                p2p_addr: "127.0.0.1:7001".into(),
-            },
-            "inline",
-        )
-        .expect_err("rpc_addr list separators must fail closed");
-        assert!(
-            rpc_err
-                .to_string()
-                .contains("rpc_addr must not contain list separators (, ; |)"),
-            "unexpected error: {rpc_err:#}"
-        );
+        for rpc_addr in [
+            "127.0.0.1:7000,127.0.0.1:7002",
+            "127.0.0.1:7000;127.0.0.1:7002",
+            "127.0.0.1:7000|127.0.0.1:7002",
+        ] {
+            let rpc_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("rpc_addr list separators must fail closed");
+            assert!(
+                rpc_err
+                    .to_string()
+                    .contains("rpc_addr must not contain list separators (, ; |)"),
+                "unexpected error for {rpc_addr:?}: {rpc_err:#}"
+            );
+        }
 
-        let p2p_err = validate_node_config(
-            NodeConfig {
-                node_id: "node-a".into(),
-                rpc_addr: "127.0.0.1:7000".into(),
-                p2p_addr: "127.0.0.1:7001|127.0.0.1:7003".into(),
-            },
-            "inline",
-        )
-        .expect_err("p2p_addr list separators must fail closed");
-        assert!(
-            p2p_err
-                .to_string()
-                .contains("p2p_addr must not contain list separators (, ; |)"),
-            "unexpected error: {p2p_err:#}"
-        );
+        for p2p_addr in [
+            "127.0.0.1:7001,127.0.0.1:7003",
+            "127.0.0.1:7001;127.0.0.1:7003",
+            "127.0.0.1:7001|127.0.0.1:7003",
+        ] {
+            let p2p_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "inline",
+            )
+            .expect_err("p2p_addr list separators must fail closed");
+            assert!(
+                p2p_err
+                    .to_string()
+                    .contains("p2p_addr must not contain list separators (, ; |)"),
+                "unexpected error for {p2p_addr:?}: {p2p_err:#}"
+            );
+        }
     }
 
     #[test]
