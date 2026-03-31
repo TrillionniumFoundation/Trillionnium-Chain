@@ -333,6 +333,24 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() 
 }
 
 #[test]
+fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+            .expect("canonical subject path should parse"),
+        "alice"
+    );
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+    let err = parse_query_capability_audit_subject_from_target(
+        "/query-capability-audit/alice?limit=1",
+    )
+    .expect_err("capability audit route should fail closed on query strings");
+    assert_eq!(err, "invalid query");
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("post /health HTTP/1.1"), None);
