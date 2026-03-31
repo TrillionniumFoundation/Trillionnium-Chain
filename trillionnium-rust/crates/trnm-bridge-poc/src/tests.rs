@@ -166,6 +166,22 @@ fn settlement_request_collapses_interlinear_annotation_controls_in_revert_reason
 }
 
 #[test]
+fn settlement_request_collapses_plane14_tag_noise_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string(),
+        )
+        .expect("plane14 tag noise should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("proof mismatch trail".to_string())
+    );
+}
+
+#[test]
 fn settlement_audit_view_normalizes_plane14_tag_noise_from_legacy_revert_reason() {
     let mut reverted = SettlementRequest::new(7, "0xlegacy-plane14".to_string());
     reverted.status = BridgeStatus::Reverted(
