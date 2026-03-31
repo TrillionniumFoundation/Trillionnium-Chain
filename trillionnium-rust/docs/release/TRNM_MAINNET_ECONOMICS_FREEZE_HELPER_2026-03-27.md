@@ -59,6 +59,7 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | --- | --- |
 | `public_free_ingress_classes` | Which tx classes remain free on day 1? |
 | `public_fee_like_classes` | Which tx classes must pay or spend explicit budget? |
+| `sponsor_only_classes` | Which tx classes are disallowed unless an approved sponsor path is present? |
 | `sponsor_allowed_callers` | Which actors/modules may sponsor ingress? |
 | `sponsor_allowed_classes` | Which transaction classes are allowed to consume sponsor-backed admission? |
 | `sponsor_epoch_budget` | What is the hard sponsor budget per epoch/account? |
@@ -90,7 +91,7 @@ Before calling the economics tuple frozen, make the operator packet and any publ
 Minimum wording checks:
 - `free-ingress` only names the exact day-1 classes listed in `public_free_ingress_classes`; do not paraphrase this as "generally free" or "default free".
 - `fee-like` only names the exact classes listed in `public_fee_like_classes`; if budget-spend semantics are used, say so explicitly instead of implying universal token fees.
-- `sponsor-backed` / `sponsor-only` wording must match the frozen sponsor authority, epoch budget, refill rule, and revocation semantics; never imply unrestricted third-party subsidy when the tuple says allowlist or protocol-only.
+- `sponsor-backed` / `sponsor-only` wording must match the frozen `sponsor_only_classes`, sponsor authority, epoch budget, refill rule, and revocation semantics; never imply unrestricted third-party subsidy when the tuple says allowlist or protocol-only.
 - retention wording must name the payer-of-record and exhaustion fallback, so operators do not infer indefinite free storage for proof/evidence-heavy paths.
 - anti-spam wording must point to the actual floor/budget/bond rule rather than generic QoS language.
 - prelaunch change wording must name the override authority plus timelock/bypass rule, so readers can tell whether the tuple is still mutable.
