@@ -97,6 +97,13 @@ fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
     entries.dedup_by(|a, b| a == b);
 }
 
+fn metadata_scaffold_is_effectively_empty(raw: &str) -> bool {
+    raw.lines().all(|line| {
+        let trimmed = line.trim();
+        trimmed.is_empty() || trimmed.starts_with('#')
+    })
+}
+
 pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     let f = wal_meta_file(wal_dir);
     if !f.exists() {
@@ -104,7 +111,7 @@ pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if metadata_scaffold_is_effectively_empty(&raw) {
         return Ok(vec![]);
     }
     let mut list: WalMetaList =
@@ -139,7 +146,7 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if metadata_scaffold_is_effectively_empty(&raw) {
         return Ok(vec![]);
     }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
@@ -719,6 +726,22 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -770,6 +793,22 @@ mod tests {
         let wal_dir = temp_wal_dir("wal-blank-scaffold");
         fs::create_dir_all(&wal_dir).unwrap();
         fs::write(wal_meta_file(&wal_dir), "\n  \t").unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
 
         let entries = load_wal_meta_entries(&wal_dir).unwrap();
         assert!(entries.is_empty());
