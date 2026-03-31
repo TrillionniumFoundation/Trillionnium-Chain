@@ -55,19 +55,25 @@ Rule:
 Resolve the exact evidence files from disk before quoting any PASS / GO language:
 
 ```bash
+latest_preflight_path="run/preflight/go-no-go-latest.txt"
+[ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
+printf 'preflight_path=%s\n' "$latest_preflight_path"
+
 ./scripts/v2/extract_release_handoff_fields.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
   --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
 
 Record:
+- preflight_path=
 - summary_path=
 - manifest_path=
+- preflight_generated_at=
 - summary_generated_at=
 - manifest_generated_at=
 
 Rule:
-- if either artifact path is missing or unresolved, decision = **NO-GO**
+- if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
 
 ## 4. Required cross-artifact identity fields
 
@@ -95,9 +101,10 @@ Decision rule:
 
 ## 5. Gate summary
 
-Record exact commands and outcomes:
+Record exact commands, resolved artifact paths, and outcomes:
 
 - preflight command:
+- preflight artifact:
 - preflight result:
 - local evidence command:
 - local evidence result:
@@ -146,6 +153,7 @@ Mark each item explicitly:
 - [ ] assigned worktree / branch recorded from ticket
 - [ ] `verify_lane_worktree.sh` passed using ticket-assigned values
 - [ ] `git status --short` empty before evidence generation
+- [ ] `preflight_path` resolved from disk
 - [ ] `summary_path` resolved from disk
 - [ ] `manifest_path` resolved from disk
 - [ ] summary/manifest identity fields match each other
@@ -166,6 +174,7 @@ decision=<GO|CONDITIONAL GO|NO-GO>
 decision_scope=<local rehearsal only|internal RC only|public-mainnet candidate review>
 assigned_worktree=<ticket path>
 assigned_branch_ref=<ticket ref>
+preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
 git_branch=<artifact value>
