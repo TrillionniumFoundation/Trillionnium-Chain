@@ -56,6 +56,7 @@ Interpretation rule:
 
 Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious launch decision input", require all of the following together:
 - the assigned worktree path and branch ref from the lane prompt / release ticket, recorded before any release script runs
+- a fail-closed preflight run of `./scripts/v2/verify_lane_worktree.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` using the ticket-assigned values directly (the branch argument may be either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`), rather than first inferring values from the current shell and then reusing those inferred values as the expectation
 - a path-resolved `summary.txt` from `run/health/evidence-*`
 - a path-resolved `manifest.txt` from `release/rc-*`
 - matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` across those artifacts
