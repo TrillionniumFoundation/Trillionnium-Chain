@@ -78,6 +78,28 @@ fn http_service_response_for_metrics_rejects_empty_oracle_query_values() {
 }
 
 #[test]
+fn http_service_response_for_metrics_rejects_empty_or_invalid_now_ts_ms() {
+    for (target, expected) in [
+        (
+            "/metrics?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=",
+            "\"message\":\"empty now_ts_ms\"",
+        ),
+        (
+            "/metrics?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=10ms",
+            "\"message\":\"invalid now_ts_ms\"",
+        ),
+    ] {
+        let response = http_service_response_for_target(Some(target));
+
+        assert!(
+            response.starts_with("HTTP/1.1 400 Bad Request\r\n"),
+            "{response}"
+        );
+        assert!(response.contains(expected), "{response}");
+    }
+}
+
+#[test]
 fn http_service_response_for_metrics_returns_base_prometheus_text() {
     let response = http_service_response_for_target(Some("/metrics"));
 
