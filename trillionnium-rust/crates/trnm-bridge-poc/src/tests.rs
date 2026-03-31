@@ -87,6 +87,25 @@ fn settlement_audit_view_normalizes_reverted_reason_from_legacy_state() {
 }
 
 #[test]
+fn settlement_audit_view_omits_legacy_revert_reason_that_sanitizes_empty() {
+    let mut reverted = SettlementRequest::new(7, "0xlegacy-empty".to_string());
+    reverted.status =
+        BridgeStatus::Reverted("\u{200B}\u{2065}\u{202E}\n\t\u{FEFF}".to_string());
+
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xlegacy-empty".to_string(),
+            status: "reverted",
+            is_terminal: true,
+            finalized_height: None,
+            revert_reason: None,
+        }
+    );
+}
+
+#[test]
 fn settlement_request_collapses_bom_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
@@ -95,6 +114,22 @@ fn settlement_request_collapses_bom_spacing_in_revert_reason() {
             "target\u{FEFF}relay timeout".to_string(),
         )
         .expect("bom-style hidden spacing should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}
+
+#[test]
+fn settlement_request_collapses_medium_math_and_ideographic_spacing_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{205F}relay\u{3000}timeout".to_string(),
+        )
+        .expect("medium math and ideographic spacing should be normalized in revert reason");
 
     assert_eq!(
         request.status,
@@ -112,6 +147,42 @@ fn settlement_request_rejects_revert_reason_that_becomes_empty_after_sanitize() 
 
     assert_eq!(err, Err(SettlementError::InvalidRevertReason));
     assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
+fn settlement_request_collapses_interlinear_annotation_controls_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "proof\u{FFF9}mismatch\u{FFFA}target\u{FFFB}trail".to_string(),
+        )
+        .expect("interlinear annotation controls should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("proof mismatch target trail".to_string())
+    );
+}
+
+#[test]
+fn settlement_audit_view_normalizes_plane14_tag_noise_from_legacy_revert_reason() {
+    let mut reverted = SettlementRequest::new(7, "0xlegacy-plane14".to_string());
+    reverted.status = BridgeStatus::Reverted(
+        "proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string(),
+    );
+
+    assert_eq!(
+        reverted.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xlegacy-plane14".to_string(),
+            status: "reverted",
+            is_terminal: true,
+            finalized_height: None,
+            revert_reason: Some("proof mismatch trail".to_string()),
+        }
+    );
 }
 
 #[test]

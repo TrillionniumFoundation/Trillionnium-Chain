@@ -103,6 +103,39 @@ fn x2_confirm_accepts_source_plus_one_height_once_heartbeat_overlay_has_caught_u
 }
 
 #[test]
+fn x2_confirm_accepts_saturated_source_height_once_heartbeat_overlay_has_caught_up() {
+    let mut request = SettlementRequest::new(1, "0xsaturated-finality-boundary-pass".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(u64::MAX, u64::MAX, 17);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: u64::MAX },
+    )
+    .expect("caught-up saturated overlay should keep the source+1 boundary pinned at u64::MAX");
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: u64::MAX,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(u64::MAX),
+                heartbeat_target_height: Some(u64::MAX),
+                heartbeat_latency_ms: Some(17),
+                confirm_height: Some(u64::MAX),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(u64::MAX));
+}
+
+#[test]
 fn x2_failure_path_confirm_failed_triggers_compensation_revert() {
     let mut request = SettlementRequest::new(1, "0xbadf00d".to_string());
     let token = operator_token();
@@ -2251,4 +2284,53 @@ fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_termin
     assert_eq!(event.confirm_reason.as_deref(), Some(reason.as_str()));
 
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+
+#[test]
+fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_compensation() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-confirm-failure".to_string());
+    let token = operator_token();
+
+    let retry_pending = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 699,
+            latency_ms: 19,
+        }),
+        should_retry: true,
+        degraded: false,
+        message: "target relay timeout #1".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .expect("terminal confirm failure should compensate even if heartbeat is retry-pending");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target confirm timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target confirm timeout".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: target confirm timeout".to_string())
+    );
 }

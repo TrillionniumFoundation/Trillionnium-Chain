@@ -202,6 +202,48 @@ fn x3_prep_confirm_failure_reason_sanitizes_bom_and_word_joiner_controls_for_rep
 }
 
 #[test]
+fn x3_prep_confirm_failure_reason_strips_plane14_tag_controls_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-sanitize-plane14-tags".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(735, 734, 18);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target\u{E0001}receipt\u{E0020}timeout\u{E007F}signal".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target receipt timeout signal".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(735),
+                heartbeat_target_height: Some(734),
+                heartbeat_latency_ms: Some(18),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target receipt timeout signal".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target receipt timeout signal".to_string()
+        )
+    );
+}
+
+#[test]
 fn x3_prep_confirm_failure_reason_collapses_braille_blank_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xconfirm-sanitize-braille-blank".to_string());
     let token = operator_token();

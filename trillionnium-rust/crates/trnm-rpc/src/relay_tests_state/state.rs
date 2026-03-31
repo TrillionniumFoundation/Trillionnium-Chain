@@ -66,6 +66,16 @@ fn source_attribution_canonicalization_collapses_whitespace_without_trailing_spa
         "relay-source-1"
     );
 
+    assert_eq!(
+        canonicalize_risk_source(Some("  `\"Proof-Source\"`  ")),
+        "proof-source"
+    );
+
+    let canonical_proof_fullwidth_space = canonicalize_risk_source(Some(
+        "  「Proof\u{3000}Source」\u{2060}  ",
+    ));
+    assert_eq!(canonical_proof_fullwidth_space, "proof source");
+
     let canonical_unicode_case = canonicalize_risk_source(Some("İSTANBUL source"));
     assert_eq!(canonical_unicode_case, "i̇stanbul source");
 

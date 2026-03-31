@@ -193,6 +193,110 @@ fn x3_prep_degraded_heartbeat_blank_reason_falls_back_to_stable_contract_message
 }
 
 #[test]
+fn x3_prep_degraded_invalid_heartbeat_progression_prefix_allows_compensation_revert() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-invalid-progression-prefix".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 310,
+            target_height: 999,
+            latency_ms: 25,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "Invalid heartbeat progression: target height exceeded source sample".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 411 },
+    )
+    .expect("declared invalid heartbeat progression should fail closed via compensation revert");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: Invalid heartbeat progression: target height exceeded source sample".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: Invalid heartbeat progression: target height exceeded source sample"
+                        .to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: Invalid heartbeat progression: target height exceeded source sample"
+                .to_string(),
+        )
+    );
+}
+
+#[test]
+fn x3_prep_degraded_invalid_heartbeat_progression_parenthesized_suffix_allows_compensation_revert() {
+    let mut request = SettlementRequest::new(
+        1,
+        "0xdegraded-invalid-progression-parenthesized-suffix".to_string(),
+    );
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 310,
+            target_height: 999,
+            latency_ms: 25,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "Invalid heartbeat progression (target height exceeded source sample)"
+            .to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 411 },
+    )
+    .expect("parenthesized invalid heartbeat progression should fail closed via compensation revert");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)"
+                        .to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: Invalid heartbeat progression (target height exceeded source sample)"
+                .to_string(),
+        )
+    );
+}
+
+#[test]
 fn x3_prep_degraded_invalid_heartbeat_metrics_fail_closed_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdegraded-invalid-metrics".to_string());
     let token = operator_token();
@@ -612,36 +716,54 @@ fn x3_prep_accepts_saturated_finality_boundary_when_source_is_u64_max_and_target
 }
 
 #[test]
-fn x3_prep_accepts_confirm_height_at_heartbeat_target_lower_boundary() {
+fn x3_prep_rejects_confirm_height_at_heartbeat_target_lower_boundary() {
     let mut request = SettlementRequest::new(1, "0xconfirm-lower-boundary".to_string());
     let token = operator_token();
 
     let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
     let heartbeat = monitor.record_success(700, 699, 19);
 
-    let out = drive_minimal_settlement(
+    let err = drive_minimal_settlement(
         &mut request,
         &token,
         &heartbeat,
         SettlementConfirm::Confirmed { height: 699 },
     )
-    .unwrap();
+    .expect_err("target-floor confirm height must fail closed");
 
     assert_eq!(
-        out,
-        SettlementStep::Finalized {
-            height: 699,
-            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
-                phase: "settlement_confirmed",
-                heartbeat_source_height: Some(700),
-                heartbeat_target_height: Some(699),
-                heartbeat_latency_ms: Some(19),
-                confirm_height: Some(699),
-                confirm_reason: None,
-            },
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 699 }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_rejects_saturated_confirm_height_at_heartbeat_target_lower_boundary() {
+    let mut request =
+        SettlementRequest::new(1, "0xconfirm-saturated-lower-boundary".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(u64::MAX, u64::MAX - 1, 19);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed {
+            height: u64::MAX - 1,
+        },
+    )
+    .expect_err("saturated target-floor confirm height must fail closed");
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight {
+            height: u64::MAX - 1,
         }
     );
-    assert_eq!(current_status(&request), &BridgeStatus::Finalized(699));
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
 
 #[test]
@@ -675,6 +797,47 @@ fn x3_prep_accepts_confirm_height_at_heartbeat_source_boundary() {
         }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(700));
+}
+
+#[test]
+fn x3_prep_accepts_source_plus_one_confirm_when_target_has_reached_source_head() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-head-plus-one-boundary".to_string());
+    let token = operator_token();
+
+    let heartbeat = HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 700,
+            target_height: 700,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: false,
+        message: "heartbeat ok".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .expect("source+1 overlay boundary should remain confirmable even when target has reached source head");
+
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 701,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(700),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: Some(701),
+                confirm_reason: None,
+            },
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Finalized(701));
 }
 
 #[test]

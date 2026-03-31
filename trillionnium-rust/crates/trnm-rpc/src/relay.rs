@@ -22,7 +22,10 @@ fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
             format!("{field} must be non-empty"),
         ));
     }
-    if session_id.trim() != session_id || session_id.as_bytes().iter().any(|b| b.is_ascii_control())
+    if session_id.trim() != session_id
+        || !session_id
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '-' | '_' | '.'))
     {
         return Err(bad_request(
             "invalid_session",
@@ -515,6 +518,7 @@ fn is_disallowed_risk_source_char(ch: char) -> bool {
                 | '\u{FFFB}'
         )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
@@ -530,7 +534,30 @@ fn elide_risk_error_key(key: &str) -> String {
 }
 
 fn canonicalize_risk_source(source: Option<&str>) -> String {
-    let source = source.unwrap_or("anon").trim();
+    fn quote_wrapper_len(source: &str) -> Option<(usize, usize)> {
+        const QUOTE_WRAPPERS: [(&str, &str); 7] = [
+            ("\"", "\""),
+            ("'", "'"),
+            ("`", "`"),
+            ("“", "”"),
+            ("‘", "’"),
+            ("«", "»"),
+            ("「", "」"),
+        ];
+
+        QUOTE_WRAPPERS.iter().find_map(|(open, close)| {
+            source
+                .starts_with(open)
+                .then_some(())
+                .filter(|_| source.ends_with(close))
+                .map(|_| (open.len(), close.len()))
+        })
+    }
+
+    let mut source = source.unwrap_or("anon").trim();
+    while let Some((prefix_len, suffix_len)) = quote_wrapper_len(source) {
+        source = source[prefix_len..source.len() - suffix_len].trim();
+    }
     if source.is_empty() {
         return "anon".to_string();
     }
@@ -1056,11 +1083,37 @@ impl RelayService {
     }
 }
 
+fn is_hex_wrapper_noise(ch: char) -> bool {
+    ch.is_whitespace()
+        || ch.is_control()
+        || matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2060}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{FEFF}'
+        )
+}
+
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
-    let canonical = input
+    let normalized = input.trim_matches(is_hex_wrapper_noise);
+    let canonical = normalized
         .strip_prefix("0x")
-        .or_else(|| input.strip_prefix("0X"))
-        .unwrap_or(input);
+        .or_else(|| normalized.strip_prefix("0X"))
+        .unwrap_or(normalized)
+        .trim_matches(is_hex_wrapper_noise);
     let bytes = hex::decode(canonical).map_err(|e| anyhow!("invalid {field} hex: {e}"))?;
     if bytes.len() != 32 {
         bail!("{field} must be 32 bytes");
@@ -1672,6 +1725,26 @@ mod tests {
         root_mismatch.segment_root_hex = "00".repeat(32);
         assert!(verify_session_proof(&root_mismatch).is_err());
 
+        let mut range_len_mismatch = proof.clone();
+        range_len_mismatch.range_len += 1;
+        assert!(verify_session_proof(&range_len_mismatch).is_err());
+
+        let mut message_count_mismatch = proof.clone();
+        message_count_mismatch.message_count += 1;
+        assert!(verify_session_proof(&message_count_mismatch).is_err());
+
+        let mut proof_count_mismatch = proof.clone();
+        proof_count_mismatch.proof_count += 1;
+        assert!(verify_session_proof(&proof_count_mismatch).is_err());
+
+        let mut total_steps_mismatch = proof.clone();
+        total_steps_mismatch.total_proof_steps += 1;
+        assert!(verify_session_proof(&total_steps_mismatch).is_err());
+
+        let mut max_depth_mismatch = proof.clone();
+        max_depth_mismatch.max_proof_depth += 1;
+        assert!(verify_session_proof(&max_depth_mismatch).is_err());
+
         let mut session_mismatch = proof.clone();
         session_mismatch.session_id = "sp2-other".to_string();
         assert!(verify_session_proof(&session_mismatch).is_err());
@@ -1805,6 +1878,49 @@ mod tests {
             entry.leaf_hash_hex = format!("0X{}", entry.leaf_hash_hex);
             for step in entry.proof.iter_mut() {
                 step.sibling_hash_hex = format!("0x{}", step.sibling_hash_hex);
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_0x_uppercase_prefixed_hash_hex() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-prefixed-uppercase".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-prefixed-uppercase".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-prefixed-uppercase".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!("0X{}", proof.segment_root_hex.to_uppercase());
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = format!("0X{}", entry.leaf_hash_hex.to_uppercase());
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!("0X{}", step.sibling_hash_hex.to_uppercase());
             }
         }
 
@@ -1964,6 +2080,21 @@ mod tests {
     }
 
     #[test]
+    fn relay_proof_query_rejects_session_with_zero_width_space() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp\u{200B}canonical".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
+    }
+
+    #[test]
     fn relay_proof_query_rejects_reversed_range() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
@@ -1984,6 +2115,12 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_range"));
+    }
+
+    #[test]
+    fn relay_proof_query_accepts_exact_max_span() {
+        assert!(validate_proof_query_range(1, MAX_PROOF_QUERY_SPAN).is_ok());
+        assert!(validate_proof_query_range(41, 40 + MAX_PROOF_QUERY_SPAN).is_ok());
     }
 
     #[test]
@@ -2614,6 +2751,13 @@ mod tests {
         // quota accounting can't be split across visually identical aliases.
         let canonical_bidi = canonicalize_risk_source(Some("relay\u{2060}\u{200d}source"));
         assert_eq!(canonical_bidi, "relay source");
+
+        // Tag/BOM/variation-selector noise must also collapse into the same proof
+        // attribution bucket instead of creating visually identical aliases.
+        let canonical_tag_noise = canonicalize_risk_source(Some(
+            "proof\u{FEFF}\u{E0020}\u{FE0F}source",
+        ));
+        assert_eq!(canonical_tag_noise, "proof source");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
         assert_eq!(

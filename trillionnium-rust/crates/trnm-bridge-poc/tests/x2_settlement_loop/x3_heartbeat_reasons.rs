@@ -267,20 +267,20 @@ fn x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_
     assert_eq!(
         out,
         SettlementStep::Compensated {
-            reason: "heartbeat degraded: targetrelaytimeout".to_string(),
+            reason: "heartbeat degraded: target relay timeout".to_string(),
             event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
                 phase: "relay_heartbeat_degraded",
                 heartbeat_source_height: None,
                 heartbeat_target_height: None,
                 heartbeat_latency_ms: None,
                 confirm_height: None,
-                confirm_reason: Some("heartbeat degraded: targetrelaytimeout".to_string()),
+                confirm_reason: Some("heartbeat degraded: target relay timeout".to_string()),
             },
         }
     );
     assert_eq!(
         current_status(&request),
-        &BridgeStatus::Reverted("heartbeat degraded: targetrelaytimeout".to_string())
+        &BridgeStatus::Reverted("heartbeat degraded: target relay timeout".to_string())
     );
 }
 

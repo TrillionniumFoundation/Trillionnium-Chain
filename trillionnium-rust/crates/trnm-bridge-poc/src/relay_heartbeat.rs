@@ -190,6 +190,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{FFFB}'
     )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
@@ -223,7 +224,33 @@ fn normalize_failure_reason(reason: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::normalize_failure_reason;
+    use super::{normalize_failure_reason, RelayHeartbeatConfig, RelayHeartbeatMonitor};
+
+    #[test]
+    fn record_success_invalid_zero_height_fails_closed_without_retry_window() {
+        let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(30, 3));
+
+        let outcome = monitor.record_success(0, 42, 18);
+
+        assert!(outcome.degraded);
+        assert!(!outcome.should_retry);
+        assert!(outcome.heartbeat.is_none());
+        assert_eq!(outcome.message, "invalid heartbeat height");
+        assert_eq!(monitor.consecutive_failures(), 3);
+    }
+
+    #[test]
+    fn record_success_invalid_progression_fails_closed_without_retry_window() {
+        let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(30, 3));
+
+        let outcome = monitor.record_success(41, 42, 18);
+
+        assert!(outcome.degraded);
+        assert!(!outcome.should_retry);
+        assert!(outcome.heartbeat.is_none());
+        assert_eq!(outcome.message, "invalid heartbeat progression");
+        assert_eq!(monitor.consecutive_failures(), 3);
+    }
 
     #[test]
     fn normalize_failure_reason_strips_cgj_for_replay_stability() {
@@ -289,6 +316,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_invisible_math_operators_and_mvs() {
+        let raw = "target\u{2061} relay\u{2062} timeout\u{2063} signal\u{2064}\u{180E}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_strips_hangul_fillers_for_replay_stability() {
         let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_failure_reason(raw);
@@ -306,6 +340,13 @@ mod tests {
     fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability()
     {
         let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_plane14_tag_chars_for_replay_stability() {
+        let raw = "target\u{E0001}relay\u{E0020}timeout\u{E007F}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
@@ -332,6 +373,27 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_bidi_embedding_isolates_for_replay_stability() {
+        let raw = "target\u{2066}relay\u{2067}timeout\u{2068}signal\u{2069}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_nested_directional_isolates_for_replay_stability() {
+        let raw = "target\u{2066}\u{2067}relay\u{2068}timeout\u{2069}\u{2069}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability() {
+        let raw = "target\u{200E}\u{2066}relay\u{202E}timeout\u{2069}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_ogham_space_mark_for_replay_stability() {
         let raw = "target\u{1680}relay timeout";
         let normalized = normalize_failure_reason(raw);
@@ -350,6 +412,13 @@ mod tests {
         let raw = "target\u{180F}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_uses_stable_fallback_when_empty_after_sanitize() {
+        let raw = "\u{200B}\u{2060}\n\t\u{FEFF}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "unknown heartbeat failure");
     }
 
     #[test]
