@@ -230,6 +230,35 @@ fn qos_snapshot_stays_fail_closed_for_normal_after_critical_refill_probe_noise()
 }
 
 #[test]
+fn qos_snapshot_keeps_normal_closed_when_only_critical_spillover_headroom_remains() {
+    let mut g = LaneAdmissionGate::new(5, 2);
+
+    // Fill the dedicated normal lane and occupy one reserved critical slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (3, 1, 4));
+
+    // One aggregate slot remains, but it is reachable only by fresh critical
+    // spillover into the still-free normal headroom. Fresh normal ingress must
+    // stay closed because the last reserved critical slot is guarded.
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 3,
+            critical_queued: 1,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        }
+    );
+}
+
+#[test]
 fn critical_refill_guarded_normal_retry_stays_fresh_until_reserved_slot_reopens() {
     let mut g = LaneAdmissionGate::new(4, 2);
 
