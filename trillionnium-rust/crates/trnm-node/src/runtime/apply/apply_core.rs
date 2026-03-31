@@ -39,11 +39,27 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.contains('@')
+            && !node_id.contains('?')
+            && !node_id.contains('#')
+            && !node_id.contains('%')
+            && !node_id.contains('&')
+            && !node_id.contains('='),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
+        path
+    );
+    anyhow::ensure!(
         node_id != "." && node_id != "..",
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let bracketed_host_literal = node_id
+        .strip_prefix('[')
+        .and_then(|inner| inner.strip_suffix(']'))
+        .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
     let dns_like_host_label = node_id
+        .strip_suffix('.')
+        .unwrap_or(node_id)
         .split('.')
         .all(|label| {
             !label.is_empty()
@@ -58,6 +74,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !node_id.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<std::net::SocketAddr>().is_err()
+            && !bracketed_host_literal
             && !dns_like_host_label,
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
@@ -925,13 +942,42 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_uri_delimiters_in_node_id() {
+        for node_id in [
+            "node@seed",
+            "node?peer=seed",
+            "node#seed",
+            "node%seed",
+            "node&peer=seed",
+            "node=seed",
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("URI delimiters in node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain URI delimiters (@ ? # % & =)"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_host_like_node_id_literals() {
         for node_id in [
             "localhost",
             "LOCALHOST",
             "127.0.0.1",
             "127.0.0.1:7001",
+            "[::1]",
             "seed.example.com",
+            "seed.example.com.",
             "validator-1.mainnet.local",
         ] {
             let err = validate_node_config(
