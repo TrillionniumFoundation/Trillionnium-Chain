@@ -363,6 +363,19 @@ fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whites
 }
 
 #[test]
+fn parse_query_capability_audit_subject_from_target_rejects_encoded_query_delimiters() {
+    for target in [
+        "/query-capability-audit/alice%3Flimit=1",
+        "/query-capability-audit/alice%23frag",
+        "/query-capability-audit/alice%26cursor=1",
+    ] {
+        parse_query_capability_audit_subject_from_target(target).expect_err(
+            "capability audit subject must fail closed on encoded query-like delimiters",
+        );
+    }
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("post /health HTTP/1.1"), None);

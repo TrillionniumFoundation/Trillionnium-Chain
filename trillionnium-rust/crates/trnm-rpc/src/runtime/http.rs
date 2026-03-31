@@ -220,7 +220,12 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c") || lower.contains("%2e")
+    lower.contains("%2f")
+        || lower.contains("%5c")
+        || lower.contains("%2e")
+        || lower.contains("%3f")
+        || lower.contains("%23")
+        || lower.contains("%26")
 }
 
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
@@ -672,6 +677,27 @@ mod tests {
         assert_eq!(
             parse_nonempty_path_suffix(
                 "/query-capability-audit/alice%2ejson",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%3Flimit=1",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%23frag",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%26cursor=1",
                 "/query-capability-audit/"
             ),
             None
