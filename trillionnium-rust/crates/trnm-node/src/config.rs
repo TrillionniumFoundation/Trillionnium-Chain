@@ -275,11 +275,8 @@ fn resolve_config_path(path: &str) -> PathBuf {
     requested.to_path_buf()
 }
 
-fn ensure_relative_config_path_stays_within_allowed_roots(
-    requested: &str,
-    resolved: &Path,
-) -> Result<()> {
-    if Path::new(requested).is_absolute() || !resolved.exists() {
+fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
+    if !resolved.exists() {
         return Ok(());
     }
 
@@ -322,7 +319,7 @@ fn validate_config_path_input(path: &str) -> Result<()> {
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
-    ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
+    ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -444,6 +441,49 @@ mod tests {
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
 
+        assert!(
+            err.to_string().contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_absolute_path_outside_workspace_and_cwd() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
+        let outside_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-absolute-outside-{}-{}.toml",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        std::fs::write(
+            &outside_path,
+            "node_id = \"node-escape\"\nrpc_addr = \"127.0.0.1:30001\"\np2p_addr = \"127.0.0.1:30000\"\n",
+        )
+        .expect("outside config should be writable");
+
+        let err = load_config(outside_path.to_str().expect("utf8 path"))
+            .expect_err("absolute config path outside allowed roots should fail closed");
+        let canonical_outside = outside_path
+            .canonicalize()
+            .expect("outside path should canonicalize");
+        let _ = std::fs::remove_file(&outside_path);
+
+        assert!(
+            !canonical_outside.starts_with(&workspace_root)
+                && !canonical_outside.starts_with(&current_dir),
+            "test fixture must stay outside allowed roots"
+        );
         assert!(
             err.to_string().contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
