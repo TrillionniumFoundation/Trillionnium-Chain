@@ -211,6 +211,7 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     required_exact_values = {
         "packet_generated_at": args.packet_generated_at,
         "packet_distribution_path": args.packet_distribution_path,
+        "validator_set_version": args.validator_set_version,
         "startup_order_note": args.startup_order_note,
         "rollback_owner": args.rollback_owner,
         "genesis_artifact_path": args.genesis_artifact_path,
@@ -219,10 +220,12 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     placeholder_fields = [
         field for field, value in required_exact_values.items() if looks_like_placeholder(value)
     ]
+    if args.validator_set_version == "v1":
+        placeholder_fields.append("validator_set_version")
     if placeholder_fields:
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires explicit values for "
-            + ", ".join(placeholder_fields)
+            + ", ".join(dict.fromkeys(placeholder_fields))
         )
 
     if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
