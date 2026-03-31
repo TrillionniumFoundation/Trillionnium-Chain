@@ -181,6 +181,14 @@ fn parse_oracle_validate_snapshot_target_rejects_empty_or_invalid_now_ts_ms() {
             "empty now_ts_ms",
         ),
         (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=+",
+            "empty now_ts_ms",
+        ),
+        (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=%20",
+            "empty now_ts_ms",
+        ),
+        (
             "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=10ms",
             "invalid now_ts_ms",
         ),

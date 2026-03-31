@@ -241,7 +241,7 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
     }
 
     let now_ts_ms = match params.get("now_ts_ms") {
-        Some(v) if !v.is_empty() => Some(
+        Some(v) if !v.is_empty() && !v.trim().is_empty() => Some(
             v.parse::<u64>()
                 .map_err(|_| "invalid now_ts_ms".to_string())?,
         ),
