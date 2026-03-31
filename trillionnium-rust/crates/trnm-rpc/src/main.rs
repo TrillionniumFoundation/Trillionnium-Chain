@@ -9,6 +9,7 @@ use std::{
     fs::{self, OpenOptions},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
+    cmp::Ordering,
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -22,7 +23,7 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
+    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
     PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
     TransferTx,
 };
@@ -1054,6 +1055,16 @@ fn load_identity_registry(path: &Path) -> IdentityRegistry {
     serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
 }
 
+fn audit_action_rank(action: &AuditAction) -> u8 {
+    match action {
+        AuditAction::DidRegistered => 0,
+        AuditAction::DidRevoked => 1,
+        AuditAction::CapabilityIssued => 2,
+        AuditAction::CapabilityRenewed => 3,
+        AuditAction::CapabilityRevoked => 4,
+    }
+}
+
 fn query_capability_audit(
     registry: &IdentityRegistry,
     token_id: u64,
@@ -1089,7 +1100,16 @@ fn query_capability_audit(
 
     // Keep audit query output deterministic even when registry snapshots are
     // merged/imported with non-canonical ordering.
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
+    owner_history.sort_by(|left, right| {
+        left.at_height
+            .cmp(&right.at_height)
+            .then_with(|| left.seq.cmp(&right.seq))
+            .then_with(|| audit_action_rank(&left.action).cmp(&audit_action_rank(&right.action)))
+            .then_with(|| left.actor.cmp(&right.actor))
+            .then_with(|| left.subject.cmp(&right.subject))
+            .then_with(|| left.note.cmp(&right.note))
+            .then(Ordering::Equal)
+    });
 
     Ok(CapabilityAuditQueryResponse {
         token,

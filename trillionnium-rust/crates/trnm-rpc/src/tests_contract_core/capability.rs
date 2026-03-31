@@ -2,6 +2,58 @@ pub(crate) use super::*;
 use trnm_types::CapabilityScope;
 
 #[test]
+fn query_capability_audit_canonicalizes_same_height_same_seq_owner_history_order() {
+    let mut registry = IdentityRegistry::default();
+    registry
+        .register_did(
+            "did:org:lane-xi".to_string(),
+            "org:lane-xi-admin".to_string(),
+            10,
+        )
+        .expect("register did");
+    let token_id = registry
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+    registry
+        .renew_capability("org:lane-xi-admin".to_string(), token_id, 20, Some(140))
+        .expect("renew capability");
+
+    let mut raw = serde_json::to_value(&registry).expect("serialize registry");
+    let events = raw["audit_trail"]
+        .as_array_mut()
+        .expect("audit trail array");
+    events.swap(1, 2);
+    events[1]["at_height"] = serde_json::json!(99);
+    events[2]["at_height"] = serde_json::json!(99);
+    events[1]["seq"] = serde_json::json!(77);
+    events[2]["seq"] = serde_json::json!(77);
+
+    let imported: IdentityRegistry = serde_json::from_value(raw).expect("deserialize registry");
+    let out = query_capability_audit(&imported, token_id).expect("query capability audit");
+
+    let actions = out
+        .owner_history
+        .iter()
+        .map(|event| format!("{:?}", event.action))
+        .collect::<Vec<_>>();
+    assert_eq!(
+        actions,
+        vec![
+            "DidRegistered".to_string(),
+            "CapabilityIssued".to_string(),
+            "CapabilityRenewed".to_string(),
+        ],
+        "same-height/same-seq audit entries should sort canonically rather than preserve import order"
+    );
+}
+
+#[test]
 fn resolve_capability_token_subject_or_token_strips_invisible_controls_before_lookup() {
     let mut registry = IdentityRegistry::default();
     registry
