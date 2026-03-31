@@ -1581,6 +1581,39 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_prefers_future_stale_label_over_quorum_and_drift_failures() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            120_000,
+            vec![source("coingecko")],
+            1,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_001,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_000);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("stale"));
+        assert_eq!(report.observation.stale_reject_total, 1);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 1);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_maps_quorum_rejection_to_stable_error_label() {
         let p = policy();
         let snap = OracleSnapshot::new(
