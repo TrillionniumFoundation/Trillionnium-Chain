@@ -1302,11 +1302,15 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "127.0.0.1",
             "127.0.0.1:7001",
             "[::1]",
+            "[::1]:7001",
             "[2001:db8::1]",
+            "[2001:db8::1]:7001",
             "seed.example.com",
             "seed.example.com.",
+            "seed.example.com:26656",
             "validator-1.mainnet.local",
             "validator-1.mainnet.local.",
+            "validator-1.mainnet.local:27656",
         ] {
             let err = validate_node_config(
                 NodeConfig {
