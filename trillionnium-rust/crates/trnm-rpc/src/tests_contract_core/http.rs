@@ -75,6 +75,18 @@ fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
 }
 
 #[test]
+fn parse_http_request_target_rejects_encoded_query_delimiter_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /query-task/42%3Fshadow HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /query-events/7%3flimit=9 HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
 fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
     assert_eq!(
         parse_query_events_limit_from_path("/query-events/42").expect("default limit"),

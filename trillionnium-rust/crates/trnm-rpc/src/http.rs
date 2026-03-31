@@ -169,6 +169,9 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
+    if normalized.contains("%3f") {
+        return None;
+    }
     if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path) {
         return None;
     }
@@ -387,6 +390,18 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_encoded_query_delimiter() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42%3Fshadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7%3flimit=9 HTTP/1.1"),
             None
         );
     }
