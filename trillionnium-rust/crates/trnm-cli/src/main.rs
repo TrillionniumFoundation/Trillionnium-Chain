@@ -2527,9 +2527,13 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Mutex;
+    use std::{path::PathBuf, sync::Mutex};
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    fn canonical_temp_root() -> PathBuf {
+        std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
 
     #[test]
     fn wallet_import_hex_check() {
@@ -2686,7 +2690,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let store = std::env::temp_dir().join(unique);
+        let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
         let existing = wallet_file(&store, "alice");
         std::fs::write(
@@ -2728,7 +2732,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let store = std::env::temp_dir().join(unique);
+        let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
         let existing = wallet_file(&store, "alice");
         symlink(store.join("missing-target.key"), &existing).unwrap();
@@ -2766,7 +2770,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let store = std::env::temp_dir().join(unique);
+        let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
 
         let target = store.join("alice.real.key");
