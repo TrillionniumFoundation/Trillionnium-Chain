@@ -901,6 +901,24 @@ fn tx_retry_policy_trims_quote_wrapped_env_values() {
 }
 
 #[test]
+fn tx_retry_policy_trims_unicode_quotes_wrapped_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some(" “７” "),
+        Some(" ‘９００’ "),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
 fn tx_retry_policy_treats_blank_env_values_as_missing() {
     let policy = resolve_tx_retry_policy_from_sources(None, None, Some("   \n"), Some("\t\t"));
 
