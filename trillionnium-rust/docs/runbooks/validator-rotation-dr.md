@@ -96,16 +96,22 @@ Run the same fail-closed binding step used for validator bootstrap:
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
-  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
 
 Record:
 - `verified_worktree=`
 - `verified_branch_ref=`
 - `verified_head=`
+
+Interpretation rule:
+- if the ticket or handoff note already assigns an exact commit, pass it via `EXPECTED_HEAD` so the cutover fails closed on the wrong lane tip
+- if `EXPECTED_HEAD` is intentionally unknown, leave it empty rather than inventing a commit from memory
 
 ### 2. Name the cutover shape before execution
 
@@ -190,7 +196,7 @@ Keep the two generated-at fields distinct. They do not need to match, but both m
 
 For a DR rebuild, preserve evidence in this order so the handoff can be audited without shell scrollback:
 
-1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref
+1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref (and `EXPECTED_HEAD` too when the ticket/handoff already pins an exact commit)
 2. run `check_bft_restart_recovery.sh` and capture the emitted report path
 3. copy `dr_summary_path=` from that concrete report
 4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
@@ -201,10 +207,12 @@ Recommended shell shape:
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
-  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 
 EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT" \
 EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
@@ -219,6 +227,7 @@ Stop if any of the following occurs:
 - `report_path` does not resolve to a concrete report
 - `git_worktree_path=` in the report does not match the ticket-assigned worktree
 - `git_worktree_branch_ref=` in the report does not match the ticket-assigned branch ref
+- `verify_lane_worktree.sh` was expected to pin `EXPECTED_HEAD`, but the verified head does not match the ticket/handoff commit
 - `git_status_summary=` is not `clean`
 - `rollback_command=` or `replay_command=` is missing from the report
 
