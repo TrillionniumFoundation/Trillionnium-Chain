@@ -288,6 +288,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_mongolian_free_variation_selector_four_for_replay_stability() {
+        let raw = "target\u{180F}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_medium_math_and_ideographic_spaces() {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_failure_reason(raw);
