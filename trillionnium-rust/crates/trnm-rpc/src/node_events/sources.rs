@@ -204,6 +204,49 @@ mod tests {
     }
 
     #[test]
+    fn load_node_event_log_sources_deduplicates_manifest_and_env_entries_after_lexical_normalization(
+    ) {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-manifest-env-dedupe");
+        let history_dir = root.join("history");
+        fs::create_dir_all(&history_dir).expect("create history dir");
+
+        let shared_log = root.join("shared.log");
+        let manifest = history_dir.join("sources.txt");
+        fs::write(&shared_log, "").expect("write shared log");
+        fs::write(&manifest, "../shared.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "./shared.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "historical replay sources should dedupe across manifest/env lexical path variants"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_ignores_wrapped_comment_manifest_entries() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-node-event-sources-comment-manifest");
