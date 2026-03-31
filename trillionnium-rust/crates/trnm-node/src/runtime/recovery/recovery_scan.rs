@@ -217,9 +217,16 @@ pub(crate) fn metadata_only_recovery_error(
     recovered: &RecoveredWalState,
 ) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
+        recovered.wal_entries_retained,
+        recovered.truncated,
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
@@ -440,7 +447,12 @@ mod tests {
             err.contains("refusing metadata-only recovery")
                 && err.contains("checkpoint lags retained WAL tip by 1 block")
                 && err.contains("last retained checkpoint: 16")
-                && err.contains("next startup height: 18"),
+                && err.contains("next startup height: 18")
+                && err.contains("incident clue: metadata_only_recovery=1")
+                && err.contains("wal_entries_retained=2")
+                && err.contains("wal_tail_truncated=true")
+                && err.contains("checkpoint_height_retained=16")
+                && err.contains("next_startup_height=18"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
