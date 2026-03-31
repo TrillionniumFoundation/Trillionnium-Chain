@@ -119,6 +119,29 @@ Expected operator rule:
 
 > On verifier ambiguity, do not silently downgrade to a "best-effort success" path. Preserve evidence, mark the surface non-audit-ready, and require explicit operator action.
 
+### Minimum retry / operator-action matrix
+
+To keep retry behavior from masking trust failures, the sidecar should treat each stable `failure_code` as one of three classes:
+
+| failure_code | retry class | expected operator meaning | required sidecar behavior |
+| --- | --- | --- | --- |
+| `timeout` | retryable-bounded | verifier may be healthy but did not answer before the caller deadline | retry only up to the configured bounded attempt budget; persist the final timeout as audit evidence |
+| `unavailable` | retryable-bounded | transport/process outage or dependency unavailable | retry only up to the configured bounded attempt budget; do not rewrite the outcome as `verified` without a fresh successful response |
+| `malformed_evidence` | terminal-no-retry | verifier answered, but the proof/digest surface is unusable | stop immediately, preserve raw evidence/ref, and mark the attempt non-audit-ready |
+| `checkpoint_tuple_mismatch` | terminal-no-retry | verifier evidence does not bind to the requested checkpoint tuple | stop immediately; treat as a trust failure, not a transient outage |
+| `da_summary_mismatch` | terminal-no-retry | DA/light-verifier linkage disagrees with the requested checkpoint evidence | stop immediately; preserve both observed and requested summary handles for replay |
+| `policy_version_reject` | terminal-no-retry | request is semantically outside the active verifier policy | stop immediately and surface the rejecting policy version to the operator |
+| `schema_version_reject` | terminal-no-retry | request/response schema drifted across a declared boundary | stop immediately and require an explicit compatibility decision before reattempt |
+| `non_canonical_checkpoint_surface` | terminal-no-retry | caller supplied trim/control/case drift or other non-canonical checkpoint identity surface | reject before any success downgrade or retry path; require canonical checkpoint/WAL evidence |
+| `uncommitted_wal_reject` | terminal-no-retry | caller attempted to verify speculative rather than committed checkpoint evidence | reject before transport retry; the issue is evidence class, not verifier availability |
+
+Retry invariants for release review:
+
+- only `timeout` and `unavailable` may enter bounded retry paths;
+- all mismatch/canonicalization/policy/schema failures are **terminal** for that request id;
+- every terminal failure must preserve enough evidence to replay the exact rejected tuple later;
+- a later success must be tied to a **new** attempt/result pair, not silently overwrite the prior failed trust decision.
+
 ## Release-review checklist
 
 Use this when deciding whether verifier-sidecar scope is still trailing work or has crossed into launch-blocking territory.
