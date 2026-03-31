@@ -1095,6 +1095,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{200d}'
                 | '\u{200e}'
                 | '\u{200f}'
+                | '\u{2060}'
                 | '\u{202a}'..='\u{202e}'
                 | '\u{2066}'..='\u{2069}'
                 | '\u{feff}'
@@ -3706,6 +3707,16 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_zero_width_joiner_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200d}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_word_joiner_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2060}slot-b").unwrap_err();
         assert!(
             err.to_string()
                 .contains("contains control or bidi override characters"),
