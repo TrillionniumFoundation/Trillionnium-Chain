@@ -368,12 +368,14 @@ mod tests {
         let double_vote_idx = summary.find("bft_double_vote_total=7").unwrap();
         let bad_sig_idx = summary.find("bft_auth_reject_bad_sig_total=11").unwrap();
         let replay_idx = summary.find("bft_auth_reject_replay_total=13").unwrap();
+        let stale_alias_idx = summary.find("bft_auth_reject_stale_total=17").unwrap();
         let stale_nonce_idx = summary.find("bft_auth_reject_stale_nonce_total=17").unwrap();
 
         assert!(recovery_idx < timeout_idx);
         assert!(timeout_idx < error_rate_idx);
         assert!(double_vote_idx < bad_sig_idx);
         assert!(bad_sig_idx < replay_idx);
-        assert!(replay_idx < stale_nonce_idx);
+        assert!(replay_idx < stale_alias_idx);
+        assert!(stale_alias_idx < stale_nonce_idx);
     }
 }
