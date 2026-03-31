@@ -77,6 +77,20 @@ Interpretation rule:
 
 ## Step 3 — Check the config bundle before bootstrap
 
+Before touching the node, bind the bootstrap to one explicitly named genesis artifact.
+Do not proceed on a fuzzy statement like "the latest genesis" or "the same one as yesterday".
+
+Minimum genesis checklist to record in the ticket / handoff note:
+- `genesis_artifact_path=` with the exact file or bundle path the validator is expected to join
+- `genesis_artifact_sha256=` (or another explicitly named content hash) copied from the artifact you actually intend to distribute
+- `genesis_source_note=` describing who produced or approved this genesis bundle
+- `genesis_decision_scope=` stating whether this is local rehearsal-only evidence or a public operator ceremony input
+
+Interpretation rule:
+- if the artifact path can be named but the content hash cannot, stop
+- if the content hash exists but cannot be tied back to the exact distributed file, stop
+- if different operators are using different labels for the same genesis bundle, normalize to one path + one hash before bootstrap
+
 Required files:
 
 ```bash
