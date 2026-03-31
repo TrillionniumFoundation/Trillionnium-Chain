@@ -3009,6 +3009,25 @@ fn contains_malformed_percent_encoding(value: &str) -> bool {
     false
 }
 
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn parse_query_normalized_audit_events_query_from_path(
     path: &str,
 ) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
@@ -3031,6 +3050,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
         || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -3075,6 +3095,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_query.contains("%20")
         || normalized_query.contains("%7f")
         || contains_malformed_percent_encoding(query)
+        || contains_percent_encoded_control_or_space(query)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -5207,6 +5228,22 @@ mod tests {
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
                 .expect_err("encoded controls should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_uppercase_percent_encoded_controls_and_spaces(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%1Fshadow",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%7Ftrail",
+            "/query-normalized-audit-events?limit=3%20",
+            "/query-normalized-audit-events%0Ashadow?source=trnm.task",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("uppercase encoded controls/spaces should fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
