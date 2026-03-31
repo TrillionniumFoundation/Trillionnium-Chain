@@ -586,7 +586,7 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
     ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
     ("llm_meter_worker_slash_rebate_per_work_unit_num", "1000000000001"),
     ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-    ("resolve_authority", "   "),
+    ("resolve_authority", "resolver-a,governance.resolve_authority"),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -3226,9 +3226,20 @@ impl StateStore {
                     return;
                 }
 
+                if let Some((expected_key, _)) = governance_pinned_binding_for_id(snapshot_key_id) {
+                    if key != expected_key || snapshot.key != expected_key {
+                        self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                        self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
+                        if scrubs_resolve_quorum || expected_key == "resolve_authority" {
+                            self.pending_resolve_approvals.clear();
+                        }
+                        return;
+                    }
+                }
+
                 if key == NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID {
-                    self.clear_pending_gov_update_bindings(key, None);
-                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
+                    self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
                     if scrubs_resolve_quorum {
                         self.pending_resolve_approvals.clear();
                     }
@@ -3236,11 +3247,9 @@ impl StateStore {
                 }
 
                 if key == "emergency_pause" {
-                    self.clear_pending_gov_update_bindings(key, None);
-                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, key);
-                    if scrubs_resolve_quorum {
-                        self.pending_resolve_approvals.clear();
-                    }
+                    self.clear_pending_gov_update_bindings(key, Some(snapshot.key.as_str()));
+                    self.clear_pending_gov_update_key_id_aliases(snapshot_key_id, "");
+                    self.pending_resolve_approvals.clear();
                     return;
                 }
 
@@ -3349,6 +3358,9 @@ impl StateStore {
             }
             None => {
                 self.clear_pending_gov_update_bindings(key, None);
+                if scrubs_resolve_quorum {
+                    self.pending_resolve_approvals.clear();
+                }
             }
         }
     }
@@ -9148,6 +9160,23 @@ mod tests {
     }
 
     #[test]
+    fn governance_pinned_key_registry_rejects_uppercase_alias_fail_closed() {
+        let err = validate_governance_registry_shape_lists(
+            &["max_block_ms", "emergency_pause"],
+            &[],
+            &["max_block_ms", "emergency_pause"],
+            &["max_block_ms", "emergency_pause"],
+            &[("Emergency_Pause", EMERGENCY_PAUSE_KEY_ID)],
+        )
+        .expect_err("uppercase-padded pinned governance keys must fail closed");
+
+        assert!(
+            err.contains("pinned-key registry contains non-canonical uppercase key"),
+            "{err}"
+        );
+    }
+
+    #[test]
     fn governance_validator_registry_rejects_membership_drift_fail_closed() {
         let err = validate_governance_registry_shape_lists(
             &["max_block_ms", "max_parallel_workers"],
@@ -10129,6 +10158,47 @@ mod tests {
         assert!(
             !st.is_emergency_paused(),
             "rejected pending restore must not alter effective emergency pause state"
+        );
+    }
+
+    #[test]
+    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases() {
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "resolve_authority".into(),
+            PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 88_888,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            " emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: EMERGENCY_PAUSE_KEY_ID,
+                key: " emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "non-canonical reserved-key restore must not materialize the canonical emergency_pause slot"
+        );
+        assert!(
+            st.pending_gov_update(" emergency_pause").is_none(),
+            "non-canonical reserved-key restore must fail closed instead of persisting the alias slot"
+        );
+        assert!(
+            !st.pending_gov_updates.contains_key("resolve_authority"),
+            "reserved emergency_pause key-id rejection must scrub stale alias occupants even when the attempted key is non-canonical"
+        );
+        assert!(
+            !st.is_emergency_paused(),
+            "rejecting a non-canonical reserved-key restore must not toggle effective emergency pause"
         );
     }
 
@@ -11564,6 +11634,40 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_checked_path_rejects_non_strict_bool_without_mutating_live_binding() {
+        let mut st = StateStore::new();
+        st.set_gov_param(8_051, 7_999, "emergency_pause".into(), "true".into())
+            .expect("baseline checked emergency_pause=true should apply immediately");
+
+        let live_before = st.gov_param_snapshot("emergency_pause");
+        let root_before = st.state_root();
+
+        let err = st
+            .set_gov_param(8_052, 7_999, "emergency_pause".into(), "TRUE".into())
+            .expect_err("checked path must reject non-strict bool literal");
+
+        assert!(err.contains("expected strict bool"), "{err}");
+        assert_eq!(
+            st.gov_param_snapshot("emergency_pause"),
+            live_before,
+            "invalid checked write must preserve the live canonical emergency_pause object"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "invalid checked write must not silently unpause the live emergency brake"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejecting a non-strict checked emergency_pause literal must preserve the prior deterministic root"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "invalid checked write must not materialize a pending emergency_pause entry"
+        );
+    }
+
+    #[test]
     fn emergency_pause_checked_path_repairs_same_key_registry_drift_via_single_source_binding() {
         let mut st = StateStore::new();
         st.gov_param_key_index
@@ -11767,6 +11871,30 @@ mod tests {
             .expect_err("replace with non-canonical emergency_pause key_id must be rejected");
 
         assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_replace_key_id_validation_precedes_bool_schema_validation() {
+        // Merge-gate guard: Replace must reject non-canonical pinned key ids before parsing
+        // the strict-bool payload, so malformed literals cannot perturb the boundary.
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param_with_action(
+                8_052,
+                8_000,
+                "emergency_pause".into(),
+                "TRUE".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace must reject non-canonical emergency_pause key_id first");
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(
+            !err.contains("strict bool"),
+            "replace key-id mismatch path must not leak value-schema errors: {err}"
+        );
         assert!(!st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
     }
@@ -12054,6 +12182,81 @@ mod tests {
         assert!(
             st.pending_gov_update("emergency_pause").is_none(),
             "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_noncanonical_emergency_pause_aliases() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_gov_update(
+            " emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: " emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must not materialize canonical emergency_pause metadata from a non-canonical key alias"
+        );
+        assert!(
+            st.pending_gov_update(" emergency_pause").is_none(),
+            "restore must fail closed instead of persisting a non-canonical emergency_pause alias"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases() {
+        let mut st = StateStore::new();
+
+        st.pending_gov_updates.insert(
+            "resolve_authority".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "resolve_authority".into(),
+                value: "authority-a,authority-b".into(),
+                activate_at_height: 88_888,
+            },
+        );
+        st.pending_resolve_approvals.insert(
+            123,
+            PendingResolveApproval {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+                stored_as_canonical: true,
+            },
+        );
+
+        st.restore_pending_gov_update(
+            "emergency_pause",
+            Some(PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            }),
+        );
+
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "restore must fail closed for immediate emergency_pause pending metadata"
+        );
+        assert!(
+            !st.pending_gov_updates.contains_key("resolve_authority"),
+            "reserved emergency_pause key-id rejection must scrub stale alias occupants sharing id=7999"
+        );
+        assert!(
+            st.pending_resolve_approvals.is_empty(),
+            "scrubbing a stale reserved-id resolve_authority alias must also clear dependent pending resolve approvals"
         );
         assert!(!st.is_emergency_paused());
     }
@@ -13050,6 +13253,26 @@ mod tests {
     }
 
     #[test]
+    fn restore_gov_param_rejects_noncanonical_emergency_pause_alias_fail_closed() {
+        let mut st = StateStore::new();
+
+        st.restore_gov_param(
+            7_999,
+            Some(GovParamObject {
+                key_id: 7_999,
+                key: "emergency_pause ".into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+
+        assert!(st.get_param(7_999).is_none());
+        assert!(st.gov_param_string("emergency_pause").is_none());
+        assert!(st.gov_param_string("emergency_pause ").is_none());
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
     fn restore_gov_param_rejects_schema_invalid_allowed_key_fail_closed() {
         let mut st = StateStore::new();
 
@@ -13312,6 +13535,86 @@ mod tests {
         assert_eq!(
             st.gov_param_string("resolve_authority"),
             Some("authority,authority2".to_string())
+        );
+    }
+
+    #[test]
+    fn emergency_pause_restore_rejects_non_strict_bool_and_preserves_live_canonical_binding() {
+        let mut st = StateStore::new();
+        st.set_gov_param(98_010, 7_999, "emergency_pause".into(), "true".into())
+            .expect("baseline canonical emergency_pause=true must apply immediately");
+
+        let live_before = st.gov_param_snapshot("emergency_pause");
+        let root_before = st.state_root();
+        assert!(st.is_emergency_paused());
+
+        st.restore_gov_param(
+            7_999,
+            Some(GovParamObject {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "TRUE".into(),
+                version: live_before
+                    .as_ref()
+                    .expect("baseline emergency_pause object must exist")
+                    .version
+                    + 1,
+            }),
+        );
+
+        assert_eq!(
+            st.gov_param_snapshot("emergency_pause"),
+            live_before,
+            "invalid restore payload must fail closed and preserve the live canonical emergency_pause object"
+        );
+        assert!(
+            st.is_emergency_paused(),
+            "invalid restore payload must not unpause the live emergency brake"
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejecting a non-strict emergency_pause restore payload must preserve the prior deterministic root"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "invalid restore payload must not materialize a pending emergency_pause entry"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_enforce_action_numeric_literal_preserves_live_binding_and_pending_cleanliness() {
+        // Merge-gate guard: numeric truthy/falsey coercions must never sneak through the
+        // emergency brake path. The control-plane bool stays strict and fail-closed.
+        let mut st = StateStore::new();
+        st.set_gov_param(9_009, 7_999, "emergency_pause".into(), "true".into())
+            .expect("baseline pause=true should apply immediately");
+        let live_before = st.gov_param_snapshot("emergency_pause");
+        assert!(st.is_emergency_paused());
+
+        let err = st
+            .set_gov_param_with_action(
+                9_010,
+                7_999,
+                "emergency_pause".into(),
+                "1".into(),
+                GovPendingUpdateAction::Enforce,
+            )
+            .expect_err("enforce action must reject numeric bool literal");
+
+        assert!(err.contains("expected strict bool"), "unexpected error: {err}");
+        assert!(
+            st.is_emergency_paused(),
+            "rejected numeric enforce payload must preserve the live emergency brake"
+        );
+        assert_eq!(
+            st.gov_param_snapshot("emergency_pause"),
+            live_before,
+            "rejected numeric enforce payload must preserve the canonical live emergency_pause object"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "rejected numeric enforce payload must not materialize pending emergency_pause state"
         );
     }
 

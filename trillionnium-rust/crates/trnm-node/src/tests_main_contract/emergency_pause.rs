@@ -151,3 +151,37 @@ fn emergency_pause_rejection_formula_is_exact_boolean_gate() {
         }
     }
 }
+
+#[test]
+fn emergency_pause_rejects_all_resolve_variants_independent_of_resolver_identity() {
+    let resolve_txs = [
+        MockTx::Resolve {
+            task_id: 7,
+            slash_worker: true,
+            resolver: "governance.resolve_authority".into(),
+        },
+        MockTx::Resolve {
+            task_id: 7,
+            slash_worker: false,
+            resolver: "authority-a".into(),
+        },
+    ];
+
+    for tx in &resolve_txs {
+        assert!(
+            is_high_risk_tx(tx),
+            "resolve risk classification must not drift based on resolver identity or slash mode: {:?}",
+            tx
+        );
+        assert!(
+            is_rejected_by_emergency_pause(true, tx),
+            "paused node must reject every resolve variant: {:?}",
+            tx
+        );
+        assert!(
+            !is_rejected_by_emergency_pause(false, tx),
+            "unpaused node must not reject resolve purely due to classification helper: {:?}",
+            tx
+        );
+    }
+}

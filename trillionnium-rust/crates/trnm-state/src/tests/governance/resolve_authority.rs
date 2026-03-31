@@ -356,6 +356,57 @@ fn governance_resolve_authority_cancel_wrong_key_id_preserves_pending_update() {
     );
 }
 #[test]
+fn governance_resolve_authority_scheduling_scrubs_stale_pending_resolve_approvals() {
+    // Merge-gate guard: once resolve_authority enters timelock rotation, any staged
+    // approvals under the old quorum must be scrubbed immediately.
+    let mut st = StateStore::new();
+    st.set_gov_param_unchecked(
+        7_314,
+        "resolve_authority".into(),
+        "resolver-v1,resolver-v2".into(),
+    )
+    .expect("initial resolve_authority write should succeed");
+
+    st.stage_or_confirm_resolve_approval(14_600, 7, true, "resolver-v1", "resolver-v1,resolver-v2")
+        .expect("staging resolve approval under the live authority set should succeed");
+    assert!(
+        st.pending_resolve_approval_snapshot(14_600).is_some(),
+        "sanity: staged resolve approval should exist before scheduling a quorum rotation"
+    );
+
+    let scheduled = st
+        .set_gov_param(
+            14_601,
+            7_314,
+            "resolve_authority".into(),
+            "resolver-v3,resolver-v4".into(),
+        )
+        .expect("resolve_authority rotation should schedule successfully");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 14_621
+        }
+    ));
+    assert!(
+        st.pending_resolve_approval_snapshot(14_600).is_none(),
+        "scheduling a resolve_authority rotation must scrub staged approvals that were computed under the old quorum"
+    );
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("resolve_authority rotation should remain queued after scrubbing stale approvals");
+    assert_eq!(pending.key_id, 7_314);
+    assert_eq!(pending.value, "resolver-v3,resolver-v4");
+    assert_eq!(pending.activate_at_height, 14_621);
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        Some("resolver-v1,resolver-v2".into()),
+        "timelock scheduling must preserve the live authority set until activation"
+    );
+}
+
+#[test]
 fn governance_resolve_authority_rejects_reserved_or_placeholder_values() {
     let mut st = StateStore::new();
 

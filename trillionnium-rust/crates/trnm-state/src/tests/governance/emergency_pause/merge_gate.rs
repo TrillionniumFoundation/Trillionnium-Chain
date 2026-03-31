@@ -112,3 +112,61 @@ fn emergency_pause_checked_path_rejects_key_id_shadowing() {
         .unwrap();
     assert!(!st.is_emergency_paused());
 }
+
+#[test]
+fn emergency_pause_enforce_wrong_key_id_is_rejected_without_scrubbing_state() {
+    let mut st = StateStore::new();
+    st.set_gov_param(9_110, 7_999, "emergency_pause".into(), "true".into())
+        .expect("baseline canonical pause write should succeed");
+    st.pending_gov_updates.insert(
+        "emergency_pause".into(),
+        PendingGovParamUpdate {
+            key_id: 7_999,
+            key: "emergency_pause".into(),
+            value: "false".into(),
+            activate_at_height: 91_111,
+        },
+    );
+
+    let err = st
+        .set_gov_param_with_action(
+            9_111,
+            8_000,
+            "emergency_pause".into(),
+            "NOT_BOOL".into(),
+            GovPendingUpdateAction::Enforce,
+        )
+        .expect_err("enforce with non-canonical emergency_pause key_id must be rejected");
+    assert!(err.contains("expected_id=7999"), "{err}");
+    assert!(
+        !err.contains("strict bool"),
+        "key-id mismatch must fail before value-schema validation: {err}"
+    );
+    assert!(
+        st.is_emergency_paused(),
+        "mismatched enforce path must preserve the live emergency brake"
+    );
+    let pending = st
+        .pending_gov_update("emergency_pause")
+        .expect("mismatched enforce path must not scrub legacy pending residue");
+    assert_eq!(pending.key_id, 7_999);
+    assert_eq!(pending.value, "false");
+    assert_eq!(pending.activate_at_height, 91_111);
+}
+
+#[test]
+fn emergency_pause_checked_path_rejects_non_canonical_key_before_key_id_policy() {
+    let mut st = StateStore::new();
+
+    let err = st
+        .set_gov_param(9_112, 8_000, "Emergency_Pause".into(), "false".into())
+        .expect_err("non-canonical emergency_pause key spelling must fail before key-id policy");
+
+    assert!(err.contains("governance key not allowed"), "unexpected error: {err}");
+    assert!(
+        !err.contains("expected_id=7999"),
+        "non-canonical key spelling must fail before key-id mismatch handling: {err}"
+    );
+    assert!(!st.is_emergency_paused());
+    assert!(st.pending_gov_update("emergency_pause").is_none());
+}
