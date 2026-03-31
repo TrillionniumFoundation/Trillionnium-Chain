@@ -158,6 +158,13 @@ cd trillionnium-rust
 ```
 
 The down script attempts graceful termination first, then forces termination if the process does not exit within 5 seconds.
+It also re-emits the same operator-facing contract fields as the up/status scripts so handoff/debug notes can still quote the canonical paths even when the service is already stopped:
+
+- `pid_file=.../explorer-service.pid`
+- `log_file=.../explorer-service.log`
+- `public_dir=.../run/explorer-service/public`
+- `health_url=http://.../healthz`
+- `index_url=http://.../index.json`
 
 ## Operator caution
 

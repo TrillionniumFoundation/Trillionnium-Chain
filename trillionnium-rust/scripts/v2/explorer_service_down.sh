@@ -5,9 +5,24 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUST_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 RUN_ROOT="${RUST_ROOT}/run/explorer-service"
 PID_FILE="${RUN_ROOT}/explorer-service.pid"
+LOG_FILE="${RUN_ROOT}/explorer-service.log"
+PUBLIC_DIR="${RUN_ROOT}/public"
+HOST="${EXPLORER_HOST:-127.0.0.1}"
+PORT="${EXPLORER_PORT:-8090}"
+HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
+INDEX_URL="http://${HOST}:${PORT}/index.json"
+
+emit_contract_paths() {
+  echo "pid_file=${PID_FILE}"
+  echo "log_file=${LOG_FILE}"
+  echo "public_dir=${PUBLIC_DIR}"
+  echo "health_url=${HEALTH_URL}"
+  echo "index_url=${INDEX_URL}"
+}
 
 if [[ ! -f "${PID_FILE}" ]]; then
   echo "explorer service already stopped"
+  emit_contract_paths
   exit 0
 fi
 
@@ -31,3 +46,4 @@ if [[ -n "${pid}" && "${pid}" =~ ^[0-9]+$ ]]; then
 else
   echo "cleared explorer service scaffold stale pid file"
 fi
+emit_contract_paths
