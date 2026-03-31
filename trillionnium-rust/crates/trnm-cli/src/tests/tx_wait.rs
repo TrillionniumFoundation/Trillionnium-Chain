@@ -49,3 +49,24 @@ fn wait_for_tx_rejects_bare_hex_without_0x_prefix() {
         "unexpected: {err}"
     );
 }
+
+#[test]
+fn wait_for_tx_rejects_mismatched_tx_hash_from_query() {
+    let result = wait_for_tx(
+        "0xbbbccc",
+        Duration::from_millis(10),
+        Duration::from_millis(1),
+        |_| {
+            Ok(TxQueryResponse {
+                tx_hash: "0xdeadbeef".to_string(),
+                status: "pending".to_string(),
+                error: None,
+            })
+        },
+    );
+    let err = result.unwrap_err().to_string();
+    assert!(
+        err.contains("tx wait response hash mismatch"),
+        "unexpected: {err}"
+    );
+}
