@@ -160,8 +160,17 @@ Quote verbatim from generated artifacts:
 - challenge_reexec_entry=
 - replay_env_trnm_challenge_reexec_entry=
 
+Record one explicit rollback-drill note for the packet:
+
+- rollback_drill_scope: `docs-only` | `artifact replay only` | `operator procedure walkthrough` | `executed on rehearsal environment`
+- rollback_drill_command=
+- rollback_drill_result: `PASS` | `FAIL` | `NOT_RUN`
+- rollback_drill_evidence=
+
 Rule:
 - do not rewrite these commands from shell memory
+- `rollback_drill_command=` must either quote the generated `rollback_command=` verbatim or explicitly explain why a narrower docs-only/procedure-only drill was used
+- if `rollback_drill_result=NOT_RUN`, decision cannot exceed `CONDITIONAL GO`
 - if `challenge_reexec_entry=<entry_not_found>` appears, preserve it literally and treat the packet as incomplete unless the scope explicitly allows that absence
 
 ## 7. Blocker classification
@@ -206,6 +215,7 @@ Mark each item explicitly:
 - [ ] `historical_evidence_only=` preserved next to decision language
 - [ ] `rollback_command=` quoted verbatim
 - [ ] `replay_command=` quoted verbatim
+- [ ] rollback drill scope/command/result recorded
 - [ ] remaining blocker, if any, is explicitly classified
 
 ## 10. Final memo stub
@@ -245,6 +255,10 @@ historical_evidence_only=<artifact value>
 evidence_scope=<artifact value>
 rollback_command=<artifact value>
 replay_command=<artifact value>
+rollback_drill_scope=<docs-only|artifact replay only|operator procedure walkthrough|executed on rehearsal environment>
+rollback_drill_command=<artifact value or documented narrower drill command>
+rollback_drill_result=<PASS|FAIL|NOT_RUN>
+rollback_drill_evidence=<path|note>
 blocker_type=<none|code|env|policy|evidence|operator>
 blocker_summary=<one line>
 next_blocker=<one line>
