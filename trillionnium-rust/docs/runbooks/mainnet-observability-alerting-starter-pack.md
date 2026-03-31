@@ -289,6 +289,8 @@ Every `sev0` / `sev1` incident should preserve one compact evidence block:
 - `service`: `<node|rpc|worker|oracle|bridge>`
 - `severity`: `<sev0|sev1|sev2|sev3>`
 - `signal`: `<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
+- `needs_replay`: `<yes|no>`
+- `needs_rollback`: `<yes|no>`
 - `summary_line`: `<one-line operator summary>`
 - `summary_path`: `<abs-path-to-summary.txt|unknown>`
 - `manifest_path`: `<abs-path-to-manifest.txt|unknown>`
