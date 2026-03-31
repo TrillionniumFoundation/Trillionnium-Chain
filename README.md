@@ -181,7 +181,11 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - `legacy/` 仅作归档，不作为当前开发入口。
 - 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
 - Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
-- 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` 这组只读接口，**不是仓内已实现的 Next.js route**。
+- 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
+- Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
+  - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
+  - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
+  - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---

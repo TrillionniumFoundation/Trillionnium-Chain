@@ -361,8 +361,14 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                                     json_response_for_method(method, "200 OK", &body)
                                 }
                                 Err(err) => {
-                                    let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                                    json_response_for_method(method, "404 Not Found", &body)
+                                    let rpc_error = err.to_rpc_error();
+                                    let body = serde_json::json!({
+                                        "ok": false,
+                                        "code": rpc_error.code,
+                                        "message": rpc_error.message
+                                    })
+                                    .to_string();
+                                    json_response_for_method(method, err.http_status(), &body)
                                 }
                             }
                         } else {

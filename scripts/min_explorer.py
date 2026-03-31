@@ -2,6 +2,7 @@
 """TRNM minimal local explorer.
 
 Pages:
+- /healthz            -> liveness probe
 - /address/<address>  -> balance / nonce / recent tx
 - /tx/<tx_hash>       -> status / error
 - /block/<height>     -> height / state_root
@@ -55,10 +56,22 @@ class ExplorerData:
             return raw
         return {}
 
+    def find_tx(self, tx_hash: str) -> tuple[str, dict[str, Any]] | None:
+        txs = self.load_txs()
+        rec = txs.get(tx_hash)
+        if isinstance(rec, dict):
+            return tx_hash, rec
+
+        normalized = tx_hash.lower()
+        for key, value in txs.items():
+            if isinstance(key, str) and key.lower() == normalized and isinstance(value, dict):
+                return key, value
+        return None
+
     def load_blocks(self) -> dict[int, dict[str, Any]]:
         # keep latest occurrence for each height
         blocks: dict[int, dict[str, Any]] = {}
-        pattern = re.compile(r"\\[block\\].*?height=(\\d+).*?state_root=([0-9a-fA-F]+)")
+        pattern = re.compile(r"\[block\].*?height=(\d+).*?state_root=((?:0x)?[0-9a-fA-F]+)")
         for logf in self.block_logs:
             if not logf.exists():
                 continue
@@ -72,6 +85,7 @@ class ExplorerData:
                         "height": h,
                         "state_root": m.group(2),
                         "raw": line.strip(),
+                        "source": logf.name,
                     }
             except Exception:
                 continue
@@ -139,6 +153,16 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/":
             self._send_html(200, "Home", "<p>Use the forms above to open address / tx / block pages.</p>")
+            return
+
+        if path == "/healthz":
+            out = b"ok\n"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(out)))
+            self.end_headers()
+            self.wfile.write(out)
             return
 
         if path == "/address":
@@ -241,17 +265,24 @@ class Handler(BaseHTTPRequestHandler):
         self._send_html(200, f"Address {addr}", body)
 
     def _render_tx(self, txh: str) -> None:
-        txs = self.data.load_txs()
-        rec = txs.get(txh)
-        if not isinstance(rec, dict):
+        found = self.data.find_tx(txh)
+        if not found:
             self._send_html(404, f"Tx {txh}", f"<h2>Tx</h2><p><code>{html.escape(txh)}</code></p><p class='bad'>Transaction not found in run/rpc/txs.json</p>")
             return
 
+        resolved_txh, rec = found
         tx = rec.get("tx") if isinstance(rec.get("tx"), dict) else {}
         st = str(rec.get("status", "unknown"))
         st_cls = "ok" if st == "committed" else ("bad" if st == "fail" else "pending")
+        lookup_note = ""
+        if resolved_txh != txh:
+            lookup_note = (
+                "<p class='muted'>Resolved case-insensitive match to stored tx hash "
+                f"<code>{html.escape(resolved_txh)}</code>.</p>"
+            )
         body = (
-            f"<h2>Transaction</h2><p><code>{html.escape(txh)}</code></p>"
+            f"<h2>Transaction</h2><p><code>{html.escape(resolved_txh)}</code></p>"
+            f"{lookup_note}"
             f"<div class='card'><b>status:</b> <span class='{st_cls}'>{html.escape(st)}</span><br />"
             f"<b>error:</b> {html.escape(str(rec.get('error') or ''))}</div>"
             "<h3>Detail</h3>"
@@ -271,12 +302,12 @@ class Handler(BaseHTTPRequestHandler):
         if not b:
             latest_h = max(blocks.keys()) if blocks else None
             extra = f" Latest known height: <code>{latest_h}</code>." if latest_h is not None else ""
-            self._send_html(404, f"Block {h}", f"<h2>Block</h2><p><code>{h}</code></p><p class='bad'>Block not found from run/node*.log.{extra}</p>")
+            self._send_html(404, f"Block {h}", f"<h2>Block</h2><p><code>{h}</code></p><p class='bad'>Block not found from run/parallel-sanity.log or run/node*.log.{extra}</p>")
             return
 
         body = (
             f"<h2>Block</h2><p><code>{h}</code></p>"
-            f"<div class='card'><b>height:</b> {h}<br /><b>state_root:</b> <code>{html.escape(str(b.get('state_root')))}</code></div>"
+            f"<div class='card'><b>height:</b> {h}<br /><b>state_root:</b> <code>{html.escape(str(b.get('state_root')))}</code><br /><b>source:</b> <code>{html.escape(str(b.get('source') or 'unknown'))}</code></div>"
             "<h3>Raw log line</h3>"
             f"<pre>{html.escape(str(b.get('raw') or ''))}</pre>"
         )

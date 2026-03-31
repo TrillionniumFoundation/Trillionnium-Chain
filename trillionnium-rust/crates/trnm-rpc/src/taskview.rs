@@ -114,6 +114,46 @@ pub(crate) fn query_task_from_node_events(
     })
 }
 
+fn adapter_kind_query_order(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
+fn sorted_task_adapter_records<'a>(task_id: u64, recs: &'a [AdapterRecord]) -> Vec<&'a AdapterRecord> {
+    let mut task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    task_recs.sort_by(|a, b| {
+        (
+            a.ts,
+            adapter_kind_query_order(&a.kind),
+            a.worker.as_deref().unwrap_or(""),
+            a.tx_hash.as_deref().unwrap_or(""),
+            a.result_hash.as_deref().unwrap_or(""),
+        )
+            .cmp(&(
+                b.ts,
+                adapter_kind_query_order(&b.kind),
+                b.worker.as_deref().unwrap_or(""),
+                b.tx_hash.as_deref().unwrap_or(""),
+                b.result_hash.as_deref().unwrap_or(""),
+            ))
+    });
+    task_recs
+}
+
 pub(crate) fn query_task_response(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -127,18 +167,7 @@ pub(crate) fn query_task_response(
         return Ok(out);
     }
 
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
+    let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
@@ -151,7 +180,9 @@ pub(crate) fn query_task_response(
     } else {
         TaskStatus::Open
     };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let worker = task_recs
+        .iter()
+        .find_map(|r| r.worker.as_deref().and_then(normalize_actor_or_signer));
     let result_hash_hex = task_recs.iter().rev().find_map(|r| {
         if r.kind == "reveal" {
             r.result_hash.clone()
@@ -226,10 +257,7 @@ pub(crate) fn query_events_response(
     if events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+        for r in sorted_task_adapter_records(task_id, recs) {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
