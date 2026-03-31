@@ -50,8 +50,10 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !node_id.contains('@')
             && !node_id.contains('?')
             && !node_id.contains('#')
-            && !node_id.contains('%'),
-        "invalid node config {}: node_id must not contain URI delimiters (@ ? # %)",
+            && !node_id.contains('%')
+            && !node_id.contains('&')
+            && !node_id.contains('='),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
         path
     );
     anyhow::ensure!(
@@ -1191,6 +1193,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "node?peer=seed",
             "node#fragment",
             "node%2falpha",
+            "node&peer=seed",
+            "node=seed",
         ] {
             let err = validate_node_config(
                 NodeConfig {
@@ -1203,7 +1207,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .expect_err("node_id URI delimiters must fail closed");
             assert!(
                 err.to_string()
-                    .contains("node_id must not contain URI delimiters (@ ? # %)"),
+                    .contains("node_id must not contain URI delimiters (@ ? # % & =)"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
