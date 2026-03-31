@@ -43,10 +43,22 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let dns_like_host_label = node_id
+        .split('.')
+        .all(|label| {
+            !label.is_empty()
+                && label
+                    .chars()
+                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
+                && !label.starts_with('-')
+                && !label.ends_with('-')
+        })
+        && node_id.contains('.');
     anyhow::ensure!(
         !node_id.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
-            && node_id.parse::<std::net::SocketAddr>().is_err(),
+            && node_id.parse::<std::net::SocketAddr>().is_err()
+            && !dns_like_host_label,
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
@@ -914,7 +926,14 @@ mod tests {
 
     #[test]
     fn validate_node_config_rejects_host_like_node_id_literals() {
-        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7001"] {
+        for node_id in [
+            "localhost",
+            "LOCALHOST",
+            "127.0.0.1",
+            "127.0.0.1:7001",
+            "seed.example.com",
+            "validator-1.mainnet.local",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),

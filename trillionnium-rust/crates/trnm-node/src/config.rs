@@ -55,11 +55,23 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
         .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
+    let dns_like_host_label = node_id
+        .split('.')
+        .all(|label| {
+            !label.is_empty()
+                && label
+                    .chars()
+                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
+                && !label.starts_with('-')
+                && !label.ends_with('-')
+        })
+        && node_id.contains('.');
     anyhow::ensure!(
         !node_id.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err()
-            && !bracketed_host_literal,
+            && !bracketed_host_literal
+            && !dns_like_host_label,
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
@@ -1193,6 +1205,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "127.0.0.1:7001",
             "[::1]",
             "[2001:db8::1]",
+            "seed.example.com",
+            "validator-1.mainnet.local",
         ] {
             let err = validate_node_config(
                 NodeConfig {
