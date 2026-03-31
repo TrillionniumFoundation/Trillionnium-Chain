@@ -98,7 +98,7 @@ Record:
 
 Rule:
 - if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
-- if the preflight artifact does not preserve `result=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
+- if the preflight artifact does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 
 ## 4. Required cross-artifact identity fields
 
