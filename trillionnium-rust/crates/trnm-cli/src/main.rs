@@ -960,6 +960,29 @@ fn ensure_wallet_store_path_is_safe(store: &Path) -> Result<()> {
     Ok(())
 }
 
+fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
+    for ancestor in store.ancestors() {
+        match fs::symlink_metadata(ancestor) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                bail!(
+                    "wallet store '{}' traverses symlinked ancestor '{}'; refusing non-canonical keystore path",
+                    store.display(),
+                    ancestor.display()
+                );
+            }
+            Ok(_) => {}
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(err) => {
+                return Err(anyhow!(
+                    "failed to inspect wallet store ancestor '{}' for symlink safety: {err}",
+                    ancestor.display()
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
@@ -1062,6 +1085,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
     ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     if fs::symlink_metadata(store)
         .map(|meta| meta.file_type().is_symlink())
         .unwrap_or(false)
@@ -1087,6 +1111,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
 fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
     ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     if fs::symlink_metadata(store)
         .map(|meta| meta.file_type().is_symlink())
         .unwrap_or(false)
@@ -2767,6 +2792,61 @@ mod tests {
         let _ = std::fs::remove_file(&wallet);
         let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn wallet_store_rejects_symlinked_ancestor_path_components() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-ancestor-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = std::env::temp_dir().join(unique);
+        let real_parent = root.join("real-parent");
+        let linked_parent = root.join("linked-parent");
+        let store = linked_parent.join("wallets");
+        std::fs::create_dir_all(&real_parent).unwrap();
+        symlink(&real_parent, &linked_parent).unwrap();
+
+        let write_err = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            write_err
+                .to_string()
+                .contains("traverses symlinked ancestor"),
+            "unexpected error: {write_err}"
+        );
+
+        let wallet_path = real_parent.join("wallets").join("alice.key");
+        std::fs::create_dir_all(wallet_path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &wallet_path,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+        let read_err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            read_err
+                .to_string()
+                .contains("traverses symlinked ancestor"),
+            "unexpected error: {read_err}"
+        );
+
+        let _ = std::fs::remove_file(&wallet_path);
+        let _ = std::fs::remove_dir(real_parent.join("wallets"));
+        let _ = std::fs::remove_file(&linked_parent);
+        let _ = std::fs::remove_dir(&real_parent);
+        let _ = std::fs::remove_dir(&root);
     }
 
     #[test]
