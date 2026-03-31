@@ -6612,6 +6612,52 @@ fn checkpoint_da_light_verifier_summary_rejects_mixed_case_non_genesis_prev_hash
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_rejects_zero_width_non_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "proposal-7".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should expose a DA/light-verifier summary"
+    );
+
+    let mut zero_width_prev_hash_wal = wal.clone();
+    zero_width_prev_hash_wal.prev_hash_hex = Some(format!("{}\u{200b}", "cd".repeat(32)));
+    let zero_width_prev_hash_checkpoint = CheckpointMeta {
+        height: zero_width_prev_hash_wal.height,
+        state_root_hex: zero_width_prev_hash_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: zero_width_prev_hash_wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &zero_width_prev_hash_checkpoint,
+            &zero_width_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject zero-width prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links stay byte-canonical"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(
+            &zero_width_prev_hash_checkpoint,
+            &zero_width_prev_hash_wal,
+        ),
+        None,
+        "DA/light-verifier summaries must fail closed when non-genesis prev_hash_hex carries zero-width layout drift"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_rejects_forged_genesis_prev_hash_surface() {
     let wal = WalMeta {
         height: 1,
