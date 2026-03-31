@@ -88,6 +88,22 @@ fn extract_tx_hash_accepts_hyphenated_key_aliases() {
 }
 
 #[test]
+fn extract_tx_hash_accepts_spaced_key_aliases() {
+    assert_eq!(
+        extract_tx_hash("tx hash=0xCAFE03").as_deref(),
+        Some("0xcafe03")
+    );
+    assert_eq!(
+        extract_tx_hash("transaction hash : 0xBEEF04").as_deref(),
+        Some("0xbeef04")
+    );
+    assert_eq!(
+        extract_tx_hash("INFO transaction hash ＝ 0xBEEF05 done").as_deref(),
+        Some("0xbeef05")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_spaced_separators() {
     assert_eq!(
         extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
