@@ -104,8 +104,51 @@ Minimum packet fields:
 - `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists
 - `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own
+- `operator_ack_signature_path=` or `operator_ack_digest=` repeated once per operator when the ceremony requires a durable signed/attested acknowledgment artifact instead of chat-only confirmation
 - `startup_order_note=` stating whether startup order matters for this rehearsal and who is expected to start first
 - `rollback_owner=` naming who can declare the ceremony aborted and which command/process stop is authoritative
+
+Recommended for any packet expected to feed a public-mainnet readiness review:
+- `packet_generated_at=` in UTC so later evidence can tie the ceremony packet to the bootstrap window explicitly
+- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed
+- `operator_contact=` repeated once per operator so a missing acknowledgment can be resolved without ambiguity
+- `abort_condition=` repeated for the specific fail-closed triggers that cause the ceremony to stop immediately (for example mismatched genesis hash, duplicate `node_id`, or wrong assigned worktree)
+
+Copyable packet skeleton:
+
+```text
+ceremony_id=mn04-bootstrap-YYYYMMDD-HHMMZ
+ceremony_scope=operator-handoff
+packet_generated_at=2026-03-31T06:21:00Z
+packet_distribution_path=/abs/path/or/ticket
+validator_set_version=v1
+startup_order_note=node1 -> node2 -> node3 -> node4
+rollback_owner=primary-operator
+abort_condition=genesis hash mismatch
+abort_condition=duplicate node_id
+abort_condition=assigned worktree/ref mismatch
+
+genesis_artifact_path=/abs/path/to/genesis.json
+genesis_artifact_sha256=<sha256>
+
+authority_note=all operators must acknowledge the exact packet above before any validator starts
+
+validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
+validator_entry_hash=<optional-descriptor-hash>
+operator_contact=alice=<chat/email/oncall>
+operator_ack=alice checked genesis_artifact_sha256=<sha256>;config_path=configs/node1.toml;validator_name=node1
+operator_ack_signature_path=/abs/path/to/alice-ack.txt
+
+validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
+validator_entry_hash=<optional-descriptor-hash>
+operator_contact=bob=<chat/email/oncall>
+operator_ack=bob checked genesis_artifact_sha256=<sha256>;config_path=configs/node2.toml;validator_name=node2
+operator_ack_digest=<optional-sha256-of-bob-ack>
+```
+
+Interpretation rule:
+- chat-only `operator_ack=` is acceptable for local rehearsal, but if the packet is later quoted in a mainnet readiness review, preserve either `operator_ack_signature_path=` or `operator_ack_digest=` for each operator whose approval is being relied upon
+- if the packet claims a durable acknowledgment exists but cannot name the path or digest, treat that acknowledgment as missing instead of implicitly trusted
 
 Fail-closed rule:
 - if two validators claim the same `node_id`, stop
