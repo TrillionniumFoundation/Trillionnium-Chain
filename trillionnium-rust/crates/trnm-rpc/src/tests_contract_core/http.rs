@@ -351,6 +351,11 @@ fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_pa
             .expect("canonical subject path should parse"),
         "alice"
     );
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+            .expect("single operator trailing slash should normalize"),
+        "alice"
+    );
 }
 
 #[test]

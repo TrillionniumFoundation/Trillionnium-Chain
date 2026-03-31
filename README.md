@@ -185,6 +185,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
+  - 上述只读路径接受**单个** operator trailing slash（如 `.../alice/`），但会对额外层级、原始/编码斜杠、query/fragment smuggling 维持 fail-closed；接入侧不要把模糊路径当作可兼容输入。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
