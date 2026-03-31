@@ -169,7 +169,7 @@ Minimum DR evidence fields to preserve from the generated report:
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory.
+Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
@@ -206,10 +206,13 @@ EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 
+EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT" \
+EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
 ./scripts/check_bft_restart_recovery.sh
-report_path="$(ls -dt run/recovery-check-* 2>/dev/null | head -n 1)/report.txt"
+report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
 
-awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|rollback_command|replay_command|result)=/ { print }' "$report_path"
+[ -n "$report_path" ] || { echo "missing recovery report" >&2; exit 1; }
+awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|rollback_command|replay_command|status)=/ { print }' "$report_path"
 ```
 
 Stop if any of the following occurs:
