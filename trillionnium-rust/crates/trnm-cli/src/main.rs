@@ -1007,28 +1007,44 @@ fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
 
+fn contains_hidden_or_control(c: char) -> bool {
+    c.is_control()
+        || matches!(
+            c,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+        )
+}
+
+fn ensure_sign_message(message: &str) -> Result<()> {
+    if message.is_empty() {
+        bail!("sign message must not be empty");
+    }
+    if message
+        .chars()
+        .any(|c| c == '\r' || c == '\n' || contains_hidden_or_control(c))
+    {
+        bail!("sign message must be single-line printable text without control characters");
+    }
+    Ok(())
+}
+
 fn ensure_wallet_name(name: &str) -> Result<()> {
-    let has_hidden_or_whitespace = name.chars().any(|c| {
-        c.is_whitespace()
-            || c.is_control()
-            || matches!(
-                c,
-                '\u{200B}'
-                    | '\u{200C}'
-                    | '\u{200D}'
-                    | '\u{2060}'
-                    | '\u{FEFF}'
-                    | '\u{202A}'
-                    | '\u{202B}'
-                    | '\u{202C}'
-                    | '\u{202D}'
-                    | '\u{202E}'
-                    | '\u{2066}'
-                    | '\u{2067}'
-                    | '\u{2068}'
-                    | '\u{2069}'
-            )
-    });
+    let has_hidden_or_whitespace = name
+        .chars()
+        .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
 
     if name.is_empty()
         || name == "."
@@ -2458,6 +2474,7 @@ fn main() -> Result<()> {
                 message,
                 store,
             } => {
+                ensure_sign_message(&message)?;
                 let store = store.unwrap_or_else(default_wallet_store);
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
@@ -2668,6 +2685,27 @@ mod tests {
                 .contains("must be an absolute normalized path"),
             "unexpected error: {read_err}"
         );
+    }
+
+    #[test]
+    fn sign_message_rejects_multiline_or_control_text() {
+        for bad in [
+            "",
+            "hello\nworld",
+            "hello\rworld",
+            "hello\u{0007}world",
+            "hello\u{202e}world",
+            "hello\u{2068}world",
+        ] {
+            let err = ensure_sign_message(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("sign message"),
+                "unexpected error for {bad:?}: {err}"
+            );
+        }
+
+        ensure_sign_message("trnm mainnet attestation v1").unwrap();
+        ensure_sign_message("签名用途: validator-bootstrap").unwrap();
     }
 
     #[test]
