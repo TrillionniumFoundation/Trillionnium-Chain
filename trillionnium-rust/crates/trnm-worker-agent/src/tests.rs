@@ -1,8 +1,14 @@
 use super::*;
 use crate::{assigned::assigned_skip_reason, proof_adapter::StandardProofAdapter};
+use std::sync::{Mutex, OnceLock};
 
 #[path = "tests_adapter_path_classification.rs"]
 mod tests_adapter_path_classification;
+
+fn tx_retry_policy_env_lock() -> &'static Mutex<()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
 
 #[test]
 fn assigned_skip_reason_reports_devnet_smoke_gating_causes() {
@@ -118,13 +124,1100 @@ fn duplicate_commit_still_executes_reveal_gate() {
 }
 
 #[test]
-fn backoff_delay_is_linear_and_saturating() {
+fn slo_violation_commit_skips_reveal_execution_gate() {
+    let commit_res = AdapterExecResult {
+        ok: false,
+        rc: RC_SLO_VIOLATION,
+        tx_hash: None,
+        terminal: true,
+    };
+
+    assert!(
+        !should_execute_reveal(&commit_res),
+        "slo_violation must not be treated as an idempotent duplicate"
+    );
+}
+
+#[test]
+fn backoff_delay_is_exponential_and_saturating() {
     assert_eq!(backoff_delay_ms(200, 0), 200);
     assert_eq!(backoff_delay_ms(200, 1), 400);
-    assert_eq!(backoff_delay_ms(200, 2), 600);
+    assert_eq!(backoff_delay_ms(200, 2), 800);
+    assert_eq!(backoff_delay_ms(200, 3), 1600);
 
     // saturation guard (no overflow panic/wrap)
     assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    assert_eq!(backoff_delay_ms(1_000_000, 62), u64::MAX);
+    assert_eq!(
+        backoff_delay_ms(1_000_000, u32::MAX),
+        u64::MAX,
+        "attempts above the shift cap must stay saturated"
+    );
+}
+
+#[test]
+fn zero_backoff_delay_remains_zero_across_retries() {
+    assert_eq!(backoff_delay_ms(0, 0), 0);
+    assert_eq!(backoff_delay_ms(0, 1), 0);
+    assert_eq!(backoff_delay_ms(0, u32::MAX), 0);
+}
+
+#[test]
+fn backoff_delay_stays_monotonic_after_saturation() {
+    let near_cap = backoff_delay_ms(1_000_000, 62);
+    let beyond_cap = backoff_delay_ms(1_000_000, 63);
+    let max_attempt = backoff_delay_ms(1_000_000, u32::MAX);
+
+    assert_eq!(near_cap, u64::MAX);
+    assert_eq!(beyond_cap, u64::MAX);
+    assert_eq!(max_attempt, u64::MAX);
+    assert!(near_cap <= beyond_cap);
+    assert!(beyond_cap <= max_attempt);
+}
+
+#[test]
+fn backoff_delay_keeps_63rd_shift_for_small_base_before_saturating() {
+    assert_eq!(backoff_delay_ms(1, 62), 1u64 << 62);
+    assert_eq!(backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(backoff_delay_ms(2, 63), u64::MAX);
+}
+
+#[test]
+fn backoff_delay_saturates_at_attempt_64_even_for_small_base() {
+    assert_eq!(backoff_delay_ms(1, 64), u64::MAX);
+    assert_eq!(backoff_delay_ms(1, 65), u64::MAX);
+    assert_eq!(backoff_delay_ms(1, u32::MAX), u64::MAX);
+}
+
+#[test]
+fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xDEADBEEF', file=sys.stderr); raise SystemExit(9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 1)
+        .expect("adapter execution should return terminal duplicate result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "1", "duplicate must fail fast without retrying");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_stops_after_nonce_rejected_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-retry-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xDEADBEEF', file=sys.stderr); raise SystemExit(10)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 1)
+        .expect("adapter execution should return terminal rejection result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "1", "nonce_rejected must fail fast without retrying");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_stops_after_slo_violation_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-slo-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xDEADBEEF', file=sys.stderr); raise SystemExit(11)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 1)
+        .expect("adapter execution should return terminal slo violation result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "1", "slo_violation must fail fast without retrying");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_SLO_VIOLATION);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_keeps_last_seen_tx_hash_after_retriable_exhaustion() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-last-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; raise SystemExit(1)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 2, 0)
+        .expect("adapter execution should return retriable exhaustion result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "3", "max_retries=2 should execute three attempts");
+    assert!(!res.ok);
+    assert_eq!(res.rc, 1);
+    assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
+    assert!(!res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_retries_with_exponential_backoff_schedule() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        25,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "raise SystemExit(1)"])
+                    .output()
+                    .expect("python3 retriable probe should run"))
+            } else {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "print('tx_hash=0xBEEFCAFE')"])
+                    .output()
+                    .expect("python3 success probe should run"))
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should succeed within retry budget");
+
+    assert_eq!(attempt, 3);
+    assert_eq!(slept, vec![25, 50]);
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beefcafe"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_skips_zero_backoff_sleep_between_retriable_attempts() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        0,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "raise SystemExit(1)"])
+                    .output()
+                    .expect("python3 zero-backoff probe should run"))
+            } else {
+                Ok(std::process::Command::new("python3")
+                    .args(["-c", "print('tx_hash=0xBEEFCAFE')"])
+                    .output()
+                    .expect("python3 zero-backoff success probe should run"))
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should succeed within retry budget without sleeping");
+
+    assert_eq!(attempt, 3);
+    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beefcafe"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        3,
+        25,
+        || {
+            attempt += 1;
+            Ok(std::process::Command::new("python3")
+                .args(["-c", "print('tx_hash=0xDEADBEEF', file=__import__('sys').stderr); raise SystemExit(10)"])
+                .output()
+                .expect("python3 deterministic rejection probe should run"))
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should stop on deterministic rejection");
+
+    assert_eq!(attempt, 1, "deterministic rejections must not retry");
+    assert!(slept.is_empty(), "deterministic rejections must not sleep before stopping");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_does_not_sleep_after_retry_budget_exhaustion() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_adapter_with_retry_inner(
+        2,
+        25,
+        || {
+            attempt += 1;
+            Ok(std::process::Command::new("python3")
+                .args(["-c", "raise SystemExit(1)"])
+                .output()
+                .expect("python3 retriable exhaustion probe should run"))
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .expect("adapter execution should return exhausted retriable result");
+
+    assert_eq!(attempt, 3, "retry loop should attempt initial run plus the configured retries");
+    assert_eq!(slept, vec![25, 50], "sleep should happen only between attempts, never after the final exhausted attempt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, 1);
+    assert_eq!(res.tx_hash, None);
+    assert!(!res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_terminal_stop() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-slo-last-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; raise SystemExit(1 if count == 0 else 11)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal slo_violation result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop the loop immediately");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_SLO_VIOLATION);
+    assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-slo-stdout-precedence-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xCAFE1234') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 11)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal slo_violation result with stdout precedence");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_SLO_VIOLATION);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("cafe1234"),
+        "stdout tx_hash should win over stderr on the same terminal receipt"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_slo_violation_hash_is_malformed() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-slo-stderr-fallback-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 11)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should preserve stderr fallback when stdout slo_violation hash is malformed",
+    );
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_SLO_VIOLATION);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_duplicate_terminal_stop() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-last-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal duplicate result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop the loop immediately");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_newest_tx_hash_from_duplicate_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-newest-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234' if count == 0 else 'tx_hash=0xBEEF5678', file=sys.stderr); raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal duplicate result with the latest receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_ignores_malformed_duplicate_receipt_hash_and_keeps_last_seen_hash() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-malformed-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal duplicate result while preserving the last valid receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("abcd1234"),
+        "malformed duplicate receipt hashes must not clobber the last valid tx hash"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_duplicate_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-stdout-precedence-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xCAFE1234') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal duplicate result with stdout precedence");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("cafe1234"),
+        "stdout tx_hash should win over stderr on the same terminal receipt"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_duplicate_hash_is_malformed() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-duplicate-stderr-fallback-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 9)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should preserve stderr fallback when stdout duplicate hash is malformed",
+    );
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_DUPLICATE);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_preserves_last_seen_tx_hash_after_successful_retry() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-success-last-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; raise SystemExit(1 if count == 0 else 0)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return successful retry result");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_terminal_receipt() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-nonce-stdout-precedence-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xCAFE1234') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 10)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal nonce_rejected result with stdout precedence");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("cafe1234"),
+        "stdout tx_hash should win over stderr on the same terminal nonce receipt"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keeps_last_seen_hash() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-nonce-malformed-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xBAD-HASH', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 10)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return terminal nonce_rejected result while preserving the last valid receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert!(!res.ok);
+    assert_eq!(res.rc, RC_NONCE_REJECTED);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("abcd1234"),
+        "malformed nonce_rejected receipt hashes must not clobber the last valid tx hash"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_latest_success_receipt_hash_over_prior_retry_hash() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-success-newest-tx-hash-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234' if count == 0 else 'tx_hash=0xBEEF5678', file=sys.stderr); raise SystemExit(1 if count == 0 else 0)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return successful retry result with the latest receipt hash");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_successful_retry() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-success-stdout-precedence-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=0xCAFE1234') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 0)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
+        .expect("adapter execution should return successful retry result with stdout precedence");
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("cafe1234"),
+        "stdout tx_hash should win over stderr on the same successful receipt"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_success_hash_is_malformed() {
+    let counter = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-run-adapter-success-stderr-fallback-counter-{}-{}.txt",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos()
+    ));
+    let script = "import pathlib,sys; p=pathlib.Path(sys.argv[1]); count=int(p.read_text()) if p.exists() else 0; p.write_text(str(count + 1)); print('tx_hash=0xABCD1234', file=sys.stderr) if count == 0 else None; print('tx_hash=not-a-hash') if count == 1 else None; print('tx_hash=0xBEEF5678', file=sys.stderr) if count == 1 else None; raise SystemExit(1 if count == 0 else 0)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let action_args = vec![counter.display().to_string()];
+
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should preserve stderr fallback when stdout success hash is malformed",
+    );
+
+    let attempts = std::fs::read_to_string(&counter)
+        .expect("counter file should exist after adapter execution");
+    let _ = std::fs::remove_file(&counter);
+
+    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert!(res.ok);
+    assert_eq!(res.rc, RC_OK);
+    assert_eq!(
+        res.tx_hash.as_deref(),
+        Some("beef5678"),
+        "malformed stdout success hashes must fall back to stderr"
+    );
+    assert!(res.terminal);
+}
+
+#[test]
+fn tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env() {
+    assert_eq!(
+        resolve_u32(Some(0), Some("not-a-number"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        0
+    );
+    assert_eq!(
+        resolve_u64(Some(0), Some("also-bad"), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+        0
+    );
+
+    let policy = RetryPolicy {
+        max_retries: resolve_u32(Some(0), Some("7"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        backoff_ms: resolve_u64(Some(0), Some("900"), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+    };
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 0,
+            backoff_ms: 0,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_whitespace_wrapped_env_values() {
+    let policy = RetryPolicy {
+        max_retries: resolve_u32(None, Some(" 7\n"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        backoff_ms: resolve_u64(None, Some("\t900 "), DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+    };
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_quote_wrapped_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some(" \"7\" "),
+        Some(" '900' "),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_unicode_quotes_wrapped_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some(" “７” "),
+        Some(" ‘９００’ "),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_treats_blank_env_values_as_missing() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("   \n"), Some("\t\t"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_bom_and_invisible_fillers_around_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("\u{feff}\u{200b}7\u{2060}"),
+        Some("\u{200d}900\u{feff}"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 900,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_control_wrappers_around_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("\0\u{0007}8\r"),
+        Some("\n150\u{001b}"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 8,
+            backoff_ms: 150,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_accepts_fullwidth_digits_and_signs_from_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("＋３"), Some("４５０"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 3,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_trims_fullwidth_spaces_around_unicode_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("　＋３　"), Some("　４５０　"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 3,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_ignores_embedded_invisible_fillers_in_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("2\u{200B}5"),
+        Some("4\u{2060}5\u{200D}0"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 25,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_ignores_embedded_bom_fillers_in_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("2\u{feff}5"),
+        Some("4\u{feff}5\u{feff}0"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 25,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_ignores_embedded_control_wrappers_in_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(
+        None,
+        None,
+        Some("2\r\n5"),
+        Some("4\t5\n0"),
+    );
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 25,
+            backoff_ms: 450,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_rejects_negative_fullwidth_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("－２"), Some("－４５０"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_rejects_negative_unicode_minus_env_values() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("−2"), Some("−450"));
+
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation() {
+    let env_policy = resolve_tx_retry_policy_from_sources(None, None, Some(" 4\n"), Some("\t250 "));
+    assert_eq!(
+        env_policy,
+        RetryPolicy {
+            max_retries: 4,
+            backoff_ms: 250,
+        }
+    );
+
+    let cli_policy = resolve_tx_retry_policy_from_sources(Some(0), Some(0), Some("9"), Some("900"));
+    assert_eq!(
+        cli_policy,
+        RetryPolicy {
+            max_retries: 0,
+            backoff_ms: 0,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_allows_per_field_cli_override_while_preserving_other_env_value() {
+    let policy = resolve_tx_retry_policy_from_sources(Some(2), None, Some("9"), Some("450"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 2,
+            backoff_ms: 450,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, Some(125), Some("7"), Some("900"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 7,
+            backoff_ms: 125,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_reads_process_env_and_preserves_cli_precedence() {
+    let _guard = tx_retry_policy_env_lock()
+        .lock()
+        .expect("tx retry policy env mutex should not be poisoned");
+    let prev_max = std::env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok();
+    let prev_backoff = std::env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok();
+
+    unsafe {
+        std::env::set_var(TX_ADAPTER_MAX_RETRIES_ENV, " 8\n");
+        std::env::set_var(TX_ADAPTER_BACKOFF_MS_ENV, "\t650 ");
+    }
+
+    let env_policy = resolve_tx_retry_policy(None, None);
+    assert_eq!(
+        env_policy,
+        RetryPolicy {
+            max_retries: 8,
+            backoff_ms: 650,
+        }
+    );
+
+    let cli_policy = resolve_tx_retry_policy(Some(1), Some(25));
+    assert_eq!(
+        cli_policy,
+        RetryPolicy {
+            max_retries: 1,
+            backoff_ms: 25,
+        }
+    );
+
+    match prev_max {
+        Some(value) => unsafe { std::env::set_var(TX_ADAPTER_MAX_RETRIES_ENV, value) },
+        None => unsafe { std::env::remove_var(TX_ADAPTER_MAX_RETRIES_ENV) },
+    }
+    match prev_backoff {
+        Some(value) => unsafe { std::env::set_var(TX_ADAPTER_BACKOFF_MS_ENV, value) },
+        None => unsafe { std::env::remove_var(TX_ADAPTER_BACKOFF_MS_ENV) },
+    }
+}
+
+#[test]
+fn tx_retry_policy_falls_back_per_field_when_only_one_env_value_is_invalid() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("invalid"), Some(" 350 "));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: 350,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("5"), Some("invalid"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 5,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
+fn tx_retry_policy_rejects_negative_env_values_per_field() {
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("-1"), Some("-250"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("6"), Some("-250"));
+    assert_eq!(
+        policy,
+        RetryPolicy {
+            max_retries: 6,
+            backoff_ms: DEFAULT_TX_ADAPTER_BACKOFF_MS,
+        }
+    );
+}
+
+#[test]
+fn llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default() {
+    let policy = LlmAdapterPolicy {
+        retry: RetryPolicy {
+            max_retries: resolve_u32(None, Some("5"), DEFAULT_LLM_ADAPTER_MAX_RETRIES, 0),
+            backoff_ms: resolve_u64(None, Some("250"), DEFAULT_LLM_ADAPTER_BACKOFF_MS, 0),
+        },
+        timeout_ms: resolve_u64(Some(0), Some("0"), DEFAULT_LLM_ADAPTER_TIMEOUT_MS, 1),
+    };
+
+    assert_eq!(
+        policy,
+        LlmAdapterPolicy {
+            retry: RetryPolicy {
+                max_retries: 5,
+                backoff_ms: 250,
+            },
+            timeout_ms: DEFAULT_LLM_ADAPTER_TIMEOUT_MS,
+        }
+    );
 }
 
 #[test]
@@ -174,6 +1267,17 @@ fn parse_tx_hash_accepts_angle_bracket_wrapped_receipts() {
         json,
         "facefacefacefacefacefacefacefacefacefacefacefacefacefacefaceface"
     );
+}
+
+#[test]
+fn parse_tx_hash_accepts_fullwidth_bracket_wrapped_receipts() {
+    let shell = parse_tx_hash("[adapter] commit accepted tx_hash=（0xDEADBEEF）")
+        .expect("fullwidth parenthesis shell receipt hash should parse");
+    assert_eq!(shell, "deadbeef");
+
+    let json = parse_tx_hash("adapter stdout: {\"tx_hash\": \"【0xFACECAFE】\"}")
+        .expect("fullwidth bracket json receipt hash should parse");
+    assert_eq!(json, "facecafe");
 }
 
 #[test]
@@ -299,6 +1403,17 @@ fn parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value() {
 }
 
 #[test]
+fn parse_tx_hash_ignores_invisible_fillers_inside_receipt_key() {
+    let json = parse_tx_hash("receipt={\"tx\u{200b}_hash\":\"0xDEADBEEF\"}")
+        .expect("json receipt hash should parse despite invisible fillers in the key");
+    assert_eq!(json, "deadbeef");
+
+    let shell = parse_tx_hash("\u{feff}tx_hash\u{2060}=0xFACECAFE")
+        .expect("shell receipt hash should parse despite invisible fillers around the key");
+    assert_eq!(shell, "facecafe");
+}
+
+#[test]
 fn parse_tx_hash_accepts_hyphenated_json_receipt_keys() {
     let json = parse_tx_hash("{\"tx-hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
         .expect("hyphenated json receipt hash should parse");
@@ -421,6 +1536,19 @@ fn parse_tx_hash_accepts_shell_escaped_quote_wrapped_receipt_values() {
     let shell_escaped_single = parse_tx_hash("adapter stdout: {'tx_hash': \\'ABCD1234\\'}")
         .expect("shell-escaped single-quoted receipt hash should parse");
     assert_eq!(shell_escaped_single, "abcd1234");
+}
+
+#[test]
+fn parse_tx_hash_accepts_nested_shell_escaped_and_localized_quote_wrapped_receipts() {
+    let shell_escaped_smart =
+        parse_tx_hash(r#"adapter stdout: {\"transaction hash\": \"“0xDEADBEEF”\"}"#)
+            .expect("shell-escaped smart-quoted transaction hash should parse");
+    assert_eq!(shell_escaped_smart, "deadbeef");
+
+    let shell_escaped_guillemet =
+        parse_tx_hash(r#"adapter stdout: {\"tx_hash\": \"«0xFACECAFE»\"}"#)
+            .expect("shell-escaped guillemet-wrapped tx hash should parse");
+    assert_eq!(shell_escaped_guillemet, "facecafe");
 }
 
 #[test]
@@ -1274,6 +2402,25 @@ fn exp_backoff_delay_saturates_without_overflow() {
     // Very large attempts should saturate rather than overflow/panic.
     assert_eq!(exp_backoff_delay_ms(u64::MAX, 1), u64::MAX);
     assert_eq!(exp_backoff_delay_ms(1_000_000, 62), u64::MAX);
+    assert_eq!(
+        exp_backoff_delay_ms(1_000_000, u32::MAX),
+        u64::MAX,
+        "attempts above the shift cap must stay saturated"
+    );
+}
+
+#[test]
+fn exp_backoff_delay_keeps_63rd_shift_for_small_base_before_saturating() {
+    assert_eq!(exp_backoff_delay_ms(1, 62), 1u64 << 62);
+    assert_eq!(exp_backoff_delay_ms(1, 63), 1u64 << 63);
+    assert_eq!(exp_backoff_delay_ms(2, 63), u64::MAX);
+}
+
+#[test]
+fn exp_backoff_delay_saturates_at_attempt_64_even_for_small_base() {
+    assert_eq!(exp_backoff_delay_ms(1, 64), u64::MAX);
+    assert_eq!(exp_backoff_delay_ms(1, 65), u64::MAX);
+    assert_eq!(exp_backoff_delay_ms(1, u32::MAX), u64::MAX);
 }
 
 #[test]
@@ -1333,6 +2480,41 @@ fn llm_adapter_retry_budget_exhausted_returns_last_error() {
     assert_eq!(slept, vec![20, 40]);
     assert_eq!(err.kind, AdapterErrorKind::Retriable);
     assert_eq!(err.context, "timeout-3");
+}
+
+#[test]
+fn llm_adapter_retry_skips_zero_backoff_sleep_between_retriable_attempts() {
+    let mut attempt = 0u32;
+    let mut slept = vec![];
+    let res = run_llm_adapter_with_retry_inner(
+        2,
+        0,
+        || {
+            attempt += 1;
+            if attempt < 3 {
+                Err(AdapterError {
+                    kind: AdapterErrorKind::Retriable,
+                    context: format!("transient-{}", attempt),
+                })
+            } else {
+                Ok(LlmAdapterResponse {
+                    output_text: "ok".to_string(),
+                    provider_request_id: None,
+                    provider: None,
+                    model: None,
+                    adapter: None,
+                    agent_protocol: None,
+                    compliance_profile: None,
+                })
+            }
+        },
+        |d| slept.push(d.as_millis() as u64),
+    )
+    .unwrap();
+
+    assert_eq!(res.output_text, "ok");
+    assert_eq!(attempt, 3);
+    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
 }
 
 #[test]
@@ -1433,6 +2615,33 @@ fn flush_submissions_reuses_persisted_tx_hash_for_duplicate_resume_acceptance() 
 }
 
 #[test]
+fn flush_submissions_reuses_persisted_reveal_tx_hash_for_duplicate_reveal_resume() {
+    let commit_res = AdapterExecResult {
+        ok: true,
+        rc: RC_OK,
+        tx_hash: Some("commitbeef".to_string()),
+        terminal: true,
+    };
+    let reveal_res = AdapterExecResult {
+        ok: false,
+        rc: RC_DUPLICATE,
+        tx_hash: None,
+        terminal: true,
+    };
+
+    let previous_reveal_tx_hash = Some("revealbeef".to_string());
+
+    let reveal_hash_observed = reveal_res.tx_hash.is_some()
+        || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
+    let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+
+    assert!(should_execute_reveal(&commit_res));
+    assert!(reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc));
+    assert!(reveal_hash_observed);
+    assert_eq!(reveal_tx_hash_for_ack.as_deref(), Some("revealbeef"));
+}
+
+#[test]
 fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
     let ack_log = std::env::temp_dir().join(format!(
         "trnm-worker-agent-persisted-ack-hashes-{}-{}.jsonl",
@@ -1465,6 +2674,171 @@ fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
     let hashes = persisted_ack_hashes_for_task(&ack_log, 77);
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-old"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn persisted_ack_hashes_for_task_ignores_blank_wrapped_hash_entries() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-blank-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        78,
+        "failed",
+        Some("\u{feff}\u{200b}   \u{2060}".to_string()),
+        Some("\t\n".to_string()),
+        Some("missing_tx_hash_receipt".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write blank ack");
+    append_ack(
+        &ack_log,
+        78,
+        "accepted",
+        Some("commit-new".to_string()),
+        Some("\u{feff}reveal-new\u{200b}".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-2".to_string()),
+    )
+    .expect("write recovery ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 78);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-new"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn persisted_ack_hashes_for_task_ignores_newer_other_task_records() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-other-task-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        80,
+        "accepted",
+        Some("commit-target".to_string()),
+        None,
+        Some("idempotent_ok".to_string()),
+        Some("run-target-1".to_string()),
+    )
+    .expect("write target commit ack");
+    append_ack(
+        &ack_log,
+        81,
+        "accepted",
+        Some("commit-other".to_string()),
+        Some("reveal-other".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-other".to_string()),
+    )
+    .expect("write newer other-task ack");
+    append_ack(
+        &ack_log,
+        80,
+        "accepted",
+        None,
+        Some("reveal-target".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-target-2".to_string()),
+    )
+    .expect("write target reveal ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 80);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-target"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-target"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn persisted_ack_hashes_for_task_canonicalizes_legacy_wrapped_hex_receipts() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-canonical-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        79,
+        "accepted",
+        Some(" \"0xABCD1234\" ".to_string()),
+        Some("\u{feff}<0XFACEBEEF>\u{200b}".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write wrapped legacy ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 79);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn persisted_ack_hashes_for_task_canonicalizes_shell_escaped_quote_wrapped_hex_receipts() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-shell-escaped-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        791,
+        "accepted",
+        Some(r#"\"0xABCD1234\""#.to_string()),
+        Some(r#"\"<0XFACEBEEF>\""#.to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write shell-escaped wrapped legacy ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 791);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
+
+    let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn persisted_ack_hashes_for_task_extracts_tx_hash_from_receipt_blob_entries() {
+    let ack_log = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-persisted-ack-receipt-blob-hashes-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let _ = fs::remove_file(&ack_log);
+
+    append_ack(
+        &ack_log,
+        792,
+        "accepted",
+        Some(" {\"tx_hash\": \"0xABCD1234\", \"status\": \"accepted\"} ".to_string()),
+        Some(" {'tx_hash': '0xFACEBEEF', 'status': 'accepted'} ".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-blob".to_string()),
+    )
+    .expect("write receipt-blob ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 792);
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
 
     let _ = fs::remove_file(&ack_log);
 }

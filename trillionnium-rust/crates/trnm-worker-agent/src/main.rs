@@ -438,20 +438,46 @@ fn is_receipt_quote_wrapper(ch: char) -> bool {
     )
 }
 
+fn is_receipt_bracket_wrapper(ch: char) -> bool {
+    matches!(
+        ch,
+        '(' | ')'
+            | '['
+            | ']'
+            | '{'
+            | '}'
+            | '<'
+            | '>'
+            | '（'
+            | '）'
+            | '［'
+            | '］'
+            | '｛'
+            | '｝'
+            | '＜'
+            | '＞'
+            | '【'
+            | '】'
+            | '〔'
+            | '〕'
+            | '〖'
+            | '〗'
+    )
+}
+
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(
-                    c,
-                    ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<'
-                )
+                || is_receipt_bracket_wrapper(c)
+                || matches!(c, ',' | ';' | '.' | ':' | '，' | '；' | '。' | '：')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
         .trim_end_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(c, ',' | ';' | '}' | ']' | '>')
+                || is_receipt_bracket_wrapper(c)
+                || matches!(c, ',' | ';' | '，' | '；')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
@@ -633,7 +659,7 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                     || ch.is_control()
                     || is_invisible_filler(ch)
                     || is_receipt_quote_wrapper(ch)
-                    || matches!(ch, '(' | '[' | '{' | '<')
+                    || is_receipt_bracket_wrapper(ch)
             });
             if let Some(rest) = candidate.strip_prefix('\\') {
                 if rest.chars().next().is_some_and(is_receipt_quote_wrapper) {
@@ -696,12 +722,17 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             last_was_space = false;
         }
     }
+    let normalized_receipt_fillers = normalized_whitespace
+        .chars()
+        .filter(|ch| !ch.is_control() && !is_invisible_filler(*ch))
+        .collect::<String>();
 
     for haystack in [
         text,
         normalized_key_quotes.as_str(),
         normalized_delimiters.as_str(),
         normalized_whitespace.as_str(),
+        normalized_receipt_fillers.as_str(),
     ] {
         for prefix in PREFIXES {
             let mut remainder = haystack;
@@ -710,7 +741,12 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                 if let Some(parsed) = parse_hash_from_suffix(suffix) {
                     return Some(parsed);
                 }
-                remainder = &suffix[1.min(suffix.len())..];
+                let advance = suffix
+                    .char_indices()
+                    .nth(1)
+                    .map(|(idx, _)| idx)
+                    .unwrap_or(suffix.len());
+                remainder = &suffix[advance..];
             }
         }
     }
@@ -735,6 +771,50 @@ pub(crate) fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
     commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
 }
 
+fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
+    hash.and_then(|value| {
+        let mut trimmed = value
+            .trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
+            .to_string();
+
+        loop {
+            let mut chars = trimmed.chars();
+            let Some('\\') = chars.next() else {
+                break;
+            };
+            let Some(start_quote) = chars.next() else {
+                break;
+            };
+            if !is_receipt_quote_wrapper(start_quote) {
+                break;
+            }
+
+            let mut rev_chars = trimmed.chars().rev();
+            let Some(end_quote) = rev_chars.next() else {
+                break;
+            };
+            let Some('\\') = rev_chars.next() else {
+                break;
+            };
+            if !is_receipt_quote_wrapper(end_quote) {
+                break;
+            }
+
+            let start = '\\'.len_utf8() + start_quote.len_utf8();
+            let end = trimmed.len() - ('\\'.len_utf8() + end_quote.len_utf8());
+            trimmed = trimmed[start..end].to_string();
+        }
+
+        if trimmed.is_empty() {
+            None
+        } else {
+            parse_tx_hash(&trimmed)
+                .or_else(|| normalize_candidate_tx_hash(&trimmed))
+                .or(Some(trimmed))
+        }
+    })
+}
+
 pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
@@ -746,10 +826,10 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> 
             continue;
         }
         if hashes.commit_tx_hash.is_none() {
-            hashes.commit_tx_hash = ack.commit_tx_hash;
+            hashes.commit_tx_hash = normalize_persisted_tx_hash(ack.commit_tx_hash);
         }
         if hashes.reveal_tx_hash.is_none() {
-            hashes.reveal_tx_hash = ack.reveal_tx_hash;
+            hashes.reveal_tx_hash = normalize_persisted_tx_hash(ack.reveal_tx_hash);
         }
         if hashes.commit_tx_hash.is_some() && hashes.reveal_tx_hash.is_some() {
             break;
@@ -760,7 +840,12 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> 
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(attempt as u64 + 1)
+    if base_ms == 0 {
+        return 0;
+    }
+
+    let multiplier = 1u64.checked_shl(attempt).unwrap_or(u64::MAX);
+    base_ms.saturating_mul(multiplier)
 }
 
 fn is_forbidden_shell_program(program: &str) -> bool {
@@ -797,21 +882,21 @@ fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
     Ok((program, args))
 }
 
-pub(crate) fn run_adapter_with_retry(
-    adapter_cmd: &str,
-    action_args: &[String],
+fn run_adapter_with_retry_inner<F, S>(
     max_retries: u32,
     backoff_ms: u64,
-) -> Result<AdapterExecResult> {
-    let (program, base_args) = parse_command_spec(adapter_cmd)?;
+    mut exec_attempt: F,
+    mut sleeper: S,
+) -> Result<AdapterExecResult>
+where
+    F: FnMut() -> Result<Output>,
+    S: FnMut(Duration),
+{
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new(&program)
-            .args(&base_args)
-            .args(action_args)
-            .output()?;
+        let out = exec_attempt()?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
@@ -821,7 +906,7 @@ pub(crate) fn run_adapter_with_retry(
             return Ok(AdapterExecResult {
                 ok: true,
                 rc: RC_OK,
-                tx_hash,
+                tx_hash: tx_hash.or(last_tx_hash),
                 terminal: true,
             });
         }
@@ -831,7 +916,8 @@ pub(crate) fn run_adapter_with_retry(
             last_tx_hash = tx_hash;
         }
 
-        // deterministic rejections (duplicate/nonce_rejected) should not retry.
+        // deterministic terminal rejections (duplicate/nonce_rejected/slo_violation)
+        // should not retry.
         if is_deterministic_rejection(rc) {
             return Ok(AdapterExecResult {
                 ok: false,
@@ -842,7 +928,10 @@ pub(crate) fn run_adapter_with_retry(
         }
 
         if attempt < max_retries {
-            thread::sleep(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
+            let delay_ms = backoff_delay_ms(backoff_ms, attempt);
+            if delay_ms > 0 {
+                sleeper(Duration::from_millis(delay_ms));
+            }
         }
     }
 
@@ -852,6 +941,26 @@ pub(crate) fn run_adapter_with_retry(
         tx_hash: last_tx_hash,
         terminal: false,
     })
+}
+
+pub(crate) fn run_adapter_with_retry(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+) -> Result<AdapterExecResult> {
+    let (program, base_args) = parse_command_spec(adapter_cmd)?;
+    run_adapter_with_retry_inner(
+        max_retries,
+        backoff_ms,
+        || {
+            Ok(ProcCommand::new(&program)
+                .args(&base_args)
+                .args(action_args)
+                .output()?)
+        },
+        thread::sleep,
+    )
 }
 
 #[derive(Debug, Deserialize)]
@@ -880,14 +989,36 @@ fn truncate_for_error(raw: &str, max_chars: usize) -> String {
     format!("{}…(truncated, {} chars total)", prefix, total)
 }
 
+fn trim_config_numeric_value(raw: &str) -> &str {
+    raw.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || is_invisible_filler(c)
+            || is_receipt_quote_wrapper(c)
+    })
+}
+
+fn normalize_config_numeric_value(raw: &str) -> String {
+    trim_config_numeric_value(raw)
+        .chars()
+        .filter(|ch| !ch.is_control() && !is_invisible_filler(*ch))
+        .map(|ch| match ch {
+            '０'..='９' => char::from_u32('0' as u32 + (ch as u32 - '０' as u32)).unwrap_or(ch),
+            '＋' => '+',
+            '－' | '−' => '-',
+            other => other,
+        })
+        .collect()
+}
+
 fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
-    raw.and_then(|s| s.parse::<u32>().ok())
+    raw.and_then(|s| normalize_config_numeric_value(s).parse::<u32>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
 
 fn parse_u64_with_min(raw: Option<&str>, default: u64, min: u64) -> u64 {
-    raw.and_then(|s| s.parse::<u64>().ok())
+    raw.and_then(|s| normalize_config_numeric_value(s).parse::<u64>().ok())
         .filter(|v| *v >= min)
         .unwrap_or(default)
 }
@@ -902,24 +1033,38 @@ fn resolve_u64(cli: Option<u64>, env_raw: Option<&str>, default: u64, min: u64) 
         .unwrap_or_else(|| parse_u64_with_min(env_raw, default, min))
 }
 
-pub(crate) fn resolve_tx_retry_policy(
+pub(crate) fn resolve_tx_retry_policy_from_sources(
     max_retries_cli: Option<u32>,
     backoff_ms_cli: Option<u64>,
+    env_max_retries_raw: Option<&str>,
+    env_backoff_ms_raw: Option<&str>,
 ) -> RetryPolicy {
     RetryPolicy {
         max_retries: resolve_u32(
             max_retries_cli,
-            env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+            env_max_retries_raw,
             DEFAULT_TX_ADAPTER_MAX_RETRIES,
             0,
         ),
         backoff_ms: resolve_u64(
             backoff_ms_cli,
-            env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+            env_backoff_ms_raw,
             DEFAULT_TX_ADAPTER_BACKOFF_MS,
             0,
         ),
     }
+}
+
+pub(crate) fn resolve_tx_retry_policy(
+    max_retries_cli: Option<u32>,
+    backoff_ms_cli: Option<u64>,
+) -> RetryPolicy {
+    resolve_tx_retry_policy_from_sources(
+        max_retries_cli,
+        backoff_ms_cli,
+        env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+        env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+    )
 }
 
 pub(crate) fn resolve_llm_adapter_policy(
@@ -987,7 +1132,7 @@ pub(crate) struct AdapterError {
 }
 
 fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
-    base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
+    backoff_delay_ms(base_ms, attempt)
 }
 
 fn run_llm_adapter_once(
@@ -1050,9 +1195,10 @@ where
                 let should_retry = err.kind == AdapterErrorKind::Retriable && attempt < max_retries;
                 last_error = Some(err);
                 if should_retry {
-                    sleeper(Duration::from_millis(exp_backoff_delay_ms(
-                        backoff_ms, attempt,
-                    )));
+                    let delay_ms = exp_backoff_delay_ms(backoff_ms, attempt);
+                    if delay_ms > 0 {
+                        sleeper(Duration::from_millis(delay_ms));
+                    }
                     continue;
                 }
                 break;
@@ -1084,7 +1230,8 @@ pub(crate) fn run_llm_adapter_with_retry(
 fn is_invisible_filler(c: char) -> bool {
     matches!(
         c,
-        '\u{200B}' // ZERO WIDTH SPACE
+        '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
+            | '\u{200B}' // ZERO WIDTH SPACE
             | '\u{200C}' // ZERO WIDTH NON-JOINER
             | '\u{200D}' // ZERO WIDTH JOINER
             | '\u{200E}' // LEFT-TO-RIGHT MARK
@@ -1104,7 +1251,6 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
             | '\u{FE0E}' // VARIATION SELECTOR-15 (text presentation)
             | '\u{FE0F}' // VARIATION SELECTOR-16 (emoji presentation)
-            | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
     )
 }
 
