@@ -1119,12 +1119,17 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
     ensure_wallet_store_path_is_safe(store)?;
     ensure_wallet_store_ancestors_not_symlink(store)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
+    let store_meta = fs::symlink_metadata(store)
+        .map_err(|e| anyhow!("failed to inspect wallet store '{}': {e}", store.display()))?;
+    if store_meta.file_type().is_symlink() {
         bail!(
             "wallet store '{}' is a symlink; refusing to read keys through non-regular wallet store path",
+            store.display()
+        );
+    }
+    if !store_meta.file_type().is_dir() {
+        bail!(
+            "wallet store '{}' is not a directory; refusing to read keys through non-regular wallet store path",
             store.display()
         );
     }
@@ -2827,6 +2832,35 @@ mod tests {
         let _ = std::fs::remove_file(&wallet);
         let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    fn read_key_refuses_non_directory_wallet_store() {
+        let unique = format!(
+            "trnm-cli-wallet-store-read-file-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let file_store = root.join("wallet-store-file");
+        std::fs::write(&file_store, "not a directory\n").unwrap();
+
+        let err = read_key(&file_store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store")
+                && err.to_string().contains("is not a directory")
+                && err
+                    .to_string()
+                    .contains("refusing to read keys through non-regular wallet store path"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_file(&file_store);
+        let _ = std::fs::remove_dir(&root);
     }
 
     #[test]
