@@ -131,6 +131,26 @@ Interpretation hints:
 
 This keeps pager handoff text append-stable even if dashboards differ across environments.
 
+## Stable incident labels
+
+Use one small label set across page payloads, dashboard share links, and incident tickets.
+This closes the last-mile gap where operators agree on the graph but still tag the same incident differently.
+
+Minimum label block:
+
+- `service=oracle`
+- `plane=observability`
+- `severity=<sev0|sev1|sev2|sev3>`
+- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `needs_replay=<yes|no>`
+- `needs_rollback=<yes|no>`
+
+Label rules:
+
+- set `needs_replay=yes` for every `sev0`/`sev1` incident, or whenever evidence and observability disagree;
+- set `needs_rollback=yes` only when an emitted `rollback_command=` exists or an operator has explicitly chosen rollback as the active mitigation path;
+- if a dashboard screenshot/link is shared without the label block, treat the handoff as incomplete even if the graph itself looks obvious.
+
 ## Dashboard minimum bundle
 
 For mainnet rehearsal, treat the following as the smallest acceptable oracle dashboard bundle.
