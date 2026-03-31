@@ -29,6 +29,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 REQUIRED_FIELDS = ("node_id", "rpc_addr", "p2p_addr")
 SHA256_HEX_RE = re.compile(r"^[0-9a-fA-F]{64}$")
+UTC_TIMESTAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 
 def looks_like_placeholder(value: str) -> bool:
@@ -233,6 +234,11 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires an explicit ceremony_id instead of the template default"
+        )
+
+    if not UTC_TIMESTAMP_RE.fullmatch(args.packet_generated_at):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires packet_generated_at in UTC ISO-8601 form like 2026-03-31T06:21:00Z"
         )
 
     if not SHA256_HEX_RE.fullmatch(args.genesis_artifact_sha256):
