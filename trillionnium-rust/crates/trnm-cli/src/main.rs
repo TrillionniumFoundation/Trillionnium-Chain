@@ -1083,6 +1083,16 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
         );
     }
     let f = wallet_file(store, name);
+    if fs::symlink_metadata(&f)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())
@@ -2677,6 +2687,47 @@ mod tests {
             .is_symlink());
 
         let _ = std::fs::remove_file(&existing);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_symlink_wallet_file_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-read-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+
+        let target = store.join("alice.real.key");
+        std::fs::write(
+            &target,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+        let wallet = wallet_file(&store, "alice");
+        symlink(&target, &wallet).unwrap();
+
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("refusing to read key through non-regular wallet file path"),
+            "unexpected error: {err}"
+        );
+        assert!(std::fs::symlink_metadata(&wallet)
+            .unwrap()
+            .file_type()
+            .is_symlink());
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_dir(&store);
     }
 
