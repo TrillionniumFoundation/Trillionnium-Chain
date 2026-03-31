@@ -191,7 +191,7 @@ Threshold rules:
 
 - consecutive windows must align with the slowest shared dashboard rollup used by operators;
 - if observability output and emitted evidence artifacts disagree, override any lower classification to `sev0`;
-- if a page fires without `severity`, `signal`, `needs_replay`, and `needs_rollback`, treat the incident as under-specified;
+- if a page fires without the full shared label block (`plane`, `service`, `severity`, `signal`, `needs_replay`, and `needs_rollback`), treat the incident as under-specified;
 - if `needs_rollback=yes`, the ticket/page must quote the current `rollback_command=` verbatim or mark it as `unknown` rather than leaving the field implicit.
 
 ---
