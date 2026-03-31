@@ -9,10 +9,14 @@ fn resolve_wal_dir_fail_if_exists_rejects_stale_state() {
 
     let args = args_with_wal_dir(wal_dir.display().to_string(), WalDirMode::FailIfExists);
 
-    let err = resolve_wal_dir(&args).unwrap_err();
-    assert!(err
-        .to_string()
-        .contains("refusing to reuse existing BFT WAL state"));
+    let err = resolve_wal_dir(&args).unwrap_err().to_string();
+    assert!(
+        err.contains("refusing to reuse existing BFT WAL state")
+            && err.contains(&wal_dir.display().to_string())
+            && err.contains("--bft-wal-mode reuse")
+            && err.contains("--bft-wal-dir"),
+        "unexpected fail-if-exists error: {err}"
+    );
 
     let _ = fs::remove_dir_all(&wal_dir);
 }

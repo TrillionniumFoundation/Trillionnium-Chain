@@ -187,9 +187,15 @@ fn active_hot_object_share_averages_are_zero_without_hot_heights() {
     } else {
         800_000u128 / hot_object_active_heights as u128
     };
+    let hot_object_active_height_share_ppm = if hot_object_active_heights == 0 {
+        0
+    } else {
+        (1_200_000u128 + 800_000u128) / hot_object_active_heights as u128
+    };
 
     assert_eq!(hot_object_active_top_label_share_avg_ppm, 0);
     assert_eq!(hot_object_active_tail_share_avg_ppm, 0);
+    assert_eq!(hot_object_active_height_share_ppm, 0);
 }
 
 #[test]

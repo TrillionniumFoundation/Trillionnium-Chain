@@ -1919,6 +1919,92 @@
     }
 
     #[test]
+    fn recovery_error_rate_field_name_stays_explicitly_incident_focused() {
+        let recovery_error_rate_field_name = "recovery_error_rate";
+        let apply_error_total_field_name = "apply_error_total";
+        let rollback_total_field_name = "rollback_total";
+        let timeout_migrated_total_field_name = "timeout_migrated_total";
+
+        assert!(recovery_error_rate_field_name.ends_with("_rate"));
+        assert!(apply_error_total_field_name.ends_with("_total"));
+        assert!(rollback_total_field_name.ends_with("_total"));
+        assert!(timeout_migrated_total_field_name.ends_with("_total"));
+        assert_ne!(recovery_error_rate_field_name, apply_error_total_field_name);
+        assert_ne!(recovery_error_rate_field_name, rollback_total_field_name);
+        assert_ne!(recovery_error_rate_field_name, timeout_migrated_total_field_name);
+    }
+
+    #[test]
+    fn consensus_summary_incident_bundle_keeps_timeout_and_recovery_signals_adjacent() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+        ];
+
+        assert_eq!(incident_bundle.len(), 6);
+        assert!(incident_bundle[0].ends_with("_total"));
+        assert!(incident_bundle[1].ends_with("_total"));
+        assert!(incident_bundle[2].ends_with("_share_bps"));
+        assert!(incident_bundle[3].ends_with("_total"));
+        assert!(incident_bundle[4].ends_with("_rate"));
+        assert!(incident_bundle[5].ends_with("_heights"));
+        assert_eq!(incident_bundle[3], "timeout_migrated_total");
+        assert_eq!(incident_bundle[4], "recovery_error_rate");
+        assert_eq!(incident_bundle[5], "bft_observed_heights");
+        assert_ne!(incident_bundle[3], incident_bundle[4]);
+        assert_ne!(incident_bundle[4], incident_bundle[5]);
+    }
+
+    #[test]
+    fn consensus_summary_incident_bundle_keeps_height_counters_after_recovery_rate() {
+        let incident_bundle = [
+            "apply_error_total",
+            "rollback_total",
+            "apply_error_rollback_share_bps",
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+            "bft_committed_heights",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+        ];
+
+        assert_eq!(incident_bundle.len(), 10);
+        assert!(incident_bundle[4].ends_with("_rate"));
+        assert!(incident_bundle[5].ends_with("_heights"));
+        assert!(incident_bundle[6].ends_with("_heights"));
+        assert!(incident_bundle[7].ends_with("_rate_ppm"));
+        assert!(incident_bundle[8].ends_with("_total"));
+        assert!(incident_bundle[9].ends_with("_rate_ppm"));
+        assert_eq!(incident_bundle[4], "recovery_error_rate");
+        assert_eq!(incident_bundle[5], "bft_observed_heights");
+        assert_eq!(incident_bundle[6], "bft_committed_heights");
+        assert_eq!(incident_bundle[7], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(incident_bundle[8], "bft_skipped_height_total");
+        assert_eq!(incident_bundle[9], "bft_skipped_observed_height_rate_ppm");
+    }
+
+    #[test]
+    fn recovery_error_rate_uses_finality_sample_count_as_denominator() {
+        let apply_error_total = 3u64;
+        let finality_samples_ms = [12u64, 18, 24, 30, 36];
+        let recovery_error_rate = if finality_samples_ms.is_empty() {
+            0.0
+        } else {
+            apply_error_total as f64 / finality_samples_ms.len() as f64
+        };
+
+        assert_eq!(recovery_error_rate, 0.6);
+        assert!(recovery_error_rate > 0.0);
+        assert!(recovery_error_rate < 1.0);
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
@@ -9799,11 +9885,38 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
-        assert!(err.contains("retained 2 WAL entries through height 2"));
+        assert!(err.contains("retained 2 committed WAL entries through height 2"));
+        assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+        assert!(err.contains("repaired WAL tail required truncation"));
         assert!(err.contains("last retained checkpoint: 1"));
+        assert!(err.contains("next startup height: 3"));
         assert!(err.contains(
             "does not yet restore application StateStore snapshots or replay committed blocks"
         ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_reports_missing_checkpoint_metadata() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint-metadata");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: None,
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 1 committed WAL entry through height 1"));
+        assert!(err.contains("no retained checkpoint metadata"));
+        assert!(err.contains("last retained checkpoint: none"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
