@@ -1,4 +1,5 @@
 use super::*;
+use anyhow::anyhow;
 
 pub(crate) fn default_tx_state_file() -> PathBuf {
     if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
@@ -50,6 +51,14 @@ pub(crate) fn query_local_tx_status(tx_hash: &str) -> Option<String> {
 }
 
 pub(crate) fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
+    let normalized = super::parse::normalize_tx_hash(tx_hash)
+        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    if !normalized.starts_with("0x") {
+        return Err(anyhow!(
+            "invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)"
+        ));
+    }
+
     let path = default_tx_state_file();
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -68,9 +77,9 @@ pub(crate) fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         .unwrap_or(0);
 
     root.insert(
-        tx_hash.to_string(),
+        normalized.clone(),
         serde_json::json!({
-            "tx_hash": tx_hash,
+            "tx_hash": normalized,
             "tx": {
                 "from": "trnm1pendingplaceholderfrom",
                 "to": "trnm1pendingplaceholderto",

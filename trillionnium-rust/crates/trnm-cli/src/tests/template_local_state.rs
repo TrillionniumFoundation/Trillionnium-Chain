@@ -101,3 +101,38 @@ fn query_local_tx_status_normalizes_requested_hash_noise() {
     let _ = std::fs::remove_file(&path);
     std::env::remove_var("TRNM_RPC_TX_FILE");
 }
+
+#[test]
+fn persist_local_pending_tx_normalizes_wrapped_tx_hash_input() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let unique = format!(
+        "trnm-cli-test-{}-{}.json",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let path = std::env::temp_dir().join(unique);
+    std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+    let noisy = "\u{2068}<0xABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890>\u{2069},";
+    let canonical = "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
+    persist_local_pending_tx(noisy).unwrap();
+
+    let raw = std::fs::read_to_string(&path).unwrap();
+    assert!(raw.contains(canonical), "expected canonical hash in persisted state: {raw}");
+    assert_eq!(query_local_tx_status(canonical).as_deref(), Some("pending"));
+
+    let _ = std::fs::remove_file(&path);
+    std::env::remove_var("TRNM_RPC_TX_FILE");
+}
+
+#[test]
+fn persist_local_pending_tx_rejects_non_prefixed_hashes() {
+    let err = persist_local_pending_tx("abcdef123456").unwrap_err().to_string();
+    assert!(
+        err.contains("expected 0x-prefixed hex tx hash"),
+        "unexpected: {err}"
+    );
+}
