@@ -1525,6 +1525,20 @@ bootstrap_peers = ["127.0.0.1:27656"]
         .into_iter()
         .enumerate()
         {
+            let on_disk_metadata = std::fs::symlink_metadata(config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{config_path} should stay stat-able for shipped bootstrap topology checks: {err}"
+                )
+            });
+            assert!(
+                on_disk_metadata.file_type().is_file(),
+                "{config_path} must remain a regular file for deterministic shipped bootstrap topology fixtures"
+            );
+            assert!(
+                !on_disk_metadata.file_type().is_symlink(),
+                "{config_path} must not become a symlink that can retarget shipped bootstrap topology fixtures"
+            );
+
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
             let workspace_relative_cfg = load_config(workspace_relative_path).unwrap_or_else(|err| {
