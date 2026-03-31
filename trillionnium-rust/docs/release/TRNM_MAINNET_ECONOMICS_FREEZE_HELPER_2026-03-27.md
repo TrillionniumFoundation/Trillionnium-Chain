@@ -174,12 +174,19 @@ authorities, and operator-visible inspection commands.
 
 When the rehearsal slice is run for a launch review, preserve the exact command packet and
 its pass/fail result in one artifact instead of scattering shell snippets across chat/logs.
-Until a first-class release wrapper lands, the following minimal capture pattern is enough:
+Until a first-class release wrapper lands, the following minimal capture pattern is enough.
+If the review is attached to a specific lane ticket/worktree, fail closed on that assigned
+identity *before* the packet runs; do not infer the expected path/ref from the current shell.
 
 ```bash
+EXPECTED_WORKTREE_ROOT="/absolute/path/from-ticket"
+EXPECTED_BRANCH_REF="refs/heads/lane/example-economics-freeze"
 mkdir -p trillionnium-rust/run/mainnet-economics-freeze
 (
   set -euo pipefail
+  ./trillionnium-rust/scripts/v2/verify_lane_worktree.sh \
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
   status_summary="$(git status --short)"
   if [ -n "$status_summary" ]; then
     printf 'git_status_summary=dirty\n'
@@ -188,6 +195,8 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
     exit 1
   fi
   date -u +"generated_at=%Y-%m-%dT%H:%M:%SZ"
+  printf 'expected_worktree=%s\n' "$EXPECTED_WORKTREE_ROOT"
+  printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
   printf 'worktree=%s\n' "$(pwd)"
   printf 'branch=%s\n' "$(git branch --show-current)"
   echo 'git_status_summary=clean'
