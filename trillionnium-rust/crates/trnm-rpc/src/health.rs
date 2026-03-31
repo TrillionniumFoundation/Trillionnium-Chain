@@ -121,6 +121,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
             Some(trimmed)
         })
         .filter(|suffix| !suffix.is_empty())
+        .filter(|suffix| !suffix.contains(['#', '?']))
+        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         // Capability subjects/tokens are single path segments. Reject extra
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
@@ -515,6 +517,27 @@ mod tests {
         assert_eq!(
             parse_nonempty_path_suffix(
                 "/query-capability-audit/%2e%2E",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice#frag",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice?extra=1",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/al ice",
                 "/query-capability-audit/"
             ),
             None

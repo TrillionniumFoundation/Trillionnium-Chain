@@ -260,6 +260,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         })
         .filter(|suffix| !suffix.is_empty())
         .filter(|suffix| !matches!(*suffix, "." | ".."))
+        .filter(|suffix| !suffix.contains(['#', '?']))
+        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         // Capability subjects/tokens are single path segments. Reject extra
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.

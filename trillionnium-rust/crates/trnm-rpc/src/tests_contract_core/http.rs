@@ -351,6 +351,18 @@ fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
 }
 
 #[test]
+fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whitespace() {
+    for target in [
+        "/query-capability-audit/alice#frag",
+        "/query-capability-audit/al ice",
+        "/query-capability-audit/alice\textra",
+    ] {
+        parse_query_capability_audit_subject_from_target(target)
+            .expect_err("capability audit subject must stay a clean single path segment");
+    }
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("post /health HTTP/1.1"), None);

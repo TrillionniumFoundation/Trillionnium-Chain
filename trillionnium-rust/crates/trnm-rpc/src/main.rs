@@ -3276,6 +3276,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         })
         .filter(|suffix| !suffix.is_empty())
         .filter(|suffix| !matches!(*suffix, "." | ".."))
+        .filter(|suffix| !suffix.contains(['#', '?']))
+        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
