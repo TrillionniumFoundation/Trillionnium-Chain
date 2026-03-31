@@ -90,6 +90,18 @@ Operators should not over-read it as indexer/read-model closure.
 - `bft_auth_reject_replay_total`
 - `bft_auth_reject_stale_total`
 - `bft_auth_reject_stale_nonce_total`
+- `bft_leader_missed_total`
+- `bft_leader_missed_max`
+- `bft_leader_missed_top_share_ppm`
+- `bft_leader_missed_active_validators`
+- `bft_leader_missed_active_validator_share_ppm`
+- `bft_leader_missed_active_heights`
+- `bft_leader_missed_active_height_rate_ppm`
+- `bft_leader_missed_active_observed_height_rate_ppm`
+- `bft_leader_missed_density_avg`
+- `bft_leader_missed_density_avg_milli`
+- `bft_leader_missed_active_height_share_ppm`
+- `bft_leader_missed_proposals`
 
 ### Minimal interpretation hints
 
@@ -107,12 +119,22 @@ Operators should not over-read it as indexer/read-model closure.
   - use as the minimum operator-visible BFT auth/safety cluster before escalation.
 - `bft_auth_reject_stale_total` / `bft_auth_reject_stale_nonce_total`
   - keep both append-stable for grep compatibility; today the alias resolves to the same stale-nonce rejection counter and should not be reinterpreted as a distinct source.
+- `bft_leader_missed_total` / `bft_leader_missed_max` / `bft_leader_missed_top_share_ppm`
+  - use together to decide whether missed-proposal pressure is diffuse or concentrated on one proposer.
+- `bft_leader_missed_active_validators` / `bft_leader_missed_active_validator_share_ppm`
+  - use to distinguish single-validator trouble from lane-wide proposer health degradation.
+- `bft_leader_missed_active_heights` / `bft_leader_missed_active_height_rate_ppm` / `bft_leader_missed_active_observed_height_rate_ppm`
+  - read as the height-level blast-radius view before escalating to operator rotation or peer-health triage.
+- `bft_leader_missed_density_avg` / `bft_leader_missed_density_avg_milli` / `bft_leader_missed_active_height_share_ppm`
+  - keep as the normalized density/share trio for dashboards and handoff notes.
+- `bft_leader_missed_proposals`
+  - treat as the append-stable per-validator final vector; preserve ordering semantics and do not reinterpret it as a ranked/sorted list.
 
 ### Operator-visible summary template
 
 A safe starter summary line for incident handoff is:
 
-- `apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n>`
+- `apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n> bft_leader_missed_total=<n> bft_leader_missed_max=<n> bft_leader_missed_top_share_ppm=<n> bft_leader_missed_active_validators=<n> bft_leader_missed_active_validator_share_ppm=<n> bft_leader_missed_active_heights=<n> bft_leader_missed_active_height_rate_ppm=<n> bft_leader_missed_active_observed_height_rate_ppm=<n> bft_leader_missed_density_avg=<n> bft_leader_missed_density_avg_milli=<n> bft_leader_missed_active_height_share_ppm=<n> bft_leader_missed_proposals=<vec>`
 
 Keep field names verbatim so pager notes and release evidence remain grep-stable.
 
