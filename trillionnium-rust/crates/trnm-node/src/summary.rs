@@ -50,6 +50,11 @@ pub(crate) struct ConsensusSummaryInputs<'a> {
 }
 
 pub(crate) fn emit_consensus_summary(inputs: ConsensusSummaryInputs<'_>) {
+    // Preserve the legacy `bft_auth_reject_stale_total` operator field as an
+    // alias of the canonical stale-nonce counter until the metrics contract is
+    // frozen across node/rpc/worker surfaces.
+    let bft_auth_reject_stale_total = inputs.bft_auth_reject_stale_nonce_total;
+
     let finality_p50 = percentile(inputs.finality_samples_ms.to_vec(), 0.50);
     let finality_p95 = percentile(inputs.finality_samples_ms.to_vec(), 0.95);
     let scheduler_p50 = percentile(inputs.scheduler_samples_ms.to_vec(), 0.50);
@@ -469,7 +474,7 @@ pub(crate) fn emit_consensus_summary(inputs: ConsensusSummaryInputs<'_>) {
         inputs.bft_double_vote_total,
         inputs.bft_auth_reject_bad_sig_total,
         inputs.bft_auth_reject_replay_total,
-        inputs.bft_auth_reject_stale_nonce_total,
+        bft_auth_reject_stale_total,
         inputs.bft_auth_reject_stale_nonce_total
     );
 }
