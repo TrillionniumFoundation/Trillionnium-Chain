@@ -168,9 +168,15 @@ fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_re
     fs::create_dir_all(&manifest_dir).expect("create manifest dir");
 
     let archived_log = archive_dir.join("node4.log");
+    let second_archived_log = archive_dir.join("node5.log");
     let manifest = manifest_dir.join("sources.txt");
     fs::write(&archived_log, "").expect("write archived log");
-    fs::write(&manifest, "\"../../archive/node4.log\"\n").expect("write manifest");
+    fs::write(&second_archived_log, "").expect("write second archived log");
+    fs::write(
+        &manifest,
+        "\"../../archive/node4.log\"\n'../../archive/node5.log'\n`../../archive/node4.log`\n",
+    )
+    .expect("write manifest");
 
     let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
     let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
@@ -195,8 +201,8 @@ fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_re
 
     assert_eq!(
         got,
-        vec![archive_dir.join("node4.log")],
-        "quoted historical replay manifest entries should resolve to canonical log sources"
+        vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+        "historical replay manifest entries should unwrap quote-like wrappers and dedupe to canonical log sources"
     );
 
     let _ = fs::remove_dir_all(root);
