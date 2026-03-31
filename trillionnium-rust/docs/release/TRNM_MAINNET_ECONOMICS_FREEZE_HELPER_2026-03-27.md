@@ -82,6 +82,20 @@ A launch review should include:
 - one test or gate proving the state machine/mempool still honors the chosen boundaries
 - one rollback path for tightening policy before public launch
 
+## Operator/public wording alignment checklist
+
+Before calling the economics tuple frozen, make the operator packet and any public-facing launch wording restate the same admission boundary without softer synonyms.
+
+Minimum wording checks:
+- `free-ingress` only names the exact day-1 classes listed in `public_free_ingress_classes`; do not paraphrase this as "generally free" or "default free".
+- `fee-like` only names the exact classes listed in `public_fee_like_classes`; if budget-spend semantics are used, say so explicitly instead of implying universal token fees.
+- `sponsor-backed` / `sponsor-only` wording must match the frozen sponsor authority, epoch budget, refill rule, and revocation semantics; never imply unrestricted third-party subsidy when the tuple says allowlist or protocol-only.
+- retention wording must name the payer-of-record and exhaustion fallback, so operators do not infer indefinite free storage for proof/evidence-heavy paths.
+- anti-spam wording must point to the actual floor/budget/bond rule rather than generic QoS language.
+- prelaunch change wording must name the override authority plus timelock/bypass rule, so readers can tell whether the tuple is still mutable.
+
+If any operator runbook, launch checklist, or public release note describes a broader or softer ingress surface than the frozen tuple, treat the economics freeze as evidence-incomplete until the wording is corrected.
+
 ### Minimal adversarial rehearsal slice
 
 To satisfy the blocker-board requirement that the frozen tuple survives one concrete spam /
