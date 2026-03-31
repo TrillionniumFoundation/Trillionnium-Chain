@@ -287,12 +287,22 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
 
+    seen_config_paths: dict[Path, Path] = {}
     seen_node_ids: dict[str, Path] = {}
     seen_addresses: dict[str, tuple[str, Path]] = {}
     entries: list[dict[str, str]] = []
 
     for raw_path in args.configs:
         path = Path(raw_path)
+        canonical_path = path.resolve(strict=False)
+        previous_path = seen_config_paths.get(canonical_path)
+        if previous_path is not None:
+            fail(
+                "invalid validator config bundle: "
+                f"config file {path} resolves to the same path as {previous_path}"
+            )
+        seen_config_paths[canonical_path] = path
+
         data = load_config(path)
 
         missing = [field for field in REQUIRED_FIELDS if field not in data]
