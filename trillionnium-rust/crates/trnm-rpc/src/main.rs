@@ -2910,7 +2910,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3053,7 +3053,7 @@ fn parse_query_normalized_audit_events_query_from_path(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -5070,6 +5070,21 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-events/42?limit=7 ",
+            "/query-events/42?limit=7\t",
+            "/query-events/42?limit= 7",
+            "/query-events/42?limit=7&limit=8 ",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("raw query whitespace must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+            assert!(err.contains("invalid limit"), "path={path:?} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
         for path in [
             "/query-events%2f42?limit=7",
@@ -5149,6 +5164,21 @@ mod tests {
         assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
         assert_eq!(out.limit, 3);
         assert_eq!(out.cursor, Some(2));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task ",
+            "/query-normalized-audit-events?eventType=trnm.task.commit\t",
+            "/query-normalized-audit-events?cursor= 1",
+            "/query-normalized-audit-events?limit=3 ",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("raw query whitespace must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+            assert!(err.contains("invalid query"), "path={path:?} err={err}");
+        }
     }
 
     #[test]

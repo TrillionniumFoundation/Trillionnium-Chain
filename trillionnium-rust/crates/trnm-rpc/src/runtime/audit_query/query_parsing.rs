@@ -246,7 +246,7 @@ fn extract_validated_query<'a>(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(bad_request(error_body));
     }
