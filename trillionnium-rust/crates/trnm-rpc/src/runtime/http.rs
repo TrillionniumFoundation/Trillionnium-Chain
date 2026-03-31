@@ -43,6 +43,46 @@ fn is_supported_http_version(version: &str) -> bool {
     matches!(version, "HTTP/1.0" | "HTTP/1.1")
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -130,18 +170,16 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
+    if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path)
     {
         return None;
     }
@@ -475,6 +513,30 @@ mod tests {
         assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
         assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
         assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_malformed_percent_encodings_fail_closed() {
+        for line in [
+            "GET /query-events/42% HTTP/1.1",
+            "GET /query-events/42%2 HTTP/1.1",
+            "GET /query-events/42?limit=7% HTTP/1.1",
+            "GET /query-events/42?limit=7%4x HTTP/1.1",
+        ] {
+            assert_eq!(parse_http_request_target(line), None, "line={line}");
+        }
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_control_or_space_fail_closed() {
+        for line in [
+            "GET /query-events/42%20 HTTP/1.1",
+            "GET /query-events/42%7F HTTP/1.1",
+            "GET /query-events/%00/42?limit=1 HTTP/1.1",
+            "GET /query-events/42?limit=1%01 HTTP/1.1",
+        ] {
+            assert_eq!(parse_http_request_target(line), None, "line={line}");
+        }
     }
 
     #[test]
