@@ -782,6 +782,70 @@ fn task_metering_work_units_should_affect_state_root_even_when_receipt_metadata_
 }
 
 #[test]
+fn task_provenance_index_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 8_000,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("checkpoint evidence linked task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test".into()),
+                produced_at: Some("2026-03-12T06:45:00Z".into()),
+                provenance_index: Some("checkpoint-proof-17".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            metering: None,
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .unwrap()
+        .provenance
+        .as_mut()
+        .unwrap()
+        .provenance_index = Some("checkpoint-proof-18".into());
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should incorporate task provenance_index so distinct checkpoint evidence links cannot hash identically"
+    );
+}
+
+#[test]
 fn task_provenance_privacy_tier_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
