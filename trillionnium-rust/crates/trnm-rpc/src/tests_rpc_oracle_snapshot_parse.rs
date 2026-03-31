@@ -71,6 +71,30 @@ fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
     assert_eq!(request.policy, "/tmp/policy.json");
     assert_eq!(request.now_ts_ms, Some(10_100));
 }
+
+#[test]
+fn parse_oracle_validate_snapshot_target_accepts_oracle_metrics_alias() {
+    let request = parse_oracle_validate_snapshot_target(
+        "/oracle/metrics?snapshot=/tmp/oracle.json&policy=/tmp/policy.json&now_ts_ms=10100",
+    )
+    .expect("oracle metrics alias should reuse the same request schema");
+
+    assert_eq!(request.snapshot, "/tmp/oracle.json");
+    assert_eq!(request.policy, "/tmp/policy.json");
+    assert_eq!(request.now_ts_ms, Some(10_100));
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_accepts_global_metrics_alias() {
+    let request = parse_oracle_validate_snapshot_target(
+        "/metrics?snapshot=/tmp/oracle.json&policy=/tmp/policy.json&now_ts_ms=10100",
+    )
+    .expect("global metrics alias should preserve oracle query parsing");
+
+    assert_eq!(request.snapshot, "/tmp/oracle.json");
+    assert_eq!(request.policy, "/tmp/policy.json");
+    assert_eq!(request.now_ts_ms, Some(10_100));
+}
 #[test]
 fn parse_oracle_validate_snapshot_target_rejects_unknown_query_keys() {
     let err = parse_oracle_validate_snapshot_target(
