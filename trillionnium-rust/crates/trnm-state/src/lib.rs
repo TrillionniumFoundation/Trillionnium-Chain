@@ -1101,6 +1101,10 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         return false;
     }
 
+    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true) {
+        return false;
+    }
+
     if has_bond {
         let Some(challenged_at_height) = task.challenged_at_height else {
             return false;
@@ -1130,7 +1134,10 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
                 .is_none_or(|window| window > 0)
         };
 
-        task.challenged_at_height.is_none()
+        task.challenge_bond.is_none()
+            && task.challenger.is_none()
+            && task.challenge_bond_forfeited.is_none()
+            && task.challenged_at_height.is_none()
             && task.challenge_deadline_height.is_none()
             && task.resolve_deadline_height.is_none()
             && retained_window_is_consistent
@@ -1163,7 +1170,10 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
             RESOLVE_ACTOR_ID_MAX_LEN
         ));
     }
-    if resolve_actor_has_forbidden_separator(trimmed) || !trimmed.is_ascii() {
+    if resolve_actor_has_forbidden_separator(trimmed)
+        || !trimmed.is_ascii()
+        || trimmed.chars().any(|ch| ch.is_ascii_uppercase())
+    {
         return Err("resolve approval approver must be a single canonical actor id".into());
     }
     if resolve_actor_is_reserved(trimmed) {
@@ -5723,7 +5733,7 @@ mod tests {
         let mut without_retention = StateStore::new();
         let mut with_retention = StateStore::new();
 
-        let mut base_task = TaskObject {
+        let base_task = TaskObject {
             task_id: 404,
             creator: "alice".into(),
             bounty: 25,
@@ -6104,6 +6114,48 @@ mod tests {
     }
 
     #[test]
+    fn restore_task_rejects_terminal_challenge_retention_with_mixed_case_challenger_identity() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 4083,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("retained collateral trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: Some(21),
+            resolve_deadline_height: Some(40),
+            challenge_bond: Some(7),
+            challenger: Some("BobSmith".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 2,
+        };
+
+        st.restore_task(4083, Some(task));
+
+        assert!(
+            st.get_task(4083).is_none(),
+            "restore_task must fail closed when retained terminal collateral metadata keeps a mixed-case challenger identity instead of a lowercase canonical actor id for sponsor-funded retention audits"
+        );
+    }
+
+    #[test]
     fn restore_task_rejects_terminal_challenge_retention_with_inverted_settlement_boundaries() {
         let mut st = StateStore::new();
 
@@ -6226,6 +6278,48 @@ mod tests {
         assert!(
             st.get_task(410).is_none(),
             "restore_task must fail closed when a slashed terminal task drops the retained proof-window snapshot needed to audit an unchallenged slash"
+        );
+    }
+
+    #[test]
+    fn restore_task_rejects_slashed_retention_with_zeroed_proof_window_snapshot() {
+        let mut st = StateStore::new();
+
+        let task = TaskObject {
+            task_id: 4101,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Slashed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("slashed proof trail".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ef".repeat(32)),
+                model: None,
+                provenance: None,
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(0),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        st.restore_task(4101, Some(task));
+
+        assert!(
+            st.get_task(4101).is_none(),
+            "restore_task must fail closed when a slashed terminal task zeroes the retained proof-window snapshot needed to audit an unchallenged slash"
         );
     }
 
@@ -15045,6 +15139,46 @@ mod tests {
         let root_after = st.state_root();
 
         assert_ne!(root_before, root_after);
+    }
+
+    #[test]
+    fn state_root_changes_when_slashed_terminal_proof_window_snapshot_changes() {
+        let mut st_a = StateStore::new();
+        let slashed_task = TaskObject {
+            task_id: 426,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([4u8; 32]),
+            result_hash: Some([5u8; 32]),
+            reveal_salt: Some([6u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        st_a.put_task_new(slashed_task.clone()).unwrap();
+
+        let mut st_b = StateStore::new();
+        let mut changed = slashed_task;
+        changed.challenge_window_blocks_snapshot = Some(41);
+        st_b.put_task_new(changed).unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "slashed terminal proof-window retention snapshot must contribute to state root so retained slash-audit trails cannot hash identically"
+        );
     }
 
     #[test]

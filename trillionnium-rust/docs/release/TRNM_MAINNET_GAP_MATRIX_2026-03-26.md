@@ -197,6 +197,18 @@ TRNM already has substantial work around free-ingress, QoS, lane fairness, chall
 Mainnet begins exactly where adversarial usage begins.
 If anti-spam and pricing remain fluid, launch risk is too high.
 
+### Day-1 freeze tuple (minimum launch helper)
+To turn this blocker into a ship/no-ship gate, freeze one explicit tuple before any public mainnet cut:
+- **ingress class split**: which flows stay free-ingress, which require fee-like admission, and which remain sponsor-only
+- **sponsor boundary**: exact caller/classes allowed to subsidize admission, plus per-epoch caps and revocation path
+- **retention pricing rule**: how long proofs/evidence/collateral snapshots remain queryable and which actor pays for storage-heavy paths
+- **anti-spam floor**: minimum admission threshold (fee floor, bond floor, or rate-limit budget) for sustained public load
+- **override authority**: who may change the tuple pre-launch and what timelock/audit evidence is required
+
+If any one of these five elements is still "to be decided", economics should remain **NO-GO** for public-mainnet release.
+
+For a concrete review sheet, see `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`.
+
 ---
 
 # P1 — Highly important, but can trail P0 if launch scope is narrow
