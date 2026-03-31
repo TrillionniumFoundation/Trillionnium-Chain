@@ -85,7 +85,7 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
                 }
                 let path = PathBuf::from(trimmed);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
                     normalize_lexical_path(manifest_dir.join(path))
                 };
@@ -97,7 +97,7 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
                 normalize_lexical_path(root.join(path))
             };

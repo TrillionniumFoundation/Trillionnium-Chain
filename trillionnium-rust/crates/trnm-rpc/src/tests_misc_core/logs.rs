@@ -110,6 +110,55 @@ fn load_node_event_log_sources_prefers_manifest_and_env_over_fixed_defaults() {
 }
 
 #[test]
+fn load_node_event_log_sources_deduplicates_lexically_equivalent_absolute_entries() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-absolute-dedupe", "dir");
+    let cfg_dir = root.join("cfg");
+    fs::create_dir_all(&cfg_dir).expect("create cfg dir");
+
+    let shared_log = root.join("shared.log");
+    let manifest = cfg_dir.join("sources.txt");
+    fs::write(&shared_log, "").expect("write shared log");
+    fs::write(
+        &manifest,
+        format!("{}\n", root.join("history/../shared.log").display()),
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::set_var(
+            NODE_EVENT_LOG_SOURCES_ENV,
+            root.join("./shared.log").to_string_lossy().to_string(),
+        );
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![shared_log],
+        "lexically equivalent absolute historical log sources should dedupe to one path"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_latest_node_events_reads_events_from_configured_node4_source() {
     let _guard = lock_env();
     let path = unique_tmp_path("trnm-rpc-node4", "log");
