@@ -215,6 +215,12 @@ Retry invariants for release review:
 - every terminal failure must preserve enough evidence to replay the exact rejected tuple later;
 - a later success must be tied to a **new** attempt/result pair, not silently overwrite the prior failed trust decision.
 
+Implementation note for current review surfaces:
+
+- compound/operator-facing diagnostics such as `unavailable:no_matching_wal_entry` should preserve the stable retry-class prefix (`unavailable`) **and** the more specific suffix (`no_matching_wal_entry`);
+- the prefix determines whether bounded retry is even eligible, while the suffix stays in the persisted evidence/log surface so operators can distinguish transport outage from concrete evidence lookup failure;
+- no compound code may be rewritten into `verified` without a fresh successful attempt carrying a new attempt/result identity.
+
 ## Release-review checklist
 
 Use this when deciding whether verifier-sidecar scope is still trailing work or has crossed into launch-blocking territory.
