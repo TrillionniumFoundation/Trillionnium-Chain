@@ -21,6 +21,37 @@ Primary references:
 - `docs/runbooks/local-release-evidence.md`
 - `docs/runbooks/bft-checkpoint-wal-recovery.md`
 - `scripts/v2/verify_lane_worktree.sh`
+- `scripts/v2/extract_release_handoff_fields.sh`
+
+## Operator cutover note template
+
+Before starting the event, open a handoff note and pre-fill these fields so replacement / rotation / DR does not depend on terminal memory:
+
+```text
+cutover_kind=
+verified_worktree=
+verified_branch_ref=
+verified_head=
+outgoing_validator_config=
+outgoing_validator_identity=
+incoming_validator_config=
+incoming_validator_identity=
+expected_genesis_or_checkpoint=
+handoff_signed_by=
+handoff_acknowledged_by=
+rollback_command=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
+bootstrap_command=
+result=
+next_blocker=
+```
+
+Rules:
+- `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
+- if any identity or rollback field cannot be filled before cutover, stop.
 
 ## Operator invariants
 
@@ -111,6 +142,15 @@ Minimum DR evidence fields to preserve from the generated report:
 - `rollback_command=`
 - `replay_command=`
 - final pass/fail result
+
+Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report.
+If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
+
+```bash
+./scripts/v2/extract_release_handoff_fields.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+```
 
 If recovery evidence cannot be produced from the current worktree, treat the DR rebuild as **No-Go**.
 
