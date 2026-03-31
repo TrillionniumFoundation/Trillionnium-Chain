@@ -131,6 +131,33 @@ Interpretation hints:
 
 This keeps pager handoff text append-stable even if dashboards differ across environments.
 
+## Dashboard minimum bundle
+
+For mainnet rehearsal, treat the following as the smallest acceptable oracle dashboard bundle.
+Keep panel titles stable so alerts, screenshots, and handoff notes refer to the same surface.
+
+1. **Acceptance vs rejects**
+   - Plot: `accepted_total`, `oracle_stale_reject_total`, `oracle_quorum_reject_total`, `oracle_drift_reject_total`
+   - Why: establishes whether the incident is an accepts stall, stale wave, quorum collapse, or drift anomaly.
+
+2. **Sample conservation**
+   - Plot: `sample_count` together with the derived sum `accepted_total + oracle_stale_reject_total + oracle_quorum_reject_total + oracle_drift_reject_total`
+   - Why: makes `contract-drift` visible without requiring operators to do arithmetic from memory.
+
+3. **Source cardinality vs quorum floor**
+   - Plot: `oracle_source_cardinality` plus the configured quorum floor annotation
+   - Why: separates provider loss / dedup collapse from pure data-quality drift.
+
+4. **Ingest latency trend**
+   - Plot: `oracle_ingest_latency_ms`
+   - Why: keeps batch-duration regressions visible even when acceptance has not yet stalled.
+
+Dashboard annotation rules:
+
+- annotate the configured quorum floor on any panel that renders `oracle_source_cardinality`;
+- annotate the incident `severity` and `verdict` on sev0/sev1 screenshots or dashboard share links;
+- when linking a dashboard snapshot into an incident ticket, include the `summary_line` beside it so the image and ticket stay semantically aligned.
+
 ## Severity mapping
 
 Use one small severity vocabulary across dashboards, pages, and incident tickets.
