@@ -305,7 +305,22 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
     Ok(())
 }
 
+fn validate_config_path_input(path: &str) -> Result<()> {
+    anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
+    anyhow::ensure!(
+        path == path.trim(),
+        "read config failed: path must not contain leading or trailing whitespace"
+    );
+    anyhow::ensure!(
+        !path.chars().any(char::is_control),
+        "read config failed: path must not contain control characters"
+    );
+
+    Ok(())
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
+    validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
@@ -455,6 +470,26 @@ mod tests {
         );
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_config_rejects_blank_path_fail_closed() {
+        let err = load_config("   ").expect_err("blank config path must fail closed");
+        assert!(
+            err.to_string().contains("path must not be empty"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_control_characters_in_path_fail_closed() {
+        let err = load_config("configs/node1.toml\n")
+            .expect_err("config path control characters must fail closed");
+        assert!(
+            err.to_string()
+                .contains("path must not contain control characters"),
+            "unexpected error: {err:#}"
+        );
     }
 
     #[test]

@@ -295,7 +295,22 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
     Ok(())
 }
 
+fn validate_config_path_input(path: &str) -> Result<()> {
+    anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
+    anyhow::ensure!(
+        path == path.trim(),
+        "read config failed: path must not contain leading or trailing whitespace"
+    );
+    anyhow::ensure!(
+        !path.chars().any(char::is_control),
+        "read config failed: path must not contain control characters"
+    );
+
+    Ok(())
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
+    validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
