@@ -100,7 +100,11 @@ fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c") || is_encoded_dot_segment(&lower)
+    lower.contains("%2f")
+        || lower.contains("%5c")
+        || lower.contains("%3f")
+        || lower.contains("%23")
+        || is_encoded_dot_segment(&lower)
 }
 
 fn is_encoded_dot_segment(segment: &str) -> bool {
@@ -542,6 +546,20 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%3Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%23frag",
+                "/query-capability-audit/"
+            ),
+            None
+        );
     }
 
     #[test]
@@ -554,6 +572,8 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding(".%2e"));
         assert!(has_ambiguous_path_segment_encoding("%2E."));
         assert!(has_ambiguous_path_segment_encoding("%2e%2E"));
+        assert!(has_ambiguous_path_segment_encoding("alice%3Fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%23frag"));
         assert!(has_ambiguous_path_segment_encoding("."));
         assert!(has_ambiguous_path_segment_encoding(".."));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
