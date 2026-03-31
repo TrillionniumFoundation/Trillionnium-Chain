@@ -373,6 +373,23 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_does_not_anchor_curdir_prefixed_workspace_parent_traversal() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let outside_path = workspace_root.join("../configs/node1.toml");
+        assert!(outside_path.exists(), "expected parent traversal fixture to exist");
+
+        let resolved = resolve_config_path("./trillionnium-rust/../configs/node1.toml");
+        assert_eq!(
+            resolved,
+            std::path::PathBuf::from("./trillionnium-rust/../configs/node1.toml")
+        );
+    }
+
+    #[test]
     fn load_config_rejects_relative_symlink_escape_outside_workspace_and_cwd() {
         use std::os::unix::fs::symlink;
         use std::time::{SystemTime, UNIX_EPOCH};
