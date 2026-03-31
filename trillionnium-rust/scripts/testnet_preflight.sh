@@ -311,6 +311,7 @@ bench_classic=$latest_bench
 bench_mixed=$latest_mixed
 executor_profile=$latest_profile
 recovery_runs=$RECOVERY_RUNS
+recovery_report=$RECOVERY_REPORT
 recovery_replay_command=$RECOVERY_REPLAY_COMMAND
 replay_command=$replay_command
 lane_verify_command=${lane_verify_command:-<not-run>}

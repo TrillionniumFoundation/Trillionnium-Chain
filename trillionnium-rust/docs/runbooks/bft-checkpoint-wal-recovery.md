@@ -96,6 +96,8 @@ RECOVERY_RUNS=1 \
 - devnet + state-root audit
 - quick benchmark matrix
 
+成功后生成的 `run/preflight/go-no-go-<timestamp>.txt` 现在会显式记录 `recovery_report=`，便于直接跳转到对应的 restart-recovery PASS 报告，而不用再按时间戳猜最新文件。
+
 适合做 lane 级预演，不适合当作最小 smoke replacement。
 
 ## 审计与回放
