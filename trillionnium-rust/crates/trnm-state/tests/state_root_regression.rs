@@ -8253,6 +8253,30 @@ fn wal_checkpoint_verification_rejects_zero_width_checkpoint_wal_hash_even_when_
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_newline_checkpoint_wal_hash_even_when_state_root_matches(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: format!("{}\n", wal.content_hash_hex()),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject newline-variant checkpoint wal_entry_hash_hex surfaces even when the state_root evidence otherwise matches"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_non_ascii_checkpoint_wal_hash_even_when_state_root_matches(
 ) {
     let wal = WalMeta {
