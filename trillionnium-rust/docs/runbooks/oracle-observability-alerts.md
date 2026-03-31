@@ -143,6 +143,7 @@ Minimum label block:
 - `service=oracle`
 - `plane=observability`
 - `severity=<sev0|sev1|sev2|sev3>`
+- `signal=oracle-anomaly`
 - `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
@@ -198,7 +199,7 @@ Threshold rules:
 
 - consecutive windows should map to the dashboard's stable rollup interval; if multiple dashboards exist, use the slowest shared rollup when paging;
 - if observability data and emitted evidence artifacts disagree, override any lower threshold and classify as `sev0`;
-- if a page fires without the matching `severity` / `verdict` label block, treat the incident as under-specified until the labels are added.
+- if a page fires without the matching `severity` / `signal` / `verdict` label block, treat the incident as under-specified until the labels are added.
 
 ## Severity mapping
 
