@@ -375,6 +375,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_raw_query_whitesp
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
+    for path in [
+        "/query-normalized-audit-events-shadow?source=trnm.task",
+        "/query-normalized-audit-events.v1?source=trnm.task",
+        "/query-normalized-audit-events%2fshadow?source=trnm.task",
+        "/query-normalized-audit-events%01shadow?source=trnm.task",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("prefix shadow paths must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+        assert!(err.contains("invalid query"), "path={path:?} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
     assert_eq!(
         parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
