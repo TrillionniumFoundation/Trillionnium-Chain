@@ -1086,6 +1086,15 @@ fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     Ok(format!("trnm1{}", addr_hex))
 }
 
+fn ensure_safe_sign_message(message: &str) -> Result<()> {
+    if message.chars().any(|c| c.is_control()) {
+        bail!(
+            "wallet sign message contains control characters; refusing unsafe offline-signing output"
+        );
+    }
+    Ok(())
+}
+
 fn random_priv_hex() -> Result<String> {
     let mut b = [0u8; 32];
     let mut f = fs::File::open("/dev/urandom")?;
@@ -2183,6 +2192,7 @@ fn main() -> Result<()> {
                 store,
             } => {
                 let store = store.unwrap_or_else(default_wallet_store);
+                ensure_safe_sign_message(&message)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -3558,6 +3568,20 @@ mod tests {
                 .to_string()
                 .contains("invalid tx_hash field in tx query response"),
             "unexpected: {err_kv}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_accepts_plain_visible_text() {
+        ensure_safe_sign_message("rotate signer to cold-key slot b").unwrap();
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_newline_injected_text() {
+        let err = ensure_safe_sign_message("rotate\nsignature=fake").unwrap_err();
+        assert!(
+            err.to_string().contains("contains control characters"),
+            "unexpected: {err}"
         );
     }
 
