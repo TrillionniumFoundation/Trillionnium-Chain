@@ -18,6 +18,8 @@ emit_contract_paths() {
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
   echo "public_dir=${PUBLIC_DIR}"
+  echo "bind_host=${HOST}"
+  echo "bind_port=${PORT}"
   echo "health_url=${HEALTH_URL}"
   echo "index_url=${INDEX_URL}"
   echo "service_mode=operator-facing-static-scaffold"

@@ -42,6 +42,8 @@ From `trillionnium-rust/`:
 
 - bind host: `127.0.0.1`
 - bind port: `8090`
+- bind host: `127.0.0.1`
+- bind port: `8090`
 - health URL: `http://127.0.0.1:8090/healthz`
 - PID file: `trillionnium-rust/run/explorer-service/explorer-service.pid`
 - log file: `trillionnium-rust/run/explorer-service/explorer-service.log`
@@ -85,6 +87,8 @@ Expected healthy signals:
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
 - `public_dir=.../run/explorer-service/public`
+- `bind_host=...`
+- `bind_port=...`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
 - `service_mode=operator-facing-static-scaffold`
@@ -169,6 +173,8 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
 - `public_dir=.../run/explorer-service/public`
+- `bind_host=...`
+- `bind_port=...`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
 - `service_mode=operator-facing-static-scaffold`
