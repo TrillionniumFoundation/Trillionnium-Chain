@@ -1298,6 +1298,27 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_accepts_exact_match_under_zero_deviation_policy() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 0,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(100_000, Some(100_000), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(report.ok);
+        assert!(report.error.is_none());
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
     fn zero_baseline_cap_boundary_is_treated_as_drift_guardrail() {
         let p = OraclePolicy {
             min_sources: 2,
