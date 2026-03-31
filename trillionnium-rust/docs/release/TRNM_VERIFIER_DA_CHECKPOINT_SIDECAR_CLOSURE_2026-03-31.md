@@ -54,6 +54,55 @@ For launch-grade operator confidence, verifier evidence should preserve these re
 
 In short: a verifier receipt that cannot be traced back to a single canonical checkpoint/WAL tuple is not sufficient release evidence.
 
+## Concrete minimum sidecar contract
+
+To keep release review falsifiable, the sidecar should publish at least one concrete request/response tuple instead of only prose.
+
+### Minimum request tuple
+
+A launch-reviewable verifier submission should carry, at minimum:
+
+- `checkpoint_height`
+- `checkpoint_state_root_hex`
+- `checkpoint_wal_entry_hash_hex`
+- `checkpoint_prev_hash_hex` (required for non-genesis checkpoints; omitted only for canonical genesis)
+- `checkpoint_commitment_hex`
+- `da_light_verifier_summary`
+- `verifier_policy_version`
+- `verifier_schema_version`
+- `request_id` or equivalent replay handle
+
+### Minimum response tuple
+
+A verifier response should preserve enough structure for operators to distinguish policy failure from transport failure:
+
+- `request_id`
+- `verdict` = `verified | rejected | unavailable`
+- `failure_code` = stable machine-readable code when `verdict != verified`
+- `checkpoint_commitment_hex`
+- `observed_wal_entry_hash_hex`
+- `observed_state_root_hex`
+- `observed_da_summary_hash` or equivalent digest
+- `verifier_policy_version`
+- `verifier_schema_version`
+- `evidence_ref` (path, object key, or digest for replay/audit)
+
+### Minimum failure code taxonomy
+
+At minimum, operators should be able to tell these cases apart without reading raw logs:
+
+- `timeout`
+- `unavailable`
+- `malformed_evidence`
+- `checkpoint_tuple_mismatch`
+- `da_summary_mismatch`
+- `policy_version_reject`
+- `schema_version_reject`
+- `non_canonical_checkpoint_surface`
+- `uncommitted_wal_reject`
+
+If the implementation cannot yet emit a stable set at least this rich, verifier-sidecar scope is still product-incomplete.
+
 ## Required failure semantics
 
 The sidecar path should remain **fail-closed** under at least these operator-visible cases:
