@@ -333,6 +333,18 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() 
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_accepts_wrapped_values() {
+    let out = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source='trnm.task'&eventType=`trnm.task.commit`&limit=\"3\"&cursor=  '2'  ",
+    )
+    .expect("wrapped values should normalize");
+    assert_eq!(out.source.as_deref(), Some("trnm.task"));
+    assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
+    assert_eq!(out.limit, 3);
+    assert_eq!(out.cursor, Some(2));
+}
+
+#[test]
 fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
     assert_eq!(
         parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
