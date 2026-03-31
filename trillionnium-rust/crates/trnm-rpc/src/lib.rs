@@ -1407,6 +1407,25 @@ mod tests {
                 },
                 error: Some("snapshot hash mismatch: expected=abc, actual=def".into()),
             },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 795,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 1,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 1,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("invalid window timestamp: observed=170, window_start=200".into()),
+            },
         ];
 
         for report in reports {
