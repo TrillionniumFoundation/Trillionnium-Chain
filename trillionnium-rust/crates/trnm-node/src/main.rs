@@ -383,10 +383,20 @@ fn wal_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-wal.toml")
 }
 
+fn file_contains_meaningful_recovery_surface(path: &Path) -> bool {
+    if !path.exists() {
+        return false;
+    }
+    match fs::read_to_string(path) {
+        Ok(raw) => !is_effectively_empty_toml_scaffold(&raw),
+        Err(_) => true,
+    }
+}
+
 fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
-    wal_file(wal_dir).exists()
-        || wal_meta_file(wal_dir).exists()
-        || checkpoint_file(wal_dir).exists()
+    file_contains_meaningful_recovery_surface(&wal_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&wal_meta_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&checkpoint_file(wal_dir))
 }
 
 fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
@@ -15644,7 +15654,7 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn resolve_wal_dir_auto_isolates_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
         let root = temp_wal_dir("default-wal-comment-checkpoint-only-root");
         let base = root.join(DEFAULT_BFT_WAL_DIR);
         fs::create_dir_all(&base).unwrap();
@@ -15685,18 +15695,14 @@ locked_block_hash = "stale-lock"
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
 
-        assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
-        assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
-        let notice = notice
-            .expect("auto mode should isolate comment-only checkpoint scaffolds too");
-        assert!(notice.contains("isolating this run"));
-        assert!(notice.contains(DEFAULT_BFT_WAL_DIR));
+        assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.is_none());
 
         let _ = fs::remove_dir_all(&root);
     }
 
     #[test]
-    fn resolve_wal_dir_auto_isolates_builtin_default_when_only_comment_only_wal_scaffold_exists() {
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_wal_scaffold_exists() {
         let root = temp_wal_dir("default-wal-comment-meta-only-root");
         let base = root.join(DEFAULT_BFT_WAL_DIR);
         fs::create_dir_all(&base).unwrap();
@@ -15737,11 +15743,8 @@ locked_block_hash = "stale-lock"
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
 
-        assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
-        assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
-        let notice = notice.expect("auto mode should isolate comment-only wal scaffolds too");
-        assert!(notice.contains("isolating this run"));
-        assert!(notice.contains(DEFAULT_BFT_WAL_DIR));
+        assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.is_none());
 
         let _ = fs::remove_dir_all(&root);
     }
@@ -15827,7 +15830,7 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn resolve_wal_dir_fail_if_exists_rejects_comment_only_wal_scaffold() {
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_wal_scaffold() {
         let wal_dir = temp_wal_dir("fail-if-exists-comment-only-wal-scaffold");
         fs::create_dir_all(&wal_dir).unwrap();
         fs::write(
@@ -15862,11 +15865,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let err = resolve_wal_dir(&args).unwrap_err();
-        assert!(err
-            .to_string()
-            .contains("refusing to reuse existing BFT WAL state"));
-        assert!(err.to_string().contains(&wal_dir.display().to_string()));
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(notice.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
