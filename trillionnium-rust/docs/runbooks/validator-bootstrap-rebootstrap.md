@@ -101,7 +101,7 @@ Minimum packet fields:
 - `ceremony_scope=` one of `local-rehearsal`, `operator-handoff`, or `public-mainnet-input`
 - the packet generator rejects any other `--ceremony-scope` value so a mistyped scope cannot silently drift into handoff evidence
 - `genesis_artifact_path=` and `genesis_artifact_sha256=` copied exactly once as the shared ceremony anchor
-- `validator_set_version=` identifying the exact validator membership list under review
+- `validator_set_version=` identifying the exact validator membership list under review; for packets that may feed `public-mainnet-input`, use a concrete version label (for example `mainnet-candidate-2026-03-31`) instead of the template/default `v1`
 - `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists
 - `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own
@@ -122,7 +122,7 @@ ceremony_id=mn04-bootstrap-YYYYMMDD-HHMMZ
 ceremony_scope=operator-handoff
 packet_generated_at=2026-03-31T06:21:00Z
 packet_distribution_path=/abs/path/or/ticket
-validator_set_version=v1
+validator_set_version=mainnet-candidate-2026-03-31
 startup_order_note=node1 -> node2 -> node3 -> node4
 rollback_owner=primary-operator
 abort_condition=genesis hash mismatch
@@ -193,7 +193,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --ceremony-scope public-mainnet-input \
   --packet-generated-at 2026-03-31T06:21:00Z \
   --packet-distribution-path /abs/path/or/ticket \
-  --validator-set-version v1 \
+  --validator-set-version mainnet-candidate-2026-03-31 \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
