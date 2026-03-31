@@ -5547,6 +5547,25 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_socket_like_node_id_literals_before_host_parsing() {
+        for node_id in ["127.0.0.1:26656", "[::1]", "[2001:db8::1]", "seed.example.com:26656"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("socket-like node_id literals must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain path separators (/ \\ :)")
+            );
+        }
+    }
+
+    #[test]
     fn requeue_uncommitted_txs_noop_on_empty_pick() {
         let mut mempool = VecDeque::from(vec![MockTx::CreateTask {
             task_id: 3001,
