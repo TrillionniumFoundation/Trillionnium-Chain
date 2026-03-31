@@ -42,8 +42,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
-        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
     anyhow::ensure!(
@@ -1105,7 +1109,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_path_separators_in_node_id() {
-        for node_id in ["node/alpha", r"node\\alpha", "node:alpha"] {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -1114,10 +1118,10 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 },
                 "inline",
             )
-            .expect_err("node_id path separators must fail closed");
+            .expect_err("node_id path or host-literal separators must fail closed");
             assert!(
                 err.to_string()
-                    .contains("node_id must not contain path separators"),
+                    .contains("node_id must not contain path or host-literal separators"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
