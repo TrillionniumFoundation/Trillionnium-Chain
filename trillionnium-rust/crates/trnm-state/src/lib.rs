@@ -5729,6 +5729,88 @@ mod tests {
     }
 
     #[test]
+    fn task_provenance_identity_and_timestamp_affect_state_root() {
+        let mut baseline = StateStore::new();
+        let mut changed_producer = StateStore::new();
+        let mut changed_timestamp = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 405,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("checkpoint evidence linked task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(trnm_types::TaskModelMetadata {
+                    model_id: Some("trnm-model".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(trnm_types::TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T06:45:00Z".into()),
+                    provenance_index: Some("prov-task-405".into()),
+                    privacy_tier: Some(trnm_types::PrivacyTier::Internal),
+                }),
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut producer_mutation = base_task.clone();
+        producer_mutation
+            .metadata
+            .as_mut()
+            .unwrap()
+            .provenance
+            .as_mut()
+            .unwrap()
+            .producer_did = Some("did:trnm:test:bob".into());
+
+        let mut timestamp_mutation = base_task.clone();
+        timestamp_mutation
+            .metadata
+            .as_mut()
+            .unwrap()
+            .provenance
+            .as_mut()
+            .unwrap()
+            .produced_at = Some("2026-03-12T06:46:00Z".into());
+
+        baseline.put_task_new(base_task).unwrap();
+        changed_producer.put_task_new(producer_mutation).unwrap();
+        changed_timestamp.put_task_new(timestamp_mutation).unwrap();
+
+        let baseline_root = baseline.state_root();
+        assert_ne!(
+            baseline_root,
+            changed_producer.state_root(),
+            "state_root must include task provenance producer_did so otherwise identical completed tasks from different provenance identities cannot hash identically"
+        );
+        assert_ne!(
+            baseline_root,
+            changed_timestamp.state_root(),
+            "state_root must include task provenance produced_at so otherwise identical completed tasks with different provenance timestamps cannot hash identically"
+        );
+    }
+
+    #[test]
     fn completed_unchallenged_retention_snapshot_changes_state_root() {
         let mut without_retention = StateStore::new();
         let mut with_retention = StateStore::new();
