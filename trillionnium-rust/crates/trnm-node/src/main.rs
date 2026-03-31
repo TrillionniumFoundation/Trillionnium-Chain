@@ -435,6 +435,13 @@ fn checkpoint_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-checkpoints.toml")
 }
 
+fn is_effectively_empty_toml_scaffold(raw: &str) -> bool {
+    raw.lines().all(|line| {
+        let without_comment = line.split_once('#').map_or(line, |(before, _)| before);
+        without_comment.trim().is_empty()
+    })
+}
+
 fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     let f = wal_meta_file(wal_dir);
     if !f.exists() {
@@ -442,7 +449,7 @@ fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if is_effectively_empty_toml_scaffold(&raw) {
         return Ok(vec![]);
     }
     let list: WalMetaList =
@@ -476,7 +483,7 @@ fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if is_effectively_empty_toml_scaffold(&raw) {
         return Ok(vec![]);
     }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
@@ -10709,6 +10716,38 @@ bootstrap_peers = ["127.0.0.1:27656"]
         let mut p = std::env::temp_dir();
         p.push(format!("trnm-node-{}-{}", name, now_unix_ms()));
         p
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# bootstrap placeholder\n   # retained until first checkpoint\n",
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# bootstrap placeholder\n\t# retained until first wal write\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
