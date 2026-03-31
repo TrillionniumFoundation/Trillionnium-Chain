@@ -161,7 +161,9 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
   cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
   printf 'command[3]=cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q\n'
   cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-  printf 'command[4]=cargo test -p trnm-state --test retention_restore_regression -q\n'
+  printf 'command[4]=cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q\n'
+  cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
+  printf 'command[5]=cargo test -p trnm-state --test retention_restore_regression -q\n'
   cargo test -p trnm-state --test retention_restore_regression -q
   echo 'result=PASS'
 ) | tee trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt
