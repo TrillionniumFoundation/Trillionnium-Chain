@@ -13,6 +13,13 @@ replay_cargo_term_color="never"
 replay_rust_backtrace="1"
 replay_cargo_build_jobs="1"
 
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
+
 # Keep RC evidence timestamps/log formatting deterministic across runners/locales.
 export TZ="${TZ:-$replay_tz}"
 export LC_ALL="${LC_ALL:-$replay_lc_all}"
@@ -63,6 +70,26 @@ fi
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
 EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
+lane_verify_command="<not-run>"
+
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
+  [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
+  [ -n "${EXPECTED_BRANCH_REF:-}" ] || { echo "lane identity failed: EXPECTED_BRANCH_REF is required when lane binding is enabled" >&2; exit 4; }
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  lane_verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "${EXPECTED_HEAD:-}" ]; then
+    lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  lane_verify_command="./scripts/v2/verify_lane_worktree.sh"
+  for arg in "${lane_verify_args[@]}"; do
+    printf -v quoted_arg '%q' "$arg"
+    lane_verify_command+=" $quoted_arg"
+  done
+  ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}"
+fi
 
 echo "[rc] output=$OUT"
 
@@ -156,7 +183,17 @@ cargo build --workspace | tee "$OUT/cargo-build.log"
 
 rollback_command="rm -rf $(printf '%q' "$OUT")"
 replay_out_dir="$BASE_OUT"
-replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' ALLOW_MISSING_RESOLVE_EVENT='${ALLOW_MISSING_RESOLVE_EVENT}' ALLOW_PARTIAL_EVENT_REPLAY='${ALLOW_PARTIAL_EVENT_REPLAY}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
+replay_lane_binding=""
+if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ]; then
+  replay_lane_binding+=" EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
+fi
+if [ -n "${EXPECTED_BRANCH_REF:-}" ]; then
+  replay_lane_binding+=" EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
+fi
+if [ -n "${EXPECTED_HEAD:-}" ]; then
+  replay_lane_binding+=" EXPECTED_HEAD='${EXPECTED_HEAD}'"
+fi
+replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' ALLOW_MISSING_RESOLVE_EVENT='${ALLOW_MISSING_RESOLVE_EVENT}' ALLOW_PARTIAL_EVENT_REPLAY='${ALLOW_PARTIAL_EVENT_REPLAY}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}'${replay_lane_binding} ./scripts/release_rc.sh"
 
 cat > "$OUT/manifest.txt" <<EOF
 release_id=rc-$TS
@@ -173,6 +210,10 @@ git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
 git_worktree_entry_begin
 $CURRENT_WORKTREE_ENTRY
 git_worktree_entry_end
+expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}
+expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}
+expected_head=${EXPECTED_HEAD:-<unset>}
+lane_verify_command=$lane_verify_command
 git_status_short_begin
 $GIT_STATUS_SHORT
 git_status_short_end

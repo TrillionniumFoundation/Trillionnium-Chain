@@ -13,6 +13,13 @@ replay_cargo_term_color="never"
 replay_rust_backtrace="1"
 replay_cargo_build_jobs="1"
 
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
+
 export TZ="${TZ:-$replay_tz}"
 export LC_ALL="${LC_ALL:-$replay_lc_all}"
 export LANG="${LANG:-$replay_lang}"
@@ -50,6 +57,26 @@ if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
   CURRENT_WORKTREE_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
 else
   CURRENT_WORKTREE_BRANCH_REF=""
+fi
+
+lane_verify_command="<not-run>"
+if [[ -n "${EXPECTED_WORKTREE_ROOT:-}" || -n "${EXPECTED_BRANCH_REF:-}" || -n "${EXPECTED_HEAD:-}" ]]; then
+  [[ -n "${EXPECTED_WORKTREE_ROOT:-}" ]] || { echo "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled" >&2; exit 4; }
+  [[ -n "${EXPECTED_BRANCH_REF:-}" ]] || { echo "lane identity failed: EXPECTED_BRANCH_REF is required when lane binding is enabled" >&2; exit 4; }
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  lane_verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [[ -n "${EXPECTED_HEAD:-}" ]]; then
+    lane_verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  lane_verify_command="./scripts/v2/verify_lane_worktree.sh"
+  for arg in "${lane_verify_args[@]}"; do
+    printf -v quoted_arg '%q' "$arg"
+    lane_verify_command+=" $quoted_arg"
+  done
+  ./scripts/v2/verify_lane_worktree.sh "${lane_verify_args[@]}"
 fi
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
@@ -152,6 +179,10 @@ find_challenge_reexec_entry() {
     printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
   fi
   echo "git_worktree_entry_end"
+  echo "expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}"
+  echo "expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}"
+  echo "expected_head=${EXPECTED_HEAD:-<unset>}"
+  echo "lane_verify_command=${lane_verify_command}"
   echo "git_status_short_begin"
   if [[ -n "$GIT_STATUS_SHORT" ]]; then
     printf '%s\n' "$GIT_STATUS_SHORT"
@@ -218,6 +249,16 @@ fi
 rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
 replay_out_dir="$BASE_OUT"
 replay_challenge_entry="$CHALLENGE_REEXEC_ENTRY"
+replay_lane_binding=""
+if [[ -n "${EXPECTED_WORKTREE_ROOT:-}" ]]; then
+  replay_lane_binding+=" EXPECTED_WORKTREE_ROOT='${EXPECTED_WORKTREE_ROOT}'"
+fi
+if [[ -n "${EXPECTED_BRANCH_REF:-}" ]]; then
+  replay_lane_binding+=" EXPECTED_BRANCH_REF='${EXPECTED_BRANCH_REF}'"
+fi
+if [[ -n "${EXPECTED_HEAD:-}" ]]; then
+  replay_lane_binding+=" EXPECTED_HEAD='${EXPECTED_HEAD}'"
+fi
 
 {
   echo ""
@@ -229,9 +270,9 @@ replay_challenge_entry="$CHALLENGE_REEXEC_ENTRY"
     echo "result=FAIL"
   fi
   if [[ -n "$replay_challenge_entry" ]]; then
-    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}'${replay_lane_binding} TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
   else
-    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}'${replay_lane_binding} ./scripts/run_local_release_evidence.sh"
   fi
   echo "rollback_command=$rollback_cmd"
   echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
