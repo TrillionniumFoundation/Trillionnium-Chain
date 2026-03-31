@@ -1,7 +1,7 @@
 use serde_json::json;
 use trnm_rpc::{
     AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse, GetTxResponse,
-    RpcErrorResponse, SendTxResponse, TaskMeteringDerivedQueryResponse,
+    RequestFullQueryResponse, RpcErrorResponse, SendTxResponse, TaskMeteringDerivedQueryResponse,
     TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TxStatus,
 };
 
@@ -211,4 +211,45 @@ fn contract_error_codes_stable() {
     assert_eq!(invalid.code, "INVALID_ADDRESS");
     assert_eq!(not_found.code, "ACCOUNT_NOT_FOUND");
     assert_eq!(tx_nf.code, "TX_NOT_FOUND");
+}
+
+#[test]
+fn contract_public_read_payloads_reject_unknown_top_level_fields() {
+    let event_err = serde_json::from_value::<EventQueryResponse>(json!({
+        "event_type":"commit",
+        "task_id":7,
+        "from_status":"Assigned",
+        "to_status":"Committed",
+        "actor":"worker-1",
+        "tx_id":11,
+        "block_height":3,
+        "state_root":"0xabc",
+        "ts_unix_ms":123,
+        "unexpected":"schema-drift"
+    }))
+    .expect_err("event contract should fail closed on unknown fields");
+    assert!(event_err.to_string().contains("unexpected"));
+
+    let request_err = serde_json::from_value::<RequestFullQueryResponse>(json!({
+        "request": {
+            "request_id":"req-1",
+            "task_id":7,
+            "channel":"discord",
+            "user_id":"u-1",
+            "session_id":"s-1",
+            "text":"hello",
+            "idempotency_key":"idem-1",
+            "status":"accepted",
+            "created_at_unix_ms":123
+        },
+        "verifier_status": null,
+        "resolution_code": null,
+        "result_hash": null,
+        "commit_tx_hash": null,
+        "reveal_tx_hash": null,
+        "events": [],
+        "unexpected": true
+    }))
+    .expect_err("request contract should fail closed on unknown fields");
+    assert!(request_err.to_string().contains("unexpected"));
 }

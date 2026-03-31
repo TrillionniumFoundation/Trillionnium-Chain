@@ -22,6 +22,7 @@ pub use transfer::{
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringPolicyQueryResponse {
     pub snapshot_version: u8,
     pub min_accept_work_units: u128,
@@ -35,6 +36,7 @@ pub struct TaskMeteringPolicyQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringDerivedQueryResponse {
     pub path: String,
     pub accept_floor_pass: bool,
@@ -45,6 +47,7 @@ pub struct TaskMeteringDerivedQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringQueryResponse {
     pub workload_class: String,
     pub metering_schema: String,
@@ -63,6 +66,7 @@ pub struct TaskMeteringQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TaskQueryResponse {
     pub task_id: u64,
     pub status: TaskStatus,
@@ -242,6 +246,7 @@ impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct EventQueryResponse {
     pub event_type: String,
     pub task_id: u64,
@@ -271,6 +276,7 @@ pub struct EventQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MessageRequestQueryResponse {
     pub request_id: String,
     pub task_id: u64,
@@ -284,6 +290,7 @@ pub struct MessageRequestQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RequestFullQueryResponse {
     pub request: MessageRequestQueryResponse,
     pub verifier_status: Option<String>,
@@ -302,6 +309,7 @@ pub struct AccountState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountBalanceQueryResponse {
     pub address: String,
     pub balance: u128,
@@ -309,6 +317,7 @@ pub struct AccountBalanceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountNonceQueryResponse {
     pub address: String,
     pub nonce: u64,
@@ -331,6 +340,7 @@ pub struct FaucetRequestResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RpcErrorResponse {
     pub code: &'static str,
     pub message: String,
