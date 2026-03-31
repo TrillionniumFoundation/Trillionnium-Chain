@@ -130,6 +130,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
     path.is_absolute()
+        && path.parent().is_some()
         && !path
             .components()
             .any(|component| matches!(component, Component::CurDir | Component::ParentDir))

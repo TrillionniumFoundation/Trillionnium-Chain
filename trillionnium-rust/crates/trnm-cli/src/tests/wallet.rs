@@ -279,6 +279,27 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
             .contains("must be an absolute normalized path"),
         "unexpected error: {read_err}"
     );
+
+    let root_write_err = write_key(
+        std::path::Path::new("/"),
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        root_write_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {root_write_err}"
+    );
+
+    let root_read_err = read_key(std::path::Path::new("/"), "alice").unwrap_err();
+    assert!(
+        root_read_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {root_read_err}"
+    );
 }
 
 #[test]
