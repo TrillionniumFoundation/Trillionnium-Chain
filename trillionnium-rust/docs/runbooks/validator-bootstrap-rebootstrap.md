@@ -170,8 +170,18 @@ python3 scripts/v2/check_validator_config_bundle.py \
   configs/node2.toml \
   configs/node3.toml \
   configs/node4.toml
+python3 scripts/v2/check_validator_config_bundle.py \
+  --emit-ceremony-packet \
+  --genesis-artifact-path /abs/path/to/genesis.json \
+  --genesis-artifact-sha256 <sha256> \
+  configs/node1.toml \
+  configs/node2.toml \
+  configs/node3.toml \
+  configs/node4.toml
 cargo check -p trnm-node -q
 ```
+
+The `--emit-ceremony-packet` mode is meant to reduce operator transcription drift: it reuses the validated `node_id` / `config_path` / `p2p_addr` / `rpc_addr` tuple from the actual config bundle instead of retyping each `validator_entry=` by hand.
 
 What this proves:
 - the named validator config bundle has no duplicate node identity or reused listen addresses
