@@ -992,8 +992,15 @@ fn default_wallet_store() -> PathBuf {
             }
         }
     }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".trnm").join("wallets")
+
+    let home_root = std::env::var("HOME")
+        .ok()
+        .map(PathBuf::from)
+        .filter(|path| wallet_store_path_is_safe(path))
+        .or_else(|| std::env::current_dir().ok().filter(|path| path.is_absolute()))
+        .unwrap_or_else(|| PathBuf::from("/"));
+
+    home_root.join(".trnm").join("wallets")
 }
 
 fn wallet_file(store: &Path, name: &str) -> PathBuf {
@@ -2608,6 +2615,30 @@ mod tests {
             None => std::env::remove_var("HOME"),
         }
         let _ = std::fs::remove_dir_all(&home);
+    }
+
+    #[test]
+    fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        std::env::remove_var("TRNM_WALLET_STORE");
+
+        let cwd = std::env::current_dir().unwrap();
+
+        std::env::remove_var("HOME");
+        assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+        std::env::set_var("HOME", "./relative-home");
+        assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
     }
 
     #[test]
