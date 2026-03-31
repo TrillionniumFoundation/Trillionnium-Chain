@@ -16,6 +16,7 @@ bootstrap/handoff use:
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -27,6 +28,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 REQUIRED_FIELDS = ("node_id", "rpc_addr", "p2p_addr")
+SHA256_HEX_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
 
 def looks_like_placeholder(value: str) -> bool:
@@ -231,6 +233,11 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires an explicit ceremony_id instead of the template default"
+        )
+
+    if not SHA256_HEX_RE.fullmatch(args.genesis_artifact_sha256):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires genesis_artifact_sha256 to be a 64-character hex sha256 digest"
         )
 
 

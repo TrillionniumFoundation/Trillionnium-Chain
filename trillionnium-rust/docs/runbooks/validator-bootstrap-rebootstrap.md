@@ -207,6 +207,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
 Fail-closed rule for generated packets:
 - if `packet_generated_at=` or `packet_distribution_path=` is still a placeholder when the packet is shared for operator acknowledgment, do not treat the packet as ceremony-ready
 - if `ceremony_scope=public-mainnet-input`, require operators to replace `<owner>` / `<chat/email/oncall>` / `<optional-ack-path>` placeholders before startup instead of relying on a later cleanup pass
+- if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_sha256=` to be a real 64-character hex SHA-256 digest instead of a shorthand label or truncated checksum
 
 What this proves:
 - the named validator config bundle has no duplicate node identity or reused listen addresses
