@@ -216,6 +216,18 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
     let penalty = breakdown.penalty;
     let reputation_component_applied = market_reputation_component_applied(&breakdown);
     let reputation_score_delta = market_reputation_score_delta(&breakdown);
+    let reputation_adjustment_amount = if reputation_score_delta < 0 {
+        reputation_weight
+    } else {
+        penalty
+    };
+    let reputation_adjustment_direction = if reputation_score_delta < 0 {
+        "reward"
+    } else if reputation_score_delta > 0 {
+        "penalty"
+    } else {
+        "neutral"
+    };
     let winner_score = breakdown.effective_score;
 
     task.status = "matched".into();
@@ -248,7 +260,10 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "reputation_reward_amount": reputation_weight,
         "penalty": penalty,
         "reputation_penalty": penalty,
+        "reputation_penalty_amount": penalty,
         "penalty_amount": penalty,
+        "reputation_adjustment_direction": reputation_adjustment_direction,
+        "reputation_adjustment_amount": reputation_adjustment_amount,
         "reputation_score_delta": reputation_score_delta,
         "final_score": winner_score,
         "effective_score": winner_score,
