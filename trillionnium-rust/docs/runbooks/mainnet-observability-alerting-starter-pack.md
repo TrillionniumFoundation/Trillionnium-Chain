@@ -151,6 +151,25 @@ Expected action:
 - record in dashboard notes / shift handoff
 - no page by default
 
+## Severity promotion / override rules
+
+Use these override rules before closing or reclassifying an incident.
+They keep the starter alert set from drifting when the same symptom appears across multiple panels.
+
+| Current class | Promote when | Target class | Why |
+| --- | --- | --- | --- |
+| `sev3` | the same signal fires in 2 consecutive windows or appears on more than 1 validator / endpoint / worker queue | `sev2` | persistence or spread means the issue is no longer informational noise |
+| `sev2` | user-facing read paths, validator participation, or worker receipt flow are degraded for 2 consecutive windows | `sev1` | bounded incidents become launch blockers once they threaten live service continuity |
+| `sev2` | replay / rollback evidence is missing during active mitigation | `sev1` | responders should page before they improvise recovery from memory |
+| `sev1` | dashboard math, label mapping, or emitted evidence identity is contradicted or missing | `sev0` | the observability plane itself is no longer trustworthy |
+| any | 2 signals with different severities fire together and one is `contract-drift` or `replay-failure` | higher of the two, with `contract-drift` winning ties | evidence-plane failures take precedence over availability symptoms because they invalidate operator interpretation |
+
+Additional rules:
+
+- do not downgrade a live incident while `needs_replay=yes` and the quoted `replay_command=` has not been attempted or verified;
+- do not downgrade a live incident while `needs_rollback=yes` and the rollback decision is still under discussion;
+- if impact is unknown, classify at the higher plausible severity until blast radius is bounded.
+
 ---
 
 ## Starter alert set
