@@ -65,7 +65,9 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
         .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
-    let dns_like_host_label = node_id
+    let dns_like_host_literal = node_id
+        .strip_suffix('.')
+        .unwrap_or(node_id)
         .split('.')
         .all(|label| {
             !label.is_empty()
@@ -1243,7 +1245,9 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "[::1]",
             "[2001:db8::1]",
             "seed.example.com",
+            "seed.example.com.",
             "validator-1.mainnet.local",
+            "validator-1.mainnet.local.",
         ] {
             let err = validate_node_config(
                 NodeConfig {
