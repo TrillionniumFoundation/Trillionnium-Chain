@@ -296,6 +296,52 @@ TRNM mainnet economics freeze review
 This keeps freeze review from scattering across issue comments or oral history and makes the
 operator handoff auditable even before a dedicated runtime/config query exists.
 
+## Freeze decision rubric
+
+Use the same result words everywhere in the launch packet so MN14 evidence does not drift
+between helper docs, rehearsal artifacts, and the final GO/NOGO memo.
+
+### `GO`
+
+Only mark the economics tuple `GO` when all of the following are true:
+- the full tuple is frozen with explicit values or named launch constants;
+- operator inspection path is written and reproducible from the repo/runbook surface;
+- at least one targeted mempool gate and one retention-side gate were run green against the
+  current tuple review;
+- sponsor revocation semantics, duplicate-retention behavior, and retention payer fallback are
+  stated without ambiguity;
+- operator/public wording matches the frozen tuple without broader marketing shorthand.
+
+### `CONDITIONAL GO`
+
+Use `CONDITIONAL GO` when the tuple is mostly reviewable but at least one launch-critical
+edge still needs tightening before any public-mainnet claim, for example:
+- the tuple is written but not yet bound to named config/constants;
+- the gates are green but the evidence artifact is partial or not yet attached to the launch packet;
+- sponsor revocation, drain-only duplicate retention, or retention-budget exhaustion fallback is
+  described in prose but not yet pinned as an operator-facing rule;
+- operator/public wording still uses softer ingress language than the actual frozen boundary.
+
+### `NO-GO`
+
+Mark the economics tuple `NO-GO` immediately if any of the following hold:
+- any public transaction class is effectively uncapped `free-ingress` under sustained load;
+- sponsor-backed admission lacks an explicit authority boundary or hard budget cap;
+- retention-heavy paths have no payer-of-record or no exhaustion fallback;
+- the anti-spam / admission floor can still move without auditable authority and timing rules;
+- the review packet cannot show one concrete inspection path plus one concrete mempool/retention
+  evidence slice.
+
+### Minimal reviewer shortcut
+
+If the reviewer has less than five minutes, ask only these three questions:
+1. can I print the exact frozen tuple right now?
+2. can I point to one green admission gate and one green retention gate tied to that tuple?
+3. would the public wording cause a reasonable operator to infer a broader subsidy/free-ingress
+   surface than the tuple actually allows?
+
+If any answer is `no`, keep the economics package below `GO`.
+
 ## Initial evidence hooks already in tree
 
 Until the final launch parameter surface exists, freeze review should at minimum point to
