@@ -189,6 +189,7 @@ pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::Parser;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
         let now_nanos = SystemTime::now()
@@ -201,6 +202,72 @@ mod tests {
             std::process::id(),
             now_nanos
         ))
+    }
+
+    fn default_args() -> Args {
+        Args::parse_from(["trnm-node"])
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_isolates_existing_builtin_default_state_for_safe_rejoin() {
+        let sandbox = temp_wal_dir("resolve-auto-isolates-default");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "[[checkpoints]]\nheight = 1\nstate_root_hex = \"aa\"\nwal_entry_hash_hex = \"bb\"\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_ne!(resolved, requested);
+        assert!(resolved.starts_with(&requested));
+        assert!(
+            note.unwrap().contains("isolating this run"),
+            "expected auto isolation note for existing default-path state"
+        );
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_preserves_explicit_custom_recovery_path() {
+        let wal_dir = temp_wal_dir("resolve-auto-preserves-custom");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "entries = []\n").unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::Auto;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_recovery_surface() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-checkpoint-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "[[checkpoints]]\nheight = 7\nstate_root_hex = \"root-a\"\nwal_entry_hash_hex = \"hash-a\"\n").unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let err = resolve_wal_dir(&args).unwrap_err().to_string();
+        assert!(
+            err.contains("refusing to reuse existing BFT WAL state"),
+            "unexpected fail-if-exists error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
