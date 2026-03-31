@@ -287,6 +287,20 @@ When passing bootstrap status to another validator/operator, record:
 - whether the run was bootstrap or re-bootstrap
 - one-line blocker if the run is not cleanly reproducible
 
+If the bootstrap is being cited in a rehearsal/handoff packet rather than a local-only sanity pass, also resolve the generated evidence paths with the assigned lane values instead of quoting "latest artifact" from shell memory:
+
+```bash
+./scripts/v2/extract_release_handoff_fields.sh \
+  --expected-worktree-root /abs/path/from-ticket \
+  --expected-branch-ref refs/heads/lane/assigned-branch
+```
+
+Preserve the resulting `summary_path=`, `manifest_path=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields next to any PASS/GO language.
+
+Fail-closed rule:
+- if either artifact path cannot be resolved, do not cite the bootstrap as handoff-ready evidence
+- if `git_worktree_branch_ref_match` is not `true`, stop instead of treating the bootstrap as "close enough"
+
 ## Non-go conditions
 
 Treat the bootstrap as **No-Go** if any of the following is true:
