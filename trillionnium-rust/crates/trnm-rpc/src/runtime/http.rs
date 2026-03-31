@@ -654,6 +654,20 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
                 "/query-capability-audit/alice%5cextra",
                 "/query-capability-audit/"
             ),
