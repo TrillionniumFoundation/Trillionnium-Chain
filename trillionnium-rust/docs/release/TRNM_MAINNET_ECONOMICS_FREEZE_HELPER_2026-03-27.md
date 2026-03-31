@@ -124,6 +124,24 @@ Why this is the minimum useful slice:
 If any command above fails, the economics tuple should remain at least `CONDITIONAL GO`
 until the mismatch is explained or the freeze packet is tightened.
 
+### Existing gate coverage mapped to the freeze tuple
+
+Before a first-class economics config/query surface exists, reviewers still need a crisp
+answer to: "which current gates actually defend each frozen boundary?" The mapping below
+keeps that review bounded and auditable.
+
+| Freeze tuple element | Current gate/evidence anchor | What it proves today |
+| --- | --- | --- |
+| ingress class split | `cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q` | When public capacity is hard-stopped, sponsor-backed and free-ingress probe noise cannot make the externally visible admission surface look open again. |
+| sponsor boundary / duplicate retention | `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` | Once a reopened shared slot is re-consumed, sponsor/free-ingress retries remain classification-only until a real drain happens again; retry noise cannot silently widen sponsor-backed headroom. |
+| sponsor boundary / borrowed-slot discipline | `cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` | If the last admissible shared slot is already borrowed, fresh cross-class retries stay backpressured until that exact borrowed occupant drains. |
+| retention pricing / retention safety | `cargo test -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. |
+| tuple integrity packet | `cargo check -p trnm-mempool -p trnm-pouw -q` | The current mempool / proof-retention surfaces still compile together as one economics-review slice, rather than drifting independently. |
+
+This is intentionally **evidence of current guardrails**, not proof that the economics tuple is
+fully frozen. Launch review must still bind these behaviors to named launch constants,
+authorities, and operator-visible inspection commands.
+
 ### Minimal evidence capture companion
 
 When the rehearsal slice is run for a launch review, preserve the exact command packet and
