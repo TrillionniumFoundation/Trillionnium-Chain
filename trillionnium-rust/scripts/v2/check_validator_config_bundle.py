@@ -29,6 +29,11 @@ except ModuleNotFoundError:  # pragma: no cover
 REQUIRED_FIELDS = ("node_id", "rpc_addr", "p2p_addr")
 
 
+def looks_like_placeholder(value: str) -> bool:
+    trimmed = value.strip()
+    return trimmed.startswith("<") and trimmed.endswith(">") and len(trimmed) >= 3
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -198,6 +203,28 @@ def load_config(path: Path) -> dict[str, object]:
     return data
 
 
+def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
+    if args.ceremony_scope != "public-mainnet-input":
+        return
+
+    required_exact_values = {
+        "ceremony_id": args.ceremony_id,
+        "packet_generated_at": args.packet_generated_at,
+        "packet_distribution_path": args.packet_distribution_path,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_path": args.genesis_artifact_path,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    placeholder_fields = [
+        field for field, value in required_exact_values.items() if looks_like_placeholder(value)
+    ]
+    if placeholder_fields:
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires explicit values for "
+            + ", ".join(placeholder_fields)
+        )
+
+
 def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]) -> None:
     print("ceremony_id=" + args.ceremony_id)
     print("ceremony_scope=" + args.ceremony_scope)
@@ -297,6 +324,7 @@ def main(argv: list[str]) -> int:
         "validator config bundle OK: " + ", ".join(str(Path(raw_path)) for raw_path in args.configs)
     )
     if args.emit_ceremony_packet:
+        validate_ceremony_packet_metadata(args)
         print()
         emit_ceremony_packet(args, entries)
     return 0
