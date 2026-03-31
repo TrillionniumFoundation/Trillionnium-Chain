@@ -175,6 +175,31 @@ assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
   exit 1
 }
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  if [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
+    printf 'artifact mismatch for expected worktree root: expected=%s summary=%s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  if [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for expected worktree branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ "$summary_expected_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for artifact expected branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF" "$summary_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_HEAD" ]; then
+  if [ "$summary_head" != "$EXPECTED_HEAD" ]; then
+    printf 'artifact mismatch for expected head: expected=%s summary=%s\n' "$EXPECTED_HEAD" "$summary_head" >&2
+    exit 1
+  fi
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'git_toplevel=%s\n' "$summary_toplevel"
