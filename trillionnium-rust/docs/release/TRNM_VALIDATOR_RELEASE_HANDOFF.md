@@ -66,15 +66,17 @@ Interpretation rule:
 - `git status --short` must be empty for clean-tree release rehearsals
 - `git worktree list --porcelain` should show the current path attached to the branch you intend to rehearse; if branch/path pairing is different from expectation, stop instead of "fixing it later"
 
-For multi-worktree validator rehearsals, prefer the shared fail-closed helper instead of eyeballing the shell prompt or rewriting the assertion block by hand:
+For multi-worktree validator rehearsals, prefer the shared fail-closed helper instead of eyeballing the shell prompt or rewriting the assertion block by hand. **Important:** set the expected values from the ticket/lane assignment, not by re-reading the current shell state, otherwise the check only proves the current worktree is self-consistent:
 
 ```bash
-EXPECTED_WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
-EXPECTED_BRANCH_REF="refs/heads/$(git branch --show-current)"
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
+EXPECTED_BRANCH_REF="lane/assigned-branch" # or refs/heads/lane/assigned-branch
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+After the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` output verbatim in the ticket / handoff note before generating evidence artifacts. Those three lines are the pre-run identity anchor that later `summary.txt` / `manifest.txt` fields must match; do not replace them with paraphrases like "same branch as before".
 
 If you need the raw shell assertions for an air-gapped/debugging context, the equivalent block is:
 
@@ -168,7 +170,7 @@ Minimum evidence files to preserve:
 
 Interpretation rule:
 - `summary.txt` must end with `result=PASS`
-- `git_status_summary=clean` must be present before anyone treats the evidence as handoff-grade
+- `generated_at=` and `git_status_summary=clean` must both be present before anyone treats the evidence as handoff-grade
 - if `challenge_reexec=FAIL(entry_not_found)`, treat the rehearsal as incomplete rather than silently acceptable
 
 ### 3. RC gate rehearsal
@@ -200,6 +202,8 @@ Manifest/evidence identity fields to verify before handoff:
 - `git_branch=`, `git_head=`, and `git_head_state=` match the branch/commit attachment state under review
 - `git_worktree_path=` matches the exact worktree path you intended to run from
 - `git_worktree_branch_ref=` matches the branch binding shown by `git worktree list --porcelain`
+- `git_expected_worktree_branch_ref=` matches the lane/ticket-assigned ref you expected to review
+- `git_worktree_branch_ref_match=true` (treat `false` / `unknown` as a stop signal rather than a soft warning)
 - `git_worktree_entry_begin` … `git_worktree_entry_end` contains the current worktree stanza, so path/branch binding can be audited from the artifact itself
 - `git_status_summary=clean`
 - `git_status_short_begin` … `git_status_short_end` is empty for clean-tree rehearsals
@@ -212,8 +216,8 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
 | Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
-| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_branch=`, `git_head=`, `git_head_state=`, `git_status_summary=`, `generated_at=`, `truth_source=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
-| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
+| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
+| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
 ### Canonical path resolution commands
 
@@ -236,6 +240,8 @@ printf 'manifest_path=%s\n' "$manifest_path"
 Operator rule:
 - if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
 - quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
+- path resolution alone is **not** lane-identity proof: after resolving the files, also verify the artifact `git_worktree_path=` / `git_worktree_branch_ref=` against the lane-assigned worktree/ref from the ticket instead of assuming “latest artifact under this checkout” is automatically the assigned lane
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step
 
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
@@ -246,10 +252,12 @@ Operator discipline:
 
 When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
 
-Preferred helper (fail-closed on missing paths or cross-artifact identity mismatches):
+Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, or drift from the lane/ticket-assigned worktree/ref when you provide them; by default it resolves the latest artifacts under the `trillionnium-rust` root derived from the helper script path; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
 
 ```bash
-./scripts/v2/extract_release_handoff_fields.sh
+./scripts/v2/extract_release_handoff_fields.sh \
+  --expected-worktree-root "/abs/path/from-ticket" \
+  --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
@@ -267,13 +275,16 @@ manifest_path="$latest_rc_dir/manifest.txt"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|result|rollback_command|replay_command)=/ { print }' "$summary_path"
-awk -F= '/^(git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|truth_source|rollback_command|replay_command)=/ { print }' "$manifest_path"
+awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command|challenge_reexec_entry|replay_env_trnm_challenge_reexec_entry)=/ { print }' "$summary_path"
+awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
 ```
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, or `git_worktree_branch_ref=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
+- treat `git_worktree_branch_ref_match=true` as mandatory; `false` / `unknown` is a stop signal even if the rest of the fields look plausible
+- preserve both `summary_generated_at=` and `manifest_generated_at=` from the artifacts/helper output; they do **not** need to be identical, but they must both exist so operators can audit when each artifact was generated instead of collapsing them into one hand-copied timestamp
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `replay_command=` instead of dropping them from the handoff note
 - quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Forbidden operator shortcuts
@@ -353,7 +364,12 @@ For deterministic re-runs, prefer the exact replay command emitted by the artifa
 - `summary.txt` contains `replay_command=` for local evidence
 - `manifest.txt` contains `replay_command=` for RC rehearsal
 
-This prevents drift in locale, timezone, build-job parallelism, and output directory selection.
+Quoting rule:
+- when `summary.txt` exposes both `env_*` and `replay_env_*`, treat `replay_env_*` as the deterministic audit/replay baseline and do not rewrite the run as a shorter shell without those fields
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim in the handoff note together with `replay_command=`; if the value is `<entry_not_found>`, preserve that literal rather than rewriting it as an implicit TODO
+- when quoting `manifest.txt`, keep `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` adjacent to `replay_command=` / `rollback_command=` so a local RC rehearsal is not misread as a public-mainnet readiness proof
+
+This prevents drift in locale, timezone, build-job parallelism, output directory selection, and release-readiness interpretation.
 
 ## Common failure interpretation
 

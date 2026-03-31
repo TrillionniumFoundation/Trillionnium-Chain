@@ -5,6 +5,8 @@
 Define the **smallest credible candidate stack** for a stage-1 internal devnet / RC-prep branch, based on already-validated path-scoped commits harvested from the current dirty main worktree.
 
 This document is intentionally conservative.
+It is also a **historical candidate-stack snapshot captured on 2026-03-24**, not a rolling truth source for the current repository tip.
+When reusing it for a fresh RC rehearsal, record the live `git rev-parse origin/main` output alongside this document instead of treating the embedded base commit below as a timeless reference.
 It answers:
 
 1. Which commits are already clean enough to form a candidate stack?
@@ -192,7 +194,26 @@ In this order:
 7. `ad1d4632b`
 8. `51a639c76`
 
-### Step 3 — run minimum replay verification on the clean branch
+### Step 3 — bind the rehearsal to the assigned worktree/ref before any RC script
+Before `testnet_preflight.sh`, `run_local_release_evidence.sh`, or `release_rc.sh`, record the exact lane/ticket worktree and branch from the release note instead of deriving expectations from the current shell prompt.
+
+Recommended fail-closed helper (`--expected-branch-ref` accepts either a short branch name like `rc/stage1-devnet-20260324` or a full ref like `refs/heads/rc/stage1-devnet-20260324`):
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
+EXPECTED_BRANCH_REF="refs/heads/rc/stage1-devnet-20260324"
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+```
+
+Interpretation rule:
+- do not replace `EXPECTED_*` with values copied back out of the current shell session; use the lane assignment / ticket values
+- if the helper fails, stop instead of continuing to release evidence generation
+- after the helper passes, record `git rev-parse HEAD` together with the verified worktree/ref in the handoff note so later `summary.txt` / `manifest.txt` identity checks have an explicit pre-run anchor
+- even after path-resolving the latest `run/health/evidence-*` or `release/rc-*` artifact, still compare `git_worktree_path=` / `git_worktree_branch_ref=` inside those files against the ticket-assigned worktree/ref; “latest artifact under this checkout” is not by itself lane-identity proof
+
+### Step 4 — run minimum replay verification on the clean branch
 Required:
 - `cargo test -p trnm-state --lib -- --test-threads=1`
 - `cargo test -p trnm-state --test state_root_regression -- --test-threads=1`

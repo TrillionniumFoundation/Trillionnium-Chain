@@ -38,6 +38,37 @@ That perimeter includes:
 - unified observability/alerting,
 - and release-grade economics / anti-spam policy freeze.
 
+## Evidence boundary (RC / rehearsal / local proof)
+
+RC rehearsal success, validator handoff completeness, or local release-evidence PASS are **supporting evidence only**.
+They do **not** collapse public-mainnet P0 blockers by themselves.
+
+In particular:
+- `RELEASE_READINESS.md` answers whether the current repository snapshot should be described as release-ready.
+- `TRNM_VALIDATOR_RELEASE_HANDOFF.md` answers how an operator should verify branch/worktree identity, preserve artifacts, and decide GO / CONDITIONAL GO / NO-GO for a rehearsal.
+- `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` answers what still blocks a **public mainnet claim**.
+
+Interpretation rule:
+- local `testnet_preflight.sh` PASS, `run_local_release_evidence.sh` PASS, or `release_rc.sh` PASS can prove that a branch is reproducible enough for an RC rehearsal;
+- they cannot by themselves prove that peer formation/sync, validator lifecycle, secure signer path, stable explorer/indexer, unified observability, and launch economics are closed for public mainnet.
+
+### RC evidence integrity minimum checklist
+
+Before anyone upgrades an RC rehearsal from "useful local evidence" to "serious launch decision input", require all of the following together:
+- the assigned worktree path and branch ref from the lane prompt / release ticket, recorded before any release script runs
+- a fail-closed preflight run of `./scripts/v2/verify_lane_worktree.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` using the ticket-assigned values directly (the branch argument may be either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`), rather than first inferring values from the current shell and then reusing those inferred values as the expectation
+- a path-resolved `summary.txt` from `run/health/evidence-*`
+- a path-resolved `manifest.txt` from `release/rc-*`
+- matching `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` across those artifacts
+- preserved `git_status_summary=clean` and generated timestamps next to those identity fields, so operators can prove the rehearsal came from a clean tree and quote the exact artifact generation moment instead of relying on shell memory
+- a direct comparison showing the artifact `git_worktree_path=` / `git_worktree_branch_ref=` also match the lane-assigned path/ref, with `git_expected_worktree_branch_ref=` preserving the ticket-assigned target and `git_worktree_branch_ref_match=true` required instead of treated as a soft warning
+- preserved `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` fields next to the quoted PASS/GO language
+- verbatim `rollback_command=` and `replay_command=` copied from the generated artifact, not rewritten from shell memory
+
+Fail-closed rule:
+- if either artifact path is unresolved, or any of the identity/truth-source fields drift across artifacts, treat the rehearsal as **evidence-incomplete** rather than "probably fine"
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (the branch argument may be either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`) so this comparison fails closed instead of depending on manual copy/paste
+
 ---
 
 ## What already exists (do not re-solve)
@@ -398,6 +429,11 @@ Anything not required for the chosen day-1 promise must not be allowed to silent
 - adversarial spam/fairness rehearsal
 - incident rollback drill
 - go/no-go document for public launch
+- one path-resolved rehearsal evidence bundle that names the exact `summary.txt` / `manifest.txt` used for the decision, together with matching `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields; prefer `./scripts/v2/extract_release_handoff_fields.sh` so the handoff fails closed on missing artifacts or cross-artifact identity drift instead of relying on manually recopied field snippets
+
+Interpretation rule:
+- a Week-4 rehearsal is not "mainnet-ready evidence" unless the operator can point to concrete artifact paths and those identity fields agree across the local evidence summary and RC manifest;
+- quoting PASS lines without the artifact paths and identity fields is only anecdote, not launch evidence.
 
 ---
 

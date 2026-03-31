@@ -9,11 +9,14 @@ Fail-closed helper for lane/ticket-bound validator release rehearsals.
 It verifies the current git worktree root, attached branch ref, and optional HEAD
 against the supervisor-assigned values, then prints the resolved identity and the
 matching `git worktree list --porcelain` stanza for artifact capture.
+`--expected-branch-ref` accepts either a full ref (for example
+`refs/heads/lane/foo`) or a short branch name (for example `lane/foo`).
 EOF
 }
 
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
+EXPECTED_BRANCH_REF_CANONICAL=""
 EXPECTED_HEAD=""
 
 require_nonempty_value() {
@@ -112,6 +115,20 @@ case "$EXPECTED_BRANCH_REF" in
     ;;
 esac
 
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
+EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2
   exit 1
@@ -142,8 +159,8 @@ CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURREN
   exit 1
 }
 
-[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF" ] || {
-  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF" "$CURRENT_BRANCH_REF" >&2
+[ "$CURRENT_BRANCH_REF" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+  printf 'branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$CURRENT_BRANCH_REF" >&2
   exit 1
 }
 
