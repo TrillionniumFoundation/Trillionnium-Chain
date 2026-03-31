@@ -131,6 +131,63 @@ Interpretation hints:
 
 This keeps pager handoff text append-stable even if dashboards differ across environments.
 
+## Severity mapping
+
+Use one small severity vocabulary across dashboards, pages, and incident tickets.
+This avoids the current blocker where alert thresholds exist locally but operators still classify incidents differently.
+
+- `sev0`
+  - Meaning: observability plane itself is untrustworthy or the chain cannot be safely operated without immediate human intervention.
+  - Examples:
+    - `contract-drift` because the conservation invariant broke
+    - repeated page-worthy oracle failures together with missing/contradictory evidence artifacts
+  - Expected action: page immediately, freeze automated interpretation of oracle alerts until evidence is revalidated.
+
+- `sev1`
+  - Meaning: mainnet-impacting degradation is active or highly likely.
+  - Examples:
+    - `accepts-stalled` persists while `sample_count` keeps moving
+    - `quorum-collapse` persists across consecutive windows
+  - Expected action: page on-call, open incident, capture replay/rollback pointers.
+
+- `sev2`
+  - Meaning: degraded but still attributable; operators have time to confirm the blast radius before escalation.
+  - Examples:
+    - sustained `stale-wave`
+    - `drift-anomaly` with healthy source cardinality but rising reject ratio
+  - Expected action: investigate within the active on-call window and promote to `sev1` if persistence or spread increases.
+
+- `sev3`
+  - Meaning: informative or early-warning signal only.
+  - Examples:
+    - one-off reject blip that self-recovers
+    - ingest latency trend drift without acceptance impact
+  - Expected action: record in dashboard notes or shift handoff; no page by default.
+
+## Replay / rollback linkage for incidents
+
+Every `sev0`/`sev1` incident should carry one evidence pointer block so responders do not have to reconstruct replay state from memory.
+Prefer verbatim fields emitted by existing evidence scripts over hand-written shell summaries.
+
+Minimal incident evidence block:
+
+- `severity`: `<sev0|sev1|sev2|sev3>`
+- `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `summary_line`: `<operator-visible summary line>`
+- `truth_source`: `<value copied from summary.txt/manifest.txt when present>`
+- `evidence_scope`: `<value copied from summary.txt/manifest.txt when present>`
+- `summary_path`: `<abs-path-to-summary.txt|unknown>`
+- `manifest_path`: `<abs-path-to-manifest.txt|unknown>`
+- `rollback_command`: `<verbatim emitted value|unknown>`
+- `replay_command`: `<verbatim emitted value|unknown>`
+
+Responder rules:
+
+1. Prefer the exact `rollback_command=` / `replay_command=` emitted by generated artifacts.
+2. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
+3. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.
+4. If observability data and replay evidence disagree, treat that as `sev0` until the metrics contract or evidence bundle is reconciled.
+
 ## Operator note
 
 These metrics are already guarded by schema/serialization tests in `trnm-rpc` and `trnm-oracle`. Keep alert rules append-stable and prefer adding new metrics over renaming existing ones.
