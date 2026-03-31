@@ -186,6 +186,11 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
+- 本地最小 explorer service 仍只是 operator-facing scaffolding，不应误判为 production indexer：
+  - 启动：`./scripts/v2/explorer_service_up.sh`
+  - 状态：`./scripts/v2/explorer_service_status.sh`
+  - 停止：`./scripts/v2/explorer_service_down.sh`
+  - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---
