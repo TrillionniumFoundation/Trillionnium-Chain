@@ -65,7 +65,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
         .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
-    let dns_like_host_literal = node_id
+    let dns_like_host_label = node_id
         .strip_suffix('.')
         .unwrap_or(node_id)
         .split('.')
