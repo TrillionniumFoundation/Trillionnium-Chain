@@ -9,6 +9,11 @@ pub fn verify_wal_and_find_checkpoint(
     let mut best_checkpoint: Option<CheckpointMeta> = None;
 
     for e in wal_entries {
+        if prev_height.is_none() && e.height > 1 {
+            // Fail closed: metadata-only recovery cannot start above genesis without
+            // a proven lower-height anchor already in the verified prefix.
+            return Ok(best_checkpoint);
+        }
         if let Some(last_height) = prev_height {
             // Stop at the first non-monotonic height transition and fall back to the
             // latest checkpoint proven by the prefix seen so far.

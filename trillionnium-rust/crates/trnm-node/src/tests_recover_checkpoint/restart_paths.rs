@@ -1,5 +1,6 @@
 use super::*;
 
+#[test]
 fn recover_fully_checkpointed_wal_rewrites_stale_consensus_wal_lock_to_retained_tip() {
     let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
     fs::create_dir_all(&wal_dir).unwrap();

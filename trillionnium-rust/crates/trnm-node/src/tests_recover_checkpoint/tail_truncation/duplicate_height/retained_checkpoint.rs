@@ -84,6 +84,21 @@ locked_block_hash = "stale-replay-lock"
     assert_eq!(checkpoints[1].state_root_hex, "r2");
     assert_eq!(checkpoints[1].wal_entry_hash_hex, h2);
 
+    let checkpoint_raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+    let height1_pos = checkpoint_raw.find("height = 1").unwrap();
+    let height2_pos = checkpoint_raw.find("height = 2").unwrap();
+    let retained_hash_pos = checkpoint_raw
+        .find(&format!("wal_entry_hash_hex = \"{}\"", h2))
+        .unwrap();
+    assert!(
+        height1_pos < height2_pos && height2_pos < retained_hash_pos,
+        "retained checkpoint file must stay canonically ordered on disk so DA/light-verifier evidence linkage does not flap after stale duplicate pruning"
+    );
+    assert!(
+        !checkpoint_raw.contains("r2-stale") && !checkpoint_raw.contains("stale-hash"),
+        "stale duplicate checkpoint evidence must not survive in the persisted checkpoint surface"
+    );
+
     let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
     let wal: ConsensusWal = toml::from_str(&wal).unwrap();
     assert_eq!(wal.next_height, 3);
