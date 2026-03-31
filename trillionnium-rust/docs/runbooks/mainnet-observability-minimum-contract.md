@@ -15,8 +15,8 @@ Use this as a rehearsal/runbook reference until a fuller dashboard + alert pack 
 
 This document only freezes surfaces already evidenced in code/tests under:
 
-- `crates/trnm-rpc/src/health.rs`
-- `crates/trnm-node/src/tests_main_metrics/`
+- `crates/trnm-rpc/src/runtime/http.rs` (runtime path) and `crates/trnm-rpc/src/health.rs` (mirrored compatibility path)
+- `crates/trnm-node/src/runtime/metrics_aggregation/summary_format.rs`
 - `crates/trnm-worker-agent/src/workflow.rs`
 
 It should be read together with:
@@ -27,7 +27,8 @@ It should be read together with:
 
 ## 1. `trnm-rpc` health probe aliases
 
-The current `trnm-rpc` health server intentionally accepts the following case-insensitive aliases as health/readiness/liveness/status probes:
+The current `trnm-rpc` health server intentionally accepts the following case-insensitive aliases as health/readiness/liveness/status probes.
+The runtime implementation in `src/runtime/http.rs` is the primary truth source; the mirrored `src/health.rs` path should stay behaviorally aligned until the compatibility copy is retired:
 
 - `/health`, `/health/`, `/healthz`, `/healthz/`
 - `/live`, `/live/`, `/livez`, `/livez/`
@@ -75,7 +76,7 @@ Operators should not over-read it as indexer/read-model closure.
 
 ## 2. `trnm-node` incident-summary bundle names
 
-`trnm-node` tests already keep the following incident-facing bundle append-stable and ordered for operator-visible summaries:
+`trnm-node` summary-format tests already keep the following incident-facing bundle append-stable and ordered for operator-visible summaries:
 
 - `apply_error_total`
 - `rollback_total`
