@@ -3,18 +3,83 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF' >&2
-Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
+Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>] \
+  [--expected-worktree-root <path>] [--expected-branch-ref <ref>]
 
 Resolve the latest local-evidence summary and RC manifest (unless paths are
 provided explicitly), then print the canonical handoff fields directly from the
 artifacts. This is a fail-closed helper for validator/operator release handoff:
-it refuses to guess missing paths or silently continue when identity fields
-mismatch across artifacts.
+it refuses to guess missing paths, silently continue when identity fields
+mismatch across artifacts, or accept artifacts that drift from the
+lane/ticket-assigned worktree/branch when explicit expectations are provided.
+`--expected-branch-ref` accepts either a short branch name (for example
+`lane/foo`) or a full ref (for example `refs/heads/lane/foo`).
 EOF
 }
 
 SUMMARY_PATH=""
 MANIFEST_PATH=""
+EXPECTED_WORKTREE_ROOT=""
+EXPECTED_BRANCH_REF=""
+EXPECTED_BRANCH_REF_CANONICAL=""
+
+require_nonempty_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  [ -n "$value" ] || {
+    printf 'missing %s\n' "$flag_name" >&2
+    usage
+    exit 2
+  }
+}
+
+require_worktree_root_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
+require_ref_token() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    *[[:space:]]*)
+      printf 'invalid %s: must not contain whitespace: %s\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+}
+
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -28,6 +93,16 @@ while [ "$#" -gt 0 ]; do
       MANIFEST_PATH="$2"
       shift 2
       ;;
+    --expected-worktree-root)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_WORKTREE_ROOT="$2"
+      shift 2
+      ;;
+    --expected-branch-ref)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_BRANCH_REF="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -39,6 +114,21 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+fi
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  case "$EXPECTED_BRANCH_REF_CANONICAL" in
+    refs/heads/*) ;;
+    *)
+      printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" >&2
+      exit 2
+      ;;
+  esac
+fi
 
 ROOT="$(git rev-parse --show-toplevel)"
 
@@ -104,8 +194,24 @@ assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal rollback_command "$summary_rollback" "$manifest_rollback"
 assert_equal replay_command "$summary_replay" "$manifest_replay"
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'assigned-worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'assigned-branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_worktree_branch_ref" >&2
+  exit 1
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT"
+fi
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
+fi
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
