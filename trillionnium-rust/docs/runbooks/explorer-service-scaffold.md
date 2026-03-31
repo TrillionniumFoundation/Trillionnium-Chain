@@ -81,6 +81,8 @@ Expected healthy signals:
 - `public_dir=.../run/explorer-service/public`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
+- `service_mode=operator-facing-static-scaffold`
+- `production_ready=false`
 
 If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
 

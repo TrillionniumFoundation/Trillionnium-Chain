@@ -191,7 +191,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 状态：`./scripts/v2/explorer_service_status.sh`
   - 停止：`./scripts/v2/explorer_service_down.sh`
   - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
-  - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，便于 operator 在 down/degraded 时定位日志与健康探针目标。
+  - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，便于 operator 在 down/degraded 时定位日志与健康探针目标，同时避免把脚手架误判为 durable indexer。
   - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
