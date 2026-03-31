@@ -1960,9 +1960,14 @@ pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str
 }
 
 pub(crate) fn reputation_signal_from_label(label: &str) -> Option<ReputationSignal> {
-    CANONICAL_REPUTATION_IMPACTS
-        .iter()
-        .find_map(|(signal, impact)| (impact.label == label).then_some(*signal))
+    let normalized = label.trim();
+    if normalized.is_empty() {
+        return None;
+    }
+
+    CANONICAL_REPUTATION_IMPACTS.iter().find_map(|(signal, impact)| {
+        context_matches_token(normalized, impact.label).then_some(*signal)
+    })
 }
 
 pub(crate) fn reputation_impact_from_label(label: &str) -> Option<ReputationImpact> {

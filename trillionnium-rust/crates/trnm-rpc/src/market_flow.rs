@@ -5,7 +5,8 @@ use crate::market_io::{
     save_market_bids, save_market_tasks,
 };
 use crate::market_score::{
-    clamp_reputation_for_market, market_effective_score_with_config, market_score_breakdown,
+    clamp_reputation_for_market, market_effective_score_with_config,
+    market_reputation_component_applied, market_reputation_score_delta, market_score_breakdown,
     market_score_config, MarketScoreConfigOutput,
 };
 use crate::{MarketBid, MarketTask};
@@ -78,12 +79,15 @@ pub(crate) fn handle_market_submit_bid(
     price: u128,
     now_unix_ms: u128,
 ) -> Result<()> {
-    if worker.trim().is_empty() {
+    let Some(normalized_worker) = normalize_market_worker_key(&worker) else {
         return Err(rpc_fail(RpcErrorResponse {
             code: "worker-id-invalid",
-            message: format!("market bid worker must be non-empty for task {}", task_id),
+            message: format!(
+                "market bid worker must contain at least one visible identifier character for task {}",
+                task_id
+            ),
         }));
-    }
+    };
     if price == 0 {
         return Err(rpc_fail(RpcErrorResponse {
             code: "bid-price-invalid",
@@ -93,7 +97,6 @@ pub(crate) fn handle_market_submit_bid(
             ),
         }));
     }
-    let normalized_worker = normalize_market_worker_key(&worker).expect("worker checked non-empty");
     let bid = {
         let tasks_path = market_tasks_file();
         let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
@@ -206,10 +209,25 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         .unwrap_or(0);
     let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
     let winner_reputation_effective = breakdown.effective_reputation;
+    let winner_reputation_clamp_max = clamp_reputation_for_market(i64::MAX, score_cfg);
+    let winner_reputation_clamp_min = -winner_reputation_clamp_max;
     let base_score = breakdown.base_score;
     let reputation_weight = breakdown.reputation_reward;
     let penalty = breakdown.penalty;
+    let reputation_component_applied = market_reputation_component_applied(&breakdown);
     let reputation_score_delta = market_reputation_score_delta(&breakdown);
+    let reputation_adjustment_amount = if reputation_score_delta < 0 {
+        reputation_weight
+    } else {
+        penalty
+    };
+    let reputation_adjustment_direction = if reputation_score_delta < 0 {
+        "reward"
+    } else if reputation_score_delta > 0 {
+        "penalty"
+    } else {
+        "neutral"
+    };
     let winner_score = breakdown.effective_score;
 
     task.status = "matched".into();
@@ -226,7 +244,9 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "winner_reputation_lookup_key": winner_reputation_lookup_key,
         "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
         "winner_reputation_effective": winner_reputation_effective,
-        "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
+        "winner_reputation_clamp_min": winner_reputation_clamp_min,
+        "winner_reputation_clamp_max": winner_reputation_clamp_max,
+        "winner_reputation_clamp_limit": winner_reputation_clamp_max,
         "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
         "score_floor_applied": breakdown.score_floor_applied,
         "price_weight_unit": score_cfg.price_weight,
@@ -234,8 +254,16 @@ pub(crate) fn handle_market_match_task(task_id: u64) -> Result<()> {
         "price_component": base_score,
         "reputation_weight_unit": score_cfg.reputation_weight,
         "reputation_weight": reputation_weight,
+        "reputation_weight_applied": reputation_component_applied,
+        "reputation_component": reputation_component_applied,
         "reputation_reward": reputation_weight,
+        "reputation_reward_amount": reputation_weight,
         "penalty": penalty,
+        "reputation_penalty": penalty,
+        "reputation_penalty_amount": penalty,
+        "penalty_amount": penalty,
+        "reputation_adjustment_direction": reputation_adjustment_direction,
+        "reputation_adjustment_amount": reputation_adjustment_amount,
         "reputation_score_delta": reputation_score_delta,
         "final_score": winner_score,
         "effective_score": winner_score,

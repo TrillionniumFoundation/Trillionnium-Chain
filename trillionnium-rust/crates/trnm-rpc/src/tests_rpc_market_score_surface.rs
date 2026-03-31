@@ -26,3 +26,32 @@ fn market_score_config_output_reports_symmetric_fail_closed_reputation_bounds() 
         },
     );
 }
+
+#[test]
+fn market_score_surface_keeps_zero_effective_reputation_delta_neutral() {
+    with_market_score_env(
+        &[
+            (MARKET_PRICE_WEIGHT_ENV, "13"),
+            (MARKET_REPUTATION_WEIGHT_ENV, "17"),
+            (MARKET_REPUTATION_CLAMP_ENV, "29"),
+        ],
+        || {
+            let cfg = market_score_config();
+            let output = MarketScoreConfigOutput::from(cfg);
+            let breakdown = market_score_breakdown(41, 0, cfg);
+
+            assert_eq!(breakdown.effective_reputation, 0);
+            assert_eq!(breakdown.base_score, 533);
+            assert_eq!(breakdown.reputation_reward, 0);
+            assert_eq!(breakdown.penalty, 0);
+            assert_eq!(breakdown.effective_score, breakdown.base_score);
+            assert_eq!(market_reputation_score_delta(&breakdown), 0);
+            assert!(!breakdown.score_floor_applied);
+
+            assert!(0 <= output.max_effective_reputation);
+            assert!(0 >= output.min_effective_reputation);
+            assert_eq!(output.max_reputation_score_delta, 29 * 17);
+            assert_eq!(output.min_reputation_score_delta, -((29_i128) * 17));
+        },
+    );
+}

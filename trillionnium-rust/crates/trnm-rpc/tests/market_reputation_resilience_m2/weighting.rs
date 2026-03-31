@@ -886,3 +886,163 @@ fn market_match_exposes_negative_clamp_without_leaking_raw_penalty_weight() {
     let _ = fs::remove_file(bids);
     let _ = fs::remove_file(reputation);
 }
+
+#[test]
+fn market_match_normalizes_zero_reputation_clamp_to_fail_closed_output_limit() {
+    let _guard = test_lock()
+        .lock()
+        .unwrap_or_else(|poison| poison.into_inner());
+    let tasks = unique_market_path("market_tasks", "jsonl");
+    let bids = unique_market_path("market_bids", "jsonl");
+    let reputation = unique_market_path("market_reputation", "json");
+    fs::write(
+        &reputation,
+        r#"{
+  "worker-clamped": 9
+}"#,
+    )
+    .expect("write reputation fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let reputation_env = reputation.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_REPUTATION_FILE", reputation_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", "3"),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", "4"),
+        ("TRNM_RPC_MARKET_REPUTATION_CLAMP", "0"),
+    ];
+
+    let create_out = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "120",
+            "--description",
+            "m2 zero clamp reports fail-closed limit",
+        ],
+        &envs,
+    );
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_id,
+            "--worker",
+            "worker-clamped",
+            "--price",
+            "100",
+        ],
+        &envs,
+    );
+
+    let match_out = run_ok_with_env(&["market.match_task", "--task-id", &task_id], &envs);
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+
+    assert_eq!(matched["winner"], "worker-clamped");
+    assert_eq!(matched["winner_reputation"], 9);
+    assert_eq!(matched["winner_reputation_effective"], 1);
+    assert_eq!(matched["winner_reputation_clamp_limit"], 1);
+    assert_eq!(matched["winner_reputation_clamped"], true);
+    assert_eq!(matched["base_score"], 300);
+    assert_eq!(matched["reputation_reward"], 4);
+    assert_eq!(matched["reputation_score_delta"], -4);
+    assert_eq!(matched["effective_score"], 296);
+    assert_eq!(matched["score_floor_applied"], false);
+
+    let cfg = matched["match_config"]
+        .as_object()
+        .expect("match_config object");
+    assert_eq!(
+        cfg.get("reputation_clamp").and_then(Value::as_i64),
+        Some(1),
+        "match config should expose the normalized fail-closed clamp"
+    );
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+    let _ = fs::remove_file(reputation);
+}
+
+#[test]
+fn market_match_treats_zero_effective_reputation_as_neutral_in_output_fields() {
+    let _guard = test_lock()
+        .lock()
+        .unwrap_or_else(|poison| poison.into_inner());
+    let tasks = unique_market_path("market_tasks", "jsonl");
+    let bids = unique_market_path("market_bids", "jsonl");
+    let reputation = unique_market_path("market_reputation", "json");
+    fs::write(
+        &reputation,
+        r#"{
+  "worker-neutral": "0"
+}"#,
+    )
+    .expect("write reputation fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let reputation_env = reputation.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_REPUTATION_FILE", reputation_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", "3"),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", "11"),
+        ("TRNM_RPC_MARKET_REPUTATION_CLAMP", "2"),
+    ];
+
+    let create_out = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "120",
+            "--description",
+            "m2 zero effective reputation stays neutral end-to-end",
+        ],
+        &envs,
+    );
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_id,
+            "--worker",
+            "worker-neutral",
+            "--price",
+            "100",
+        ],
+        &envs,
+    );
+
+    let match_out = run_ok_with_env(&["market.match_task", "--task-id", &task_id], &envs);
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+
+    assert_eq!(matched["winner"], "worker-neutral");
+    assert_eq!(matched["winner_reputation"], 0);
+    assert_eq!(matched["winner_reputation_effective"], 0);
+    assert_eq!(matched["winner_reputation_lookup_missing"], false);
+    assert_eq!(matched["winner_reputation_clamped"], false);
+    assert_eq!(matched["base_score"], 300);
+    assert_eq!(matched["reputation_reward"], 0);
+    assert_eq!(matched["penalty"], 0);
+    assert_eq!(matched["reputation_score_delta"], 0);
+    assert_eq!(matched["effective_score"], 300);
+    assert_eq!(matched["score_floor_applied"], false);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+    let _ = fs::remove_file(reputation);
+}

@@ -133,7 +133,7 @@ fn market_effective_score_clamps_price_weight_config_to_max_boundary() {
 }
 
 #[test]
-fn market_score_breakdown_does_not_mark_floor_when_reward_exactly_matches_base_score() {
+fn market_score_breakdown_marks_floor_when_reward_exactly_matches_base_score() {
     with_market_score_env(
         &[
             (MARKET_PRICE_WEIGHT_ENV, "1"),
@@ -145,7 +145,7 @@ fn market_score_breakdown_does_not_mark_floor_when_reward_exactly_matches_base_s
             assert_eq!(breakdown.base_score, 5);
             assert_eq!(breakdown.reputation_reward, 5);
             assert_eq!(breakdown.effective_score, 0);
-            assert!(!breakdown.score_floor_applied);
+            assert!(breakdown.score_floor_applied);
         },
     );
 }
@@ -238,6 +238,23 @@ fn market_score_config_output_normalizes_negative_manual_clamp_to_fail_closed_mi
 }
 
 #[test]
+fn market_score_config_output_normalizes_zero_manual_clamp_to_symmetric_fail_closed_bounds() {
+    let output = MarketScoreConfigOutput::from(MarketScoreConfig {
+        price_weight: 5,
+        reputation_weight: 11,
+        reputation_clamp: 0,
+    });
+
+    assert_eq!(output.price_weight, 5);
+    assert_eq!(output.reputation_weight, 11);
+    assert_eq!(output.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+    assert_eq!(output.max_effective_reputation, MARKET_REPUTATION_CLAMP_MIN);
+    assert_eq!(output.min_effective_reputation, -MARKET_REPUTATION_CLAMP_MIN);
+    assert_eq!(output.max_reputation_score_delta, 11);
+    assert_eq!(output.min_reputation_score_delta, -11);
+}
+
+#[test]
 fn market_score_config_output_saturates_max_reputation_score_delta_without_wrapping() {
     let output = MarketScoreConfigOutput::from(MarketScoreConfig {
         price_weight: 1,
@@ -301,6 +318,40 @@ fn market_reputation_score_delta_uses_breakdown_effective_reputation_sign_fail_c
         score_floor_applied: false,
     };
     assert_eq!(market_reputation_score_delta(&penalty_breakdown), 21);
+}
+
+#[test]
+fn market_reputation_score_delta_treats_zero_effective_reputation_as_neutral() {
+    let neutral_breakdown = MarketScoreBreakdown {
+        effective_reputation: 0,
+        base_score: 100,
+        reputation_reward: 21,
+        penalty: 21,
+        effective_score: 100,
+        score_floor_applied: false,
+    };
+
+    assert_eq!(market_reputation_score_delta(&neutral_breakdown), 0);
+}
+
+#[test]
+fn market_score_breakdown_treats_zero_effective_reputation_as_neutral() {
+    let breakdown = market_score_breakdown(
+        50,
+        0,
+        MarketScoreConfig {
+            price_weight: 3,
+            reputation_weight: 7,
+            reputation_clamp: 10,
+        },
+    );
+
+    assert_eq!(breakdown.effective_reputation, 0);
+    assert_eq!(breakdown.base_score, 150);
+    assert_eq!(breakdown.reputation_reward, 0);
+    assert_eq!(breakdown.penalty, 0);
+    assert_eq!(breakdown.effective_score, 150);
+    assert!(!breakdown.score_floor_applied);
 }
 
 #[test]
