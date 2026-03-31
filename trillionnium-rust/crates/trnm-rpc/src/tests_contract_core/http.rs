@@ -333,6 +333,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() 
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_raw_fragment_delimiters() {
+    for path in [
+        "/query-normalized-audit-events#shadow",
+        "/query-normalized-audit-events?source=trnm.task#shadow",
+        "/query-normalized-audit-events?eventType=trnm.task.commit#tail",
+        "/query-normalized-audit-events?cursor=1#limit=2",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("raw fragment delimiters must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
     assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
     assert_eq!(parse_http_get_path("post /health HTTP/1.1"), None);
