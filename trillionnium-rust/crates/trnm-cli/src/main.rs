@@ -1522,7 +1522,10 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                     '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
                         | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
                         | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣'
+                        | '«' | '»' | '‹' | '›'
+                        | '【' | '】' | '〔' | '〕' | '〖' | '〗' | '〘' | '〙' | '〚' | '〛'
+                        | '〝' | '〞' | '〟'
                 )
                 || matches!(
                     c,
@@ -3180,6 +3183,14 @@ mod tests {
         assert_eq!(parsed.tx_hash, "0xbeef42");
         assert_eq!(parsed.status, "committed");
         assert_eq!(parsed.error, None);
+
+        let guillemet_wrapped =
+            "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
+        let parsed_guillemet =
+            parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
+        assert_eq!(parsed_guillemet.tx_hash, "0xbeef44");
+        assert_eq!(parsed_guillemet.status, "committed");
+        assert_eq!(parsed_guillemet.error, None);
     }
 
     #[test]
