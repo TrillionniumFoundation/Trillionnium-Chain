@@ -2850,6 +2850,43 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)]
+    fn wallet_create_rejects_symlinked_ancestor_from_env_store() {
+        use std::os::unix::fs::symlink;
+
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let unique = format!(
+            "trnm-cli-wallet-env-ancestor-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = std::env::temp_dir().join(unique);
+        let real_parent = root.join("real-parent");
+        let linked_parent = root.join("linked-parent");
+        let store = linked_parent.join("wallets");
+        std::fs::create_dir_all(&real_parent).unwrap();
+        symlink(&real_parent, &linked_parent).unwrap();
+        std::env::set_var("TRNM_WALLET_STORE", &store);
+
+        let err = wallet_create("alice".to_string(), None).unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        let _ = std::fs::remove_file(&linked_parent);
+        let _ = std::fs::remove_dir(&real_parent);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
     fn extract_tx_hash_supports_json_and_kv() {
         assert_eq!(extract_tx_hash("tx_hash=abc123").as_deref(), Some("abc123"));
         assert_eq!(
