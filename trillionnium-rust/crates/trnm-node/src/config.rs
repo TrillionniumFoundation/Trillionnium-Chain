@@ -337,6 +337,12 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         !path.chars().any(char::is_control),
         "read config failed: path must not contain control characters"
     );
+    anyhow::ensure!(
+        !Path::new(path)
+            .components()
+            .any(|component| matches!(component, std::path::Component::ParentDir)),
+        "read config failed: path must not contain parent traversal (..)"
+    );
 
     Ok(())
 }
@@ -555,6 +561,18 @@ mod tests {
                 .contains("path must not contain control characters"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn load_config_rejects_parent_traversal_in_path_fail_closed() {
+        for path in ["../configs/node1.toml", "configs/../node1.toml"] {
+            let err = load_config(path).expect_err("config path parent traversal must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain parent traversal (..)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
     }
 
     #[test]
