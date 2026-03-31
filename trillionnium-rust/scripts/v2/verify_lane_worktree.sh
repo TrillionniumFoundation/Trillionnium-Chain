@@ -109,10 +109,11 @@ fi
 
 case "$EXPECTED_BRANCH_REF" in
   refs/heads/*) ;;
-  *)
-    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
+  refs/*)
+    printf 'invalid --expected-branch-ref: only refs/heads/* or a short branch name are allowed, got %s\n' "$EXPECTED_BRANCH_REF" >&2
     exit 2
     ;;
+  *) ;;
 esac
 
 canonicalize_branch_ref() {
