@@ -1999,9 +1999,14 @@ fn format_tx_hash_alias_line(tx_hash: &str) -> String {
     format!("txhash={}", tx_hash)
 }
 
+fn format_transaction_hash_alias_line(tx_hash: &str) -> String {
+    format!("transaction_hash={}", tx_hash)
+}
+
 fn emit_tx_hash_lines(tx_hash: &str) {
     println!("{}", format_tx_hash_line(tx_hash));
     println!("{}", format_tx_hash_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_alias_line(tx_hash));
 }
 
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
@@ -2470,11 +2475,19 @@ mod tests {
             "txhash=0xabc123".to_string()
         );
         assert_eq!(
+            format_transaction_hash_alias_line("0xabc123"),
+            "transaction_hash=0xabc123".to_string()
+        );
+        assert_eq!(
             extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
         assert_eq!(
             extract_tx_hash(&format_tx_hash_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_alias_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
     }
