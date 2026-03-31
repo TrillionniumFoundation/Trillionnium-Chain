@@ -2,7 +2,8 @@
 
 ## Truth-source snapshot
 
-- Repository snapshot evaluated: `origin/main = 8ff9f1fe45bdf3f027bce7d86ae51394c3df5d86`
+- Repository snapshot evaluated: `origin/main = 9ea9e7751de1d571c6b1842e01fc66314e844356`
+- Snapshot note: refreshed after the 2026-03-31 mainline cleanup that removed placeholder library-crate bin targets, so rehearsal / go-no-go discussions quote the current integrated mainline rather than the older `8ff9f1fe45bdf3f027bce7d86ae51394c3df5d86` snapshot.
 - Companion truth sources:
   - `RELEASE_READINESS.md`
   - `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
