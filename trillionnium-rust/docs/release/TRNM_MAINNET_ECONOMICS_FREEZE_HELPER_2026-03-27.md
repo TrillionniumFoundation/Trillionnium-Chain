@@ -109,6 +109,34 @@ Why this is the minimum useful slice:
 If any command above fails, the economics tuple should remain at least `CONDITIONAL GO`
 until the mismatch is explained or the freeze packet is tightened.
 
+### Minimal evidence capture companion
+
+When the rehearsal slice is run for a launch review, preserve the exact command packet and
+its pass/fail result in one artifact instead of scattering shell snippets across chat/logs.
+Until a first-class release wrapper lands, the following minimal capture pattern is enough:
+
+```bash
+mkdir -p trillionnium-rust/run/mainnet-economics-freeze
+(
+  set -euo pipefail
+  date -u +"generated_at=%Y-%m-%dT%H:%M:%SZ"
+  printf 'worktree=%s\n' "$(pwd)"
+  printf 'branch=%s\n' "$(git branch --show-current)"
+  printf 'command[1]=cargo check -p trnm-mempool -p trnm-pouw -q\n'
+  cargo check -p trnm-mempool -p trnm-pouw -q
+  printf 'command[2]=cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q\n'
+  cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
+  printf 'command[3]=cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q\n'
+  cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+  printf 'command[4]=cargo test -p trnm-state retention_restore_regression -q\n'
+  cargo test -p trnm-state retention_restore_regression -q
+  echo 'result=PASS'
+) | tee trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt
+```
+
+If this packet aborts before `result=PASS`, treat the freeze review as non-green and attach the
+failing command + rollback/tightening action directly to the same review artifact.
+
 ## Temporary operator inspection path (until a first-class config surface lands)
 
 Until TRNM exposes a dedicated runtime/config query for the economics tuple, launch review
