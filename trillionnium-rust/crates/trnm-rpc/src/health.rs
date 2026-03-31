@@ -63,6 +63,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn health_probe_body(ts_unix_ms: u64) -> String {
+    serde_json::json!({
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": ts_unix_ms,
+        "version": 1
+    })
+    .to_string()
+}
+
 fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
     match request {
         Some((method, _)) => {
@@ -170,13 +180,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
         let response = match (request, path, target) {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
+                let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
@@ -277,7 +281,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        fallback_response_for_request, has_ambiguous_path_segment_encoding,
+        fallback_response_for_request, has_ambiguous_path_segment_encoding, health_probe_body,
         is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
         parse_path_u64_suffix,
     };
@@ -353,6 +357,18 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn health_probe_body_keeps_minimum_operator_contract_fields_stable() {
+        let body = health_probe_body(42);
+        let json: serde_json::Value = serde_json::from_str(&body).unwrap();
+
+        assert_eq!(json.get("ok"), Some(&serde_json::Value::Bool(true)));
+        assert_eq!(json.get("service"), Some(&serde_json::Value::String("trnm-rpc".into())));
+        assert_eq!(json.get("ts_unix_ms"), Some(&serde_json::Value::from(42u64)));
+        assert_eq!(json.get("version"), Some(&serde_json::Value::from(1)));
+        assert_eq!(json.as_object().map(|obj| obj.len()), Some(4));
     }
 
     #[test]
