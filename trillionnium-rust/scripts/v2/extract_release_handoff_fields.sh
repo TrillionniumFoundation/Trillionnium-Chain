@@ -106,6 +106,12 @@ require_key() {
   printf '%s' "$value"
 }
 
+optional_key() {
+  local path="$1"
+  local key="$2"
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
+}
+
 assert_equal() {
   local field="$1"
   local left="$2"
@@ -132,6 +138,8 @@ summary_evidence_scope="$(require_key "$SUMMARY_PATH" evidence_scope)"
 summary_result="$(require_key "$SUMMARY_PATH" result)"
 summary_rollback="$(require_key "$SUMMARY_PATH" rollback_command)"
 summary_replay="$(require_key "$SUMMARY_PATH" replay_command)"
+summary_challenge_reexec_entry="$(optional_key "$SUMMARY_PATH" challenge_reexec_entry)"
+summary_replay_env_trnm_challenge_reexec_entry="$(optional_key "$SUMMARY_PATH" replay_env_trnm_challenge_reexec_entry)"
 
 manifest_toplevel="$(require_key "$MANIFEST_PATH" git_toplevel)"
 manifest_branch="$(require_key "$MANIFEST_PATH" git_branch)"
@@ -186,6 +194,12 @@ printf 'summary_evidence_scope=%s\n' "$summary_evidence_scope"
 printf 'summary_result=%s\n' "$summary_result"
 printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
+if [ -n "$summary_replay_env_trnm_challenge_reexec_entry" ]; then
+  printf 'replay_env_trnm_challenge_reexec_entry=%s\n' "$summary_replay_env_trnm_challenge_reexec_entry"
+fi
+if [ -n "$summary_challenge_reexec_entry" ]; then
+  printf 'challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"
+fi
 printf 'manifest_truth_source=%s\n' "$manifest_truth_source"
 printf 'manifest_historical_evidence_only=%s\n' "$manifest_historical_evidence_only"
 printf 'manifest_evidence_scope=%s\n' "$manifest_evidence_scope"
