@@ -556,6 +556,13 @@ mod tests {
     }
 
     #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_em_dash_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression—target height exceeded source sample"
+        ));
+    }
+
+    #[test]
     fn drive_minimal_settlement_emits_finalized_event_with_canonical_heartbeat_bounds() {
         let mut request = SettlementRequest::new(1, "0xsettlement-confirmed".to_string());
         let token = CapabilityToken {
