@@ -101,9 +101,9 @@ Minimum packet fields:
 - `ceremony_scope=` one of `local-rehearsal`, `operator-handoff`, or `public-mainnet-input`
 - `genesis_artifact_path=` and `genesis_artifact_sha256=` copied exactly once as the shared ceremony anchor
 - `validator_set_version=` identifying the exact validator membership list under review
-- `validator_entry=` repeated once per validator with `validator_name`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
+- `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists
-- `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash and config path
+- `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own
 - `startup_order_note=` stating whether startup order matters for this rehearsal and who is expected to start first
 - `rollback_owner=` naming who can declare the ceremony aborted and which command/process stop is authoritative
 
