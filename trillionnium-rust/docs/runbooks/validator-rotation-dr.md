@@ -118,13 +118,13 @@ Also record:
 - `outgoing_validator_config=`
 - `incoming_validator_config=`
 - `expected_genesis_or_checkpoint=`
-- `handoff_signed_by=`
-- `handoff_acknowledged_by=`
+- `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
 - `rollback_command=`
 
 Interpretation rule:
 - if the outgoing or incoming validator identity cannot be named explicitly, stop
-- if either handoff signer/acknowledger is still unknown, stop
+- if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and either handoff signer/acknowledger is still unknown, stop
+- if `cutover_kind=replacement`, leave `handoff_signed_by=` / `handoff_acknowledged_by=` empty rather than inventing a fake approval boundary
 - if the rollback command is still "to be figured out later", stop
 
 ### 3. Re-check config bundle and ownership hygiene
@@ -240,8 +240,7 @@ When handing this event to another operator, record:
 - outgoing validator config / identity
 - incoming validator config / identity
 - genesis artifact/hash or checkpoint lineage
-- `handoff_signed_by=`
-- `handoff_acknowledged_by=`
+- `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
 - commands run
 - pass/fail result
 - rollback command
@@ -253,7 +252,7 @@ When handing this event to another operator, record:
 Treat replacement/rotation/DR as **No-Go** if any of the following is true:
 - assigned worktree/branch identity is not proven
 - outgoing or incoming validator ownership is ambiguous
-- handoff signer or acknowledger is missing
+- `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and the handoff signer or acknowledger is missing
 - the incoming config was not validated from a clean worktree
 - the event depends on unstaged edits or undocumented manual shell state
 - DR rebuild is claimed without a concrete recovery artifact
