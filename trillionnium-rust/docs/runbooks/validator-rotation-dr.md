@@ -158,14 +158,18 @@ Recommended command:
 ```
 
 Minimum DR evidence fields to preserve from the generated report:
+- `generated_at=`
 - `config_path=`
+- `git_worktree_path=`
+- `git_worktree_branch_ref=`
 - `git_branch=`
 - `git_head=`
+- `git_status_summary=`
 - `rollback_command=`
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report.
+Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
