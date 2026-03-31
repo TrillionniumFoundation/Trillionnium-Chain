@@ -58,6 +58,16 @@ Operational meaning:
 - `ts_unix_ms` is the probe generation timestamp.
 - `version=1` is the current health-body schema version.
 
+### HTTP method semantics
+
+For accepted probe aliases, the transport semantics are also part of the minimum contract:
+
+- `GET` returns the JSON body above.
+- `HEAD` returns the same status code and `Content-Length` that the equivalent `GET` body would have produced, but with no response body bytes.
+
+This matters for load balancers and lightweight operator probes that rely on header-only checks.
+If the body later grows by additive fields, `HEAD` should continue to mirror the equivalent `GET` payload length rather than inventing a separate schema.
+
 This is a **surface-availability contract**, not a full dependency/read-model health proof.
 Operators should not over-read it as indexer/read-model closure.
 
