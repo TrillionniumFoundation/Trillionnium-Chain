@@ -567,10 +567,15 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 
 fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
-        if v.is_empty() || v == "-" {
+        let normalized = v.trim();
+        let placeholder = normalized.to_ascii_lowercase();
+        if normalized.is_empty()
+            || normalized == "-"
+            || matches!(placeholder.as_str(), "null" | "none" | "n/a" | "na")
+        {
             None
         } else {
-            Some(v.clone())
+            Some(normalized.to_string())
         }
     })
 }
@@ -681,6 +686,7 @@ fn parse_event_metering_query_response(
         .and_then(|v| parse_u128_kv_value(v))
         .and_then(|v| u8::try_from(v).ok())?;
 
+    let metering_path = normalize_opt_kv(kv, "to_status")?;
     let normalized_work_units = kv
         .get("metering_normalized_work_units")
         .and_then(|v| parse_u128_kv_value(v))?;
@@ -716,7 +722,7 @@ fn parse_event_metering_query_response(
     }
 
     Some(build_task_metering_query_response(
-        normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),
+        metering_path,
         workload_class,
         metering_schema,
         receipt_hash,
@@ -1249,7 +1255,7 @@ fn task_status_path(status: TaskStatus) -> String {
 fn task_metering_query_response(
     snapshot: &TaskMeteringSnapshot,
     path: String,
-) -> TaskMeteringQueryResponse {
+) -> Option<TaskMeteringQueryResponse> {
     let policy = TaskMeteringPolicyQueryResponse {
         snapshot_version: snapshot.policy_snapshot_version,
         min_accept_work_units: snapshot.min_accept_work_units,
@@ -1265,7 +1271,14 @@ fn task_metering_query_response(
         worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
         worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
     };
-    build_task_metering_query_response(
+    if policy.snapshot_version == 0
+        || policy.challenge_success_bounty_per_work_unit_den == 0
+        || policy.worker_completion_bonus_per_work_unit_den == 0
+        || policy.worker_slash_rebate_per_work_unit_den == 0
+    {
+        return None;
+    }
+    Some(build_task_metering_query_response(
         path,
         snapshot.workload_class.clone(),
         snapshot.metering_schema.clone(),
@@ -1280,7 +1293,7 @@ fn task_metering_query_response(
         snapshot.decode_step_weight,
         snapshot.kv_byte_weight,
         policy,
-    )
+    ))
 }
 
 fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<TaskQueryResponse> {
@@ -1317,7 +1330,9 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .metadata
             .as_ref()
             .and_then(|metadata| metadata.metering.as_ref())
-            .map(|snapshot| task_metering_query_response(snapshot, task_status_path(task.status))),
+            .and_then(|snapshot| {
+                task_metering_query_response(snapshot, task_status_path(task.status))
+            }),
     })
 }
 
@@ -1672,14 +1687,15 @@ struct MarketScoreBreakdown {
 impl From<MarketScoreConfig> for MarketScoreConfigOutput {
     fn from(value: MarketScoreConfig) -> Self {
         let reputation_clamp = normalized_reputation_clamp(value.reputation_clamp);
-        let max_reputation_score_delta = (reputation_clamp as u128)
-            .saturating_mul(value.reputation_weight);
+        let max_reputation_score_delta =
+            (reputation_clamp as u128).saturating_mul(value.reputation_weight);
         Self {
             price_weight: value.price_weight,
             reputation_weight: value.reputation_weight,
             reputation_clamp,
             max_reputation_score_delta,
-            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128) as i128),
+            min_reputation_score_delta: -(max_reputation_score_delta.min(i128::MAX as u128)
+                as i128),
         }
     }
 }
@@ -2741,12 +2757,18 @@ fn http_response_for_method(method: &str, response: &str) -> String {
     let Some((headers, body)) = response.split_once("\r\n\r\n") else {
         return response.to_string();
     };
-    let status_line = headers
-        .lines()
-        .next()
-        .and_then(|line| line.strip_prefix("HTTP/1.1 "))
-        .unwrap_or("500 Internal Server Error");
-    http_json_head_response(status_line, body.len())
+
+    let mut rebuilt = String::new();
+    for (idx, line) in headers.split("\r\n").enumerate() {
+        if idx > 0 && line.to_ascii_lowercase().starts_with("content-length:") {
+            rebuilt.push_str(&format!("Content-Length: {}\r\n", body.len()));
+            continue;
+        }
+        rebuilt.push_str(line);
+        rebuilt.push_str("\r\n");
+    }
+    rebuilt.push_str("\r\n");
+    rebuilt
 }
 
 fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
@@ -2791,7 +2813,7 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
 
     let first_sp = line.find(' ')?;
     let method = &line[..first_sp];
-    if method != "GET" && method != "HEAD" {
+    if !method.eq_ignore_ascii_case("GET") && !method.eq_ignore_ascii_case("HEAD") {
         return None;
     }
 
@@ -2817,12 +2839,14 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d")
+    if normalized.contains("%00")
+        || normalized.contains("%0d")
         || normalized.contains("%0a")
         || normalized.contains("%09")
         || normalized.contains("%0b")
         || normalized.contains("%0c")
         || normalized.contains("%20")
+        || normalized.contains("%7f")
     {
         return None;
     }
@@ -2844,7 +2868,9 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
 #[cfg(test)]
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
     match parse_http_request_target(first_line) {
-        Some(("GET", path)) => Some(path.split('?').next().unwrap_or(path)),
+        Some((method, path)) if method.eq_ignore_ascii_case("GET") => {
+            Some(path.split('?').next().unwrap_or(path))
+        }
         _ => None,
     }
 }
@@ -2859,12 +2885,14 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -2960,25 +2988,49 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn parse_query_normalized_audit_events_query_from_path(
     path: &str,
 ) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     if !path_without_query.starts_with('/')
-        || !path_without_query.starts_with("/query-normalized-audit-events")
+        || path_without_query != "/query-normalized-audit-events"
         || path_without_query.contains('\x5c')
         || path_without_query.contains('#')
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
         || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
         || normalized_path.contains("%0d")
         || normalized_path.contains("%0a")
         || normalized_path.contains("%09")
         || normalized_path.contains("%0b")
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -3014,12 +3066,15 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || normalized_query.contains("%00")
         || normalized_query.contains("%0d")
         || normalized_query.contains("%0a")
         || normalized_query.contains("%09")
         || normalized_query.contains("%0b")
         || normalized_query.contains("%0c")
         || normalized_query.contains("%20")
+        || normalized_query.contains("%7f")
+        || contains_malformed_percent_encoding(query)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3194,17 +3249,36 @@ fn resolve_capability_token_subject_or_token(
 }
 
 fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
-    if method == "HEAD" {
+    if method.eq_ignore_ascii_case("HEAD") {
         http_json_head_response(status_line, body.len())
     } else {
         http_json_response(status_line, body)
     }
 }
 
+fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
+    let lower = segment.to_ascii_lowercase();
+    lower.contains("%2f") || lower.contains("%5c")
+}
+
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
+        .and_then(|suffix| {
+            if suffix.is_empty() {
+                return None;
+            }
+            let trimmed = suffix.trim_end_matches('/');
+            let trailing_slashes = suffix.len().saturating_sub(trimmed.len());
+            if trailing_slashes > 1 {
+                return None;
+            }
+            Some(trimmed)
+        })
         .filter(|suffix| !suffix.is_empty())
+        .filter(|suffix| !matches!(*suffix, "." | ".."))
+        .filter(|suffix| !suffix.contains('/'))
+        .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -4787,6 +4861,14 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_get_path_rejects_percent_encoded_control_path_bytes_fail_closed() {
+        assert_eq!(parse_http_get_path("GET /health%00check HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
@@ -4976,6 +5058,21 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_control_path_bytes() {
+        for path in [
+            "/query-events/42%00?limit=7",
+            "/query-events/42%7F?limit=7",
+            "/query-events/%00/42?limit=7",
+            "/query-events/%7f/42?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("percent encoded control bytes in path must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
         let out =
             parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
@@ -5013,6 +5110,37 @@ mod tests {
         .expect_err("invalid cursor should fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
+        for path in [
+            "/query-normalized-audit-events-shadow",
+            "/query-normalized-audit-events-shadow?source=trnm.task",
+            "/query-normalized-audit-events/extra",
+            "/query-normalized-audit-events/extra?limit=2",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("prefix-shadow paths should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%00shadow",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+            "/query-normalized-audit-events%00shadow?source=trnm.task",
+            "/query-normalized-audit-events%7fshadow?source=trnm.task",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("encoded controls should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
     }
 
     #[test]
@@ -5192,6 +5320,51 @@ mod tests {
             parse_nonempty_path_suffix("/query-capability-audit///", "/query-capability-audit/"),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice/extra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice\\extra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/.", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/..", "/query-capability-audit/"),
+            None
+        );
+    }
+
+    #[test]
+    fn ambiguous_path_segment_encoding_rejects_encoded_slashes_case_insensitively() {
+        assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
     #[test]

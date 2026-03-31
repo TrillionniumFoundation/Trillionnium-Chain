@@ -370,6 +370,19 @@
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_null_and_del_controls() {
+        for path in [
+            "/query-events/42?limit=7%00shadow",
+            "/query-events/42?limit=7%7fshadow",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded null and DEL controls must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
         for path in [
             "/query-events/42?limit=7#tail",
@@ -2900,6 +2913,22 @@
         assert!(
             loaded.events[0].metering.is_none(),
             "overflowing metering u64 fields must fail closed instead of truncating"
+        );
+    }
+
+    #[test]
+    fn load_node_events_skips_metering_block_with_zero_policy_snapshot_version() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+        let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version=0 metering_prompt_tokens=128 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=192 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384\n";
+        fs::write(run.join("node1.log"), line).expect("write log");
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert_eq!(loaded.events.len(), 1);
+        assert!(
+            loaded.events[0].metering.is_none(),
+            "zero metering policy snapshot version must fail closed instead of surfacing a non-versioned schema"
         );
     }
 

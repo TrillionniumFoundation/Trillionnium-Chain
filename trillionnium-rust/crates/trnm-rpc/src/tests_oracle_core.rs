@@ -138,15 +138,69 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_empty_cursor_valu
 }
 
 #[test]
-fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls() {
+fn parse_query_normalized_audit_events_query_from_path_rejects_malformed_percent_encoding() {
+    for path in [
+        "/query-normalized-audit-events%",
+        "/query-normalized-audit-events%2?source=trnm.task",
+        "/query-normalized-audit-events%zz?source=trnm.task",
+        "/query-normalized-audit-events?source=trnm.task%",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%2",
+        "/query-normalized-audit-events?limit=3%zz",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("malformed percent encoding should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_c0_controls_and_del() {
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
+        "/query-normalized-audit-events?source=trnm.task%01shadow",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%1ftrail",
         "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
         "/query-normalized-audit-events%00shadow?source=trnm.task",
+        "/query-normalized-audit-events%01shadow?source=trnm.task",
+        "/query-normalized-audit-events%1fshadow?source=trnm.task",
         "/query-normalized-audit-events%7fshadow?source=trnm.task",
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)
             .expect_err("encoded controls should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_query_delimiters() {
+    for path in [
+        "/query-normalized-audit-events?source=trnm.task%26eventType=trnm.task.commit",
+        "/query-normalized-audit-events?eventType%3dtrnm.task.commit",
+        "/query-normalized-audit-events?limit=3%23tail",
+        "/query-normalized-audit-events?cursor=1%3Flimit=2",
+        "/query-normalized-audit-events?source=trnm.task%26limit=2",
+        "/query-normalized-audit-events?eventType%3Dtrnm.task.commit",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("encoded query delimiters should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_spaces() {
+    for path in [
+        "/query-normalized-audit-events?source=trnm.task%20shadow",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%20tail",
+        "/query-normalized-audit-events?cursor=1%20",
+        "/query-normalized-audit-events?limit=3%20",
+        "/query-normalized-audit-events%20shadow?source=trnm.task",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("percent-encoded spaces should fail closed");
         assert!(err.contains("400 Bad Request"), "path={path} err={err}");
         assert!(err.contains("invalid query"), "path={path} err={err}");
     }

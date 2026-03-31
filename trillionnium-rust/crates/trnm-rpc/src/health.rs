@@ -56,7 +56,7 @@ fn is_health_probe_path(path: &str) -> bool {
 }
 
 fn json_response_for_method(method: &str, status_line: &str, body: &str) -> String {
-    if method == "HEAD" {
+    if method.eq_ignore_ascii_case("HEAD") {
         http_json_head_response(status_line, body.len())
     } else {
         http_json_response(status_line, body)
@@ -78,22 +78,59 @@ fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
 
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
+        .and_then(|suffix| {
+            if suffix.is_empty() {
+                return None;
+            }
+            let trimmed = suffix.trim_end_matches('/');
+            let trailing_slashes = suffix.len().saturating_sub(trimmed.len());
+            if trailing_slashes > 1 {
+                return None;
+            }
+            Some(trimmed)
+        })
         .filter(|suffix| !suffix.is_empty())
         // Task/event lookups accept only a single decimal id path segment.
-        // Reject extra slash-delimited suffixes so malformed operator paths
-        // fail closed before numeric parsing.
+        // Reject raw or encoded slash-like separators so malformed operator
+        // paths fail closed before numeric parsing.
         .filter(|suffix| !suffix.contains('/'))
+        .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
+}
+
+fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
+    let lower = segment.to_ascii_lowercase();
+    lower.contains("%2f") || lower.contains("%5c") || is_encoded_dot_segment(&lower)
+}
+
+fn is_encoded_dot_segment(segment: &str) -> bool {
+    matches!(segment, "." | ".." | "%2e" | ".%2e" | "%2e." | "%2e%2e")
 }
 
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
     path.strip_prefix(prefix)
-        .map(|suffix| suffix.trim_end_matches('/'))
+        .and_then(|suffix| {
+            if suffix.is_empty() {
+                return None;
+            }
+            let trimmed = suffix.trim_end_matches('/');
+            let trailing_slashes = suffix.len().saturating_sub(trimmed.len());
+            if trailing_slashes > 1 {
+                return None;
+            }
+            Some(trimmed)
+        })
         .filter(|suffix| !suffix.is_empty())
         // Capability subjects/tokens are single path segments. Reject extra
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
         .filter(|suffix| !suffix.contains('/'))
+        // Treat raw backslashes as ambiguous path separators too so
+        // slash-like operator paths fail closed even before decoding.
+        .filter(|suffix| !suffix.contains('\\'))
+        // Also reject encoded slash-like separators so ambiguous operator
+        // paths are not silently accepted as opaque identifiers.
+        .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -240,8 +277,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        fallback_response_for_request, is_health_probe_path, json_response_for_method,
-        parse_nonempty_path_suffix, parse_path_u64_suffix,
+        fallback_response_for_request, has_ambiguous_path_segment_encoding,
+        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
+        parse_path_u64_suffix,
     };
 
     #[test]
@@ -270,12 +308,20 @@ mod tests {
         assert!(is_health_probe_path("/STATUSZ"));
         assert!(is_health_probe_path("/-/health"));
         assert!(is_health_probe_path("/-/health/"));
+        assert!(is_health_probe_path("/-/healthz"));
+        assert!(is_health_probe_path("/-/healthz/"));
         assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/live/"));
+        assert!(is_health_probe_path("/-/livez"));
+        assert!(is_health_probe_path("/-/livez/"));
+        assert!(is_health_probe_path("/-/ready"));
+        assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
+        assert!(!is_health_probe_path("/-/readycheck"));
     }
 
     #[test]
@@ -287,6 +333,11 @@ mod tests {
         assert!(head.ends_with("\r\n\r\n"));
         assert!(!head.ends_with("{\"ok\":true}"));
         assert!(head.contains("Content-Length: 11\r\n"));
+
+        let lowercase_head = json_response_for_method("head", "200 OK", "{\"ok\":true}");
+        assert!(lowercase_head.ends_with("\r\n\r\n"));
+        assert!(!lowercase_head.ends_with("{\"ok\":true}"));
+        assert!(lowercase_head.contains("Content-Length: 11\r\n"));
     }
 
     #[test]
@@ -314,6 +365,7 @@ mod tests {
         );
         assert_eq!(parse_path_u64_suffix("/query-task/", "/query-task/"), None);
         assert_eq!(parse_path_u64_suffix("/query-task///", "/query-task/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-task/42//", "/query-task/"), None);
         assert_eq!(
             parse_path_u64_suffix("/query-task/42/extra", "/query-task/"),
             None
@@ -322,6 +374,32 @@ mod tests {
             parse_path_u64_suffix("/query-events/42/history", "/query-events/"),
             None
         );
+        assert_eq!(
+            parse_path_u64_suffix("/query-task/42\\extra", "/query-task/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%2Fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%5Chistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%2fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/42%5chistory", "/query-events/"),
+            None
+        );
+        assert_eq!(parse_path_u64_suffix("/query-events/.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/..", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/.%2e", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2e%2E", "/query-events/"), None);
     }
 
     #[test]
@@ -344,11 +422,118 @@ mod tests {
         );
         assert_eq!(
             parse_nonempty_path_suffix(
+                "/query-capability-audit/alice//",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
                 "/query-capability-audit/alice/extra",
                 "/query-capability-audit/"
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice\\extra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/.", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix("/query-capability-audit/..", "/query-capability-audit/"),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2E",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/.%2e",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2E.",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2e%2E",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn ambiguous_path_segment_encoding_rejects_encoded_slashes_and_dot_segments() {
+        assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(has_ambiguous_path_segment_encoding("%2E"));
+        assert!(has_ambiguous_path_segment_encoding(".%2e"));
+        assert!(has_ambiguous_path_segment_encoding("%2E."));
+        assert!(has_ambiguous_path_segment_encoding("%2e%2E"));
+        assert!(has_ambiguous_path_segment_encoding("."));
+        assert!(has_ambiguous_path_segment_encoding(".."));
+        assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
     #[test]

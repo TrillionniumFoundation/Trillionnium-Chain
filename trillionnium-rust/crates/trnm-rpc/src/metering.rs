@@ -14,6 +14,31 @@ fn trim_wrapped_log_numeric(raw: &str) -> &str {
     })
 }
 
+fn trim_wrapped_log_text(raw: &str) -> &str {
+    let mut value = raw.trim();
+    loop {
+        let trimmed = value.trim();
+        let next = if trimmed.len() >= 2 {
+            match (trimmed.as_bytes().first().copied(), trimmed.as_bytes().last().copied()) {
+                (Some(b'"'), Some(b'"'))
+                | (Some(b'\''), Some(b'\''))
+                | (Some(b'`'), Some(b'`'))
+                | (Some(b'('), Some(b')'))
+                | (Some(b'['), Some(b']'))
+                | (Some(b'{'), Some(b'}')) => &trimmed[1..trimmed.len() - 1],
+                _ => break,
+            }
+        } else {
+            break;
+        };
+        if next == value {
+            break;
+        }
+        value = next;
+    }
+    value.trim()
+}
+
 pub(crate) fn parse_u64_kv_value(raw: &str) -> Option<u64> {
     trim_wrapped_log_numeric(raw).parse::<u64>().ok()
 }
@@ -28,10 +53,15 @@ pub(crate) fn parse_i128_kv_value(raw: &str) -> Option<i128> {
 
 pub(crate) fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
     kv.get(key).and_then(|v| {
-        if v.is_empty() || v == "-" {
+        let normalized = trim_wrapped_log_text(v);
+        let placeholder = normalized.to_ascii_lowercase();
+        if normalized.is_empty()
+            || normalized == "-"
+            || matches!(placeholder.as_str(), "null" | "none" | "n/a" | "na")
+        {
             None
         } else {
-            Some(v.clone())
+            Some(normalized.to_string())
         }
     })
 }
@@ -54,8 +84,9 @@ fn parse_required_u64_kv_value(kv: &BTreeMap<String, String>, key: &str) -> Opti
         .and_then(|v| u64::try_from(v).ok())
 }
 
-fn metering_policy_has_nonzero_denominators(policy: &TaskMeteringPolicyQueryResponse) -> bool {
-    policy.challenge_success_bounty_per_work_unit_den != 0
+fn metering_policy_is_structurally_valid(policy: &TaskMeteringPolicyQueryResponse) -> bool {
+    policy.snapshot_version != 0
+        && policy.challenge_success_bounty_per_work_unit_den != 0
         && policy.worker_completion_bonus_per_work_unit_den != 0
         && policy.worker_slash_rebate_per_work_unit_den != 0
 }
@@ -142,6 +173,7 @@ pub(crate) fn parse_event_metering_query_response(
         .and_then(|v| parse_u128_kv_value(v))
         .and_then(|v| u8::try_from(v).ok())?;
 
+    let metering_path = normalize_opt_kv(kv, "to_status")?;
     let normalized_work_units = kv
         .get("metering_normalized_work_units")
         .and_then(|v| parse_u128_kv_value(v))?;
@@ -172,12 +204,12 @@ pub(crate) fn parse_event_metering_query_response(
             .get("metering_worker_slash_rebate_per_work_unit_den")
             .and_then(|v| parse_u128_kv_value(v))?,
     };
-    if !metering_policy_has_nonzero_denominators(&policy) {
+    if !metering_policy_is_structurally_valid(&policy) {
         return None;
     }
 
     Some(build_task_metering_query_response(
-        normalize_opt_kv(kv, "to_status").unwrap_or_else(|| "-".into()),
+        metering_path,
         workload_class,
         metering_schema,
         receipt_hash,
