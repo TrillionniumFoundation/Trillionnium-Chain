@@ -51,10 +51,15 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let bracketed_host_literal = node_id
+        .strip_prefix('[')
+        .and_then(|inner| inner.strip_suffix(']'))
+        .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
     anyhow::ensure!(
         !node_id.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
-            && node_id.parse::<SocketAddr>().is_err(),
+            && node_id.parse::<SocketAddr>().is_err()
+            && !bracketed_host_literal,
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
@@ -1181,7 +1186,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_host_like_node_id_literals() {
-        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7001"] {
+        for node_id in [
+            "localhost",
+            "LOCALHOST",
+            "127.0.0.1",
+            "127.0.0.1:7001",
+            "[::1]",
+            "[2001:db8::1]",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
