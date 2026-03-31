@@ -16,6 +16,52 @@ EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
 
+require_nonempty_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  [ -n "$value" ] || {
+    printf 'missing %s\n' "$flag_name" >&2
+    usage
+    exit 2
+  }
+}
+
+require_worktree_root_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
+require_ref_token() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    *[[:space:]]*)
+      printf 'invalid %s: must not contain whitespace: %s\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --expected-worktree-root)
@@ -45,8 +91,26 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-[ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root" >&2; usage; exit 2; }
-[ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref" >&2; usage; exit 2; }
+require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
+if [ -n "$EXPECTED_HEAD" ]; then
+  require_ref_token --expected-head "$EXPECTED_HEAD"
+  case "$EXPECTED_HEAD" in
+    [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]) ;;
+    *)
+      printf 'invalid --expected-head: expected 40-hex sha got %s\n' "$EXPECTED_HEAD" >&2
+      exit 2
+      ;;
+  esac
+fi
+
+case "$EXPECTED_BRANCH_REF" in
+  refs/heads/*) ;;
+  *)
+    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
+    exit 2
+    ;;
+esac
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2
@@ -65,7 +129,10 @@ CURRENT_HEAD="$(git rev-parse HEAD)"
 CURRENT_BRANCH_REF="refs/heads/${CURRENT_BRANCH_NAME}"
 CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURRENT_WORKTREE_ROOT" '
   BEGIN { in_match=0 }
-  /^worktree / { in_match = ($2 == target) }
+  /^worktree / {
+    worktree_path = substr($0, length("worktree ") + 1)
+    in_match = (worktree_path == target)
+  }
   in_match { print }
   in_match && /^$/ { exit }
 ')"
