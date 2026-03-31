@@ -68,7 +68,21 @@ latest_preflight_path="run/preflight/go-no-go-latest.txt"
 printf 'preflight_path=%s\n' "$latest_preflight_path"
 awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|expected_worktree_root|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
+latest_evidence_dir="$(ls -dt run/release-evidence/* 2>/dev/null | head -n1)"
+[ -n "$latest_evidence_dir" ] || { echo "missing release evidence dir" >&2; exit 1; }
+summary_path="$latest_evidence_dir/summary.txt"
+[ -f "$summary_path" ] || { echo "missing summary artifact" >&2; exit 1; }
+printf 'summary_path=%s\n' "$summary_path"
+
+latest_rc_dir="$(ls -dt run/release-rc/* 2>/dev/null | head -n1)"
+[ -n "$latest_rc_dir" ] || { echo "missing release rc dir" >&2; exit 1; }
+manifest_path="$latest_rc_dir/manifest.txt"
+[ -f "$manifest_path" ] || { echo "missing manifest artifact" >&2; exit 1; }
+printf 'manifest_path=%s\n' "$manifest_path"
+
 ./scripts/v2/extract_release_handoff_fields.sh \
+  --summary-path "$summary_path" \
+  --manifest-path "$manifest_path" \
   --expected-worktree-root "/abs/path/from-ticket" \
   --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
