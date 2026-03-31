@@ -120,6 +120,42 @@ Release-review invariants for this bundle:
 - a bounded retry must mint a fresh `attempt_id` and append a new bundle rather than overwrite the prior one;
 - a later successful retry may supersede the operational state, but it must not erase prior failed trust evidence for the same `request_id`.
 
+### Example replay/audit evidence bundle
+
+A concrete bundle example keeps release review anchored in a single checkpoint/WAL tuple instead of vague "verifier said no" logs.
+
+```json
+{
+  "request_id": "verify-ckpt-0001842",
+  "attempt_id": "verify-ckpt-0001842-attempt-02",
+  "verdict": "rejected",
+  "failure_code": "checkpoint_tuple_mismatch",
+  "requested_checkpoint_height": 1842,
+  "requested_checkpoint_state_root_hex": "4f3c2a1b9e8d7c6b5a4938271605f4e3d2c1b0a9988776655443322110ffeedd",
+  "requested_checkpoint_wal_entry_hash_hex": "0a1b2c3d4e5f60718273645566778899aabbccddeeff00112233445566778899",
+  "requested_checkpoint_prev_hash_hex": "11223344556677889900aabbccddeeff00112233445566778899aabbccddeeff",
+  "requested_checkpoint_commitment_hex": "9d4c3b2a1908f7e6d5c4b3a291807f6e5d4c3b2a1908f7e6d5c4b3a291807f6e",
+  "requested_da_summary_hash": "6a5b4c3d2e1f00112233445566778899aabbccddeeff00112233445566778899",
+  "observed_checkpoint_height": 1842,
+  "observed_state_root_hex": "4f3c2a1b9e8d7c6b5a4938271605f4e3d2c1b0a9988776655443322110ffeedd",
+  "observed_wal_entry_hash_hex": "deadbeef4e5f60718273645566778899aabbccddeeff00112233445566778899",
+  "observed_da_summary_hash": "7b6c5d4e3f2a00112233445566778899aabbccddeeff00112233445566778899",
+  "verifier_policy_version": "policy-2026-03-31",
+  "verifier_schema_version": "checkpoint-wal-v1",
+  "attempt_started_at": "2026-03-31T15:04:11Z",
+  "attempt_finished_at": "2026-03-31T15:04:14Z",
+  "transport_outcome": "http_200",
+  "raw_evidence_ref": "s3://trnm-verifier-audit/2026/03/31/verify-ckpt-0001842-attempt-02.json"
+}
+```
+
+What this example makes explicit:
+
+- the sidecar kept the **requested** checkpoint tuple intact;
+- the verifier answered successfully at the transport layer (`http_200`), so this is **not** an outage-class retry;
+- the observed WAL anchor diverged from the requested checkpoint binding, so the correct outcome is a terminal trust failure (`checkpoint_tuple_mismatch`);
+- a later retry may succeed for the same `request_id`, but it must append a new `attempt_id` rather than rewrite this rejected evidence.
+
 ### Minimum failure code taxonomy
 
 At minimum, operators should be able to tell these cases apart without reading raw logs:
