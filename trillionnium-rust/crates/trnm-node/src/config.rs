@@ -340,6 +340,18 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_workspace_prefixed_path_to_workspace_root() {
+        let resolved = resolve_config_path("trillionnium-rust/configs/node1.toml");
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        assert_eq!(resolved, workspace_root.join("configs/node1.toml"));
+        assert!(resolved.is_file(), "expected shipped node1 config to exist");
+    }
+
+    #[test]
     fn resolve_config_path_anchors_curdir_prefixed_repo_root_defaults_to_workspace_configs_dir() {
         let resolved = resolve_config_path("./configs/node1.toml");
         assert!(

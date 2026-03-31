@@ -3649,6 +3649,15 @@ mod tests {
     }
 
     #[test]
+    fn load_config_accepts_workspace_prefixed_default_path() {
+        let cfg = load_config("trillionnium-rust/configs/node1.toml")
+            .expect("workspace-prefixed bootstrap config should resolve");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
     fn load_config_accepts_curdir_prefixed_repo_root_default_path() {
         let cfg = load_config("./configs/node1.toml")
             .expect("curdir-prefixed repo-root bootstrap config should resolve");
