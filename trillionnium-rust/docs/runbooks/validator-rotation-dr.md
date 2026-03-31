@@ -123,7 +123,9 @@ Record one of:
 
 Also record:
 - `outgoing_validator_config=`
+- `outgoing_validator_identity=`
 - `incoming_validator_config=`
+- `incoming_validator_identity=`
 - `expected_genesis_or_checkpoint=`
 - `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
 - `rollback_command=`
@@ -143,15 +145,14 @@ git status --short
 ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep
 lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'
 python3 scripts/v2/check_validator_config_bundle.py \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  <incoming-validator-config.toml> \
+  [additional-config.toml ...]
 ```
 
 Interpretation rule:
 - the worktree must still be clean
 - any ambiguous running owner is a stop condition
+- validate the exact incoming validator config bundle named in the cutover note; do not substitute an unrelated demo quartet just because those files happen to exist in the repo
 - the incoming validator config must pass the config-bundle check before cutover
 
 ### 4. Attach DR/recovery evidence when the event is a rebuild
