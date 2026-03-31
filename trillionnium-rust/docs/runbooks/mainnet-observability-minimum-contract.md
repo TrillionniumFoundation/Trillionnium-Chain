@@ -75,6 +75,11 @@ Operators should not over-read it as indexer/read-model closure.
 - `bft_commit_observed_height_rate_ppm`
 - `bft_skipped_height_total`
 - `bft_skipped_observed_height_rate_ppm`
+- `bft_double_vote_total`
+- `bft_auth_reject_bad_sig_total`
+- `bft_auth_reject_replay_total`
+- `bft_auth_reject_stale_total`
+- `bft_auth_reject_stale_nonce_total`
 
 ### Minimal interpretation hints
 
@@ -88,12 +93,16 @@ Operators should not over-read it as indexer/read-model closure.
   - use together before drawing conclusions from skipped-height rates.
 - `bft_skipped_height_total` / `bft_skipped_observed_height_rate_ppm`
   - summarize commit gap pressure against observed height progress.
+- `bft_double_vote_total` / `bft_auth_reject_*`
+  - use as the minimum operator-visible BFT auth/safety cluster before escalation.
+- `bft_auth_reject_stale_total` / `bft_auth_reject_stale_nonce_total`
+  - keep both append-stable for grep compatibility; today the alias resolves to the same stale-nonce rejection counter and should not be reinterpreted as a distinct source.
 
 ### Operator-visible summary template
 
 A safe starter summary line for incident handoff is:
 
-- `apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n>`
+- `apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n>`
 
 Keep field names verbatim so pager notes and release evidence remain grep-stable.
 
