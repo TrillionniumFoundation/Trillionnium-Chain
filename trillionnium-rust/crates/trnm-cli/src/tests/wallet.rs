@@ -402,6 +402,30 @@ fn wallet_name_rejects_path_like_values() {
 }
 
 #[test]
+fn write_key_rejects_non_normalized_private_key_hex() {
+    let unique = format!(
+        "trnm-cli-wallet-invalid-hex-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+
+    let err = write_key(&store, "alice", "0x1234").unwrap_err();
+    assert!(
+        err.to_string()
+            .contains("private key hex must be 32 bytes (64 hex chars)"),
+        "unexpected error: {err}"
+    );
+    assert!(!wallet_file(&store, "alice").exists());
+
+    let _ = std::fs::remove_dir_all(&store);
+}
+
+#[test]
 fn write_key_refuses_to_overwrite_existing_wallet_file() {
     let unique = format!(
         "trnm-cli-wallet-test-{}-{}",

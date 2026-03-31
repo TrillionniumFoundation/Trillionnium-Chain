@@ -358,6 +358,7 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
     ensure_wallet_store_path_is_safe(store)?;
     ensure_wallet_store_ancestors_not_symlink(store)?;
     if let Ok(meta) = fs::symlink_metadata(store) {
@@ -388,7 +389,7 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
             f.display()
         );
     }
-    fs::write(&f, format!("{}\n", priv_hex))?;
+    fs::write(&f, format!("{}\n", normalized_priv_hex))?;
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;

@@ -1107,6 +1107,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
     ensure_wallet_store_path_is_safe(store)?;
     ensure_wallet_store_ancestors_not_symlink(store)?;
     if fs::symlink_metadata(store)
@@ -1127,7 +1128,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
             f.display()
         );
     }
-    fs::write(&f, format!("{}\n", priv_hex))?;
+    fs::write(&f, format!("{}\n", normalized_priv_hex))?;
     Ok(f)
 }
 
