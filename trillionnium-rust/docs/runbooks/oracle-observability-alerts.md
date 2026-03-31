@@ -105,7 +105,9 @@ When opening an incident or handing off between operators, include one compact s
 
 Minimal template:
 
-- `sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown>`
+
+This keeps oracle handoff lines compatible with the shared observability routing contract in `docs/runbooks/mainnet-observability-alerting-starter-pack.md` while still preserving the oracle-specific `verdict`.
 
 ## Incident note 最小模板
 
@@ -238,8 +240,13 @@ Prefer verbatim fields emitted by existing evidence scripts over hand-written sh
 
 Minimal incident evidence block:
 
+- `service`: `oracle`
+- `plane`: `observability`
 - `severity`: `<sev0|sev1|sev2|sev3>`
+- `signal`: `oracle-anomaly`
 - `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `needs_replay`: `<yes|no>`
+- `needs_rollback`: `<yes|no>`
 - `summary_line`: `<operator-visible summary line>`
 - `truth_source`: `<value copied from summary.txt/manifest.txt when present>`
 - `evidence_scope`: `<value copied from summary.txt/manifest.txt when present>`
@@ -247,13 +254,18 @@ Minimal incident evidence block:
 - `manifest_path`: `<abs-path-to-manifest.txt|unknown>`
 - `rollback_command`: `<verbatim emitted value|unknown>`
 - `replay_command`: `<verbatim emitted value|unknown>`
+- `git_worktree_path`: `<verbatim emitted value|unknown>`
+- `git_worktree_branch_ref`: `<verbatim emitted value|unknown>`
+- `git_worktree_branch_ref_match`: `<true|false|unknown>`
 
 Responder rules:
 
 1. Prefer the exact `rollback_command=` / `replay_command=` emitted by generated artifacts.
-2. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
-3. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.
-4. If observability data and replay evidence disagree, treat that as `sev0` until the metrics contract or evidence bundle is reconciled.
+2. Keep `signal=oracle-anomaly` in every page/ticket/dashboard link, and use `verdict=` only for the oracle-specific subtype.
+3. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
+4. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.
+5. If `git_worktree_path=` / `git_worktree_branch_ref=` are missing or mismatched during rehearsal, escalate to at least `sev0` until identity is reconciled.
+6. If observability data and replay evidence disagree, treat that as `sev0` until the metrics contract or evidence bundle is reconciled.
 
 ## Operator note
 
