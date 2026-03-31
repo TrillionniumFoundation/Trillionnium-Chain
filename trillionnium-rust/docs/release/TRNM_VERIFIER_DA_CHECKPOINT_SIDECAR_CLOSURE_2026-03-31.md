@@ -87,6 +87,39 @@ A verifier response should preserve enough structure for operators to distinguis
 - `verifier_schema_version`
 - `evidence_ref` (path, object key, or digest for replay/audit)
 
+### Minimum replay/audit evidence bundle
+
+`evidence_ref` should resolve to a durable bundle that lets an operator replay the exact trust decision later instead of reinterpreting logs by hand.
+
+Minimum fields:
+
+- `request_id`
+- `attempt_id` (unique per bounded retry attempt; never reused across retries)
+- `verdict`
+- `failure_code`
+- `requested_checkpoint_height`
+- `requested_checkpoint_state_root_hex`
+- `requested_checkpoint_wal_entry_hash_hex`
+- `requested_checkpoint_prev_hash_hex` (required for non-genesis checkpoints)
+- `requested_checkpoint_commitment_hex`
+- `requested_da_summary_hash` or equivalent canonical digest
+- `observed_checkpoint_height`
+- `observed_state_root_hex`
+- `observed_wal_entry_hash_hex`
+- `observed_da_summary_hash` or equivalent canonical digest
+- `verifier_policy_version`
+- `verifier_schema_version`
+- `attempt_started_at`
+- `attempt_finished_at`
+- `transport_outcome` (for example `http_200`, `timeout`, `process_unavailable`)
+- `raw_evidence_ref` (raw proof, receipt, or response body handle)
+
+Release-review invariants for this bundle:
+
+- a terminal mismatch must preserve both the requested tuple and the observed tuple in the same bundle;
+- a bounded retry must mint a fresh `attempt_id` and append a new bundle rather than overwrite the prior one;
+- a later successful retry may supersede the operational state, but it must not erase prior failed trust evidence for the same `request_id`.
+
 ### Minimum failure code taxonomy
 
 At minimum, operators should be able to tell these cases apart without reading raw logs:
