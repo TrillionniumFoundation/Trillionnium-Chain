@@ -311,6 +311,7 @@ Every `sev0` / `sev1` incident should preserve one compact evidence block:
 - `signal`: `<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `needs_replay`: `<yes|no>`
 - `needs_rollback`: `<yes|no>`
+- `first_stop_panel`: `<Node liveness / height progress|Consensus instability / rollback pressure|RPC health / read surface|Worker execution / receipt flow|Evidence / replay integrity|Oracle-specific drill-down|Service-specific drill-down|unknown>`
 - `summary_line`: `<one-line operator summary>`
 - `summary_path`: `<abs-path-to-summary.txt|unknown>`
 - `manifest_path`: `<abs-path-to-manifest.txt|unknown>`
@@ -326,8 +327,9 @@ Rules:
 
 1. Prefer emitted fields from generated artifacts over hand-written shell summaries.
 2. Quote `rollback_command=` / `replay_command=` verbatim; do not rewrite them.
-3. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
-4. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
+3. Set `first_stop_panel=` to the exact stable panel name from the routing table above; use `unknown` rather than inventing an ad-hoc alias.
+4. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
+5. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
 
 ---
 
