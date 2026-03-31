@@ -65,8 +65,9 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-TRNM_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TRNM_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ]; then
   [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root when lane binding is requested" >&2; exit 2; }
