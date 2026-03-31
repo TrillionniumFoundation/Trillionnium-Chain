@@ -47,6 +47,14 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.contains('@')
+            && !node_id.contains('?')
+            && !node_id.contains('#')
+            && !node_id.contains('%'),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # %)",
+        path
+    );
+    anyhow::ensure!(
         node_id != "." && node_id != "..",
         "invalid node config {}: node_id must not be '.' or '..'",
         path
@@ -1174,6 +1182,31 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .contains("node_id must not contain path separators"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_uri_delimiters_in_node_id() {
+        for node_id in [
+            "node@seed",
+            "node?peer=seed",
+            "node#fragment",
+            "node%2falpha",
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("node_id URI delimiters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain URI delimiters (@ ? # %)"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
     }
 
     #[test]
