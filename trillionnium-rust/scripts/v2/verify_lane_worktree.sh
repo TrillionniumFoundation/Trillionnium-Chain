@@ -19,6 +19,18 @@ EXPECTED_BRANCH_REF=""
 EXPECTED_BRANCH_REF_CANONICAL=""
 EXPECTED_HEAD=""
 
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
 require_nonempty_value() {
   local flag_name="$1"
   local value="$2"
@@ -107,27 +119,15 @@ if [ -n "$EXPECTED_HEAD" ]; then
   esac
 fi
 
-case "$EXPECTED_BRANCH_REF" in
+EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+
+case "$EXPECTED_BRANCH_REF_CANONICAL" in
   refs/heads/*) ;;
   *)
-    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
+    printf 'invalid --expected-branch-ref: expected branch ref under refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
     exit 2
     ;;
 esac
-
-canonicalize_branch_ref() {
-  local ref="$1"
-  case "$ref" in
-    refs/*)
-      printf '%s' "$ref"
-      ;;
-    *)
-      printf 'refs/heads/%s' "$ref"
-      ;;
-  esac
-}
-
-EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2

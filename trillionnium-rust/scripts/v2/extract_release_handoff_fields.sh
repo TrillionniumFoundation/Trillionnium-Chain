@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF' >&2
-Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
+Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>] [--expected-worktree-root <path>] [--expected-branch-ref <ref>] [--expected-head <sha>]
 
 Resolve the latest local-evidence summary and RC manifest (unless paths are
 provided explicitly), then print the canonical handoff fields directly from the
@@ -15,6 +15,16 @@ EOF
 
 SUMMARY_PATH=""
 MANIFEST_PATH=""
+EXPECTED_WORKTREE_ROOT=""
+EXPECTED_BRANCH_REF=""
+EXPECTED_HEAD=""
+
+normalize_branch_ref() {
+  case "$1" in
+    refs/*) printf '%s\n' "$1" ;;
+    *) printf 'refs/heads/%s\n' "$1" ;;
+  esac
+}
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -26,6 +36,21 @@ while [ "$#" -gt 0 ]; do
     --manifest-path)
       [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
       MANIFEST_PATH="$2"
+      shift 2
+      ;;
+    --expected-worktree-root)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_WORKTREE_ROOT="$2"
+      shift 2
+      ;;
+    --expected-branch-ref)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_BRANCH_REF="$2"
+      shift 2
+      ;;
+    --expected-head)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_HEAD="$2"
       shift 2
       ;;
     -h|--help)
@@ -41,6 +66,20 @@ while [ "$#" -gt 0 ]; do
 done
 
 ROOT="$(git rev-parse --show-toplevel)"
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ]; then
+  [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root when lane binding is requested" >&2; exit 2; }
+  [ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref when lane binding is requested" >&2; exit 2; }
+  EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "$EXPECTED_HEAD" ]; then
+    verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  "$ROOT/trillionnium-rust/scripts/v2/verify_lane_worktree.sh" "${verify_args[@]}" >/dev/null
+fi
 
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(find "$ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
