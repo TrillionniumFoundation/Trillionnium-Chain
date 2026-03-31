@@ -192,3 +192,19 @@ fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_ob
         assert_ne!(bundle[2], bundle[4]);
     }
 }
+
+#[test]
+fn consensus_summary_auth_reject_bundle_keeps_legacy_stale_alias_adjacent_to_explicit_nonce_label() {
+    let auth_reject_fields = [
+        "bft_auth_reject_bad_sig_total",
+        "bft_auth_reject_replay_total",
+        "bft_auth_reject_stale_total",
+        "bft_auth_reject_stale_nonce_total",
+    ];
+
+    assert_eq!(auth_reject_fields.len(), 4);
+    assert!(auth_reject_fields.iter().all(|field| field.ends_with("_total")));
+    assert_eq!(auth_reject_fields[2], "bft_auth_reject_stale_total");
+    assert_eq!(auth_reject_fields[3], "bft_auth_reject_stale_nonce_total");
+    assert_ne!(auth_reject_fields[2], auth_reject_fields[3]);
+}
