@@ -332,6 +332,7 @@ Record these fields in the release ticket or operator handoff note:
 - assigned branch ref (from ticket/lane prompt):
 - verified worktree:
 - verified branch ref:
+- verified head:
 - branch:
 - commit:
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
