@@ -99,3 +99,20 @@ fn query_events_response_fallback_sorts_adapter_records_stably() {
     assert_eq!(out[1].from_status, "Committed");
     assert_eq!(out[1].to_status, "Revealed");
 }
+
+#[test]
+fn query_events_response_fallback_rejects_reveal_without_persisted_commit() {
+    let recs = vec![AdapterRecord {
+        ts: 20,
+        kind: "reveal".into(),
+        task_id: 45,
+        worker: Some("worker-z".into()),
+        result_hash: Some("0x45".into()),
+        status: "accepted".into(),
+        tx_hash: Some("0xccc".into()),
+    }];
+
+    let err = query_events_response(45, 20, &[], &recs)
+        .expect_err("reveal-only fallback must not synthesize a historical event chain");
+    assert!(err.to_string().contains("events not found for task_id=45"));
+}
