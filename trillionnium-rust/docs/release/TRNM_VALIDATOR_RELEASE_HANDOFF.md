@@ -346,7 +346,9 @@ Record these fields in the release ticket or operator handoff note:
 - local evidence truth_source:
 - local evidence historical_evidence_only:
 - local evidence evidence_scope:
+- local evidence result (`summary_result`):
 - rc manifest path:
+- rc manifest worktree branch ref match (`git_worktree_branch_ref_match`):
 - rc manifest generated_at:
 - rc manifest truth_source:
 - rc manifest historical_evidence_only:
