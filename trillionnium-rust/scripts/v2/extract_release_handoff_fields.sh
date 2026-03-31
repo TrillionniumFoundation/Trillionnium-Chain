@@ -65,7 +65,8 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-ROOT="$(git rev-parse --show-toplevel)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+TRNM_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ]; then
   [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root when lane binding is requested" >&2; exit 2; }
@@ -78,18 +79,18 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
   if [ -n "$EXPECTED_HEAD" ]; then
     verify_args+=(--expected-head "$EXPECTED_HEAD")
   fi
-  "$ROOT/trillionnium-rust/scripts/v2/verify_lane_worktree.sh" "${verify_args[@]}" >/dev/null
+  "$REPO_ROOT/trillionnium-rust/scripts/v2/verify_lane_worktree.sh" "${verify_args[@]}" >/dev/null
 fi
 
 if [ -z "$SUMMARY_PATH" ]; then
-  latest_evidence_dir="$(find "$ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
-  [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $ROOT/run/health" >&2; exit 1; }
+  latest_evidence_dir="$(find "$TRNM_ROOT/run/health" -maxdepth 1 -type d -name 'evidence-*' -print 2>/dev/null | sort | tail -n 1)"
+  [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $TRNM_ROOT/run/health" >&2; exit 1; }
   SUMMARY_PATH="$latest_evidence_dir/summary.txt"
 fi
 
 if [ -z "$MANIFEST_PATH" ]; then
-  latest_rc_dir="$(find "$ROOT/release" -maxdepth 1 -type d -name 'rc-*' -print 2>/dev/null | sort | tail -n 1)"
-  [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $ROOT/release" >&2; exit 1; }
+  latest_rc_dir="$(find "$TRNM_ROOT/release" -maxdepth 1 -type d -name 'rc-*' -print 2>/dev/null | sort | tail -n 1)"
+  [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $TRNM_ROOT/release" >&2; exit 1; }
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
 fi
 
