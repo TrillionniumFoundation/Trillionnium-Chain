@@ -60,6 +60,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--ceremony-scope",
         default="operator-handoff",
+        choices=("local-rehearsal", "operator-handoff", "public-mainnet-input"),
         help="ceremony_scope value to print when --emit-ceremony-packet is used",
     )
     parser.add_argument(

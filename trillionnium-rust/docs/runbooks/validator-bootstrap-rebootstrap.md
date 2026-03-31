@@ -99,6 +99,7 @@ Do not allow each operator to freestyle their own note format.
 Minimum packet fields:
 - `ceremony_id=` unique identifier for this bootstrap ceremony/rehearsal
 - `ceremony_scope=` one of `local-rehearsal`, `operator-handoff`, or `public-mainnet-input`
+- the packet generator rejects any other `--ceremony-scope` value so a mistyped scope cannot silently drift into handoff evidence
 - `genesis_artifact_path=` and `genesis_artifact_sha256=` copied exactly once as the shared ceremony anchor
 - `validator_set_version=` identifying the exact validator membership list under review
 - `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
