@@ -141,6 +141,16 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
     let parsed_transaction_hyphen =
         parse_tx_query_response(transaction_hyphen, "0xfallback").unwrap();
     assert_eq!(parsed_transaction_hyphen.tx_hash, "0xdecafbad");
+
+    let spaced = "tx hash = 0xabc123\ntransaction status = success\n";
+    let parsed_spaced = parse_tx_query_response(spaced, "0xfallback").unwrap();
+    assert_eq!(parsed_spaced.tx_hash, "0xabc123");
+    assert_eq!(parsed_spaced.status, "committed");
+
+    let mixed = "transaction hash：0xdef456\ncheck tx code：0\n";
+    let parsed_mixed = parse_tx_query_response(mixed, "0xfallback").unwrap();
+    assert_eq!(parsed_mixed.tx_hash, "0xdef456");
+    assert_eq!(parsed_mixed.status, "committed");
 }
 
 #[test]
