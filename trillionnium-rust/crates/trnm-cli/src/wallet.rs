@@ -126,7 +126,7 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     (!normalized.is_empty()).then_some(normalized)
 }
 
-fn wallet_store_env_path_is_safe(path: &Path) -> bool {
+fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
     path.is_absolute()
@@ -135,11 +135,44 @@ fn wallet_store_env_path_is_safe(path: &Path) -> bool {
             .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
 }
 
+fn ensure_wallet_store_path_is_safe(store: &Path) -> Result<()> {
+    if !wallet_store_path_is_safe(store) {
+        bail!(
+            "wallet store '{}' must be an absolute normalized path without '.' or '..' segments",
+            store.display()
+        );
+    }
+    Ok(())
+}
+
+fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
+    for ancestor in store.ancestors().skip(1) {
+        match fs::symlink_metadata(ancestor) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                bail!(
+                    "wallet store '{}' traverses symlinked ancestor '{}'; refusing non-canonical keystore path",
+                    store.display(),
+                    ancestor.display()
+                );
+            }
+            Ok(_) => {}
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+            Err(err) => {
+                bail!(
+                    "failed to inspect wallet store ancestor '{}' for symlink safety: {err}",
+                    ancestor.display()
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
             let candidate = PathBuf::from(normalized);
-            if wallet_store_env_path_is_safe(&candidate) {
+            if wallet_store_path_is_safe(&candidate) {
                 return candidate;
             }
         }
@@ -311,6 +344,8 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     if let Ok(meta) = fs::symlink_metadata(store) {
         if meta.file_type().is_symlink() {
             bail!(
@@ -350,6 +385,8 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
 
 pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     let store_meta = fs::symlink_metadata(store)
         .map_err(|e| anyhow!("failed to inspect wallet store '{}': {e}", store.display()))?;
     if store_meta.file_type().is_symlink() {

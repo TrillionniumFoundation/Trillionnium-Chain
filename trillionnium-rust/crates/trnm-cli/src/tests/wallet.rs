@@ -234,6 +234,30 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 }
 
 #[test]
+fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
+    let write_err = write_key(
+        std::path::Path::new("./wallets"),
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        write_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {write_err}"
+    );
+
+    let read_err = read_key(std::path::Path::new("/tmp/trnm/../wallets"), "alice").unwrap_err();
+    assert!(
+        read_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {read_err}"
+    );
+}
+
+#[test]
 fn wallet_name_rejects_path_like_values() {
     for bad in [
         "",
@@ -660,5 +684,61 @@ fn read_key_refuses_symlink_wallet_store() {
     let _ = std::fs::remove_file(wallet_file(&real_store, "alice"));
     let _ = std::fs::remove_file(&symlink_store);
     let _ = std::fs::remove_dir(&real_store);
+    let _ = std::fs::remove_dir(&root);
+}
+
+#[test]
+#[cfg(unix)]
+fn wallet_store_rejects_symlinked_ancestor_path_components() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-ancestor-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let root = std::env::temp_dir().join(unique);
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    std::fs::create_dir_all(&real_parent).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+
+    let store = linked_parent.join("wallets");
+    let write_err = write_key(
+        &store,
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        write_err
+            .to_string()
+            .contains("traverses symlinked ancestor"),
+        "unexpected error: {write_err}"
+    );
+
+    let wallet_path = real_parent.join("wallets").join("alice.key");
+    std::fs::create_dir_all(wallet_path.parent().unwrap()).unwrap();
+    std::fs::write(
+        &wallet_path,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    )
+    .unwrap();
+
+    let read_err = read_key(&store, "alice").unwrap_err();
+    assert!(
+        read_err
+            .to_string()
+            .contains("traverses symlinked ancestor"),
+        "unexpected error: {read_err}"
+    );
+
+    let _ = std::fs::remove_file(&wallet_path);
+    let _ = std::fs::remove_dir(real_parent.join("wallets"));
+    let _ = std::fs::remove_file(&linked_parent);
+    let _ = std::fs::remove_dir(&real_parent);
     let _ = std::fs::remove_dir(&root);
 }
