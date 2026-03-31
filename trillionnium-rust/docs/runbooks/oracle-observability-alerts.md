@@ -105,7 +105,7 @@ When opening an incident or handing off between operators, include one compact s
 
 Minimal template:
 
-- `service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown>`
+- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown>`
 
 This keeps oracle handoff lines compatible with the shared observability routing contract in `docs/runbooks/mainnet-observability-alerting-starter-pack.md` while still preserving the oracle-specific `verdict`.
 
