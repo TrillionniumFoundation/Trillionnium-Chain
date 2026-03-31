@@ -1538,6 +1538,20 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 !on_disk_metadata.file_type().is_symlink(),
                 "{config_path} must not become a symlink that can retarget shipped bootstrap topology fixtures"
             );
+            let workspace_relative_metadata =
+                std::fs::symlink_metadata(workspace_relative_path).unwrap_or_else(|err| {
+                    panic!(
+                        "{workspace_relative_path} should stay stat-able for bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert!(
+                workspace_relative_metadata.file_type().is_file(),
+                "{workspace_relative_path} must remain a regular file for deterministic bootstrap/rejoin path anchoring"
+            );
+            assert!(
+                !workspace_relative_metadata.file_type().is_symlink(),
+                "{workspace_relative_path} must not become a symlink that can retarget shipped bootstrap/rejoin fixtures"
+            );
 
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
