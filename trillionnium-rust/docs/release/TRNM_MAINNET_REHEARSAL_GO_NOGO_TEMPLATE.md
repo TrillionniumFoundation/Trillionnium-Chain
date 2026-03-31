@@ -82,6 +82,7 @@ Copy these fields from the extracted artifact output or directly from `summary.t
 - `git_expected_worktree_branch_ref=`
 - `git_worktree_branch_ref_match=`
 - `git_status_summary=`
+- `generated_at=`
 - `truth_source=`
 - `historical_evidence_only=`
 - `evidence_scope=`
@@ -151,6 +152,7 @@ Mark each item explicitly:
 - [ ] summary/manifest identity fields match assigned worktree/branch
 - [ ] `git_worktree_branch_ref_match=true`
 - [ ] `git_status_summary=clean`
+- [ ] `generated_at=` preserved next to decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
 - [ ] `rollback_command=` quoted verbatim
@@ -173,6 +175,7 @@ git_worktree_branch_ref=<artifact value>
 git_expected_worktree_branch_ref=<artifact value>
 git_worktree_branch_ref_match=<true|false|unknown>
 git_status_summary=<clean|dirty|unknown>
+generated_at=<artifact value>
 truth_source=<artifact value>
 historical_evidence_only=<artifact value>
 evidence_scope=<artifact value>
