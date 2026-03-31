@@ -188,6 +188,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an unspecified address",
         path
     );
+    anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_link_local())
+            && !matches!(rpc_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_unicast_link_local()),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: p2p_addr must be a valid socket address",
@@ -222,6 +228,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unspecified(),
         "invalid node config {}: p2p_addr must not use an unspecified address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_link_local())
+            && !matches!(p2p_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_unicast_link_local()),
+        "invalid node config {}: p2p_addr must not use a link-local address",
         path
     );
     anyhow::ensure!(
@@ -852,6 +864,53 @@ bootstrap_peers = ["127.0.0.1:27656"]
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not use a multicast address"),
+            "unexpected error: {p2p_err:#}"
+        );
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_link_local_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"169.254.10.20:7000\"\np2p_addr = \"127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local rpc listener must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a link-local address"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"[fe80::1]:7001\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local p2p listener must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a link-local address"),
             "unexpected error: {p2p_err:#}"
         );
 
