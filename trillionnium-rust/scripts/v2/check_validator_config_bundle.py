@@ -209,9 +209,9 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
         return
 
     required_exact_values = {
-        "ceremony_id": args.ceremony_id,
         "packet_generated_at": args.packet_generated_at,
         "packet_distribution_path": args.packet_distribution_path,
+        "startup_order_note": args.startup_order_note,
         "rollback_owner": args.rollback_owner,
         "genesis_artifact_path": args.genesis_artifact_path,
         "genesis_artifact_sha256": args.genesis_artifact_sha256,
@@ -223,6 +223,11 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires explicit values for "
             + ", ".join(placeholder_fields)
+        )
+
+    if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires an explicit ceremony_id instead of the template default"
         )
 
 
