@@ -129,8 +129,10 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
 fn wallet_store_env_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
-    !path.components()
-        .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+    path.is_absolute()
+        && !path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
 }
 
 pub(crate) fn default_wallet_store() -> PathBuf {

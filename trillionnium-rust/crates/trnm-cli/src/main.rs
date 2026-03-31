@@ -841,8 +841,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
 fn is_single_sided_env_quote(c: char) -> bool {
     matches!(
         c,
-        '"'
-            | '\''
+        '"' | '\''
             | '`'
             | '“'
             | '”'
@@ -945,7 +944,17 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
-            return PathBuf::from(normalized);
+            let candidate = PathBuf::from(normalized);
+            if candidate.is_absolute()
+                && !candidate.components().any(|component| {
+                    matches!(
+                        component,
+                        std::path::Component::CurDir | std::path::Component::ParentDir
+                    )
+                })
+            {
+                return candidate;
+            }
         }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
@@ -985,7 +994,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with('.')
         || name.starts_with('-')
         || name.contains(['/', '\\', ':', '=', '|', '&', '$'])
-        || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
+        || name.contains([
+            '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
+        ])
         || has_hidden_or_whitespace
     {
         bail!(
@@ -1001,7 +1012,10 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
         .trim_matches(|c: char| {
             c.is_whitespace()
                 || c.is_control()
-                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}')
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                )
                 || matches!(
                     c,
                     '\u{200B}'
@@ -1104,8 +1118,7 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
                     || c.is_control()
                     || matches!(
                         c,
-                        ','
-                            | ';'
+                        ',' | ';'
                             | ':'
                             | '('
                             | ')'
@@ -1383,9 +1396,38 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
     let value = value.trim_matches(|c: char| {
@@ -1393,9 +1435,38 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
 
@@ -1412,9 +1483,38 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1441,9 +1541,38 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     || c.is_control()
                     || matches!(
                         c,
-                        ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                            | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                            | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                        ',' | ';'
+                            | '{'
+                            | '}'
+                            | '['
+                            | ']'
+                            | '('
+                            | ')'
+                            | '<'
+                            | '>'
+                            | '，'
+                            | '；'
+                            | '：'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '＜'
+                            | '＞'
+                            | '「'
+                            | '」'
+                            | '『'
+                            | '』'
+                            | '《'
+                            | '》'
+                            | '〈'
+                            | '〉'
+                            | '｢'
+                            | '｣'
+                            | '【'
+                            | '】'
                     )
             })
             .trim_matches(|c| matches!(c, '"' | '\'' | '`' | '“' | '”' | '‘' | '’'))
@@ -1459,12 +1588,50 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
                 || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
-                        | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
-                        | ',' | ';' | ':' | '!' | '?'
-                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
-                        | '，' | '；' | '：' | '！' | '？'
+                    '"' | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '<'
+                        | '>'
+                        | ','
+                        | ';'
+                        | ':'
+                        | '!'
+                        | '?'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                        | '｢'
+                        | '｣'
+                        | '【'
+                        | '】'
+                        | '，'
+                        | '；'
+                        | '：'
+                        | '！'
+                        | '？'
                 )
                 || matches!(
                     c,
@@ -1485,7 +1652,11 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
                 )
         })
         .trim_end_matches(|c: char| {
-            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+            c.is_ascii_punctuation()
+                || matches!(
+                    c,
+                    '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：'
+                )
         })
         .to_ascii_lowercase();
     let canonical = cleaned
@@ -1519,13 +1690,55 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                 || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
-                        | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
-                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣'
-                        | '«' | '»' | '‹' | '›'
-                        | '【' | '】' | '〔' | '〕' | '〖' | '〗' | '〘' | '〙' | '〚' | '〛'
-                        | '〝' | '〞' | '〟'
+                    '"' | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '<'
+                        | '>'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                        | '｢'
+                        | '｣'
+                        | '«'
+                        | '»'
+                        | '‹'
+                        | '›'
+                        | '【'
+                        | '】'
+                        | '〔'
+                        | '〕'
+                        | '〖'
+                        | '〗'
+                        | '〘'
+                        | '〙'
+                        | '〚'
+                        | '〛'
+                        | '〝'
+                        | '〞'
+                        | '〟'
                 )
                 || matches!(
                     c,
@@ -1546,7 +1759,11 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                 )
         })
         .trim_end_matches(|c: char| {
-            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+            c.is_ascii_punctuation()
+                || matches!(
+                    c,
+                    '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：'
+                )
         })
         .to_ascii_lowercase();
     cleaned.is_empty() || cleaned == "null"
@@ -1716,12 +1933,10 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         for (key, value) in pairs {
             match key.as_str() {
                 "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    match normalize_tx_hash(&value) {
-                        Some(normalized) => tx_hash = Some(normalized),
-                        None => bail!("invalid tx_hash field in tx query response"),
-                    }
-                }
+                | "transaction-hash" => match normalize_tx_hash(&value) {
+                    Some(normalized) => tx_hash = Some(normalized),
+                    None => bail!("invalid tx_hash field in tx query response"),
+                },
                 "status" | "tx_status" | "txstatus" | "transaction_status"
                 | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
                 | "transactionstate" => {
@@ -2049,12 +2264,12 @@ fn main() -> Result<()> {
                     let tx_hash = format!(
                         "0x{}",
                         hash(&[
-                        "commit-result",
-                        &task_id.to_string(),
-                        &worker,
-                        &commit_hash,
-                        &nonce.to_string(),
-                    ])
+                            "commit-result",
+                            &task_id.to_string(),
+                            &worker,
+                            &commit_hash,
+                            &nonce.to_string(),
+                        ])
                     );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
@@ -2075,11 +2290,11 @@ fn main() -> Result<()> {
                     let tx_hash = format!(
                         "0x{}",
                         hash(&[
-                        "reveal-result",
-                        &task_id.to_string(),
-                        &result_hash,
-                        &salt_hex,
-                    ])
+                            "reveal-result",
+                            &task_id.to_string(),
+                            &result_hash,
+                            &salt_hex,
+                        ])
                     );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
@@ -2279,7 +2494,10 @@ mod tests {
             "0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         )
         .unwrap();
-        assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        assert_eq!(
+            upper,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
 
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }
@@ -2299,6 +2517,44 @@ mod tests {
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
+    }
+
+    #[test]
+    fn default_wallet_store_rejects_relative_env_paths() {
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        let home = std::env::temp_dir().join(format!(
+            "trnm-cli-wallet-home-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&home).unwrap();
+        std::env::set_var("HOME", &home);
+
+        std::env::set_var("TRNM_WALLET_STORE", "wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "nested/wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
+        assert_eq!(
+            default_wallet_store(),
+            std::path::PathBuf::from("/tmp/trnm-wallets")
+        );
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
+        let _ = std::fs::remove_dir_all(&home);
     }
 
     #[test]
@@ -2373,7 +2629,8 @@ mod tests {
         )
         .unwrap_err();
         assert!(
-            err.to_string().contains("refusing to overwrite existing key"),
+            err.to_string()
+                .contains("refusing to overwrite existing key"),
             "unexpected error: {err}"
         );
         assert_eq!(
@@ -2410,10 +2667,14 @@ mod tests {
         )
         .unwrap_err();
         assert!(
-            err.to_string().contains("refusing to overwrite existing key"),
+            err.to_string()
+                .contains("refusing to overwrite existing key"),
             "unexpected error: {err}"
         );
-        assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
+        assert!(std::fs::symlink_metadata(&existing)
+            .unwrap()
+            .file_type()
+            .is_symlink());
 
         let _ = std::fs::remove_file(&existing);
         let _ = std::fs::remove_dir(&store);
@@ -3082,9 +3343,9 @@ mod tests {
     fn task_query_rejects_missing_primary_finding_when_compatibility_implies_one() {
         let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["non_canonical_core_fields"]}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
-        assert!(err.to_string().contains(
-            "metadata_primary_compatibility_finding mismatch"
-        ));
+        assert!(err
+            .to_string()
+            .contains("metadata_primary_compatibility_finding mismatch"));
     }
 
     #[test]
@@ -3178,16 +3439,15 @@ mod tests {
 
     #[test]
     fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
-        let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
+        let kv =
+            "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
         let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
         assert_eq!(parsed.tx_hash, "0xbeef42");
         assert_eq!(parsed.status, "committed");
         assert_eq!(parsed.error, None);
 
-        let guillemet_wrapped =
-            "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
-        let parsed_guillemet =
-            parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
+        let guillemet_wrapped = "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
+        let parsed_guillemet = parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
         assert_eq!(parsed_guillemet.tx_hash, "0xbeef44");
         assert_eq!(parsed_guillemet.status, "committed");
         assert_eq!(parsed_guillemet.error, None);
