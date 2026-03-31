@@ -186,6 +186,8 @@ Expected fields visible in the capture:
 - `generated_at=` for evidence timing
 - `worktree=` and `branch=` for identity
 - `command[n]=...` lines for the exact rehearsal packet
+- `command[4]=cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` so sponsor borrowed-slot backpressure evidence is explicitly present in the recorded freeze packet
+- `command[5]=cargo test -p trnm-state --test retention_restore_regression -q` so the packet still captures the retention-side fail-closed restore evidence instead of only admission-side checks
 - terminal `result=PASS` only when the full slice finished green
 
 If the artifact is missing any of those fields, or the file ends before `result=PASS`, treat the
