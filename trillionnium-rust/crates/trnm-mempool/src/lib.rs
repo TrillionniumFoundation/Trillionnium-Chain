@@ -927,6 +927,51 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_probe_does_not_consume_reopened_zero_reserve_shared_slot() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+
+        // Zero-reserve mode routes both ingress classes through the same shared
+        // normal lane. After one real drain reopens headroom, duplicate probes
+        // against the surviving id must remain purely classificatory.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(1));
+
+        let reopened_snapshot = LaneQosSnapshot {
+            normal_queued: 1,
+            critical_queued: 0,
+            total_queued: 1,
+            normal_headroom: 1,
+            critical_headroom: 0,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The queued shared-lane id must stay globally duplicate across classes
+        // without consuming the reopened slot or perturbing QoS observability.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The slot remains genuinely available for fresh ingress immediately after.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn zero_reserve_full_shared_queue_keeps_qos_flat_across_cross_class_duplicate_and_retry_noise() {
         let mut g = LaneAdmissionGate::new(2, 0);
 
