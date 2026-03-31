@@ -186,6 +186,39 @@ When that helper is used, record at minimum:
 
 Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory.
 
+### 4a. Fail-closed DR evidence capture order
+
+For a DR rebuild, preserve evidence in this order so the handoff can be audited without shell scrollback:
+
+1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref
+2. run `check_bft_restart_recovery.sh` and capture the emitted report path
+3. copy `dr_summary_path=` from that concrete report
+4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
+5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `handoff_*` / `*_generated_at` fields verbatim
+
+Recommended shell shape:
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+
+./scripts/check_bft_restart_recovery.sh
+report_path="$(ls -dt run/recovery-check-* 2>/dev/null | head -n 1)/report.txt"
+
+awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|rollback_command|replay_command|result)=/ { print }' "$report_path"
+```
+
+Stop if any of the following occurs:
+- `report_path` does not resolve to a concrete report
+- `git_worktree_path=` in the report does not match the ticket-assigned worktree
+- `git_worktree_branch_ref=` in the report does not match the ticket-assigned branch ref
+- `git_status_summary=` is not `clean`
+- `rollback_command=` or `replay_command=` is missing from the report
+
 If recovery evidence cannot be produced from the current worktree, treat the DR rebuild as **No-Go**.
 
 ### 5. Perform the smallest credible replacement/rotation bootstrap
