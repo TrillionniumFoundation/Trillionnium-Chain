@@ -155,6 +155,22 @@ pub(crate) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
         .collect()
 }
 
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
+}
+
 pub(crate) fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let run_dir = root.join("run");
     let mut out = BTreeSet::<PathBuf>::new();
@@ -196,7 +212,7 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 let resolved = if path.is_absolute() {
                     path
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }

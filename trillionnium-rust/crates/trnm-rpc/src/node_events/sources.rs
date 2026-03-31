@@ -1,7 +1,7 @@
 use std::{
     collections::BTreeSet,
     fs,
-    path::{Path, PathBuf},
+    path::{Component, Path, PathBuf},
 };
 
 use crate::envpaths::normalized_path_from_env;
@@ -18,6 +18,22 @@ pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             }
         })
         .collect()
+}
+
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
 }
 
 fn discover_default_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
@@ -71,7 +87,7 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
                 let resolved = if path.is_absolute() {
                     path
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
