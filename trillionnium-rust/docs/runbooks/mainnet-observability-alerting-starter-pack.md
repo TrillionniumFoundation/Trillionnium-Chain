@@ -36,6 +36,34 @@ This document standardizes the **shared paging / dashboard / incident handoff co
 
 ---
 
+## Frozen metrics / alert dimension contract
+
+Before mainnet rehearsal, operators should treat the following dimensions as append-stable for the starter pack.
+Dashboards and alert rules may add panels or thresholds later, but they should not silently rename these keys across services.
+
+### Required shared dimensions
+
+| Dimension | Required values / shape | Why it is frozen for the starter pack |
+| --- | --- | --- |
+| `plane` | `observability` | Keeps observability incidents searchable as one operator plane. |
+| `service` | `node`, `rpc`, `worker`, `oracle`, `bridge` | Preserves one cross-service routing surface. |
+| `severity` | `sev0`, `sev1`, `sev2`, `sev3` | Prevents page/ticket/dashboard severity drift. |
+| `signal` | `node-down`, `sync-lag`, `replay-failure`, `rpc-unhealthy`, `worker-failure`, `oracle-anomaly`, `bridge-anomaly`, `contract-drift` | Keeps alert families stable enough for paging and dashboard links. |
+| `needs_replay` | `yes`, `no` | Forces responders to distinguish evidence-required incidents from pure telemetry noise. |
+| `needs_rollback` | `yes`, `no` | Preserves rollback intent as an explicit operator decision, not tribal knowledge. |
+
+### Stability rules
+
+- do not rename the shared dimensions above during a rehearsal window;
+- if a service needs extra dimensions, add them without replacing the shared keys;
+- if an alert payload, dashboard annotation, or incident ticket cannot populate the shared keys, classify that handoff as incomplete;
+- if dashboard math depends on a metric rename or label remap that is not reflected in the incident payload, treat the resulting mismatch as `signal=contract-drift`.
+
+This is a starter-pack contract, not a claim that all long-term observability schemas are finalized.
+It exists to keep the first dashboard pack, first alert pack, and first incident workflow speaking the same language.
+
+---
+
 ## Required incident labels
 
 Every alert page, dashboard share link, and incident ticket should carry the same small label block:
