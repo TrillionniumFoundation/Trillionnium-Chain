@@ -1360,7 +1360,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_host_like_node_id_and_url_style_operator_addresses() {
-        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7000"] {
+        for node_id in [
+            "localhost",
+            "LOCALHOST",
+            "127.0.0.1",
+            "127.0.0.1:7000",
+            "::1",
+            "[::1]:7000",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
