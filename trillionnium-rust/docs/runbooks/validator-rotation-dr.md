@@ -45,6 +45,7 @@ handoff_manifest_path=
 summary_generated_at=
 manifest_generated_at=
 dr_summary_path=
+dr_generated_at=
 dr_replay_command=
 dr_rollback_command=
 bootstrap_command=
@@ -53,7 +54,7 @@ next_blocker=
 ```
 
 Rules:
-- `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `dr_summary_path=` / `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
@@ -68,7 +69,7 @@ If any required row cannot be satisfied, treat the event as **No-Go** before exe
 | --- | --- | --- | --- |
 | `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
 | `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, or rotation lineage cannot be stated from the note |
-| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
 
 Interpretation rule:
 - `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
@@ -175,7 +176,7 @@ Minimum DR evidence fields to preserve from the generated report:
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=` and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
+Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
@@ -198,7 +199,7 @@ For a DR rebuild, preserve evidence in this order so the handoff can be audited 
 
 1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref (and `EXPECTED_HEAD` too when the ticket/handoff already pins an exact commit)
 2. run `check_bft_restart_recovery.sh` and capture the emitted report path
-3. copy `dr_summary_path=` from that concrete report
+3. copy `dr_summary_path=` and `dr_generated_at=` from that concrete report
 4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
 5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `handoff_*` / `*_generated_at` fields verbatim
 
@@ -256,6 +257,7 @@ When handing this event to another operator, record:
 - commands run
 - pass/fail result
 - rollback command
+- DR report generated-at timestamp when DR evidence was required
 - replay command when DR evidence was required
 - one-line blocker if the event is not reproducible
 
