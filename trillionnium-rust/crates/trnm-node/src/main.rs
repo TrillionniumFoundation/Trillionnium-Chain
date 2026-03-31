@@ -2033,8 +2033,8 @@ fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
-    if !mempool.iter().any(is_critical_tx) {
-        // Normal-only backlog has no critical-lane anti-starvation requirement.
+    if !mempool.iter().any(is_critical_tx) || mempool.iter().all(is_critical_tx) {
+        // Homogeneous backlog has no cross-class anti-starvation requirement.
         // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
         // free-ingress selection overhead on the hot path.
         let mut picked = Vec::with_capacity(txs_per_block);
@@ -8337,6 +8337,35 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(matches!(picked[0], MockTx::Challenge { .. }));
         assert!(matches!(picked[1], MockTx::CreateTask { .. }));
         assert!(matches!(picked[2], MockTx::Resolve { .. }));
+    }
+
+    #[test]
+    fn critical_guard_single_slot_critical_only_backlog_keeps_fifo_prefix() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::Challenge {
+                task_id: 41,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 41,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::Challenge {
+                task_id: 42,
+                challenger: "c2".into(),
+                bond: 20,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 1);
+        assert_eq!(picked.len(), 1);
+        assert!(matches!(picked[0], MockTx::Challenge { task_id: 41, .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Resolve { task_id: 41, .. }));
+        assert!(matches!(mempool[1], MockTx::Challenge { task_id: 42, .. }));
     }
 
     #[test]

@@ -72,3 +72,23 @@ fn admit_fast_path_clears_stale_retry_fifo_when_retry_set_is_empty() {
     assert_eq!(gate.retry_reservations, 0);
     assert_eq!(gate.last_fairness_deferred, None);
 }
+
+#[test]
+fn admit_fast_path_clears_stale_retry_fifo_at_compaction_threshold_when_retry_set_is_empty() {
+    let mut gate = AdmissionGate::new(2);
+
+    // Restored/churned state can leave retry FIFO markers exactly at the
+    // compaction threshold even after retry ids have fully drained.
+    gate.backpressured_fifo.extend([7, 8, 7, 8, 7, 8, 7, 8]);
+    gate.backpressured_ids.clear();
+    gate.retry_reservations = 2;
+    gate.last_fairness_deferred = Some(7);
+    assert_eq!(gate.backpressured_fifo.len(), gate.capacity.saturating_mul(4));
+
+    // Fresh ingress must still take the no-retry fast path and eagerly scrub
+    // the stale FIFO tail instead of carrying dead retry bookkeeping forward.
+    assert_eq!(gate.admit(100), AdmitOutcome::Accepted);
+    assert!(gate.backpressured_fifo.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
+}

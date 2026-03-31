@@ -22,8 +22,8 @@ pub(crate) fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
-    if !mempool.iter().any(is_critical_tx) {
-        // Normal-only backlog has no critical-lane anti-starvation requirement.
+    if !mempool.iter().any(is_critical_tx) || mempool.iter().all(is_critical_tx) {
+        // Homogeneous backlog has no cross-class anti-starvation requirement.
         // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
         // free-ingress selection overhead on the hot path.
         let mut picked = Vec::with_capacity(txs_per_block);

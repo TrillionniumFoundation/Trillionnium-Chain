@@ -261,3 +261,19 @@ fn restored_retry_ids_rehydrate_fifo_before_bounded_eviction() {
     assert!(gate.backpressured_fifo.len() <= gate.backpressured_ids.len());
     assert!(gate.backpressured_ids.contains(&99));
 }
+
+#[test]
+fn zero_capacity_retry_insert_clears_restored_markers_instead_of_leaking_antispam_state() {
+    let mut gate = AdmissionGate::new(0);
+
+    // Hard-stop mode may restore stale retry bookkeeping from disk; a new rejected
+    // probe must self-heal back to empty bounded state instead of retaining any
+    // synthetic retry memory when aggregate admission capacity is zero.
+    gate.backpressured_ids.extend([41, 42]);
+    gate.backpressured_fifo.extend([42, 41, 42]);
+
+    assert!(gate.remember_backpressured(99));
+
+    assert!(gate.backpressured_ids.is_empty());
+    assert!(gate.backpressured_fifo.is_empty());
+}

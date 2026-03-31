@@ -367,3 +367,53 @@ fn critical_guard_spillover_preserves_critical_domain_fifo_across_selection() {
     assert!(matches!(mempool[0], MockTx::Commit { task_id: 41, .. }));
     assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 42, .. }));
 }
+
+#[test]
+fn critical_guard_long_normal_prefix_still_surfaces_tail_critical_then_rewarms_normal_fifo() {
+    let mut mempool = VecDeque::from(vec![
+        MockTx::CreateTask {
+            task_id: 61,
+            creator: "alice".into(),
+            bounty: 10,
+        },
+        MockTx::AcceptTask {
+            task_id: 61,
+            worker: "w1".into(),
+        },
+        MockTx::Commit {
+            task_id: 61,
+            worker: "w1".into(),
+            committed_hash: [6u8; 32],
+        },
+        MockTx::CreateTask {
+            task_id: 62,
+            creator: "bob".into(),
+            bounty: 20,
+        },
+        MockTx::Challenge {
+            task_id: 61,
+            challenger: "c1".into(),
+            bond: 10,
+        },
+        MockTx::Resolve {
+            task_id: 62,
+            slash_worker: false,
+            resolver: "gov".into(),
+        },
+    ]);
+
+    let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+    assert_eq!(picked.len(), 3);
+
+    // A long normal prefix must not hide later critical work, but after surfacing
+    // the earliest critical tx the selector should still re-warm the pending
+    // normal FIFO instead of immediately jumping to the next later critical.
+    assert!(matches!(picked[0], MockTx::Challenge { task_id: 61, .. }));
+    assert!(matches!(picked[1], MockTx::CreateTask { task_id: 61, .. }));
+    assert!(matches!(picked[2], MockTx::AcceptTask { task_id: 61, .. }));
+
+    assert_eq!(mempool.len(), 3);
+    assert!(matches!(mempool[0], MockTx::Commit { task_id: 61, .. }));
+    assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 62, .. }));
+    assert!(matches!(mempool[2], MockTx::Resolve { task_id: 62, .. }));
+}

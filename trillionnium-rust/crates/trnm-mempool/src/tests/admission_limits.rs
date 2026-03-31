@@ -97,6 +97,27 @@ fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure()
 }
 
 #[test]
+fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
+    let mut g = AdmissionGate::new(2);
+
+    assert_eq!(g.admit(21), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22), AdmitOutcome::Accepted);
+
+    // Simulate restored-state skew: metadata retains a ghost id that is not
+    // actually queued. Once the authoritative queue fully drains, the next
+    // batch must start fresh rather than inheriting stale duplicate poison.
+    g.seen.insert(999);
+
+    assert_eq!(g.pop_ready(), Some(21));
+    assert_eq!(g.pop_ready(), Some(22));
+    assert_eq!(g.pop_ready(), None);
+    assert!(g.seen.is_empty());
+
+    assert_eq!(g.admit(999), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(999), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn zero_total_capacity_lane_gate_backpressures_all_ingress_without_poisoning_seen_ids() {
     let mut g = LaneAdmissionGate::new(0, 0);
 
@@ -165,6 +186,33 @@ fn borrowed_last_idle_critical_slot_preserves_cross_class_duplicate_and_fresh_ba
         g.admit(88, IngressClass::Critical),
         AdmitOutcome::Backpressured
     );
+
+    assert_eq!(g.pop_ready(), Some(77));
+    assert_eq!(g.admit(88, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
+fn borrowed_last_idle_critical_slot_preserves_same_class_duplicate_without_queue_drift() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    // Fill dedicated normal capacity first, then borrow the final idle critical slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+
+    // Same-class replay of the borrowed occupant must stay Duplicate and must not
+    // perturb accounting while the last idle critical slot remains consumed.
+    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
+
+    // Fresh same-class retry noise must also stay fail-closed until the borrowed
+    // slot drains, without poisoning future admission.
+    assert_eq!(g.admit(88, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.seen_global.len(), 3);
 
     assert_eq!(g.pop_ready(), Some(77));
     assert_eq!(g.admit(88, IngressClass::Critical), AdmitOutcome::Accepted);
