@@ -873,7 +873,11 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 if trimmed.is_empty() || trimmed.starts_with('#') {
                     continue;
                 }
-                let path = PathBuf::from(trimmed);
+                let normalized = normalize_wrapped_env_value(trimmed);
+                if normalized.is_empty() {
+                    continue;
+                }
+                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
                     path
                 } else {
@@ -8358,6 +8362,56 @@ line2
             got,
             vec![shared_log],
             "quoted historical replay env entries should resolve to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_replay() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-quoted", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let second_archived_log = archive_dir.join("node5.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&second_archived_log, "").expect("write second archived log");
+        fs::write(
+            &manifest,
+            "\"../../archive/node4.log\"\n'../../archive/node5.log'\n`../../archive/node4.log`\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+            "historical replay manifest entries should unwrap quote-like wrappers and dedupe to canonical log sources"
         );
 
         let _ = fs::remove_dir_all(root);
