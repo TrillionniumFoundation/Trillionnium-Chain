@@ -361,7 +361,7 @@ fn x3_prep_confirm_failure_reason_strips_variation_selectors_for_replay_stabilit
 }
 
 #[test]
-fn x3_prep_confirm_failure_reason_collapses_braille_blank_for_replay_stability() {
+fn x3_prep_confirm_failure_reason_collapses_braille_blank_near_target_boundary_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xconfirm-sanitize-braille".to_string());
     let token = operator_token();
 
