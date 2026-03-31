@@ -16,7 +16,7 @@ Use this as a rehearsal/runbook reference until a fuller dashboard + alert pack 
 This document only freezes surfaces already evidenced in code/tests under:
 
 - `crates/trnm-rpc/src/health.rs`
-- `crates/trnm-node/src/tests.rs`
+- `crates/trnm-node/src/tests_main_metrics/`
 - `crates/trnm-worker-agent/src/workflow.rs`
 
 It should be read together with:
@@ -108,7 +108,7 @@ Keep field names verbatim so pager notes and release evidence remain grep-stable
 
 ## 3. `trnm-worker-agent` submit log line
 
-When `trnm-worker-agent` runs in submit mode, the current operator-visible stderr line is:
+When `trnm-worker-agent` runs in submit mode, the current operator-visible submit line is:
 
 - `submitted=true submit_log=<path>`
 
@@ -116,6 +116,8 @@ Operational meaning:
 
 - `submitted=true` tells the operator the submit branch actually executed.
 - `submit_log=<path>` points to the persisted submit log file that should be attached during handoff/triage.
+
+Current code emits the same token pair on stdout for the happy path and stderr for the failure path; the contract here is the token shape, not the stream choice.
 
 This line is intentionally small and path-oriented.
 If richer structured logging lands later, prefer adding fields rather than renaming these two tokens.
