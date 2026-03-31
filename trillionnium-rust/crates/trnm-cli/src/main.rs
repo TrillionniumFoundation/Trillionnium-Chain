@@ -1261,17 +1261,22 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     None
 }
 
+fn is_text_tx_hash_key(key: &str) -> bool {
+    let canonical = key
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect::<String>();
+    matches!(canonical.as_str(), "txhash" | "transactionhash")
+}
+
 fn extract_tx_hash(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some((key, value)) = parse_kv_line(line) {
-            match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(&value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(&value) {
+                    return Some(normalized);
                 }
-                _ => {}
             }
         }
 
@@ -1290,11 +1295,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => normalize_tx_hash(v),
-                _ => None,
-            }
+            is_text_tx_hash_key(key).then(|| normalize_tx_hash(v)).flatten()
         }) {
             return Some(v);
         }
@@ -1312,14 +1313,27 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             if !matches!(sep, "=" | ":" | "＝" | "：") {
                 continue;
             }
-            match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
                 }
-                _ => {}
+            }
+        }
+
+        for window in tokens.windows(4) {
+            let key = format!("{} {}", window[0], window[1]);
+            let sep = window[2].trim();
+            let value = window[3].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
+                continue;
+            }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
+                }
             }
         }
     }
@@ -2559,6 +2573,22 @@ mod tests {
         assert_eq!(
             extract_tx_hash("transaction-hash: 0xBEEF02").as_deref(),
             Some("0xbeef02")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_spaced_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx hash=0xCAFE03").as_deref(),
+            Some("0xcafe03")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction hash : 0xBEEF04").as_deref(),
+            Some("0xbeef04")
+        );
+        assert_eq!(
+            extract_tx_hash("INFO transaction hash = 0xBEEF05 done").as_deref(),
+            Some("0xbeef05")
         );
     }
 
