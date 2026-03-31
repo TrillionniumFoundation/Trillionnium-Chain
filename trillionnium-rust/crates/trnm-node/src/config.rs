@@ -1013,6 +1013,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .contains("p2p_addr must use a canonical socket address literal"),
             "unexpected error: {p2p_err:#}"
         );
+
+        let uppercase_ipv6_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[::FFFF:127.0.0.1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("uppercase IPv6 host literals must fail closed until rewritten canonically");
+        assert!(
+            uppercase_ipv6_err
+                .to_string()
+                .contains("p2p_addr must use a canonical socket address literal"),
+            "unexpected error: {uppercase_ipv6_err:#}"
+        );
     }
 
     #[test]
