@@ -507,21 +507,32 @@ fn ratio(numerator: usize, denominator: usize) -> f64 {
     }
 }
 
+fn default_bench_output_dir() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("..")
+        .join("..")
+        .join("run")
+        .join("bench")
+}
+
 fn persist_profile_report(
     lines: &mut Vec<String>,
     capture_started_at_epoch: u64,
 ) -> std::io::Result<PathBuf> {
-    let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join("run")
-        .join("bench");
-    fs::create_dir_all(&out_dir)?;
+    persist_profile_report_into(lines, &default_bench_output_dir(), capture_started_at_epoch)
+}
+
+fn persist_profile_report_into(
+    lines: &mut Vec<String>,
+    out_dir: &std::path::Path,
+    capture_started_at_epoch: u64,
+) -> std::io::Result<PathBuf> {
+    fs::create_dir_all(out_dir)?;
     let out_path = out_dir.join(format!(
         "executor-profile-summary-{capture_started_at_epoch}.txt"
     ));
-    let resolved_path = fs::canonicalize(&out_dir)
-        .unwrap_or_else(|_| out_dir.clone())
+    let resolved_path = fs::canonicalize(out_dir)
+        .unwrap_or_else(|_| out_dir.to_path_buf())
         .join(
             out_path
                 .file_name()
@@ -545,7 +556,7 @@ fn persist_profile_report(
         persisted_lines.push(format!("{byte_count_prefix}{output_bytes}"));
         let persisted_content = format!("{}\n", persisted_lines.join("\n"));
         let next_line_count = persisted_content.lines().count();
-        let next_output_bytes = persisted_content.as_bytes().len();
+        let next_output_bytes = persisted_content.len();
         if next_line_count == output_line_count && next_output_bytes == output_bytes {
             break persisted_content;
         }
@@ -677,9 +688,50 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
 #[cfg(test)]
 mod tests {
-    use super::{build_hot_streak_txs, build_mixed_txs, chrono_like_iso};
-    use std::time::{Duration, UNIX_EPOCH};
+    use super::{
+        build_hot_streak_txs, build_mixed_txs, chrono_like_iso, persist_profile_report_into,
+    };
+    use std::fs;
+    use std::path::PathBuf;
+    use std::time::{Duration, SystemTime, UNIX_EPOCH};
     use trnm_executor::GroupingProfile;
+
+    fn unique_temp_dir(label: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        std::env::temp_dir().join(format!("trnm-bench-{label}-{nanos}"))
+    }
+
+    #[test]
+    fn persist_profile_report_into_writes_self_describing_artifact_in_requested_dir() {
+        let out_dir = unique_temp_dir("persist-profile");
+        let mut lines = vec![
+            "bench_parallel_grouping".to_string(),
+            "profile.report.persist_profile=true".to_string(),
+        ];
+
+        let path = persist_profile_report_into(&mut lines, &out_dir, 1_700_000_000)
+            .expect("profile artifact should persist into isolated test dir");
+        let content =
+            fs::read_to_string(&path).expect("persisted profile artifact should be readable");
+        let resolved_out_dir = fs::canonicalize(&out_dir)
+            .expect("isolated output dir should canonicalize after persistence");
+
+        assert!(path.starts_with(&resolved_out_dir));
+        assert!(
+            content.contains("profile.report.artifact_basename=executor-profile-summary-1700000000.txt")
+        );
+        assert!(content.contains(&format!("profile.report.path={}", path.display())));
+        assert!(content.contains(&format!(
+            "profile.report.output_line_count={}",
+            content.lines().count()
+        )));
+        assert!(content.contains(&format!("profile.report.output_bytes={}", content.len())));
+
+        fs::remove_dir_all(&out_dir).expect("temp bench profile dir should be removable");
+    }
 
     #[test]
     fn mixed_workload_respects_read_fanout_and_write_every_stride() {
