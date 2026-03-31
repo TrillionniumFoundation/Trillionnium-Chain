@@ -283,6 +283,42 @@ Fail-closed interpretation:
 
 This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
 
+### 6a. Copy-paste ceremony packet skeleton
+
+Use this exact shape when a replacement crosses operators or when a DR rebuild is being handed off. Keep unresolved fields empty; do not backfill them from chat or shell memory after the fact.
+
+```text
+cutover_kind=rotation
+verified_worktree=/abs/path/from-ticket
+verified_branch_ref=refs/heads/lane/assigned-branch
+verified_head=<git rev-parse HEAD>
+outgoing_validator_config=configs/validator-old.toml
+outgoing_validator_identity=<validator-id-or-key-fingerprint>
+incoming_validator_config=configs/validator-new.toml
+incoming_validator_identity=<validator-id-or-key-fingerprint>
+expected_genesis_or_checkpoint=<genesis-hash-or-checkpoint>
+handoff_signed_by=<operator releasing ownership>
+handoff_acknowledged_by=<operator accepting ownership>
+rollback_command=<quoted verbatim from the cutover note or generated artifact>
+handoff_summary_path=<path from extract_release_handoff_fields.sh or empty>
+handoff_manifest_path=<path from extract_release_handoff_fields.sh or empty>
+summary_generated_at=<verbatim summary generated_at or empty>
+manifest_generated_at=<verbatim manifest generated_at or empty>
+dr_summary_path=<path to recovery report when cutover_kind=dr_rebuild>
+dr_generated_at=<verbatim generated_at from recovery report when cutover_kind=dr_rebuild>
+dr_replay_command=<verbatim replay_command from recovery report when cutover_kind=dr_rebuild>
+dr_rollback_command=<verbatim rollback_command from recovery report when cutover_kind=dr_rebuild>
+bootstrap_command=<exact bootstrap or re-bootstrap command>
+result=PASS|FAIL
+next_blocker=<one line or empty>
+```
+
+Fail-closed interpretation:
+- for `cutover_kind=replacement`, `handoff_signed_by=` / `handoff_acknowledged_by=` may stay empty only when there is truly no cross-operator ownership boundary
+- for `cutover_kind=rotation`, both handoff names must be present on the same note as the verified worktree/branch/head tuple
+- for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `dr_summary_path=` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
+- if `rollback_command=` was paraphrased instead of copied verbatim from the selected artifact or pre-declared cutover note, the packet is incomplete
+
 ## No-Go conditions
 
 Treat replacement/rotation/DR as **No-Go** if any of the following is true:
