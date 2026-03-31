@@ -61,6 +61,21 @@ mod tests {
     }
 
     #[test]
+    fn non_reserve_only_mode_allows_borrowing_last_reserved_slot_only_while_critical_is_idle() {
+        let mut gate = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(gate.normal.capacity, 2);
+        assert!(gate.critical.queue.is_empty());
+        assert!(gate.can_normal_borrow_critical_slot(1));
+
+        // Once critical backlog appears, the same final reserved slot must stay
+        // protected for fresh critical ingress instead of remaining borrowable.
+        assert_eq!(gate.admit(11, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert!(!gate.critical.queue.is_empty());
+        assert!(!gate.can_normal_borrow_critical_slot(1));
+    }
+
+    #[test]
     fn reserve_only_mode_allows_borrowing_any_reopened_critical_slot() {
         let gate = LaneAdmissionGate::new(2, 2);
 

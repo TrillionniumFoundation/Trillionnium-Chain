@@ -542,6 +542,10 @@ impl LaneAdmissionGate {
                     // critical backlog is active. If the critical lane is idle,
                     // temporarily borrow the last free critical slot to keep
                     // normal free-ingress throughput live.
+                    //
+                    // Borrowed normal ingress is queued on the critical side on
+                    // purpose, so the reopened reserved slot stays represented by
+                    // the same dequeue / duplicate-accounting path until it drains.
                     self.critical.admit(tx_id)
                 } else {
                     primary
