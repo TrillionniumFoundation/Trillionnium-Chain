@@ -230,6 +230,27 @@ At minimum link out to:
 - recovery / WAL runbook from `docs/runbooks/bft-checkpoint-wal-recovery.md`
 - release evidence runbook from `docs/runbooks/local-release-evidence.md`
 
+### 7. First-stop routing table
+
+Use one append-stable routing table so the first responder does not have to guess which panel or artifact to open first.
+
+| Service | Signal | Open first | Immediately verify | Why this first stop exists |
+| --- | --- | --- | --- | --- |
+| `node` | `node-down` | **Node liveness / height progress** | scrape/health availability, current host reachability note, latest `summary_path` / `manifest_path` if the outage happened during rehearsal | distinguishes process crash, host/network loss, and false scrape gaps before responders chase replay noise |
+| `node` | `sync-lag` | **Node liveness / height progress** | committed vs observed height trend, lagging node id, latest `replay_command=` / recovery evidence pointer | keeps sync incidents tied to one concrete lagging node and one replay/recovery trail |
+| `node` | `replay-failure` | **Evidence / replay integrity** | `replay_command=`, `rollback_command=`, `git_worktree_path=`, `git_worktree_branch_ref_match=` | replay failures are evidence-plane incidents first, not graph-reading exercises |
+| `rpc` | `rpc-unhealthy` | **RPC health / read surface** | failing endpoint, query success/failure trend, latest rollback/replay pointer if the failure followed deploy or rehearsal | preserves the public read surface as its own first-class operator plane |
+| `worker` | `worker-failure` | **Worker execution / receipt flow** | affected worker ids/queues, retry/exhaustion trend, linked worker receipt evidence | separates queue starvation from execution or submission failure before escalation |
+| `oracle` | `oracle-anomaly` | **Oracle-specific drill-down** | labels from `docs/runbooks/oracle-observability-alerts.md`, matching `severity`, `needs_replay`, and evidence pointers | oracle triage already has a service-specific contract; use it without dropping the shared labels |
+| `bridge` | `bridge-anomaly` | **Service-specific drill-down** | bridge relay/settlement heartbeat evidence, settlement blast radius, replay/rollback pointers if integrity is in doubt | bridge incidents often start as sev2 but can promote quickly when settlement trust is threatened |
+| `any` | `contract-drift` | **Evidence / replay integrity** | label block completeness, dashboard math/field drift, `truth_source=`, `evidence_scope=`, identity-match fields | if the contract is drifting, operators must stop trusting the dashboard before anything else |
+
+Routing rules:
+
+- if multiple signals fire together, start with the highest-severity row; if severities tie, prefer `contract-drift` → `replay-failure` → availability/performance signals;
+- if the chosen first-stop panel lacks the fields listed under **Immediately verify**, classify the handoff as incomplete and add those missing fields to the ticket/page before reassignment;
+- if the signal is `oracle-anomaly` but the shared label block is missing, restore the shared block first and then continue with the oracle-specific runbook.
+
 ---
 
 ## Minimum incident evidence block
