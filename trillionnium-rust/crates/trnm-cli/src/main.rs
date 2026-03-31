@@ -4010,7 +4010,7 @@ mod tests {
     }
 
     #[test]
-    fn query_and_wait_stdout_include_plain_txhash_alias_for_shell_adapters() {
+    fn query_and_wait_stdout_include_shell_safe_tx_hash_aliases() {
         let query = TxQueryResponse {
             tx_hash: "0xabc123".to_string(),
             status: "pending".to_string(),
@@ -4018,14 +4018,18 @@ mod tests {
         };
 
         let emitted = format!(
-            "{}\n{}\nstatus={}\n",
+            "{}\n{}\n{}\n{}\nstatus={}\n",
             format_tx_hash_line(&query.tx_hash),
             format_tx_hash_alias_line(&query.tx_hash),
+            format_transaction_hash_alias_line(&query.tx_hash),
+            format_transaction_hash_camel_alias_line(&query.tx_hash),
             query.status
         );
 
         assert!(emitted.contains("tx_hash=\"0xabc123\""));
         assert!(emitted.contains("txhash=0xabc123"));
+        assert!(emitted.contains("transaction_hash=0xabc123"));
+        assert!(emitted.contains("transactionHash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }
