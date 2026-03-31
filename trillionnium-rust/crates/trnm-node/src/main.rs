@@ -2581,6 +2581,7 @@ fn canonicalize_resolve_authority_snapshot(raw: &str) -> Option<String> {
             || has_forbidden_separator(member_trimmed)
             || !member_trimmed.is_ascii()
             || member_trimmed.eq_ignore_ascii_case("governance.resolve_authority")
+            || member_trimmed.eq_ignore_ascii_case("governance.emergency_pause")
             || member_trimmed.eq_ignore_ascii_case("system")
             || member_trimmed.eq_ignore_ascii_case("treasury.challenge_escrow")
             || member_trimmed.eq_ignore_ascii_case("treasury.challenge_forfeits")
@@ -2612,6 +2613,7 @@ fn is_canonical_resolve_approver_snapshot(raw: &str) -> bool {
         && !trimmed.contains('|')
         && trimmed.is_ascii()
         && !trimmed.eq_ignore_ascii_case("governance.resolve_authority")
+        && !trimmed.eq_ignore_ascii_case("governance.emergency_pause")
         && !trimmed.eq_ignore_ascii_case("system")
         && !trimmed.eq_ignore_ascii_case("treasury.challenge_escrow")
         && !trimmed.eq_ignore_ascii_case("treasury.challenge_forfeits")
@@ -10219,6 +10221,37 @@ bootstrap_peers = ["127.0.0.1:27656"]
             st.pending_resolve_approval(8_110),
             None,
             "rollback must scrub reserved system approvers instead of reviving a forged quorum"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_emergency_pause_approver() {
+        let mut st = StateStore::new();
+        let _ = challenged_task_fixture(&mut st, 8_109);
+        let before_task = st.get_task(8_109).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_109,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "governance.emergency_pause".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_109).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_109),
+            None,
+            "rollback must scrub reserved emergency-pause approvers instead of reviving a forged quorum"
         );
     }
 
