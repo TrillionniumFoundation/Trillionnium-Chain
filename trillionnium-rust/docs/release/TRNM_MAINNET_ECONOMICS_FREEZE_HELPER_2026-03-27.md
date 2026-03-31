@@ -92,7 +92,7 @@ frozen sheet:
 cargo check -p trnm-mempool -p trnm-pouw -q
 cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
 cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-cargo test -p trnm-state retention_restore_regression -q
+cargo test -p trnm-state --test retention_restore_regression -q
 ```
 
 Why this is the minimum useful slice:
@@ -128,8 +128,8 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
   cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
   printf 'command[3]=cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q\n'
   cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-  printf 'command[4]=cargo test -p trnm-state retention_restore_regression -q\n'
-  cargo test -p trnm-state retention_restore_regression -q
+  printf 'command[4]=cargo test -p trnm-state --test retention_restore_regression -q\n'
+  cargo test -p trnm-state --test retention_restore_regression -q
   echo 'result=PASS'
 ) | tee trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt
 ```
@@ -221,14 +221,14 @@ consistency boundaries:
 - `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_immediate_reopen_bound -q`
   - proves reserve-only shared-lane QoS observability does not falsely re-advertise
     sponsor/free-ingress headroom across guarded reopen boundaries
-- `cargo test -p trnm-mempool lane_qos_snapshot_zero_capacity_stability_bound -q`
+- `cargo test -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q`
   - proves hard-stop mode keeps public admission closed even under repeated cross-class
-    probe noise
+    probe noise and idle scheduler polls
 - `cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
   - proves a fully hard-stopped lane keeps both sponsor-backed and free-ingress retries
     backpressured across repeated cross-class probes without poisoning tx ids into
     duplicate state or fabricating any queued admission surface
-- `cargo test -p trnm-mempool lane_zero_capacity_idle_duplicate_metadata_bound -q`
+- `cargo test -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q`
   - proves a zero-budget / hard-stop lane can preserve restored duplicate knowledge for
     already-seen ids without fabricating queue state or re-opening sponsor/free-ingress
     headroom during idle polling
@@ -252,7 +252,7 @@ consistency boundaries:
   - proves the same drained-retry boundary closes the externally visible sponsor/free-ingress
     snapshot again as soon as the drained id is re-admitted, so freeze review covers both the
     classification-only duplicate phase and the immediate re-saturation phase of shared-lane reuse
-- `cargo test -p trnm-mempool lane_qos_snapshot_guarded_reopen_probe_stability_bound -q`
+- `cargo test -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q`
   - proves partially reopened capacity does not falsely widen free-ingress observability:
     when the last reserved critical slot is still guarded, repeated fresh-normal and
     cross-class probe noise stays classification-only and cannot advertise phantom headroom
@@ -260,7 +260,7 @@ consistency boundaries:
   - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
     immediately after the borrowed occupant drains, without requiring an extra idle
     scheduler poll to reopen the public admission surface
-- `cargo test -p trnm-state retention_restore_regression -q`
+- `cargo test -p trnm-state --test retention_restore_regression -q`
   - proves retained proof/collateral metadata fails closed when challenge-window,
     challenger, or treasury identity snapshots are non-canonical
   - specifically covers reserved sponsor/audit identities (`System`, governance pause /
