@@ -96,7 +96,11 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
 
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
-            let resolved = if path.is_absolute() { path } else { root.join(path) };
+            let resolved = if path.is_absolute() {
+                path
+            } else {
+                normalize_lexical_path(root.join(path))
+            };
             sources.insert(resolved);
         }
     }

@@ -224,7 +224,7 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             let resolved = if path.is_absolute() {
                 path
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
