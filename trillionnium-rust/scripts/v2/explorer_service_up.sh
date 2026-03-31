@@ -11,7 +11,6 @@ HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
 INDEX_URL="http://${HOST}:${PORT}/index.json"
-INDEX_URL="http://${HOST}:${PORT}/index.json"
 
 mkdir -p "${PUBLIC_DIR}"
 
@@ -26,8 +25,8 @@ if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/nu
 fi
 
 if [[ -f "${PID_FILE}" ]]; then
-  existing_pid="$(cat "${PID_FILE}")"
-  if kill -0 "${existing_pid}" 2>/dev/null; then
+  existing_pid="$(tr -d '[:space:]' <"${PID_FILE}")"
+  if [[ "${existing_pid}" =~ ^[0-9]+$ ]] && kill -0 "${existing_pid}" 2>/dev/null; then
     echo "explorer service already running pid=${existing_pid}"
     echo "pid_file=${PID_FILE}"
     echo "log_file=${LOG_FILE}"
