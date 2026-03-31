@@ -12,10 +12,14 @@ HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
 
 state="down"
 health="unknown"
+pid_valid="true"
 
 if [[ -f "${PID_FILE}" ]]; then
-  pid="$(cat "${PID_FILE}")"
-  if kill -0 "${pid}" 2>/dev/null; then
+  pid="$(tr -d '[:space:]' <"${PID_FILE}")"
+  if [[ -z "${pid}" || ! "${pid}" =~ ^[0-9]+$ ]]; then
+    state="stale-pid"
+    pid_valid="false"
+  elif kill -0 "${pid}" 2>/dev/null; then
     state="running"
   else
     state="stale-pid"
@@ -35,6 +39,9 @@ fi
 echo "state=${state}"
 if [[ -n "${pid}" ]]; then
   echo "pid=${pid}"
+fi
+if [[ "${pid_valid}" != "true" ]]; then
+  echo "pid_file_valid=false"
 fi
 echo "pid_file=${PID_FILE}"
 echo "log_file=${LOG_FILE}"

@@ -80,6 +80,8 @@ Expected healthy signals:
 - `log_file=.../explorer-service.log`
 - `health_url=http://.../healthz`
 
+If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
+
 ## What gets served
 
 The scaffold writes two static files before launching the HTTP server:
