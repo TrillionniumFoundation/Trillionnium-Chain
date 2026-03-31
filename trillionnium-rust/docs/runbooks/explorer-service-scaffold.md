@@ -55,9 +55,11 @@ The scaffold supports these environment variables:
 - `EXPLORER_PORT`
 - `EXPLORER_PUBLIC_BASE_URL`
 - `EXPLORER_HEALTH_URL`
+- `EXPLORER_RPC_BASE_URL`
 
 `EXPLORER_HOST` / `EXPLORER_PORT` control where the local static server binds.
 `EXPLORER_PUBLIC_BASE_URL` controls the operator-facing base URL emitted in `health_url` / `index_url`, which is useful when the process binds to `0.0.0.0`, sits behind a reverse proxy, or is reached through port-forwarding.
+`EXPLORER_RPC_BASE_URL` records which RPC read surface this scaffold is documenting; it defaults to `http://127.0.0.1:7777` and is emitted by the up/status/down scripts as `rpc_base_url=...` so handoff notes can name the expected upstream read source explicitly.
 
 Example:
 
@@ -89,6 +91,7 @@ Expected healthy signals:
 - `bind_port=...`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
+- `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
 
@@ -103,7 +106,7 @@ The scaffold writes two static files before launching the HTTP server:
 - `index.json`
 
 `healthz` reports that the scaffold is alive, but also marks `production_ready=false`.
-`index.json` states clearly that the service is static-only and not a durable indexer/read-model, and now also exposes the current Day-1 read-only contract:
+`index.json` states clearly that the service is static-only and not a durable indexer/read-model, and also records `rpc_base_url` so operators can see which upstream RPC read surface the scaffold expects. It now exposes the current Day-1 read-only contract:
 
 - `query-task/<task_id>`
 - `query-events/<task_id>?limit=<n>`
@@ -112,6 +115,7 @@ The scaffold writes two static files before launching the HTTP server:
 
 Additional contract markers carried in `index.json`:
 
+- `rpc_base_url=<upstream-rpc-read-surface>`
 - `query_events_default_limit=100`
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
@@ -176,10 +180,11 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `bind_port=...`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
+- `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
 
-Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first.
+Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `rpc_base_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first.
 
 ## Operator caution
 

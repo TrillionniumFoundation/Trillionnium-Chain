@@ -13,6 +13,8 @@ PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${HOST}:${PORT}}"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL%/}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
 INDEX_URL="${PUBLIC_BASE_URL}/index.json"
+RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
+RPC_BASE_URL="${RPC_BASE_URL%/}"
 
 emit_contract_fields() {
   echo "pid_file=${PID_FILE}"
@@ -22,6 +24,7 @@ emit_contract_fields() {
   echo "bind_port=${PORT}"
   echo "health_url=${HEALTH_URL}"
   echo "index_url=${INDEX_URL}"
+  echo "rpc_base_url=${RPC_BASE_URL}"
   echo "service_mode=operator-facing-static-scaffold"
   echo "production_ready=false"
 }
@@ -49,7 +52,7 @@ cat >"${PUBLIC_DIR}/healthz" <<EOF
 EOF
 
 cat >"${PUBLIC_DIR}/index.json" <<EOF
-{"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","read_contract":{"mode":"read-only","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
+{"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
 EOF
 
 cd "${PUBLIC_DIR}"

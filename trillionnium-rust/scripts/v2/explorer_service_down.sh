@@ -13,6 +13,8 @@ PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${HOST}:${PORT}}"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL%/}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
 INDEX_URL="${PUBLIC_BASE_URL}/index.json"
+RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
+RPC_BASE_URL="${RPC_BASE_URL%/}"
 
 emit_contract_paths() {
   echo "pid_file=${PID_FILE}"
@@ -22,6 +24,7 @@ emit_contract_paths() {
   echo "bind_port=${PORT}"
   echo "health_url=${HEALTH_URL}"
   echo "index_url=${INDEX_URL}"
+  echo "rpc_base_url=${RPC_BASE_URL}"
   echo "service_mode=operator-facing-static-scaffold"
   echo "production_ready=false"
 }
