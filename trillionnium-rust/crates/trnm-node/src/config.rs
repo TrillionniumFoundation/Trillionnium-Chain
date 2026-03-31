@@ -1554,6 +1554,12 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .nth(2)
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let shipped_config_dir = workspace_root.join("configs");
+        let canonical_shipped_config_dir = shipped_config_dir.canonicalize().unwrap_or_else(|err| {
+            panic!(
+                "{} should canonicalize for shipped bootstrap topology checks: {err}",
+                shipped_config_dir.display()
+            )
+        });
         let shipped_node_configs = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
@@ -1618,6 +1624,20 @@ bootstrap_peers = ["127.0.0.1:27656"]
             assert!(
                 !workspace_relative_metadata.file_type().is_symlink(),
                 "{workspace_relative_path} must not become a symlink that can retarget shipped bootstrap/rejoin fixtures"
+            );
+
+            let canonical_config_path = std::path::Path::new(config_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{config_path} should canonicalize for shipped bootstrap topology checks: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_config_path.parent(),
+                Some(canonical_shipped_config_dir.as_path()),
+                "{config_path} must canonicalize inside {} to keep shipped bootstrap topology path anchoring deterministic",
+                canonical_shipped_config_dir.display()
             );
 
             let cfg = load_config(config_path)
