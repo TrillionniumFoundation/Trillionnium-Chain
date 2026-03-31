@@ -135,3 +135,27 @@ fn admitting_last_known_retry_does_not_leave_fresh_ingress_stuck_behind_stale_fa
     assert_eq!(m.fairness_deferrals, 2);
     assert_eq!(m.backpressure_duplicates, 0);
 }
+
+#[test]
+fn spare_capacity_after_retry_drain_accepts_new_fresh_ids_without_reviving_stale_fairness() {
+    let mut gate = AdmissionGate::new(3);
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(90), AdmitOutcome::Backpressured);
+
+    // Open one slot and consume it with the only known retry, which should clear
+    // retry reservations and any stale fairness marker immediately.
+    assert_eq!(gate.pop_ready(), Some(1));
+    assert_eq!(gate.admit(90), AdmitOutcome::Accepted);
+    assert!(gate.backpressured_ids.is_empty());
+    assert_eq!(gate.retry_reservations, 0);
+    assert_eq!(gate.last_fairness_deferred, None);
+
+    // After another dequeue opens spare capacity, brand-new ingress should be accepted
+    // directly instead of being treated like a carried-over fairness-deferred retry.
+    assert_eq!(gate.pop_ready(), Some(2));
+    assert_eq!(gate.admit(1000), AdmitOutcome::Accepted);
+    assert_eq!(gate.last_fairness_deferred, None);
+    assert_eq!(gate.metrics().fairness_deferrals, 0);
+}
