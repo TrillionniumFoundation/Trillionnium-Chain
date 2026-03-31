@@ -27,9 +27,11 @@ Companion truth sources:
 - evaluated repo root:
 - evaluated branch:
 - evaluated head:
+- evaluated origin/main:
 
 Rule:
 - if `assigned worktree` / `assigned branch ref` are not recorded from the ticket before quoting artifacts, stop and mark the packet **evidence-incomplete**
+- when this memo cites `RELEASE_READINESS.md` as a truth source, it must also record the current `origin/main` commit (`git rev-parse origin/main`) for the evaluated snapshot; if `evaluated origin/main` is missing, decision cannot exceed **NO-GO**
 
 ## 2. Pre-run lane identity proof
 
@@ -122,9 +124,11 @@ Copy these fields from the extracted artifact output or directly from `go-no-go-
 - `truth_source=`
 - `historical_evidence_only=`
 - `evidence_scope=`
+- `evaluated_origin_main=`
 
 Decision rule:
 - `preflight_result=GO` is mandatory before quoting later PASS / GO language
+- `evaluated_origin_main=` must be recorded whenever this memo cites `RELEASE_READINESS.md`; do not reuse a stale hash from an older packet
 - preflight `git_worktree_path=` / `git_worktree_branch_ref=` must match the assigned worktree/branch, not just exist
 - preflight `expected_worktree_root=` / `expected_branch_ref=` must also match the ticket-assigned values verbatim; a packet is incomplete if the preflight artifact only proves the current shell was self-consistent
 - if the ticket assigned an expected head, preflight `expected_head=` must match it verbatim
@@ -213,6 +217,7 @@ Mark each item explicitly:
 - [ ] preflight identity fields preserved next to preflight decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
+- [ ] `evaluated_origin_main=` recorded from `git rev-parse origin/main` for this packet
 - [ ] `rollback_command=` quoted verbatim
 - [ ] `replay_command=` quoted verbatim
 - [ ] rollback drill scope/command/result recorded
@@ -253,6 +258,7 @@ git_status_summary=<clean|dirty|unknown>
 truth_source=<artifact value>
 historical_evidence_only=<artifact value>
 evidence_scope=<artifact value>
+evaluated_origin_main=<git rev-parse origin/main at memo time>
 rollback_command=<artifact value>
 replay_command=<artifact value>
 rollback_drill_scope=<docs-only|artifact replay only|operator procedure walkthrough|executed on rehearsal environment>
