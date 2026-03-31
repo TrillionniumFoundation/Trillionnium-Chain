@@ -121,6 +121,13 @@ struct NodeConfig {
     p2p_addr: String,
 }
 
+fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => addr.is_link_local(),
+        std::net::IpAddr::V6(addr) => addr.is_unicast_link_local(),
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
@@ -1614,6 +1621,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an unspecified address",
         path
     );
+    anyhow::ensure!(
+        !is_link_local_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1685,6 +1697,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unspecified(),
         "invalid node config {}: p2p_addr must not use an unspecified address",
+        path
+    );
+    anyhow::ensure!(
+        !is_link_local_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a link-local address",
         path
     );
     anyhow::ensure!(
@@ -3603,6 +3620,32 @@ mod tests {
         assert!(p2p_unspecified_err
             .to_string()
             .contains("p2p_addr must not use an unspecified address"));
+
+        let rpc_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "169.254.10.20:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr link-local bind must be rejected");
+        assert!(rpc_link_local_err
+            .to_string()
+            .contains("rpc_addr must not use a link-local address"));
+
+        let p2p_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[fe80::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr link-local bind must be rejected");
+        assert!(p2p_link_local_err
+            .to_string()
+            .contains("p2p_addr must not use a link-local address"));
     }
 
     #[test]
@@ -4328,6 +4371,47 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must not use a multicast address"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_link_local_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"169.254.10.20:26657\"\np2p_addr = \"169.254.10.21:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not use a link-local address"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[fe80::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not use a link-local address"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
