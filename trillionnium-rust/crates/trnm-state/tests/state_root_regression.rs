@@ -6453,6 +6453,32 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         ),
         "checkpoint evidence surfaces must reject zero-width prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links cannot hide layout drift behind visually identical digest surfaces"
     );
+
+    let mut non_ascii_proposal_hash_wal = wal.clone();
+    non_ascii_proposal_hash_wal.proposal_hash = "proposal-猫头鹰".into();
+    let mut non_ascii_proposal_hash_checkpoint = checkpoint.clone();
+    non_ascii_proposal_hash_checkpoint.wal_entry_hash_hex =
+        non_ascii_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &non_ascii_proposal_hash_checkpoint,
+            &non_ascii_proposal_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject non-ascii WAL proposal_hash values so verifier sidecars cannot publish DA-linked checkpoint provenance with locale-dependent proposal identities"
+    );
+
+    let mut overlong_proposal_hash_wal = wal.clone();
+    overlong_proposal_hash_wal.proposal_hash = "p".repeat(257);
+    let mut overlong_proposal_hash_checkpoint = checkpoint.clone();
+    overlong_proposal_hash_checkpoint.wal_entry_hash_hex =
+        overlong_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &overlong_proposal_hash_checkpoint,
+            &overlong_proposal_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject overlong WAL proposal_hash values so DA/light-verifier sidecars cannot anchor checkpoint evidence to unbounded proposal identity surfaces"
+    );
 }
 
 #[test]
