@@ -294,6 +294,25 @@ mod tests {
             })
         );
     }
+
+    #[test]
+    fn canonicalize_resolve_authority_snapshot_rejects_reserved_or_alias_members_fail_closed() {
+        for raw in [
+            "authority-a,governance.resolve_authority",
+            "authority-a,governance.emergency_pause",
+            "authority-a,system",
+            "authority-a,treasury.challenge_escrow",
+            "authority-a,treasury.challenge_forfeits",
+            "authority-a,treasury.worker_slashes",
+            "authority-a,Authority-A",
+        ] {
+            assert_eq!(
+                canonicalize_resolve_authority_snapshot(raw),
+                None,
+                "reserved or aliased authority member must fail closed: {raw}"
+            );
+        }
+    }
 }
 
 pub(crate) fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {

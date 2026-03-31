@@ -19939,6 +19939,38 @@ mod tests {
     }
 
     #[test]
+    fn timeout_preflight_rejects_terminal_marker_when_no_transfer_mode_selected() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 79,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Completed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: Some(true),
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let err = preflight_timeout_transfers(&st, &task, false, false).expect_err(
+            "timeout settlement must fail closed when retained terminal marker exists but no transfer mode is selected",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode")));
+    }
+
+    #[test]
     fn timeout_preflight_rejects_conflicting_refund_and_forfeit_modes_without_balance_mutation() {
         let mut st = seeded_state();
         st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
