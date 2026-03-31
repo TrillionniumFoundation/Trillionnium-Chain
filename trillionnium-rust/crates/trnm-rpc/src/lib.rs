@@ -211,11 +211,10 @@ impl OracleValidateSnapshotResponse {
         } else {
             self.has_non_empty_error_label() && self.metrics.accepted_total == 0
         };
-        let source_cardinality_consistent = if self.metrics.sample_count == 0 {
-            self.metrics.oracle_source_cardinality == 0
-        } else {
+        let source_cardinality_consistent = if self.metrics.accepted_total > 0 {
             self.metrics.oracle_source_cardinality > 0
-                && self.metrics.oracle_source_cardinality <= self.metrics.sample_count
+        } else {
+            true
         };
         let outcome_accounting_consistent = self.classified_outcome_conserves_sample_count()
             && self.observation_classified_outcome_conserves_sample_count();
@@ -736,6 +735,53 @@ mod tests {
         assert!(!obj.contains_key("error"));
         assert_eq!(v["observation"]["accepted_total"], 1);
         assert_eq!(v["metrics"]["accepted_total"], 1);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_future_snapshot_as_stale_only() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 10_000,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("future snapshot: ts=10001, now=10000".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+
+        assert!(!out.ok);
+        assert_eq!(out.now_ts_ms, 10_000);
+        assert_eq!(out.observation.stale_reject_total, 1);
+        assert_eq!(out.observation.quorum_reject_total, 0);
+        assert_eq!(out.observation.drift_reject_total, 0);
+        assert_eq!(out.observation.accepted_total, 0);
+        assert_eq!(out.metrics.oracle_stale_reject_total, 1);
+        assert_eq!(out.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(out.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(out.metrics.oracle_source_cardinality, 2);
+        assert_eq!(out.metrics.accepted_total, 0);
+        assert_eq!(out.metrics.sample_count, 1);
+        assert_eq!(
+            out.error.as_deref(),
+            Some("future snapshot: ts=10001, now=10000")
+        );
+        assert_eq!(out.classified_reject_total(), 1);
+        assert_eq!(out.classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_matches_metrics());
+        assert!(out.bridge_contract_consistent());
     }
 
     #[test]
