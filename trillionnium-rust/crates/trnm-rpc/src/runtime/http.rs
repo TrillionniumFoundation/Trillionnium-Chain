@@ -433,12 +433,20 @@ mod tests {
         assert!(is_health_probe_path("/STATUSZ"));
         assert!(is_health_probe_path("/-/health"));
         assert!(is_health_probe_path("/-/health/"));
+        assert!(is_health_probe_path("/-/healthz"));
+        assert!(is_health_probe_path("/-/healthz/"));
         assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/live/"));
+        assert!(is_health_probe_path("/-/livez"));
+        assert!(is_health_probe_path("/-/livez/"));
+        assert!(is_health_probe_path("/-/ready"));
+        assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
+        assert!(!is_health_probe_path("/-/readycheck"));
     }
 
     #[test]
