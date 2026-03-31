@@ -275,6 +275,53 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_critical_wait_density_cluster_operator_visible_once_each() {
+        let mut metrics = RuntimeMetrics::new(3);
+        metrics.critical_wait_active_heights = 2;
+        metrics.bft_observed_heights = 5;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.critical_wait_density_ppm = 400_000;
+        stats.critical_wait_peak_density_ppm = 600_000;
+        stats.critical_wait_active_height_rate_ppm = 666_666;
+        stats.critical_wait_active_observed_height_rate_ppm = 400_000;
+        stats.critical_wait_density_avg = 3;
+        stats.critical_wait_density_avg_milli = 3_500;
+        stats.critical_wait_active_height_share_ppm = 666_666;
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        assert_eq!(summary.matches("critical_wait_active_heights=").count(), 1);
+        assert_eq!(summary.matches("critical_wait_density_ppm=").count(), 1);
+        assert_eq!(summary.matches("critical_wait_peak_density_ppm=").count(), 1);
+        assert!(summary.contains("critical_wait_active_heights=2"));
+        assert!(summary.contains("critical_wait_density_ppm=400000"));
+        assert!(summary.contains("critical_wait_peak_density_ppm=600000"));
+        assert!(summary.contains("critical_wait_active_height_rate_ppm=666666"));
+        assert!(summary.contains("critical_wait_active_observed_height_rate_ppm=400000"));
+        assert!(summary.contains("critical_wait_density_avg=3"));
+        assert!(summary.contains("critical_wait_density_avg_milli=3500"));
+        assert!(summary.contains("critical_wait_active_height_share_ppm=666666"));
+
+        let density_idx = summary.find("critical_wait_density_ppm=400000").unwrap();
+        let peak_idx = summary.find("critical_wait_peak_density_ppm=600000").unwrap();
+        let active_idx = summary.find("critical_wait_active_heights=2").unwrap();
+        let rate_idx = summary.find("critical_wait_active_height_rate_ppm=666666").unwrap();
+        let observed_rate_idx = summary
+            .find("critical_wait_active_observed_height_rate_ppm=400000")
+            .unwrap();
+        let avg_idx = summary.find("critical_wait_density_avg=3").unwrap();
+        let avg_milli_idx = summary.find("critical_wait_density_avg_milli=3500").unwrap();
+
+        assert!(density_idx < peak_idx);
+        assert!(peak_idx < active_idx);
+        assert!(active_idx < rate_idx);
+        assert!(rate_idx < observed_rate_idx);
+        assert!(observed_rate_idx < avg_idx);
+        assert!(avg_idx < avg_milli_idx);
+    }
+
+    #[test]
     fn runtime_summary_line_keeps_stale_auth_reject_alias_operator_visible_once_each() {
         let mut metrics = RuntimeMetrics::new(2);
         metrics.bft_auth_reject_stale_nonce_total = 17;
