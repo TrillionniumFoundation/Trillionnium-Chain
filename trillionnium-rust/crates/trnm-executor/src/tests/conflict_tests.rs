@@ -110,6 +110,27 @@ fn vec_hashset_intersects_medium_duplicate_probe_path_preserves_semantics() {
 }
 
 #[test]
+fn vec_hashset_intersects_large_duplicate_probe_path_preserves_semantics() {
+    let domain: HashSet<u64> = [777u64, 888u64].into_iter().collect();
+
+    let mut hit = Vec::new();
+    for key in 1..=20u64 {
+        hit.push(key);
+        hit.push(key);
+    }
+    hit.extend([777, 777, 777, 21, 21, 22, 22]);
+
+    let mut miss = Vec::new();
+    for key in 1..=24u64 {
+        miss.push(10_000 + key);
+        miss.push(10_000 + key);
+    }
+
+    assert!(vec_hashset_intersects(&hit, &domain));
+    assert!(!vec_hashset_intersects(&miss, &domain));
+}
+
+#[test]
 fn skewed_small_vs_large_conflict_path_handles_large_domains() {
     let small_write = tx(1, vec![], vec![o(101), o(202), o(303), o(404)]);
     let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(o).collect();

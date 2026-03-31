@@ -628,6 +628,9 @@ fn build_mixed_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize
 }
 
 fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize) -> Vec<Tx> {
+    let keys = keys.max(1);
+    let read_fanout = read_fanout.max(1);
+    let write_every = write_every.max(1);
     let mut txs = Vec::with_capacity(n);
     let streak = 16usize;
     for i in 0..n {
@@ -639,7 +642,14 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
         });
 
         for j in 1..read_fanout {
-            let side = ((i + j * 11) % keys) as u64;
+            let mut side = ((i + j * 11) % keys) as u64;
+            let mut probes = 0usize;
+            while probes < keys
+                && read_set.iter().any(|existing| existing.id == side)
+            {
+                side = ((side as usize + 1) % keys) as u64;
+                probes += 1;
+            }
             read_set.push(ObjectRef {
                 id: side,
                 version: 1,
@@ -667,7 +677,8 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
 #[cfg(test)]
 mod tests {
-    use super::{build_hot_streak_txs, build_mixed_txs};
+    use super::{build_hot_streak_txs, build_mixed_txs, chrono_like_iso};
+    use std::time::{Duration, UNIX_EPOCH};
     use trnm_executor::GroupingProfile;
 
     #[test]
@@ -742,6 +753,50 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn hot_streak_workload_avoids_duplicate_side_reads_when_keyspace_allows() {
+        let txs = build_hot_streak_txs(8, 3, 3, 2);
+
+        for (idx, tx) in txs.iter().enumerate() {
+            let ids = tx.read_set.iter().map(|obj| obj.id).collect::<Vec<_>>();
+            assert_eq!(ids.len(), 3, "tx {idx} should keep configured read fanout");
+            assert_eq!(
+                ids[0],
+                tx.write_set.first().map(|obj| obj.id).unwrap_or(ids[0]),
+                "tx {idx} should keep the hot key in the first read slot"
+            );
+
+            let unique = ids.iter().copied().collect::<std::collections::BTreeSet<_>>();
+            assert_eq!(
+                unique.len(),
+                ids.len(),
+                "tx {idx} should avoid duplicate side reads when keys >= read_fanout"
+            );
+        }
+    }
+
+    #[test]
+    fn hot_streak_workload_fail_closes_zero_inputs_to_single_key_single_read_stride() {
+        let txs = build_hot_streak_txs(4, 0, 0, 0);
+
+        assert_eq!(txs.len(), 4);
+        for (idx, tx) in txs.iter().enumerate() {
+            assert_eq!(tx.read_set.len(), 1, "tx {idx} should clamp zero fanout to one read");
+            assert_eq!(tx.read_set[0].id, 0, "tx {idx} should clamp zero keyspace to one hot key");
+            assert_eq!(tx.write_set.len(), 1, "tx {idx} should clamp zero write stride to every tx");
+            assert_eq!(tx.write_set[0].id, tx.read_set[0].id);
+        }
+    }
+
+    #[test]
+    fn chrono_like_iso_formats_unix_epoch_and_next_second_stably() {
+        assert_eq!(chrono_like_iso(UNIX_EPOCH), "1970-01-01T00:00:00Z");
+        assert_eq!(
+            chrono_like_iso(UNIX_EPOCH + Duration::from_secs(1)),
+            "1970-01-01T00:00:01Z"
+        );
     }
 
     #[test]

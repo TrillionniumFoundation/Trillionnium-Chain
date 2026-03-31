@@ -39,6 +39,31 @@ fn same_object_different_versions_land_in_separate_groups() {
 }
 
 #[test]
+fn object_zero_different_versions_land_in_separate_groups() {
+    let txs = vec![
+        Tx {
+            id: 10,
+            read_set: vec![ObjectRef { id: 0, version: 1 }],
+            write_set: vec![],
+            payload: vec![],
+        },
+        Tx {
+            id: 11,
+            read_set: vec![],
+            write_set: vec![ObjectRef { id: 0, version: 2 }],
+            payload: vec![],
+        },
+    ];
+
+    // Object id 0 is a real execution-domain key, not a sentinel. Mixed-domain
+    // version skew on object 0 must still force separate groups.
+    let groups = build_parallel_groups(&txs);
+    assert_eq!(groups.len(), 2);
+    assert_eq!(groups[0][0].id, 10);
+    assert_eq!(groups[1][0].id, 11);
+}
+
+#[test]
 fn read_only_same_object_different_versions_share_one_group() {
     let txs = vec![
         Tx {
@@ -309,6 +334,20 @@ fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
     assert_eq!(profile.group_count, 1);
     assert_eq!(profile.max_group_size, txs.len());
     assert_eq!(profile.min_group_size, txs.len());
+}
+
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn write_first_grouping_rejects_mixed_domain_version_skew() {
+    let txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+    let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteFirst);
+}
+
+#[test]
+#[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+fn write_last_grouping_rejects_mixed_domain_version_skew() {
+    let txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+    let _ = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteLast);
 }
 
 #[test]

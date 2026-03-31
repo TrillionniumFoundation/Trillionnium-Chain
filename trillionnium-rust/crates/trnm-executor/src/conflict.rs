@@ -160,6 +160,72 @@ pub(crate) fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
     out
 }
 
+#[inline]
+fn extend_unique_access_keys(dst: &mut Vec<u64>, objs: &[ObjectRef]) {
+    assert!(
+        access_domain_versions_are_consistent(objs),
+        "access domain contains the same object id with multiple versions"
+    );
+
+    if objs.is_empty() {
+        if dst.len() <= 1 {
+            return;
+        }
+
+        let mut unique_len = 1usize;
+        for idx in 1..dst.len() {
+            let key = dst[idx];
+            if !dst[..unique_len].contains(&key) {
+                dst[unique_len] = key;
+                unique_len += 1;
+            }
+        }
+        dst.truncate(unique_len);
+        return;
+    }
+
+    // Tiny mixed domains are common in executor telemetry. Keep the merge path
+    // allocation-free there while still deduplicating same-version read/write echoes.
+    if dst.len() + objs.len() <= 8 {
+        if dst.len() > 1 {
+            let mut unique_len = 1usize;
+            for idx in 1..dst.len() {
+                let key = dst[idx];
+                if !dst[..unique_len].contains(&key) {
+                    dst[unique_len] = key;
+                    unique_len += 1;
+                }
+            }
+            dst.truncate(unique_len);
+        }
+
+        for obj in objs {
+            let key = access_key(obj);
+            if !dst.contains(&key) {
+                dst.push(key);
+            }
+        }
+        return;
+    }
+
+    let mut seen: HashSet<u64> = HashSet::with_capacity(dst.len() + objs.len());
+    let mut unique_len = 0usize;
+    for idx in 0..dst.len() {
+        let key = dst[idx];
+        if seen.insert(key) {
+            dst[unique_len] = key;
+            unique_len += 1;
+        }
+    }
+    dst.truncate(unique_len);
+    for obj in objs {
+        let key = access_key(obj);
+        if seen.insert(key) {
+            dst.push(key);
+        }
+    }
+}
+
 pub(crate) fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
@@ -306,11 +372,7 @@ pub(crate) fn hot_object_share(txs: &[Tx]) -> f64 {
     for tx in txs {
         assert_tx_access_domain_versions_are_consistent(tx);
         let mut keys = dedup_access_keys(&tx.read_set);
-        for key in dedup_access_keys(&tx.write_set) {
-            if !keys.contains(&key) {
-                keys.push(key);
-            }
-        }
+        extend_unique_access_keys(&mut keys, &tx.write_set);
         total += keys.len();
         for key in keys {
             *counts.entry(key).or_insert(0) += 1;
@@ -333,9 +395,14 @@ pub(crate) fn access_map_capacity_hint(txs: &[Tx]) -> usize {
     let mut footprint = 0usize;
     for tx in txs {
         assert_tx_access_domain_versions_are_consistent(tx);
-        footprint = footprint
-            .saturating_add(tx.read_set.len())
-            .saturating_add(tx.write_set.len());
+
+        // Size conflict-domain maps from the tx's unique access domain rather than
+        // raw read/write list lengths. This keeps same-version read/write echoes and
+        // duplicate keys from inflating hot-path map capacity under mixed Sui-like
+        // read/write workloads while preserving the same fail-closed skew guard.
+        let mut keys = dedup_access_keys(&tx.write_set);
+        extend_unique_access_keys(&mut keys, &tx.read_set);
+        footprint = footprint.saturating_add(keys.len());
     }
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
@@ -362,6 +429,21 @@ mod tests {
             write_set: w,
             payload: vec![],
         }
+    }
+
+    fn ov(id: u64, version: u64) -> ObjectRef {
+        ObjectRef { id, version }
+    }
+
+    #[test]
+    fn detect_conflict_treats_object_versions_as_one_execution_domain() {
+        let write_v1 = tx(1, vec![], vec![ov(7, 1)]);
+        let write_v9 = tx(2, vec![], vec![ov(7, 9)]);
+        let other_object = tx(3, vec![], vec![ov(8, 9)]);
+
+        assert!(detect_conflict(&write_v1, &write_v9));
+        assert!(detect_conflict(&write_v9, &write_v1));
+        assert!(!detect_conflict(&write_v1, &other_object));
     }
 
     #[test]
@@ -398,5 +480,44 @@ mod tests {
 
         assert!(vec_hashset_intersects(&hit, &domain));
         assert!(!vec_hashset_intersects(&miss, &domain));
+    }
+
+    #[test]
+    fn access_map_capacity_hint_tracks_unique_object_domain_footprint() {
+        let txs = vec![tx(
+            1,
+            (0..40u64)
+                .flat_map(|i| [o(1_000 + i), o(1_000 + i)])
+                .collect(),
+            (0..40u64)
+                .flat_map(|i| [o(2_000 + i), o(2_000 + i), o(1_000 + i)])
+                .collect(),
+        )];
+
+        // Capacity sizing should track the tx's distinct object-domain footprint,
+        // not raw duplicate/echo volume. Otherwise mixed read/write echoes can
+        // inflate scheduler map reservations and blur lane-isolation telemetry.
+        assert_eq!(access_map_capacity_hint(&txs), 107);
+    }
+
+    #[test]
+    fn access_map_capacity_hint_is_stable_for_role_flipped_mixed_domains() {
+        let write_heavy = tx(
+            1,
+            vec![o(5), o(9), o(11), o(11)],
+            vec![o(5), o(7), o(7)],
+        );
+        let read_heavy = tx(
+            2,
+            vec![o(5), o(7), o(7)],
+            vec![o(5), o(9), o(11), o(11)],
+        );
+
+        // Capacity sizing should be anchored to the mixed execution domain's
+        // unique object footprint, not whichever side currently carries the
+        // wider role. Otherwise equivalent lanes can drift after read/write
+        // role flips and over-reserve scheduler conflict maps.
+        assert_eq!(access_map_capacity_hint(&[write_heavy]), 64);
+        assert_eq!(access_map_capacity_hint(&[read_heavy]), 64);
     }
 }

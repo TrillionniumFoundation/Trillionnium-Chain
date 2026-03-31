@@ -1,4 +1,56 @@
 use super::*;
+use std::sync::{Mutex, MutexGuard, OnceLock};
+use trnm_types::{ObjectRef, Tx};
+
+fn o(id: u64) -> ObjectRef {
+    ObjectRef { id, version: 1 }
+}
+
+fn tx(id: u64, r: Vec<ObjectRef>, w: Vec<ObjectRef>) -> Tx {
+    Tx {
+        id,
+        read_set: r,
+        write_set: w,
+        payload: vec![],
+    }
+}
+
+fn env_lock() -> MutexGuard<'static, ()> {
+    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+        Ok(guard) => guard,
+        Err(err) => err.into_inner(),
+    }
+}
+
+struct EnvGuard {
+    key: &'static str,
+    old: Option<String>,
+}
+
+impl EnvGuard {
+    fn set(key: &'static str, value: &str) -> Self {
+        let old = std::env::var(key).ok();
+        unsafe {
+            std::env::set_var(key, value);
+        }
+        Self { key, old }
+    }
+}
+
+impl Drop for EnvGuard {
+    fn drop(&mut self) {
+        if let Some(v) = &self.old {
+            unsafe {
+                std::env::set_var(self.key, v);
+            }
+        } else {
+            unsafe {
+                std::env::remove_var(self.key);
+            }
+        }
+    }
+}
 
 #[test]
 fn hot_bucket_interleave_seeds_initial_round_from_first_hot_key() {
@@ -48,6 +100,9 @@ fn hot_bucket_interleave_prefers_a_sparse_bucket_under_moderate_two_to_one_skew(
 
 #[test]
 fn hot_bucket_interleave_keeps_first_hint_when_skew_is_below_two_to_one_threshold() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
+
     let mut txs = vec![
         tx(391, vec![], vec![o(0)]),  // first hot hint bucket 0
         tx(392, vec![], vec![o(8)]),  // same bucket (depth 3)
@@ -114,6 +169,28 @@ fn hot_bucket_interleave_keeps_first_hint_when_it_is_already_sparse_seed() {
     // keep that bucket as the anti-starvation seed (distance 0) instead of
     // rotating away to a neighboring sparse lane.
     assert_eq!(txs.first().map(|t| t.id), Some(421));
+}
+
+#[test]
+fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_clamped() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+    let mut txs = vec![
+        tx(431, vec![], vec![o(5)]),  // first hot hint bucket 1 (also sparse)
+        tx(432, vec![], vec![o(0)]),  // dominant bucket 0 depth 4
+        tx(433, vec![], vec![o(4)]),  // dominant bucket 0 depth 4
+        tx(434, vec![], vec![o(8)]),  // dominant bucket 0 depth 4
+        tx(435, vec![], vec![o(12)]), // dominant bucket 0 depth 4
+        tx(436, vec![], vec![o(6)]),  // equally sparse bucket 2 depth 1
+        tx(437, vec![], vec![o(7)]),  // equally sparse bucket 3 depth 1
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Even when ops trims fanout below the default 8 buckets, the sparse-seed
+    // anti-starvation path should still anchor to the first sparse hint instead
+    // of drifting toward another equally sparse bucket after modulo remapping.
+    assert_eq!(txs.first().map(|t| t.id), Some(431));
 }
 
 #[test]
@@ -186,6 +263,178 @@ fn hot_bucket_interleave_short_circuits_all_singleton_buckets() {
 }
 
 #[test]
+fn hot_bucket_interleave_short_circuits_single_mixed_domain_lane_without_role_flip_drift() {
+    let mut txs = vec![
+        tx(81, vec![o(0)], vec![o(8)]),
+        tx(82, vec![o(8)], vec![o(0)]),
+        tx(83, vec![o(16)], vec![o(24)]),
+        tx(84, vec![o(24)], vec![o(16)]),
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Equivalent mixed execution domains should keep the same canonical lane hint
+    // even when read/write roles flip. If every tx still lands in one bucket,
+    // the single-bucket hotspot fast path must preserve ingress order instead of
+    // doing a pointless round-robin reorder.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![81, 82, 83, 84]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_ignores_empty_access_noise_around_single_signaled_lane() {
+    let mut txs = vec![
+        tx(91, vec![], vec![]),      // empty-access noise would default to bucket 0
+        tx(92, vec![], vec![o(1)]),  // real signaled lane bucket 1 under fanout=4
+        tx(93, vec![], vec![]),      // same empty-access noise
+        tx(94, vec![], vec![o(5)]),  // same real lane bucket 1 under fanout=4
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs carry no conflict-domain hint. If all signaled traffic is
+    // still a single lane, preserve ingress order instead of letting bucket-0
+    // empties manufacture a fake second lane and perturb isolation.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![91, 92, 93, 94]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_ignores_empty_access_noise_around_single_role_flipped_mixed_lane() {
+    let mut txs = vec![
+        tx(95, vec![], vec![]),          // empty-access noise defaults to bucket 0
+        tx(96, vec![o(0)], vec![o(8)]),  // canonical mixed lane {0,8}
+        tx(97, vec![], vec![]),          // same empty-access noise
+        tx(98, vec![o(8)], vec![o(0)]),  // same mixed lane after read/write role flip
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs carry no lane signal, and equivalent mixed domains should
+    // keep one canonical bucket even when read/write roles flip. If all signaled
+    // traffic still belongs to that single lane, preserve ingress order.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![95, 96, 97, 98]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_fanout() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+    let mut txs = vec![
+        tx(99, vec![], vec![]),           // empty-access noise still defaults to bucket 0
+        tx(100, vec![o(1)], vec![o(5)]),  // canonical mixed lane {1,5} -> bucket 1 when fanout=4
+        tx(101, vec![], vec![]),          // same empty-access noise
+        tx(102, vec![o(5)], vec![o(1)]),  // same mixed lane after read/write role flip
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Shrinking hot-bucket fanout must not let bucket-0 empty-access noise
+    // fabricate a second lane when the only signaled mixed domain remains
+    // canonical and stable across read/write role flips.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![99, 100, 101, 102]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fanout_with_empty_noise() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
+
+    let mut txs = vec![
+        tx(103, vec![], vec![]),      // empty-access noise defaults to bucket 0
+        tx(104, vec![], vec![o(1)]),  // only signaled lane once fanout clamps to len=5
+        tx(105, vec![], vec![]),      // same empty-access noise
+        tx(106, vec![], vec![o(6)]),  // same signaled lane under input-clamped fanout=5
+        tx(107, vec![], vec![]),      // same empty-access noise
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Input-size fanout clamping (`min(TRNM_HOT_BUCKETS, txs.len())`) must keep
+    // empty-access bucket-0 noise from fabricating a second lane when all
+    // signaled traffic still belongs to one real lane.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![103, 104, 105, 106, 107]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_keeps_real_two_lane_rotation_despite_empty_access_noise() {
+    let _env = env_lock();
+
+    let mut txs = vec![
+        tx(108, vec![], vec![]),     // empty-access noise bucket 0
+        tx(109, vec![], vec![]),     // same empty-access noise bucket 0
+        tx(110, vec![], vec![o(1)]), // real signaled lane bucket 1 under fanout=6
+        tx(111, vec![], vec![o(7)]), // same real signaled lane bucket 1 under fanout=6
+        tx(112, vec![], vec![o(2)]), // second real signaled lane bucket 2 under fanout=6
+        tx(113, vec![], vec![o(8)]), // same second signaled lane bucket 2 under fanout=6
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Empty-access txs should not suppress interleave once there are two real
+    // signaled lanes. Keep the stable bucket-0 noise, but still rotate between
+    // the actual signaled lanes so lane isolation is preserved.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![108, 110, 112, 111, 113, 109]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_preserves_single_modulo_signaled_lane_with_empty_noise() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "6");
+
+    let mut txs = vec![
+        tx(114, vec![], vec![]),      // empty-access noise bucket 0
+        tx(115, vec![], vec![o(5)]),  // real signaled lane bucket 5 under fanout=6
+        tx(116, vec![], vec![]),      // more empty-access noise bucket 0
+        tx(117, vec![], vec![o(11)]), // same real signaled lane bucket 5 via modulo path
+        tx(118, vec![], vec![o(17)]), // same real signaled lane bucket 5 via modulo path
+        tx(119, vec![], vec![]),      // keeps input len >= requested modulo fanout
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // Non-power-of-two fanout still uses the modulo reduction path. Empty-access
+    // noise must not fabricate a second lane when all signaled traffic lands on
+    // the same real bucket there.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![114, 115, 116, 117, 118, 119]
+    );
+}
+
+#[test]
+fn hot_bucket_interleave_fails_closed_to_stable_order_when_fanout_collapses_to_one_bucket() {
+    let _env = env_lock();
+    let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
+
+    let mut txs = vec![
+        tx(111, vec![], vec![]),
+        tx(112, vec![o(5), o(13)], vec![o(7)]),
+        tx(113, vec![], vec![o(1 + (1u64 << 40))]),
+        tx(114, vec![o(7)], vec![o(5)]),
+    ];
+
+    reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+    // When ops clamps hot-bucket fanout to a single bucket, interleave should
+    // fail closed to stable ingress order instead of fabricating pseudo-lanes
+    // from mixed-domain or high-bit keys.
+    assert_eq!(
+        txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+        vec![111, 112, 113, 114]
+    );
+}
+
+#[test]
 fn hot_bucket_hint_fail_closes_to_bucket_zero_when_fanout_collapses() {
     let mixed = tx(1, vec![o(5), o(13)], vec![o(7)]);
     let write_only = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
@@ -247,7 +496,127 @@ fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
 }
 
 #[test]
+fn hot_bucket_hint_power_of_two_fast_path_stays_stable_for_high_bit_role_flips() {
+    let high_a = 1u64 << 40;
+    let high_b = (1u64 << 55) + 3;
+    let high_c = (1u64 << 55) + 11;
+    let buckets_n = 64usize;
+    let write_heavy = tx(
+        91,
+        vec![o(high_b), o(high_c), o(high_c)],
+        vec![o(high_a), o(high_a), o(high_b)],
+    );
+    let read_heavy = tx(
+        92,
+        vec![o(high_a), o(high_a), o(high_b)],
+        vec![o(high_b), o(high_c), o(high_c)],
+    );
+    let expected = ((high_a ^ high_b.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+
+    // Even on the power-of-two fast path, duplicate-heavy equivalent mixed
+    // domains must keep the same executor lane when read/write roles flip.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
+fn hot_bucket_hint_modulo_path_stays_stable_for_high_bit_role_flips() {
+    let high_a = 1u64 << 40;
+    let high_b = (1u64 << 55) + 3;
+    let high_c = (1u64 << 55) + 11;
+    let buckets_n = 97usize;
+    let write_heavy = tx(
+        93,
+        vec![o(high_b), o(high_c), o(high_c)],
+        vec![o(high_a), o(high_a), o(high_b)],
+    );
+    let read_heavy = tx(
+        94,
+        vec![o(high_a), o(high_a), o(high_b)],
+        vec![o(high_b), o(high_c), o(high_c)],
+    );
+    let expected = ((high_a ^ high_b.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // The non-power-of-two modulo path must preserve the same canonical
+    // object-domain lane for equivalent mixed domains even when read/write
+    // roles flip under wide high-bit keys.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
+fn hot_bucket_hint_is_stable_for_single_write_single_read_role_flips() {
+    let buckets_n = 97usize;
+    let write_then_read = tx(951, vec![o(2)], vec![o(1)]);
+    let read_then_write = tx(952, vec![o(1)], vec![o(2)]);
+    let expected = ((1u64 ^ 2u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // Equivalent one-write/one-read mixed domains should stay in the same
+    // scheduler lane even when read/write roles flip. Previously the fallback
+    // second-key probe skipped the lone opposite-domain key and drifted.
+    assert_eq!(hot_bucket_hint(&write_then_read, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_then_write, buckets_n), expected);
+}
+
+#[test]
+fn hot_bucket_hint_stays_stable_when_echoed_primary_has_asymmetric_secondary_width() {
+    let buckets_n = 97usize;
+    let write_heavy = tx(
+        961,
+        vec![o(5), o(9), o(11), o(11)],
+        vec![o(5), o(7), o(7)],
+    );
+    let read_heavy = tx(
+        962,
+        vec![o(5), o(7), o(7)],
+        vec![o(5), o(9), o(11), o(11)],
+    );
+    let expected = ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // If the canonical primary key is echoed across read/write domains but one
+    // side contributes a narrower non-primary footprint, role flips must still
+    // preserve the same lane anchor instead of drifting to the wider side's
+    // local secondary.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
+fn hot_bucket_hint_treats_object_zero_as_real_canonical_lane_under_role_flips() {
+    let buckets_n = 97usize;
+    let write_heavy = tx(971, vec![o(0), o(9), o(9)], vec![o(0), o(5), o(5)]);
+    let read_heavy = tx(972, vec![o(0), o(5), o(5)], vec![o(0), o(9), o(9)]);
+    let expected = ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+    // Object id 0 is a valid execution-domain key, not a sentinel. Equivalent
+    // mixed domains should keep the same canonical lane even when read/write
+    // roles flip and duplicate-heavy echoes surround the zero-key object.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
+fn hot_bucket_hint_power_of_two_path_keeps_zero_primary_stable_under_asymmetric_role_flips() {
+    let buckets_n = 64usize;
+    let write_heavy = tx(973, vec![o(0), o(17), o(33), o(33)], vec![o(0), o(9), o(9)]);
+    let read_heavy = tx(974, vec![o(0), o(9), o(9)], vec![o(0), o(17), o(33), o(33)]);
+    let expected = ((0u64 ^ 9u64.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+
+    // The power-of-two reduction path should preserve the same canonical lane
+    // when object id 0 is the primary execution-domain key and the echoed
+    // non-primary footprint is asymmetric across read/write role flips.
+    assert_eq!(hot_bucket_hint(&write_heavy, buckets_n), expected);
+    assert_eq!(hot_bucket_hint(&read_heavy, buckets_n), expected);
+}
+
+#[test]
 fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
     let t = tx(999, vec![], vec![o(42)]);
     assert_eq!(hot_bucket_hint(&t, 0), 0);
+}
+
+#[test]
+fn hot_bucket_hint_single_bucket_count_fails_closed_to_bucket_zero() {
+    let t = tx(999, vec![o(7)], vec![o(42)]);
+    assert_eq!(hot_bucket_hint(&t, 1), 0);
 }

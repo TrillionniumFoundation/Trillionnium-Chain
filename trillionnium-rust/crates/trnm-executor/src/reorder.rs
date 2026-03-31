@@ -6,9 +6,20 @@ use crate::GroupingStrategy;
 pub(crate) fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
     // Defensive guard: keep helper total for misconfigured callers and tests.
     // Production reorder path always uses buckets_n>=1, but this preserves
-    // fail-closed deterministic behavior if future call sites pass zero.
-    if buckets_n == 0 {
+    // fail-closed deterministic behavior if future call sites collapse fanout
+    // to zero/one bucket.
+    if buckets_n <= 1 {
         return 0;
+    }
+
+    #[inline]
+    fn next_distinct_access_key(tx: &Tx, first: u64) -> u64 {
+        tx.write_set
+            .iter()
+            .chain(tx.read_set.iter())
+            .map(|obj| obj.id)
+            .find(|&id| id != first)
+            .unwrap_or(0)
     }
 
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
@@ -19,12 +30,7 @@ pub(crate) fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .or_else(|| tx.read_set.first())
         .map(|o| o.id)
         .unwrap_or(0);
-    let key_b = tx
-        .write_set
-        .get(1)
-        .or_else(|| tx.read_set.get(1))
-        .map(|o| o.id)
-        .unwrap_or(0);
+    let key_b = next_distinct_access_key(tx, key_a);
     let mixed = key_a ^ key_b.rotate_left(7);
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: avoid division in the common power-of-two
@@ -97,6 +103,8 @@ pub(crate) fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             let mut bucket_depths = vec![0usize; buckets_n];
             let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
+            let mut signaled_non_empty_buckets = 0usize;
+            let mut signaled_bucket_seen = vec![false; buckets_n];
 
             for tx in txs.iter() {
                 // First pass: count occupancy only. This lets hotspot/singleton
@@ -107,12 +115,27 @@ pub(crate) fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     non_empty_buckets += 1;
                 }
                 bucket_depths[bucket] += 1;
+
+                // Empty-access txs do not carry any conflict-domain hint. Keep them
+                // from fabricating an extra bucket-0 lane in mixed batches when all
+                // signaled traffic still belongs to one actual hot bucket.
+                if !(tx.read_set.is_empty() && tx.write_set.is_empty()) && !signaled_bucket_seen[bucket]
+                {
+                    signaled_bucket_seen[bucket] = true;
+                    signaled_non_empty_buckets += 1;
+                }
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
             // round-robin interleave would reproduce the original order while paying
             // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
             if non_empty_buckets <= 1 {
+                return;
+            }
+            // Mixed batches with only one real conflict-domain lane and some empty-access
+            // txs also gain nothing from interleave. Empty txs should not synthesize a
+            // second bucket-0 lane that perturbs otherwise stable single-lane ingress.
+            if signaled_non_empty_buckets <= 1 {
                 return;
             }
             // Free-ingress fast path: when every non-empty bucket is singleton,

@@ -6,7 +6,7 @@ use crate::env_config::{
     auto_adaptive_min_batch_len, auto_adaptive_sample_len, auto_hot_streak_threshold,
     auto_min_expected_gain_score, auto_reorder_min_hot_key_share, auto_reorder_min_margin,
 };
-use crate::AutoAdaptiveDecision;
+use crate::{primary_access_domain_key, AutoAdaptiveDecision};
 
 pub(crate) fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let threshold = auto_hot_streak_threshold();
@@ -61,11 +61,7 @@ pub(crate) fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         }
         prev_idx = Some(idx);
         let tx = &txs[idx];
-        let key = tx
-            .write_set
-            .first()
-            .or_else(|| tx.read_set.first())
-            .map(|o| o.id);
+        let key = primary_access_domain_key(tx);
         if let Some(k) = key {
             observed += 1;
             *key_hist.entry(k).or_insert(0) += 1;

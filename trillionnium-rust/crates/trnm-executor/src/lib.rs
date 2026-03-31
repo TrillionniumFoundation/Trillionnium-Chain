@@ -1,6 +1,10 @@
 use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
+#[cfg(test)]
+#[path = "tests/hot_bucket_tests.rs"]
+mod hot_bucket_tests;
+
 #[derive(Debug, Clone, Copy)]
 pub enum GroupingStrategy {
     Original,
@@ -841,7 +845,7 @@ fn tx_access_domain_keys(tx: &Tx) -> Vec<u64> {
     keys
 }
 
-fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
+pub(crate) fn primary_access_domain_key(tx: &Tx) -> Option<u64> {
     // Fail-closed if a tx carries mixed read/write footprints for the same object id
     // with mismatched versions.
     assert_tx_access_domain_versions_are_consistent(tx);
@@ -1711,7 +1715,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         let tx = &txs[idx];
         let key = {
             let (key_a, key_b) = hot_bucket_keys(tx);
-            if key_a == 0 && key_b == 0 {
+            if tx.read_set.is_empty() && tx.write_set.is_empty() {
                 None
             } else if tx.read_set.is_empty() || tx.write_set.is_empty() {
                 Some((key_a, key_b))
@@ -1821,8 +1825,9 @@ fn hot_bucket_keys(tx: &Tx) -> (u64, u64) {
         );
     }
 
-    let mut all_keys: Vec<u64> = write_keys.clone();
-    all_keys.extend(read_keys.iter());
+    let mut all_keys: Vec<u64> = Vec::with_capacity(write_keys.len() + read_keys.len());
+    all_keys.extend(write_keys.iter().copied());
+    all_keys.extend(read_keys.iter().copied());
     all_keys.sort_unstable();
     all_keys.dedup();
     if all_keys.is_empty() {
@@ -1913,17 +1918,26 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         return 0;
     }
 
-    // Derive the bucket hint from the canonical object-scoped domain rather than
-    // a role-local secondary choice. Once the smallest key is fixed, hash over the
-    // two smallest distinct access keys so equivalent read/write role flips stay on
-    // the same Avalanche-style execution lane even when writes carry a larger local
-    // secondary than reads.
+    // Singleton access domains dominate simple transfer-like batches. Keep that
+    // hot path allocation-light by avoiding the global sort/dedup pass when the
+    // canonical execution lane is already a one-key object domain.
     let mut domain_keys = tx_access_domain_keys(tx);
-    domain_keys.sort_unstable();
-    domain_keys.dedup();
-    let key_a = domain_keys.first().copied().unwrap_or(0);
-    let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
-    let mixed = key_a ^ key_b.rotate_left(7);
+    let mixed = match domain_keys.len() {
+        0 => 0,
+        1 => domain_keys[0],
+        _ => {
+            // Derive the bucket hint from the canonical object-scoped domain rather than
+            // a role-local secondary choice. Once the smallest key is fixed, hash over the
+            // two smallest distinct access keys so equivalent read/write role flips stay on
+            // the same Avalanche-style execution lane even when writes carry a larger local
+            // secondary than reads.
+            domain_keys.sort_unstable();
+            domain_keys.dedup();
+            let key_a = domain_keys[0];
+            let key_b = domain_keys.iter().copied().find(|k| *k != key_a).unwrap_or(0);
+            key_a ^ key_b.rotate_left(7)
+        }
+    };
     if buckets_n.is_power_of_two() {
         // Fast-path hot scheduler probes: keep the reduction in u64-space so
         // high-bit object ids cannot truncate on 32-bit targets before bucket
@@ -1940,6 +1954,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
         GroupingStrategy::FootprintDesc => {
+            // Keep direct footprint probes on the same fail-closed execution-domain
+            // contract as the other scheduler reorder paths. Otherwise mixed
+            // read/write version skew could silently collapse into a width-only hint
+            // and drift lane selection instead of tripping the guardrail.
+            for tx in txs.iter() {
+                assert_tx_access_domain_versions_are_consistent(tx);
+            }
             txs.sort_by_key(|tx| {
                 let footprint = tx_access_domain_keys(tx).len();
                 (std::cmp::Reverse(footprint), tx.id)
@@ -2005,14 +2026,17 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
-            // Misconfigured/trimmed bucket fanout can collapse to a single bucket,
-            // where interleave degenerates to identity while still paying probe cost.
+            // Input-size capping (or a future lower env floor) can collapse fanout
+            // to a single bucket, where interleave degenerates to identity while
+            // still paying probe cost.
             if buckets_n <= 1 {
                 return;
             }
             let mut bucket_depths = vec![0usize; buckets_n];
             let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
+            let mut signaled_non_empty_buckets = 0usize;
+            let mut signaled_bucket_seen = vec![false; buckets_n];
 
             for tx in txs.iter() {
                 // First pass: count occupancy only. This lets hotspot/singleton
@@ -2023,12 +2047,27 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     non_empty_buckets += 1;
                 }
                 bucket_depths[bucket] += 1;
+
+                // Empty-access txs do not carry any conflict-domain hint. Keep them
+                // from fabricating an extra bucket-0 lane in mixed batches when all
+                // signaled traffic still belongs to one actual hot bucket.
+                if !(tx.read_set.is_empty() && tx.write_set.is_empty()) && !signaled_bucket_seen[bucket]
+                {
+                    signaled_bucket_seen[bucket] = true;
+                    signaled_non_empty_buckets += 1;
+                }
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
             // round-robin interleave would reproduce the original order while paying
             // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
             if non_empty_buckets <= 1 {
+                return;
+            }
+            // Mixed batches with only one real conflict-domain lane and some empty-access
+            // txs also gain nothing from interleave. Empty txs should not synthesize a
+            // second bucket-0 lane that perturbs otherwise stable single-lane ingress.
+            if signaled_non_empty_buckets <= 1 {
                 return;
             }
             // Free-ingress fast path: when every non-empty bucket is singleton,
@@ -2795,6 +2834,23 @@ mod tests {
     }
 
     #[test]
+    fn read_domain_only_keys_treats_object_zero_as_real_shared_domain_key() {
+        let write_keys = vec![
+            0, 100, 200, 300, 400, 500, 600, 700, 800, 900,
+        ];
+
+        let keys = read_domain_only_keys(
+            &[o(0), o(42), o(0), o(42), o(900), o(7), o(7)],
+            &write_keys,
+        );
+
+        // Object id 0 is a real execution-domain member. Large write-domain
+        // filtering must remove it just like any other shared key rather than
+        // treating it as an empty/sentinel lane marker.
+        assert_eq!(keys, vec![42, 7]);
+    }
+
+    #[test]
     fn tx_access_domain_keys_match_hot_bucket_write_first_scope() {
         let tx = tx(
             1,
@@ -2862,24 +2918,22 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(
-        expected = "mixed access domain contains the same object id with multiple versions"
-    )]
-    fn hot_bucket_keys_rejects_cross_domain_version_skew_for_same_object_id() {
-        let tx = tx(
-            1,
-            vec![ObjectRef { id: 7, version: 2 }],
-            vec![ObjectRef { id: 7, version: 1 }],
-        );
+    fn hot_bucket_keys_keep_object_zero_secondary_stable_across_role_flips() {
+        let write_zero = tx(1, vec![o(0), o(11)], vec![o(17)]);
+        let read_zero = tx(2, vec![o(17)], vec![o(0), o(11)]);
 
-        let _ = hot_bucket_keys(&tx);
+        // Object id 0 is a real lane key. Equivalent mixed domains touching
+        // {0, 11, 17} must keep the same secondary anchor even when read/write
+        // roles flip, otherwise hot-lane isolation can drift across retries.
+        assert_eq!(hot_bucket_keys(&write_zero), (0, 11));
+        assert_eq!(hot_bucket_keys(&read_zero), (0, 11));
     }
 
     #[test]
     #[should_panic(
         expected = "mixed access domain contains the same object id with multiple versions"
     )]
-    fn hot_bucket_keys_reject_cross_domain_version_skew_for_same_object_id() {
+    fn hot_bucket_keys_rejects_cross_domain_version_skew_for_same_object_id() {
         let tx = tx(
             1,
             vec![ObjectRef { id: 7, version: 2 }],
@@ -3207,6 +3261,9 @@ mod tests {
 
     #[test]
     fn hot_bucket_interleave_keeps_first_hint_when_skew_is_below_two_to_one_threshold() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
+
         let mut txs = vec![
             tx(391, vec![], vec![o(0)]),  // first hot hint bucket 0
             tx(392, vec![], vec![o(8)]),  // same bucket (depth 3)
@@ -3276,6 +3333,48 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_clamped() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+        let mut txs = vec![
+            tx(431, vec![], vec![o(5)]),  // first hot hint bucket 1 (also sparse)
+            tx(432, vec![], vec![o(0)]),  // dominant bucket 0 depth 4
+            tx(433, vec![], vec![o(4)]),  // dominant bucket 0 depth 4
+            tx(434, vec![], vec![o(8)]),  // dominant bucket 0 depth 4
+            tx(435, vec![], vec![o(12)]), // dominant bucket 0 depth 4
+            tx(436, vec![], vec![o(6)]),  // equally sparse bucket 2 depth 1
+            tx(437, vec![], vec![o(7)]),  // equally sparse bucket 3 depth 1
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Even when ops trims fanout below the default 8 buckets, the sparse-seed
+        // anti-starvation path should still anchor to the first sparse hint instead
+        // of drifting toward another equally sparse bucket after modulo remapping.
+        assert_eq!(txs.first().map(|t| t.id), Some(431));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_keeps_first_sparse_seed_when_bucket_fanout_is_input_clamped() {
+        let _env = env_lock();
+
+        let mut txs = vec![
+            tx(441, vec![], vec![o(1)]),  // first hot hint bucket 1 (also sparse)
+            tx(442, vec![], vec![o(0)]),  // dominant bucket 0 depth 3 after len-clamp to 5 buckets
+            tx(443, vec![], vec![o(5)]),  // dominant bucket 0 depth 3
+            tx(444, vec![], vec![o(10)]), // dominant bucket 0 depth 3
+            tx(445, vec![], vec![o(2)]),  // equally sparse bucket 2 depth 1
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Input-size clamping (`min(TRNM_HOT_BUCKETS, txs.len())`) should preserve
+        // the same sparse-seed anti-starvation contract: if the first hot hint is
+        // already one of the sparsest buckets, keep it as the lane seed instead of
+        // drifting after the effective bucket fanout shrinks with the batch size.
+        assert_eq!(txs.first().map(|t| t.id), Some(441));
+    }
+
+    #[test]
     fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
         let mut txs = vec![
             tx(21, vec![], vec![o(8)]),
@@ -3323,6 +3422,47 @@ mod tests {
         assert_eq!(
             txs.iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![61, 62, 63, 64]
+        );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_short_circuits_single_bucket_hotspot_under_clamped_fanout() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
+
+        let mut txs = vec![
+            tx(65, vec![], vec![o(4)]),
+            tx(66, vec![], vec![o(8)]),
+            tx(67, vec![], vec![o(12)]),
+            tx(68, vec![], vec![o(16)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // When ops clamps fanout below the default, a batch that still collapses
+        // into one effective bucket should remain in ingress order rather than
+        // paying round-robin overhead for a degenerate lane split.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![65, 66, 67, 68]
+        );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_ignores_empty_access_noise_when_only_one_real_lane_exists() {
+        let mut txs = vec![
+            tx(81, vec![], vec![o(8)]),
+            tx(82, vec![], vec![]),
+            tx(83, vec![], vec![o(16)]),
+            tx(84, vec![], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Empty-access ingress should not fabricate a second hot bucket. When all
+        // signaled traffic still lands in one real lane, keep stable input order
+        // and avoid round-robin churn from synthetic bucket-0 noise.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![81, 82, 83, 84]
         );
     }
 
@@ -3604,6 +3744,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_keys_keep_zero_primary_echo_stable_when_single_suffix_flips_roles() {
+        let write_suffix = tx(1, vec![o(0), o(13)], vec![o(0), o(7)]);
+        let read_suffix = tx(2, vec![o(0), o(7)], vec![o(0), o(13)]);
+
+        // When object id 0 is echoed across both domains and each side contributes
+        // one distinct non-primary key, lane isolation should keep the smallest
+        // global suffix instead of drifting with read/write ownership.
+        assert_eq!(hot_bucket_keys(&write_suffix), (0, 7));
+        assert_eq!(hot_bucket_keys(&write_suffix), hot_bucket_keys(&read_suffix));
+    }
+
+    #[test]
     fn hot_bucket_hint_treats_object_zero_as_real_secondary_domain_key() {
         let buckets_n = 97usize;
         let write_then_read = tx(1, vec![o(0)], vec![o(5)]);
@@ -3644,6 +3796,69 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_keeps_high_bit_domains_stable_when_zero_primary_flips_roles() {
+        let buckets_n = 64usize;
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 40) + 17;
+        let write_then_read = tx(1, vec![o(0), o(high_b)], vec![o(high_a)]);
+        let read_then_write = tx(2, vec![o(high_a)], vec![o(0), o(high_b)]);
+
+        // Equivalent mixed domains touching {0, high_a, high_b} must keep the same
+        // canonical two-key hint even when object 0 flips between read/write sets.
+        // This guards executor lane isolation against future bucket-key regressions
+        // on wide object-id ranges while preserving the zero-is-real-key contract.
+        assert_eq!(hot_bucket_keys(&write_then_read), (0, high_a));
+        assert_eq!(
+            hot_bucket_keys(&write_then_read),
+            hot_bucket_keys(&read_then_write)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            hot_bucket_hint(&read_then_write, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_then_read, buckets_n),
+            ((0u64 ^ high_a.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_keeps_zero_primary_mixed_domains_lane_stable() {
+        let buckets_n = 64usize;
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 48) + 9;
+        let write_narrow = tx(1, vec![o(0), o(high_b)], vec![o(0), o(high_a)]);
+        let read_narrow = tx(2, vec![o(0), o(high_a)], vec![o(0), o(high_b)]);
+
+        // Keep the zero-primary lane anchor stable on the power-of-two bucket fast
+        // path as well: equivalent mixed domains that flip read/write ownership of
+        // high-bit suffixes must stay on the same executor lane instead of drifting
+        // after the bitmask reduction.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, high_a));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            hot_bucket_hint(&read_narrow, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            ((0u64 ^ high_a.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_keys_keep_zero_primary_lane_stable_under_duplicate_heavy_role_flips() {
+        let write_narrow = tx(1, vec![o(0), o(11), o(11), o(13)], vec![o(0), o(7), o(7)]);
+        let read_narrow = tx(2, vec![o(0), o(7), o(7)], vec![o(0), o(11), o(11), o(13)]);
+
+        // Even when duplicate-heavy mixed domains echo object 0 across both sides,
+        // keep the canonical lane anchor on the smallest distinct global suffix so
+        // executor lane isolation does not drift when read/write ownership flips.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, 7));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
@@ -3662,6 +3877,35 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_non_power_of_two_path_preserves_high_bit_lane_mapping() {
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 55) + 3;
+        let t = tx(1, vec![o(high_a)], vec![o(high_b)]);
+        let buckets_n = 97usize;
+
+        // Keep modulo reduction in u64-space on the non-power-of-two path so
+        // wide access-domain keys cannot truncate through usize casts and skew
+        // mixed-domain execution lane selection on narrower targets.
+        let expected = ((high_a ^ high_b.rotate_left(7)) % buckets_n as u64) as usize;
+        assert_eq!(hot_bucket_keys(&t), (high_a, high_b));
+        assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+    }
+
+    #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_preserves_high_bit_lane_mapping() {
+        let high_a = 1u64 << 40;
+        let high_b = (1u64 << 55) + 3;
+        let t = tx(1, vec![o(high_a)], vec![o(high_b)]);
+        let buckets_n = 64usize;
+
+        // Keep the bitmask fast path in u64-space too so high-bit mixed-domain
+        // keys preserve their executor-lane mapping under power-of-two fanout.
+        let expected = ((high_a ^ high_b.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+        assert_eq!(hot_bucket_keys(&t), (high_a, high_b));
+        assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+    }
+
+    #[test]
     fn hot_bucket_keys_skip_duplicate_leading_refs_and_preserve_write_priority() {
         let t = tx(1, vec![o(77), o(88)], vec![o(42), o(42), o(99)]);
         assert_eq!(hot_bucket_keys(&t), (42, 99));
@@ -3677,9 +3921,42 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_singleton_domain_matches_direct_bucket_mapping() {
+        let write_only = tx(998, vec![], vec![o(42)]);
+        let read_only = tx(997, vec![o(42)], vec![]);
+
+        // One-key execution domains should hash directly to that object key without
+        // needing the broader two-key sort/dedup path. This keeps simple transfer-
+        // like lanes aligned across read-only and write-only singleton footprints.
+        assert_eq!(hot_bucket_hint(&write_only, 97), (42u64 % 97) as usize);
+        assert_eq!(hot_bucket_hint(&read_only, 97), (42u64 % 97) as usize);
+        assert_eq!(hot_bucket_hint(&write_only, 64), (42u64 & 63u64) as usize);
+        assert_eq!(hot_bucket_hint(&read_only, 64), (42u64 & 63u64) as usize);
+    }
+
+    #[test]
     fn hot_bucket_hint_single_bucket_count_fails_closed_to_bucket_zero() {
         let t = tx(999, vec![o(7)], vec![o(42)]);
         assert_eq!(hot_bucket_hint(&t, 1), 0);
+    }
+
+    #[test]
+    fn hot_bucket_hint_is_stable_for_duplicate_heavy_equivalent_read_only_domains() {
+        let buckets_n = 97usize;
+        let duplicate_heavy = tx(1, vec![o(11), o(5), o(11), o(13), o(13)], vec![]);
+        let canonical = tx(2, vec![o(5), o(11), o(13)], vec![]);
+
+        // Read-only duplicate-heavy domains should collapse to the same two
+        // smallest distinct access keys as their canonical equivalent so lane
+        // hints stay stable under telemetry/order noise.
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            hot_bucket_hint(&canonical, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&duplicate_heavy, buckets_n),
+            ((5u64 ^ 11u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
     }
 
     #[test]
@@ -3702,6 +3979,24 @@ mod tests {
         assert_eq!(
             hot_bucket_hint(&duplicate_echoes, buckets_n),
             hot_bucket_hint(&deduped_domain, buckets_n)
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_keeps_asymmetric_primary_echo_domains_on_same_lane() {
+        let buckets_n = 97usize;
+        let write_wide = tx(1, vec![o(5), o(7)], vec![o(5), o(13), o(21)]);
+        let read_wide = tx(2, vec![o(5), o(13), o(21)], vec![o(5), o(7)]);
+        let expected = ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize;
+
+        // When the primary object key is echoed across both domains and only one
+        // side contributes a single non-primary suffix, keep the hot-lane bucket
+        // anchored to the same smallest global secondary even if read/write roles
+        // flip on the wider suffix set.
+        assert_eq!(hot_bucket_hint(&write_wide, buckets_n), expected);
+        assert_eq!(
+            hot_bucket_hint(&write_wide, buckets_n),
+            hot_bucket_hint(&read_wide, buckets_n)
         );
     }
 
@@ -3774,6 +4069,56 @@ mod tests {
         // different shares purely because ingress repeated the same domain keys.
         assert_eq!(hot_object_share(&baseline), hot_object_share(&echoed));
         assert_eq!(hot_object_share(&baseline), 0.2);
+    }
+
+    #[test]
+    fn access_map_capacity_hint_sizes_from_unique_access_domain_keys() {
+        let txs = vec![tx(
+            1,
+            (0..40u64)
+                .flat_map(|i| [o(1_000 + i), o(1_000 + i)])
+                .collect(),
+            (0..40u64)
+                .flat_map(|i| [o(2_000 + i), o(2_000 + i), o(1_000 + i)])
+                .collect(),
+        )];
+
+        // Capacity sizing should track the tx's distinct object-domain footprint,
+        // not raw duplicate/echo volume. Otherwise mixed read/write echoes can
+        // inflate scheduler map reservations and blur lane-isolation telemetry.
+        assert_eq!(tx_access_domain_keys(&txs[0]).len(), 80);
+        assert_eq!(access_map_capacity_hint(&txs), 107);
+    }
+
+    #[test]
+    fn access_map_capacity_hint_keeps_minimum_floor_for_tiny_unique_domains() {
+        let txs = vec![
+            tx(1, vec![o(7), o(7)], vec![]),
+            tx(2, vec![o(7)], vec![o(7)]),
+            tx(3, vec![], vec![o(9), o(9)]),
+        ];
+
+        // Tiny duplicate-heavy batches should still keep the scheduler's minimum
+        // map capacity floor so lane-local micro-batches don't oscillate between
+        // undersized allocations and rehash churn.
+        assert_eq!(tx_access_domain_keys(&txs[0]).len(), 1);
+        assert_eq!(tx_access_domain_keys(&txs[1]).len(), 1);
+        assert_eq!(tx_access_domain_keys(&txs[2]).len(), 1);
+        assert_eq!(access_map_capacity_hint(&txs), 64);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "mixed access domain contains the same object id with multiple versions"
+    )]
+    fn access_map_capacity_hint_rejects_cross_domain_version_skew_for_same_object_id() {
+        let txs = vec![tx(
+            1,
+            vec![ObjectRef { id: 7, version: 2 }],
+            vec![ObjectRef { id: 7, version: 1 }],
+        )];
+
+        let _ = access_map_capacity_hint(&txs);
     }
 
     #[test]
@@ -3899,6 +4244,31 @@ mod tests {
             !decision.use_hot_bucket,
             "distinct mixed execution domains should not collapse onto one hotspot hint"
         );
+    }
+
+    #[test]
+    fn auto_adaptive_treats_object_zero_as_real_singleton_hotspot_key() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let txs: Vec<Tx> = (0..64u64)
+            .map(|id| tx(id, vec![], vec![o(0)]))
+            .collect();
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "object id 0 is a real execution-domain key and should trigger hotspot detection"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!((d.hot_key_share - 1.0).abs() < f64::EPSILON);
+        assert!((d.streak_ratio - 1.0).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -4293,6 +4663,10 @@ mod tests {
         assert_eq!(hot_bucket_count(), 4);
         drop(_low);
 
+        let _positive_below_floor = EnvGuard::set("TRNM_HOT_BUCKETS", "1");
+        assert_eq!(hot_bucket_count(), 4);
+        drop(_positive_below_floor);
+
         let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
         assert_eq!(hot_bucket_count(), 64);
     }
@@ -4469,6 +4843,21 @@ mod tests {
         assert_eq!(auto_reorder_min_margin(), 0.125);
         assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
         assert_eq!(auto_min_expected_gain_score(), 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_treats_plus_prefixed_leading_comma_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "'+,250'");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+,125\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+,375' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+,050\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.125);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
     }
 
     #[test]
@@ -4838,6 +5227,42 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_empty_access_samples_break_hot_streak_continuity() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.656");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.30");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..16u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+        for i in 16..32u64 {
+            txs.push(tx(i, vec![], vec![]));
+        }
+        for i in 32..48u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+        for i in 48..64u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "below_streak_budget");
+        assert!((d.hot_key_share - (32.0 / 48.0)).abs() < 1e-12);
+        assert!((d.streak_ratio - (30.0 / 46.0)).abs() < 1e-12);
+        assert!(
+            d.streak_ratio < d.streak_threshold + d.min_margin,
+            "empty-access samples must break streak continuity instead of stitching hotspot runs together"
+        );
+    }
+
+    #[test]
     fn auto_adaptive_sub_min_batch_hotspots_stay_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
@@ -5114,6 +5539,35 @@ mod tests {
         assert!(
             d.use_hot_bucket,
             "direct-scan path should preserve read-only tail hotspot detection"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_first_sampled_batch_preserves_read_only_tail_hotspot_visibility() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mirror the first sampled-batch boundary for read-only batches. Once the
+        // batch grows from 2048 to 2049 txs, adaptive detection switches from
+        // direct scan to bounded sampling and still needs to see a hotspot that
+        // appears only in the tail through the read_set fallback path.
+        let mut txs = Vec::with_capacity(2049);
+        for i in 0..1024u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..1025u64 {
+            txs.push(tx(2_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(
+            d.use_hot_bucket,
+            "first sampled batch should preserve read-only tail hotspot visibility"
         );
         assert_eq!(d.reason, "hotspot_detected");
     }
@@ -6004,6 +6458,24 @@ mod tests {
     }
 
     #[test]
+    fn footprint_desc_reorder_uses_object_scoped_domains_not_raw_version_counts() {
+        let mut txs = vec![
+            tx(
+                9,
+                vec![ov(77, 1), ov(77, 1), ov(77, 1), ov(77, 1)],
+                vec![ov(77, 1), ov(77, 1)],
+            ),
+            tx(3, vec![ov(10, 1), ov(20, 1)], vec![ov(30, 1), ov(40, 1)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
+
+        // FootprintDesc should rank by the deduped object-scoped access domain so
+        // duplicate/version-heavy footprints do not outrank genuinely wider work.
+        assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![3, 9]);
+    }
+
+    #[test]
     fn write_first_reorder_uses_object_scoped_domains_not_raw_version_counts() {
         let mut txs = vec![
             tx(
@@ -6037,6 +6509,13 @@ mod tests {
         // WriteLast should also follow deduped object-scoped domains so
         // version-heavy footprints do not drift from the executor's scheduler.
         assert_eq!(txs.iter().map(|tx| tx.id).collect::<Vec<_>>(), vec![9, 3]);
+    }
+
+    #[test]
+    #[should_panic(expected = "mixed access domain contains the same object id with multiple versions")]
+    fn footprint_desc_reorder_panics_on_mixed_domain_version_skew() {
+        let mut txs = vec![tx(9, vec![ov(77, 1)], vec![ov(77, 2)])];
+        reorder_for_strategy(&mut txs, GroupingStrategy::FootprintDesc);
     }
 
     #[test]

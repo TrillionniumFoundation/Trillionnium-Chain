@@ -102,6 +102,34 @@ fn auto_adaptive_read_only_keyless_gaps_break_same_key_streaks_fail_closed() {
 }
 
 #[test]
+fn auto_adaptive_large_sample_keyless_gaps_do_not_manufacture_false_hotspots() {
+    let _env = env_lock();
+    let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+    let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+    let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+    let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+    let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+    // Mirror the keyless-gap fail-closed guard on the large-batch sampled path.
+    // Even when adaptive mode samples 2048 positions across a wide queue,
+    // empty-access gaps must keep identical write keys from appearing adjacent
+    // in the hotspot probe.
+    let mut txs = Vec::with_capacity(3_000);
+    for i in 0..1_500u64 {
+        txs.push(tx(i * 2, vec![], vec![o(42)]));
+        txs.push(tx(i * 2 + 1, vec![], vec![]));
+    }
+
+    let d = auto_adaptive_decision(&txs);
+    assert_eq!(d.sample_len, 2048);
+    assert_eq!(d.hot_key_share, 0.0);
+    assert_eq!(d.streak_ratio, 0.0);
+    assert!(!d.use_hot_bucket);
+    assert_eq!(d.reason, "insufficient_sample");
+    assert_eq!(d.expected_gain_score, 0.0);
+}
+
+#[test]
 fn auto_adaptive_prefers_write_hotspot_signal_over_shared_read_domains() {
     let _env = env_lock();
     let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
@@ -152,6 +180,39 @@ fn auto_adaptive_large_sample_prefers_write_signal_over_shared_read_domains() {
     assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
     assert_eq!(d.streak_ratio, 0.0);
     assert_eq!(d.expected_gain_score, 0.0);
+}
+
+#[test]
+fn auto_adaptive_canonicalizes_duplicate_heavy_mixed_domains_before_hotspot_probe() {
+    let _env = env_lock();
+    let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+    let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+    let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+    let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+    let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+    let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+    let mut txs = Vec::with_capacity(64);
+    for i in 0..64u64 {
+        let tx_id = 140_000 + i;
+        if i % 2 == 0 {
+            txs.push(tx(tx_id, vec![o(41), o(13)], vec![o(13), o(29), o(29)]));
+        } else {
+            txs.push(tx(tx_id, vec![o(13), o(41), o(41)], vec![o(29), o(13), o(29)]));
+        }
+    }
+
+    // Equivalent mixed domains with duplicate-heavy echoes should collapse to the
+    // same canonical write-lane key before adaptive hotspot scoring. Otherwise
+    // harmless ingress ordering differences fragment one executor lane into two
+    // alternating pseudo-hot keys and suppress a real hotspot switch.
+    let d = auto_adaptive_decision(&txs);
+    assert_eq!(d.sample_len, 64);
+    assert!(d.use_hot_bucket);
+    assert_eq!(d.reason, "hotspot_detected");
+    assert_eq!(d.hot_key_share, 1.0);
+    assert_eq!(d.streak_ratio, 1.0);
+    assert_eq!(d.expected_gain_score, 1.0);
 }
 
 #[test]

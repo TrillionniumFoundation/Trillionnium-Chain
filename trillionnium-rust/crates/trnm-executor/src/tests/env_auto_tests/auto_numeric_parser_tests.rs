@@ -248,6 +248,21 @@ fn auto_adaptive_numeric_env_parser_treats_leading_comma_percent_values_as_decim
 }
 
 #[test]
+fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_leading_comma_percent_values_with_grouping() {
+    let _env = env_lock();
+
+    let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+,2_5%' ");
+    let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+,5_0%\" ");
+    let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+,7_5%' ");
+    let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+,2_5%\" ");
+
+    assert_eq!(auto_hot_streak_threshold(), 0.0025);
+    assert_eq!(auto_reorder_min_margin(), 0.005);
+    assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+    assert_eq!(auto_min_expected_gain_score(), 0.0025);
+}
+
+#[test]
 fn auto_adaptive_numeric_env_parser_falls_back_to_defaults_on_invalid_values() {
     let _env = env_lock();
 

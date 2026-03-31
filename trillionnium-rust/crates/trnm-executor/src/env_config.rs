@@ -309,3 +309,75 @@ pub(crate) fn auto_adaptive_sample_len(batch_len: usize) -> usize {
 
     batch_len.min(configured)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
+
+    struct EnvGuard {
+        name: &'static str,
+        old: Option<String>,
+    }
+
+    impl EnvGuard {
+        fn set(name: &'static str, value: &str) -> Self {
+            let old = std::env::var(name).ok();
+            unsafe {
+                std::env::set_var(name, value);
+            }
+            Self { name, old }
+        }
+    }
+
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            match &self.old {
+                Some(value) => unsafe {
+                    std::env::set_var(self.name, value);
+                },
+                None => unsafe {
+                    std::env::remove_var(self.name);
+                },
+            }
+        }
+    }
+
+    fn env_lock() -> MutexGuard<'static, ()> {
+        static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+            Ok(guard) => guard,
+            Err(err) => err.into_inner(),
+        }
+    }
+
+    #[test]
+    fn parse_env_f64_accepts_leading_comma_decimals_and_percentages() {
+        let _env = env_lock();
+
+        let _decimal = EnvGuard::set("TRNM_TEST_F64", " '+,125' ");
+        assert_eq!(parse_env_f64("TRNM_TEST_F64"), Some(0.125));
+        drop(_decimal);
+
+        let _percent = EnvGuard::set("TRNM_TEST_F64", " \"+,5%\" ");
+        assert_eq!(parse_env_f64("TRNM_TEST_F64"), Some(0.005));
+    }
+
+    #[test]
+    fn parse_grouped_env_usize_accepts_quoted_plus_prefixed_comma_grouped_values() {
+        let _env = env_lock();
+        let _value = EnvGuard::set("TRNM_TEST_USIZE", " '+1,536' ");
+
+        assert_eq!(parse_grouped_env_usize("TRNM_TEST_USIZE"), Some(1536));
+    }
+
+    #[test]
+    fn auto_adaptive_sample_len_preserves_empty_batches_under_env_floor() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+
+        assert_eq!(auto_adaptive_sample_len(0), 0);
+        assert_eq!(auto_adaptive_sample_len(32), 32);
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+    }
+}
