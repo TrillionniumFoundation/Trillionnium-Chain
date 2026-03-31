@@ -240,7 +240,7 @@ pub(crate) fn metadata_only_recovery_error(
     recovered: &RecoveredWalState,
 ) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -250,6 +250,11 @@ pub(crate) fn metadata_only_recovery_error(
         recovered.next_height,
         recovered.wal_entries_retained,
         recovered.truncated,
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
     )
 }
 
@@ -371,6 +376,8 @@ mod tests {
         assert!(error.contains("incident clue: metadata_only_recovery=1"));
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=true"));
+        assert!(error.contains("checkpoint_height_retained=10"));
+        assert!(error.contains("next_startup_height=12"));
     }
 
     #[test]
@@ -386,6 +393,8 @@ mod tests {
         assert!(error.contains("incident clue: metadata_only_recovery=1"));
         assert!(error.contains("wal_entries_retained=1"));
         assert!(error.contains("wal_tail_truncated=false"));
+        assert!(error.contains("checkpoint_height_retained=none"));
+        assert!(error.contains("next_startup_height=9"));
     }
 
     #[test]
@@ -401,6 +410,8 @@ mod tests {
         assert!(error.contains("incident clue: metadata_only_recovery=1"));
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=false"));
+        assert!(error.contains("checkpoint_height_retained=15"));
+        assert!(error.contains("next_startup_height=12"));
     }
 
     #[test]
@@ -416,5 +427,7 @@ mod tests {
         assert!(error.contains("incident clue: metadata_only_recovery=1"));
         assert!(error.contains("wal_entries_retained=0"));
         assert!(error.contains("wal_tail_truncated=false"));
+        assert!(error.contains("checkpoint_height_retained=8"));
+        assert!(error.contains("next_startup_height=9"));
     }
 }
