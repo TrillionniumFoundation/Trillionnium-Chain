@@ -3918,6 +3918,48 @@ mod tests {
         .into_iter()
         .enumerate()
         {
+            let absolute_config_path = workspace_root.join(
+                std::path::Path::new(config_path)
+                    .strip_prefix("trillionnium-rust")
+                    .unwrap_or_else(|_| std::path::Path::new(config_path)),
+            );
+            let absolute_workspace_relative_path = workspace_root.join(workspace_relative_path);
+            let on_disk_metadata = std::fs::symlink_metadata(&absolute_config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for shipped bootstrap topology checks: {err}",
+                    absolute_config_path.display()
+                )
+            });
+            assert!(
+                on_disk_metadata.file_type().is_file(),
+                "{} must remain a regular file for deterministic shipped bootstrap topology fixtures",
+                absolute_config_path.display()
+            );
+            assert!(
+                !on_disk_metadata.file_type().is_symlink(),
+                "{} must not become a symlink that can retarget shipped bootstrap topology fixtures",
+                absolute_config_path.display()
+            );
+            let workspace_relative_metadata = std::fs::symlink_metadata(
+                &absolute_workspace_relative_path,
+            )
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for bootstrap/rejoin path anchoring: {err}",
+                    absolute_workspace_relative_path.display()
+                )
+            });
+            assert!(
+                workspace_relative_metadata.file_type().is_file(),
+                "{} must remain a regular file for deterministic bootstrap/rejoin path anchoring",
+                absolute_workspace_relative_path.display()
+            );
+            assert!(
+                !workspace_relative_metadata.file_type().is_symlink(),
+                "{} must not become a symlink that can retarget shipped bootstrap/rejoin fixtures",
+                absolute_workspace_relative_path.display()
+            );
+
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
             let workspace_relative_cfg = load_config(workspace_relative_path).unwrap_or_else(|err| {
