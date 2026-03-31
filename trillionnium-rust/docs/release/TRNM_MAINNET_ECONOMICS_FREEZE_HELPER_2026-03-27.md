@@ -82,6 +82,33 @@ A launch review should include:
 - one test or gate proving the state machine/mempool still honors the chosen boundaries
 - one rollback path for tightening policy before public launch
 
+### Minimal adversarial rehearsal slice
+
+To satisfy the blocker-board requirement that the frozen tuple survives one concrete spam /
+fairness rehearsal, attach at least one small reproducible command packet alongside the
+frozen sheet:
+
+```bash
+cargo check -p trnm-mempool -p trnm-pouw -q
+cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
+cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+cargo test -p trnm-state retention_restore_regression -q
+```
+
+Why this is the minimum useful slice:
+- `lane_zero_capacity_public_contract_bound` exercises hard-stop public admission so a
+  freeze cannot quietly leave sponsor-backed or free-ingress retries looking open under
+  sustained probe noise.
+- `lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound` exercises the shared
+  reserve-only refill edge so duplicate sponsor/free-ingress retries stay
+  classification-only until fresh work truly re-consumes capacity.
+- `retention_restore_regression` checks that retained proof/collateral metadata still
+  fails closed when challenger/treasury identities are non-canonical, which keeps the
+  retention payer/audit trail inside the same freeze review.
+
+If any command above fails, the economics tuple should remain at least `CONDITIONAL GO`
+until the mismatch is explained or the freeze packet is tightened.
+
 ## Temporary operator inspection path (until a first-class config surface lands)
 
 Until TRNM exposes a dedicated runtime/config query for the economics tuple, launch review
