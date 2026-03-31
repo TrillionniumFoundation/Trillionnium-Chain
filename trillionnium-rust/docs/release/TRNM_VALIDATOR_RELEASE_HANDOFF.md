@@ -337,10 +337,14 @@ Record these fields in the release ticket or operator handoff note:
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
+- worktree branch ref match (`git_worktree_branch_ref_match`):
+- git status summary (`git_status_summary`):
 - preflight summary path:
 - local evidence summary path:
+- local evidence generated_at:
 - local evidence truth_source:
 - rc manifest path:
+- rc manifest generated_at:
 - rc manifest truth_source:
 - nightly streak result:
 - go/no-go decision:
