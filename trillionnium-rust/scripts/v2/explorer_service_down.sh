@@ -20,6 +20,8 @@ emit_contract_paths() {
   echo "public_dir=${PUBLIC_DIR}"
   echo "health_url=${HEALTH_URL}"
   echo "index_url=${INDEX_URL}"
+  echo "service_mode=operator-facing-static-scaffold"
+  echo "production_ready=false"
 }
 
 if [[ ! -f "${PID_FILE}" ]]; then

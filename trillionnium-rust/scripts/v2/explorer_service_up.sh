@@ -14,15 +14,21 @@ PUBLIC_BASE_URL="${PUBLIC_BASE_URL%/}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
 INDEX_URL="${PUBLIC_BASE_URL}/index.json"
 
-mkdir -p "${PUBLIC_DIR}"
-
-if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
-  echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
+emit_contract_fields() {
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
   echo "public_dir=${PUBLIC_DIR}"
   echo "health_url=${HEALTH_URL}"
   echo "index_url=${INDEX_URL}"
+  echo "service_mode=operator-facing-static-scaffold"
+  echo "production_ready=false"
+}
+
+mkdir -p "${PUBLIC_DIR}"
+
+if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
+  echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
+  emit_contract_fields
   exit 1
 fi
 
@@ -30,11 +36,7 @@ if [[ -f "${PID_FILE}" ]]; then
   existing_pid="$(tr -d '[:space:]' <"${PID_FILE}")"
   if [[ "${existing_pid}" =~ ^[0-9]+$ ]] && kill -0 "${existing_pid}" 2>/dev/null; then
     echo "explorer service already running pid=${existing_pid}"
-    echo "pid_file=${PID_FILE}"
-    echo "log_file=${LOG_FILE}"
-    echo "public_dir=${PUBLIC_DIR}"
-    echo "health_url=${HEALTH_URL}"
-    echo "index_url=${INDEX_URL}"
+    emit_contract_fields
     exit 0
   fi
   rm -f "${PID_FILE}"
@@ -56,17 +58,9 @@ sleep 1
 
 if ! kill -0 "${server_pid}" 2>/dev/null; then
   echo "explorer service scaffold failed to stay up"
-  echo "pid_file=${PID_FILE}"
-  echo "log_file=${LOG_FILE}"
-  echo "public_dir=${PUBLIC_DIR}"
-  echo "health_url=${HEALTH_URL}"
-  echo "index_url=${INDEX_URL}"
+  emit_contract_fields
   exit 1
 fi
 
 echo "started explorer service scaffold pid=${server_pid}"
-echo "pid_file=${PID_FILE}"
-echo "log_file=${LOG_FILE}"
-echo "public_dir=${PUBLIC_DIR}"
-echo "health_url=${HEALTH_URL}"
-echo "index_url=${INDEX_URL}"
+emit_contract_fields

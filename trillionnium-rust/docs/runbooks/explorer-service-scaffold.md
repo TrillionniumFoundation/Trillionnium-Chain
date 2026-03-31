@@ -171,6 +171,10 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `public_dir=.../run/explorer-service/public`
 - `health_url=http://.../healthz`
 - `index_url=http://.../index.json`
+- `service_mode=operator-facing-static-scaffold`
+- `production_ready=false`
+
+Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first.
 
 ## Operator caution
 
