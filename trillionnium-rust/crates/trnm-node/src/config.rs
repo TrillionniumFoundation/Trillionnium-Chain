@@ -14,6 +14,8 @@ pub(crate) struct NodeConfig {
     pub(crate) p2p_addr: String,
 }
 
+const MAX_NODE_ID_LEN: usize = 64;
+
 fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => addr.is_link_local(),
@@ -32,6 +34,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !node_id.is_empty(),
         "invalid node config {}: node_id must not be empty",
         path
+    );
+    anyhow::ensure!(
+        node_id.len() <= MAX_NODE_ID_LEN,
+        "invalid node config {}: node_id must be at most {} bytes",
+        path,
+        MAX_NODE_ID_LEN
     );
     anyhow::ensure!(
         !node_id.chars().any(char::is_control),
@@ -1218,6 +1226,38 @@ bootstrap_peers = ["127.0.0.1:27656"]
             err.to_string().contains("node_id must not contain whitespace"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_overlong_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "n".repeat(MAX_NODE_ID_LEN + 1),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("overlong node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must be at most 64 bytes"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_accepts_node_id_at_max_length_boundary() {
+        let cfg = validate_node_config(
+            NodeConfig {
+                node_id: "n".repeat(MAX_NODE_ID_LEN),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect("node_id at length boundary should remain valid");
+        assert_eq!(cfg.node_id.len(), MAX_NODE_ID_LEN);
     }
 
     #[test]
