@@ -1367,6 +1367,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "127.0.0.1:7000",
             "::1",
             "[::1]:7000",
+            "::ffff:127.0.0.1",
+            "[::ffff:127.0.0.1]:7000",
         ] {
             let err = validate_node_config(
                 NodeConfig {
