@@ -261,6 +261,27 @@ When handing this event to another operator, record:
 - replay command when DR evidence was required
 - one-line blocker if the event is not reproducible
 
+## Minimum signed operator ceremony packet
+
+For public-mainnet-facing replacement / rotation / DR rehearsal, do not stop at a green local shell run.
+Attach one compact packet that another operator can audit without terminal scrollback:
+
+1. the pre-filled cutover note with every required identity field resolved
+2. the concrete worktree-binding proof from `verify_lane_worktree.sh`
+3. the generated recovery / release artifacts referenced by path, not paraphrase
+4. one explicit sign-off boundary:
+   - `handoff_signed_by=` names the operator who is releasing ownership
+   - `handoff_acknowledged_by=` names the operator who is accepting ownership
+   - both names must be attached to the same artifact set and cutover kind
+
+Fail-closed interpretation:
+- a replacement may stay local/unsigned only when there is no human ownership boundary; once the event crosses operators, treat it as `rotation`
+- if the handoff references release or RC evidence, preserve both `handoff_summary_path=` and `handoff_manifest_path=` together with both generated-at timestamps
+- if the handoff references DR rebuild evidence, preserve `dr_summary_path=` together with `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` from the same concrete report
+- if an operator name, artifact path, or generated-at field has to be reconstructed from chat or shell memory, the ceremony packet is incomplete and the event is **No-Go**
+
+This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
+
 ## No-Go conditions
 
 Treat replacement/rotation/DR as **No-Go** if any of the following is true:
