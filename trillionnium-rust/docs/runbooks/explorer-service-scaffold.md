@@ -42,8 +42,6 @@ From `trillionnium-rust/`:
 
 - bind host: `127.0.0.1`
 - bind port: `8090`
-- bind host: `127.0.0.1`
-- bind port: `8090`
 - health URL: `http://127.0.0.1:8090/healthz`
 - PID file: `trillionnium-rust/run/explorer-service/explorer-service.pid`
 - log file: `trillionnium-rust/run/explorer-service/explorer-service.log`
@@ -95,6 +93,7 @@ Expected healthy signals:
 - `production_ready=false`
 
 If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
+If `curl` is unavailable on the host, the status script leaves active probing disabled and reports `health=unknown` instead of forcing a false negative.
 
 ## What gets served
 
