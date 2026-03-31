@@ -59,6 +59,22 @@ Rules:
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
 - if any identity or rollback field cannot be filled before cutover, stop.
 
+## Cutover evidence matrix
+
+Use the smallest evidence set that still proves ownership, rollback, and artifact lineage for the specific cutover kind.
+If any required row cannot be satisfied, treat the event as **No-Go** before execution.
+
+| Cutover kind | Required identity fields | Required artifacts | Minimum stop condition if missing |
+| --- | --- | --- | --- |
+| `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
+| `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, or rotation lineage cannot be stated from the note |
+| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+
+Interpretation rule:
+- `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
+- `rotation` is a replacement that also requires a human handoff boundary; do not reduce it to an unsigned config rename.
+- `dr_rebuild` is the strongest evidence bar because it must prove both ownership transfer and recovery lineage from a concrete artifact.
+
 ## Operator invariants
 
 Before touching validator ownership, all of the following must be true:
