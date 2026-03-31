@@ -9,8 +9,10 @@ LOG_FILE="${RUN_ROOT}/explorer-service.log"
 PUBLIC_DIR="${RUN_ROOT}/public"
 HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
-HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
-INDEX_URL="http://${HOST}:${PORT}/index.json"
+PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${HOST}:${PORT}}"
+PUBLIC_BASE_URL="${PUBLIC_BASE_URL%/}"
+HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
+INDEX_URL="${PUBLIC_BASE_URL}/index.json"
 
 emit_contract_paths() {
   echo "pid_file=${PID_FILE}"

@@ -53,16 +53,22 @@ The scaffold supports these environment variables:
 
 - `EXPLORER_HOST`
 - `EXPLORER_PORT`
+- `EXPLORER_PUBLIC_BASE_URL`
 - `EXPLORER_HEALTH_URL`
+
+`EXPLORER_HOST` / `EXPLORER_PORT` control where the local static server binds.
+`EXPLORER_PUBLIC_BASE_URL` controls the operator-facing base URL emitted in `health_url` / `index_url`, which is useful when the process binds to `0.0.0.0`, sits behind a reverse proxy, or is reached through port-forwarding.
 
 Example:
 
 ```bash
-EXPLORER_HOST=0.0.0.0 EXPLORER_PORT=18090 \
+EXPLORER_HOST=0.0.0.0 \
+EXPLORER_PORT=18090 \
+EXPLORER_PUBLIC_BASE_URL=https://read.trnm.example \
   ./scripts/v2/explorer_service_up.sh
 ```
 
-If `EXPLORER_HEALTH_URL` is not provided, it defaults to `http://${EXPLORER_HOST}:${EXPLORER_PORT}/healthz`.
+If `EXPLORER_HEALTH_URL` is not provided, it defaults to `${EXPLORER_PUBLIC_BASE_URL}/healthz` when `EXPLORER_PUBLIC_BASE_URL` is set, otherwise `http://${EXPLORER_HOST}:${EXPLORER_PORT}/healthz`.
 
 ## Bring-up
 
