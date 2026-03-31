@@ -688,6 +688,49 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_blank_path_fail_closed() {
+        let err = load_config("   ").expect_err("blank apply config path must fail closed");
+        assert!(
+            err.to_string().contains("path must not be empty"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_unknown_fields_to_keep_apply_bootstrap_config_fail_closed() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-apply-config-unknown-field-{}-{}.toml",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_nanos()
+        ));
+        std::fs::write(
+            &path,
+            r#"node_id = "node-a"
+rpc_addr = "127.0.0.1:26657"
+p2p_addr = "127.0.0.1:26656"
+bootstrap_peers = ["127.0.0.1:27656"]
+"#,
+        )
+        .expect("write temp config");
+
+        let err = load_config(path.to_str().expect("temp path utf-8"))
+            .expect_err("unknown apply config fields must fail closed");
+        let _ = std::fs::remove_file(&path);
+
+        let err_surface = err.to_string();
+        assert!(
+            err_surface.contains("parse toml failed")
+                && err_surface.contains("unknown field `bootstrap_peers`"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
         let cfg = NodeConfig {
             node_id: "  node-a  ".into(),
