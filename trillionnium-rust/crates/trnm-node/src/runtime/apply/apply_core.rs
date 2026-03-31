@@ -832,6 +832,24 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_shared_rpc_and_p2p_addr() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7000".into(),
+            },
+            "inline",
+        )
+        .expect_err("shared rpc/p2p listener address must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr and p2p_addr must differ"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_list_separators_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
@@ -845,6 +863,24 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("node_id must not contain list separators (, ; |)"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_path_separators_in_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node/alpha".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("path separators in node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must not contain path separators (/ \\ :)"),
             "unexpected error: {err:#}"
         );
     }
