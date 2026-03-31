@@ -1086,10 +1086,18 @@ fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     Ok(format!("trnm1{}", addr_hex))
 }
 
+fn is_unsafe_sign_message_char(c: char) -> bool {
+    c.is_control()
+        || matches!(
+            c,
+            '\u{200e}' | '\u{200f}' | '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}'
+        )
+}
+
 fn ensure_safe_sign_message(message: &str) -> Result<()> {
-    if message.chars().any(|c| c.is_control()) {
+    if message.chars().any(is_unsafe_sign_message_char) {
         bail!(
-            "wallet sign message contains control characters; refusing unsafe offline-signing output"
+            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -3619,7 +3627,18 @@ mod tests {
     fn ensure_safe_sign_message_rejects_newline_injected_text() {
         let err = ensure_safe_sign_message("rotate\nsignature=fake").unwrap_err();
         assert!(
-            err.to_string().contains("contains control characters"),
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_bidi_override_text() {
+        let err = ensure_safe_sign_message("rotate signer \u{202e}tx=approved").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
             "unexpected: {err}"
         );
     }
