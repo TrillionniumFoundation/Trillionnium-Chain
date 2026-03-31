@@ -178,6 +178,26 @@ Dashboard annotation rules:
 - annotate the incident `severity` and `verdict` on sev0/sev1 screenshots or dashboard share links;
 - when linking a dashboard snapshot into an incident ticket, include the `summary_line` beside it so the image and ticket stay semantically aligned.
 
+## Starter alert threshold matrix
+
+Use this as the smallest threshold contract for mainnet rehearsal.
+The goal is not perfect tuning; it is to stop dashboards, pages, and incident tickets from drifting into different severity vocabularies.
+
+| Signal | Trigger heuristic | Default severity | Required responder action |
+| --- | --- | --- | --- |
+| `contract-drift` | `sample_count` diverges from `accepted_total + oracle_stale_reject_total + oracle_quorum_reject_total + oracle_drift_reject_total` for 2 consecutive scrapes | `sev0` | Page immediately, freeze automated interpretation, and open an incident with evidence pointers. |
+| `accepts-stalled` | `sample_count` increases while `accepted_total` stays flat for 2 consecutive windows | `sev1` | Page on-call and attach `replay_command=` / `rollback_command=` state. |
+| `quorum-collapse` | `oracle_source_cardinality` stays below quorum floor for 2 consecutive windows | `sev1` | Page on-call and confirm whether provider loss or dedup collapse is active. |
+| `stale-wave` | `oracle_stale_reject_total` dominates rejects for 3 consecutive windows while source cardinality stays at/above quorum floor | `sev2` | Investigate in the active on-call window and promote if acceptance impact appears. |
+| `drift-anomaly` | `oracle_drift_reject_total` rises for 3 consecutive windows while source cardinality stays healthy | `sev2` | Investigate drift source, capture summary line, and promote if spread persists. |
+| `ingest-latency` | `oracle_ingest_latency_ms` rises for 3 consecutive windows without acceptance impact | `sev3` | Record in dashboard notes / handoff; no page by default. |
+
+Threshold rules:
+
+- consecutive windows should map to the dashboard's stable rollup interval; if multiple dashboards exist, use the slowest shared rollup when paging;
+- if observability data and emitted evidence artifacts disagree, override any lower threshold and classify as `sev0`;
+- if a page fires without the matching `severity` / `verdict` label block, treat the incident as under-specified until the labels are added.
+
 ## Severity mapping
 
 Use one small severity vocabulary across dashboards, pages, and incident tickets.
