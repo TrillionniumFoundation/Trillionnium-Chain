@@ -17,6 +17,7 @@ Use this when an operator needs to:
 Primary references:
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 - `docs/runbooks/local-release-evidence.md`
+- `docs/runbooks/validator-rotation-dr.md`
 - `scripts/v2/verify_lane_worktree.sh`
 - `configs/node1.toml`
 - `configs/node2.toml`
