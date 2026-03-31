@@ -65,3 +65,39 @@ fn query_local_tx_status_normalizes_aliases_and_rejects_unknown() {
     let _ = std::fs::remove_file(&path);
     std::env::remove_var("TRNM_RPC_TX_FILE");
 }
+
+#[test]
+fn query_local_tx_status_normalizes_requested_hash_noise() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let unique = format!(
+        "trnm-cli-test-{}-{}.json",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let path = std::env::temp_dir().join(unique);
+    std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+    let canonical = "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
+    let payload = format!(
+        "{{\n  \"{}\": {{\"status\": \"pending\"}}\n}}",
+        canonical
+    );
+    std::fs::write(&path, payload).unwrap();
+
+    assert_eq!(
+        query_local_tx_status("<0xABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890>?!")
+            .as_deref(),
+        Some("pending")
+    );
+    assert_eq!(
+        query_local_tx_status("\u{2068}<0xABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890>\u{2069}\u{200b}")
+            .as_deref(),
+        Some("pending")
+    );
+
+    let _ = std::fs::remove_file(&path);
+    std::env::remove_var("TRNM_RPC_TX_FILE");
+}

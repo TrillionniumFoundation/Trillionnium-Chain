@@ -23,6 +23,9 @@ where
 
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for wait (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for wait (expected 0x-prefixed hex tx hash)");
+    }
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;

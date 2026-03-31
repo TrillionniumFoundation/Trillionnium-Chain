@@ -23,7 +23,16 @@ fn tx_query_parse_json_nested_result_payload() {
 }
 
 #[test]
-fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
+fn tx_query_parse_json_nested_top_level_data_payload() {
+    let json = "{\"data\":{\"tx_hash\":\"0xabc\",\"status\":\"success\",\"error\":null}}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xabc");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_json_accepts_camel_transaction_and_hyphenated_hash_keys() {
     let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
     let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
     assert_eq!(parsed_camel.tx_hash, "0xabc");
@@ -33,6 +42,27 @@ fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
     let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
     assert_eq!(parsed_transaction.tx_hash, "0xdef");
     assert_eq!(parsed_transaction.status, "committed");
+
+    let hyphenated = "{\"result\":{\"tx-hash\":\"0xfeed01\",\"status\":\"success\"}}";
+    let parsed_hyphenated = parse_tx_query_response(hyphenated, "0xfallback").unwrap();
+    assert_eq!(parsed_hyphenated.tx_hash, "0xfeed01");
+    assert_eq!(parsed_hyphenated.status, "committed");
+
+    let transaction_hyphenated =
+        "{\"transaction-hash\":\"0xfeed02\",\"status\":\"committed\"}";
+    let parsed_transaction_hyphenated =
+        parse_tx_query_response(transaction_hyphenated, "0xfallback").unwrap();
+    assert_eq!(parsed_transaction_hyphenated.tx_hash, "0xfeed02");
+    assert_eq!(parsed_transaction_hyphenated.status, "committed");
+}
+
+#[test]
+fn tx_query_parse_json_accepts_case_and_separator_insensitive_keys() {
+    let json = "{\"RESULT\":{\"TX_HASH\":\"0xABCD\",\"TX-STATUS\":\"SUCCESS\",\"RAW-LOG\":\"NULL\"}}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xabcd");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
 }
 
 #[test]
@@ -53,6 +83,24 @@ fn tx_query_parse_json_preserves_non_string_error_payloads() {
     let json_obj = "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
     let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
     assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+}
+
+#[test]
+fn tx_query_parse_json_infers_status_from_hyphenated_code_aliases() {
+    let root = "{\"tx_hash\":\"0x701\",\"tx-code\":0}";
+    let parsed_root = parse_tx_query_response(root, "0xfallback").unwrap();
+    assert_eq!(parsed_root.tx_hash, "0x701");
+    assert_eq!(parsed_root.status, "committed");
+
+    let nested = "{\"result\":{\"tx_hash\":\"0x702\",\"deliver-tx\":{\"code\":\"12\"}}}";
+    let parsed_nested = parse_tx_query_response(nested, "0xfallback").unwrap();
+    assert_eq!(parsed_nested.tx_hash, "0x702");
+    assert_eq!(parsed_nested.status, "fail");
+
+    let check = "{\"result\":{\"tx_hash\":\"0x703\",\"check-tx-code\":0}}";
+    let parsed_check = parse_tx_query_response(check, "0xfallback").unwrap();
+    assert_eq!(parsed_check.tx_hash, "0x703");
+    assert_eq!(parsed_check.status, "committed");
 }
 
 #[test]

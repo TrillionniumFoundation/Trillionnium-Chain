@@ -107,6 +107,20 @@ fn tx_query_parse_normalizes_quoted_or_punctuated_tx_hash() {
     let nested_wrappers = "tx_hash=(`\"0xBEEF42\"`,)\nstatus=committed\n";
     let parsed_nested = parse_tx_query_response(nested_wrappers, "0xfallback").unwrap();
     assert_eq!(parsed_nested.tx_hash, "0xbeef42");
+
+    let sentence_noise = "tx_hash=0xC0FFEE42?!\nstatus=committed\n";
+    let parsed_sentence_noise = parse_tx_query_response(sentence_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_sentence_noise.tx_hash, "0xc0ffee42");
+
+    let cjk_sentence_noise = "tx_hash=0xC0FFEE43。\nstatus=committed\n";
+    let parsed_cjk_sentence_noise =
+        parse_tx_query_response(cjk_sentence_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_cjk_sentence_noise.tx_hash, "0xc0ffee43");
+
+    let fullwidth_dot_noise = "tx_hash=0xC0FFEE44．\nstatus=committed\n";
+    let parsed_fullwidth_dot_noise =
+        parse_tx_query_response(fullwidth_dot_noise, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_dot_noise.tx_hash, "0xc0ffee44");
 }
 
 #[test]
@@ -118,4 +132,96 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
     let compact = "transactionHash=0xdef456\nstatus=committed\n";
     let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
     assert_eq!(parsed_compact.tx_hash, "0xdef456");
+
+    let hyphen = "tx-hash=0xface789\nstatus=committed\n";
+    let parsed_hyphen = parse_tx_query_response(hyphen, "0xfallback").unwrap();
+    assert_eq!(parsed_hyphen.tx_hash, "0xface789");
+
+    let transaction_hyphen = "transaction-hash: 0xdecafbad\nstatus=committed\n";
+    let parsed_transaction_hyphen =
+        parse_tx_query_response(transaction_hyphen, "0xfallback").unwrap();
+    assert_eq!(parsed_transaction_hyphen.tx_hash, "0xdecafbad");
+}
+
+#[test]
+fn tx_query_parse_kv_accepts_fullwidth_separators() {
+    let fullwidth_equals = "tx_hash＝0xabc987\nstatus＝committed\nerror＝null\n";
+    let parsed_fullwidth_equals = parse_tx_query_response(fullwidth_equals, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_equals.tx_hash, "0xabc987");
+    assert_eq!(parsed_fullwidth_equals.status, "committed");
+    assert_eq!(parsed_fullwidth_equals.error, None);
+
+    let fullwidth_colon = "transactionHash：0xdef654\nstatus：COMMITTED\n";
+    let parsed_fullwidth_colon = parse_tx_query_response(fullwidth_colon, "0xfallback").unwrap();
+    assert_eq!(parsed_fullwidth_colon.tx_hash, "0xdef654");
+    assert_eq!(parsed_fullwidth_colon.status, "committed");
+}
+
+#[test]
+fn tx_query_parse_kv_accepts_angle_bracket_wrapped_inline_tokens() {
+    let noisy = "[rpc] <transactionHash:0xCAFE99> <status:COMMITTED> <error:null>";
+    let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xcafe99");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_accepts_quoted_and_unicode_wrapped_keys() {
+    let quoted = "\"tx_hash\"=0xCAFE77\n'status'=COMMITTED\n`error`=null\n";
+    let parsed_quoted = parse_tx_query_response(quoted, "0xfallback").unwrap();
+    assert_eq!(parsed_quoted.tx_hash, "0xcafe77");
+    assert_eq!(parsed_quoted.status, "committed");
+    assert_eq!(parsed_quoted.error, None);
+
+    let unicode_wrapped = "《transactionHash》：0xCAFE78\n【status】：SUCCESS\n『error』：NULL\n";
+    let parsed_unicode = parse_tx_query_response(unicode_wrapped, "0xfallback").unwrap();
+    assert_eq!(parsed_unicode.tx_hash, "0xcafe78");
+    assert_eq!(parsed_unicode.status, "committed");
+    assert_eq!(parsed_unicode.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
+    let noisy = "【rpc】 《transactionHash：0xCAFE98》 《status：COMMITTED》 《error：NULL》";
+    let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xcafe98");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
+    let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
+    let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xbeef42");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_tolerates_guillemet_and_lenticular_wrapped_status() {
+    let kv = "transactionHash=0xBEEF43\nstatus=«confirmed»\nerror=【null】\n";
+    let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xbeef43");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_infers_status_from_hyphenated_code_aliases() {
+    let tx_code = "tx_hash=0x704\ntx-code=0\n";
+    let parsed_tx_code = parse_tx_query_response(tx_code, "0xfallback").unwrap();
+    assert_eq!(parsed_tx_code.tx_hash, "0x704");
+    assert_eq!(parsed_tx_code.status, "committed");
+
+    let deliver = "tx_hash=0x705\ndeliver-tx-code=19\n";
+    let parsed_deliver = parse_tx_query_response(deliver, "0xfallback").unwrap();
+    assert_eq!(parsed_deliver.tx_hash, "0x705");
+    assert_eq!(parsed_deliver.status, "fail");
+
+    let check = "transaction-hash: 0x706\ncheck-tx-code: \"0\"\n";
+    let parsed_check = parse_tx_query_response(check, "0xfallback").unwrap();
+    assert_eq!(parsed_check.tx_hash, "0x706");
+    assert_eq!(parsed_check.status, "committed");
 }

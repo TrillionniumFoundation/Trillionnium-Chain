@@ -160,7 +160,7 @@ pub(crate) fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
 
 pub(crate) fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
     });
 
     loop {
@@ -172,7 +172,7 @@ pub(crate) fn normalize_tx_hash_lookup(raw: &str) -> String {
         if is_wrapped {
             normalized = normalized[1..normalized.len() - 1].trim_matches(|c: char| {
                 c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+                    || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
             });
             continue;
         }
@@ -188,7 +188,7 @@ pub(crate) fn normalize_tx_hash_lookup(raw: &str) -> String {
             if normalized_key == "txhash" || normalized_key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
-                        || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+                        || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
                 });
                 while let Some(stripped) = value.strip_prefix('=') {
                     value = stripped.trim_start_matches(|c: char| c.is_ascii_whitespace());
@@ -204,7 +204,7 @@ pub(crate) fn normalize_tx_hash_lookup(raw: &str) -> String {
                     if is_wrapped {
                         value = value[1..value.len() - 1].trim_matches(|c: char| {
                             c.is_ascii_whitespace()
-                                || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+                                || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
                         });
                         continue;
                     }

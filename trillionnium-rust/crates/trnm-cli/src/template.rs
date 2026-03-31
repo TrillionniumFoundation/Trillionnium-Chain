@@ -28,7 +28,7 @@ pub(crate) fn run_template(cmd: &str) -> Result<String> {
         return Ok(txh);
     }
 
-    Ok(hash(&["fallback", &merged]))
+    Ok(format!("0x{}", hash(&["fallback", &merged])))
 }
 
 pub(crate) fn run_template_raw(cmd: &str) -> Result<String> {

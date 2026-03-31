@@ -34,3 +34,18 @@ fn wait_for_tx_success() {
     .unwrap();
     assert_eq!(result.status, "committed");
 }
+
+#[test]
+fn wait_for_tx_rejects_bare_hex_without_0x_prefix() {
+    let result = wait_for_tx(
+        "bbbccc",
+        Duration::from_millis(10),
+        Duration::from_millis(1),
+        |_| unreachable!("query_fn should not run for invalid tx hash input"),
+    );
+    let err = result.unwrap_err().to_string();
+    assert!(
+        err.contains("expected 0x-prefixed hex tx hash"),
+        "unexpected: {err}"
+    );
+}

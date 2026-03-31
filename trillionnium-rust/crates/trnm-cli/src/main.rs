@@ -816,9 +816,137 @@ fn sha256_hex(data: &[u8]) -> String {
     hex::encode(h.finalize())
 }
 
+fn is_hidden_env_wrapper(c: char) -> bool {
+    c.is_whitespace()
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+        )
+}
+
+fn is_single_sided_env_quote(c: char) -> bool {
+    matches!(
+        c,
+        '"'
+            | '\''
+            | '`'
+            | '“'
+            | '”'
+            | '‘'
+            | '’'
+            | '«'
+            | '»'
+            | '‹'
+            | '›'
+            | '「'
+            | '」'
+            | '『'
+            | '』'
+            | '《'
+            | '》'
+            | '〈'
+            | '〉'
+            | '｢'
+            | '｣'
+            | '（'
+            | '）'
+            | '［'
+            | '］'
+            | '｛'
+            | '｝'
+            | '<'
+            | '>'
+            | '＜'
+            | '＞'
+            | '【'
+            | '】'
+            | '〔'
+            | '〕'
+            | '〖'
+            | '〗'
+            | '〘'
+            | '〙'
+            | '〚'
+            | '〛'
+            | '〝'
+            | '〞'
+            | '〟'
+    )
+}
+
+fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
+    let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
+    loop {
+        let Some(first) = normalized.chars().next() else {
+            return None;
+        };
+        let Some(last) = normalized.chars().last() else {
+            return None;
+        };
+        let wrapped_by_quotes = matches!(
+            (Some(first), Some(last)),
+            (Some('"'), Some('"'))
+                | (Some('\''), Some('\''))
+                | (Some('`'), Some('`'))
+                | (Some('“'), Some('”'))
+                | (Some('‘'), Some('’'))
+                | (Some('«'), Some('»'))
+                | (Some('‹'), Some('›'))
+                | (Some('「'), Some('」'))
+                | (Some('『'), Some('』'))
+                | (Some('《'), Some('》'))
+                | (Some('〈'), Some('〉'))
+                | (Some('｢'), Some('｣'))
+                | (Some('（'), Some('）'))
+                | (Some('［'), Some('］'))
+                | (Some('｛'), Some('｝'))
+                | (Some('<'), Some('>'))
+                | (Some('＜'), Some('＞'))
+                | (Some('【'), Some('】'))
+                | (Some('〔'), Some('〕'))
+                | (Some('〖'), Some('〗'))
+                | (Some('〘'), Some('〙'))
+                | (Some('〚'), Some('〛'))
+                | (Some('〝'), Some('〞'))
+                | (Some('〟'), Some('〟'))
+        );
+        if wrapped_by_quotes {
+            normalized = normalized[first.len_utf8()..normalized.len() - last.len_utf8()]
+                .trim_matches(is_hidden_env_wrapper);
+            continue;
+        }
+
+        let trimmed_single_sided = normalized
+            .trim_start_matches(is_single_sided_env_quote)
+            .trim_end_matches(is_single_sided_env_quote)
+            .trim_matches(is_hidden_env_wrapper);
+        if trimmed_single_sided.len() == normalized.len() {
+            break;
+        }
+        normalized = trimmed_single_sided;
+    }
+    (!normalized.is_empty()).then_some(normalized)
+}
+
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
-        return PathBuf::from(p);
+        if let Some(normalized) = normalize_wallet_store_env(&p) {
+            return PathBuf::from(normalized);
+        }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home).join(".trnm").join("wallets")
@@ -828,8 +956,76 @@ fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
 
+fn ensure_wallet_name(name: &str) -> Result<()> {
+    let has_hidden_or_whitespace = name.chars().any(|c| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
+    });
+
+    if name.is_empty()
+        || name == "."
+        || name == ".."
+        || name.starts_with('.')
+        || name.starts_with('-')
+        || name.contains(['/', '\\', ':', '=', '|', '&', '$'])
+        || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
+        || has_hidden_or_whitespace
+    {
+        bail!(
+            "invalid wallet name '{}': use a simple local name without path separators",
+            name
+        );
+    }
+    Ok(())
+}
+
 fn ensure_hex_32_bytes(s: &str) -> Result<String> {
-    let x = s.strip_prefix("0x").unwrap_or(s).to_lowercase();
+    let cleaned = s
+        .trim_matches(|c: char| {
+            c.is_whitespace()
+                || c.is_control()
+                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}')
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        .trim();
+    let x = cleaned
+        .strip_prefix("0x")
+        .or_else(|| cleaned.strip_prefix("0X"))
+        .unwrap_or(cleaned)
+        .to_lowercase();
     if x.len() != 64 {
         bail!("private key hex must be 32 bytes (64 hex chars)");
     }
@@ -838,13 +1034,40 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 }
 
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
+    ensure_wallet_name(name)?;
+    if fs::symlink_metadata(store)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
+            store.display()
+        );
+    }
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
+    if fs::symlink_metadata(&f).is_ok() {
+        bail!(
+            "wallet '{}' already exists at {}; refusing to overwrite existing key",
+            name,
+            f.display()
+        );
+    }
     fs::write(&f, format!("{}\n", priv_hex))?;
     Ok(f)
 }
 
 fn read_key(store: &Path, name: &str) -> Result<String> {
+    ensure_wallet_name(name)?;
+    if fs::symlink_metadata(store)
+        .map(|meta| meta.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        bail!(
+            "wallet store '{}' is a symlink; refusing to read keys through non-regular wallet store path",
+            store.display()
+        );
+    }
     let f = wallet_file(store, name);
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
@@ -877,30 +1100,105 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
         let before = cleaned.len();
         cleaned = cleaned
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+                c.is_whitespace()
+                    || c.is_control()
+                    || matches!(
+                        c,
+                        ','
+                            | ';'
+                            | ':'
+                            | '('
+                            | ')'
+                            | '['
+                            | ']'
+                            | '{'
+                            | '}'
+                            | '<'
+                            | '>'
+                            | '"'
+                            | '\''
+                            | '`'
+                            | '.'
+                            | '!'
+                            | '?'
+                            | '“'
+                            | '”'
+                            | '‘'
+                            | '’'
+                            | '«'
+                            | '»'
+                            | '‹'
+                            | '›'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '＜'
+                            | '＞'
+                            | '「'
+                            | '」'
+                            | '『'
+                            | '』'
+                            | '《'
+                            | '》'
+                            | '〈'
+                            | '〉'
+                            | '｢'
+                            | '｣'
+                            | '【'
+                            | '】'
+                            | '〔'
+                            | '〕'
+                            | '〖'
+                            | '〗'
+                            | '〘'
+                            | '〙'
+                            | '〚'
+                            | '〛'
+                            | '〝'
+                            | '〞'
+                            | '〟'
+                            | '，'
+                            | '；'
+                            | '：'
+                            | '！'
+                            | '？'
+                            | '。'
+                            | '｡'
+                            | '．'
+                            | '﹒'
+                            | '․'
+                    )
+                    || matches!(
+                        c,
+                        '\u{200B}'
+                            | '\u{200C}'
+                            | '\u{200D}'
+                            | '\u{2060}'
+                            | '\u{FEFF}'
+                            | '\u{202A}'
+                            | '\u{202B}'
+                            | '\u{202C}'
+                            | '\u{202D}'
+                            | '\u{202E}'
+                            | '\u{2066}'
+                            | '\u{2067}'
+                            | '\u{2068}'
+                            | '\u{2069}'
+                    )
             })
             .to_string();
 
-        if cleaned.len() >= 2 {
-            let q = cleaned.chars().next().unwrap();
-            let last = cleaned.chars().last().unwrap();
-            if (q == '"' || q == '\'' || q == '`') && q == last {
-                cleaned = cleaned[1..cleaned.len() - 1].to_string();
-                continue;
-            }
-            // Add check for mismatched quotes or remaining punctuation inside?
-            // The test case has (`"0xBEEF42"`,)
-            // parse_kv_line -> (`"0xBEEF42"`
-            // normalize -> "0xBEEF42" (trims parens)
-            // then quotes are stripped -> 0xBEEF42
-            // Seems correct?
-        }
         if cleaned.len() == before {
             break;
         }
     }
 
+    if cleaned.starts_with("0X") {
+        cleaned.replace_range(..2, "0x");
+    }
     cleaned = cleaned.to_ascii_lowercase();
 
     if cleaned.starts_with("0x") && cleaned.len() > 2 {
@@ -947,17 +1245,66 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
 }
 
 fn extract_tx_hash(text: &str) -> Option<String> {
-    if let Some(v) = text.split_whitespace().find_map(|w| {
-        let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
-        let (k, v) = trimmed
-            .split_once('=')
-            .or_else(|| trimmed.split_once(':'))?;
-        match k.trim().to_ascii_lowercase().as_str() {
-            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => normalize_tx_hash(v),
-            _ => None,
+    for line in text.lines() {
+        if let Some((key, value)) = parse_kv_line(line) {
+            match key.as_str() {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
+                    if let Some(normalized) = normalize_tx_hash(&value) {
+                        return Some(normalized);
+                    }
+                }
+                _ => {}
+            }
         }
-    }) {
-        return Some(v);
+
+        let tokens = line.split_whitespace().collect::<Vec<_>>();
+        if let Some(v) = tokens.iter().find_map(|w| {
+            let trimmed = w.trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            let (k, v) = trimmed
+                .split_once('=')
+                .or_else(|| trimmed.split_once(':'))
+                .or_else(|| trimmed.split_once('＝'))
+                .or_else(|| trimmed.split_once('：'))?;
+            let key = k.trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            match key.to_ascii_lowercase().as_str() {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => normalize_tx_hash(v),
+                _ => None,
+            }
+        }) {
+            return Some(v);
+        }
+
+        for window in tokens.windows(3) {
+            let key = window[0].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            let sep = window[1].trim();
+            let value = window[2].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
+                continue;
+            }
+            match key.to_ascii_lowercase().as_str() {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
+                    if let Some(normalized) = normalize_tx_hash(value) {
+                        return Some(normalized);
+                    }
+                }
+                _ => {}
+            }
+        }
     }
 
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
@@ -995,7 +1342,7 @@ fn run_template(cmd: &str) -> Result<String> {
         return Ok(txh);
     }
 
-    Ok(hash(&["fallback", &merged]))
+    Ok(format!("0x{}", hash(&["fallback", &merged])))
 }
 
 fn run_template_raw(cmd: &str) -> Result<String> {
@@ -1023,9 +1370,34 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
         (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
+        (k.trim(), v.trim())
     } else {
         return None;
     };
+
+    let key = key.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
+    });
+    let value = value.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
+    });
 
     if key.is_empty() {
         return None;
@@ -1036,11 +1408,22 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     let trimmed = token.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
     } else if let Some((k, v)) = trimmed.split_once(':') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('＝') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once('：') {
         (k.trim(), v.trim())
     } else {
         return None;
@@ -1054,12 +1437,16 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         key.to_ascii_lowercase(),
         value
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+                c.is_whitespace()
+                    || c.is_control()
+                    || matches!(
+                        c,
+                        ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                            | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                            | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                    )
             })
-            .trim_matches('"')
-            .trim_matches('\'')
-            .trim_matches('`')
+            .trim_matches(|c| matches!(c, '"' | '\'' | '`' | '“' | '”' | '‘' | '’'))
             .to_string(),
     ))
 }
@@ -1068,13 +1455,38 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
         .trim_matches(|c: char| {
-            c.is_ascii_whitespace()
+            c.is_whitespace()
+                || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':'
+                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
+                        | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
+                        | ',' | ';' | ':' | '!' | '?'
+                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                        | '，' | '；' | '：' | '！' | '？'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
                 )
         })
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_end_matches(|c: char| {
+            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+        })
         .to_ascii_lowercase();
     let canonical = cleaned
         .chars()
@@ -1102,10 +1514,40 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
 fn is_nullish_kv_value(raw: &str) -> bool {
     let cleaned = raw
         .trim()
-        .trim_matches('"')
-        .trim_matches('\'')
-        .trim_matches('`')
-        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_matches(|c: char| {
+            c.is_whitespace()
+                || c.is_control()
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
+                        | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣'
+                        | '«' | '»' | '‹' | '›'
+                        | '【' | '】' | '〔' | '〕' | '〖' | '〗' | '〘' | '〙' | '〚' | '〛'
+                        | '〝' | '〞' | '〟'
+                )
+                || matches!(
+                    c,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        .trim_end_matches(|c: char| {
+            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+        })
         .to_ascii_lowercase();
     cleaned.is_empty() || cleaned == "null"
 }
@@ -1273,7 +1715,8 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
+                | "transaction-hash" => {
                     match normalize_tx_hash(&value) {
                         Some(normalized) => tx_hash = Some(normalized),
                         None => bail!("invalid tx_hash field in tx query response"),
@@ -1321,6 +1764,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for query (expected 0x-prefixed hex tx hash)");
+    }
 
     if let Some(status) = query_local_tx_status(&requested) {
         return Ok(TxQueryResponse {
@@ -1422,6 +1868,9 @@ where
 
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for wait (expected hex-like tx hash)"))?;
+    if !requested.starts_with("0x") {
+        bail!("invalid tx hash for wait (expected 0x-prefixed hex tx hash)");
+    }
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
@@ -1472,7 +1921,10 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let path = default_tx_state_file();
     let raw = fs::read_to_string(path).ok()?;
     let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
-    let rec = v.get(tx_hash)?;
+    let requested = normalize_tx_hash(tx_hash).unwrap_or_else(|| tx_hash.to_string());
+    let rec = v.as_object()?.iter().find_map(|(key, value)| {
+        (normalize_tx_hash(key).as_deref() == Some(requested.as_str())).then_some(value)
+    })?;
     [
         "status",
         "tx_status",
@@ -1594,13 +2046,16 @@ fn main() -> Result<()> {
                     let tx_hash = run_template(&cmd)?;
                     emit_pending_tx_hash(&tx_hash)?;
                 } else {
-                    let tx_hash = hash(&[
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&[
                         "commit-result",
                         &task_id.to_string(),
                         &worker,
                         &commit_hash,
                         &nonce.to_string(),
-                    ]);
+                    ])
+                    );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
             }
@@ -1617,12 +2072,15 @@ fn main() -> Result<()> {
                     let tx_hash = run_template(&cmd)?;
                     emit_pending_tx_hash(&tx_hash)?;
                 } else {
-                    let tx_hash = hash(&[
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&[
                         "reveal-result",
                         &task_id.to_string(),
                         &result_hash,
                         &salt_hex,
-                    ]);
+                    ])
+                    );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
             }
@@ -1682,7 +2140,10 @@ fn main() -> Result<()> {
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
-                    let tx_hash = hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom]);
+                    let tx_hash = format!(
+                        "0x{}",
+                        hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom])
+                    );
                     persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
@@ -1813,7 +2274,149 @@ mod tests {
         )
         .unwrap();
         assert_eq!(ok.len(), 64);
+
+        let upper = ensure_hex_32_bytes(
+            "0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        )
+        .unwrap();
+        assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
         assert!(ensure_hex_32_bytes("0x1234").is_err());
+    }
+
+    #[test]
+    fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
+        assert_eq!(
+            normalize_wallet_store_env("  \"/tmp/trnm-wallets\"  "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env(" “《/tmp/trnm-wallets》” "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{2068} \"/tmp/trnm-wallets\" \u{2069}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
+    }
+
+    #[test]
+    fn wallet_name_rejects_path_like_values() {
+        for bad in [
+            "",
+            ".",
+            "..",
+            ".alice",
+            "-alice",
+            "--help",
+            "alice/bob",
+            "alice\\bob",
+            "alice:bob",
+            "alice=debug",
+            "alice|bob",
+            "alice&bob",
+            "alice$bob",
+            "\"alice\"",
+            "'alice'",
+            "`alice`",
+            "<alice>",
+            "(alice)",
+            "[alice]",
+            "{alice}",
+            "alice,",
+            "alice;",
+            "alice\n",
+            "alice bob",
+            " alice",
+            "alice\t",
+            "alice\u{00a0}bob",
+            "alice\u{200b}bob",
+            "alice\u{2060}bob",
+            "alice\u{feff}bob",
+            "alice\u{202e}bob",
+            "alice\u{2066}bob",
+            "alice\u{2069}bob",
+            "alice\u{0007}bob",
+        ] {
+            let err = ensure_wallet_name(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("invalid wallet name"),
+                "unexpected error for {bad:?}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn write_key_refuses_to_overwrite_existing_wallet_file() {
+        let unique = format!(
+            "trnm-cli-wallet-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+        let existing = wallet_file(&store, "alice");
+        std::fs::write(
+            &existing,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+
+        let err = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("refusing to overwrite existing key"),
+            "unexpected error: {err}"
+        );
+        assert_eq!(
+            std::fs::read_to_string(&existing).unwrap(),
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n"
+        );
+
+        let _ = std::fs::remove_file(&existing);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn write_key_refuses_existing_dangling_symlink_wallet_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+        let existing = wallet_file(&store, "alice");
+        symlink(store.join("missing-target.key"), &existing).unwrap();
+
+        let err = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("refusing to overwrite existing key"),
+            "unexpected error: {err}"
+        );
+        assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
+
+        let _ = std::fs::remove_file(&existing);
+        let _ = std::fs::remove_dir(&store);
     }
 
     #[test]
@@ -1884,6 +2487,34 @@ mod tests {
             extract_tx_hash("note transactionHash=0xbabe04").as_deref(),
             Some("0xbabe04")
         );
+        assert_eq!(
+            extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
+            Some("0xfeed55")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_hyphenated_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx-hash=0xCAFE01").as_deref(),
+            Some("0xcafe01")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction-hash: 0xBEEF02").as_deref(),
+            Some("0xbeef02")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_fullwidth_separators() {
+        assert_eq!(
+            extract_tx_hash("tx_hash＝0xFEED77").as_deref(),
+            Some("0xfeed77")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction-hash：0xBEEF88").as_deref(),
+            Some("0xbeef88")
+        );
     }
 
     #[test]
@@ -1905,6 +2536,78 @@ mod tests {
 
         let response = "{\"response\":{\"data\":{\"transactionHash\":\"BEEF4567\"}}}";
         assert_eq!(extract_tx_hash(response).as_deref(), Some("beef4567"));
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_angle_bracket_wrapped_hashes() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=<0xBEEF42>").as_deref(),
+            Some("0xbeef42")
+        );
+        assert_eq!(
+            extract_tx_hash("see <transactionHash:0xCAFE99> now").as_deref(),
+            Some("0xcafe99")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_sentence_punctuation_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=0xABCD1234.").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash:0xBEEF42?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_hidden_unicode_wrappers() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=\u{2068}<0xABCD1234>\u{2069}").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_unicode_whitespace_and_smart_quote_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=\u{00a0}“0xABCD1234”\u{2003}").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash: ‘0xBEEF42’?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_fullwidth_wrapper_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=（《0xABCD1234》）；").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash：『0xBEEF42』！？").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_guillemet_and_tortoise_shell_noise() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=«0xABCD1234». ").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("transactionHash=〔〝0xBEEF42〞〕；").as_deref(),
+            Some("0xbeef42")
+        );
     }
 
     #[test]
@@ -2474,6 +3177,32 @@ mod tests {
     }
 
     #[test]
+    fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
+        let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xbeef42");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+
+        let guillemet_wrapped =
+            "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
+        let parsed_guillemet =
+            parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
+        assert_eq!(parsed_guillemet.tx_hash, "0xbeef44");
+        assert_eq!(parsed_guillemet.status, "committed");
+        assert_eq!(parsed_guillemet.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
+        let noisy = "【rpc】 《transactionHash：0xCAFE98》 《status：COMMITTED》 《error：NULL》";
+        let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xcafe98");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
     fn tx_query_parse_kv_unwraps_single_and_backtick_quoted_error_values() {
         let single = "tx_hash=0x781\nstatus=fail\nerror='nonce mismatch'\n";
         let parsed_single = parse_tx_query_response(single, "0xfallback").unwrap();
@@ -2772,6 +3501,14 @@ mod tests {
         let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
         assert_eq!(parsed_compact.tx_hash, "0xdef456");
 
+        let hyphenated = "transaction-hash=0xdef457\nstatus=committed\n";
+        let parsed_hyphenated = parse_tx_query_response(hyphenated, "0xfallback").unwrap();
+        assert_eq!(parsed_hyphenated.tx_hash, "0xdef457");
+
+        let tx_hyphenated = "tx-hash=0xabc124\nstatus=committed\n";
+        let parsed_tx_hyphenated = parse_tx_query_response(tx_hyphenated, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_hyphenated.tx_hash, "0xabc124");
+
         let tx_status_snake = "tx_hash=0xaaa111\ntx_status=queued\n";
         let parsed_tx_status_snake =
             parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
@@ -3010,6 +3747,14 @@ mod tests {
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
+        assert_eq!(
+            query_local_tx_status(&ok_hash.to_ascii_uppercase()).as_deref(),
+            Some("committed")
+        );
+        assert_eq!(
+            query_local_tx_status(&format!("<{}>", ok_hash.to_ascii_uppercase())).as_deref(),
+            Some("committed")
+        );
         assert_eq!(
             query_local_tx_status(completed_hash).as_deref(),
             Some("committed")
