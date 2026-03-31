@@ -216,6 +216,9 @@ fn validate_path_prefix<'a>(
         || required_prefix.is_some_and(|prefix| path_without_query != prefix)
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
+        || path_without_query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
@@ -243,7 +246,7 @@ fn extract_validated_query<'a>(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(bad_request(error_body));
     }
