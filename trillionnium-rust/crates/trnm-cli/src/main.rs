@@ -941,18 +941,30 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     (!normalized.is_empty()).then_some(normalized)
 }
 
+fn wallet_store_path_is_safe(path: &Path) -> bool {
+    use std::path::Component;
+
+    path.is_absolute()
+        && !path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+}
+
+fn ensure_wallet_store_path_is_safe(store: &Path) -> Result<()> {
+    if !wallet_store_path_is_safe(store) {
+        bail!(
+            "wallet store '{}' must be an absolute normalized path without '.' or '..' segments",
+            store.display()
+        );
+    }
+    Ok(())
+}
+
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
             let candidate = PathBuf::from(normalized);
-            if candidate.is_absolute()
-                && !candidate.components().any(|component| {
-                    matches!(
-                        component,
-                        std::path::Component::CurDir | std::path::Component::ParentDir
-                    )
-                })
-            {
+            if wallet_store_path_is_safe(&candidate) {
                 return candidate;
             }
         }
@@ -1049,6 +1061,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
 
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    ensure_wallet_store_path_is_safe(store)?;
     if fs::symlink_metadata(store)
         .map(|meta| meta.file_type().is_symlink())
         .unwrap_or(false)
@@ -1073,6 +1086,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
 
 fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
+    ensure_wallet_store_path_is_safe(store)?;
     if fs::symlink_metadata(store)
         .map(|meta| meta.file_type().is_symlink())
         .unwrap_or(false)
@@ -2565,6 +2579,30 @@ mod tests {
             None => std::env::remove_var("HOME"),
         }
         let _ = std::fs::remove_dir_all(&home);
+    }
+
+    #[test]
+    fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
+        let write_err = write_key(
+            std::path::Path::new("./wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {write_err}"
+        );
+
+        let read_err = read_key(std::path::Path::new("/tmp/trnm/../wallets"), "alice").unwrap_err();
+        assert!(
+            read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {read_err}"
+        );
     }
 
     #[test]
