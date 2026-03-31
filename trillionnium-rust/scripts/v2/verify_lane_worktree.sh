@@ -107,14 +107,6 @@ if [ -n "$EXPECTED_HEAD" ]; then
   esac
 fi
 
-case "$EXPECTED_BRANCH_REF" in
-  refs/heads/*) ;;
-  *)
-    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
-    exit 2
-    ;;
-esac
-
 canonicalize_branch_ref() {
   local ref="$1"
   case "$ref" in
@@ -128,6 +120,13 @@ canonicalize_branch_ref() {
 }
 
 EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+case "$EXPECTED_BRANCH_REF_CANONICAL" in
+  refs/heads/*) ;;
+  *)
+    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" >&2
+    exit 2
+    ;;
+esac
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "not inside a git worktree" >&2
