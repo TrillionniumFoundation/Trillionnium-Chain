@@ -203,6 +203,45 @@ fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_re
 }
 
 #[test]
+fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-quoted-env", "dir");
+    fs::create_dir_all(&root).expect("create root dir");
+
+    let shared_log = root.join("shared.log");
+    fs::write(&shared_log, "").expect("write shared log");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::set_var(
+            NODE_EVENT_LOG_SOURCES_ENV,
+            "  \"shared.log\" ; `./shared.log`  ",
+        );
+        std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![shared_log],
+        "quoted historical replay env entries should resolve to canonical log sources"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_latest_node_events_reads_events_from_configured_node4_source() {
     let _guard = lock_env();
     let path = unique_tmp_path("trnm-rpc-node4", "log");
