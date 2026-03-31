@@ -42,6 +42,8 @@ The current `trnm-rpc` health server intentionally accepts the following case-in
 
 For any accepted probe alias, the current JSON body is:
 
+Query strings are ignored for alias matching. For example, `/healthz?probe=lb` and `/-/statusz/?from=ops` still bind to the same health contract as their path-only forms.
+
 ```json
 {
   "ok": true,

@@ -469,6 +469,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_preserves_query_string_for_health_probe_aliases() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb HTTP/1.1"),
+            Some(("GET", "/healthz?probe=lb"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1"),
+            Some(("HEAD", "/-/STATUSZ/?from=ops"))
+        );
+        assert_eq!(
+            parse_http_get_path("GET /-/ready?verbose=1 HTTP/1.1"),
+            Some("/-/ready")
+        );
+    }
+
+    #[test]
     fn parse_http_get_path_preserves_operator_trailing_slash_for_query_routes() {
         assert_eq!(
             parse_http_get_path("GET /query-task/42/ HTTP/1.1"),
