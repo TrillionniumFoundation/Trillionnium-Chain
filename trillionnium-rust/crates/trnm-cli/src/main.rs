@@ -1886,7 +1886,7 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
 }
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(status, "committed" | "fail")
+    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
 }
 
 fn wait_for_tx<F>(

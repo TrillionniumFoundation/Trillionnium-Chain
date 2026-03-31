@@ -2,7 +2,10 @@ use super::*;
 use std::{thread, time::Instant};
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(status, "committed" | "fail")
+    matches!(
+        super::parse::normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 pub(crate) fn wait_for_tx<F>(

@@ -70,3 +70,39 @@ fn wait_for_tx_rejects_mismatched_tx_hash_from_query() {
         "unexpected: {err}"
     );
 }
+
+#[test]
+fn wait_for_tx_accepts_normalized_success_alias_as_terminal() {
+    let result = wait_for_tx(
+        "0xbbbccc",
+        Duration::from_millis(10),
+        Duration::from_millis(1),
+        |_| {
+            Ok(TxQueryResponse {
+                tx_hash: "0xbbbccc".to_string(),
+                status: "confirmed".to_string(),
+                error: None,
+            })
+        },
+    )
+    .unwrap();
+    assert_eq!(result.status, "confirmed");
+}
+
+#[test]
+fn wait_for_tx_accepts_normalized_failure_alias_as_terminal() {
+    let result = wait_for_tx(
+        "0xbbbccc",
+        Duration::from_millis(10),
+        Duration::from_millis(1),
+        |_| {
+            Ok(TxQueryResponse {
+                tx_hash: "0xbbbccc".to_string(),
+                status: "timed_out".to_string(),
+                error: Some("signer did not submit before deadline".to_string()),
+            })
+        },
+    )
+    .unwrap();
+    assert_eq!(result.status, "timed_out");
+}
