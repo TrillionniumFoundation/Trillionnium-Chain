@@ -177,8 +177,15 @@ pub(crate) fn default_wallet_store() -> PathBuf {
             }
         }
     }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".trnm").join("wallets")
+
+    let home_root = std::env::var("HOME")
+        .ok()
+        .map(PathBuf::from)
+        .filter(|path| wallet_store_path_is_safe(path))
+        .or_else(|| std::env::current_dir().ok().filter(|path| path.is_absolute()))
+        .unwrap_or_else(|| PathBuf::from("/"));
+
+    home_root.join(".trnm").join("wallets")
 }
 
 pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {

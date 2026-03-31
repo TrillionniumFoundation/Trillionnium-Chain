@@ -234,6 +234,30 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 }
 
 #[test]
+fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+    let original_home = std::env::var_os("HOME");
+    std::env::remove_var("TRNM_WALLET_STORE");
+
+    let cwd = std::env::current_dir().unwrap();
+
+    std::env::remove_var("HOME");
+    assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+    std::env::set_var("HOME", "./relative-home");
+    assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+    match original_store {
+        Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+    match original_home {
+        Some(value) => std::env::set_var("HOME", value),
+        None => std::env::remove_var("HOME"),
+    }
+}
+
+#[test]
 fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
     let write_err = write_key(
         std::path::Path::new("./wallets"),
