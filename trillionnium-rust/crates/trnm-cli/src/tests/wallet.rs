@@ -187,6 +187,47 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
 }
 
 #[test]
+fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+    let original_home = std::env::var_os("HOME");
+    let home = std::env::temp_dir().join(format!(
+        "trnm-cli-wallet-home-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&home).unwrap();
+    std::env::set_var("HOME", &home);
+
+    std::env::set_var("TRNM_WALLET_STORE", "./wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    std::env::set_var("TRNM_WALLET_STORE", "../wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm/../wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm/./wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
+    assert_eq!(default_wallet_store(), std::path::PathBuf::from("/tmp/trnm-wallets"));
+
+    match original_store {
+        Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+    match original_home {
+        Some(value) => std::env::set_var("HOME", value),
+        None => std::env::remove_var("HOME"),
+    }
+    let _ = std::fs::remove_dir_all(&home);
+}
+
+#[test]
 fn wallet_name_rejects_path_like_values() {
     for bad in [
         "",

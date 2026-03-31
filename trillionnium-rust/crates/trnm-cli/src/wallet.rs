@@ -126,10 +126,20 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     (!normalized.is_empty()).then_some(normalized)
 }
 
+fn wallet_store_env_path_is_safe(path: &Path) -> bool {
+    use std::path::Component;
+
+    !path.components()
+        .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+}
+
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
-            return PathBuf::from(normalized);
+            let candidate = PathBuf::from(normalized);
+            if wallet_store_env_path_is_safe(&candidate) {
+                return candidate;
+            }
         }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
