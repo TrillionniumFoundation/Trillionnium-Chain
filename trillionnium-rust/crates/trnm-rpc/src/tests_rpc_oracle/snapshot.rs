@@ -101,8 +101,21 @@ struct PolicyFile {
     max_staleness_ms: u64,
     min_source_count: u64,
     max_deviation_bps: u64,
-    #[allow(dead_code)]
     feed_id: String,
+}
+
+fn validate_canonical_feed_id(raw: &str) -> Result<String, String> {
+    let canonical = raw.trim().to_ascii_lowercase();
+    if canonical.is_empty() {
+        return Err("feed id is empty".to_string());
+    }
+    if raw != canonical {
+        return Err(format!(
+            "feed id must be canonical lowercase+trim: raw={}, canonical={}",
+            raw, canonical
+        ));
+    }
+    Ok(canonical)
 }
 
 fn from_hex(n: u8) -> Option<u8> {
@@ -293,6 +306,15 @@ pub(crate) fn oracle_validate_snapshot_response(
 
     let source_count = snapshot_val.sources.len() as u32;
     let cardinality = canonical_source_cardinality(&snapshot_val.sources);
+    let snapshot_feed_id = validate_canonical_feed_id(&snapshot_val.feed_id)?;
+    let policy_feed_id = validate_canonical_feed_id(&policy_val.feed_id)?;
+
+    if snapshot_feed_id != policy_feed_id {
+        return Err(format!(
+            "feed id mismatch: snapshot={}, policy={}",
+            snapshot_feed_id, policy_feed_id
+        ));
+    }
 
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
@@ -344,7 +366,7 @@ pub(crate) fn oracle_validate_snapshot_response(
         now_ts_ms,
         observation: OracleValidationObservation {
             outcome: outcome.to_string(),
-            feed_id: snapshot_val.feed_id,
+            feed_id: snapshot_feed_id,
             stale_reject_total,
             quorum_reject_total,
             drift_reject_total,
