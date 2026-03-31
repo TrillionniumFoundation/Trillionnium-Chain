@@ -13367,6 +13367,32 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn load_checkpoint_meta_rejects_mixed_array_and_table_representations_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-mixed-array-and-table-representations");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                checkpoints = []
+
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "aa"
+                wal_entry_hash_hex = "bb"
+            "#,
+        )
+        .unwrap();
+
+        let err = load_checkpoint_meta(&wal_dir).unwrap_err().to_string();
+        assert!(
+            err.contains("duplicate") || err.contains("redefined") || err.contains("checkpoints"),
+            "unexpected parse error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_prunes_identical_duplicate_checkpoint_at_retained_height() {
         let wal_dir = temp_wal_dir("recover-prune-identical-duplicate-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
