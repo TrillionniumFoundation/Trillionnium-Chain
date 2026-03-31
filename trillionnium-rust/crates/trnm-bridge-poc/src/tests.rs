@@ -278,6 +278,35 @@ fn settlement_request_rejects_plane14_tags_in_tx_hash_and_subject() {
 }
 
 #[test]
+fn settlement_request_rejects_variation_selectors_in_tx_hash_and_subject() {
+    let mut request = SettlementRequest::new(7, "0xabc\u{FE0E}def\u{FE0F}".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement\u{FE0E}-operator\u{FE0F}".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&token, 90);
+    assert_eq!(
+        finalize_err,
+        Err(SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    request.tx_hash = "0xabcdef".to_string();
+
+    let revert_err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        revert_err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn settlement_request_rejects_braille_blank_in_tx_hash_and_subject() {
     let mut request = SettlementRequest::new(7, "0xabc\u{2800}def".to_string());
     let token = CapabilityToken {
