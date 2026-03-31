@@ -197,6 +197,7 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
     exit 1
   fi
   date -u +"generated_at=%Y-%m-%dT%H:%M:%SZ"
+  printf 'origin_main=%s\n' "$(git rev-parse origin/main)"
   printf 'expected_worktree=%s\n' "$EXPECTED_WORKTREE_ROOT"
   printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
   printf 'worktree=%s\n' "$(pwd)"
@@ -231,6 +232,7 @@ sed -n '1,160p' \
 
 Expected fields visible in the capture:
 - `generated_at=` for evidence timing
+- `origin_main=` for the exact truth-source snapshot paired with `RELEASE_READINESS.md`
 - `worktree=` and `branch=` for identity
 - `git_status_summary=clean` for fail-closed clean-tree evidence before the packet runs
 - `command[n]=...` lines for the exact rehearsal packet
@@ -296,6 +298,7 @@ admission / sponsorship / retention boundary in one place:
 
 ```text
 TRNM mainnet economics freeze review
+- truth-source snapshot (`origin/main`):
 - tuple source of truth:
 - tuple owner of record:
 - operator inspection command:
