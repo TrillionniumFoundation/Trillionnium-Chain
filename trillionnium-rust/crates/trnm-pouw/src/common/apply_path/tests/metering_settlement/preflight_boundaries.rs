@@ -131,6 +131,45 @@ fn resolve_slash_rejects_challenge_success_bounty_above_task_bounty_without_muta
 }
 
 #[test]
+fn resolve_preflight_allows_challenge_success_bounty_equal_to_min_worker_stake() {
+    let mut st = seeded_state();
+    st.set_gov_param_bootstrap_unchecked(9_502, "challenge_success_bounty".into(), "40".into())
+        .expect("challenge success bounty governance seed must succeed");
+    st.set_gov_param_bootstrap_unchecked(9_503, "min_worker_stake".into(), "40".into())
+        .expect("min worker stake governance seed must succeed");
+
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+    st.set_balance(&worker_stake_lock_account(75), 40);
+
+    let task = TaskObject {
+        task_id: 75,
+        creator: "alice".into(),
+        bounty: 40,
+        status: TaskStatus::Slashed,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some("worker1".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: Some(1),
+        reveal_deadline_height: Some(10),
+        challenge_deadline_height: Some(20),
+        challenge_window_blocks_snapshot: Some(10),
+        challenged_at_height: Some(11),
+        resolve_deadline_height: Some(30),
+        challenge_bond: Some(10),
+        challenge_bond_forfeited: None,
+        challenger: Some("challenger".into()),
+        version: 0,
+    };
+
+    preflight_resolve_transfers(&st, &task, true).expect(
+        "bounty equal to min_worker_stake should remain inside the allowed slash-principal envelope",
+    );
+}
+
+#[test]
 fn resolve_preflight_rejects_challenge_success_bounty_above_task_bounty() {
     let mut st = seeded_state();
     st.set_gov_param_bootstrap_unchecked(9_504, "challenge_success_bounty".into(), "11".into())

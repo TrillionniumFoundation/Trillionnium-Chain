@@ -26,8 +26,23 @@ fn resolve_rejects_creator_as_authority_member_or_signer() {
     .unwrap_err();
     assert!(matches!(err, PouwError::Unauthorized));
 
+    set_resolve_authority(&mut st, "authority,Alice");
+    let err = apply_resolve(
+        &mut st,
+        r5.clone(),
+        false,
+        "authority".into(),
+        "authority".into(),
+    )
+    .unwrap_err();
+    assert!(matches!(err, PouwError::Unauthorized));
+
     set_resolve_authority(&mut st, "authority,authority2");
-    let err = apply_resolve(&mut st, r5, false, "alice".into(), "alice".into()).unwrap_err();
+    let err = apply_resolve(&mut st, r5.clone(), false, "alice".into(), "alice".into())
+        .unwrap_err();
+    assert!(matches!(err, PouwError::Unauthorized));
+
+    let err = apply_resolve(&mut st, r5, false, "Alice".into(), "Alice".into()).unwrap_err();
     assert!(matches!(err, PouwError::Unauthorized));
 }
 

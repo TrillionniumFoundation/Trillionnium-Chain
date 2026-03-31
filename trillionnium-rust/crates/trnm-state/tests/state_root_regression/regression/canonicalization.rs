@@ -171,6 +171,58 @@ fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_
         "state_root must treat zero challenge escrow balance the same as a missing entry even when other pending, treasury, and monetary state is present"
     );
 }
+
+#[test]
+fn zero_worker_slashes_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state(
+) {
+    let mut missing = StateStore::new();
+    let mut explicit_zero = StateStore::new();
+
+    for state in [&mut missing, &mut explicit_zero] {
+        state.set_balance("treasury.challenge_forfeits", 11);
+        state.set_balance("treasury.challenge_escrow", 13);
+        state.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 303,
+                key: "challenge_min_bond".into(),
+                value: "175".into(),
+                activate_at_height: 261,
+            }),
+        );
+        state.restore_pending_resolve_approval(
+            4_201,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority.alpha".into(),
+                authority_set: "authority.alpha,authority.beta".into(),
+                task_version: 5,
+            }),
+        );
+        state.restore_monetary_state(MonetaryState {
+            last_tick_height: 92,
+            tick_count: 6,
+            total_minted: 29,
+            total_burned: 7,
+            net_issuance: 22,
+        });
+    }
+
+    let missing_root = missing.state_root();
+    explicit_zero.set_balance("treasury.worker_slashes", 0);
+
+    assert_eq!(
+        explicit_zero.balance_of("treasury.worker_slashes"),
+        0,
+        "sanity: explicit zero worker slashes balance should still read back as zero"
+    );
+    assert_eq!(
+        explicit_zero.state_root(),
+        missing_root,
+        "state_root must treat zero worker slashes balance the same as a missing entry even when other pending, collateral, and monetary state is present"
+    );
+}
 #[test]
 fn insertion_order_of_balances_pending_and_monetary_snapshots_keeps_state_root_deterministic() {
     let mut state_a = StateStore::new();

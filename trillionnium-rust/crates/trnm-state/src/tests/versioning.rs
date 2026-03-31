@@ -603,6 +603,34 @@ fn restore_task_rejects_cross_type_gov_proposal_id_takeover_fail_closed() {
 }
 
 #[test]
+fn restore_pending_resolve_approval_requires_existing_challenged_task() {
+    let mut st = StateStore::new();
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(
+        29,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(29),
+        None,
+        "restore_pending_resolve_approval must fail closed when the challenged task is absent"
+    );
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "orphan pending resolve approvals must not perturb canonical state"
+    );
+}
+
+#[test]
 fn restore_gov_param_scrubs_stale_pending_resolve_on_same_id() {
     let mut st = StateStore::new();
     st.restore_pending_resolve_approval(
