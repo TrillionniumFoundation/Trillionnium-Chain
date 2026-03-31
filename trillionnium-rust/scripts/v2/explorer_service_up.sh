@@ -43,7 +43,7 @@ cat >"${PUBLIC_DIR}/healthz" <<EOF
 EOF
 
 cat >"${PUBLIC_DIR}/index.json" <<EOF
-{"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","notes":["static scaffold only","not a durable indexer","not a production read-model"]}
+{"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","read_contract":{"mode":"read-only","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
 EOF
 
 cd "${PUBLIC_DIR}"

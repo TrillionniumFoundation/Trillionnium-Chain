@@ -94,7 +94,19 @@ The scaffold writes two static files before launching the HTTP server:
 - `index.json`
 
 `healthz` reports that the scaffold is alive, but also marks `production_ready=false`.
-`index.json` states clearly that the service is static-only and not a durable indexer/read-model.
+`index.json` states clearly that the service is static-only and not a durable indexer/read-model, and now also exposes the current Day-1 read-only contract:
+
+- `query-task/<task_id>`
+- `query-events/<task_id>?limit=<n>`
+- `query-capability-audit/<subject-or-token>`
+- `query-normalized-audit-events/<task_id>?limit=<n>`
+
+Additional contract markers carried in `index.json`:
+
+- `query_events_default_limit=100`
+- `query_events_max_limit=500`
+- `write_paths_exposed=false`
+- a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
 
 ## Failure interpretation
 

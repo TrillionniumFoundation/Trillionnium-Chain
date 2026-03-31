@@ -183,9 +183,14 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
+  - `query-task/<task_id>`
+  - `query-events/<task_id>?limit=<n>`
+  - `query-capability-audit/<subject-or-token>`
+  - `query-normalized-audit-events/<task_id>?limit=<n>`
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
+  - 在 durable indexer / archive read replica 落地前，历史查询语义仍以当前 RPC retention window 为边界，不应把脚手架或前端只读 client 误读为“无限历史可查”。
 - 本地最小 explorer service 仍只是 operator-facing scaffolding，不应误判为 production indexer：
   - 启动：`./scripts/v2/explorer_service_up.sh`
   - 状态：`./scripts/v2/explorer_service_status.sh`
