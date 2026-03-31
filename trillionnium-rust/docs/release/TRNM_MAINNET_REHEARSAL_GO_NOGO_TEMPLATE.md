@@ -58,6 +58,7 @@ Resolve the exact evidence files from disk before quoting any PASS / GO language
 latest_preflight_path="run/preflight/go-no-go-latest.txt"
 [ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
 printf 'preflight_path=%s\n' "$latest_preflight_path"
+awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|expected_worktree_root|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
 ./scripts/v2/extract_release_handoff_fields.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
@@ -68,16 +69,18 @@ Record:
 - preflight_path=
 - summary_path=
 - manifest_path=
+- preflight_result=
 - preflight_generated_at=
 - summary_generated_at=
 - manifest_generated_at=
 
 Rule:
 - if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- if the preflight artifact does not preserve `result=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 
 ## 4. Required cross-artifact identity fields
 
-Copy these fields from the extracted artifact output or directly from `summary.txt` / `manifest.txt`:
+Copy these fields from the extracted artifact output or directly from `go-no-go-latest.txt`, `summary.txt`, and `manifest.txt`:
 
 - `git_toplevel=`
 - `git_branch=`
@@ -94,6 +97,8 @@ Copy these fields from the extracted artifact output or directly from `summary.t
 - `evidence_scope=`
 
 Decision rule:
+- `preflight_result=GO` is mandatory before quoting later PASS / GO language
+- preflight `git_worktree_path=` / `git_worktree_branch_ref=` must match the assigned worktree/branch, not just exist
 - `git_worktree_branch_ref_match=true` is mandatory
 - `git_status_summary=clean` is mandatory
 - the summary and manifest values must match each other and match the assigned worktree/branch
