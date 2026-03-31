@@ -84,7 +84,7 @@ pub(crate) fn checkpoint_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-checkpoints.toml")
 }
 
-fn canonicalize_wal_meta(entries: &mut [WalMeta]) {
+fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
     entries.sort_by(|a, b| {
         a.height
             .cmp(&b.height)
@@ -94,6 +94,7 @@ fn canonicalize_wal_meta(entries: &mut [WalMeta]) {
             .then_with(|| a.state_root_hex.cmp(&b.state_root_hex))
             .then_with(|| a.prev_hash_hex.cmp(&b.prev_hash_hex))
     });
+    entries.dedup_by(|a, b| a == b);
 }
 
 pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
@@ -103,6 +104,9 @@ pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let mut list: WalMetaList =
         toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
     canonicalize_wal_meta(&mut list.entries);
@@ -135,6 +139,9 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
+    if raw.trim().is_empty() {
+        return Ok(vec![]);
+    }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
     canonicalize_checkpoint_meta(&mut list.checkpoints);
@@ -149,6 +156,11 @@ pub(crate) fn persist_checkpoint_meta(
     let f = checkpoint_file(wal_dir);
     let mut checkpoints = checkpoints.to_vec();
     canonicalize_checkpoint_meta(&mut checkpoints);
+    checkpoints.dedup_by(|a, b| {
+        a.height == b.height
+            && a.state_root_hex == b.state_root_hex
+            && a.wal_entry_hash_hex == b.wal_entry_hash_hex
+    });
     let raw = toml::to_string(&CheckpointMetaList { checkpoints })?;
     fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
     Ok(())
@@ -167,7 +179,16 @@ mod tests {
     use super::*;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
-        std::env::temp_dir().join(format!("trnm-node-wal-{}-{}", name, now_unix_ms()))
+        let now_nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        std::env::temp_dir().join(format!(
+            "trnm-node-wal-{}-{}-{}",
+            name,
+            std::process::id(),
+            now_nanos
+        ))
     }
 
     #[test]
@@ -333,6 +354,146 @@ mod tests {
     }
 
     #[test]
+    fn persist_wal_meta_canonicalizes_missing_prev_hash_before_linked_successors_for_audit_surfaces() {
+        let wal_dir = temp_wal_dir("wal-persist-canonical-missing-prev-hash-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_wal_meta_entries(
+            &wal_dir,
+            &[
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-z".into()),
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        )
+        .unwrap();
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        let parsed: WalMetaList = toml::from_str(&raw).unwrap();
+        assert_eq!(parsed.entries.len(), 3);
+        assert_eq!(parsed.entries[0].prev_hash_hex, None);
+        assert_eq!(parsed.entries[1].prev_hash_hex.as_deref(), Some("prev-a"));
+        assert_eq!(parsed.entries[2].prev_hash_hex.as_deref(), Some("prev-z"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_canonicalizes_missing_prev_hash_before_linked_successors_for_audit_surfaces() {
+        let wal_dir = temp_wal_dir("wal-canonical-missing-prev-hash-order");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let raw = toml::to_string(&WalMetaList {
+            entries: vec![
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-z".into()),
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: None,
+                },
+                WalMeta {
+                    height: 11,
+                    round: 0,
+                    proposal_hash: "proposal-a".into(),
+                    committed: true,
+                    state_root_hex: "root-a".into(),
+                    prev_hash_hex: Some("prev-a".into()),
+                },
+            ],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), raw).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 3);
+        assert_eq!(entries[0].prev_hash_hex, None);
+        assert_eq!(entries[1].prev_hash_hex.as_deref(), Some("prev-a"));
+        assert_eq!(entries[2].prev_hash_hex.as_deref(), Some("prev-z"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn persist_wal_meta_deduplicates_identical_entries_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("wal-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let entry = WalMeta {
+            height: 7,
+            round: 1,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "aa".repeat(32),
+            prev_hash_hex: Some("bb".repeat(32)),
+        };
+        persist_wal_meta_entries(&wal_dir, &[entry.clone(), entry.clone()]).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries, vec![entry.clone()]);
+
+        let raw = fs::read_to_string(wal_meta_file(&wal_dir)).unwrap();
+        assert_eq!(raw.matches("height = 7").count(), 1, "unexpected raw WAL file: {raw}");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_deduplicates_identical_disk_entries_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("wal-load-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let entry = WalMeta {
+            height: 9,
+            round: 0,
+            proposal_hash: "proposal-9".into(),
+            committed: true,
+            state_root_hex: "cc".repeat(32),
+            prev_hash_hex: Some("dd".repeat(32)),
+        };
+        let raw = toml::to_string(&WalMetaList {
+            entries: vec![entry.clone(), entry.clone()],
+        })
+        .unwrap();
+        fs::write(wal_meta_file(&wal_dir), raw).unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries, vec![entry]);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn persist_checkpoint_meta_canonicalizes_disk_order_for_audit_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-canonical-persist-order");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -462,6 +623,60 @@ mod tests {
     }
 
     #[test]
+    fn persist_checkpoint_meta_deduplicates_identical_entries_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 7,
+                    state_root_hex: "root-a".into(),
+                    wal_entry_hash_hex: "hash-a".into(),
+                },
+                CheckpointMeta {
+                    height: 8,
+                    state_root_hex: "root-b".into(),
+                    wal_entry_hash_hex: "hash-b".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 7);
+        assert_eq!(checkpoints[0].state_root_hex, "root-a");
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-a");
+        assert_eq!(checkpoints[1].height, 8);
+        assert_eq!(checkpoints[1].state_root_hex, "root-b");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-b");
+
+        let raw = fs::read_to_string(checkpoint_file(&wal_dir)).unwrap();
+        assert_eq!(raw.matches("height = 7").count(), 1, "unexpected raw checkpoint file: {raw}");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "  \n\t").unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -504,6 +719,18 @@ mod tests {
             err.contains("unknown field") && err.contains("forged"),
             "unexpected parse error: {err}"
         );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "\n  \t").unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
