@@ -167,3 +167,41 @@ fn x3_prep_confirm_failure_reason_collapses_crlf_and_unicode_separators_for_repl
         )
     );
 }
+
+#[test]
+fn x3_prep_confirm_failure_reason_collapses_ogham_space_mark_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-sanitize-ogham-space".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(736, 735, 18);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target\u{1680}relay timeout".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target relay timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(736),
+                heartbeat_target_height: Some(735),
+                heartbeat_latency_ms: Some(18),
+                confirm_height: None,
+                confirm_reason: Some("settlement confirm failed: target relay timeout".to_string(),),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: target relay timeout".to_string())
+    );
+}
