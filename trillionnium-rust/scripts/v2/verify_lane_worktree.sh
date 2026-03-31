@@ -152,6 +152,7 @@ CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain | awk -v target="$CURREN
   in_match { print }
   in_match && /^$/ { exit }
 ')"
+CURRENT_WORKTREE_ENTRY_BRANCH_REF="$(printf '%s\n' "$CURRENT_WORKTREE_ENTRY" | awk '/^branch / { print $2; exit }')"
 
 [ "$CURRENT_WORKTREE_ROOT" = "$EXPECTED_WORKTREE_ROOT" ] || {
   printf 'worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$CURRENT_WORKTREE_ROOT" >&2
@@ -170,6 +171,16 @@ fi
 
 [ -n "$CURRENT_WORKTREE_ENTRY" ] || {
   printf 'missing git worktree stanza for %s\n' "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
+
+[ -n "$CURRENT_WORKTREE_ENTRY_BRANCH_REF" ] || {
+  printf 'missing git worktree branch binding for %s\n' "$CURRENT_WORKTREE_ROOT" >&2
+  exit 1
+}
+
+[ "$CURRENT_WORKTREE_ENTRY_BRANCH_REF" = "$CURRENT_BRANCH_REF" ] || {
+  printf 'worktree branch binding mismatch: expected %s got %s\n' "$CURRENT_BRANCH_REF" "$CURRENT_WORKTREE_ENTRY_BRANCH_REF" >&2
   exit 1
 }
 
