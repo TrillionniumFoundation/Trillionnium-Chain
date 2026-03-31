@@ -124,6 +124,34 @@ Why this is the minimum useful slice:
 If any command above fails, the economics tuple should remain at least `CONDITIONAL GO`
 until the mismatch is explained or the freeze packet is tightened.
 
+### Optional sponsor-boundary stability spot checks
+
+When launch review wants slightly stronger evidence without widening into a repo-wide
+rehearsal, append these focused checks to the same packet:
+
+```bash
+cargo test -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q
+cargo test -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q
+cargo test -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q
+```
+
+Why these are useful extensions:
+- `zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls`
+  demonstrates that repeated idle polls and cross-class probe noise do not make a fully
+  closed public lane look open again.
+- `qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen`
+  demonstrates that partially reopened capacity does not falsely widen the externally
+  visible sponsor/free-ingress surface while the last reserved critical slot is still
+  guarded.
+- `hard_stop_idle_pop_preserves_restored_duplicate_metadata` demonstrates that a
+  zero-budget/hard-stop lane preserves already-seen duplicate knowledge across idle-pop
+  recovery, which matters when sponsor revocation is using a `drain-only`-style duplicate
+  retention rule.
+
+These are still targeted economics-boundary checks, not a substitute for the frozen tuple
+itself; use them to harden evidence when sponsor revocation or reserve-only visibility is
+still under review.
+
 ### Existing gate coverage mapped to the freeze tuple
 
 Before a first-class economics config/query surface exists, reviewers still need a crisp
