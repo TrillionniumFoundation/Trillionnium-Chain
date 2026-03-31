@@ -10,6 +10,8 @@ LOG_FILE="${RUN_ROOT}/explorer-service.log"
 HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
+INDEX_URL="http://${HOST}:${PORT}/index.json"
+INDEX_URL="http://${HOST}:${PORT}/index.json"
 
 mkdir -p "${PUBLIC_DIR}"
 
@@ -17,7 +19,9 @@ if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/nu
   echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
+  echo "public_dir=${PUBLIC_DIR}"
   echo "health_url=${HEALTH_URL}"
+  echo "index_url=${INDEX_URL}"
   exit 1
 fi
 
@@ -27,7 +31,9 @@ if [[ -f "${PID_FILE}" ]]; then
     echo "explorer service already running pid=${existing_pid}"
     echo "pid_file=${PID_FILE}"
     echo "log_file=${LOG_FILE}"
+    echo "public_dir=${PUBLIC_DIR}"
     echo "health_url=${HEALTH_URL}"
+    echo "index_url=${INDEX_URL}"
     exit 0
   fi
   rm -f "${PID_FILE}"
@@ -51,11 +57,15 @@ if ! kill -0 "${server_pid}" 2>/dev/null; then
   echo "explorer service scaffold failed to stay up"
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
+  echo "public_dir=${PUBLIC_DIR}"
   echo "health_url=${HEALTH_URL}"
+  echo "index_url=${INDEX_URL}"
   exit 1
 fi
 
 echo "started explorer service scaffold pid=${server_pid}"
 echo "pid_file=${PID_FILE}"
 echo "log_file=${LOG_FILE}"
+echo "public_dir=${PUBLIC_DIR}"
 echo "health_url=${HEALTH_URL}"
+echo "index_url=${INDEX_URL}"

@@ -78,7 +78,9 @@ Expected healthy signals:
 - `health=ok`
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
+- `public_dir=.../run/explorer-service/public`
 - `health_url=http://.../healthz`
+- `index_url=http://.../index.json`
 
 If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
 

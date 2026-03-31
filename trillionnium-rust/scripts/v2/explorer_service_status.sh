@@ -9,6 +9,8 @@ LOG_FILE="${RUN_ROOT}/explorer-service.log"
 HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
 HEALTH_URL="${EXPLORER_HEALTH_URL:-http://${HOST}:${PORT}/healthz}"
+PUBLIC_DIR="${RUN_ROOT}/public"
+INDEX_URL="http://${HOST}:${PORT}/index.json"
 
 state="down"
 health="unknown"
@@ -45,5 +47,7 @@ if [[ "${pid_valid}" != "true" ]]; then
 fi
 echo "pid_file=${PID_FILE}"
 echo "log_file=${LOG_FILE}"
+echo "public_dir=${PUBLIC_DIR}"
 echo "health_url=${HEALTH_URL}"
+echo "index_url=${INDEX_URL}"
 echo "health=${health}"
