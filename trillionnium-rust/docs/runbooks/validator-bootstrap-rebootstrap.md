@@ -183,6 +183,30 @@ cargo check -p trnm-node -q
 
 The `--emit-ceremony-packet` mode is meant to reduce operator transcription drift: it reuses the validated `node_id` / `config_path` / `p2p_addr` / `rpc_addr` tuple from the actual config bundle instead of retyping each `validator_entry=` by hand.
 
+For any packet expected to feed a signed/public-mainnet readiness review, prefer generating the skeleton with the ceremony metadata filled in up front instead of forwarding a packet that still contains placeholder fields:
+
+```bash
+python3 scripts/v2/check_validator_config_bundle.py \
+  --emit-ceremony-packet \
+  --ceremony-id mn04-bootstrap-20260331-0621Z \
+  --ceremony-scope public-mainnet-input \
+  --packet-generated-at 2026-03-31T06:21:00Z \
+  --packet-distribution-path /abs/path/or/ticket \
+  --validator-set-version v1 \
+  --startup-order-note 'node1 -> node2 -> node3 -> node4' \
+  --rollback-owner primary-operator \
+  --genesis-artifact-path /abs/path/to/genesis.json \
+  --genesis-artifact-sha256 <sha256> \
+  configs/node1.toml \
+  configs/node2.toml \
+  configs/node3.toml \
+  configs/node4.toml
+```
+
+Fail-closed rule for generated packets:
+- if `packet_generated_at=` or `packet_distribution_path=` is still a placeholder when the packet is shared for operator acknowledgment, do not treat the packet as ceremony-ready
+- if `ceremony_scope=public-mainnet-input`, require operators to replace `<owner>` / `<chat/email/oncall>` / `<optional-ack-path>` placeholders before startup instead of relying on a later cleanup pass
+
 What this proves:
 - the named validator config bundle has no duplicate node identity or reused listen addresses
 - the validator config loader still compiles
