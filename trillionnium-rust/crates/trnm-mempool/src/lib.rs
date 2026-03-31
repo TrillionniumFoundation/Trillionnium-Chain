@@ -2443,6 +2443,21 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_stale_hot_fairness_does_not_synthesize_normal_preemption() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate stale restored-state bookkeeping: reserve-only mode should still
+        // refuse to synthesize a dedicated-normal fairness turn.
+        g.critical_served_streak = g.critical_burst_limit;
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.critical_served_streak, 0);
+        assert_eq!(g.pop_ready(), Some(11));
+    }
+
+    #[test]
     fn reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
