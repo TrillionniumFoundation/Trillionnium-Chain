@@ -6714,6 +6714,12 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains(&format!("da_wal_content_hash={}", wal.content_hash_hex())));
     assert!(summary.contains("da_wal_content_hash_kind=canonical-hex-32b"));
     assert!(summary.contains("da_wal_content_hash_bytes=32"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_height=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_round=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_proposal_hash=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_committed=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_state_root=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_prev_hash=true"));
     assert!(summary.contains("checkpoint_binding_fields=height,state_root,wal_entry_hash"));
     assert!(summary.contains("checkpoint_tuple_order=height,state_root,wal_entry_hash"));
     assert!(summary.contains(
