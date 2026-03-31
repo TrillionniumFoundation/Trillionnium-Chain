@@ -40,6 +40,10 @@ expected_genesis_or_checkpoint=
 handoff_signed_by=
 handoff_acknowledged_by=
 rollback_command=
+handoff_summary_path=
+handoff_manifest_path=
+summary_generated_at=
+manifest_generated_at=
 dr_summary_path=
 dr_replay_command=
 dr_rollback_command=
@@ -50,6 +54,8 @@ next_blocker=
 
 Rules:
 - `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
+- when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
 - if any identity or rollback field cannot be filled before cutover, stop.
 
@@ -151,6 +157,14 @@ If release-evidence or RC artifacts also exist for the same handoff, prefer extr
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+When that helper is used, record at minimum:
+- `handoff_summary_path=`
+- `handoff_manifest_path=`
+- `summary_generated_at=`
+- `manifest_generated_at=`
+
+Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory.
 
 If recovery evidence cannot be produced from the current worktree, treat the DR rebuild as **No-Go**.
 
