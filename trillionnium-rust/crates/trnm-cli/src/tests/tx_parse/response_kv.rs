@@ -200,6 +200,15 @@ fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
 }
 
 #[test]
+fn tx_query_parse_kv_tolerates_bidi_wrapped_tx_hash() {
+    let kv = "transactionHash=\u{200e}0xBEEF44\u{200f}\nstatus=\u{061c}committed\u{200f}\nerror=null\n";
+    let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xbeef44");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_kv_tolerates_guillemet_and_lenticular_wrapped_status() {
     let kv = "transactionHash=0xBEEF43\nstatus=«confirmed»\nerror=【null】\n";
     let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
