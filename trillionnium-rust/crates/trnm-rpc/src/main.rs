@@ -1561,6 +1561,7 @@ fn normalize_actor_or_signer(raw: &str) -> Option<String> {
         .trim()
         .chars()
         .filter_map(|ch| match ch {
+            '\u{00AD}' => None,
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
             _ if ch.is_whitespace() || ch.is_control() => Some(' '),
             _ => Some(ch),
@@ -5749,6 +5750,17 @@ mod tests {
         assert_eq!(
             normalize_market_status_key("\u{feff} matched \u{2060}"),
             "matched"
+        );
+    }
+
+    #[test]
+    fn normalize_actor_or_signer_collapses_hidden_and_control_separators() {
+        assert_eq!(normalize_actor_or_signer(" author\u{200b}ity "), Some("author ity".into()));
+        assert_eq!(normalize_actor_or_signer("auth\u{00ad}ority"), Some("authority".into()));
+        assert_eq!(normalize_actor_or_signer("system\u{0007}"), Some("system".into()));
+        assert_eq!(
+            normalize_actor_or_signer("\u{feff}worker \u{2060} one\n"),
+            Some("worker one".into())
         );
     }
 
