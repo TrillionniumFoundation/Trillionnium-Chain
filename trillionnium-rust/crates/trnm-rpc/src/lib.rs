@@ -1388,6 +1388,25 @@ mod tests {
                 },
                 error: Some("drift".into()),
             },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 794,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("snapshot hash mismatch: expected=abc, actual=def".into()),
+            },
         ];
 
         for report in reports {
