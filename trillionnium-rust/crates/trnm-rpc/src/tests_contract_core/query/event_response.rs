@@ -116,3 +116,34 @@ fn query_events_response_fallback_rejects_reveal_without_persisted_commit() {
         .expect_err("reveal-only fallback must not synthesize a historical event chain");
     assert!(err.to_string().contains("events not found for task_id=45"));
 }
+
+#[test]
+fn query_events_response_fallback_sorts_same_timestamp_records_by_normalized_identity() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 46,
+            worker: Some(" worker-z\u{200b}".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0XBBB".into()),
+        },
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 46,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some(" tx_hash=0xaaa ".into()),
+        },
+    ];
+
+    let out = query_events_response(46, 20, &[], &recs).expect("events expected");
+    assert_eq!(out.len(), 2);
+    assert_eq!(out[0].actor, "worker-z");
+    assert_eq!(out[0].tx_hash.as_deref(), Some("0xaaa"));
+    assert_eq!(out[1].actor, "worker-z");
+    assert_eq!(out[1].tx_hash.as_deref(), Some("0xbbb"));
+}

@@ -139,16 +139,28 @@ fn sorted_task_adapter_records<'a>(task_id: u64, recs: &'a [AdapterRecord]) -> V
         (
             a.ts,
             adapter_kind_query_order(&a.kind),
-            a.worker.as_deref().unwrap_or(""),
-            a.tx_hash.as_deref().unwrap_or(""),
-            a.result_hash.as_deref().unwrap_or(""),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            a.result_hash.as_deref().unwrap_or("").trim(),
         )
             .cmp(&(
                 b.ts,
                 adapter_kind_query_order(&b.kind),
-                b.worker.as_deref().unwrap_or(""),
-                b.tx_hash.as_deref().unwrap_or(""),
-                b.result_hash.as_deref().unwrap_or(""),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                b.result_hash.as_deref().unwrap_or("").trim(),
             ))
     });
     task_recs
