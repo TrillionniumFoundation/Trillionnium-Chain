@@ -61,6 +61,13 @@ The scaffold supports these environment variables:
 `EXPLORER_PUBLIC_BASE_URL` controls the operator-facing base URL emitted in `health_url` / `index_url`, which is useful when the process binds to `0.0.0.0`, sits behind a reverse proxy, or is reached through port-forwarding.
 `EXPLORER_RPC_BASE_URL` records which RPC read surface this scaffold is documenting; it defaults to `http://127.0.0.1:7777` and is emitted by the up/status/down scripts as `rpc_base_url=...` so handoff notes can name the expected upstream read source explicitly.
 
+Fail-closed config guardrails now apply before start/status/down execution:
+
+- `EXPLORER_HOST` must not be empty
+- `EXPLORER_PORT` must be an integer in `[1, 65535]`
+
+If those checks fail, the scripts stop immediately instead of attempting a misleading partial launch or reporting status for an invalid bind target.
+
 Example:
 
 ```bash

@@ -29,7 +29,23 @@ emit_contract_fields() {
   echo "production_ready=false"
 }
 
+validate_runtime_contract() {
+  if [[ -z "${HOST}" ]]; then
+    echo "refusing to start explorer service scaffold: EXPLORER_HOST must not be empty"
+    emit_contract_fields
+    exit 1
+  fi
+
+  if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
+    echo "refusing to start explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
+    emit_contract_fields
+    exit 1
+  fi
+}
+
 mkdir -p "${PUBLIC_DIR}"
+
+validate_runtime_contract
 
 if ! command -v python3 >/dev/null 2>&1; then
   echo "refusing to start explorer service scaffold: python3 is required but not installed"

@@ -29,6 +29,22 @@ emit_contract_paths() {
   echo "production_ready=false"
 }
 
+validate_runtime_contract() {
+  if [[ -z "${HOST}" ]]; then
+    echo "refusing to stop explorer service scaffold: EXPLORER_HOST must not be empty"
+    emit_contract_paths
+    exit 1
+  fi
+
+  if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
+    echo "refusing to stop explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
+    emit_contract_paths
+    exit 1
+  fi
+}
+
+validate_runtime_contract
+
 if [[ ! -f "${PID_FILE}" ]]; then
   echo "explorer service already stopped"
   emit_contract_paths

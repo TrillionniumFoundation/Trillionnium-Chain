@@ -16,9 +16,47 @@ INDEX_URL="${PUBLIC_BASE_URL}/index.json"
 RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
 RPC_BASE_URL="${RPC_BASE_URL%/}"
 
+validate_runtime_contract() {
+  if [[ -z "${HOST}" ]]; then
+    echo "state=invalid-config"
+    echo "config_error=EXPLORER_HOST must not be empty"
+    echo "pid_file=${PID_FILE}"
+    echo "log_file=${LOG_FILE}"
+    echo "public_dir=${PUBLIC_DIR}"
+    echo "bind_host=${HOST}"
+    echo "bind_port=${PORT}"
+    echo "health_url=${HEALTH_URL}"
+    echo "index_url=${INDEX_URL}"
+    echo "rpc_base_url=${RPC_BASE_URL}"
+    echo "service_mode=operator-facing-static-scaffold"
+    echo "production_ready=false"
+    echo "health=unknown"
+    exit 1
+  fi
+
+  if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
+    echo "state=invalid-config"
+    echo "config_error=EXPLORER_PORT must be an integer in [1, 65535]"
+    echo "pid_file=${PID_FILE}"
+    echo "log_file=${LOG_FILE}"
+    echo "public_dir=${PUBLIC_DIR}"
+    echo "bind_host=${HOST}"
+    echo "bind_port=${PORT}"
+    echo "health_url=${HEALTH_URL}"
+    echo "index_url=${INDEX_URL}"
+    echo "rpc_base_url=${RPC_BASE_URL}"
+    echo "service_mode=operator-facing-static-scaffold"
+    echo "production_ready=false"
+    echo "health=unknown"
+    exit 1
+  fi
+}
+
 state="down"
 health="unknown"
 pid_valid="true"
+
+validate_runtime_contract
 
 if [[ -f "${PID_FILE}" ]]; then
   pid="$(tr -d '[:space:]' <"${PID_FILE}")"
