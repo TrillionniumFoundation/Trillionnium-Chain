@@ -129,7 +129,8 @@ Likely causes:
 
 - the service has not been started,
 - the process exited,
-- the port is unreachable from the current host.
+- the port is unreachable from the current host,
+- `python3` is unavailable on the host, so the scaffold refused to start.
 
 Action:
 

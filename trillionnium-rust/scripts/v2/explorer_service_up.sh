@@ -31,6 +31,12 @@ emit_contract_fields() {
 
 mkdir -p "${PUBLIC_DIR}"
 
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "refusing to start explorer service scaffold: python3 is required but not installed"
+  emit_contract_fields
+  exit 1
+fi
+
 if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
   echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
   emit_contract_fields
