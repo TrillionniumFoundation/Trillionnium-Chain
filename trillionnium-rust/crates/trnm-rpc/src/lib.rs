@@ -143,14 +143,31 @@ impl OracleValidateSnapshotResponse {
             .is_some_and(|label| !label.is_empty())
     }
 
+    fn is_stale_error_label(label: &str) -> bool {
+        matches!(label, "stale")
+            || label.starts_with("future snapshot:")
+            || label.starts_with("stale snapshot:")
+            || label.starts_with("invalid window:")
+            || label.starts_with("invalid window timestamp:")
+    }
+
+    fn is_quorum_error_label(label: &str) -> bool {
+        matches!(label, "quorum") || label.starts_with("snapshot hash mismatch:")
+    }
+
+    fn is_drift_error_label(label: &str) -> bool {
+        matches!(label, "drift")
+    }
+
     fn has_explicit_unclassified_error_label(&self) -> bool {
         self.error
             .as_deref()
             .map(str::trim)
             .is_some_and(|label| {
                 !label.is_empty()
-                    && !matches!(label, "stale" | "quorum" | "drift")
-                    && !label.starts_with("snapshot hash mismatch:")
+                    && !Self::is_stale_error_label(label)
+                    && !Self::is_quorum_error_label(label)
+                    && !Self::is_drift_error_label(label)
             })
     }
 
@@ -208,26 +225,17 @@ impl OracleValidateSnapshotResponse {
             return false;
         };
 
-        match label {
-            "stale" => {
-                self.observation.stale_reject_total > 0 && self.metrics.oracle_stale_reject_total > 0
-            }
-            "quorum" => {
-                self.observation.quorum_reject_total > 0
-                    && self.metrics.oracle_quorum_reject_total > 0
-            }
-            "drift" => {
-                self.observation.drift_reject_total > 0 && self.metrics.oracle_drift_reject_total > 0
-            }
-            _ if label.starts_with("snapshot hash mismatch:") => {
-                self.observation.quorum_reject_total > 0
-                    && self.metrics.oracle_quorum_reject_total > 0
-            }
-            _ => {
-                self.has_explicit_unclassified_error_label()
-                    && self.classified_reject_total() == 0
-                    && self.observation_classified_reject_total() == 0
-            }
+        if Self::is_stale_error_label(label) {
+            self.observation.stale_reject_total > 0 && self.metrics.oracle_stale_reject_total > 0
+        } else if Self::is_quorum_error_label(label) {
+            self.observation.quorum_reject_total > 0
+                && self.metrics.oracle_quorum_reject_total > 0
+        } else if Self::is_drift_error_label(label) {
+            self.observation.drift_reject_total > 0 && self.metrics.oracle_drift_reject_total > 0
+        } else {
+            self.has_explicit_unclassified_error_label()
+                && self.classified_reject_total() == 0
+                && self.observation_classified_reject_total() == 0
         }
     }
 

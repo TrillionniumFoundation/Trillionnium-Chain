@@ -270,7 +270,11 @@ fn canonical_source_cardinality(sources: &[Value]) -> u32 {
         let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
             return sources.len() as u32;
         };
-        unique.insert(source_id.trim().to_ascii_lowercase());
+        let canonical = source_id.trim().to_ascii_lowercase();
+        if canonical.is_empty() {
+            continue;
+        }
+        unique.insert(canonical);
     }
     unique.len() as u32
 }
