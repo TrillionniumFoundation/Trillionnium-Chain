@@ -113,6 +113,10 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     if not isinstance(raw, str):
         fail(f"invalid node config {path}: {field} must be a string")
     value = raw.strip()
+    if raw != value:
+        fail(
+            f"invalid node config {path}: {field} must not contain leading or trailing whitespace"
+        )
     if not value:
         fail(f"invalid node config {path}: {field} must not be empty")
     return value
