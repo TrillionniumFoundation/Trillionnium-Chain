@@ -258,6 +258,20 @@ pub(crate) fn metadata_only_recovery_error(
     )
 }
 
+pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
+    format!(
+        "retained_wal_entries={} checkpoint_height_retained={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
+        recovered.wal_entries_retained,
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
+        recovered.truncated,
+        recovered.metadata_only_recovery,
+    )
+}
+
 pub(crate) fn ensure_recoverable_wal_state(
     wal_dir: &Path,
     recovered: &RecoveredWalState,
@@ -270,7 +284,7 @@ pub(crate) fn ensure_recoverable_wal_state(
 
 #[cfg(test)]
 mod tests {
-    use super::{metadata_only_recovery_error, retained_wal_summary};
+    use super::{metadata_only_recovery_error, recovery_startup_summary, retained_wal_summary};
     use crate::types::RecoveredWalState;
     use std::path::Path;
 
@@ -359,6 +373,26 @@ mod tests {
         assert_eq!(
             retained_wal_summary(&recovered),
             "retained no committed WAL entries (last retained checkpoint height 8)"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_surfaces_join_rejoin_triage_fields() {
+        let recovered = recovered_state(2, 12, Some(10), true, true);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=10 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_handles_missing_checkpoint_metadata() {
+        let recovered = recovered_state(1, 9, None, false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false"
         );
     }
 
