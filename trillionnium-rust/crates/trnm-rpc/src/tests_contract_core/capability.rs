@@ -134,6 +134,14 @@ fn resolve_capability_token_subject_or_token_accepts_wrapped_operator_input() {
         resolve_capability_token_subject_or_token(&registry, " \"did:org:lane-xi\" "),
         Some(token_id)
     );
+    assert_eq!(
+        resolve_capability_token_subject_or_token(
+            &registry,
+            "  \u{2066}`\"'did:org:lane-xi'\"`\u{2069}  ",
+        ),
+        Some(token_id),
+        "mixed operator quoting plus bidi controls should still normalize to the canonical DID"
+    );
     let wrapped_token = format!(" '`{token_id}`' ");
     assert_eq!(
         resolve_capability_token_subject_or_token(&registry, &wrapped_token),
