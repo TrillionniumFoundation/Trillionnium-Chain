@@ -149,3 +149,53 @@ fn reserve_only_mode_can_still_borrow_the_last_truly_idle_critical_slot() {
     assert_eq!(g.critical_free_slots(), 0);
     assert!(!g.can_normal_borrow_critical_slot(g.critical_free_slots()));
 }
+
+#[test]
+fn reserve_only_saturation_reopens_cleanly_after_one_real_drain() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    // Saturate the shared reserve-only queue via mixed-class ingress.
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 2,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        }
+    );
+
+    // Opposite-class duplicate probes and fresh retry noise must not perturb the
+    // shared reserve-only accounting surface while saturated.
+    assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+
+    // One real drain should immediately reopen both classes for fresh ingress.
+    assert_eq!(g.pop_ready(), Some(10));
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 1,
+            total_queued: 1,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        }
+    );
+    assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+}
