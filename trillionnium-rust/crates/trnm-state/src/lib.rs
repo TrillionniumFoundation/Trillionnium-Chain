@@ -218,7 +218,7 @@ impl WalMeta {
             .as_ref()
             .map(|prev| prev.len() / 2)
             .unwrap_or(0);
-        let wal_proposal_hash_present = !self.proposal_hash.is_empty();
+        let wal_proposal_hash_present = !self.proposal_hash.trim().is_empty();
         let wal_proposal_hash_kind = "opaque-ascii";
         let wal_proposal_hash_surface_policy = "ascii-trimmed-no-ws-control-max256";
         let wal_surface_canonical = checkpoint_height_surface_is_canonical(self.height)
