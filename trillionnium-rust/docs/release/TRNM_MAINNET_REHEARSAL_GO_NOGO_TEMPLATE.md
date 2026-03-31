@@ -191,6 +191,7 @@ Mark each item explicitly:
 - [ ] `preflight_generated_at=` preserved next to preflight decision language
 - [ ] `summary_generated_at=` preserved next to local-evidence decision language
 - [ ] `manifest_generated_at=` preserved next to RC decision language
+- [ ] preflight identity fields preserved next to preflight decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
 - [ ] `rollback_command=` quoted verbatim
@@ -208,7 +209,17 @@ signer_exclusivity_note=<one line>
 preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
+preflight_result=<GO|NO-GO>
 preflight_generated_at=<artifact value>
+preflight_git_toplevel=<artifact value>
+preflight_git_branch=<artifact value>
+preflight_git_head=<artifact value>
+preflight_git_head_state=<artifact value>
+preflight_git_status_summary=<artifact value>
+preflight_git_worktree_path=<artifact value>
+preflight_git_worktree_branch_ref=<artifact value>
+preflight_expected_worktree_root=<ticket path>
+preflight_expected_branch_ref=<ticket ref>
 summary_generated_at=<artifact value>
 manifest_generated_at=<artifact value>
 git_branch=<artifact value>
