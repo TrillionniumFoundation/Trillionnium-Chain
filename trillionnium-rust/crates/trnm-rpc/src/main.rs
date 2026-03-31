@@ -874,12 +874,12 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                     continue;
                 }
                 let normalized = normalize_wrapped_env_value(trimmed);
-                if normalized.is_empty() {
+                if normalized.is_empty() || normalized.starts_with('#') {
                     continue;
                 }
                 let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
                     normalize_lexical_path(manifest_dir.join(path))
                 };
@@ -891,9 +891,9 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
@@ -8323,6 +8323,49 @@ line2
             got,
             vec![archive_dir.join("node4.log")],
             "historical replay manifests must resolve relative entries from the manifest directory"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_deduplicates_manifest_and_env_entries_after_lexical_normalization(
+    ) {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-lexical-dedupe", "dir");
+        let history_dir = root.join("history");
+        fs::create_dir_all(&history_dir).expect("create history dir");
+
+        let shared_log = root.join("shared.log");
+        let manifest = history_dir.join("sources.txt");
+        fs::write(&shared_log, "").expect("write shared log");
+        fs::write(&manifest, "../shared.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "./shared.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "historical replay sources should dedupe across manifest/env lexical path variants"
         );
 
         let _ = fs::remove_dir_all(root);
