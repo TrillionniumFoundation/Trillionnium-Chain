@@ -1537,6 +1537,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
+        "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
+        path
+    );
+    anyhow::ensure!(
         node_id != "." && node_id != "..",
         "invalid node config {}: node_id must not be '.' or '..'",
         path
@@ -5550,6 +5555,24 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(err
             .to_string()
             .contains("node_id must not contain path separators"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_quoting_characters_in_node_id() {
+        for node_id in ["node\"alpha", "node'alpha", "node`alpha"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("node_id quoting characters must fail closed");
+            assert!(err
+                .to_string()
+                .contains("node_id must not contain quoting characters (\" ' `)"));
+        }
     }
 
     #[test]
