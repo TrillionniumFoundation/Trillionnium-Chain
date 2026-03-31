@@ -2622,6 +2622,28 @@ mod tests {
     }
 
     #[test]
+    fn drained_standalone_duplicate_metadata_reopens_as_fresh_after_real_queue_drain() {
+        let mut g = AdmissionGate::new(2);
+
+        assert_eq!(g.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: duplicate metadata retains an extra ghost id
+        // while one fresh id is still only blocked by saturation.
+        g.seen.insert(99);
+        assert_eq!(g.admit(99), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(100), AdmitOutcome::Backpressured);
+
+        // Once the authoritative queue fully drains, stale duplicate metadata must
+        // be cleared immediately so earlier fresh retries can re-enter cleanly.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert!(g.seen.is_empty());
+        assert_eq!(g.admit(99), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(100), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
         let mut g = AdmissionGate::new(2);
 
