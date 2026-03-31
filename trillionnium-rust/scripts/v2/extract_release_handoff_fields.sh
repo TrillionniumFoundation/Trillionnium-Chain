@@ -176,6 +176,11 @@ assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
   exit 1
 }
 
+[ "$summary_status_summary" = "clean" ] || {
+  printf 'artifact mismatch for git_status_summary: expected clean got %s\n' "$summary_status_summary" >&2
+  exit 1
+}
+
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   if [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
     printf 'artifact mismatch for expected worktree root: expected=%s summary=%s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
