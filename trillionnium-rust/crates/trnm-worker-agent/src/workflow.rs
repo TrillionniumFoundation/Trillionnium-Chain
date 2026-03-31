@@ -2,7 +2,10 @@ use anyhow::Result;
 use serde::Serialize;
 use std::path::PathBuf;
 
-use crate::{append_submission, commitment, execute_payload, next_task_id};
+use crate::{
+    append_submission, commitment, execute_payload, next_task_id,
+    workflow_ops::submit_log_contract_line,
+};
 
 #[derive(Debug, Serialize)]
 struct RunOnceOutput {
@@ -50,7 +53,7 @@ pub(crate) fn handle_commit_reveal(
     );
     if submit {
         append_submission(&submit_log, task_id, &worker, &c, &result_hash, &salt_hex)?;
-        println!("submitted=true submit_log={}", submit_log.display());
+        println!("{}", submit_log_contract_line(&submit_log));
     }
     Ok(())
 }
@@ -92,7 +95,7 @@ pub(crate) fn handle_run_once(
     };
     println!("{}", serde_json::to_string_pretty(&out)?);
     if submit {
-        eprintln!("submitted=true submit_log={}", submit_log.display());
+        eprintln!("{}", submit_log_contract_line(&submit_log));
     }
     Ok(())
 }

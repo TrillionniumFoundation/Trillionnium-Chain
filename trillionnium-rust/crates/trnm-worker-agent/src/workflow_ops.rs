@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::path::Path;
 
 #[derive(Debug, Serialize)]
 pub(crate) struct RunOnceOutput {
@@ -58,11 +59,15 @@ pub(crate) fn build_run_once_output(
     }
 }
 
+pub(crate) fn submit_log_contract_line(submit_log: &Path) -> String {
+    format!("submitted=true submit_log={}", submit_log.display())
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
         build_run_once_output, commit_template, compute_commit_hash, compute_result_and_salt,
-        reveal_template,
+        reveal_template, submit_log_contract_line,
     };
 
     #[test]
@@ -103,5 +108,13 @@ mod tests {
     fn compute_commit_hash_stays_deterministic() {
         let commit = compute_commit_hash(7, "r", "s", "bob");
         assert!(commit.len() == 64);
+    }
+
+    #[test]
+    fn submit_log_contract_line_keeps_operator_handoff_tokens_stable() {
+        let line = submit_log_contract_line(std::path::Path::new("logs/submit.jsonl"));
+        assert_eq!(line, "submitted=true submit_log=logs/submit.jsonl");
+        assert_eq!(line.matches("submitted=true").count(), 1);
+        assert_eq!(line.matches("submit_log=").count(), 1);
     }
 }
