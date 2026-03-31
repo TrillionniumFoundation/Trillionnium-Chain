@@ -2053,6 +2053,41 @@ mod tests {
     }
 
     #[test]
+    fn guarded_normal_retry_stays_fresh_until_all_active_critical_backlog_clears() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity and arm active critical backlog while one
+        // aggregate slot remains reachable only by fresh critical spillover.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+
+        // A fresh normal id is reserve-guarded here and must stay fresh on retry.
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // Fresh critical ingress may still claim the final guarded slot.
+        assert_eq!(g.admit(91, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        // Draining only one critical item still leaves active critical backlog, so the
+        // same normal id must remain fresh-but-guarded instead of becoming duplicate.
+        assert_eq!(g.pop_ready(), Some(90));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        // Once critical backlog fully clears, the earlier guarded id should admit as
+        // fresh rather than being poisoned by stale anti-spam metadata.
+        assert_eq!(g.pop_ready(), Some(91));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn borrowed_last_idle_critical_slot_reopens_critical_retry_after_drain() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
