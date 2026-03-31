@@ -181,7 +181,13 @@ pub(crate) fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
 fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     let base = match recovered.wal_entries_retained {
-        0 => "retained no committed WAL entries".into(),
+        0 => match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) => format!(
+                "retained no committed WAL entries (last retained checkpoint height {})",
+                checkpoint_height
+            ),
+            None => "retained no committed WAL entries".into(),
+        },
         1 => format!(
             "retained 1 committed WAL entry through height {}",
             recovered.next_height.saturating_sub(1)
@@ -193,22 +199,32 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
         ),
     };
 
-    if recovered.wal_entries_retained == 0 {
-        return base;
-    }
-
-    let tip_height = recovered.next_height.saturating_sub(1);
-    match recovered.checkpoint_height_retained {
-        Some(checkpoint_height) if checkpoint_height < tip_height => {
-            let lag = tip_height - checkpoint_height;
-            let blocks = if lag == 1 { "block" } else { "blocks" };
-            format!(
-                "{} (checkpoint lags retained WAL tip by {} {})",
-                base, lag, blocks
-            )
+    let summary = if recovered.wal_entries_retained == 0 {
+        base
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                let lag = tip_height - checkpoint_height;
+                let blocks = if lag == 1 { "block" } else { "blocks" };
+                format!(
+                    "{} (checkpoint lags retained WAL tip by {} {})",
+                    base, lag, blocks
+                )
+            }
+            Some(checkpoint_height) if checkpoint_height > tip_height => format!(
+                "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
+                base, checkpoint_height, tip_height
+            ),
+            None => format!("{} (no retained checkpoint metadata)", base),
+            Some(_) => base,
         }
-        None => format!("{} (no retained checkpoint metadata)", base),
-        Some(_) => base,
+    };
+
+    if recovered.truncated {
+        format!("{}; repaired WAL tail required truncation", summary)
+    } else {
+        summary
     }
 }
 
@@ -248,6 +264,25 @@ pub(crate) fn ensure_recoverable_wal_state(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::types::RecoveredWalState;
+
+    fn recovered_state(
+        wal_entries_retained: usize,
+        next_height: u64,
+        checkpoint_height_retained: Option<u64>,
+        truncated: bool,
+        metadata_only_recovery: bool,
+    ) -> RecoveredWalState {
+        RecoveredWalState {
+            next_height,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated,
+            metadata_only_recovery,
+            wal_entries_retained,
+            checkpoint_height_retained,
+        }
+    }
 
     fn temp_wal_dir(name: &str) -> PathBuf {
         let now_nanos = SystemTime::now()
@@ -260,6 +295,54 @@ mod tests {
             std::process::id(),
             now_nanos
         ))
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_ahead_mismatch_for_runtime_triage() {
+        let recovered = recovered_state(2, 12, Some(15), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch)"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_appends_truncation_notice_for_runtime_triage() {
+        let recovered = recovered_state(2, 12, Some(10), true, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (checkpoint lags retained WAL tip by 1 block); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_checkpoint_height_without_retained_entries_for_runtime_triage() {
+        let recovered = recovered_state(0, 9, Some(8), false, true);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries (last retained checkpoint height 8)"
+        );
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_includes_runtime_incident_clues() {
+        let recovered = recovered_state(2, 12, Some(10), true, true);
+        let error = metadata_only_recovery_error(Path::new("/tmp/trnm-runtime-wal"), &recovered);
+
+        assert!(error.contains("/tmp/trnm-runtime-wal"));
+        assert!(error.contains(
+            "retained 2 committed WAL entries through height 11 (checkpoint lags retained WAL tip by 1 block); repaired WAL tail required truncation"
+        ));
+        assert!(error.contains("last retained checkpoint: 10"));
+        assert!(error.contains("next startup height: 12"));
+        assert!(error.contains("incident clue: metadata_only_recovery=1"));
+        assert!(error.contains("wal_entries_retained=2"));
+        assert!(error.contains("wal_tail_truncated=true"));
+        assert!(error.contains("checkpoint_height_retained=10"));
+        assert!(error.contains("next_startup_height=12"));
     }
 
     #[test]
