@@ -1,4 +1,5 @@
 use super::*;
+use super::ENV_LOCK;
 
 #[test]
 fn wallet_import_hex_check() {
@@ -199,6 +200,7 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
 
 #[test]
 fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
+    let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
     let original_home = std::env::var_os("HOME");
     let home = std::env::temp_dir().join(format!(
@@ -246,6 +248,7 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 
 #[test]
 fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
+    let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
     let original_home = std::env::var_os("HOME");
     std::env::remove_var("TRNM_WALLET_STORE");
@@ -839,6 +842,7 @@ fn wallet_store_rejects_symlinked_ancestor_path_components() {
 fn wallet_create_rejects_symlinked_ancestor_from_env_store() {
     use std::os::unix::fs::symlink;
 
+    let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
     let unique = format!(
         "trnm-cli-wallet-env-ancestor-symlink-test-{}-{}",
