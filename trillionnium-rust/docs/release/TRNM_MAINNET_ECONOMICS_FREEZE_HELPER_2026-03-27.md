@@ -338,7 +338,7 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
    - owner of record for edits before launch
 2. **Operator inspection path**
    - exact command or runbook operators use to print the current tuple
-   - expected output fields: ingress classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, anti-spam floor, override authority
+   - expected output fields: ingress classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, override authority
 3. **Behavioral evidence**
    - at least one mempool gate for ingress/sponsor boundaries
    - at least one state gate for retention canonicalization
@@ -366,6 +366,7 @@ TRNM mainnet economics freeze review
 - sponsor revocation path + queued-tx disposition:
 - sponsor revoke duplicate-retention rule:
 - retention window + payer of record:
+- retention expiry disposition:
 - retention budget exhaustion fallback:
 - anti-spam floor / sustained-load rule:
 - override authority:
