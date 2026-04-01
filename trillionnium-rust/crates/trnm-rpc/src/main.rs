@@ -1218,7 +1218,19 @@ fn normalize_wrapped_env_value(raw: &str) -> &str {
 fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
     let raw = std::env::var(name).ok()?;
     let normalized = normalize_wrapped_env_value(&raw);
-    if normalized.is_empty() {
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
         None
     } else {
         Some(PathBuf::from(normalized))
