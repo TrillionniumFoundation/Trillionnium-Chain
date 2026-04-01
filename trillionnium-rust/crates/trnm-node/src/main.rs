@@ -1557,6 +1557,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.contains('[') && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain host-literal brackets ([ ])",
+        path
+    );
+    anyhow::ensure!(
         node_id != "." && node_id != "..",
         "invalid node config {}: node_id must not be '.' or '..'",
         path
@@ -5692,6 +5697,24 @@ bootstrap_peers = ["127.0.0.1:27656"]
             )
             .expect_err("node_id dot segments must fail closed");
             assert!(err.to_string().contains("node_id must not be '.' or '..'"));
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_host_literal_brackets_in_node_id() {
+        for node_id in ["[seed.example.com]", "[node-a]", "node-a]", "[node-a"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("node_id host-literal brackets must fail closed");
+            assert!(err
+                .to_string()
+                .contains("node_id must not contain host-literal brackets ([ ])"));
         }
     }
 
