@@ -332,16 +332,25 @@ Record these fields in the release ticket or operator handoff note:
 - assigned branch ref (from ticket/lane prompt):
 - verified worktree:
 - verified branch ref:
+- verified head:
 - branch:
 - commit:
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
+- worktree branch ref match (`true` required):
+- git status summary (`clean` required):
 - preflight summary path:
 - local evidence summary path:
+- local evidence generated_at:
 - local evidence truth_source:
+- local evidence historical_evidence_only:
+- local evidence evidence_scope:
 - rc manifest path:
+- rc manifest generated_at:
 - rc manifest truth_source:
+- rc manifest historical_evidence_only:
+- rc manifest evidence_scope:
 - nightly streak result:
 - go/no-go decision:
 - blocker summary:
