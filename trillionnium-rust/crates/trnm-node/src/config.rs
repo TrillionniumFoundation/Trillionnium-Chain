@@ -417,6 +417,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
             .any(|component| matches!(component, std::path::Component::ParentDir)),
         "read config failed: path must not contain parent traversal (..)"
     );
+    anyhow::ensure!(
+        !path.split(['/', '\\']).any(|segment| segment == ".."),
+        "read config failed: path must not contain parent traversal (..)"
+    );
 
     Ok(())
 }
@@ -671,7 +675,12 @@ mod tests {
 
     #[test]
     fn load_config_rejects_parent_traversal_in_path_fail_closed() {
-        for path in ["../configs/node1.toml", "configs/../node1.toml"] {
+        for path in [
+            "../configs/node1.toml",
+            "configs/../node1.toml",
+            r"..\configs\node1.toml",
+            r"configs\..\node1.toml",
+        ] {
             let err = load_config(path).expect_err("config path parent traversal must fail closed");
             assert!(
                 err.to_string()
