@@ -8940,6 +8940,27 @@ fn checkpoint_and_wal_evidence_summaries_mark_noncanonical_surfaces_false() {
 }
 
 #[test]
+fn wal_evidence_summary_rejects_short_ascii_state_root_surface() {
+    let wal = WalMeta {
+        height: 2,
+        round: 1,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "state-root-2".into(),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_state_root=state-root-2"));
+    assert!(wal_summary.contains("wal_state_root_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_state_root_encoding=hex-lower"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "wal evidence summary must fail closed when state_root_hex is printable ascii but not a canonical 32-byte lower-hex digest"
+    );
+}
+
+#[test]
 fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
     let e1 = WalMeta {
         height: 1,

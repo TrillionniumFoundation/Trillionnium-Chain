@@ -3918,14 +3918,9 @@ fn wal_state_root_surface_has_forbidden_layout(value: &str) -> bool {
 
 fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     let state_root_hex = wal_entry.state_root_hex.as_str();
-    let looks_like_digest_surface = state_root_hex.len() == 64
-        && state_root_hex
-            .as_bytes()
-            .iter()
-            .all(|byte| byte.is_ascii_hexdigit());
 
     !wal_state_root_surface_has_forbidden_layout(state_root_hex)
-        && (!looks_like_digest_surface || is_canonical_hex_digest(state_root_hex))
+        && is_canonical_hex_digest(state_root_hex)
 }
 
 fn checkpoint_hash_surfaces_are_canonical(
