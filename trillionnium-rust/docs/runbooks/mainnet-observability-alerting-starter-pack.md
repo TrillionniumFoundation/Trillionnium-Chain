@@ -354,11 +354,11 @@ Use one compact line in pages, tickets, and dashboard snapshots:
 
 - `plane=observability service=<service> severity=<sevX> signal=<signal> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<stable-panel-name|unknown> observed=<what-failed> impact=<blast-radius> truth_source=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> replay=<present|missing> rollback=<present|missing>`
 
-Keep `first_stop=` aligned with the exact stable panel name from the routing table above, and copy `truth_source=` from emitted evidence when present.
+Keep `first_stop=` aligned with the exact stable panel name from the routing table above, and copy `truth_source=` from emitted evidence when present. If the transport format cannot safely carry spaces, wrap the panel name in quotes rather than inventing an underscore alias.
 
 Example:
 
-- `plane=observability service=node severity=sev1 signal=sync-lag needs_replay=yes needs_rollback=yes first_stop=Node_liveness_height_progress observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=node severity=sev1 signal=sync-lag needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 
 ---
 
