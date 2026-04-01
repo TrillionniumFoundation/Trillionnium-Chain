@@ -1514,6 +1514,26 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_socket_like_node_id_literals() {
+        for node_id in ["127.0.0.1:26656", "[::1]", "[2001:db8::1]", "seed.example.com:26656"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("socket-like node_id literals must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not look like a host or socket literal"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_internal_whitespace_in_operator_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
