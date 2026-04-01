@@ -67,7 +67,7 @@ pub(crate) fn submit_message_max_bytes() -> u64 {
 }
 
 pub(crate) fn normalize_wrapped_env_value(raw: &str) -> &str {
-    let mut normalized = raw.trim();
+    let mut normalized = raw.trim_start_matches('\u{feff}').trim();
     while normalized.len() >= 2 {
         let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
             || (normalized.starts_with('\'') && normalized.ends_with('\''))
@@ -75,9 +75,11 @@ pub(crate) fn normalize_wrapped_env_value(raw: &str) -> &str {
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[1..normalized.len() - 1].trim();
+        normalized = normalized[1..normalized.len() - 1]
+            .trim_start_matches('\u{feff}')
+            .trim();
     }
-    normalized
+    normalized.trim_start_matches('\u{feff}').trim()
 }
 
 pub(crate) fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
