@@ -217,6 +217,17 @@ Fail-closed rule for generated packets:
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_path=` and `packet_distribution_path=` to be explicit absolute paths rather than relative paths copied from a local shell
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_sha256=` to be a real 64-character hex SHA-256 digest instead of a shorthand label or truncated checksum
 
+### Signed handoff evidence bundle (public-mainnet-input)
+
+For any packet that will be cited outside a local rehearsal, archive one small evidence bundle alongside the packet instead of relying on chat history:
+- the exact generated ceremony packet file referenced by `packet_distribution_path=`
+- the exact genesis artifact digest record used by the packet (`genesis_artifact_path=` + `genesis_artifact_sha256=`)
+- one acknowledgment artifact per validator owner, where each artifact names the same `ceremony_id=`, `validator_name=`, `config_path=`, and `genesis_artifact_sha256=` that appear in the shared packet
+- if `validator_entry_hash=` is used, require each operator acknowledgment artifact to quote the same hash so later review can tie the acknowledgment back to one immutable validator descriptor
+
+Minimum review rule:
+- if an operator acknowledgment cannot be matched back to the packet by `ceremony_id=` plus either `validator_name=` or `validator_entry_hash=`, treat the acknowledgment as unusable for signed/public-mainnet handoff evidence
+
 What this proves:
 - the named validator config bundle has no duplicate node identity or reused listen addresses
 - the validator config loader still compiles
