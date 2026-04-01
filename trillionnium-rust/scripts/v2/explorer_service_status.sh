@@ -50,6 +50,40 @@ validate_runtime_contract() {
     echo "health=unknown"
     exit 1
   fi
+
+  if [[ -z "${RPC_BASE_URL}" ]]; then
+    echo "state=invalid-config"
+    echo "config_error=EXPLORER_RPC_BASE_URL must not be empty"
+    echo "pid_file=${PID_FILE}"
+    echo "log_file=${LOG_FILE}"
+    echo "public_dir=${PUBLIC_DIR}"
+    echo "bind_host=${HOST}"
+    echo "bind_port=${PORT}"
+    echo "health_url=${HEALTH_URL}"
+    echo "index_url=${INDEX_URL}"
+    echo "rpc_base_url=${RPC_BASE_URL}"
+    echo "service_mode=operator-facing-static-scaffold"
+    echo "production_ready=false"
+    echo "health=unknown"
+    exit 1
+  fi
+
+  if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
+    echo "state=invalid-config"
+    echo "config_error=EXPLORER_RPC_BASE_URL must start with http:// or https://"
+    echo "pid_file=${PID_FILE}"
+    echo "log_file=${LOG_FILE}"
+    echo "public_dir=${PUBLIC_DIR}"
+    echo "bind_host=${HOST}"
+    echo "bind_port=${PORT}"
+    echo "health_url=${HEALTH_URL}"
+    echo "index_url=${INDEX_URL}"
+    echo "rpc_base_url=${RPC_BASE_URL}"
+    echo "service_mode=operator-facing-static-scaffold"
+    echo "production_ready=false"
+    echo "health=unknown"
+    exit 1
+  fi
 }
 
 state="down"

@@ -41,6 +41,18 @@ validate_runtime_contract() {
     emit_contract_paths
     exit 1
   fi
+
+  if [[ -z "${RPC_BASE_URL}" ]]; then
+    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
+    emit_contract_paths
+    exit 1
+  fi
+
+  if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
+    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
+    emit_contract_paths
+    exit 1
+  fi
 }
 
 validate_runtime_contract

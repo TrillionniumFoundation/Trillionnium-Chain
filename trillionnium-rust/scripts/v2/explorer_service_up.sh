@@ -41,6 +41,18 @@ validate_runtime_contract() {
     emit_contract_fields
     exit 1
   fi
+
+  if [[ -z "${RPC_BASE_URL}" ]]; then
+    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
+    emit_contract_fields
+    exit 1
+  fi
+
+  if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
+    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
+    emit_contract_fields
+    exit 1
+  fi
 }
 
 mkdir -p "${PUBLIC_DIR}"
