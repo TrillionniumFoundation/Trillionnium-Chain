@@ -129,6 +129,34 @@ fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_documentation_or_benchmark_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(octets, [192, 0, 2, _] | [198, 51, 100, _] | [203, 0, 113, _])
+                || (octets[0] == 198 && octets[1] >= 18 && octets[1] <= 19)
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
+fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => addr.to_ipv4_mapped().is_some(),
+    }
+}
+
+fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
+    match socket {
+        SocketAddr::V4(_) => false,
+        SocketAddr::V6(addr) => addr.scope_id() != 0,
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
@@ -1650,6 +1678,21 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use a link-local address",
         path
     );
+    anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(rpc_socket),
+        "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
+        path
+    );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a documentation or benchmark-only address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1726,6 +1769,21 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_link_local_ip(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(p2p_socket),
+        "invalid node config {}: p2p_addr must not use an IPv6 scope identifier",
+        path
+    );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a documentation or benchmark-only address",
         path
     );
     anyhow::ensure!(
@@ -5558,6 +5616,104 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .to_string()
             .contains("p2p_addr must not contain list separators (, ; |)"));
     }
+
+    #[test]
+    fn validate_node_config_rejects_ipv4_mapped_scope_and_documentation_listener_addresses() {
+        let rpc_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv4-mapped IPv6 bind must fail closed");
+        assert!(rpc_ipv4_mapped_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv4-mapped IPv6 address"));
+
+        let p2p_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:127.0.0.1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv4-mapped IPv6 bind must fail closed");
+        assert!(p2p_ipv4_mapped_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv4-mapped IPv6 address"));
+
+        let rpc_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888%7]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 scope identifier must fail closed");
+        assert!(rpc_scope_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv6 scope identifier"));
+
+        let p2p_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888%9]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 scope identifier must fail closed");
+        assert!(p2p_scope_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv6 scope identifier"));
+
+        for rpc_addr in [
+            "192.0.2.10:26657",
+            "198.51.100.10:26657",
+            "203.0.113.10:26657",
+            "198.18.0.10:26657",
+            "[2001:db8::10]:26657",
+        ] {
+            let rpc_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("rpc_addr documentation and benchmark ranges must fail closed");
+            assert!(rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a documentation or benchmark-only address"));
+        }
+
+        for p2p_addr in [
+            "192.0.2.10:26656",
+            "198.51.100.10:26656",
+            "203.0.113.10:26656",
+            "198.19.0.10:26656",
+            "[2001:db8::11]:26656",
+        ] {
+            let p2p_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "node.toml",
+            )
+            .expect_err("p2p_addr documentation and benchmark ranges must fail closed");
+            assert!(p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a documentation or benchmark-only address"));
+        }
+    }
+
     #[test]
     fn validate_node_config_rejects_oversized_node_id() {
         let oversized_node_id = "n".repeat(MAX_NODE_ID_LEN + 1);
