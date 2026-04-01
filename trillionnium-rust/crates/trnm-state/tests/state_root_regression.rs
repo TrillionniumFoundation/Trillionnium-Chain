@@ -8836,6 +8836,40 @@ fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() 
 }
 
 #[test]
+fn zero_height_checkpoint_and_wal_evidence_summaries_fail_closed_as_noncanonical() {
+    let wal = WalMeta {
+        height: 0,
+        round: 0,
+        proposal_hash: "proposal-zero-height".into(),
+        committed: true,
+        state_root_hex: "34".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_height=0"));
+    assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=non-genesis"));
+    assert!(
+        checkpoint_summary.contains("checkpoint_surface_canonical=false"),
+        "height-zero checkpoint summaries must fail closed instead of advertising canonical audit evidence"
+    );
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_height=0"));
+    assert!(wal_summary.contains("wal_prev_hash=none"));
+    assert!(wal_summary.contains("wal_prev_hash_present=false"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "height-zero WAL summaries must fail closed instead of advertising canonical audit evidence"
+    );
+}
+
+#[test]
 fn wal_evidence_summary_marks_overlong_proposal_hash_surface_noncanonical() {
     let wal = WalMeta {
         height: 9,
