@@ -127,6 +127,18 @@ describe("dashboard page", () => {
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });
   });
 
+  it("shows a fail-closed overview empty state when KPI cards are missing", async () => {
+    mockedFetch.mockResolvedValue({ ...snapshot, kpis: [] });
+
+    render(<Home />);
+
+    expect(await screen.findByText("No overview KPIs available")).toBeInTheDocument();
+    expect(
+      screen.getByText(/readonly dashboard metrics are unavailable for this snapshot/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Open execution items: 1")).toBeInTheDocument();
+  });
+
   it("shows adapter error state as an assertive fail-closed alert", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");

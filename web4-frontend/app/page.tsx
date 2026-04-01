@@ -159,18 +159,25 @@ export default function Home() {
           <>
             {activeTab === "Overview" && (
               <section className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  {loadState.data.kpis.map((kpi) => (
-                    <article key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                      <p className="text-sm text-slate-500">{kpi.label}</p>
-                      <div className="mt-2 flex items-center justify-between gap-2">
-                        <p className="text-2xl font-semibold">{kpi.value}</p>
-                        <StatusChip text={kpi.health} tone={healthClassMap[kpi.health]} />
-                      </div>
-                      <p className="mt-2 text-sm text-slate-500">Δ {kpi.delta} / 24h</p>
-                    </article>
-                  ))}
-                </div>
+                {loadState.data.kpis.length === 0 ? (
+                  <EmptyState
+                    title="No overview KPIs available"
+                    detail="Readonly dashboard metrics are unavailable for this snapshot. Verify the adapter payload before trusting the overview."
+                  />
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {loadState.data.kpis.map((kpi) => (
+                      <article key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <p className="text-sm text-slate-500">{kpi.label}</p>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <p className="text-2xl font-semibold">{kpi.value}</p>
+                          <StatusChip text={kpi.health} tone={healthClassMap[kpi.health]} />
+                        </div>
+                        <p className="mt-2 text-sm text-slate-500">Δ {kpi.delta} / 24h</p>
+                      </article>
+                    ))}
+                  </div>
+                )}
 
                 <div className="grid gap-4 lg:grid-cols-3">
                   <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
