@@ -38,6 +38,7 @@ emit_invalid_config() {
   echo "production_ready=false"
   echo "health=unknown"
   echo "health_probe=invalid-config"
+  echo "health_probe_url=invalid-config"
 }
 
 validate_runtime_contract() {
@@ -85,6 +86,7 @@ validate_runtime_contract() {
 state="down"
 health="unknown"
 health_probe="not-run-state-not-running"
+health_probe_url="not-run-state-not-running"
 pid_valid="true"
 
 validate_runtime_contract
@@ -106,6 +108,7 @@ fi
 if [[ "${state}" == "running" ]]; then
   if command -v curl >/dev/null 2>&1; then
     health_probe="active"
+    health_probe_url="${HEALTH_URL}"
     if curl --silent --show-error --fail --max-time 2 "${HEALTH_URL}" >/dev/null 2>&1; then
       health="ok"
     else
@@ -113,6 +116,7 @@ if [[ "${state}" == "running" ]]; then
     fi
   else
     health_probe="disabled-curl-unavailable"
+    health_probe_url="curl-unavailable"
   fi
 fi
 
@@ -138,3 +142,4 @@ echo "service_mode=operator-facing-static-scaffold"
 echo "production_ready=false"
 echo "health=${health}"
 echo "health_probe=${health_probe}"
+echo "health_probe_url=${health_probe_url}"
