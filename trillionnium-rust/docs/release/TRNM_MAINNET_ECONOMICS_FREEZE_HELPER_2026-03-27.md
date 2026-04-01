@@ -155,6 +155,7 @@ frozen sheet. Run the commands below from the **repo root** (the directory that 
 cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q
 cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q
 cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
 cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q
 ```
 
@@ -165,6 +166,10 @@ Why this is the minimum useful slice:
 - `lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound` exercises the shared
   reserve-only refill edge so duplicate sponsor/free-ingress retries stay
   classification-only until fresh work truly re-consumes capacity.
+- `lane_borrowed_last_slot_backpressured_retry_reuse_bound` exercises the sponsor-boundary
+  borrowed-slot edge so once the final shared slot is already borrowed, cross-class retries
+  stay backpressured until that exact occupant drains instead of fabricating new sponsor-backed
+  headroom.
 - `retention_restore_regression` checks that retained proof/collateral metadata still
   fails closed when challenger/treasury identities are non-canonical, which keeps the
   retention payer/audit trail inside the same freeze review.
