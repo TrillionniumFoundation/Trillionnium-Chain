@@ -1584,6 +1584,33 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validate_snapshot_response_rejects_unknown_top_level_fields() {
+        let payload = json!({
+            "ok": true,
+            "now_ts_ms": 1_710_000_000_123u64,
+            "observation": {
+                "stale_reject_total": 0,
+                "quorum_reject_total": 0,
+                "drift_reject_total": 0,
+                "accepted_total": 1
+            },
+            "metrics": {
+                "oracle_stale_reject_total": 0,
+                "oracle_quorum_reject_total": 0,
+                "oracle_drift_reject_total": 0,
+                "oracle_source_cardinality": 1,
+                "accepted_total": 1,
+                "sample_count": 1
+            },
+            "bridge_status": "finalized"
+        });
+
+        let err = serde_json::from_value::<OracleValidateSnapshotResponse>(payload)
+            .expect_err("oracle read schema should reject unknown top-level fields");
+        assert!(err.to_string().contains("bridge_status"));
+    }
+
+    #[test]
     fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality() {
         let out: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
