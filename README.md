@@ -145,7 +145,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 6. 文档入口
 
-- 当前发布/就绪真相源（绑定当前 `origin/main` 快照 `0b209289`）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
+- 当前发布/就绪真相源： [RELEASE_READINESS.md](RELEASE_READINESS.md)（引用时请同时记录当下 `git rev-parse origin/main` 输出；不要把 README 中的固定快照 hash 当作长期 truth source）
 - 项目状态（历史推进日志，不作为 release truth source）：[STATUS.md](STATUS.md)
 - 统一开发调度（planning board，不覆盖 release 判定）：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - 并发瓶颈图与 8 周路线（当前 closeout / roadmap 入口）：[docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
