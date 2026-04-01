@@ -1088,7 +1088,15 @@ fn is_hex_wrapper_noise(ch: char) -> bool {
         || ch.is_control()
         || matches!(
             ch,
-            '\u{200B}'
+            '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{180B}'
+                | '\u{180C}'
+                | '\u{180D}'
+                | '\u{180E}'
+                | '\u{180F}'
+                | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
                 | '\u{200E}'
@@ -1099,12 +1107,29 @@ fn is_hex_wrapper_noise(ch: char) -> bool {
                 | '\u{202D}'
                 | '\u{202E}'
                 | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
                 | '\u{2066}'
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
                 | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
         )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
@@ -1964,6 +1989,53 @@ mod tests {
             entry.leaf_hash_hex = format!("\u{2066}0x{}\u{2069}", entry.leaf_hash_hex);
             for step in entry.proof.iter_mut() {
                 step.sibling_hash_hex = format!("\n\u{200F}{}\u{FEFF}\t", step.sibling_hash_hex);
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_hash_hex_wrapped_in_annotation_and_tag_noise() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-annotation-tag-noise".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-annotation-tag-noise".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-annotation-tag-noise".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!("\u{FFF9}\u{E0001}0x{}\u{E007F}\u{FFFB}", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex =
+                format!("\u{034F}\u{FE0F}{}\u{E0100}", entry.leaf_hash_hex.to_uppercase());
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!(
+                    "\u{061C}\u{2061}0X{}\u{2064}\u{180F}",
+                    step.sibling_hash_hex.to_uppercase()
+                );
             }
         }
 
