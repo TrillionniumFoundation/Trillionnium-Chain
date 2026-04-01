@@ -38,6 +38,10 @@ pub enum BridgeRelayError {
         now_ts: u64,
         deadline: u64,
     },
+    DeadlineWitnessMismatch {
+        expected: u64,
+        got: u64,
+    },
     ProofAlreadyUsed {
         proof_digest: [u8; 32],
     },
@@ -170,6 +174,12 @@ impl BridgeRelay {
     ) -> Result<[u8; 32], BridgeRelayError> {
         if now_ts > deadline {
             return Err(BridgeRelayError::ProofExpired { now_ts, deadline });
+        }
+        if deadline != message.deadline {
+            return Err(BridgeRelayError::DeadlineWitnessMismatch {
+                expected: message.deadline,
+                got: deadline,
+            });
         }
 
         self.validate_validator_signature_config(self.min_validator_signatures, self.validators.len())?;
@@ -785,6 +795,25 @@ mod tests {
             .submit_proof(&msg, &[sig_for(&msg, 1)], 900, 901, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::ProofExpired { .. }));
+    }
+
+    #[test]
+    fn fail_closed_on_deadline_witness_mismatch() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], msg.deadline - 1, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::DeadlineWitnessMismatch {
+                expected,
+                got,
+            } if expected == msg.deadline && got == msg.deadline - 1
+        ));
+        assert!(relay.audit_log().is_empty(), "mismatched deadline must not append audit events");
     }
 
     #[test]
