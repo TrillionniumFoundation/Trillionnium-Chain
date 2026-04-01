@@ -350,6 +350,17 @@ describe("api-contract adapters", () => {
     expect(out.hasMore).toBe(true);
   });
 
+  it("drops canonical normalized audit pagination cursors with BOM/zero-width noise only", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [],
+      hasMore: true,
+      nextCursor: "\uFEFF \u200B\u200D ",
+    });
+
+    expect(out.nextCursor).toBeUndefined();
+    expect(out.hasMore).toBe(true);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({

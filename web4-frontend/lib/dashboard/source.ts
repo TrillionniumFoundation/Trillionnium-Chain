@@ -223,6 +223,16 @@ const parsePositiveIntEnv = (value: string | undefined, fallback: number): numbe
   return parsed;
 };
 
+const normalizeOptionalCursor = (cursor: string | undefined): string | undefined => {
+  if (cursor == null) return undefined;
+
+  const normalized = cursor
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized.length > 0 ? normalized : undefined;
+};
+
 const resolveNormalizedAuditPageLimit = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT, 60);
 
@@ -245,8 +255,8 @@ const fetchNormalizedAuditEventsWithPagination = async (
     const pageResp = await client.queryNormalizedAuditEvents({ ...query, limit: normalizedAuditPageLimit });
     allEvents.push(...pageResp.events);
 
-    const nextCursor = pageResp.nextCursor?.trim();
-    hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
+    const nextCursor = normalizeOptionalCursor(pageResp.nextCursor);
+    hasMore = pageResp.hasMore === true && nextCursor != null;
 
     if (!hasMore) break;
 

@@ -113,6 +113,16 @@ function isM2V2ErrorCode(code: string | undefined): code is M2V2ErrorCode {
   return code != null && m2v2ErrorCodeSet.has(code);
 }
 
+function normalizeOptionalCursor(cursor: string | undefined): string | undefined {
+  if (cursor == null) return undefined;
+
+  const normalized = cursor
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized.length > 0 ? normalized : undefined;
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -301,11 +311,11 @@ export const adaptQueryNormalizedAuditEvents = (
       total?: number;
     };
 
-    const nextCursor = data.nextCursor?.trim();
+    const nextCursor = normalizeOptionalCursor(data.nextCursor);
 
     return {
       events: data.events,
-      nextCursor: nextCursor && nextCursor.length > 0 ? nextCursor : undefined,
+      nextCursor,
       hasMore: data.hasMore,
       total: data.total,
     };
