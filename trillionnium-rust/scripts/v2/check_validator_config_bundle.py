@@ -140,6 +140,10 @@ def validate_packet_path(value: str, field: str) -> None:
 def validate_packet_line_value(value: str, field: str) -> None:
     if not value:
         fail(f"invalid ceremony packet arguments: {field} must not be empty")
+    if value != value.strip():
+        fail(
+            f"invalid ceremony packet arguments: {field} must not contain leading or trailing whitespace"
+        )
     if any(ch in "\r\n" for ch in value):
         fail(
             f"invalid ceremony packet arguments: {field} must be a single-line value without embedded newlines"
