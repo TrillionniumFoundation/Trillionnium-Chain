@@ -19,7 +19,7 @@ npm run dev
 生产/测试环境建议使用本地化配置文件：
 
 ```bash
-cp web4-frontend/.env.example web4-frontend/.env.local
+cp .env.example .env.local
 ```
 
 可选变量说明见：
