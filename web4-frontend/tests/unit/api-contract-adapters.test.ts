@@ -67,6 +67,43 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.level).toBe("info");
   });
 
+  it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:alice",
+        scope: "AUDIT_READ",
+      },
+      owner_history: [
+        {
+          action: "DID_REGISTERED",
+          at_height: 11,
+        },
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 12,
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:alice");
+    expect(out.audits).toEqual([
+      {
+        subject: "did:trnm:alice",
+        capability: "AUDIT_READ",
+        granted: false,
+        reason: "DID_REGISTERED",
+        checkedAt: "height:11",
+      },
+      {
+        subject: "did:trnm:alice",
+        capability: "AUDIT_READ",
+        granted: true,
+        reason: "CAPABILITY_ISSUED",
+        checkedAt: "height:12",
+      },
+    ]);
+  });
+
   it("normalizes canonical events with frozen M2V2 resolution code to fail-closed level", () => {
     const out = adaptQueryEvents({
       taskId: "7",

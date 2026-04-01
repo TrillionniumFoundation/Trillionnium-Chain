@@ -360,18 +360,20 @@ export const adaptQueryCapabilityAudit = (
 
   return {
     subject: rpc.data.token.subject_did,
-    audits: rpc.data.owner_history.map((entry) => ({
-      subject: rpc.data.token.subject_did,
-      capability: rpc.data.token.scope,
-      granted:
-        !tokenIsRevoked &&
-        entry.action !== "CAPABILITY_REVOKED" &&
-        entry.action !== "DID_REVOKED",
-      reason:
-        tokenIsRevoked && entry.action !== "CAPABILITY_REVOKED" && entry.action !== "DID_REVOKED"
-          ? entry.note ?? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
-          : entry.note ?? entry.action,
-      checkedAt: toHeightMarker(entry.at_height),
-    })),
+    audits: rpc.data.owner_history.map((entry) => {
+      const actionGrantsCapability =
+        entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
+
+      return {
+        subject: rpc.data.token.subject_did,
+        capability: rpc.data.token.scope,
+        granted: !tokenIsRevoked && actionGrantsCapability,
+        reason:
+          tokenIsRevoked && actionGrantsCapability
+            ? entry.note ?? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+            : entry.note ?? entry.action,
+        checkedAt: toHeightMarker(entry.at_height),
+      };
+    }),
   };
 };
