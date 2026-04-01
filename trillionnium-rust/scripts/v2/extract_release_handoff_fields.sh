@@ -9,7 +9,12 @@ Resolve the latest local-evidence summary and RC manifest (unless paths are
 provided explicitly), then print the canonical handoff fields directly from the
 artifacts. This is a fail-closed helper for validator/operator release handoff:
 it refuses to guess missing paths or silently continue when identity fields
-mismatch across artifacts.
+mismatch across artifacts. When lane-binding expectations are supplied, it also
+prints verified_worktree=, verified_branch_ref=, and verified_head= from
+verify_lane_worktree.sh so the ticket/handoff note can preserve the pre-run
+identity anchor verbatim. The helper always emits preflight_summary_path= and
+uses <missing> when no retained preflight summary can be resolved, instead of
+silently omitting that retention signal.
 EOF
 }
 
