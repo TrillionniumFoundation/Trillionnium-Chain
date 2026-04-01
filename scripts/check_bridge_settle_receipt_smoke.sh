@@ -28,6 +28,9 @@ run_step "bridge-relay: reject proof when receipt status is non-success" \
 run_step "bridge-relay: reject finalize when receipt status is non-success" \
   bash -c 'cargo test --manifest-path contracts-rust/bridge-relay/Cargo.toml --lib --tests finalize_settlement_rejects_non_success_tx_receipt -- --nocapture'
 
+run_step "bridge-relay: reject stale-config finalize after governance change" \
+  bash -c 'cargo test --manifest-path contracts-rust/bridge-relay/Cargo.toml --lib --tests finalize_settlement_rejects_stale_config_version_after_governance_change -- --nocapture'
+
 run_step "trnm-types: enforce receipt success for finalize helper" \
   bash -c 'cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-types --lib settlement_state_machine_enforces_receipt_success_for_finalization -- --nocapture'
 

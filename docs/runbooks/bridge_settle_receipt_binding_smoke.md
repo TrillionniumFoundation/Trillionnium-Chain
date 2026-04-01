@@ -24,6 +24,8 @@
 1. **bridge-relay**
    - `submit_proof_rejects_non_success_tx_receipt`
    - `finalize_settlement_rejects_non_success_tx_receipt`
+   - `finalize_settlement_rejects_stale_config_version_after_governance_change`
+     - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。
 
 2. **trnm-types（核心状态机）**
    - `settlement_state_machine_enforces_receipt_success_for_finalization`
