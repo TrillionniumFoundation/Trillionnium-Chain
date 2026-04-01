@@ -303,6 +303,7 @@ Use one append-stable routing table so the first responder does not have to gues
 | `node` | `node-down` | **Node liveness / height progress** | scrape/health availability, current host reachability note, latest `summary_path` / `manifest_path` if the outage happened during rehearsal | distinguishes process crash, host/network loss, and false scrape gaps before responders chase replay noise |
 | `node` | `sync-lag` | **Node liveness / height progress** | committed vs observed height trend, lagging node id, latest `replay_command=` / recovery evidence pointer | keeps sync incidents tied to one concrete lagging node and one replay/recovery trail |
 | `node` | `replay-failure` | **Evidence / replay integrity** | `replay_command=`, `rollback_command=`, `git_worktree_path=`, `git_worktree_branch_ref_match=` | replay failures are evidence-plane incidents first, not graph-reading exercises |
+| `node` | `node-down` + rollback/backoff churn | **Consensus instability / rollback pressure** | `rollback_total`, round-change/backoff trend, leader-miss or auth-replay spike, and the latest recovery evidence pointer | gives responders one explicit first stop when availability symptoms coincide with rollback pressure instead of forcing them to infer consensus stress from unrelated panels |
 | `rpc` | `rpc-unhealthy` | **RPC health / read surface** | failing endpoint, query success/failure trend, latest rollback/replay pointer if the failure followed deploy or rehearsal | preserves the public read surface as its own first-class operator plane |
 | `worker` | `worker-failure` | **Worker execution / receipt flow** | affected worker ids/queues, retry/exhaustion trend, linked worker receipt evidence | separates queue starvation from execution or submission failure before escalation |
 | `oracle` | `oracle-anomaly` | **Oracle-specific drill-down** | labels from `docs/runbooks/oracle-observability-alerts.md`, matching `severity`, `needs_replay`, and evidence pointers | oracle triage already has a service-specific contract; use it without dropping the shared labels |
@@ -312,6 +313,7 @@ Use one append-stable routing table so the first responder does not have to gues
 Routing rules:
 
 - if multiple signals fire together, start with the highest-severity row; if severities tie, prefer `contract-drift` → `replay-failure` → availability/performance signals;
+- if `node-down` or `sync-lag` fires together with visible rollback, round-change backoff, leader-miss, or auth-replay churn, switch the first stop from **Node liveness / height progress** to **Consensus instability / rollback pressure** before deciding whether the issue is pure host loss or active consensus stress;
 - if the chosen first-stop panel lacks the fields listed under **Immediately verify**, classify the handoff as incomplete and add those missing fields to the ticket/page before reassignment;
 - if the signal is `oracle-anomaly` but the shared label block is missing, restore the shared block first and then continue with the oracle-specific runbook.
 
