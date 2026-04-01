@@ -188,18 +188,19 @@ Dashboard annotation rules:
 Use this as the smallest threshold contract for mainnet rehearsal.
 The goal is not perfect tuning; it is to stop dashboards, pages, and incident tickets from drifting into different severity vocabularies.
 
-| Signal | Trigger heuristic | Default severity | Default `needs_rollback` | Required responder action |
-| --- | --- | --- | --- | --- |
-| `contract-drift` | `sample_count` diverges from `accepted_total + oracle_stale_reject_total + oracle_quorum_reject_total + oracle_drift_reject_total` for 2 consecutive scrapes | `sev0` | `yes` | Page immediately, freeze automated interpretation, and open an incident with evidence pointers. |
-| `accepts-stalled` | `sample_count` increases while `accepted_total` stays flat for 2 consecutive windows | `sev1` | `yes` until rollback is explicitly ruled out by the incident lead | Page on-call and attach `replay_command=` / `rollback_command=` state. |
-| `quorum-collapse` | `oracle_source_cardinality` stays below quorum floor for 2 consecutive windows | `sev1` | `no` by default; promote to `yes` if provider rollback, config rollback, or release rollback becomes the active mitigation path | Page on-call and confirm whether provider loss or dedup collapse is active. |
-| `stale-wave` | `oracle_stale_reject_total` dominates rejects for 3 consecutive windows while source cardinality stays at/above quorum floor | `sev2` | `no` by default; promote to `yes` if stale data follows a release/config change and rollback is selected as mitigation | Investigate in the active on-call window and promote if acceptance impact appears. |
-| `drift-anomaly` | `oracle_drift_reject_total` rises for 3 consecutive windows while source cardinality stays healthy | `sev2` | `no` by default; promote to `yes` if rollback is chosen to restore the last trusted oracle policy/config surface | Investigate drift source, capture summary line, and promote if spread persists. |
-| `ingest-latency` | `oracle_ingest_latency_ms` rises for 3 consecutive windows without acceptance impact | `sev3` | `no` | Record in dashboard notes / handoff; no page by default. |
+| Signal | Trigger heuristic | Default severity | Default `needs_replay` | Default `needs_rollback` | Required responder action |
+| --- | --- | --- | --- | --- | --- |
+| `contract-drift` | `sample_count` diverges from `accepted_total + oracle_stale_reject_total + oracle_quorum_reject_total + oracle_drift_reject_total` for 2 consecutive scrapes | `sev0` | `yes` | `yes` | Page immediately, freeze automated interpretation, and open an incident with evidence pointers. |
+| `accepts-stalled` | `sample_count` increases while `accepted_total` stays flat for 2 consecutive windows | `sev1` | `yes` | `yes` until rollback is explicitly ruled out by the incident lead | Page on-call and attach `replay_command=` / `rollback_command=` state. |
+| `quorum-collapse` | `oracle_source_cardinality` stays below quorum floor for 2 consecutive windows | `sev1` | `yes` | `no` by default; promote to `yes` if provider rollback, config rollback, or release rollback becomes the active mitigation path | Page on-call and confirm whether provider loss or dedup collapse is active. |
+| `stale-wave` | `oracle_stale_reject_total` dominates rejects for 3 consecutive windows while source cardinality stays at/above quorum floor | `sev2` | `no` by default; promote to `yes` if evidence and observability disagree during mitigation | `no` by default; promote to `yes` if stale data follows a release/config change and rollback is selected as mitigation | Investigate in the active on-call window and promote if acceptance impact appears. |
+| `drift-anomaly` | `oracle_drift_reject_total` rises for 3 consecutive windows while source cardinality stays healthy | `sev2` | `no` by default; promote to `yes` if evidence and observability disagree during mitigation | `no` by default; promote to `yes` if rollback is chosen to restore the last trusted oracle policy/config surface | Investigate drift source, capture summary line, and promote if spread persists. |
+| `ingest-latency` | `oracle_ingest_latency_ms` rises for 3 consecutive windows without acceptance impact | `sev3` | `no` | `no` | Record in dashboard notes / handoff; no page by default. |
 
 Threshold rules:
 
 - consecutive windows should map to the dashboard's stable rollup interval; if multiple dashboards exist, use the slowest shared rollup when paging;
+- default `needs_replay=yes` for every `sev0` / `sev1` row unless the responder has already reconciled observability with emitted evidence and the service-specific runbook says otherwise;
 - if observability data and emitted evidence artifacts disagree, override any lower threshold and classify as `sev0`;
 - if a page fires without the matching `severity` / `signal` / `verdict` / `needs_replay` / `needs_rollback` label block, treat the incident as under-specified until the labels are added.
 

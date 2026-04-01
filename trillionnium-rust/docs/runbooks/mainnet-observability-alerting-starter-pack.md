@@ -177,20 +177,21 @@ Additional rules:
 
 These are the minimum launch-blocker-oriented alert families from the gap matrix.
 
-| Signal | Trigger heuristic | Default severity | Default `needs_rollback` | Required responder action |
-| --- | --- | --- | --- | --- |
-| `node-down` | node health endpoint or scrape target missing for 2 consecutive windows | `sev1` | `no` by default; promote to `yes` if outage follows deploy, config change, or failed recovery action | Page on-call, capture current evidence paths, confirm whether failure is process, host, or network reachability. |
-| `sync-lag` | committed/observed height progress stalls or lag remains above operator threshold for 2 consecutive windows | `sev1` | `yes` | Page on-call, capture lagging node identity, and attach recovery / replay evidence pointers. |
-| `replay-failure` | recovery / replay drill or emitted evidence cannot be reproduced with emitted `replay_command=` | `sev1` | `yes` until rollback path is explicitly ruled out by the incident lead | Page on-call and classify handoff as incomplete until replay/evidence alignment is restored. |
-| `rpc-unhealthy` | rpc health/readiness path fails for 2 consecutive windows or query error rate dominates the healthy baseline | `sev1` | `no` by default; promote to `yes` if the regression began after deploy, schema change, or read-model cutover | Page on-call, capture failing endpoint, and attach current rollback / replay context. |
-| `worker-failure` | worker receipts/submissions stall or repeated worker execution failures persist for 2 consecutive windows | `sev1` | `no` by default; promote to `yes` if queue drain, receipt replay, or recent worker release cannot safely stabilize the flow | Page on-call, capture affected worker ids / queues, and link the active worker runbook or receipt evidence. |
-| `oracle-anomaly` | use the severity rules from `docs/runbooks/oracle-observability-alerts.md` | inherited | inherited from the oracle runbook; do not drop the shared field in the ticket/page payload | Use the oracle runbook as source of truth; preserve the shared label block here. |
-| `bridge-anomaly` | bridge relay or settlement heartbeat stalls for 2 consecutive windows | `sev2` by default | `no` by default; promote to `yes` if settlement integrity or replay evidence is in doubt | Open incident, gather evidence, and promote if settlement integrity or operator trust is at risk. |
-| `contract-drift` | dashboard math / label mapping / evidence fields drift so the signal cannot be trusted | `sev0` | `yes` | Page immediately and freeze automated interpretation until corrected. |
+| Signal | Trigger heuristic | Default severity | Default `needs_replay` | Default `needs_rollback` | Required responder action |
+| --- | --- | --- | --- | --- | --- |
+| `node-down` | node health endpoint or scrape target missing for 2 consecutive windows | `sev1` | `yes` | `no` by default; promote to `yes` if outage follows deploy, config change, or failed recovery action | Page on-call, capture current evidence paths, confirm whether failure is process, host, or network reachability. |
+| `sync-lag` | committed/observed height progress stalls or lag remains above operator threshold for 2 consecutive windows | `sev1` | `yes` | `yes` | Page on-call, capture lagging node identity, and attach recovery / replay evidence pointers. |
+| `replay-failure` | recovery / replay drill or emitted evidence cannot be reproduced with emitted `replay_command=` | `sev1` | `yes` | `yes` until rollback path is explicitly ruled out by the incident lead | Page on-call and classify handoff as incomplete until replay/evidence alignment is restored. |
+| `rpc-unhealthy` | rpc health/readiness path fails for 2 consecutive windows or query error rate dominates the healthy baseline | `sev1` | `yes` | `no` by default; promote to `yes` if the regression began after deploy, schema change, or read-model cutover | Page on-call, capture failing endpoint, and attach current rollback / replay context. |
+| `worker-failure` | worker receipts/submissions stall or repeated worker execution failures persist for 2 consecutive windows | `sev1` | `yes` | `no` by default; promote to `yes` if queue drain, receipt replay, or recent worker release cannot safely stabilize the flow | Page on-call, capture affected worker ids / queues, and link the active worker runbook or receipt evidence. |
+| `oracle-anomaly` | use the severity rules from `docs/runbooks/oracle-observability-alerts.md` | inherited | inherited from the oracle runbook | inherited from the oracle runbook; do not drop the shared field in the ticket/page payload | Use the oracle runbook as source of truth; preserve the shared label block here. |
+| `bridge-anomaly` | bridge relay or settlement heartbeat stalls for 2 consecutive windows | `sev2` by default | `no` by default; promote to `yes` if settlement integrity or replay evidence is in doubt | `no` by default; promote to `yes` if settlement integrity or replay evidence is in doubt | Open incident, gather evidence, and promote if settlement integrity or operator trust is at risk. |
+| `contract-drift` | dashboard math / label mapping / evidence fields drift so the signal cannot be trusted | `sev0` | `yes` | `yes` | Page immediately and freeze automated interpretation until corrected. |
 
 Threshold rules:
 
 - consecutive windows must align with the slowest shared dashboard rollup used by operators;
+- default `needs_replay=yes` for every `sev0` / `sev1` row unless a stricter service-specific runbook overrides it explicitly;
 - if observability output and emitted evidence artifacts disagree, override any lower classification to `sev0`;
 - if a page fires without the full shared label block (`plane`, `service`, `severity`, `signal`, `needs_replay`, and `needs_rollback`), treat the incident as under-specified;
 - if `needs_rollback=yes`, the ticket/page must quote the current `rollback_command=` verbatim or mark it as `unknown` rather than leaving the field implicit.
