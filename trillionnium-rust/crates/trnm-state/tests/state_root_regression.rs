@@ -6929,6 +6929,46 @@ fn checkpoint_da_light_verifier_summary_rejects_forged_genesis_prev_hash_surface
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_rejects_blank_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-genesis".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should expose a DA/light-verifier summary"
+    );
+
+    let mut blank_prev_hash_wal = wal.clone();
+    blank_prev_hash_wal.prev_hash_hex = Some(String::new());
+    let blank_prev_hash_checkpoint = CheckpointMeta {
+        height: blank_prev_hash_wal.height,
+        state_root_hex: blank_prev_hash_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: blank_prev_hash_wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&blank_prev_hash_checkpoint, &blank_prev_hash_wal),
+        "checkpoint evidence surfaces must reject blank genesis prev_hash_hex so height-1 audit proofs cannot smuggle an empty predecessor surface"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(&blank_prev_hash_checkpoint, &blank_prev_hash_wal),
+        None,
+        "DA/light-verifier summaries must fail closed when genesis WAL metadata encodes blank prev_hash_hex instead of canonical none"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     let wal = WalMeta {
         height: 7,
