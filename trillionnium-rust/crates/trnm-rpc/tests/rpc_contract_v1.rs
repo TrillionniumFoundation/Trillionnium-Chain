@@ -1,10 +1,10 @@
 use serde_json::json;
 use trnm_rpc::{
     AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse,
-    FaucetRequestResponse, GetTxResponse, GovParamQueryResponse,
+    FaucetRequestResponse, GetTxResponse, GovParamQueryResponse, GovProposalQueryResponse,
     OracleValidateSnapshotResponse, RequestFullQueryResponse, RpcErrorResponse, SendTxResponse,
     TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
-    TaskMeteringQueryResponse, TxStatus,
+    TaskMeteringQueryResponse, TaskQueryResponse, TxStatus,
 };
 
 #[test]
@@ -232,6 +232,29 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("event contract should fail closed on unknown fields");
     assert!(event_err.to_string().contains("unexpected"));
 
+    let task_err = serde_json::from_value::<TaskQueryResponse>(json!({
+        "task_id":7,
+        "status":"Open",
+        "worker":"worker-1",
+        "bounty":42,
+        "result_hash_hex":null,
+        "version":3,
+        "unexpected":"schema-drift"
+    }))
+    .expect_err("task contract should fail closed on unknown fields");
+    assert!(task_err.to_string().contains("unexpected"));
+
+    let gov_proposal_err = serde_json::from_value::<GovProposalQueryResponse>(json!({
+        "proposal_id":9,
+        "title":"freeze economics tuple",
+        "proposer":"validator-1",
+        "status":"Voting",
+        "version":2,
+        "unexpected":true
+    }))
+    .expect_err("gov proposal contract should fail closed on unknown fields");
+    assert!(gov_proposal_err.to_string().contains("unexpected"));
+
     let request_err = serde_json::from_value::<RequestFullQueryResponse>(json!({
         "request": {
             "request_id":"req-1",
@@ -311,6 +334,51 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("nested event contract should fail closed on unknown fields");
     assert!(nested_event_err.to_string().contains("unexpected"));
 
+    let nested_task_metering_err = serde_json::from_value::<TaskQueryResponse>(json!({
+        "task_id":7,
+        "status":"Open",
+        "worker":"worker-1",
+        "bounty":42,
+        "result_hash_hex":"0xabc",
+        "version":3,
+        "metering": {
+            "workload_class":"llm_inference",
+            "metering_schema":"llm_token_meter_v1",
+            "receipt_hash":"deadbeef",
+            "prompt_tokens":128,
+            "generated_tokens":32,
+            "decode_steps":32,
+            "kv_bytes_moved":4096,
+            "normalized_work_units":192,
+            "prompt_token_weight":1,
+            "generated_token_weight":1,
+            "decode_step_weight":1,
+            "kv_byte_weight":0,
+            "policy": {
+                "snapshot_version":1,
+                "min_accept_work_units":100,
+                "challenge_success_bounty_base":1,
+                "challenge_success_bounty_per_work_unit_num":1,
+                "challenge_success_bounty_per_work_unit_den":192,
+                "worker_completion_bonus_per_work_unit_num":1,
+                "worker_completion_bonus_per_work_unit_den":256,
+                "worker_slash_rebate_per_work_unit_num":1,
+                "worker_slash_rebate_per_work_unit_den":384
+            },
+            "derived": {
+                "path":"Resolved",
+                "accept_floor_pass":true,
+                "challenge_metered_bonus":1,
+                "challenge_bonus_total":2,
+                "worker_completion_bonus":1,
+                "worker_slash_rebate":1
+            },
+            "unexpected":"schema-drift"
+        }
+    }))
+    .expect_err("nested task metering contract should fail closed on unknown fields");
+    assert!(nested_task_metering_err.to_string().contains("unexpected"));
+
     let gov_param_err = serde_json::from_value::<GovParamQueryResponse>(json!({
         "key_id":1,
         "key":"runtime_metadata_schema",
@@ -320,6 +388,22 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     }))
     .expect_err("gov param contract should fail closed on unknown fields");
     assert!(gov_param_err.to_string().contains("unexpected"));
+
+    let pending_update_err = serde_json::from_value::<GovParamQueryResponse>(json!({
+        "key_id":1,
+        "key":"runtime_metadata_schema",
+        "value":"v2",
+        "version":3,
+        "pending_update": {
+            "key_id":1,
+            "key":"runtime_metadata_schema",
+            "value":"v3",
+            "activate_at_height":100,
+            "unexpected":"schema-drift"
+        }
+    }))
+    .expect_err("pending update contract should fail closed on unknown fields");
+    assert!(pending_update_err.to_string().contains("unexpected"));
 
     let faucet_err = serde_json::from_value::<FaucetRequestResponse>(json!({
         "ok":true,
