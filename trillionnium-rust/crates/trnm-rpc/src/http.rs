@@ -163,6 +163,9 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
         return None;
     }
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
@@ -402,6 +405,18 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("HEAD /query-events/7%3flimit=9 HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_multiple_raw_query_delimiters() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
             None
         );
     }
