@@ -1111,6 +1111,11 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
 }
 
 fn ensure_safe_sign_message(message: &str) -> Result<()> {
+    if message.trim() != message {
+        bail!(
+            "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(is_unsafe_sign_message_char) {
         bail!(
             "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
@@ -3763,6 +3768,26 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_leading_whitespace() {
+        let err = ensure_safe_sign_message(" rotate signer to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains leading or trailing whitespace"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_trailing_whitespace() {
+        let err = ensure_safe_sign_message("rotate signer to cold-key slot b ").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains leading or trailing whitespace"),
             "unexpected: {err}"
         );
     }
