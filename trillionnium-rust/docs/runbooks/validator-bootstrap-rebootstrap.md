@@ -16,6 +16,7 @@ Use this when an operator needs to:
 
 Primary references:
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+- `docs/runbooks/genesis-generation-checklist.md`
 - `docs/runbooks/local-release-evidence.md`
 - `scripts/v2/verify_lane_worktree.sh`
 - `configs/node1.toml`
@@ -79,6 +80,7 @@ Interpretation rule:
 
 Before touching the node, bind the bootstrap to one explicitly named genesis artifact.
 Do not proceed on a fuzzy statement like "the latest genesis" or "the same one as yesterday".
+Use `docs/runbooks/genesis-generation-checklist.md` first if the artifact/hash has not yet been generated and frozen for operator handoff.
 
 Minimum genesis checklist to record in the ticket / handoff note:
 - `genesis_artifact_path=` with the exact file or bundle path the validator is expected to join
