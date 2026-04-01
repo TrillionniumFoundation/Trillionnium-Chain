@@ -106,6 +106,28 @@ python3 scripts/v2/check_validator_config_bundle.py \
   configs/node4.toml
 ```
 
+For `public-mainnet-input`, fill the ceremony metadata up front instead of forwarding a packet that still contains template/default values. The packet generator already fails closed here: it rejects the template `ceremony_id`, placeholder path fields, shorthand/truncated genesis hashes, and the default `validator_set_version=v1` when `--ceremony-scope public-mainnet-input` is selected.
+
+Copyable stricter example:
+
+```bash
+python3 scripts/v2/check_validator_config_bundle.py \
+  --emit-ceremony-packet \
+  --ceremony-id mn04-bootstrap-20260331-0621Z \
+  --ceremony-scope public-mainnet-input \
+  --packet-generated-at 2026-03-31T06:21:00Z \
+  --packet-distribution-path /abs/path/or/ticket \
+  --validator-set-version mainnet-candidate-2026-03-31 \
+  --startup-order-note 'node1 -> node2 -> node3 -> node4' \
+  --rollback-owner primary-operator \
+  --genesis-artifact-path /abs/path/to/genesis.json \
+  --genesis-artifact-sha256 <64-char-sha256> \
+  configs/node1.toml \
+  configs/node2.toml \
+  configs/node3.toml \
+  configs/node4.toml
+```
+
 Interpretation rule:
 - if the config bundle fails validation, the genesis artifact is not bootstrap-ready for this validator set
 - if the ceremony packet names a different hash than the one computed in Step 3, stop
@@ -123,13 +145,15 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 
 Recommended for public-mainnet-facing evidence:
 - `packet_generated_at=` in UTC
+- `packet_distribution_path=` as one explicit absolute path every operator reviewed
 - `operator_ack=` per validator owner
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
+- a concrete `validator_set_version=` (for example `mainnet-candidate-2026-03-31`) instead of a template/default label
 
 Interpretation rule:
 - if operators receive different packet contents for the same `ceremony_id`, stop and normalize to one packet before startup
-- if a public-mainnet-input packet still contains placeholders, do not treat it as ceremony-ready
+- if a public-mainnet-input packet still contains placeholders, relative packet/genesis paths, truncated hashes, or the default `validator_set_version=v1`, do not treat it as ceremony-ready
 
 ## Rollback
 
