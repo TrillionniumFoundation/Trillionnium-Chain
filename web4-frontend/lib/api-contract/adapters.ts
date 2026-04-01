@@ -364,13 +364,19 @@ export const adaptQueryCapabilityAudit = (
       const actionGrantsCapability =
         entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
 
+      const revocationMarker = tokenIsRevoked
+        ? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+        : undefined;
+
       return {
         subject: rpc.data.token.subject_did,
         capability: rpc.data.token.scope,
         granted: !tokenIsRevoked && actionGrantsCapability,
         reason:
           tokenIsRevoked && actionGrantsCapability
-            ? entry.note ?? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+            ? [revocationMarker, entry.note]
+                .filter((value): value is string => typeof value === "string" && value.length > 0)
+                .join(": ")
             : entry.note ?? entry.action,
         checkedAt: toHeightMarker(entry.at_height),
       };

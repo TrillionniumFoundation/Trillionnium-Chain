@@ -475,7 +475,7 @@ describe("api-contract adapters", () => {
 
     expect(out.subject).toBe("did:trnm:bob");
     expect(out.audits[0]?.granted).toBe(false);
-    expect(out.audits[0]?.reason).toBe("initial grant");
+    expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: initial grant");
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
