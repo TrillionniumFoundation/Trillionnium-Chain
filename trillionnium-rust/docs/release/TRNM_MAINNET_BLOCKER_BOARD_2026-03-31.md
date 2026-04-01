@@ -149,14 +149,15 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 
 **Exit criteria**
 - full prelaunch rehearsal green on current `origin/main`
-- artifact identities consistent across summary/manifest
+- artifact identities consistent across preflight / summary / manifest, with lane binding proven from the ticket-assigned worktree/branch rather than inferred from the shell
 - rollback command explicitly preserved
 - signed operator decision packet
 
 **Next actions**
 1. define rehearsal scope against current `origin/main`
-2. run full rehearsal with path-resolved evidence bundle
-3. produce formal GO/NOGO memo
+2. bind the run to the ticket-assigned worktree/branch with `./scripts/v2/verify_lane_worktree.sh --expected-worktree-root ... --expected-branch-ref ...` before any release/evidence script runs
+3. run full rehearsal with a path-resolved evidence bundle, then extract/compare the packet via `./scripts/v2/extract_release_handoff_fields.sh` so `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` are quoted from artifacts instead of terminal memory
+4. produce formal GO/NOGO memo
 
 ---
 
