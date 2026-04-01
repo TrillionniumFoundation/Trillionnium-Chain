@@ -1089,9 +1089,19 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with('.')
         || name.ends_with('.')
         || name.starts_with('-')
-        || name.contains(['/', '\\', ':', '=', '|', '&', '$'])
+        || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
+        || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
+        || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
+        || name.contains(['：', '＝', '｜', '＆', '？', '，', '；', '！'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⟋', '⟍'])
+        || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains([
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
+        ])
+        || name.contains([
+            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
+            '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
+            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
         ])
         || has_hidden_or_whitespace
         || is_windows_reserved_device
@@ -2827,10 +2837,27 @@ mod tests {
             "alice/bob",
             "alice\\bob",
             "alice:bob",
+            "alice：bob",
             "alice=debug",
+            "alice＝debug",
             "alice|bob",
+            "alice｜bob",
             "alice&bob",
+            "alice＆bob",
+            "alice!",
+            "alice！",
             "alice$bob",
+            "alice*bob",
+            "alice?bob",
+            "alice/bob",
+            "alice∕bob",
+            "alice⁄bob",
+            "alice／bob",
+            "alice\\bob",
+            "alice＼bob",
+            "alice⧵bob",
+            "alice⟋bob",
+            "alice⟍bob",
             "\"alice\"",
             "'alice'",
             "`alice`",
@@ -2838,8 +2865,26 @@ mod tests {
             "(alice)",
             "[alice]",
             "{alice}",
+            "“alice”",
+            "‘alice’",
+            "「alice」",
+            "『alice』",
+            "《alice》",
+            "〈alice〉",
+            "｢alice｣",
+            "（alice）",
+            "［alice］",
+            "｛alice｝",
+            "＜alice＞",
+            "【alice】",
+            "〔alice〕",
+            "〖alice〗",
+            "〘alice〙",
+            "〚alice〛",
             "alice,",
+            "alice，",
             "alice;",
+            "alice；",
             "alice\n",
             "alice bob",
             " alice",
