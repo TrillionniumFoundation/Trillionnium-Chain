@@ -79,6 +79,23 @@ Operators should not over-read it as indexer/read-model closure.
 
 `trnm-node` summary-format tests already keep the following incident-facing bundle append-stable and ordered for operator-visible summaries:
 
+- `critical_wait_density_ppm`
+- `critical_wait_peak_density_ppm`
+- `critical_wait_active_heights`
+- `critical_wait_active_height_rate_ppm`
+- `critical_wait_active_observed_height_rate_ppm`
+- `critical_wait_density_avg`
+- `critical_wait_density_avg_milli`
+- `critical_wait_active_height_share_ppm`
+- `rollback_block_total`
+- `rollback_active_heights`
+- `rollback_block_rate`
+- `rollback_block_rate_ppm`
+- `rollback_active_height_rate_ppm`
+- `rollback_active_observed_height_rate_ppm`
+- `rollback_density_avg`
+- `rollback_density_avg_milli`
+- `rollback_active_height_share_ppm`
 - `apply_error_total`
 - `rollback_total`
 - `apply_error_rollback_share_bps`
@@ -109,6 +126,18 @@ Operators should not over-read it as indexer/read-model closure.
 
 ### Minimal interpretation hints
 
+- `critical_wait_density_ppm` / `critical_wait_peak_density_ppm` / `critical_wait_active_heights`
+  - use together as the first operator-visible contention/queue-pressure cluster before escalating into scheduler or proposer triage.
+- `critical_wait_active_height_rate_ppm` / `critical_wait_active_observed_height_rate_ppm`
+  - preserve both because active-height share and observed-height share answer different questions during incident review; the observed-height variant should stay lower-bounded by total progress rather than by only active heights.
+- `critical_wait_density_avg` / `critical_wait_density_avg_milli` / `critical_wait_active_height_share_ppm`
+  - keep as the normalized density/share trio for dashboards and handoff notes.
+- `rollback_block_total` / `rollback_active_heights` / `rollback_block_rate` / `rollback_block_rate_ppm`
+  - use together to separate absolute rollback volume from height-level blast radius.
+- `rollback_active_height_rate_ppm` / `rollback_active_observed_height_rate_ppm`
+  - preserve both because rollback pressure against active heights and observed heights should remain grep-stable and comparable across summaries.
+- `rollback_density_avg` / `rollback_density_avg_milli` / `rollback_active_height_share_ppm`
+  - keep as the normalized rollback intensity/share trio for operator notes.
 - `apply_error_total` / `rollback_total` / `apply_error_rollback_share_bps`
   - use together to understand whether failures are propagating into rollback-heavy behavior.
 - `timeout_migrated_total`
@@ -139,7 +168,7 @@ Operators should not over-read it as indexer/read-model closure.
 
 A safe starter summary line for incident handoff is:
 
-- `apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n> bft_leader_missed_total=<n> bft_leader_missed_max=<n> bft_leader_missed_top_share_ppm=<n> bft_leader_missed_active_validators=<n> bft_leader_missed_active_validator_share_ppm=<n> bft_leader_missed_active_heights=<n> bft_leader_missed_active_height_rate_ppm=<n> bft_leader_missed_active_observed_height_rate_ppm=<n> bft_leader_missed_density_avg=<n> bft_leader_missed_density_avg_milli=<n> bft_leader_missed_active_height_share_ppm=<n> bft_leader_missed_proposals=<vec>`
+- `critical_wait_density_ppm=<n> critical_wait_peak_density_ppm=<n> critical_wait_active_heights=<n> critical_wait_active_height_rate_ppm=<n> critical_wait_active_observed_height_rate_ppm=<n> critical_wait_density_avg=<n> critical_wait_density_avg_milli=<n> critical_wait_active_height_share_ppm=<n> rollback_block_total=<n> rollback_active_heights=<n> rollback_block_rate=<n> rollback_block_rate_ppm=<n> rollback_active_height_rate_ppm=<n> rollback_active_observed_height_rate_ppm=<n> rollback_density_avg=<n> rollback_density_avg_milli=<n> rollback_active_height_share_ppm=<n> apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n> bft_leader_missed_total=<n> bft_leader_missed_max=<n> bft_leader_missed_top_share_ppm=<n> bft_leader_missed_active_validators=<n> bft_leader_missed_active_validator_share_ppm=<n> bft_leader_missed_active_heights=<n> bft_leader_missed_active_height_rate_ppm=<n> bft_leader_missed_active_observed_height_rate_ppm=<n> bft_leader_missed_density_avg=<n> bft_leader_missed_density_avg_milli=<n> bft_leader_missed_active_height_share_ppm=<n> bft_leader_missed_proposals=<vec>`
 
 Keep field names verbatim so pager notes and release evidence remain grep-stable.
 
