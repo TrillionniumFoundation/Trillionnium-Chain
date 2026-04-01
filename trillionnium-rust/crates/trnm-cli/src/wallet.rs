@@ -134,6 +134,30 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
 
     path.is_absolute()
         && path.parent().is_some()
+        && path.to_string_lossy().chars().all(|c| {
+            !c.is_whitespace()
+                && !c.is_control()
+                && !matches!(
+                    c,
+                    '\u{061C}'
+                        | '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
         && !path
             .components()
             .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
