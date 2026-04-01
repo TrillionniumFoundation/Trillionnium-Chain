@@ -16,72 +16,61 @@ INDEX_URL="${PUBLIC_BASE_URL}/index.json"
 RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
 RPC_BASE_URL="${RPC_BASE_URL%/}"
 
+emit_invalid_config() {
+  local config_error="$1"
+  echo "state=invalid-config"
+  echo "config_error=${config_error}"
+  echo "pid_file=${PID_FILE}"
+  echo "log_file=${LOG_FILE}"
+  echo "public_dir=${PUBLIC_DIR}"
+  echo "bind_host=${HOST}"
+  echo "bind_port=${PORT}"
+  echo "health_url=${HEALTH_URL}"
+  echo "index_url=${INDEX_URL}"
+  echo "rpc_base_url=${RPC_BASE_URL}"
+  echo "service_mode=operator-facing-static-scaffold"
+  echo "production_ready=false"
+  echo "health=unknown"
+}
+
 validate_runtime_contract() {
   if [[ -z "${HOST}" ]]; then
-    echo "state=invalid-config"
-    echo "config_error=EXPLORER_HOST must not be empty"
-    echo "pid_file=${PID_FILE}"
-    echo "log_file=${LOG_FILE}"
-    echo "public_dir=${PUBLIC_DIR}"
-    echo "bind_host=${HOST}"
-    echo "bind_port=${PORT}"
-    echo "health_url=${HEALTH_URL}"
-    echo "index_url=${INDEX_URL}"
-    echo "rpc_base_url=${RPC_BASE_URL}"
-    echo "service_mode=operator-facing-static-scaffold"
-    echo "production_ready=false"
-    echo "health=unknown"
+    emit_invalid_config "EXPLORER_HOST must not be empty"
     exit 1
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
-    echo "state=invalid-config"
-    echo "config_error=EXPLORER_PORT must be an integer in [1, 65535]"
-    echo "pid_file=${PID_FILE}"
-    echo "log_file=${LOG_FILE}"
-    echo "public_dir=${PUBLIC_DIR}"
-    echo "bind_host=${HOST}"
-    echo "bind_port=${PORT}"
-    echo "health_url=${HEALTH_URL}"
-    echo "index_url=${INDEX_URL}"
-    echo "rpc_base_url=${RPC_BASE_URL}"
-    echo "service_mode=operator-facing-static-scaffold"
-    echo "production_ready=false"
-    echo "health=unknown"
+    emit_invalid_config "EXPLORER_PORT must be an integer in [1, 65535]"
+    exit 1
+  fi
+
+  if [[ -z "${PUBLIC_BASE_URL}" ]]; then
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must not be empty"
+    exit 1
+  fi
+
+  if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
+    exit 1
+  fi
+
+  if [[ -z "${HEALTH_URL}" ]]; then
+    emit_invalid_config "EXPLORER_HEALTH_URL must not be empty"
+    exit 1
+  fi
+
+  if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
+    emit_invalid_config "EXPLORER_HEALTH_URL must start with http:// or https://"
     exit 1
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
-    echo "state=invalid-config"
-    echo "config_error=EXPLORER_RPC_BASE_URL must not be empty"
-    echo "pid_file=${PID_FILE}"
-    echo "log_file=${LOG_FILE}"
-    echo "public_dir=${PUBLIC_DIR}"
-    echo "bind_host=${HOST}"
-    echo "bind_port=${PORT}"
-    echo "health_url=${HEALTH_URL}"
-    echo "index_url=${INDEX_URL}"
-    echo "rpc_base_url=${RPC_BASE_URL}"
-    echo "service_mode=operator-facing-static-scaffold"
-    echo "production_ready=false"
-    echo "health=unknown"
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "state=invalid-config"
-    echo "config_error=EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    echo "pid_file=${PID_FILE}"
-    echo "log_file=${LOG_FILE}"
-    echo "public_dir=${PUBLIC_DIR}"
-    echo "bind_host=${HOST}"
-    echo "bind_port=${PORT}"
-    echo "health_url=${HEALTH_URL}"
-    echo "index_url=${INDEX_URL}"
-    echo "rpc_base_url=${RPC_BASE_URL}"
-    echo "service_mode=operator-facing-static-scaffold"
-    echo "production_ready=false"
-    echo "health=unknown"
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must start with http:// or https://"
     exit 1
   fi
 }
