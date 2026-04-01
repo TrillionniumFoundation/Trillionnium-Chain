@@ -17,6 +17,45 @@ fn forged_reveal_is_rejected() {
 }
 
 #[test]
+fn commit_rejects_noncanonical_worker_binding_in_assigned_state() {
+    let mut st = seeded_state();
+    let r1 = apply_create_task(&mut st, 7_801, "alice".into(), 10).unwrap();
+
+    let bad_task = TaskObject {
+        task_id: 7_801,
+        creator: "alice".into(),
+        bounty: 10,
+        status: TaskStatus::Assigned,
+        proof_type: Default::default(),
+        metadata: None,
+        worker: Some(" worker1 ".into()),
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+    let r2 = st.update_task(r1, bad_task).unwrap();
+
+    let before = st.get_task(r2.id).unwrap();
+    let err = apply_commit_result(&mut st, r2, " worker1 ".into(), [9u8; 32]).unwrap_err();
+    assert!(matches!(err, PouwError::State(reason) if reason == "non-canonical worker account"));
+
+    let task_after = st.get_task(before.task_id).unwrap();
+    assert_eq!(task_after.status, TaskStatus::Assigned);
+    assert!(task_after.committed_hash.is_none());
+    assert!(task_after.reveal_deadline_height.is_none());
+}
+
+#[test]
 fn reveal_missing_worker_is_mapped() {
     let mut st = seeded_state();
     let r1 = apply_create_task(&mut st, 77, "alice".into(), 10).unwrap();
