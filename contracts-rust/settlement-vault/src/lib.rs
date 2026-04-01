@@ -451,6 +451,36 @@ mod tests {
     }
 
     #[test]
+    fn rejected_actions_do_not_append_audit_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        assert_eq!(vault.deposit("mallory", "alice", 10).unwrap_err(), VaultError::Unauthorized);
+        assert!(vault.audit_log().is_empty());
+
+        vault.deposit("owner", "alice", 10).unwrap();
+        let audit_len_after_deposit = vault.audit_log().len();
+
+        assert_eq!(
+            vault.lock("mallory", "req-unauthorized", "alice", 5)
+                .unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
+
+        vault.pause("owner").unwrap();
+        let audit_len_after_pause = vault.audit_log().len();
+        assert_eq!(
+            vault.transfer("owner", "alice", "bob", 1).unwrap_err(),
+            VaultError::Paused
+        );
+        assert_eq!(
+            vault.release("owner", "req-missing").unwrap_err(),
+            VaultError::Paused
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_pause);
+    }
+
+    #[test]
     fn illegal_state_transition_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
