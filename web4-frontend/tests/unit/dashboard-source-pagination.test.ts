@@ -291,4 +291,19 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.audits).toHaveLength(1);
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
   });
+
+  it("fails closed when mock mode is requested in production", async () => {
+    const createClientSpy = vi.spyOn(apiContractClient, "createFrontendApiClient");
+
+    vi.stubEnv("NODE_ENV", "production");
+
+    try {
+      await expect(fetchDashboardSnapshot({ mode: "mock" })).rejects.toThrow(
+        "Mock mode is disabled in production",
+      );
+      expect(createClientSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
 });
