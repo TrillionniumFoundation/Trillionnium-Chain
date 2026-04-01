@@ -107,7 +107,7 @@ Minimum packet fields:
 - the packet generator rejects any other `--ceremony-scope` value so a mistyped scope cannot silently drift into handoff evidence
 - `genesis_artifact_path=` and `genesis_artifact_sha256=` copied exactly once as the shared ceremony anchor
 - `validator_set_version=` identifying the exact validator membership list under review; for packets that may feed `public-mainnet-input`, use a concrete version label (for example `mainnet-candidate-2026-03-31`) instead of the template/default `v1`
-- `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`; for `public-mainnet-input`, prefer absolute `config_path` values so every operator is reviewing the same on-disk file identity rather than a shell-relative path
+- `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`; for `public-mainnet-input`, prefer absolute `config_path` values so every operator is reviewing the same on-disk file identity rather than a shell-relative path. When using `python3 scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet --ceremony-scope public-mainnet-input ...`, the generated `validator_entry.config_path` values are emitted as absolute paths automatically from the validated bundle.
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists
 - `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own
 - `operator_ack_signature_path=` or `operator_ack_digest=` repeated once per operator when the ceremony requires a durable signed/attested acknowledgment artifact instead of chat-only confirmation
@@ -188,7 +188,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
 cargo check -p trnm-node -q
 ```
 
-The `--emit-ceremony-packet` mode is meant to reduce operator transcription drift: it reuses the validated `node_id` / `config_path` / `p2p_addr` / `rpc_addr` tuple from the actual config bundle instead of retyping each `validator_entry=` by hand.
+The `--emit-ceremony-packet` mode is meant to reduce operator transcription drift: it reuses the validated `node_id` / `config_path` / `p2p_addr` / `rpc_addr` tuple from the actual config bundle instead of retyping each `validator_entry=` by hand. For `--ceremony-scope public-mainnet-input`, it also resolves each emitted `config_path` to an absolute path so the packet can be reviewed without shell-relative ambiguity.
 
 For any packet expected to feed a signed/public-mainnet readiness review, prefer generating the skeleton with the ceremony metadata filled in up front instead of forwarding a packet that still contains placeholder fields:
 
