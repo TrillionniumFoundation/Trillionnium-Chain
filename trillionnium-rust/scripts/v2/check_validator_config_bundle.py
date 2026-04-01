@@ -333,6 +333,7 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         config_path = entry["config_path"]
         if prefer_absolute_config_paths:
             config_path = str(Path(config_path).resolve())
+            validate_packet_path(config_path, "validator_entry.config_path")
         validator_name = entry["node_id"]
         validate_packet_atom_value(validator_name, "validator_entry.validator_name")
         validate_packet_atom_value(validator_name, "validator_entry.node_id")
