@@ -2219,6 +2219,33 @@ mod tests {
     }
 
     #[test]
+    fn borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the last idle critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // A fresh critical tx blocked by the borrowed slot must remain fresh across
+        // cross-class retry noise instead of being poisoned into lane-wide duplicate
+        // metadata while reserve protection is still active.
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // Once the borrowed occupant drains, the same tx id should still admit as
+        // fresh through the critical path and only then become globally duplicate.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
