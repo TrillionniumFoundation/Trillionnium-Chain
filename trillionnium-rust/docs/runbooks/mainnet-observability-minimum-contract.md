@@ -123,6 +123,7 @@ Operators should not over-read it as indexer/read-model closure.
   - use as the minimum operator-visible BFT auth/safety cluster before escalation.
 - `bft_auth_reject_stale_total` / `bft_auth_reject_stale_nonce_total`
   - keep both append-stable for grep compatibility; today the alias resolves to the same stale-nonce rejection counter and should not be reinterpreted as a distinct source.
+  - operator note: the block/round-progress `[bft]` log stream may still spell the same underlying signal with `auth_reject_stale` or `auth_reject_stale_nonce` tokens depending on the surface; treat those spellings as the same stale-nonce family unless and until a future contract explicitly splits them.
 - `bft_leader_missed_total` / `bft_leader_missed_max` / `bft_leader_missed_top_share_ppm`
   - use together to decide whether missed-proposal pressure is diffuse or concentrated on one proposer.
 - `bft_leader_missed_active_validators` / `bft_leader_missed_active_validator_share_ppm`
