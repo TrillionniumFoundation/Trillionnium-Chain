@@ -238,4 +238,54 @@ describe("dashboard source normalized audit pagination", () => {
     ).toBeDefined();
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
+
+  it("keeps the readonly snapshot adaptable when task metadata or event payload are missing", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344",
+        events: [
+          {
+            id: "EVT-344",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "EVT-344")?.details).toBe("{}");
+  });
 });

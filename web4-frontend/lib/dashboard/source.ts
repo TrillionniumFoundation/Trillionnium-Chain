@@ -264,6 +264,13 @@ const mapAuditResult = (
   return entry.reason ? "Warn" : "Fail";
 };
 
+const stringifyDashboardField = (value: unknown, fallback: string): string => {
+  if (value == null) return fallback;
+
+  const serialized = JSON.stringify(value);
+  return serialized ?? fallback;
+};
+
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
 
@@ -321,7 +328,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         updatedAt: taskResp.task.updatedAt ?? taskResp.task.createdAt
           ? toDisplayTime(taskResp.task.updatedAt ?? taskResp.task.createdAt ?? "")
           : "-", 
-        description: JSON.stringify(taskResp.task.metadata),
+        description: stringifyDashboardField(taskResp.task.metadata, "{}"),
       },
     ],
     events: [
@@ -331,7 +338,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         category: mapEventCategory(event.type),
         summary: event.type,
         severity: mapEventSeverity(event.level),
-        details: JSON.stringify(event.payload),
+        details: stringifyDashboardField(event.payload, "{}"),
       })),
       ...normalizedAuditEvents.map((event) =>
         mapNormalizedAuditToDashboardEvent(
