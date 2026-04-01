@@ -104,6 +104,17 @@ assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal rollback_command "$summary_rollback" "$manifest_rollback"
 assert_equal replay_command "$summary_replay" "$manifest_replay"
 
+current_branch_ref="$(git symbolic-ref -q HEAD || true)"
+if [ -n "$current_branch_ref" ]; then
+  if [ "$current_branch_ref" = "$summary_worktree_branch_ref" ]; then
+    git_worktree_branch_ref_match="true"
+  else
+    git_worktree_branch_ref_match="false"
+  fi
+else
+  git_worktree_branch_ref_match="unknown"
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'git_branch=%s\n' "$summary_branch"
@@ -111,6 +122,7 @@ printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
 printf 'git_worktree_path=%s\n' "$summary_worktree_path"
 printf 'git_worktree_branch_ref=%s\n' "$summary_worktree_branch_ref"
+printf 'git_worktree_branch_ref_match=%s\n' "$git_worktree_branch_ref_match"
 printf 'summary_truth_source=%s\n' "$summary_truth_source"
 printf 'summary_result=%s\n' "$summary_result"
 printf 'summary_rollback_command=%s\n' "$summary_rollback"

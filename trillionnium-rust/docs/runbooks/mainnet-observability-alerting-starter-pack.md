@@ -379,6 +379,7 @@ Rules:
 4. Set `first_stop_panel=` to the exact stable panel name from the routing table above; use `unknown` rather than inventing an ad-hoc alias.
 5. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
 6. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
+7. When both `summary.txt` and `manifest.txt` exist, prefer `./scripts/v2/extract_release_handoff_fields.sh` to populate `summary_path=`, `manifest_path=`, `git_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` directly from artifacts plus the currently checked-out branch ref.
 
 ---
 
