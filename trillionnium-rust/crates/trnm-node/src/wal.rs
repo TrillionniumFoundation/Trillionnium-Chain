@@ -99,7 +99,7 @@ fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
 
 fn metadata_scaffold_is_effectively_empty(raw: &str) -> bool {
     raw.lines().all(|line| {
-        let trimmed = line.trim();
+        let trimmed = line.trim_start_matches('\u{feff}').trim();
         trimmed.is_empty() || trimmed.starts_with('#')
     })
 }
@@ -809,6 +809,22 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_treats_bom_prefixed_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-bom-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "\u{feff}# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("checkpoint-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -874,6 +890,22 @@ mod tests {
         fs::write(
             wal_meta_file(&wal_dir),
             "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_bom_prefixed_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-bom-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
         )
         .unwrap();
 
