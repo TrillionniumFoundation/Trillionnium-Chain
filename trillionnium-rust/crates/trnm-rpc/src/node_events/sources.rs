@@ -12,15 +12,38 @@ use std::sync::{Mutex, MutexGuard, OnceLock};
 
 pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(trimmed))
-            }
-        })
+        .filter_map(|part| normalize_node_event_log_source_entry(part).map(PathBuf::from))
         .collect()
+}
+
+fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let normalized = normalize_wrapped_env_value(trimmed);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    Some(normalized.to_string())
 }
 
 fn normalize_lexical_path(path: PathBuf) -> PathBuf {
@@ -82,14 +105,9 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
             for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
+                let Some(normalized) = normalize_node_event_log_source_entry(line) else {
                     continue;
-                }
-                let normalized = normalize_wrapped_env_value(trimmed);
-                if normalized.is_empty() || normalized.starts_with('#') {
-                    continue;
-                }
+                };
                 let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
                     normalize_lexical_path(path)
@@ -289,6 +307,54 @@ mod tests {
             got,
             vec![archive_dir.join("node4.log")],
             "wrapped comment manifest entries should not create bogus historical replay paths"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_inline_manifest_comments_after_wrapped_paths() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-inline-comment-manifest");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "\"../../archive/node4.log\" # operator note\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "inline manifest comments should not corrupt wrapped historical replay paths"
         );
 
         let _ = fs::remove_dir_all(root);
