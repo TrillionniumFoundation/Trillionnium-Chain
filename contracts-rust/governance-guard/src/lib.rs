@@ -538,10 +538,12 @@ impl GovernanceGuard {
                     normalized.note = Some(format!("version={before}->{after}"));
                 }
                 if let (Some(old), Some(new_value)) = (old_value, new_value) {
-                    normalized.note = Some(format!(
-                        "value={old}->{new_value}, {}",
-                        normalized.note.as_deref().unwrap_or("-")
-                    ));
+                    normalized.note = Some(match normalized.note.take() {
+                        Some(existing_note) => {
+                            format!("value={old}->{new_value}, {existing_note}")
+                        }
+                        None => format!("value={old}->{new_value}"),
+                    });
                 }
                 normalized
             }
@@ -1160,5 +1162,31 @@ mod tests {
             gov.execute_unpause("exec", pid, eta).unwrap_err(),
             Error::PauseNotActive
         );
+    }
+
+    #[test]
+    fn normalized_unpause_execution_note_omits_placeholder_version_suffix() {
+        let mut gov = setup();
+        let now = 7_100;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-note").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-note", now)
+            .unwrap();
+        gov.execute_unpause("exec", pid, eta).unwrap();
+
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
+        let event = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_executed"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
+
+        assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
+        assert_eq!(event.note.as_deref(), Some("value=true->false"));
     }
 }
