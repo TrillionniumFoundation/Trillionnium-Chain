@@ -18,6 +18,9 @@ MANIFEST_PATH=""
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_HEAD=""
+VERIFIED_WORKTREE=""
+VERIFIED_BRANCH_REF=""
+VERIFIED_HEAD=""
 
 normalize_branch_ref() {
   case "$1" in
@@ -80,7 +83,10 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
   if [ -n "$EXPECTED_HEAD" ]; then
     verify_args+=(--expected-head "$EXPECTED_HEAD")
   fi
-  "$REPO_ROOT/trillionnium-rust/scripts/v2/verify_lane_worktree.sh" "${verify_args[@]}" >/dev/null
+  verify_output="$("$REPO_ROOT/trillionnium-rust/scripts/v2/verify_lane_worktree.sh" "${verify_args[@]}")"
+  VERIFIED_WORKTREE="$(printf '%s\n' "$verify_output" | awk -F= '/^verified_worktree=/ { sub(/^[^=]*=/, ""); print; exit }')"
+  VERIFIED_BRANCH_REF="$(printf '%s\n' "$verify_output" | awk -F= '/^verified_branch_ref=/ { sub(/^[^=]*=/, ""); print; exit }')"
+  VERIFIED_HEAD="$(printf '%s\n' "$verify_output" | awk -F= '/^verified_head=/ { sub(/^[^=]*=/, ""); print; exit }')"
 fi
 
 if [ -z "$SUMMARY_PATH" ]; then
@@ -206,6 +212,15 @@ if [ -n "$EXPECTED_HEAD" ]; then
   fi
 fi
 
+if [ -n "$VERIFIED_WORKTREE" ]; then
+  printf 'verified_worktree=%s\n' "$VERIFIED_WORKTREE"
+fi
+if [ -n "$VERIFIED_BRANCH_REF" ]; then
+  printf 'verified_branch_ref=%s\n' "$VERIFIED_BRANCH_REF"
+fi
+if [ -n "$VERIFIED_HEAD" ]; then
+  printf 'verified_head=%s\n' "$VERIFIED_HEAD"
+fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'git_toplevel=%s\n' "$summary_toplevel"
