@@ -2065,6 +2065,67 @@ mod tests {
     }
 
     #[test]
+    fn critical_spillover_stays_fail_closed_once_dedicated_normal_headroom_is_gone() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 2,
+                critical_headroom: 1,
+                total_headroom: 3,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Consume all dedicated normal headroom while aggregate capacity remains.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // The last aggregate slot is a real reserved critical slot, not hidden
+        // spillover headroom: critical may claim it directly, then both classes
+        // must observe the lane as fully closed.
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+    }
+
+    #[test]
     fn lane_gate_enforces_global_capacity_even_when_lane_mins_apply() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
