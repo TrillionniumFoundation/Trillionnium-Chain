@@ -82,6 +82,43 @@ EXPLORER_RPC_BASE_URL=http://127.0.0.1:7777 \
   ./scripts/v2/explorer_service_up.sh
 ```
 
+## Minimum operator deployment skeleton
+
+This scaffold is still local/static-only, but operators should use one repeatable deployment shape instead of ad-hoc shell history.
+A minimal Day-1 handoff can be expressed as:
+
+1. keep the process bound to a predictable host/port,
+2. persist runtime knobs in one env file,
+3. place any reverse proxy in front of `EXPLORER_PUBLIC_BASE_URL`,
+4. keep the startup/liveness probe pointed at the local bind target unless you are explicitly testing proxy reachability.
+
+Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
+
+```bash
+EXPLORER_HOST=127.0.0.1
+EXPLORER_PORT=18090
+EXPLORER_PUBLIC_BASE_URL=https://explorer.trnm.example
+EXPLORER_HEALTH_URL=https://explorer.trnm.example/healthz
+EXPLORER_RPC_BASE_URL=http://127.0.0.1:7777
+```
+
+Suggested bring-up from the repo root:
+
+```bash
+set -a
+. ./trillionnium-rust/run/explorer-service/explorer-service.env
+set +a
+./trillionnium-rust/scripts/v2/explorer_service_up.sh
+./trillionnium-rust/scripts/v2/explorer_service_status.sh
+```
+
+Operator notes for this placeholder deployment shape:
+
+- prefer `EXPLORER_HOST=127.0.0.1` when a reverse proxy terminates external traffic; only bind `0.0.0.0` if the host/network policy really requires direct exposure
+- treat `EXPLORER_PUBLIC_BASE_URL` as the public/operator-facing URL and `local_health_url` as the local liveness target; they may differ legitimately
+- keep the env file, emitted `pid_file`, and emitted `log_file` together in handoff notes so the next operator can restart or roll back without guessing hidden shell state
+- if the proxy layer is changed, re-run `explorer_service_status.sh` and quote both `health_url` and `local_health_url` in the ticket/handoff note
+
 ## Expected status output
 
 After a successful start, run:
