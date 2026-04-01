@@ -5716,6 +5716,25 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_ipv6_literal_and_socket_shaped_node_ids_fail_closed() {
+        for node_id in ["::1", "[::1]:26656"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("IPv6 literal or socket-shaped node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain path or host-literal separators"),
+                "unexpected error for {node_id}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn requeue_uncommitted_txs_noop_on_empty_pick() {
         let mut mempool = VecDeque::from(vec![MockTx::CreateTask {
             task_id: 3001,
