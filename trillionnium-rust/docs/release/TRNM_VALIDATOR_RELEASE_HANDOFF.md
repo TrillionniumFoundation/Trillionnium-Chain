@@ -276,7 +276,8 @@ printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
 awk -F= '
-  /^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command|challenge_reexec_entry|replay_env_trnm_challenge_reexec_entry)=/ { print; next }
+  /^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command|challenge_reexec_entry|replay_env_trnm_challenge_reexec_entry)=/ { print; next }
+  /^result=/ { sub(/^result=/, "summary_result="); print; next }
   /^generated_at=/ { sub(/^generated_at=/, "summary_generated_at="); print }
 ' "$summary_path"
 awk -F= '
