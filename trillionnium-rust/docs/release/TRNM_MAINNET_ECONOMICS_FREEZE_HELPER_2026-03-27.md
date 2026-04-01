@@ -196,12 +196,16 @@ keeps that review bounded and auditable.
 | sponsor boundary / duplicate retention | `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` | Once a reopened shared slot is re-consumed, sponsor/free-ingress retries remain classification-only until a real drain happens again; retry noise cannot silently widen sponsor-backed headroom. |
 | sponsor boundary / borrowed-slot discipline | `cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` | If the last admissible shared slot is already borrowed, fresh cross-class retries stay backpressured until that exact borrowed occupant drains. |
 | sponsor revocation / drain-only duplicate retention | `cargo test -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q` | A hard-stopped / zero-budget lane preserves already-seen duplicate knowledge across idle-pop recovery, so a drain-only sponsor revocation path cannot silently reopen sponsor-backed headroom before the queue truly drains. |
-| retention pricing / retention safety | `cargo test -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. |
-| tuple integrity packet | `cargo check -p trnm-mempool -p trnm-pouw -q` | The current mempool / proof-retention surfaces still compile together as one economics-review slice, rather than drifting independently. |
+| retention pricing / retention safety | `cargo test -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. This remains a **required companion gate** even though it lives outside the mempool/`trnm-pouw` compile slice. |
+| tuple integrity packet | `cargo check -p trnm-mempool -p trnm-pouw -q` | The current mempool / proof-retention surfaces still compile together as one economics-review slice, rather than drifting independently. This compile check does **not** replace the retention restore regression above; reviewers need both signals in the packet. |
 
 This is intentionally **evidence of current guardrails**, not proof that the economics tuple is
 fully frozen. Launch review must still bind these behaviors to named launch constants,
-authorities, and operator-visible inspection commands.
+authorities, and operator-visible inspection commands. In particular, do not treat a green
+`cargo check -p trnm-mempool -p trnm-pouw -q` as sufficient evidence that retention payer/
+restore semantics were exercised; the `trnm-state` retention regression remains the explicit
+retention-side proof point until a first-class economics review harness folds both surfaces
+into one operator command.
 
 ### Minimal evidence capture companion
 
