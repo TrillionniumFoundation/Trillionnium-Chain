@@ -49,6 +49,18 @@ fn run_assigned_summary_line(
     )
 }
 
+fn format_skip_summary(skipped: &BTreeMap<&'static str, usize>) -> String {
+    if skipped.is_empty() {
+        "none".to_string()
+    } else {
+        skipped
+            .iter()
+            .map(|(reason, count)| format!("{}={}", reason, count))
+            .collect::<Vec<_>>()
+            .join(",")
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn handle_run_assigned(
     worker: String,
@@ -191,15 +203,7 @@ pub(crate) fn handle_run_assigned(
         );
     }
     save_ingress_records(&ingress_file, &records)?;
-    let skip_summary = if skipped.is_empty() {
-        "none".to_string()
-    } else {
-        skipped
-            .iter()
-            .map(|(reason, count)| format!("{}={}", reason, count))
-            .collect::<Vec<_>>()
-            .join(",")
-    };
+    let skip_summary = format_skip_summary(&skipped);
     println!(
         "{}",
         run_assigned_summary_line(
@@ -218,7 +222,9 @@ pub(crate) fn handle_run_assigned(
 
 #[cfg(test)]
 mod tests {
-    use super::run_assigned_summary_line;
+    use std::collections::BTreeMap;
+
+    use super::{format_skip_summary, run_assigned_summary_line};
 
     #[test]
     fn run_assigned_summary_line_keeps_operator_visible_handoff_tokens_stable() {
@@ -249,5 +255,24 @@ mod tests {
         ] {
             assert_eq!(line.matches(token).count(), 1, "token should appear once: {token}");
         }
+    }
+
+    #[test]
+    fn format_skip_summary_preserves_none_sentinel_for_zero_skip_runs() {
+        let skipped = BTreeMap::new();
+        assert_eq!(format_skip_summary(&skipped), "none");
+    }
+
+    #[test]
+    fn format_skip_summary_keeps_reason_counts_sorted_for_grep_stability() {
+        let mut skipped = BTreeMap::new();
+        skipped.insert("status_not_assigned", 2);
+        skipped.insert("assigned_worker_missing", 1);
+        skipped.insert("assigned_worker_mismatch", 4);
+
+        assert_eq!(
+            format_skip_summary(&skipped),
+            "assigned_worker_mismatch=4,assigned_worker_missing=1,status_not_assigned=2"
+        );
     }
 }
