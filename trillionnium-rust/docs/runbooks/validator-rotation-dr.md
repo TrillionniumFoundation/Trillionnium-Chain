@@ -160,6 +160,20 @@ Interpretation rule:
 - copy the exact `python3 scripts/v2/check_validator_config_bundle.py ...` invocation into `config_bundle_check_command=` and the final pass/fail line into `config_bundle_check_result=` so another operator can audit which bundle was actually validated
 - the incoming validator config must pass the config-bundle check before cutover
 
+Recommended evidence-capture shape for the cutover note:
+
+```bash
+config_bundle_check_command="python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml"
+config_bundle_check_result="$(python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml 2>&1 | tee /tmp/trnm-config-bundle-check.log | tail -n 1)"
+printf 'config_bundle_check_command=%s\n' "$config_bundle_check_command"
+printf 'config_bundle_check_result=%s\n' "$config_bundle_check_result"
+```
+
+Interpretation rule:
+- replace `configs/validator-new.toml` with the exact incoming bundle named in the cutover note (and append any additional config files to the same command when the bundle spans more than one file)
+- keep the emitted `config_bundle_check_command=` and `config_bundle_check_result=` lines adjacent in the handoff note so another operator can audit the exact bundle and terminal verdict together
+- if the last line is ambiguous or truncated, preserve the full log path (for example `/tmp/trnm-config-bundle-check.log`) next to the handoff note rather than paraphrasing the result from memory
+
 ### 4. Attach DR/recovery evidence when the event is a rebuild
 
 For `cutover_kind=dr_rebuild`, attach one explicit recovery artifact instead of summarizing it from memory.
