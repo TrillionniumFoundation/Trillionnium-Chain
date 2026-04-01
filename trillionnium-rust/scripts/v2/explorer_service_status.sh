@@ -95,7 +95,7 @@ else
   pid=""
 fi
 
-if command -v curl >/dev/null 2>&1; then
+if [[ "${state}" == "running" ]] && command -v curl >/dev/null 2>&1; then
   if curl --silent --show-error --fail --max-time 2 "${HEALTH_URL}" >/dev/null 2>&1; then
     health="ok"
   else

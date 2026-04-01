@@ -104,6 +104,7 @@ Expected healthy signals:
 
 If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
 If `curl` is unavailable on the host, the status script leaves active probing disabled and reports `health=unknown` instead of forcing a false negative.
+The status script now probes `health_url` only when `state=running`, so operators do not get a misleading `health=ok` from an unrelated process that happens to answer on the same URL while the scaffold PID is absent or stale.
 
 ## What gets served
 
@@ -170,6 +171,8 @@ Action:
 1. verify `health_url` from `explorer_service_status.sh`
 2. inspect `log_file`
 3. fetch the URL directly with `curl`
+
+If `state!=running`, treat `health=unknown` as expected and fix the process/PID state first instead of debugging the HTTP probe path.
 
 ## Shutdown
 
