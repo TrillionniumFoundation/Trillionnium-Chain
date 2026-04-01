@@ -14,6 +14,8 @@ npm run dev
 
 访问：<http://localhost:3000>
 
+> 当前默认运行语义：前端优先读取只读查询 API；仅在显式 `?mode=mock` 时回退到本地 mock snapshot。不要把本地页面可打开，误读成仓库已具备写路径或整体 release-ready。
+
 ## 开发前自检
 
 ```bash
@@ -68,3 +70,5 @@ npm run release:preflight
 ```
 
 该命令会额外执行 `test:contract` 并产出报告：`run/release-preflight-report.txt`。
+
+如需判断“整个 TRNM 仓库现在能否对外表述为 release-ready”，请返回仓库根目录查看 `RELEASE_READINESS.md`，不要只依据前端子项目门禁结果下结论。
