@@ -940,6 +940,22 @@ mod tests {
     }
 
     #[test]
+    fn load_wal_meta_treats_crlf_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-crlf-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
