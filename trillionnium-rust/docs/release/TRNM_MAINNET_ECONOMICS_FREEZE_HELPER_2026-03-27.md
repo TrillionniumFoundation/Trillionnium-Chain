@@ -43,6 +43,21 @@ Before any public-mainnet cut, freeze all five items together:
    - fallback payer / disable rule when a sponsor-funded retention budget is exhausted
    - what happens after the window expires (prune, checkpoint-only, archive-only)
 
+   ### Retention exhaustion / expiry mini-matrix
+
+   Freeze review should name both the **budget exhaustion** behavior and the **post-window expiry** behavior so operators do not have to infer whether TRNM silently widens treasury liability or silently keeps storage hot forever.
+
+   | Surface | Candidate label | Required freeze wording | Review bias |
+   | --- | --- | --- | --- |
+   | sponsor-funded retention budget exhaustion | `disable-new-growth` | no new sponsor-funded retention growth is accepted once the budget is exhausted; existing retained artifacts stay governed by their already-frozen window | safest default for day-1 because it fails closed without inventing a new payer |
+   | sponsor-funded retention budget exhaustion | `fallback-to-explicit-payer` | new retention growth continues only when the submitter/challenger/caller becomes the payer-of-record under an already-frozen rule | acceptable only if the payer transition is operator-visible and auditable |
+   | sponsor-funded retention budget exhaustion | `fallback-to-treasury` | treasury absorbs additional retention cost after sponsor exhaustion | avoid for day-1 unless governance has explicitly capped and approved this liability |
+   | retention window expiry | `prune` | the heavy artifact payload is deleted after the frozen window, leaving only whatever metadata the packet explicitly promises | lowest storage risk, but only if audits do not rely on the discarded payload |
+   | retention window expiry | `checkpoint-only` | only a compact checkpoint / state-root / minimal audit marker survives after expiry | preferred conservative default when full archival funding is not frozen yet |
+   | retention window expiry | `archive-only` | artifacts leave the hot query path but remain recoverable from an explicitly named archive tier/payer | acceptable only if archive ownership, retrieval expectations, and cost responsibility are frozen too |
+
+   If the freeze packet names a retention payer but does not also name one exhaustion label and one expiry label, treat retention pricing as **not frozen**.
+
 4. **Anti-spam floor**
    - minimum fee-like admission floor, bond floor, or rate budget
    - separate sustained-load rule for free-ingress classes
