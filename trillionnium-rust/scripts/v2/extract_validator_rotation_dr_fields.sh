@@ -223,7 +223,9 @@ if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PAT
 fi
 
 printf 'report_path=%s\n' "$REPORT_PATH"
+printf 'dr_summary_path=%s\n' "$REPORT_PATH"
 printf 'generated_at=%s\n' "$GENERATED_AT"
+printf 'dr_generated_at=%s\n' "$GENERATED_AT"
 printf 'git_worktree_path=%s\n' "$GIT_WORKTREE_PATH"
 printf 'git_worktree_branch_ref=%s\n' "$GIT_WORKTREE_BRANCH_REF"
 printf 'git_branch=%s\n' "$GIT_BRANCH"
@@ -242,5 +244,8 @@ if [ -n "$LANE_VERIFY_COMMAND" ]; then
   printf 'lane_verify_command=%s\n' "$LANE_VERIFY_COMMAND"
 fi
 printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
+printf 'dr_rollback_command=%s\n' "$ROLLBACK_COMMAND"
 printf 'replay_command=%s\n' "$REPLAY_COMMAND"
+printf 'dr_replay_command=%s\n' "$REPLAY_COMMAND"
 printf 'status=%s\n' "$STATUS"
+printf 'dr_status=%s\n' "$STATUS"
