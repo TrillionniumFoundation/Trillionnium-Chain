@@ -226,6 +226,12 @@ Implementation note for current review surfaces:
 - the prefix determines whether bounded retry is even eligible, while the suffix stays in the persisted evidence/log surface so operators can distinguish transport outage from concrete evidence lookup failure;
 - no compound code may be rewritten into `verified` without a fresh successful attempt carrying a new attempt/result identity.
 
+Fail-closed interpretation rule for compound codes:
+
+- `unavailable:<suffix>` may use the `unavailable` retry class only for a bounded retry budget, but the persisted evidence bundle must still preserve the exact suffix so release review can tell dependency outage from missing local evidence;
+- suffixes such as `no_matching_wal_entry`, `checkpoint_store_unreachable`, or `evidence_bundle_unreadable` must never be collapsed into a generic transport-only incident in operator-facing artifacts;
+- if a later retry succeeds, the prior `unavailable:<suffix>` evidence remains part of the audit trail and must not be deleted or rewritten as if the failed attempt had only been a transient log line.
+
 ## Release-review checklist
 
 Use this when deciding whether verifier-sidecar scope is still trailing work or has crossed into launch-blocking territory.
