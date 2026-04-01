@@ -241,6 +241,7 @@ Mark each item explicitly:
 - [ ] preflight identity fields preserved next to preflight decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
+- [ ] `evidence_scope=` preserved next to decision language
 - [ ] `evaluated_origin_main=` recorded from `git rev-parse origin/main` for this packet
 - [ ] `summary_rollback_command=` quoted verbatim
 - [ ] `summary_replay_command=` quoted verbatim
