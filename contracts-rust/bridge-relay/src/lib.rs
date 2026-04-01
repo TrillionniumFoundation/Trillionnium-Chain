@@ -1273,6 +1273,62 @@ mod tests {
     }
 
     #[test]
+    fn finalize_settlement_rejects_stale_config_version_after_governance_change() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut stale = sample_msg();
+        stale.nonce = 123;
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(
+                &stale,
+                &[sig_for(&stale, 7), sig_for(&stale, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        let expected_version = relay.config_version();
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got: 1 }
+                if expected == expected_version
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale finalize must not append proof/nonce/finalize audit side effects"
+        );
+
+        let mut fresh = sample_msg();
+        fresh.config_version = expected_version;
+        fresh.nonce = 123;
+
+        let finalized_settlement_id = relay
+            .finalize_settlement(
+                &fresh,
+                &[sig_for(&fresh, 7), sig_for(&fresh, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+        assert_eq!(finalized_settlement_id, settlement_id(&fresh));
+    }
+
+    #[test]
     fn config_version_gating_rejects_stale_expected_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
