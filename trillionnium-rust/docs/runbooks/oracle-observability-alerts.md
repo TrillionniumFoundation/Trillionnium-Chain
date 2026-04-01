@@ -180,8 +180,10 @@ Keep panel titles stable so alerts, screenshots, and handoff notes refer to the 
 Dashboard annotation rules:
 
 - annotate the configured quorum floor on any panel that renders `oracle_source_cardinality`;
-- annotate the incident `severity` and `verdict` on sev0/sev1 screenshots or dashboard share links;
-- when linking a dashboard snapshot into an incident ticket, include the `summary_line` beside it so the image and ticket stay semantically aligned.
+- annotate the incident `severity`, `verdict`, `needs_replay`, and `needs_rollback` on `sev0` / `sev1` screenshots or dashboard share links;
+- keep `first_stop=` aligned with the shared observability routing contract: use `first_stop="Oracle-specific drill-down"` for normal oracle triage and switch to `first_stop="Evidence / replay integrity"` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math;
+- when linking a dashboard snapshot into an incident ticket, include the `summary_line` beside it so the image and ticket stay semantically aligned;
+- if the dashboard tool cannot render the full shared block inline, copy the missing fields (`needs_replay`, `needs_rollback`, `first_stop`, `truth_source`, `evidence_scope`, `summary_path`, `manifest_path`) into the linked incident body and treat the screenshot/share link as incomplete until that link exists.
 
 ## Starter alert threshold matrix
 
