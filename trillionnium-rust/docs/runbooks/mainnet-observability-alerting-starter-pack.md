@@ -69,7 +69,7 @@ It exists to keep the first dashboard pack, first alert pack, and first incident
 Every alert page, dashboard share link, and incident ticket should carry the same small label block:
 
 - `plane=observability`
-- `service=<node|rpc|worker|oracle|bridge>`
+- `service=<node|rpc|worker|oracle|bridge|any>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `needs_replay=<yes|no>`
@@ -326,7 +326,7 @@ This keeps the first-stop dashboard surface semantically aligned with the ticket
 Minimum annotation fields:
 
 - `plane=observability`
-- `service=<node|rpc|worker|oracle|bridge>`
+- `service=<node|rpc|worker|oracle|bridge|any>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `needs_replay=<yes|no>`
@@ -360,7 +360,7 @@ Example annotation line:
 Every `sev0` / `sev1` incident should preserve one compact evidence block:
 
 - `plane`: `observability`
-- `service`: `<node|rpc|worker|oracle|bridge>`
+- `service`: `<node|rpc|worker|oracle|bridge|any>`
 - `severity`: `<sev0|sev1|sev2|sev3>`
 - `signal`: `<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
