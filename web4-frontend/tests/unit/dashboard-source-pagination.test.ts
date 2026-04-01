@@ -238,4 +238,57 @@ describe("dashboard source normalized audit pagination", () => {
     ).toBeDefined();
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
+
+  it("fails closed on normalized audit pagination errors without dropping readonly task/event data", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: { region: "ap-east-1" },
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344",
+        events: [
+          {
+            id: "evt-1",
+            taskId: "344",
+            type: "deploy.canary_started",
+            level: "info",
+            timestamp: "2026-03-01T00:05:00.000Z",
+            payload: { rollout: "5%" },
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockRejectedValue(new Error("normalized audit timeout")),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+    expect(snapshot.tasks).toHaveLength(1);
+    expect(snapshot.tasks[0]?.id).toBe("344");
+    expect(snapshot.events).toHaveLength(1);
+    expect(snapshot.events[0]?.summary).toBe("deploy.canary_started");
+    expect(snapshot.audits).toHaveLength(1);
+    expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
+  });
 });
