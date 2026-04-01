@@ -235,13 +235,14 @@ EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
 report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
 
 [ -n "$report_path" ] || { echo "missing recovery report" >&2; exit 1; }
-awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|rollback_command|replay_command|status)=/ { print }' "$report_path"
+awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|expected_worktree_root|expected_branch_ref|expected_head|lane_verify_command|rollback_command|replay_command|status)=/ { print }' "$report_path"
 ```
 
 Stop if any of the following occurs:
 - `report_path` does not resolve to a concrete report
 - `git_worktree_path=` in the report does not match the ticket-assigned worktree
 - `git_worktree_branch_ref=` in the report does not match the ticket-assigned branch ref
+- lane binding was expected, but `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` are missing from the report
 - `verify_lane_worktree.sh` was expected to pin `EXPECTED_HEAD`, but the verified head does not match the ticket/handoff commit
 - `git_status_summary=` is not `clean`
 - `rollback_command=` or `replay_command=` is missing from the report
