@@ -486,3 +486,53 @@ fn oracle_validate_snapshot_response_rejects_snapshot_policy_feed_mismatch() {
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
 }
+
+#[test]
+fn oracle_validate_snapshot_response_rejects_zero_min_source_policy() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-zero-min-sources",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 0,
+            "max_deviation_bps": 500,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-zero-min-sources",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("zero min_source_count policy should fail closed");
+
+    assert_eq!(err, "invalid policy: min_source_count must be > 0");
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
+fn oracle_validate_snapshot_response_rejects_deviation_cap_above_guardrail() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-deviation-cap-overflow",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 2,
+            "max_deviation_bps": 10_001,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-deviation-cap-overflow",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("max_deviation_bps above guardrail should fail closed");
+
+    assert_eq!(err, "invalid policy: max_deviation_bps must be <= 10000");
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}

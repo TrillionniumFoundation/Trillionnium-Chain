@@ -104,6 +104,19 @@ struct PolicyFile {
     feed_id: String,
 }
 
+fn validate_policy_file(policy: &PolicyFile) -> Result<(), String> {
+    if policy.min_source_count == 0 {
+        return Err("invalid policy: min_source_count must be > 0".to_string());
+    }
+    if policy.max_staleness_ms == 0 {
+        return Err("invalid policy: max_staleness_ms must be > 0".to_string());
+    }
+    if policy.max_deviation_bps > 10_000 {
+        return Err("invalid policy: max_deviation_bps must be <= 10000".to_string());
+    }
+    Ok(())
+}
+
 fn validate_canonical_feed_id(raw: &str) -> Result<String, String> {
     let canonical = raw.trim().to_ascii_lowercase();
     if canonical.is_empty() {
@@ -306,6 +319,7 @@ pub(crate) fn oracle_validate_snapshot_response(
     let snapshot_val: SnapshotFile =
         serde_json::from_str(&snapshot_text).map_err(|e| e.to_string())?;
     let policy_val: PolicyFile = serde_json::from_str(&policy_text).map_err(|e| e.to_string())?;
+    validate_policy_file(&policy_val)?;
 
     let source_count = snapshot_val.sources.len() as u32;
     let cardinality = canonical_source_cardinality(&snapshot_val.sources);
