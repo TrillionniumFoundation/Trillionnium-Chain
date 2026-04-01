@@ -354,9 +354,12 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                 )
                 || matches!(
                     c,
-                    '\u{200B}'
+                    '\u{061C}'
+                        | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
                         | '\u{2060}'
                         | '\u{FEFF}'
                         | '\u{202A}'
