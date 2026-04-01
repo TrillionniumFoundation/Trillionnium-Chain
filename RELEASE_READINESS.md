@@ -46,6 +46,7 @@
 - **状态**：旧 Rust verifier PoC 本体不在当前仓库中。
 - **可确认缺失**：`rust/verifier`、`scripts/run_rust_verifier_poc.sh`、`docs/protocol/rust-verifier-poc.md` 当前不存在。
 - **文档口径**：仅可表述为“存在历史旁路复验/证据记录”，不可表述为“当前仓库内建 verifier 子系统已就绪”。
+- **若需评估 P1.3 闭环程度**：请转到 `trillionnium-rust/docs/release/TRNM_VERIFIER_DA_CHECKPOINT_SIDECAR_CLOSURE_2026-03-31.md`，按 deployable boundary / DA-checkpoint linkage / failure taxonomy / replay evidence 逐项判读；该文档是 sidecar 收口清单，不是 release-ready 证明。
 
 ## 文档使用规则（新的 truth-source 结构）
 
