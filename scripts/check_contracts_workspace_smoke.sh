@@ -29,12 +29,12 @@ run_step() {
 }
 
 run_step "contracts-rust workspace manifest resolves" \
-  cargo metadata --manifest-path "$MANIFEST" --no-deps --format-version 1
+  cargo metadata --manifest-path "$MANIFEST" --locked --no-deps --format-version 1
 
 run_step "contracts-rust workspace check" \
-  cargo check --manifest-path "$MANIFEST" -q
+  cargo check --manifest-path "$MANIFEST" --locked -q
 
 run_step "contracts-rust workspace tests" \
-  cargo test --manifest-path "$MANIFEST" -q
+  cargo test --manifest-path "$MANIFEST" --locked -q
 
 printf '\n[OK] contracts workspace smoke passed: %s\n' "$OUT" | tee -a "$OUT"
