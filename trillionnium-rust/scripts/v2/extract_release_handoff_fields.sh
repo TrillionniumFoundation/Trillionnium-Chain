@@ -235,6 +235,8 @@ if [ -n "$VERIFIED_HEAD" ]; then
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
+else
+  printf 'preflight_summary_path=%s\n' '<missing>'
 fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"

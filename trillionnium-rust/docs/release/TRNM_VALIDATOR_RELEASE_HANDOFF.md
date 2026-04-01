@@ -353,7 +353,7 @@ Record these fields in the release ticket or operator handoff note:
 - worktree branch ref:
 - worktree branch ref match (`git_worktree_branch_ref_match`; when using `extract_release_handoff_fields.sh`, the helper emits this once because it already asserts the value matches across `summary.txt` and `manifest.txt`):
 - git status summary (`git_status_summary`):
-- preflight summary path:
+- preflight summary path (use the helper output verbatim; if it prints `<missing>`, treat preflight evidence retention as incomplete rather than omitting the field):
 - local evidence summary path:
 - local evidence generated_at (`summary_generated_at`, or raw `generated_at=` when quoting `summary.txt` directly):
 - local evidence truth_source (`summary_truth_source`, or raw `truth_source=` when quoting `summary.txt` directly):
