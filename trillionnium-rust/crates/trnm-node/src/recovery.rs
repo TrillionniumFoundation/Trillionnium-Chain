@@ -427,12 +427,32 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_surfaces_aligned_checkpoint_relation() {
+        let recovered = recovered_state(2, 12, Some(11), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_surfaces_checkpoint_only_relation_without_wal_entries() {
         let recovered = recovered_state(0, 9, Some(8), false, false);
 
         assert_eq!(
             recovery_startup_summary(&recovered),
             "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_handles_empty_rejoin_bootstrap_state() {
+        let recovered = recovered_state(0, 1, None, false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=false"
         );
     }
 
