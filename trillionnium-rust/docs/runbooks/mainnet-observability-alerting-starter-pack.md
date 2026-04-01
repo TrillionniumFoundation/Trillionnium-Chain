@@ -326,6 +326,8 @@ Minimum annotation fields:
 - `service=<node|rpc|worker|oracle|bridge>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
+- `needs_replay=<yes|no>`
+- `needs_rollback=<yes|no>`
 - `first_stop=<stable-panel-name-from-this-runbook>`
 - `summary_path=<abs-path|unknown>`
 - `manifest_path=<abs-path|unknown>`
@@ -335,13 +337,14 @@ Minimum annotation fields:
 Annotation rules:
 
 - the `first_stop=` value must exactly match one stable panel name from this runbook; do not invent shortened aliases in screenshots or share links;
+- preserve `needs_replay=` / `needs_rollback=` alongside `replay=` / `rollback=` so responders can distinguish required evidence actions from merely missing pointers;
 - if the dashboard tool cannot render all fields inline, put the missing fields into the linked incident/ticket body and treat the dashboard share as incomplete until that link exists;
 - if `replay=missing` and `rollback=missing` during a live `sev0` / `sev1` incident, classify the dashboard annotation as insufficient even if the graph looks obvious;
 - for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` next to the shared fields so the oracle-specific subtype is visible in the dashboard layer too.
 
 Example annotation line:
 
-- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy first_stop="RPC health / read surface" summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
+- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 
 ---
 
