@@ -40,6 +40,8 @@ expected_genesis_or_checkpoint=
 handoff_signed_by=
 handoff_acknowledged_by=
 rollback_command=
+config_bundle_check_command=
+config_bundle_check_result=
 handoff_summary_path=
 handoff_manifest_path=
 summary_generated_at=
@@ -57,6 +59,7 @@ next_blocker=
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
+- `config_bundle_check_command=` / `config_bundle_check_result=` may remain empty until Step 3 finishes, but they must be filled before any replacement / rotation / DR event can be called reproducible.
 - when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
 - if any identity or rollback field cannot be filled before cutover, stop.
@@ -154,6 +157,7 @@ Interpretation rule:
 - the worktree must still be clean
 - any ambiguous running owner is a stop condition
 - validate the exact incoming validator config bundle named in the cutover note; do not substitute an unrelated demo quartet just because those files happen to exist in the repo
+- copy the exact `python3 scripts/v2/check_validator_config_bundle.py ...` invocation into `config_bundle_check_command=` and the final pass/fail line into `config_bundle_check_result=` so another operator can audit which bundle was actually validated
 - the incoming validator config must pass the config-bundle check before cutover
 
 ### 4. Attach DR/recovery evidence when the event is a rebuild
@@ -265,6 +269,7 @@ When handing this event to another operator, record:
 - genesis artifact/hash or checkpoint lineage
 - `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
 - commands run
+- config-bundle check command/result
 - pass/fail result
 - rollback command
 - DR report generated-at timestamp when DR evidence was required
@@ -310,6 +315,8 @@ expected_genesis_or_checkpoint=<genesis-hash-or-checkpoint>
 handoff_signed_by=<operator releasing ownership>
 handoff_acknowledged_by=<operator accepting ownership>
 rollback_command=<quoted verbatim from the cutover note or generated artifact>
+config_bundle_check_command=<verbatim python3 scripts/v2/check_validator_config_bundle.py ... invocation>
+config_bundle_check_result=<verbatim final OK/fail line for the exact incoming bundle>
 expected_worktree_root=<ticket-assigned worktree root>
 expected_branch_ref=<ticket-assigned branch ref>
 expected_head=<ticket-assigned commit or empty when not pinned>
@@ -333,6 +340,7 @@ Fail-closed interpretation:
 - for `cutover_kind=rotation`, both handoff names must be present on the same note as the verified worktree/branch/head tuple
 - for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` together with `dr_summary_path=` / `dr_generated_at=` / `dr_status=PASS` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
 - if `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` had to be reconstructed from chat instead of copied from the lane-verification step, the packet is incomplete
+- if `config_bundle_check_command=` / `config_bundle_check_result=` are missing or paraphrased, the packet is incomplete because the incoming validator bundle was not auditable as-validated
 - if `rollback_command=` was paraphrased instead of copied verbatim from the selected artifact or pre-declared cutover note, the packet is incomplete
 
 ## No-Go conditions
