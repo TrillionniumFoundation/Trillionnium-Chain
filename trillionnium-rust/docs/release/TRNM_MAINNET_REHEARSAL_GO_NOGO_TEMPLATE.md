@@ -92,15 +92,19 @@ printf 'manifest_path=%s\n' "$manifest_path"
   --summary-path "$summary_path" \
   --manifest-path "$manifest_path" \
   --expected-worktree-root "/abs/path/from-ticket" \
-  --expected-branch-ref "refs/heads/lane/assigned-branch"
+  --expected-branch-ref "refs/heads/lane/assigned-branch" \
+  | tee /tmp/trnm-release-handoff-fields.txt
 ```
 
 As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref, but the recorded `preflight_expected_branch_ref=` / `git_expected_worktree_branch_ref=` fields should preserve the exact ticket-assigned form instead of normalizing it after the fact.
+
+Treat the helper output as a first-class artifact for memo assembly, not throwaway terminal scrollback. Preserve it (or an equivalent saved transcript) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from the helper/artifacts rather than recopied from memory.
 
 Record:
 - preflight_path=
 - summary_path=
 - manifest_path=
+- handoff_helper_output_path=
 - preflight_result=
 - preflight_generated_at=
 - preflight_expected_worktree_root=
@@ -111,6 +115,7 @@ Record:
 - preflight_git_worktree_branch_ref_match=
 - summary_generated_at=
 - manifest_generated_at=
+- git_expected_worktree_branch_ref=
 
 Rule:
 - if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
