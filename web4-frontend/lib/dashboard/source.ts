@@ -184,7 +184,16 @@ const mapEventCategory = (
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${event.event_type}`.toLowerCase();
 
-  if (tokens.includes("error") || tokens.includes("fail") || tokens.includes("reject") || tokens.includes("invalid")) {
+  if (
+    tokens.includes("error") ||
+    tokens.includes("fail") ||
+    tokens.includes("reject") ||
+    tokens.includes("invalid") ||
+    tokens.includes("revoke") ||
+    tokens.includes("unauthor") ||
+    tokens.includes("forbid") ||
+    tokens.includes("denied")
+  ) {
     return "Critical";
   }
   if (tokens.includes("warn") || tokens.includes("drift") || tokens.includes("mismatch")) {
