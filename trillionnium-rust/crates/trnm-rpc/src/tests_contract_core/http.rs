@@ -425,14 +425,34 @@ fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
 }
 
 #[test]
+fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+            .expect_err("empty capability route should report missing subject"),
+        "missing token or subject"
+    );
+
+    for target in [
+        "/query-capability-audit///",
+        "/query-capability-audit/alice//",
+        "/query-capability-audit/alice/nested",
+    ] {
+        let err = parse_query_capability_audit_subject_from_target(target)
+            .expect_err("malformed capability audit path must fail closed as invalid query");
+        assert_eq!(err, "invalid query", "target={target}");
+    }
+}
+
+#[test]
 fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whitespace() {
     for target in [
         "/query-capability-audit/alice#frag",
         "/query-capability-audit/al ice",
         "/query-capability-audit/alice\textra",
     ] {
-        parse_query_capability_audit_subject_from_target(target)
+        let err = parse_query_capability_audit_subject_from_target(target)
             .expect_err("capability audit subject must stay a clean single path segment");
+        assert_eq!(err, "invalid query", "target={target}");
     }
 }
 
@@ -459,9 +479,10 @@ fn parse_query_capability_audit_subject_from_target_rejects_encoded_path_ambigui
         "/query-capability-audit/%2E",
         "/query-capability-audit/%2e%2E",
     ] {
-        parse_query_capability_audit_subject_from_target(target).expect_err(
+        let err = parse_query_capability_audit_subject_from_target(target).expect_err(
             "capability audit subject must stay a single clean segment after decoding",
         );
+        assert_eq!(err, "invalid query", "target={target}");
     }
 }
 

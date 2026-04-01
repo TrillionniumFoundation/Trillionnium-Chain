@@ -287,8 +287,14 @@ fn parse_query_capability_audit_subject_from_target<'a>(
         return Err("invalid query");
     }
 
-    parse_nonempty_path_suffix(path, "/query-capability-audit/")
-        .ok_or("missing token or subject")
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
