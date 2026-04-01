@@ -1046,6 +1046,9 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.is_empty() {
         bail!("sign message must not be empty");
     }
+    if message.len() > 4096 {
+        bail!("sign message must be <= 4096 bytes");
+    }
     if message
         .chars()
         .any(|c| c == '\r' || c == '\n' || contains_hidden_or_control(c))
@@ -2826,18 +2829,20 @@ mod tests {
 
     #[test]
     fn sign_message_rejects_multiline_or_control_text() {
+        let oversized = "a".repeat(4097);
         for bad in [
-            "",
-            "hello\nworld",
-            "hello\rworld",
-            "hello\u{0007}world",
-            "hello\u{061c}world",
-            "hello\u{200e}world",
-            "hello\u{200f}world",
-            "hello\u{202e}world",
-            "hello\u{2068}world",
+            "".to_string(),
+            "hello\nworld".to_string(),
+            "hello\rworld".to_string(),
+            "hello\u{0007}world".to_string(),
+            "hello\u{061c}world".to_string(),
+            "hello\u{200e}world".to_string(),
+            "hello\u{200f}world".to_string(),
+            "hello\u{202e}world".to_string(),
+            "hello\u{2068}world".to_string(),
+            oversized,
         ] {
-            let err = ensure_sign_message(bad).unwrap_err();
+            let err = ensure_sign_message(&bad).unwrap_err();
             assert!(
                 err.to_string().contains("sign message"),
                 "unexpected error for {bad:?}: {err}"
@@ -2846,6 +2851,7 @@ mod tests {
 
         ensure_sign_message("trnm mainnet attestation v1").unwrap();
         ensure_sign_message("签名用途: validator-bootstrap").unwrap();
+        ensure_sign_message(&"a".repeat(4096)).unwrap();
     }
 
     #[test]
