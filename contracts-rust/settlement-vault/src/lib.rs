@@ -620,4 +620,25 @@ mod tests {
         assert_eq!(vault.balance_of("bob"), u128::MAX);
         assert_eq!(vault.balance_of("carol"), 1);
     }
+
+    #[test]
+    fn release_overflow_fails_closed_without_unlocking_or_logging_event() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 5).unwrap();
+        vault.deposit("owner", "bob", u128::MAX).unwrap();
+
+        vault.lock("owner", "req-release", "alice", 5).unwrap();
+        vault.transfer("owner", "bob", "alice", u128::MAX).unwrap();
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+
+        let audit_len_before = vault.audit_log().len();
+        let release_err = vault.release("owner", "req-release").unwrap_err();
+        assert_eq!(release_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+        assert_eq!(
+            vault.lock_record("req-release").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+    }
 }
