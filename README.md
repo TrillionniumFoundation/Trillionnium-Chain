@@ -184,6 +184,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
+  - `query-events/<task_id>` 的历史排序应视为 **确定性回放顺序**：node event 主路径按 `block_height -> tx_id -> ts_unix_ms -> event_type -> from_status -> to_status` 稳定排序；索引侧若要做持久化增量回放，不应自行改写这条顺序轴。
+  - 当 node event 缺失、只能退回 adapter 记录时，`query-events` 只会在**已持久化 commit 存在**时补出 `commit -> reveal` 历史；单独的 reveal 不会被当成完整历史链。索引器不应把 reveal-only 记录解释成可独立落库的已完成回放片段。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
