@@ -338,6 +338,61 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("stops normalized audit pagination when hasMore stays true but nextCursor normalizes to empty", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "346",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "346",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-4",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            note: "cursor missing",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "   ",
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledWith({
+      limit: 60,
+    });
+    expect(
+      snapshot.events.find((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted"),
+    ).toBeDefined();
+  });
+
   it("fails closed on normalized audit pagination errors without dropping readonly task/event data", async () => {
     const mockClient = {
       queryTask: vi
