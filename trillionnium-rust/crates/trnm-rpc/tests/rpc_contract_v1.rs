@@ -255,6 +255,62 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("request contract should fail closed on unknown fields");
     assert!(request_err.to_string().contains("unexpected"));
 
+    let nested_request_err = serde_json::from_value::<RequestFullQueryResponse>(json!({
+        "request": {
+            "request_id":"req-1",
+            "task_id":7,
+            "channel":"discord",
+            "user_id":"u-1",
+            "session_id":"s-1",
+            "text":"hello",
+            "idempotency_key":"idem-1",
+            "status":"accepted",
+            "created_at_unix_ms":123,
+            "unexpected":"schema-drift"
+        },
+        "verifier_status": null,
+        "resolution_code": null,
+        "result_hash": null,
+        "commit_tx_hash": null,
+        "reveal_tx_hash": null,
+        "events": []
+    }))
+    .expect_err("nested request contract should fail closed on unknown fields");
+    assert!(nested_request_err.to_string().contains("unexpected"));
+
+    let nested_event_err = serde_json::from_value::<RequestFullQueryResponse>(json!({
+        "request": {
+            "request_id":"req-1",
+            "task_id":7,
+            "channel":"discord",
+            "user_id":"u-1",
+            "session_id":"s-1",
+            "text":"hello",
+            "idempotency_key":"idem-1",
+            "status":"accepted",
+            "created_at_unix_ms":123
+        },
+        "verifier_status": null,
+        "resolution_code": null,
+        "result_hash": null,
+        "commit_tx_hash": null,
+        "reveal_tx_hash": null,
+        "events": [{
+            "event_type":"commit",
+            "task_id":7,
+            "from_status":"Assigned",
+            "to_status":"Committed",
+            "actor":"worker-1",
+            "tx_id":11,
+            "block_height":3,
+            "state_root":"0xabc",
+            "ts_unix_ms":123,
+            "unexpected":true
+        }]
+    }))
+    .expect_err("nested event contract should fail closed on unknown fields");
+    assert!(nested_event_err.to_string().contains("unexpected"));
+
     let gov_param_err = serde_json::from_value::<GovParamQueryResponse>(json!({
         "key_id":1,
         "key":"runtime_metadata_schema",
