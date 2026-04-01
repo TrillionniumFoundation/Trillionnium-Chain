@@ -2344,6 +2344,53 @@ mod tests {
     }
 
     #[test]
+    fn critical_spillover_duplicate_probe_keeps_qos_flat_until_final_dedicated_normal_slot_is_claimed() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        let spillover_snapshot = LaneQosSnapshot {
+            normal_queued: 1,
+            critical_queued: 2,
+            total_queued: 3,
+            normal_headroom: 1,
+            critical_headroom: 0,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), spillover_snapshot);
+
+        // The spilled critical occupant must stay globally duplicate across ingress
+        // classes without perturbing operator-facing headroom.
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), spillover_snapshot);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Because one dedicated normal slot is still genuinely free, fresh normal
+        // ingress should claim that slot directly rather than being mistaken for
+        // reserve-guarded retry noise.
+        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 2,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
     fn reserve_only_normal_borrowed_admission_is_globally_idempotent_until_drained() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
