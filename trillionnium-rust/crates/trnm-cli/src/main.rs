@@ -1140,6 +1140,42 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     Ok(x)
 }
 
+#[cfg(unix)]
+fn ensure_owner_only_permissions(meta: &fs::Metadata, path: &Path, kind: &str) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mode = meta.permissions().mode() & 0o777;
+    if mode & 0o077 != 0 {
+        bail!(
+            "{} '{}' has insecure permissions {:o}; expected owner-only access",
+            kind,
+            path.display(),
+            mode
+        );
+    }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn ensure_owner_only_permissions(_meta: &fs::Metadata, _path: &Path, _kind: &str) -> Result<()> {
+    Ok(())
+}
+
+#[cfg(unix)]
+fn set_owner_only_permissions(path: &Path, mode: u32) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mut permissions = fs::metadata(path)?.permissions();
+    permissions.set_mode(mode);
+    fs::set_permissions(path, permissions)?;
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn set_owner_only_permissions(_path: &Path, _mode: u32) -> Result<()> {
+    Ok(())
+}
+
 fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
     let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
@@ -1158,8 +1194,10 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
                 store.display()
             );
         }
+        ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     }
     fs::create_dir_all(store)?;
+    set_owner_only_permissions(store, 0o700)?;
     let f = wallet_file(store, name);
     if fs::symlink_metadata(&f).is_ok() {
         bail!(
@@ -1169,6 +1207,7 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
         );
     }
     fs::write(&f, format!("{}\n", normalized_priv_hex))?;
+    set_owner_only_permissions(&f, 0o600)?;
     Ok(f)
 }
 
@@ -1190,17 +1229,25 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
             store.display()
         );
     }
+    ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
-    if fs::symlink_metadata(&f)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
+    let file_meta = fs::symlink_metadata(&f)
+        .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    if file_meta.file_type().is_symlink() {
         bail!(
             "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
             name,
             f.display()
         );
     }
+    if !file_meta.file_type().is_file() {
+        bail!(
+            "wallet '{}' at {} is not a regular file; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
+    ensure_owner_only_permissions(&file_meta, &f, "wallet")?;
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())
@@ -2803,6 +2850,81 @@ mod tests {
                 "unexpected error for {bad:?}: {err}"
             );
         }
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn write_key_sets_owner_only_permissions() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let unique = format!(
+            "trnm-cli-wallet-perm-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = canonical_temp_root().join(unique);
+
+        let wallet = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap();
+
+        let mode = std::fs::metadata(&wallet).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
+        let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
+        assert_eq!(store_mode, 0o700, "unexpected wallet store mode: {:o}", store_mode);
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_group_or_world_accessible_wallet_file_or_store() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let unique = format!(
+            "trnm-cli-wallet-read-perm-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+        let wallet = wallet_file(&store, "alice");
+        std::fs::write(
+            &wallet,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+
+        std::fs::set_permissions(&wallet, std::fs::Permissions::from_mode(0o644)).unwrap();
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet '")
+                && err.to_string().contains("has insecure permissions"),
+            "unexpected error: {err}"
+        );
+
+        std::fs::set_permissions(&wallet, std::fs::Permissions::from_mode(0o600)).unwrap();
+        std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store '")
+                && err.to_string().contains("has insecure permissions"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o700));
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_dir(&store);
     }
 
     #[test]
