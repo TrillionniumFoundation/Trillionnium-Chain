@@ -34,6 +34,25 @@ fn parse_http_request_target_accepts_head_health_probe() {
 }
 
 #[test]
+fn head_health_probe_alias_ignores_query_string_and_preserves_content_length() {
+    let request = parse_http_request_target("HEAD /-/readyz?probe=lb&from=ops HTTP/1.1")
+        .expect("health alias request parses");
+    let path = request.1.split('?').next().expect("path before query");
+    assert!(is_health_probe_path(path));
+
+    let response = if is_health_probe_path(path) {
+        json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+    } else {
+        unreachable!("health alias with query string should match after path split")
+    };
+
+    assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Length: 50\r\n"));
+    assert!(response.ends_with("\r\n\r\n"));
+    assert!(!response.ends_with("\"version\":1}"));
+}
+
+#[test]
 fn parse_http_get_path_accepts_lowercase_get_method() {
     assert_eq!(
         parse_http_get_path("get /query-task/42?verbose=1 HTTP/1.1"),

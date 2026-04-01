@@ -68,6 +68,7 @@ For accepted probe aliases, the transport semantics are also part of the minimum
 
 - `GET` returns the JSON body above.
 - `HEAD` returns the same status code and `Content-Length` that the equivalent `GET` body would have produced, but with no response body bytes.
+  This stays true even when operators probe an accepted alias with a query string (for example `HEAD /-/readyz?probe=lb&from=ops HTTP/1.1`).
 
 This matters for load balancers and lightweight operator probes that rely on header-only checks.
 If the body later grows by additive fields, `HEAD` should continue to mirror the equivalent `GET` payload length rather than inventing a separate schema.
