@@ -222,6 +222,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_pat
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_raw_route_delimiter_confusion() {
+    for path in [
+        "/query-normalized-audit-events#tail",
+        "/query-normalized-audit-events\\tail",
+        "/query-normalized-audit-events?source=trnm.task?limit=2",
+        "/query-normalized-audit-events?source=trnm.task#tail",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("raw route delimiter confusion should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn query_normalized_audit_events_supports_pagination_and_event_filters() {
     let events = vec![
         NodeEventRecord {
