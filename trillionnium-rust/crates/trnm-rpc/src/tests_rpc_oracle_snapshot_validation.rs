@@ -74,6 +74,40 @@ fn oracle_validate_snapshot_response_rejects_exact_drift_boundary_fail_closed() 
 }
 
 #[test]
+fn oracle_validate_snapshot_response_accepts_zero_deviation_exact_match() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-zero-deviation-exact-match",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 2,
+            "max_deviation_bps": 0,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-zero-deviation-exact-match",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect("zero-deviation exact match should remain admissible");
+
+    assert!(out.ok);
+    assert_eq!(out.now_ts_ms, 10_100);
+    assert_eq!(out.observation.outcome, "accepted");
+    assert_eq!(out.metrics.oracle_drift_reject_total, 0);
+    assert_eq!(out.metrics.oracle_quorum_reject_total, 0);
+    assert_eq!(out.metrics.oracle_stale_reject_total, 0);
+    assert_eq!(out.metrics.accepted_total, 1);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert!(out.error.is_none());
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_uses_canonical_source_cardinality_for_duplicate_source_ids() {
     let policy_path = write_json_fixture("oracle-policy-duplicate-sources", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(
