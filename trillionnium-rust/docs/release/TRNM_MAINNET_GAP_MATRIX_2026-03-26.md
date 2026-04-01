@@ -196,9 +196,10 @@ A public chain without a stable read surface becomes operationally opaque and un
 ### Current state
 There are partial metrics, smoke checks, benchmark outputs, and localized Prometheus-style surfaces.
 There is not yet one clearly unified production observability plane.
+A minimum operator-visible contract is now frozen in `docs/runbooks/mainnet-observability-minimum-contract.md` for the currently shipped health aliases, `trnm-rpc` health body, `trnm-node` incident-summary fields, and `trnm-worker-agent` handoff/batch-summary shapes.
 
 ### Missing
-- node/rpc/worker/oracle/bridge unified metrics contract
+- node/rpc/worker/oracle/bridge unified metrics contract beyond that minimum frozen operator contract
 - production exporter path
 - dashboards
 - alert thresholds
