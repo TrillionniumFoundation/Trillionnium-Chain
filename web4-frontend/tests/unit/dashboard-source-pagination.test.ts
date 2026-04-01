@@ -289,7 +289,7 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "EVT-344")?.details).toBe("{}");
   });
 
-  it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {
+  it("fails closed when normalized audit pagination cannot be loaded", async () => {
     const mockClient = {
       queryTask: vi
         .fn()
@@ -326,13 +326,60 @@ describe("dashboard source normalized audit pagination", () => {
           },
         ],
       }),
+      queryNormalizedAuditEvents: vi.fn().mockRejectedValue(new Error("normalized audit endpoint unavailable")),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): normalized audit endpoint unavailable. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+  });
+
+  it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "346",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "346",
+        events: [
+          {
+            id: "EVT-346",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
       queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
         events: [
           {
             source: "bridge-relay",
             event_type: "bridge_relay.proof_submitted",
             actor: "validator",
-            object_id: "proof-345",
+            object_id: "proof-346",
             timestamp: "not-an-iso-timestamp",
             reason: "warn",
           },
@@ -345,7 +392,7 @@ describe("dashboard source normalized audit pagination", () => {
 
     const snapshot = await fetchDashboardSnapshot();
 
-    expect(snapshot.events[0]?.id).toBe("EVT-345");
-    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-345")).toBeDefined();
+    expect(snapshot.events[0]?.id).toBe("EVT-346");
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-346")).toBeDefined();
   });
 });

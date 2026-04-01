@@ -289,7 +289,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     client.queryTask(defaultTaskId),
     client.queryEvents(defaultTaskId),
     client.queryCapabilityAudit(defaultAuditSubject),
-    fetchNormalizedAuditEventsWithPagination(client).catch(() => [] as NormalizedAuditEvent[]),
+    fetchNormalizedAuditEventsWithPagination(client),
   ]);
 
   const mapped = {
