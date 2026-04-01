@@ -288,4 +288,64 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.tasks[0]?.description).toBe("{}");
     expect(snapshot.events.find((event) => event.id === "EVT-344")?.details).toBe("{}");
   });
+
+  it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "345",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "345",
+        events: [
+          {
+            id: "EVT-345",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-345",
+            timestamp: "not-an-iso-timestamp",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events[0]?.id).toBe("EVT-345");
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-345")).toBeDefined();
+  });
 });

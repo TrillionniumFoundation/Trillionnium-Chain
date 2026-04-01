@@ -271,6 +271,17 @@ const stringifyDashboardField = (value: unknown, fallback: string): string => {
   return serialized ?? fallback;
 };
 
+const parseDashboardTime = (value: string): number => {
+  const direct = Date.parse(value);
+  if (!Number.isNaN(direct)) return direct;
+
+  const normalized = value.trim().replace(" ", "T");
+  const fallback = Date.parse(normalized);
+  if (!Number.isNaN(fallback)) return fallback;
+
+  return Number.NEGATIVE_INFINITY;
+};
+
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
 
@@ -346,11 +357,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
         ),
       ),
-    ].sort((left, right) => {
-      const leftTime = Date.parse(toDisplayTime(left.time));
-      const rightTime = Date.parse(toDisplayTime(right.time));
-      return rightTime - leftTime;
-    }),
+    ].sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
       control: audit.capability,
