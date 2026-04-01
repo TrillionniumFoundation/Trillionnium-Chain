@@ -104,7 +104,7 @@ Minimum packet fields:
 - the packet generator rejects any other `--ceremony-scope` value so a mistyped scope cannot silently drift into handoff evidence
 - `genesis_artifact_path=` and `genesis_artifact_sha256=` copied exactly once as the shared ceremony anchor
 - `validator_set_version=` identifying the exact validator membership list under review; for packets that may feed `public-mainnet-input`, use a concrete version label (for example `mainnet-candidate-2026-03-31`) instead of the template/default `v1`
-- `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`
+- `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`; for `public-mainnet-input`, prefer absolute `config_path` values so every operator is reviewing the same on-disk file identity rather than a shell-relative path
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists
 - `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own
 - `operator_ack_signature_path=` or `operator_ack_digest=` repeated once per operator when the ceremony requires a durable signed/attested acknowledgment artifact instead of chat-only confirmation

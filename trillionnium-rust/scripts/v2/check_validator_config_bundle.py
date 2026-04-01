@@ -315,8 +315,11 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         "authority_note=all operators must acknowledge the exact packet above before any validator starts"
     )
     print()
+    prefer_absolute_config_paths = args.ceremony_scope == "public-mainnet-input"
     for entry in entries:
         config_path = entry["config_path"]
+        if prefer_absolute_config_paths:
+            config_path = str(Path(config_path).resolve())
         validator_name = entry["node_id"]
         print(
             "validator_entry="
