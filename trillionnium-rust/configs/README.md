@@ -17,8 +17,9 @@ All four nodes bind the same loopback IP (`127.0.0.1`) and keep a deterministic 
 
 1. Start `node1` first as the initial anchor.
 2. Start `node2`, `node3`, and `node4` in slot order.
-3. For a join or rejoin rehearsal, bring the node back with the same config file and the same `node_id`/listener tuple. Treat any drift from the shipped tuple as invalid until reviewed.
-4. If a config contains unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed.
+3. If `node1` is absent, do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise.
+4. For a join or rejoin rehearsal, bring the node back with the same config file and the same `node_id`/listener tuple. Treat any drift from the shipped tuple as invalid until reviewed.
+5. If a config contains unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed.
 
 ## What this fixture is for
 

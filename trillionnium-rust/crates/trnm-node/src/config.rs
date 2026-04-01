@@ -1848,6 +1848,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         for expected_phrase in [
             "Start `node1` first as the initial anchor.",
             "Start `node2`, `node3`, and `node4` in slot order.",
+            "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
             "bring the node back with the same config file and the same `node_id`/listener tuple",
             "unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed",
         ] {
