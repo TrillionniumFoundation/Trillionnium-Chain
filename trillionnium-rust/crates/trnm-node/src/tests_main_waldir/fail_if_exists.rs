@@ -48,3 +48,22 @@ fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_state() {
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn resolve_wal_dir_fail_if_exists_allows_comment_only_wal_scaffold() {
+    let wal_dir = temp_wal_dir("fail-if-exists-comment-only-wal-scaffold");
+    fs::create_dir_all(&wal_dir).unwrap();
+    fs::write(
+        wal_meta_file(&wal_dir),
+        "# bootstrap placeholder\n\n   # retained until first committed block\n",
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(wal_dir.display().to_string(), WalDirMode::FailIfExists);
+
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    assert_eq!(resolved, wal_dir);
+    assert!(notice.is_none());
+
+    let _ = fs::remove_dir_all(&resolved);
+}

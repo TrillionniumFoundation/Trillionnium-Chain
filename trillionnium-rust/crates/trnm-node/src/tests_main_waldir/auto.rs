@@ -159,3 +159,51 @@ fn resolve_wal_dir_auto_isolates_builtin_default_when_only_empty_wal_meta_scaffo
 
     let _ = fs::remove_dir_all(&root);
 }
+
+#[test]
+fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
+    let root = temp_wal_dir("default-wal-comment-checkpoint-only-root");
+    let base = root.join(DEFAULT_BFT_WAL_DIR);
+    fs::create_dir_all(&base).unwrap();
+    fs::write(
+        checkpoint_file(&base),
+        "# bootstrap placeholder\n   # retained until first checkpoint\n",
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(DEFAULT_BFT_WAL_DIR.into(), WalDirMode::Auto);
+
+    let cwd = std::env::current_dir().unwrap();
+    std::env::set_current_dir(&root).unwrap();
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    std::env::set_current_dir(cwd).unwrap();
+
+    assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+    assert!(notice.is_none());
+
+    let _ = fs::remove_dir_all(&root);
+}
+
+#[test]
+fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_wal_scaffold_exists() {
+    let root = temp_wal_dir("default-wal-comment-meta-only-root");
+    let base = root.join(DEFAULT_BFT_WAL_DIR);
+    fs::create_dir_all(&base).unwrap();
+    fs::write(
+        wal_meta_file(&base),
+        "# bootstrap placeholder\n\n   # retained until first committed block\n",
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(DEFAULT_BFT_WAL_DIR.into(), WalDirMode::Auto);
+
+    let cwd = std::env::current_dir().unwrap();
+    std::env::set_current_dir(&root).unwrap();
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    std::env::set_current_dir(cwd).unwrap();
+
+    assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+    assert!(notice.is_none());
+
+    let _ = fs::remove_dir_all(&root);
+}
