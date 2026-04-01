@@ -29,7 +29,8 @@ fn tmp_dir(label: &str) -> PathBuf {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let p = std::env::temp_dir().join(format!("trnm-cli-{label}-{ts}"));
+    let temp_root = std::env::temp_dir().canonicalize().unwrap_or_else(|_| std::env::temp_dir());
+    let p = temp_root.join(format!("trnm-cli-{label}-{ts}"));
     std::fs::create_dir_all(&p).unwrap();
     p
 }
