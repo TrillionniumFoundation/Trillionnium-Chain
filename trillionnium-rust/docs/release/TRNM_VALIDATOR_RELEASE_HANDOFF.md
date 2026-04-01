@@ -345,7 +345,7 @@ Record these fields in the release ticket or operator handoff note:
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
-- worktree branch ref match (`git_worktree_branch_ref_match`):
+- worktree branch ref match (`git_worktree_branch_ref_match`; when using `extract_release_handoff_fields.sh`, the helper emits this once because it already asserts the value matches across `summary.txt` and `manifest.txt`):
 - git status summary (`git_status_summary`):
 - preflight summary path:
 - local evidence summary path:
@@ -355,7 +355,6 @@ Record these fields in the release ticket or operator handoff note:
 - local evidence evidence_scope:
 - local evidence result (`summary_result`):
 - rc manifest path:
-- rc manifest worktree branch ref match (`git_worktree_branch_ref_match`):
 - rc manifest generated_at:
 - rc manifest truth_source:
 - rc manifest historical_evidence_only:
