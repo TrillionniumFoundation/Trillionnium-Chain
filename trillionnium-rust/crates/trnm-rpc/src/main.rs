@@ -811,7 +811,7 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     raw.split(|c: char| c == ',' || c == ';' || c == '\n')
         .filter_map(|part| {
             let normalized = normalize_wrapped_env_value(part);
-            if normalized.is_empty() {
+            if normalized.is_empty() || normalized.starts_with('#') {
                 None
             } else {
                 Some(PathBuf::from(normalized))
@@ -8391,7 +8391,7 @@ line2
         unsafe {
             std::env::set_var(
                 NODE_EVENT_LOG_SOURCES_ENV,
-                "  \"shared.log\" ; `./shared.log`  ",
+                "  \"shared.log\" ; `./shared.log` ; \"# ignored wrapped comment\" ; `# ignored too`  ",
             );
             std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
         }
