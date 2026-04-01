@@ -154,6 +154,7 @@ export default function Home() {
           id={`dashboard-panel-${activeTab.toLowerCase()}`}
           role="tabpanel"
           aria-labelledby={`dashboard-tab-${activeTab.toLowerCase()}`}
+          aria-busy={loadState.status === "loading"}
         >
 
         {loadState.status === "loading" && (

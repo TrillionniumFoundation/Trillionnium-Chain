@@ -165,5 +165,15 @@ describe("dashboard page", () => {
     const status = screen.getByRole("status");
     expect(status).toHaveTextContent("Loading dashboard snapshot");
     expect(status).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("aria-busy", "true");
+  });
+
+  it("clears tabpanel busy state after readonly snapshot loads", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("aria-busy", "false");
   });
 });
