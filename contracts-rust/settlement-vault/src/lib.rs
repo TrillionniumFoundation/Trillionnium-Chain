@@ -37,6 +37,7 @@ pub enum VaultEvent {
     },
     Slashed {
         request_id: String,
+        account: String,
         beneficiary: String,
         amount: u128,
     },
@@ -151,12 +152,14 @@ impl SettlementVault {
             }
             VaultEvent::Slashed {
                 request_id,
+                account,
                 beneficiary,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.slashed");
                 normalized.actor = Some(beneficiary.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -279,7 +282,7 @@ impl SettlementVault {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
 
-        let amount = {
+        let (account, amount) = {
             let lock = self
                 .locks
                 .get(request_id)
@@ -289,7 +292,7 @@ impl SettlementVault {
                 return Err(VaultError::InvalidStateTransition);
             }
 
-            lock.amount
+            (lock.account.clone(), lock.amount)
         };
 
         self.ensure_creditable_balance(beneficiary, amount)?;
@@ -300,6 +303,7 @@ impl SettlementVault {
         self.credit_balance(beneficiary, amount)?;
         self.audit_log.push(VaultEvent::Slashed {
             request_id: request_id.to_string(),
+            account,
             beneficiary: beneficiary.to_string(),
             amount,
         });
@@ -598,8 +602,11 @@ mod tests {
             .any(|event| matches!(event, VaultEvent::Unpaused)));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Slashed { request_id, beneficiary, amount }
-                if request_id == "req-2" && beneficiary == "treasury" && *amount == 10
+            VaultEvent::Slashed { request_id, account, beneficiary, amount }
+                if request_id == "req-2"
+                    && account == "alice"
+                    && beneficiary == "treasury"
+                    && *amount == 10
         )));
 
         assert!(normalized
@@ -614,9 +621,12 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.event_type == "vault.transferred"));
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "vault.slashed"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.slashed"
+                && event.object_id.as_deref() == Some("req-2")
+                && event.related_id.as_deref() == Some("alice")
+                && event.actor.as_deref() == Some("treasury")
+        }));
         assert!(normalized
             .iter()
             .any(|event| event.source == "settlement-vault"));
