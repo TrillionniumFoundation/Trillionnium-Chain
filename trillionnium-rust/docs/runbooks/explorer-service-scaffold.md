@@ -246,6 +246,10 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `state=down`
 - `health=unknown`
 - `health_probe=not-run-state-down`
+- `health_probe_url=not-run-state-down`
+- `local_health=unknown`
+- `local_health_probe=not-run-state-down`
+- `local_health_probe_url=http://<bind_host>:<bind_port>/healthz` only when running; down/invalid-config exits emit `not-run-state-down` / `invalid-config` markers instead
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
 - `public_dir=.../run/explorer-service/public`

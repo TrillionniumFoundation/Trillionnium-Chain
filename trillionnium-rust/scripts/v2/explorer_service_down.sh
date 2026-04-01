@@ -23,6 +23,10 @@ emit_contract_paths() {
   local state="$1"
   local health="$2"
   local health_probe="$3"
+  local local_health="$4"
+  local local_health_probe="$5"
+  local health_probe_url="$6"
+  local local_health_probe_url="$7"
 
   echo "state=${state}"
   echo "pid_file=${PID_FILE}"
@@ -41,54 +45,58 @@ emit_contract_paths() {
   echo "production_ready=false"
   echo "health=${health}"
   echo "health_probe=${health_probe}"
+  echo "health_probe_url=${health_probe_url}"
+  echo "local_health=${local_health}"
+  echo "local_health_probe=${local_health_probe}"
+  echo "local_health_probe_url=${local_health_probe_url}"
 }
 
 validate_runtime_contract() {
   if [[ -z "${HOST}" ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_HOST must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
     echo "refusing to stop explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ -z "${PUBLIC_BASE_URL}" ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ -z "${HEALTH_URL}" ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
     echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
     exit 1
   fi
 }
@@ -97,7 +105,7 @@ validate_runtime_contract
 
 if [[ ! -f "${PID_FILE}" ]]; then
   echo "explorer service already stopped"
-  emit_contract_paths "down" "unknown" "not-run-state-down"
+  emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
   exit 0
 fi
 
@@ -121,4 +129,4 @@ if [[ -n "${pid}" && "${pid}" =~ ^[0-9]+$ ]]; then
 else
   echo "cleared explorer service scaffold stale pid file"
 fi
-emit_contract_paths "down" "unknown" "not-run-state-down"
+emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
