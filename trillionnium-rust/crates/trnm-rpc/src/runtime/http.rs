@@ -485,6 +485,25 @@ mod tests {
     }
 
     #[test]
+    fn query_string_is_ignored_for_health_probe_alias_matching() {
+        let request = parse_http_request_target("HEAD /-/readyz?probe=lb&from=ops HTTP/1.1")
+            .expect("health alias request parses");
+        let path = request.1.split('?').next().expect("path before query");
+        assert!(is_health_probe_path(path));
+
+        let response = if is_health_probe_path(path) {
+            json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+        } else {
+            unreachable!("health alias with query string should match after path split")
+        };
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Content-Length: 50\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.ends_with("\"version\":1}"));
+    }
+
+    #[test]
     fn parse_http_get_path_preserves_operator_trailing_slash_for_query_routes() {
         assert_eq!(
             parse_http_get_path("GET /query-task/42/ HTTP/1.1"),
