@@ -69,6 +69,11 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   return trimmed.replace(/\/+$/, "");
 };
 
+const normalizeOptionalQueryParam = (value: string | undefined): string | undefined => {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+};
+
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
   const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
@@ -155,9 +160,12 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
       const params = new URLSearchParams();
-      if (query.source) params.set("source", query.source);
-      if (query.eventType) params.set("eventType", query.eventType);
-      if (query.cursor) params.set("cursor", query.cursor);
+      const source = normalizeOptionalQueryParam(query.source);
+      const eventType = normalizeOptionalQueryParam(query.eventType);
+      const cursor = normalizeOptionalQueryParam(query.cursor);
+      if (source) params.set("source", source);
+      if (eventType) params.set("eventType", eventType);
+      if (cursor) params.set("cursor", cursor);
       if (query.limit != null && Number.isFinite(query.limit) && query.limit > 0) {
         params.set("limit", String(Math.trunc(query.limit)));
       }
