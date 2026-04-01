@@ -168,6 +168,34 @@ describe("dashboard page", () => {
     expect(screen.getByRole("tabpanel")).toHaveAttribute("aria-busy", "true");
   });
 
+  it("supports keyboard selection for readonly task, event, and audit details", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    const taskRow = screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i });
+    fireEvent.keyDown(taskRow, { key: "Enter" });
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+    expect(taskRow).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    const eventCard = screen.getByText("Info event").closest("article");
+    expect(eventCard).not.toBeNull();
+    fireEvent.keyDown(eventCard!, { key: " " });
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+    expect(eventCard).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    const auditCard = screen.getByText("Endpoint ACL").closest("article");
+    expect(auditCard).not.toBeNull();
+    fireEvent.keyDown(auditCard!, { key: "Enter" });
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+    expect(auditCard).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("clears tabpanel busy state after readonly snapshot loads", async () => {
     mockedFetch.mockResolvedValue(snapshot);
 

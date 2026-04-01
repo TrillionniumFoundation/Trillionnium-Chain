@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { fetchDashboardSnapshot } from "@/lib/dashboard/source";
 import type { DashboardSnapshot } from "@/lib/dashboard/adapter";
 
@@ -45,6 +45,13 @@ function EmptyState({
       <p className="mt-2 text-sm">{detail}</p>
     </article>
   );
+}
+
+function onSelectableKeyDown(event: KeyboardEvent<HTMLElement>, onSelect: () => void) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    onSelect();
+  }
 }
 
 export default function Home() {
@@ -254,8 +261,12 @@ export default function Home() {
                           {filteredTasks.map((task) => (
                             <tr
                               key={task.id}
+                              role="button"
+                              tabIndex={0}
+                              aria-pressed={selectedTask?.id === task.id}
                               onClick={() => setSelectedTaskId(task.id)}
-                              className={`cursor-pointer border-t border-slate-100 ${selectedTask?.id === task.id ? "bg-slate-50" : ""}`}
+                              onKeyDown={(event) => onSelectableKeyDown(event, () => setSelectedTaskId(task.id))}
+                              className={`cursor-pointer border-t border-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${selectedTask?.id === task.id ? "bg-slate-50" : ""}`}
                             >
                               <td className="px-4 py-3 font-medium">{task.id}</td>
                               <td className="px-4 py-3">{task.title}</td>
@@ -303,8 +314,12 @@ export default function Home() {
                     {filteredEvents.map((event) => (
                       <article
                         key={event.id}
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={selectedEvent?.id === event.id}
                         onClick={() => setSelectedEventId(event.id)}
-                        className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
+                        onKeyDown={(eventKey) => onSelectableKeyDown(eventKey, () => setSelectedEventId(event.id))}
+                        className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${
                           selectedEvent?.id === event.id ? "ring-2 ring-slate-300" : ""
                         }`}
                       >
@@ -363,8 +378,12 @@ export default function Home() {
                       {filteredAudits.map((audit) => (
                         <article
                           key={audit.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={selectedAudit?.id === audit.id}
                           onClick={() => setSelectedAuditId(audit.id)}
-                          className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
+                          onKeyDown={(eventKey) => onSelectableKeyDown(eventKey, () => setSelectedAuditId(audit.id))}
+                          className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${
                             selectedAudit?.id === audit.id ? "ring-2 ring-slate-300" : ""
                           }`}
                         >
