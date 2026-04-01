@@ -176,6 +176,52 @@ if [ -n "$EXPECTED_HEAD" ] && [ "$GIT_HEAD" != "$EXPECTED_HEAD" ]; then
   exit 1
 fi
 
+EXPECTED_WORKTREE_ROOT_RECORDED=""
+EXPECTED_BRANCH_REF_RECORDED=""
+EXPECTED_HEAD_RECORDED=""
+LANE_VERIFY_COMMAND=""
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] || [ -n "$EXPECTED_HEAD" ]; then
+  EXPECTED_WORKTREE_ROOT_RECORDED="$(require_key "$REPORT_PATH" expected_worktree_root)"
+  EXPECTED_BRANCH_REF_RECORDED="$(require_key "$REPORT_PATH" expected_branch_ref)"
+  LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
+
+  if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$EXPECTED_WORKTREE_ROOT_RECORDED" != "$EXPECTED_WORKTREE_ROOT" ]; then
+    printf 'report expected_worktree_root mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$EXPECTED_WORKTREE_ROOT_RECORDED" >&2
+    exit 1
+  fi
+
+  if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+    RECORDED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF_RECORDED")"
+    if [ "$RECORDED_BRANCH_REF_CANONICAL" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+      printf 'report expected_branch_ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$RECORDED_BRANCH_REF_CANONICAL" >&2
+      exit 1
+    fi
+  fi
+
+  if [ -n "$EXPECTED_HEAD" ]; then
+    EXPECTED_HEAD_RECORDED="$(require_key "$REPORT_PATH" expected_head)"
+    if [ "$EXPECTED_HEAD_RECORDED" != "$EXPECTED_HEAD" ]; then
+      printf 'report expected_head mismatch: expected %s got %s\n' "$EXPECTED_HEAD" "$EXPECTED_HEAD_RECORDED" >&2
+      exit 1
+    fi
+  elif grep -q '^expected_head=' "$REPORT_PATH"; then
+    EXPECTED_HEAD_RECORDED="$(require_key "$REPORT_PATH" expected_head)"
+  fi
+elif grep -q '^expected_worktree_root=' "$REPORT_PATH"; then
+  EXPECTED_WORKTREE_ROOT_RECORDED="$(require_key "$REPORT_PATH" expected_worktree_root)"
+fi
+
+if [ -z "$EXPECTED_BRANCH_REF_RECORDED" ] && grep -q '^expected_branch_ref=' "$REPORT_PATH"; then
+  EXPECTED_BRANCH_REF_RECORDED="$(require_key "$REPORT_PATH" expected_branch_ref)"
+fi
+if [ -z "$EXPECTED_HEAD_RECORDED" ] && grep -q '^expected_head=' "$REPORT_PATH"; then
+  EXPECTED_HEAD_RECORDED="$(require_key "$REPORT_PATH" expected_head)"
+fi
+if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PATH"; then
+  LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
+fi
+
 printf 'report_path=%s\n' "$REPORT_PATH"
 printf 'generated_at=%s\n' "$GENERATED_AT"
 printf 'git_worktree_path=%s\n' "$GIT_WORKTREE_PATH"
@@ -183,17 +229,17 @@ printf 'git_worktree_branch_ref=%s\n' "$GIT_WORKTREE_BRANCH_REF"
 printf 'git_branch=%s\n' "$GIT_BRANCH"
 printf 'git_head=%s\n' "$GIT_HEAD"
 printf 'git_status_summary=%s\n' "$GIT_STATUS_SUMMARY"
-if grep -q '^expected_worktree_root=' "$REPORT_PATH"; then
-  printf 'expected_worktree_root=%s\n' "$(require_key "$REPORT_PATH" expected_worktree_root)"
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+  printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT_RECORDED"
 fi
-if grep -q '^expected_branch_ref=' "$REPORT_PATH"; then
-  printf 'expected_branch_ref=%s\n' "$(require_key "$REPORT_PATH" expected_branch_ref)"
+if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_RECORDED"
 fi
-if grep -q '^expected_head=' "$REPORT_PATH"; then
-  printf 'expected_head=%s\n' "$(require_key "$REPORT_PATH" expected_head)"
+if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
+  printf 'expected_head=%s\n' "$EXPECTED_HEAD_RECORDED"
 fi
-if grep -q '^lane_verify_command=' "$REPORT_PATH"; then
-  printf 'lane_verify_command=%s\n' "$(require_key "$REPORT_PATH" lane_verify_command)"
+if [ -n "$LANE_VERIFY_COMMAND" ]; then
+  printf 'lane_verify_command=%s\n' "$LANE_VERIFY_COMMAND"
 fi
 printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
 printf 'replay_command=%s\n' "$REPLAY_COMMAND"
