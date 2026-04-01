@@ -106,6 +106,25 @@ Operators should not over-read it as indexer/read-model closure.
 - `bft_commit_observed_height_rate_ppm`
 - `bft_skipped_height_total`
 - `bft_skipped_observed_height_rate_ppm`
+- `bft_round_change_total`
+- `bft_round_change_per_height_ppm`
+- `bft_round_change_active_heights`
+- `bft_round_change_active_height_rate_ppm`
+- `bft_round_change_active_observed_height_rate_ppm`
+- `bft_round_change_density_avg`
+- `bft_round_change_density_avg_milli`
+- `bft_round_change_active_height_share_ppm`
+- `bft_round_change_backoff_total_ms`
+- `bft_round_change_backoff_avg_ms`
+- `bft_round_change_backoff_active_heights`
+- `bft_round_change_backoff_active_height_rate_ppm`
+- `bft_round_change_backoff_active_observed_height_rate_ppm`
+- `bft_round_change_backoff_density_avg_ms`
+- `bft_round_change_backoff_density_avg_milli`
+- `bft_round_change_backoff_active_height_share_ppm`
+- `bft_round_change_backoff_max_ms`
+- `bft_round_change_backoff_wall_share_ppm`
+- `bft_round_change_backoff_share_ppm`
 - `bft_double_vote_total`
 - `bft_auth_reject_bad_sig_total`
 - `bft_auth_reject_replay_total`
@@ -148,6 +167,20 @@ Operators should not over-read it as indexer/read-model closure.
   - use together before drawing conclusions from skipped-height rates.
 - `bft_skipped_height_total` / `bft_skipped_observed_height_rate_ppm`
   - summarize commit gap pressure against observed height progress.
+- `bft_round_change_total` / `bft_round_change_per_height_ppm` / `bft_round_change_active_heights`
+  - use as the minimum round-change pressure cluster before escalating to proposer rotation, quorum-health, or peer-lag review.
+- `bft_round_change_active_height_rate_ppm` / `bft_round_change_active_observed_height_rate_ppm`
+  - preserve both because round-change pressure against active heights and against all observed heights answer different operator questions during incident review.
+- `bft_round_change_density_avg` / `bft_round_change_density_avg_milli` / `bft_round_change_active_height_share_ppm`
+  - keep as the normalized round-change density/share trio for handoff notes and alert text.
+- `bft_round_change_backoff_total_ms` / `bft_round_change_backoff_avg_ms` / `bft_round_change_backoff_active_heights`
+  - use together to distinguish how much backoff wall-clock time accumulated from how broadly that backoff spread across heights.
+- `bft_round_change_backoff_active_height_rate_ppm` / `bft_round_change_backoff_active_observed_height_rate_ppm`
+  - preserve both because backoff-active heights and backoff-active observed-height share should remain grep-stable across summaries.
+- `bft_round_change_backoff_density_avg_ms` / `bft_round_change_backoff_density_avg_milli` / `bft_round_change_backoff_active_height_share_ppm`
+  - keep as the normalized backoff intensity/share trio for dashboards and operator handoff.
+- `bft_round_change_backoff_max_ms` / `bft_round_change_backoff_wall_share_ppm` / `bft_round_change_backoff_share_ppm`
+  - preserve together because peak backoff and finality-share interpretations are often reviewed side by side during BFT incident triage; the two share fields should remain append-stable aliases unless a future contract explicitly splits them.
 - `bft_double_vote_total` / `bft_auth_reject_*`
   - use as the minimum operator-visible BFT auth/safety cluster before escalation.
 - `bft_auth_reject_stale_total` / `bft_auth_reject_stale_nonce_total`
@@ -168,7 +201,7 @@ Operators should not over-read it as indexer/read-model closure.
 
 A safe starter summary line for incident handoff is:
 
-- `critical_wait_density_ppm=<n> critical_wait_peak_density_ppm=<n> critical_wait_active_heights=<n> critical_wait_active_height_rate_ppm=<n> critical_wait_active_observed_height_rate_ppm=<n> critical_wait_density_avg=<n> critical_wait_density_avg_milli=<n> critical_wait_active_height_share_ppm=<n> rollback_block_total=<n> rollback_active_heights=<n> rollback_block_rate=<n> rollback_block_rate_ppm=<n> rollback_active_height_rate_ppm=<n> rollback_active_observed_height_rate_ppm=<n> rollback_density_avg=<n> rollback_density_avg_milli=<n> rollback_active_height_share_ppm=<n> apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n> bft_leader_missed_total=<n> bft_leader_missed_max=<n> bft_leader_missed_top_share_ppm=<n> bft_leader_missed_active_validators=<n> bft_leader_missed_active_validator_share_ppm=<n> bft_leader_missed_active_heights=<n> bft_leader_missed_active_height_rate_ppm=<n> bft_leader_missed_active_observed_height_rate_ppm=<n> bft_leader_missed_density_avg=<n> bft_leader_missed_density_avg_milli=<n> bft_leader_missed_active_height_share_ppm=<n> bft_leader_missed_proposals=<vec>`
+- `critical_wait_density_ppm=<n> critical_wait_peak_density_ppm=<n> critical_wait_active_heights=<n> critical_wait_active_height_rate_ppm=<n> critical_wait_active_observed_height_rate_ppm=<n> critical_wait_density_avg=<n> critical_wait_density_avg_milli=<n> critical_wait_active_height_share_ppm=<n> rollback_block_total=<n> rollback_active_heights=<n> rollback_block_rate=<n> rollback_block_rate_ppm=<n> rollback_active_height_rate_ppm=<n> rollback_active_observed_height_rate_ppm=<n> rollback_density_avg=<n> rollback_density_avg_milli=<n> rollback_active_height_share_ppm=<n> apply_error_total=<n> rollback_total=<n> apply_error_rollback_share_bps=<n> timeout_migrated_total=<n> recovery_error_rate=<n> bft_observed_heights=<n> bft_committed_heights=<n> bft_commit_observed_height_rate_ppm=<n> bft_skipped_height_total=<n> bft_skipped_observed_height_rate_ppm=<n> bft_round_change_total=<n> bft_round_change_per_height_ppm=<n> bft_round_change_active_heights=<n> bft_round_change_active_height_rate_ppm=<n> bft_round_change_active_observed_height_rate_ppm=<n> bft_round_change_density_avg=<n> bft_round_change_density_avg_milli=<n> bft_round_change_active_height_share_ppm=<n> bft_round_change_backoff_total_ms=<n> bft_round_change_backoff_avg_ms=<n> bft_round_change_backoff_active_heights=<n> bft_round_change_backoff_active_height_rate_ppm=<n> bft_round_change_backoff_active_observed_height_rate_ppm=<n> bft_round_change_backoff_density_avg_ms=<n> bft_round_change_backoff_density_avg_milli=<n> bft_round_change_backoff_active_height_share_ppm=<n> bft_round_change_backoff_max_ms=<n> bft_round_change_backoff_wall_share_ppm=<n> bft_round_change_backoff_share_ppm=<n> bft_double_vote_total=<n> bft_auth_reject_bad_sig_total=<n> bft_auth_reject_replay_total=<n> bft_auth_reject_stale_total=<n> bft_auth_reject_stale_nonce_total=<n> bft_leader_missed_total=<n> bft_leader_missed_max=<n> bft_leader_missed_top_share_ppm=<n> bft_leader_missed_active_validators=<n> bft_leader_missed_active_validator_share_ppm=<n> bft_leader_missed_active_heights=<n> bft_leader_missed_active_height_rate_ppm=<n> bft_leader_missed_active_observed_height_rate_ppm=<n> bft_leader_missed_density_avg=<n> bft_leader_missed_density_avg_milli=<n> bft_leader_missed_active_height_share_ppm=<n> bft_leader_missed_proposals=<vec>`
 
 Keep field names verbatim so pager notes and release evidence remain grep-stable.
 
