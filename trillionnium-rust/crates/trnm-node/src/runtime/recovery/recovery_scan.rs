@@ -623,6 +623,41 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_reports_checkpoint_only_join_rejoin_surface() {
+        let wal_dir = temp_wal_dir("metadata-only-checkpoint-only");
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("retained no committed WAL entries (last retained checkpoint height 8)")
+                && err.contains("last retained checkpoint: 8")
+                && err.contains("next startup height: 9")
+                && err.contains("incident clue: metadata_only_recovery=1")
+                && err.contains("wal_entries_retained=0")
+                && err.contains("wal_tail_truncated=true")
+                && err.contains("checkpoint_height_retained=8")
+                && err.contains("checkpoint_tip_relation=checkpoint_only:8")
+                && err.contains("next_startup_height=9"),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_fresh_or_fully_replayable_state() {
         let wal_dir = temp_wal_dir("recoverable-state-ok");
         let recovered = RecoveredWalState {
