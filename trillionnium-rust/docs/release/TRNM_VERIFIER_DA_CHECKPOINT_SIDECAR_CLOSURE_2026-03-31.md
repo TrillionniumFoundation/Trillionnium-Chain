@@ -101,6 +101,7 @@ Minimum fields:
 - `attempt_id` (unique per bounded retry attempt; never reused across retries)
 - `verdict`
 - `failure_code`
+- `failure_code_class` (stable retry-class prefix such as `retryable-bounded` or `terminal-no-retry`)
 - `requested_checkpoint_height`
 - `requested_checkpoint_state_root_hex`
 - `requested_checkpoint_wal_entry_hash_hex`
@@ -135,6 +136,7 @@ A concrete bundle example keeps release review anchored in a single checkpoint/W
   "attempt_id": "verify-ckpt-0001842-attempt-02",
   "verdict": "rejected",
   "failure_code": "checkpoint_tuple_mismatch",
+  "failure_code_class": "terminal-no-retry",
   "requested_checkpoint_height": 1842,
   "requested_checkpoint_state_root_hex": "4f3c2a1b9e8d7c6b5a4938271605f4e3d2c1b0a9988776655443322110ffeedd",
   "requested_checkpoint_wal_entry_hash_hex": "0a1b2c3d4e5f60718273645566778899aabbccddeeff00112233445566778899",
@@ -159,6 +161,7 @@ What this example makes explicit:
 
 - the sidecar kept the **requested** checkpoint tuple intact;
 - the verifier answered successfully at the transport layer (`http_200`), so this is **not** an outage-class retry;
+- `failure_code_class=terminal-no-retry` preserves, inside the replay bundle itself, that this was a trust failure rather than a bounded-retry transport incident;
 - the observed predecessor/WAL anchor diverged from the requested checkpoint binding, so the correct outcome is a terminal trust failure (`checkpoint_tuple_mismatch`);
 - a later retry may succeed for the same `request_id`, but it must append a new `attempt_id` rather than rewrite this rejected evidence.
 
