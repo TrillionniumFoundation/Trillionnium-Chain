@@ -636,6 +636,7 @@ mod tests {
         vault.deposit("owner", "bob", u128::MAX).unwrap();
 
         vault.lock("owner", "req-slash", "alice", 5).unwrap();
+        let audit_len_before_slash = vault.audit_log().len();
         let slash_err = vault.slash("owner", "req-slash", "bob").unwrap_err();
         assert_eq!(slash_err, VaultError::BalanceOverflow);
         assert_eq!(vault.balance_of("bob"), u128::MAX);
@@ -643,12 +644,15 @@ mod tests {
             vault.lock_record("req-slash").unwrap().status,
             LockStatus::Locked
         );
+        assert_eq!(vault.audit_log().len(), audit_len_before_slash);
 
         vault.deposit("owner", "carol", 1).unwrap();
+        let audit_len_before_transfer = vault.audit_log().len();
         let transfer_err = vault.transfer("owner", "carol", "bob", 1).unwrap_err();
         assert_eq!(transfer_err, VaultError::BalanceOverflow);
         assert_eq!(vault.balance_of("bob"), u128::MAX);
         assert_eq!(vault.balance_of("carol"), 1);
+        assert_eq!(vault.audit_log().len(), audit_len_before_transfer);
     }
 
     #[test]
