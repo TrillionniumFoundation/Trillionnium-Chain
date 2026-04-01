@@ -7454,6 +7454,10 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_whitespace_padded_wal_pr
         "sanity: canonical checkpoint/WAL evidence should summarize before the whitespace regression mutation"
     );
     assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "checkpoint audit surfaces must reject whitespace-padded WAL proposal identities so checkpoint proofs cannot hide non-canonical task linkage"
+    );
+    assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
         "whitespace-padded WAL proposal_hash surfaces must fail closed instead of emitting a DA/light-verifier summary"
     );
