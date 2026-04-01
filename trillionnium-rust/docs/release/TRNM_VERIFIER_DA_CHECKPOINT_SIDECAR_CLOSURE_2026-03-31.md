@@ -72,6 +72,19 @@ A launch-reviewable verifier submission should carry, at minimum:
 - `verifier_schema_version`
 - `request_id` or equivalent replay handle
 
+### Request-derived invariants (fail-closed)
+
+The request tuple above intentionally carries both the raw checkpoint anchors and a derived checkpoint commitment. That derived field must not become an independent truth source.
+
+Release-review invariants for request ingestion:
+
+- `checkpoint_commitment_hex` must be recomputed from `checkpoint_height + checkpoint_state_root_hex + checkpoint_wal_entry_hash_hex` using the declared schema, not trusted as an opaque caller-supplied digest;
+- if the derived commitment and the caller-supplied `checkpoint_commitment_hex` disagree, the sidecar must fail closed with a terminal mismatch outcome instead of "repairing" the tuple by picking one field opportunistically;
+- `checkpoint_prev_hash_hex` remains part of the replay/audit anchor for non-genesis checkpoints even though it is not part of the checkpoint commitment tuple; a sidecar must therefore preserve it alongside the commitment rather than assuming the commitment alone is enough to audit predecessor linkage;
+- `da_light_verifier_summary` should resolve to a canonical digest or replayable raw-evidence handle; if the implementation emits both a summary object and a digest, the digest must be derived from the exact emitted summary instead of copied from unrelated cache state.
+
+In short: commitment/digest convenience fields may help operators replay a verdict, but they must never outrank the underlying checkpoint/WAL identity tuple they summarize.
+
 ### Minimum response tuple
 
 A verifier response should preserve enough structure for operators to distinguish policy failure from transport failure:
