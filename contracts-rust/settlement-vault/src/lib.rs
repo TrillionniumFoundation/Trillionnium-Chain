@@ -242,17 +242,21 @@ impl SettlementVault {
         let (account, amount) = {
             let lock = self
                 .locks
-                .get_mut(request_id)
+                .get(request_id)
                 .ok_or(VaultError::RequestNotFound)?;
 
             if lock.status != LockStatus::Locked {
                 return Err(VaultError::InvalidStateTransition);
             }
 
-            lock.status = LockStatus::Released;
             (lock.account.clone(), lock.amount)
         };
 
+        self.ensure_creditable_balance(&account, amount)?;
+        self.locks
+            .get_mut(request_id)
+            .expect("lock checked above")
+            .status = LockStatus::Released;
         self.credit_balance(&account, amount)?;
         self.audit_log.push(VaultEvent::Released {
             request_id: request_id.to_string(),
@@ -274,17 +278,21 @@ impl SettlementVault {
         let amount = {
             let lock = self
                 .locks
-                .get_mut(request_id)
+                .get(request_id)
                 .ok_or(VaultError::RequestNotFound)?;
 
             if lock.status != LockStatus::Locked {
                 return Err(VaultError::InvalidStateTransition);
             }
 
-            lock.status = LockStatus::Slashed;
             lock.amount
         };
 
+        self.ensure_creditable_balance(beneficiary, amount)?;
+        self.locks
+            .get_mut(request_id)
+            .expect("lock checked above")
+            .status = LockStatus::Slashed;
         self.credit_balance(beneficiary, amount)?;
         self.audit_log.push(VaultEvent::Slashed {
             request_id: request_id.to_string(),
@@ -307,10 +315,15 @@ impl SettlementVault {
             return Err(VaultError::InvalidAmount);
         }
 
-        let from_entry = self.balances.entry(from.to_string()).or_insert(0);
-        if *from_entry < amount {
+        let available = self.balance_of(from);
+        if available < amount {
             return Err(VaultError::InsufficientBalance);
         }
+        if from != to {
+            self.ensure_creditable_balance(to, amount)?;
+        }
+
+        let from_entry = self.balances.entry(from.to_string()).or_insert(0);
         *from_entry -= amount;
 
         self.credit_balance(to, amount)?;
@@ -355,6 +368,13 @@ impl SettlementVault {
         if self.paused {
             return Err(VaultError::Paused);
         }
+        Ok(())
+    }
+
+    fn ensure_creditable_balance(&self, account: &str, amount: u128) -> Result<(), VaultError> {
+        self.balance_of(account)
+            .checked_add(amount)
+            .ok_or(VaultError::BalanceOverflow)?;
         Ok(())
     }
 
@@ -577,5 +597,27 @@ mod tests {
             vault.transfer("owner", "alice", "bob", 999).unwrap_err(),
             VaultError::InsufficientBalance
         );
+    }
+
+    #[test]
+    fn overflow_paths_fail_closed_without_partial_state_mutation() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 5).unwrap();
+        vault.deposit("owner", "bob", u128::MAX).unwrap();
+
+        vault.lock("owner", "req-slash", "alice", 5).unwrap();
+        let slash_err = vault.slash("owner", "req-slash", "bob").unwrap_err();
+        assert_eq!(slash_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("bob"), u128::MAX);
+        assert_eq!(
+            vault.lock_record("req-slash").unwrap().status,
+            LockStatus::Locked
+        );
+
+        vault.deposit("owner", "carol", 1).unwrap();
+        let transfer_err = vault.transfer("owner", "carol", "bob", 1).unwrap_err();
+        assert_eq!(transfer_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("bob"), u128::MAX);
+        assert_eq!(vault.balance_of("carol"), 1);
     }
 }
