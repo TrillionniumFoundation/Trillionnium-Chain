@@ -74,7 +74,7 @@ Resolve the exact evidence files from disk before quoting any PASS / GO language
 latest_preflight_path="run/preflight/go-no-go-latest.txt"
 [ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
 printf 'preflight_path=%s\n' "$latest_preflight_path"
-awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|expected_worktree_root|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
+awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|git_worktree_branch_ref_match|expected_worktree_root|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 [ -n "$latest_evidence_dir" ] || { echo "missing release evidence dir" >&2; exit 1; }
@@ -114,7 +114,7 @@ Record:
 
 Rule:
 - if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
-- if the preflight artifact does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
+- if the preflight artifact does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` / `expected_branch_ref=` in the preflight artifact as the ticket-binding proof for the rehearsal packet, not as decorative metadata
 
