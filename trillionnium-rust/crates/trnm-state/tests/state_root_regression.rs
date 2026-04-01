@@ -8961,6 +8961,25 @@ fn wal_evidence_summary_rejects_short_ascii_state_root_surface() {
 }
 
 #[test]
+fn checkpoint_evidence_summary_marks_blank_digest_surfaces_noncanonical() {
+    let checkpoint = CheckpointMeta {
+        height: 2,
+        state_root_hex: String::new(),
+        wal_entry_hash_hex: String::new(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_state_root="));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_bytes=0"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash="));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_bytes=0"));
+    assert!(
+        checkpoint_summary.contains("checkpoint_surface_canonical=false"),
+        "checkpoint evidence summary must fail closed when state_root_hex or wal_entry_hash_hex is blank so restart-time evidence cannot advertise missing digest surfaces as canonical"
+    );
+}
+
+#[test]
 fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
     let e1 = WalMeta {
         height: 1,
