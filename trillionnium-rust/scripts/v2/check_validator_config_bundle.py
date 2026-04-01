@@ -5,6 +5,7 @@ Verifies that a set of TRNM node config files is internally consistent for
 bootstrap/handoff use:
 - every file parses as TOML
 - node_id/rpc_addr/p2p_addr exist and are non-empty after trimming
+- node_id rejects boundary whitespace, list separators, path separators, and dot-segment aliases
 - rpc_addr/p2p_addr are bare host:port listener addresses with ports in 1..65535
 - rpc_addr != p2p_addr within each file
 - node_id values are unique across the bundle
@@ -43,11 +44,28 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     return value
 
 
-def validate_node_id(node_id: str, path: Path) -> None:
+def validate_node_id(raw_node_id: object, path: Path) -> str:
+    if not isinstance(raw_node_id, str):
+        fail(f"invalid node config {path}: node_id must be a string")
+
+    node_id = raw_node_id.strip()
+    if not node_id:
+        fail(f"invalid node config {path}: node_id must not be empty")
+    if raw_node_id != node_id:
+        fail(
+            f"invalid node config {path}: node_id must not contain leading or trailing whitespace"
+        )
+    if any(ch in node_id for ch in (",", ";", "|")):
+        fail(f"invalid node config {path}: node_id must not contain list separators (, ; |)")
+    if any(ch in node_id for ch in ("/", "\\", ":")):
+        fail(f"invalid node config {path}: node_id must not contain path separators (/ \\ :)")
+    if node_id in {".", ".."}:
+        fail(f"invalid node config {path}: node_id must not be '.' or '..'")
     if any(ch.isspace() for ch in node_id):
         fail(f"invalid node config {path}: node_id must not contain whitespace")
     if any(ord(ch) < 32 or ord(ch) == 127 for ch in node_id):
         fail(f"invalid node config {path}: node_id must not contain control characters")
+    return node_id
 
 
 def validate_listener_addr(addr: str, field: str, path: Path) -> None:
@@ -115,11 +133,9 @@ def main(argv: list[str]) -> int:
         if missing:
             fail(f"invalid node config {path}: missing required field(s): {', '.join(missing)}")
 
-        node_id = trimmed_string(data.get("node_id"), "node_id", path)
+        node_id = validate_node_id(data.get("node_id"), path)
         rpc_addr = trimmed_string(data.get("rpc_addr"), "rpc_addr", path)
         p2p_addr = trimmed_string(data.get("p2p_addr"), "p2p_addr", path)
-
-        validate_node_id(node_id, path)
         validate_listener_addr(rpc_addr, "rpc_addr", path)
         validate_listener_addr(p2p_addr, "p2p_addr", path)
 
