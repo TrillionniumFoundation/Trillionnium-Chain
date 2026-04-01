@@ -353,13 +353,22 @@ export const adaptQueryCapabilityAudit = (
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
+  const tokenRevokedAt = rpc.data.token.revoked_at;
+  const tokenIsRevoked = tokenRevokedAt != null;
+
   return {
     subject: rpc.data.token.subject_did,
     audits: rpc.data.owner_history.map((entry) => ({
       subject: rpc.data.token.subject_did,
       capability: rpc.data.token.scope,
-      granted: entry.action !== "CAPABILITY_REVOKED" && entry.action !== "DID_REVOKED",
-      reason: entry.note ?? entry.action,
+      granted:
+        !tokenIsRevoked &&
+        entry.action !== "CAPABILITY_REVOKED" &&
+        entry.action !== "DID_REVOKED",
+      reason:
+        tokenIsRevoked && entry.action !== "CAPABILITY_REVOKED" && entry.action !== "DID_REVOKED"
+          ? entry.note ?? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+          : entry.note ?? entry.action,
       checkedAt: toHeightMarker(entry.at_height),
     })),
   };

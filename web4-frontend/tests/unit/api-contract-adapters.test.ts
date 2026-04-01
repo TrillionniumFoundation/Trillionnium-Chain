@@ -399,6 +399,28 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("fails closed when rpc capability token is already revoked", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 123,
+          note: "initial grant",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.granted).toBe(false);
+    expect(out.audits[0]?.reason).toBe("initial grant");
+    expect(out.audits[0]?.checkedAt).toBe("height:123");
+  });
+
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
     const out = adaptQueryCapabilityAudit({
       subject: "did:trnm:bob",
