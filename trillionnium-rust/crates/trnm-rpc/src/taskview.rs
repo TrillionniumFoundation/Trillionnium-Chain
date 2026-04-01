@@ -268,7 +268,7 @@ pub(crate) fn query_events_response(
     );
     let mut events = Vec::new();
 
-    for e in filtered_node_events_for_task(task_id, node_events) {
+    for e in sorted_node_events_for_task(task_id, node_events) {
         let Some(actor) = normalize_actor_or_signer(&e.actor) else {
             continue;
         };

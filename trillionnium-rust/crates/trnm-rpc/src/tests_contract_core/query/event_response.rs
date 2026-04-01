@@ -68,6 +68,78 @@ fn query_events_response_applies_same_trust_and_transition_filters() {
 }
 
 #[test]
+fn query_events_response_sorts_historical_node_events_before_returning_read_model_chain() {
+    let events = vec![
+        NodeEventRecord {
+            event_type: "reveal".into(),
+            task_id: 44,
+            from_status: "Committed".into(),
+            to_status: "Revealed".into(),
+            actor: "worker-z".into(),
+            tx_id: 3,
+            block_height: 3,
+            state_root: "s3".into(),
+            ts_unix_ms: 30,
+            signer: Some("worker-z".into()),
+            challenger: None,
+            tx_hash: Some("0xccc".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        },
+        NodeEventRecord {
+            event_type: "accept".into(),
+            task_id: 44,
+            from_status: "Open".into(),
+            to_status: "Assigned".into(),
+            actor: "worker-z".into(),
+            tx_id: 1,
+            block_height: 1,
+            state_root: "s1".into(),
+            ts_unix_ms: 10,
+            signer: Some("worker-z".into()),
+            challenger: None,
+            tx_hash: Some("0xaaa".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        },
+        NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 44,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-z".into(),
+            tx_id: 2,
+            block_height: 2,
+            state_root: "s2".into(),
+            ts_unix_ms: 20,
+            signer: Some("worker-z".into()),
+            challenger: None,
+            tx_hash: Some("0xbbb".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        },
+    ];
+
+    let out = query_events_response(44, 20, &events, &[]).expect("events expected");
+    assert_eq!(out.len(), 3);
+    assert_eq!(out[0].event_type, "accept");
+    assert_eq!(out[1].event_type, "commit");
+    assert_eq!(out[2].event_type, "reveal");
+    assert_eq!(out[0].tx_hash.as_deref(), Some("0xaaa"));
+    assert_eq!(out[1].tx_hash.as_deref(), Some("0xbbb"));
+    assert_eq!(out[2].tx_hash.as_deref(), Some("0xccc"));
+}
+
+#[test]
 fn query_events_response_fallback_sorts_adapter_records_stably() {
     let recs = vec![
         AdapterRecord {
