@@ -3080,6 +3080,79 @@ mod tests {
     }
 
     #[test]
+    fn zero_from_seq_proof_query_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-zero-budget".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-zero-budget".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .query_session_proof(RelaySessionProofQuery {
+                    task_id: 1,
+                    session_id: "proof-zero-budget".into(),
+                    from_seq: 0,
+                    to_seq: 1,
+                    source: Some("proof-src".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/invalid_range"));
+        }
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("zero from_seq requests should not burn proof quota budget");
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("full proof quota budget should remain available after rejected zero-from requests");
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
     fn proof_quota_source_attribution_aliases_share_boundary() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
