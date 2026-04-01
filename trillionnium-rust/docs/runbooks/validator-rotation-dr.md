@@ -245,6 +245,7 @@ EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT" \
 EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
+EXPECTED_HEAD="$EXPECTED_HEAD" \
 ./scripts/check_bft_restart_recovery.sh
 report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
 
