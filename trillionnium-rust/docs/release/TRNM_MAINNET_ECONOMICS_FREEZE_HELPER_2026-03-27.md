@@ -469,6 +469,10 @@ consistency boundaries:
   - proves a zero-budget / hard-stop lane can preserve restored duplicate knowledge for
     already-seen ids without fabricating queue state or re-opening sponsor/free-ingress
     headroom during idle polling
+- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_zero_capacity_idle_poll_public_invariants_bound -q`
+  - proves repeated idle scheduler polls under a hard-stop / zero-budget lane keep both
+    the public queued-count surface and QoS snapshot flat across fresh/retry cross-class
+    noise, so freeze review covers public invariants in addition to duplicate retention
 - `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_refill_boundary_bound -q`
   - proves duplicate sponsor/free-ingress probe noise stays classification-only while
     reserve-only shared-lane mode still exposes the last real refill slot until fresh
