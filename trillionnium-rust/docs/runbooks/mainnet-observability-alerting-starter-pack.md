@@ -344,6 +344,7 @@ Annotation rules:
 - preserve `needs_replay=` / `needs_rollback=` alongside `replay=` / `rollback=` so responders can distinguish required evidence actions from merely missing pointers;
 - preserve `truth_source=` / `evidence_scope=` from emitted artifacts when present so dashboard annotations stay semantically aligned with the incident evidence block and the `contract-drift` routing path;
 - if the dashboard tool cannot render all fields inline, put the missing fields into the linked incident/ticket body and treat the dashboard share as incomplete until that link exists;
+- if `needs_rollback=yes` but `rollback=missing`, classify the dashboard annotation as insufficient until the page or linked ticket quotes the current `rollback_command=` or explicitly records it as `unknown`;
 - if `replay=missing` and `rollback=missing` during a live `sev0` / `sev1` incident, classify the dashboard annotation as insufficient even if the graph looks obvious;
 - for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` next to the shared fields so the oracle-specific subtype is visible in the dashboard layer too.
 
