@@ -152,7 +152,20 @@ impl OracleValidateSnapshotResponse {
     }
 
     fn is_quorum_error_label(label: &str) -> bool {
-        matches!(label, "quorum") || label.starts_with("snapshot hash mismatch:")
+        matches!(label, "quorum")
+            || label.starts_with("insufficient sources:")
+            || label.starts_with("inconsistent sample count:")
+            || label.starts_with("invalid sample count:")
+            || label.starts_with("snapshot hash mismatch:")
+            || label.starts_with("snapshot hash is empty")
+            || label.starts_with("snapshot hash must be canonical lowercase+trim:")
+            || label.starts_with("snapshot hash must be a 64-char lowercase hex digest:")
+            || label.starts_with("duplicate source ids are not allowed")
+            || label.starts_with("source ids must be sorted canonically:")
+            || label.starts_with("feed_id must be canonical lowercase [a-z0-9._-]:")
+            || label.starts_with("source_id must be canonical lowercase [a-z0-9._-]:")
+            || label.starts_with("feed_id must not be empty")
+            || label.starts_with("source_id must not be empty")
     }
 
     fn is_drift_error_label(label: &str) -> bool {
@@ -1406,6 +1419,25 @@ mod tests {
                     sample_count: 1,
                 },
                 error: Some("snapshot hash mismatch: expected=abc, actual=def".into()),
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 794,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("insufficient sources: min=2, sources=1, sample_count=1".into()),
             },
             OracleValidationReport {
                 ok: false,
