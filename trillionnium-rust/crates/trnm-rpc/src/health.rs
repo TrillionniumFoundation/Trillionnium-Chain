@@ -359,6 +359,22 @@ mod tests {
     }
 
     #[test]
+    fn trailing_slash_health_alias_with_query_keeps_same_head_contract() {
+        let request = parse_http_request_target("HEAD /-/statusz/?from=ops HTTP/1.1").unwrap();
+        let path = request.1.split('?').next().unwrap();
+
+        assert_eq!(path, "/-/statusz/");
+        assert!(is_health_probe_path(path));
+
+        let response = json_response_for_method(request.0, "200 OK", &health_probe_body(42));
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Content-Length: 50\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.ends_with("\"version\":1}"));
+    }
+
+    #[test]
     fn json_response_for_method_uses_head_headers_without_body() {
         let get = json_response_for_method("GET", "200 OK", "{\"ok\":true}");
         assert!(get.ends_with("{\"ok\":true}"));
