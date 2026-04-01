@@ -116,3 +116,42 @@ fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_witho
     assert!(out.classified_outcome_conserves_sample_count());
     assert!(out.observation_classified_outcome_conserves_sample_count());
 }
+
+#[test]
+fn oracle_validate_snapshot_response_deserializes_unclassified_error_payload_fail_closed() {
+    let payload = json!({
+        "ok": false,
+        "now_ts_ms": 1_710_000_000_456u64,
+        "observation": {
+            "stale_reject_total": 0,
+            "quorum_reject_total": 0,
+            "drift_reject_total": 0,
+            "accepted_total": 0
+        },
+        "metrics": {
+            "oracle_stale_reject_total": 0,
+            "oracle_quorum_reject_total": 0,
+            "oracle_drift_reject_total": 0,
+            "oracle_source_cardinality": 2,
+            "accepted_total": 0,
+            "sample_count": 1
+        },
+        "error": "rate"
+    });
+
+    let out: OracleValidateSnapshotResponse = serde_json::from_value(payload).unwrap();
+
+    assert!(!out.ok);
+    assert_eq!(out.now_ts_ms, 1_710_000_000_456u64);
+    assert_eq!(out.error.as_deref(), Some("rate"));
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert_eq!(out.classified_reject_total(), 0);
+    assert_eq!(out.observation_classified_reject_total(), 0);
+    assert_eq!(out.classified_outcome_total(), 0);
+    assert_eq!(out.observation_classified_outcome_total(), 0);
+    assert!(!out.classified_outcome_conserves_sample_count());
+    assert!(!out.observation_classified_outcome_conserves_sample_count());
+    assert!(out.observation_matches_metrics());
+    assert!(out.bridge_contract_consistent());
+}
