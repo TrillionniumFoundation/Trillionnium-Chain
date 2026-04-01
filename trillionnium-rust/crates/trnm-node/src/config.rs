@@ -30,6 +30,13 @@ fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
+    match socket {
+        SocketAddr::V4(_) => false,
+        SocketAddr::V6(addr) => addr.scope_id() != 0,
+    }
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -213,6 +220,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
         path
     );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(rpc_socket),
+        "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
+        path
+    );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: p2p_addr must be a valid socket address",
@@ -257,6 +269,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_mapped_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(p2p_socket),
+        "invalid node config {}: p2p_addr must not use an IPv6 scope identifier",
         path
     );
     anyhow::ensure!(
@@ -1279,6 +1296,38 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .to_string()
                 .contains("p2p_addr must not use an IPv4-mapped IPv6 address"),
             "unexpected error: {p2p_ipv4_mapped_err:#}"
+        );
+
+        let rpc_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:db8::10%7]:7000".into(),
+                p2p_addr: "[2001:db8::10]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr IPv6 scope identifier must fail closed");
+        assert!(
+            rpc_scope_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv6 scope identifier"),
+            "unexpected error: {rpc_scope_err:#}"
+        );
+
+        let p2p_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:db8::10]:7000".into(),
+                p2p_addr: "[2001:db8::10%9]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr IPv6 scope identifier must fail closed");
+        assert!(
+            p2p_scope_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv6 scope identifier"),
+            "unexpected error: {p2p_scope_err:#}"
         );
     }
 
