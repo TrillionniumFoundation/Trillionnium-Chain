@@ -89,6 +89,7 @@ pub struct TaskQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct GovProposalQueryResponse {
     pub proposal_id: u64,
     pub title: String,
@@ -98,6 +99,7 @@ pub struct GovProposalQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct PendingGovParamUpdateQueryResponse {
     pub key_id: u64,
     pub key: String,
@@ -106,6 +108,7 @@ pub struct PendingGovParamUpdateQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct GovParamQueryResponse {
     pub key_id: u64,
     pub key: String,
@@ -130,6 +133,7 @@ pub struct GovParamQueryResponse {
 /// - bridge settlement/finality and replay boundaries remain owned by the
 ///   bridge layer after heartbeat/finality checks have already passed.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OracleValidateSnapshotResponse {
     pub ok: bool,
     pub now_ts_ms: u64,
@@ -302,6 +306,7 @@ pub struct RequestFullQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountState {
     pub address: String,
     pub balance: u128,
@@ -325,6 +330,7 @@ pub struct AccountNonceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct FaucetRequestResponse {
     pub ok: bool,
     pub code: String,

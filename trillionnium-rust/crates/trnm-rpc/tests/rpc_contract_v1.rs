@@ -1,8 +1,10 @@
 use serde_json::json;
 use trnm_rpc::{
-    AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse, GetTxResponse,
-    RequestFullQueryResponse, RpcErrorResponse, SendTxResponse, TaskMeteringDerivedQueryResponse,
-    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TxStatus,
+    AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse,
+    FaucetRequestResponse, GetTxResponse, GovParamQueryResponse,
+    OracleValidateSnapshotResponse, RequestFullQueryResponse, RpcErrorResponse, SendTxResponse,
+    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
+    TaskMeteringQueryResponse, TxStatus,
 };
 
 #[test]
@@ -252,4 +254,53 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     }))
     .expect_err("request contract should fail closed on unknown fields");
     assert!(request_err.to_string().contains("unexpected"));
+
+    let gov_param_err = serde_json::from_value::<GovParamQueryResponse>(json!({
+        "key_id":1,
+        "key":"runtime_metadata_schema",
+        "value":"v2",
+        "version":3,
+        "unexpected":"schema-drift"
+    }))
+    .expect_err("gov param contract should fail closed on unknown fields");
+    assert!(gov_param_err.to_string().contains("unexpected"));
+
+    let faucet_err = serde_json::from_value::<FaucetRequestResponse>(json!({
+        "ok":true,
+        "code":"OK",
+        "message":"granted",
+        "address":"trnm1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "requested_amount":1,
+        "granted_amount":1,
+        "balance":1,
+        "nonce":1,
+        "window_seconds":60,
+        "next_allowed_unix_ms":123,
+        "version":1,
+        "unexpected":true
+    }))
+    .expect_err("faucet contract should fail closed on unknown fields");
+    assert!(faucet_err.to_string().contains("unexpected"));
+
+    let oracle_err = serde_json::from_value::<OracleValidateSnapshotResponse>(json!({
+        "ok": true,
+        "now_ts_ms": 1710000000123u64,
+        "observation": {
+            "stale_reject_total": 0,
+            "quorum_reject_total": 0,
+            "drift_reject_total": 0,
+            "accepted_total": 1
+        },
+        "metrics": {
+            "oracle_stale_reject_total": 0,
+            "oracle_quorum_reject_total": 0,
+            "oracle_drift_reject_total": 0,
+            "oracle_source_cardinality": 1,
+            "accepted_total": 1,
+            "sample_count": 1
+        },
+        "unexpected": false
+    }))
+    .expect_err("oracle validation contract should fail closed on unknown fields");
+    assert!(oracle_err.to_string().contains("unexpected"));
 }
