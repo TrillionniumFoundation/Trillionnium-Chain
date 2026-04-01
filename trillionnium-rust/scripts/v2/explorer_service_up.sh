@@ -114,7 +114,7 @@ cat >"${HEALTH_FILE}" <<EOF
 EOF
 
 cat >"${INDEX_FILE}" <<EOF
-{"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
+{"service":"explorer-service-scaffold","service_mode":"operator-facing-static-scaffold","production_ready":false,"health_url":"${HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
 EOF
 
 cd "${PUBLIC_DIR}"

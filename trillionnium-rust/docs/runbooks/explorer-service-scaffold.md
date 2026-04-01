@@ -128,6 +128,8 @@ The scaffold writes two static files before launching the HTTP server:
 
 Additional contract markers carried in `index.json`:
 
+- `service_mode=operator-facing-static-scaffold`
+- `production_ready=false`
 - `rpc_base_url=<upstream-rpc-read-surface>`
 - `query_events_default_limit=100`
 - `query_events_max_limit=500`
