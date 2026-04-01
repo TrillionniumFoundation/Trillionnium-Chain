@@ -8688,6 +8688,46 @@ fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkp
 }
 
 #[test]
+fn wal_checkpoint_verification_falls_back_when_non_genesis_prev_hash_has_newline_drift() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "cd".repeat(32),
+        prev_hash_hex: Some(format!("{}\n", h1)),
+    };
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: e1.state_root_hex.clone(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: e2.state_root_hex.clone(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+    assert_eq!(
+        got.map(|cp| cp.height),
+        Some(1),
+        "checkpoint recovery must fail closed back to the last unambiguous checkpoint when a non-genesis WAL prev_hash_hex carries newline drift instead of a canonical linked digest"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_when_checkpoint_matches(
 ) {
     let wal = WalMeta {
