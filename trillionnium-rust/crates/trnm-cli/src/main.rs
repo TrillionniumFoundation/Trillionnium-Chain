@@ -1627,6 +1627,10 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
     }
 }
 
+fn is_terminal_local_tx_status(status: &str) -> bool {
+    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+}
+
 fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
     let mut current = value;
     for key in path {
@@ -2015,6 +2019,21 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         .map(|d| d.as_millis())
         .unwrap_or(0);
 
+    let existing = root.get(&canonical).cloned();
+    let existing_status = existing
+        .as_ref()
+        .and_then(|record| record.get("status"))
+        .and_then(normalize_json_status);
+    let status = existing_status
+        .as_deref()
+        .filter(|status| is_terminal_local_tx_status(status))
+        .unwrap_or("pending");
+    let submitted_at_unix_ms = existing
+        .as_ref()
+        .and_then(|record| record.get("submitted_at_unix_ms"))
+        .and_then(|value| value.as_u64())
+        .unwrap_or(now_ms as u64);
+
     root.insert(
         canonical.clone(),
         serde_json::json!({
@@ -2027,9 +2046,9 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
                 "nonce": 0,
                 "signature": "pending"
             },
-            "status": "pending",
+            "status": status,
             "error": null,
-            "submitted_at_unix_ms": now_ms,
+            "submitted_at_unix_ms": submitted_at_unix_ms,
             "updated_at_unix_ms": now_ms
         }),
     );
@@ -4059,7 +4078,7 @@ mod tests {
     }
 
     #[test]
-    fn persist_local_pending_tx_overwrites_existing_terminal_state_with_pending() {
+    fn persist_local_pending_tx_preserves_existing_terminal_state() {
         let _guard = ENV_LOCK.lock().unwrap();
         let unique = format!(
             "trnm-cli-test-{}-{}.json",
@@ -4085,10 +4104,10 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         assert_eq!(
             parsed[tx_hash]["status"].as_str(),
-            Some("pending"),
-            "persist_local_pending_tx should reset tracked txs to pending on fresh submit"
+            Some("committed"),
+            "persist_local_pending_tx should preserve existing terminal state for tracked txs"
         );
-        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("committed"));
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
