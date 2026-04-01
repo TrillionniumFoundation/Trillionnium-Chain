@@ -6,6 +6,25 @@ pub(crate) fn hash32_hex(data: &[u8]) -> String {
     hex::encode(hasher.finalize())
 }
 
+fn is_reserved_listener_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(
+                octets,
+                [192, 0, 2, _]
+                    | [198, 51, 100, _]
+                    | [203, 0, 113, _]
+                    | [198, 18 | 19, _, _]
+            )
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -147,6 +166,17 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an unspecified address",
         path
     );
+    anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_link_local())
+            && !matches!(rpc_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_unicast_link_local()),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a reserved documentation or benchmarking address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -213,6 +243,17 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unspecified(),
         "invalid node config {}: p2p_addr must not use an unspecified address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_link_local())
+            && !matches!(p2p_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_unicast_link_local()),
+        "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a reserved documentation or benchmarking address",
         path
     );
     anyhow::ensure!(
@@ -969,6 +1010,57 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_reserved_documentation_and_benchmark_listener_addresses() {
+        let rpc_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "192.0.2.10:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr documentation range must fail closed");
+        assert!(
+            rpc_doc_err
+                .to_string()
+                .contains("rpc_addr must not use a reserved documentation or benchmarking address"),
+            "unexpected error: {rpc_doc_err:#}"
+        );
+
+        let p2p_benchmark_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "198.19.0.10:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr benchmarking range must fail closed");
+        assert!(
+            p2p_benchmark_err
+                .to_string()
+                .contains("p2p_addr must not use a reserved documentation or benchmarking address"),
+            "unexpected error: {p2p_benchmark_err:#}"
+        );
+
+        let rpc_v6_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:db8::10]:7000".into(),
+                p2p_addr: "[::1]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr IPv6 documentation range must fail closed");
+        assert!(
+            rpc_v6_doc_err
+                .to_string()
+                .contains("rpc_addr must not use a reserved documentation or benchmarking address"),
+            "unexpected error: {rpc_v6_doc_err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_host_like_node_id_literals() {
         for node_id in [
             "localhost",
@@ -976,9 +1068,15 @@ mod tests {
             "127.0.0.1",
             "127.0.0.1:7001",
             "[::1]",
+            "[::1]:7001",
+            "[2001:db8::1]",
+            "[2001:db8::1]:7001",
             "seed.example.com",
             "seed.example.com.",
+            "seed.example.com:26656",
             "validator-1.mainnet.local",
+            "validator-1.mainnet.local.",
+            "validator-1.mainnet.local:27656",
         ] {
             let err = validate_node_config(
                 NodeConfig {
