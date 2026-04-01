@@ -22303,4 +22303,24 @@ mod tests {
             before_slash_treasury
         );
     }
+
+    #[test]
+    fn canonical_actor_id_rejects_hidden_unicode_aliases_fail_closed() {
+        assert!(!is_canonical_actor_id("challenger\u{200b}"));
+        assert!(!is_canonical_actor_id("worker\u{2060}one"));
+        assert!(!is_canonical_actor_id("resolver\u{fe0f}"));
+    }
+
+    #[test]
+    fn canonical_actor_id_rejects_forbidden_separator_aliases_fail_closed() {
+        assert!(!is_canonical_actor_id("challenger;backup"));
+        assert!(!is_canonical_actor_id("challenger／backup"));
+        assert!(!is_canonical_actor_id("challenger︓backup"));
+    }
+
+    #[test]
+    fn canonical_actor_id_accepts_plain_ascii_without_whitespace_or_aliases() {
+        assert!(is_canonical_actor_id("challenger-01"));
+        assert!(is_canonical_actor_id("worker.alpha_02"));
+    }
 }
