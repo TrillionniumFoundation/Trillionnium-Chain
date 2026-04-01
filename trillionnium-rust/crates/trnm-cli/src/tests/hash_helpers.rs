@@ -88,6 +88,18 @@ fn extract_tx_hash_accepts_hyphenated_key_aliases() {
 }
 
 #[test]
+fn emitted_transaction_hash_camel_alias_round_trips_through_parser() {
+    assert_eq!(
+        format_transaction_hash_camel_alias_line("0xABCD1234"),
+        "transactionHash=0xABCD1234".to_string()
+    );
+    assert_eq!(
+        extract_tx_hash(&format_transaction_hash_camel_alias_line("0xABCD1234")).as_deref(),
+        Some("0xabcd1234")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_spaced_key_aliases() {
     assert_eq!(
         extract_tx_hash("tx hash=0xCAFE03").as_deref(),
