@@ -15436,9 +15436,26 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
+        assert!(err.contains("retained no committed WAL entries"));
         assert!(err.contains("last retained checkpoint: none"));
+        assert!(err.contains("next startup height: 1"));
 
         let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn retained_wal_summary_reports_empty_fresh_join_surface() {
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        assert_eq!(retained_wal_summary(&recovered), "retained no committed WAL entries");
     }
 
     #[test]
