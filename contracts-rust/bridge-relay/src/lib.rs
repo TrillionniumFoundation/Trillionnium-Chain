@@ -903,6 +903,32 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_finalize_is_side_effect_free() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "duplicate finalize must not append audit events"
+        );
+    }
+
+    #[test]
     fn fail_closed_on_chain_domain_mismatch() {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
