@@ -824,6 +824,9 @@ fn is_hidden_env_wrapper(c: char) -> bool {
             '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{061C}'
                 | '\u{2060}'
                 | '\u{FEFF}'
                 | '\u{202A}'
@@ -962,9 +965,12 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             || c.is_control()
             || matches!(
                 c,
-                '\u{200B}'
+                    '\u{200B}'
                     | '\u{200C}'
                     | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{061C}'
                     | '\u{2060}'
                     | '\u{FEFF}'
                     | '\u{202A}'
@@ -2358,6 +2364,10 @@ mod tests {
             normalize_wallet_store_env("\u{2068} \"/tmp/trnm-wallets\" \u{2069}"),
             Some("/tmp/trnm-wallets")
         );
+        assert_eq!(
+            normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
     }
 
@@ -2394,6 +2404,9 @@ mod tests {
             "alice\u{200b}bob",
             "alice\u{2060}bob",
             "alice\u{feff}bob",
+            "alice\u{200e}bob",
+            "alice\u{200f}bob",
+            "alice\u{061c}bob",
             "alice\u{202e}bob",
             "alice\u{2066}bob",
             "alice\u{2069}bob",
