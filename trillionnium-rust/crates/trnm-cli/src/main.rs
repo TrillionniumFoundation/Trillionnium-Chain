@@ -1024,6 +1024,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                         | '\u{2067}'
                         | '\u{2068}'
                         | '\u{2069}'
+                        | '\u{061C}'
                 )
         })
         .trim();
@@ -2355,6 +2356,15 @@ mod tests {
         )
         .unwrap();
         assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        let alm_wrapped = ensure_hex_32_bytes(
+            "\u{061c}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{061c}",
+        )
+        .unwrap();
+        assert_eq!(
+            alm_wrapped,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
 
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }

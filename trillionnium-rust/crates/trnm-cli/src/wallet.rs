@@ -19,6 +19,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
+                | '\u{061C}'
         )
 }
 
