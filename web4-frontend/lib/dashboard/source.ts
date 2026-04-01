@@ -133,10 +133,17 @@ const resolveQueryApiBaseUrl = (): string => {
   return "http://127.0.0.1:8080";
 };
 
+const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
 const apiBaseUrl = resolveQueryApiBaseUrl();
-const defaultTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID ?? "341";
-const defaultAuditSubject =
-  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trnm:core-rpc";
+const defaultTaskId = resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID, "341");
+const defaultAuditSubject = resolveNonEmptyEnv(
+  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT,
+  "did:trnm:core-rpc",
+);
 
 const toDisplayTime = (isoLike: string): string => {
   const date = new Date(isoLike);
