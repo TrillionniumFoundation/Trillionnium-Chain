@@ -350,15 +350,15 @@ Record these fields in the release ticket or operator handoff note:
 - preflight summary path:
 - local evidence summary path:
 - local evidence generated_at (`summary_generated_at`, or raw `generated_at=` when quoting `summary.txt` directly):
-- local evidence truth_source:
-- local evidence historical_evidence_only:
-- local evidence evidence_scope:
+- local evidence truth_source (`summary_truth_source`, or raw `truth_source=` when quoting `summary.txt` directly):
+- local evidence historical_evidence_only (`summary_historical_evidence_only`, or raw `historical_evidence_only=` when quoting `summary.txt` directly):
+- local evidence evidence_scope (`summary_evidence_scope`, or raw `evidence_scope=` when quoting `summary.txt` directly):
 - local evidence result (`summary_result`):
 - rc manifest path:
 - rc manifest generated_at (`manifest_generated_at`, or raw `generated_at=` when quoting `manifest.txt` directly):
-- rc manifest truth_source:
-- rc manifest historical_evidence_only:
-- rc manifest evidence_scope:
+- rc manifest truth_source (`manifest_truth_source`, or raw `truth_source=` when quoting `manifest.txt` directly):
+- rc manifest historical_evidence_only (`manifest_historical_evidence_only`, or raw `historical_evidence_only=` when quoting `manifest.txt` directly):
+- rc manifest evidence_scope (`manifest_evidence_scope`, or raw `evidence_scope=` when quoting `manifest.txt` directly):
 - nightly streak result:
 - go/no-go decision:
 - blocker summary:
