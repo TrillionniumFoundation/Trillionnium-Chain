@@ -77,8 +77,10 @@ A launch-reviewable verifier submission should carry, at minimum:
 A verifier response should preserve enough structure for operators to distinguish policy failure from transport failure:
 
 - `request_id`
+- `attempt_id` (fresh per bounded retry attempt; never reused across retries)
 - `verdict` = `verified | rejected | unavailable`
 - `failure_code` = stable machine-readable code when `verdict != verified`
+- `failure_code_class` = stable retry-class prefix derived from `failure_code` (`retryable-bounded | terminal-no-retry`); if compound codes are emitted, preserve both the prefix-class and the specific suffix instead of collapsing everything into one opaque string
 - `checkpoint_commitment_hex`
 - `observed_checkpoint_height`
 - `observed_checkpoint_prev_hash_hex` (required for non-genesis checkpoints; omitted only for canonical genesis)
