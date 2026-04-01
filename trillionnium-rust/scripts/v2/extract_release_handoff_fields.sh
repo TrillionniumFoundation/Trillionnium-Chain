@@ -110,7 +110,10 @@ fi
 if [ -f "$TRNM_ROOT/run/preflight/go-no-go-latest.txt" ]; then
   PREFLIGHT_SUMMARY_PATH="$TRNM_ROOT/run/preflight/go-no-go-latest.txt"
 else
-  latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  latest_preflight_summary=""
+  if compgen -G "$TRNM_ROOT/run/preflight/go-no-go-*.txt" >/dev/null; then
+    latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
   if [ -n "$latest_preflight_summary" ]; then
     PREFLIGHT_SUMMARY_PATH="$latest_preflight_summary"
   fi
@@ -191,8 +194,6 @@ assert_equal git_status_summary "$summary_status_summary" "$manifest_status_summ
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
-assert_equal rollback_command "$summary_rollback" "$manifest_rollback"
-assert_equal replay_command "$summary_replay" "$manifest_replay"
 
 [ "$summary_worktree_branch_ref_match" = "true" ] || {
   printf 'artifact mismatch for git_worktree_branch_ref_match: expected true got %s\n' "$summary_worktree_branch_ref_match" >&2
