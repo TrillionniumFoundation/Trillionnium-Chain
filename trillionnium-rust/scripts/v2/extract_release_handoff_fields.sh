@@ -21,6 +21,7 @@ EXPECTED_HEAD=""
 VERIFIED_WORKTREE=""
 VERIFIED_BRANCH_REF=""
 VERIFIED_HEAD=""
+PREFLIGHT_SUMMARY_PATH=""
 
 normalize_branch_ref() {
   case "$1" in
@@ -99,6 +100,15 @@ if [ -z "$MANIFEST_PATH" ]; then
   latest_rc_dir="$(ls -dt "$TRNM_ROOT"/release/rc-* 2>/dev/null | head -n 1)"
   [ -n "$latest_rc_dir" ] || { echo "missing rc manifest directory under $TRNM_ROOT/release" >&2; exit 1; }
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
+fi
+
+if [ -f "$TRNM_ROOT/run/preflight/go-no-go-latest.txt" ]; then
+  PREFLIGHT_SUMMARY_PATH="$TRNM_ROOT/run/preflight/go-no-go-latest.txt"
+else
+  latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  if [ -n "$latest_preflight_summary" ]; then
+    PREFLIGHT_SUMMARY_PATH="$latest_preflight_summary"
+  fi
 fi
 
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
@@ -220,6 +230,9 @@ if [ -n "$VERIFIED_BRANCH_REF" ]; then
 fi
 if [ -n "$VERIFIED_HEAD" ]; then
   printf 'verified_head=%s\n' "$VERIFIED_HEAD"
+fi
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
 fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"

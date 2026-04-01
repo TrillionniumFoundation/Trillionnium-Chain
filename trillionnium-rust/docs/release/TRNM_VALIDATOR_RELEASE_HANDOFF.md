@@ -224,6 +224,11 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 When multiple timestamped evidence directories exist, resolve the artifact path from disk before quoting any field in chat, a ticket, or a handoff note.
 
 ```bash
+# Latest preflight summary
+preflight_summary_path="run/preflight/go-no-go-latest.txt"
+[ -f "$preflight_summary_path" ] || { echo "missing preflight summary" >&2; exit 1; }
+printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
+
 # Latest local-evidence summary
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 [ -n "$latest_evidence_dir" ] || { echo "missing local evidence" >&2; exit 1; }
@@ -239,9 +244,10 @@ printf 'manifest_path=%s\n' "$manifest_path"
 
 Operator rule:
 - if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
+- if `run/preflight/go-no-go-latest.txt` is missing, treat preflight evidence retention as incomplete instead of silently omitting the path from the handoff note
 - quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
 - path resolution alone is **not** lane-identity proof: after resolving the files, also verify the artifact `git_worktree_path=` / `git_worktree_branch_ref=` against the lane-assigned worktree/ref from the ticket instead of assuming “latest artifact under this checkout” is automatically the assigned lane
-- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step; when preflight artifacts exist, the helper now also emits `preflight_summary_path=` for the ticket/handoff note
 
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
