@@ -792,6 +792,34 @@ mod tests {
     }
 
     #[test]
+    fn rejects_policy_when_min_sources_is_zero() {
+        let err = OraclePolicy {
+            min_sources: 0,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 60,
+        }
+        .validate()
+        .expect_err("policy should fail closed when quorum floor is zero");
+
+        assert_eq!(err, OracleError::InvalidPolicy("min_sources must be > 0"));
+    }
+
+    #[test]
+    fn rejects_policy_when_max_staleness_is_zero() {
+        let err = OraclePolicy {
+            min_sources: 1,
+            max_staleness_ms: 0,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 60,
+        }
+        .validate()
+        .expect_err("policy should fail closed when staleness window is zero");
+
+        assert_eq!(err, OracleError::InvalidPolicy("max_staleness_ms must be > 0"));
+    }
+
+    #[test]
     fn rejects_policy_when_max_update_rate_is_zero() {
         let err = OraclePolicy {
             min_sources: 1,
