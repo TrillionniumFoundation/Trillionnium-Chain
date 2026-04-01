@@ -464,11 +464,9 @@ impl BridgeRelay {
                 new_admin,
             } => {
                 let mut normalized = AuditEvent::new("bridge-relay", "bridge_relay.admin_updated");
-                normalized.note = Some(format!(
-                    "admin_update {} -> {}",
-                    hex32(old_admin),
-                    hex32(new_admin)
-                ));
+                normalized.object_id = Some(hex32(new_admin));
+                normalized.related_id = Some(hex32(old_admin));
+                normalized.reason = Some("admin_rotation".to_string());
                 normalized
             }
             BridgeRelayEvent::ConfigVersionUpdated {
@@ -912,7 +910,9 @@ mod tests {
     fn governance_like_admin_can_rotate_validator_set_and_threshold() {
         let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
 
-        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
         relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut msg = sample_msg();
@@ -1366,12 +1366,17 @@ mod tests {
     #[test]
     fn audit_log_records_admin_and_settlement_flow() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        let old_admin = b32(9);
+        let new_admin = b32(11);
 
-        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
-        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
+        relay.set_admin(&old_admin, new_admin).unwrap();
+        relay
+            .set_validators(&new_admin, vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay.set_min_validator_signatures(&new_admin, 2).unwrap();
 
         let mut msg = sample_msg();
-        msg.config_version = 3;
+        msg.config_version = 4;
         let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
 
         let proof_digest = relay
@@ -1415,6 +1420,12 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.source == "bridge-relay"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.admin_updated"
+                && event.object_id == Some(hex32(&new_admin))
+                && event.related_id == Some(hex32(&old_admin))
+                && event.reason.as_deref() == Some("admin_rotation")
+        }));
 
         relay.consume_audit_log().into_iter().for_each(|event| {
             if let BridgeRelayEvent::ProofSubmittedAndStored {
