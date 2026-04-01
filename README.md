@@ -192,9 +192,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
   - 在 durable indexer / archive read replica 落地前，历史查询语义仍以当前 RPC retention window 为边界，不应把脚手架或前端只读 client 误读为“无限历史可查”。
 - 本地最小 explorer service 仍只是 operator-facing scaffolding，不应误判为 production indexer：
-  - 启动：`./scripts/v2/explorer_service_up.sh`
-  - 状态：`./scripts/v2/explorer_service_status.sh`
-  - 停止：`./scripts/v2/explorer_service_down.sh`
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_up.sh`
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_status.sh`
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_down.sh`
+  - 或先 `cd trillionnium-rust`，再执行 `./scripts/v2/explorer_service_{up,status,down}.sh`
   - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
   - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，便于 operator 在 down/degraded 时定位日志与健康探针目标，同时避免把脚手架误判为 durable indexer。
   - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
