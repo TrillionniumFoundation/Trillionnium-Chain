@@ -1204,9 +1204,12 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
                     )
                     || matches!(
                         c,
-                        '\u{200B}'
+                        '\u{061C}'
+                            | '\u{200B}'
                             | '\u{200C}'
                             | '\u{200D}'
+                            | '\u{200E}'
+                            | '\u{200F}'
                             | '\u{2060}'
                             | '\u{FEFF}'
                             | '\u{202A}'
@@ -3680,6 +3683,37 @@ mod tests {
                 .contains("invalid tx_hash field in tx query response"),
             "unexpected: {err_kv}"
         );
+    }
+
+    #[test]
+    fn normalize_tx_hash_trims_directional_control_wrappers() {
+        assert_eq!(
+            normalize_tx_hash("\u{200e}\u{061c}0xABCD1234\u{200f}"),
+            Some("0xabcd1234".to_string())
+        );
+        assert_eq!(
+            normalize_tx_hash("\u{200e}<0xBEEF42>\u{200f}?!"),
+            Some("0xbeef42".to_string())
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_normalizes_directional_control_wrapped_hash() {
+        let resp = wait_for_tx(
+            "\u{200e}\u{061c}0xABCD1234\u{200f}",
+            Duration::from_secs(1),
+            Duration::from_millis(1),
+            |requested| {
+                assert_eq!(requested, "0xabcd1234");
+                Ok(TxQueryResponse {
+                    tx_hash: "\u{200e}0xABCD1234\u{200f}".to_string(),
+                    status: "success".to_string(),
+                    error: None,
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(resp.status, "success");
     }
 
     #[test]
