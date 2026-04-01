@@ -1264,4 +1264,46 @@ mod tests {
             Error::AlreadyFinalized
         );
     }
+
+    #[test]
+    fn cancelled_unpause_cannot_execute_and_keeps_pause_active() {
+        let mut gov = setup();
+        let now = 7_400;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-cancelled-unpause")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-cancelled-unpause", now)
+            .unwrap();
+        let audit_len_before_cancel = gov.audit_log().len();
+
+        gov.cancel("guardian", pid).unwrap();
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Cancelled);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before_cancel + 1);
+        assert!(gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, actor }
+                if *proposal_id == pid && actor == "guardian"
+        )));
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::AlreadyFinalized
+        );
+        assert!(gov.bridge_state().emergency_paused);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
 }
