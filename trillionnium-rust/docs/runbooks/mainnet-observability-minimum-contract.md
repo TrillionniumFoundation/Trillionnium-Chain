@@ -7,7 +7,7 @@ Its purpose is narrower:
 - keep health probe aliases append-stable
 - keep the `trnm-rpc` health body contract explicit
 - preserve the existing `trnm-node` incident-summary metric bundle names
-- preserve the current `trnm-worker-agent` submit log line shape used in operator handoff
+- preserve the current `trnm-worker-agent` operator-visible handoff and batch-summary line shapes used in operator handoff
 
 Use this as a rehearsal/runbook reference until a fuller dashboard + alert pack lands.
 
@@ -17,7 +17,8 @@ This document only freezes surfaces already evidenced in code/tests under:
 
 - `crates/trnm-rpc/src/runtime/http.rs` (runtime path) and `crates/trnm-rpc/src/health.rs` (mirrored compatibility path)
 - `crates/trnm-node/src/runtime/metrics_aggregation/summary_format.rs`
-- `crates/trnm-worker-agent/src/workflow.rs`
+- `crates/trnm-worker-agent/src/workflow_ops.rs`
+- `crates/trnm-worker-agent/src/assigned.rs`
 
 It should be read together with:
 
@@ -141,7 +142,9 @@ A safe starter summary line for incident handoff is:
 
 Keep field names verbatim so pager notes and release evidence remain grep-stable.
 
-## 3. `trnm-worker-agent` submit log line
+## 3. `trnm-worker-agent` operator-visible log lines
+
+### Submit mode handoff line
 
 When `trnm-worker-agent` runs in submit mode, the current operator-visible submit line is:
 
@@ -157,6 +160,22 @@ Current code emits the same token pair on stdout for the happy path and stderr f
 This line is intentionally small and path-oriented.
 If richer structured logging lands later, prefer adding fields rather than renaming these two tokens.
 
+### Assigned-run summary line
+
+When `trnm-worker-agent` finishes an assigned-run batch, the current operator-visible summary line is:
+
+- `[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>`
+
+Operational meaning:
+
+- `processed=<n>` is the number of requests advanced to the commit-queued path in this batch.
+- `skipped=<reason=count|none>` is the compact skip-reason summary; preserve the `none` sentinel for zero-skip runs.
+- `ingress=<path>` points to the ingress record file that was read and rewritten.
+- `submit_log=<path>` points to the persisted submit log coupled to the batch.
+- `adapter=<name>` plus the retry/backoff/timeout fields preserve the exact LLM-adapter policy context used during the run.
+
+For operator handoff, keep this line append-stable and path-oriented. Additive fields are safer than renaming or reordering the existing tokens that batch triage may grep for.
+
 ## 4. Conservative rules for future changes
 
 Until the unified dashboard/alert pack exists, apply these rules:
@@ -164,8 +183,9 @@ Until the unified dashboard/alert pack exists, apply these rules:
 1. Prefer **adding** aliases/fields/metrics over renaming existing ones.
 2. Treat the `trnm-rpc` health JSON body as append-stable.
 3. Treat the `trnm-node` incident bundle names above as append-stable.
-4. Treat `submitted=true submit_log=<path>` as the worker-agent minimum handoff line.
-5. If a new surface claims to supersede one of the above, keep a compatibility path or update this runbook in the same patch.
+4. Treat `submitted=true submit_log=<path>` as the worker-agent minimum submit handoff line.
+5. Treat `[agent] run-assigned ... submit_log=<path> ...` as the worker-agent minimum assigned-batch summary line.
+6. If a new surface claims to supersede one of the above, keep a compatibility path or update this runbook in the same patch.
 
 ## 5. What this document does not claim
 
