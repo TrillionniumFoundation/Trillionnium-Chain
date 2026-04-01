@@ -41,6 +41,8 @@ If any invariant fails, stop before continuing.
 
 Prefer the shared fail-closed helper instead of trusting the shell prompt:
 
+Use the ticket-assigned **absolute** worktree path directly; do not pass a relative path copied from the current shell.
+
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
