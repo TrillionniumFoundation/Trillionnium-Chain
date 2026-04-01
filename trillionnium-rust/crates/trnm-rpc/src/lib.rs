@@ -1562,6 +1562,36 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_accepted_snapshot_without_canonical_sources(
+    ) {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 795,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 0,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        }
+        .into();
+
+        assert!(out.observation_matches_metrics());
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
     fn oracle_validation_response_bridge_contract_consistent_rejects_ok_error_label_mismatch() {
         let ok_with_error: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
