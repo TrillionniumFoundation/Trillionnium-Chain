@@ -22,6 +22,23 @@ fn settlement_request_rejects_ogham_space_mark_in_tx_hash() {
 }
 
 #[test]
+fn settlement_audit_view_exposes_non_terminal_pending_fields() {
+    let pending = SettlementRequest::new(7, "0xpending".to_string());
+
+    assert_eq!(
+        pending.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xpending".to_string(),
+            status: "pending",
+            is_terminal: false,
+            finalized_height: None,
+            revert_reason: None,
+        }
+    );
+}
+
+#[test]
 fn settlement_audit_view_exposes_explicit_terminal_fields() {
     let mut finalized = SettlementRequest::new(7, "0xfinal".to_string());
     finalized.status = BridgeStatus::Finalized(88);
