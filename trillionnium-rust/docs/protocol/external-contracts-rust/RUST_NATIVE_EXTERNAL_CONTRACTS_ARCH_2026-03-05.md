@@ -393,8 +393,3 @@ Cutover acceptance requires all:
 ---
 
 **Status:** architecture baseline approved for Rust-native external contracts.
-l contracts.
-ive external contracts.
-l contracts.
-rnal contracts.
-l contracts.
