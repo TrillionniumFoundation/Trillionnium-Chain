@@ -1095,6 +1095,42 @@ mod tests {
     }
 
     #[test]
+    fn emergency_unpause_self_execution_rejection_preserves_queue_and_audit_state() {
+        let mut gov = setup();
+        gov.set_role("admin", "guardian", false, true).unwrap();
+
+        let now = 5_800;
+        let eta = now + 60;
+        gov.emergency_pause("guardian", "incident-self-exec").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-self-exec", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.execute_unpause("guardian", pid, eta).unwrap_err(),
+            Error::GuardianExecutorConflict
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn schedule_unpause_rejects_when_pause_is_not_active() {
         let mut gov = setup();
         let now = 6_000;
