@@ -55,4 +55,4 @@ npm run start
 
 > `release:ready` 会先校验当前版本在 `CHANGELOG.md` 中有对应条目，再执行 `release:preflight`（lint/typecheck/test/test:contract/build）。
 
-详细说明见：`docs/operations-runbook.md`
+详细说明见：`docs/operations-runbook.md`；发布前门禁与人工复核清单见：`docs/release-checklist.md`

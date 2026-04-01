@@ -17,6 +17,7 @@
 ## 4. 运维与发布
 
 - [运维手册（发布/回滚/排障）](./operations-runbook.md)
+- [发布前 Checklist](./release-checklist.md)
 
 ---
 
