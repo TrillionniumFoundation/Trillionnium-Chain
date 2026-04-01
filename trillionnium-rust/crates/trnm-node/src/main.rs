@@ -447,6 +447,7 @@ fn checkpoint_file(wal_dir: &Path) -> PathBuf {
 
 fn is_effectively_empty_toml_scaffold(raw: &str) -> bool {
     raw.lines().all(|line| {
+        let line = line.trim_start_matches('\u{feff}');
         let without_comment = line.split_once('#').map_or(line, |(before, _)| before);
         without_comment.trim().is_empty()
     })
@@ -15791,6 +15792,59 @@ locked_block_hash = "stale-lock"
         fs::write(
             wal_meta_file(&base),
             "# bootstrap placeholder\n   # retained until first WAL write\n",
+        )
+        .unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let cwd = std::env::current_dir().unwrap();
+        std::env::set_current_dir(&root).unwrap();
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        std::env::set_current_dir(cwd).unwrap();
+
+        assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_scaffolds_exist() {
+        let root = temp_wal_dir("default-wal-bom-comment-scaffold-root");
+        let base = root.join(DEFAULT_BFT_WAL_DIR);
+        fs::create_dir_all(&base).unwrap();
+        fs::write(
+            checkpoint_file(&base),
+            "\u{feff}# bootstrap placeholder\n   # retained until first checkpoint\n",
+        )
+        .unwrap();
+        fs::write(
+            wal_meta_file(&base),
+            "\u{feff}# bootstrap placeholder\n   # retained until first WAL write\n",
         )
         .unwrap();
 
