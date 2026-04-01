@@ -329,6 +329,36 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_preserves_query_string_for_health_probe_aliases() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb HTTP/1.1"),
+            Some(("GET", "/healthz?probe=lb"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1"),
+            Some(("HEAD", "/-/STATUSZ/?from=ops"))
+        );
+    }
+
+    #[test]
+    fn query_string_is_ignored_for_health_probe_alias_matching() {
+        let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1").unwrap();
+        let path = request.1.split('?').next().unwrap();
+
+        assert!(is_health_probe_path(path));
+
+        let response = if is_health_probe_path(path) {
+            json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+        } else {
+            unreachable!("health alias with query string should match after path split")
+        };
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.contains("\"ok\":true"));
+    }
+
+    #[test]
     fn json_response_for_method_uses_head_headers_without_body() {
         let get = json_response_for_method("GET", "200 OK", "{\"ok\":true}");
         assert!(get.ends_with("{\"ok\":true}"));
