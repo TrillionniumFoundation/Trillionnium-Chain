@@ -215,6 +215,9 @@ Mark each item explicitly:
 - [ ] `checked_process_output=` preserved next to signer exclusivity note
 - [ ] `checked_listener_output=` preserved next to signer exclusivity note
 - [ ] `verify_lane_worktree.sh` passed using ticket-assigned values
+- [ ] `verified_worktree=` preserved from helper output
+- [ ] `verified_branch_ref=` preserved from helper output
+- [ ] `verified_head=` preserved from helper output
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
 - [ ] `summary_path` resolved from disk
@@ -251,6 +254,9 @@ assigned_branch_ref=<ticket ref>
 signer_exclusivity_note=<one line>
 checked_process_output=<captured command output or explicit "no matching process">
 checked_listener_output=<captured command output or explicit "no matching listener">
+verified_worktree=<helper output>
+verified_branch_ref=<helper output>
+verified_head=<helper output>
 preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
