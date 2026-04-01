@@ -267,12 +267,16 @@ impl OraclePolicy {
     }
 }
 
+fn contains_non_canonical_id_chars(raw: &str) -> bool {
+    raw.chars().any(|ch| ch.is_whitespace() || ch.is_control())
+}
+
 fn validate_canonical_source_id(raw: &str) -> Result<String, OracleError> {
     let canonical = raw.trim().to_ascii_lowercase();
     if canonical.is_empty() {
         return Err(OracleError::EmptySourceId);
     }
-    if raw != canonical {
+    if raw != canonical || contains_non_canonical_id_chars(raw) {
         return Err(OracleError::NonCanonicalSourceId {
             raw: raw.to_string(),
             canonical,
@@ -286,7 +290,7 @@ fn validate_canonical_feed_id(raw: &str) -> Result<String, OracleError> {
     if canonical.is_empty() {
         return Err(OracleError::EmptyFeedId);
     }
-    if raw != canonical {
+    if raw != canonical || contains_non_canonical_id_chars(raw) {
         return Err(OracleError::NonCanonicalFeedId {
             raw: raw.to_string(),
             canonical,
@@ -723,6 +727,21 @@ mod tests {
         );
     }
 
+    #[test]
+    fn source_id_parse_rejects_internal_whitespace_and_control_chars() {
+        for raw in ["chain link", "chain\tlink", "chain\nlink", "chain\u{0007}link"] {
+            let err = OracleSourceId::parse(raw)
+                .expect_err("source ids should fail closed on internal whitespace/control chars");
+            assert_eq!(
+                err,
+                OracleError::NonCanonicalSourceId {
+                    raw: raw.to_string(),
+                    canonical: raw.trim().to_ascii_lowercase(),
+                }
+            );
+        }
+    }
+
     fn snapshot_with(value: i128, median: Option<i128>, snapshot_ts_ms: u64) -> OracleSnapshot {
         OracleSnapshot::new(
             "btc/usd",
@@ -760,6 +779,32 @@ mod tests {
                 canonical: "btc/usd".to_string(),
             }
         );
+    }
+
+    #[test]
+    fn rejects_feed_id_with_internal_whitespace_and_control_chars() {
+        for raw in ["btc /usd", "btc\t/usd", "btc\n/usd", "btc\u{0007}/usd"] {
+            let err = OracleSnapshot::new(
+                raw,
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                2,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect_err("snapshot build should reject feed ids with internal whitespace/control chars");
+
+            assert_eq!(
+                err,
+                OracleError::NonCanonicalFeedId {
+                    raw: raw.to_string(),
+                    canonical: raw.trim().to_ascii_lowercase(),
+                }
+            );
+        }
     }
 
     #[test]
