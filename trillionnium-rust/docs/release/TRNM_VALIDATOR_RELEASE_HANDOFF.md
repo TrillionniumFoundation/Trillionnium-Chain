@@ -347,8 +347,8 @@ Record these fields in the release ticket or operator handoff note:
 - verified worktree:
 - verified branch ref:
 - verified head:
-- branch:
-- commit:
+- branch (`git_branch`; quote the helper/artifact field verbatim rather than paraphrasing):
+- commit (`git_head`; quote the helper/artifact field verbatim rather than paraphrasing):
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
