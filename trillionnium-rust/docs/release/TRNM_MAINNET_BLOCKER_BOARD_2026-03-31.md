@@ -150,6 +150,7 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 **Exit criteria**
 - full prelaunch rehearsal green on current `origin/main`
 - artifact identities consistent across summary/manifest
+- both artifact timestamps preserved as `summary_generated_at=` and `manifest_generated_at=` rather than collapsed into one assumed timestamp
 - rollback command explicitly preserved
 - signed operator decision packet
 
