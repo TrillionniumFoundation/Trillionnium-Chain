@@ -3618,8 +3618,14 @@ fn query_task_response(
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
-    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let has_commit = task_recs.iter().any(|r| r.kind == "commit");
+    if !has_commit {
+        bail!(
+            "task not found: {} (adapter fallback requires persisted commit history)",
+            task_id
+        );
+    }
+    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let status = if has_reveal {
         TaskStatus::Revealed
     } else if has_commit {

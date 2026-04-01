@@ -88,6 +88,25 @@ fn query_task_response_fallback_normalizes_adapter_worker_for_read_model_consist
 }
 
 #[test]
+fn query_task_response_fallback_rejects_reveal_without_persisted_commit() {
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, None)], || {
+        let recs = vec![AdapterRecord {
+            ts: 20,
+            kind: "reveal".into(),
+            task_id: 89,
+            worker: Some("worker-z".into()),
+            result_hash: Some("0x89".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0xddd".into()),
+        }];
+
+        let err = query_task_response(89, &[], &recs)
+            .expect_err("reveal-only fallback must not synthesize a historical task state");
+        assert!(err.to_string().contains("requires persisted commit history"));
+    });
+}
+
+#[test]
 fn query_task_from_node_events_none_for_missing_task() {
     let events = vec![NodeEventRecord {
         event_type: "accept".into(),
