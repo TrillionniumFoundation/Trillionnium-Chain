@@ -137,6 +137,19 @@ def validate_packet_path(value: str, field: str) -> None:
         )
 
 
+def validate_packet_line_value(value: str, field: str) -> None:
+    if not value:
+        fail(f"invalid ceremony packet arguments: {field} must not be empty")
+    if any(ch in "\r\n" for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: {field} must be a single-line value without embedded newlines"
+        )
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: {field} must be free of control characters"
+        )
+
+
 def validate_node_id(node_id: str, path: Path) -> None:
     if any(ch.isspace() for ch in node_id):
         fail(f"invalid node config {path}: node_id must not contain whitespace")
@@ -227,6 +240,20 @@ def load_config(path: Path) -> dict[str, object]:
 
 
 def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
+    packet_line_values = {
+        "ceremony_id": args.ceremony_id,
+        "ceremony_scope": args.ceremony_scope,
+        "packet_generated_at": args.packet_generated_at,
+        "packet_distribution_path": args.packet_distribution_path,
+        "validator_set_version": args.validator_set_version,
+        "startup_order_note": args.startup_order_note,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_path": args.genesis_artifact_path,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    for field, value in packet_line_values.items():
+        validate_packet_line_value(value, field)
+
     if args.ceremony_scope != "public-mainnet-input":
         return
 
