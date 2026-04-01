@@ -40,7 +40,9 @@ Before any release/evidence script runs, record the validator signing ownership 
 Single-signer / process exclusivity note (required for any validator/operator-bound rehearsal):
 - signer_exclusivity_note=
 - checked_process_command=`ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep`
+- checked_process_output=
 - checked_listener_command=`lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'`
+- checked_listener_output=
 
 Capture the fail-closed helper output verbatim before any release/evidence script runs:
 
@@ -52,13 +54,15 @@ Capture the fail-closed helper output verbatim before any release/evidence scrip
 
 Record:
 - signer_exclusivity_note=
+- checked_process_output=
+- checked_listener_output=
 - verified_worktree=
 - verified_branch_ref=
 - verified_head=
 - `git status --short` result:
 
 Rule:
-- if signer ownership is ambiguous, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
+- if signer ownership is ambiguous, if either exclusivity check output is missing, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
 
 ## 3. Artifact path resolution
 
@@ -204,6 +208,8 @@ Mark each item explicitly:
 
 - [ ] assigned worktree / branch recorded from ticket
 - [ ] signer/process exclusivity checked and recorded
+- [ ] `checked_process_output=` preserved next to signer exclusivity note
+- [ ] `checked_listener_output=` preserved next to signer exclusivity note
 - [ ] `verify_lane_worktree.sh` passed using ticket-assigned values
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
@@ -239,6 +245,8 @@ decision_scope=<local rehearsal only|internal RC only|public-mainnet candidate r
 assigned_worktree=<ticket path>
 assigned_branch_ref=<ticket ref>
 signer_exclusivity_note=<one line>
+checked_process_output=<captured command output or explicit "no matching process">
+checked_listener_output=<captured command output or explicit "no matching listener">
 preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
