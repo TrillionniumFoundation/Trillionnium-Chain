@@ -1936,21 +1936,25 @@ where
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
-        if !resp.tx_hash.trim().is_empty() {
-            let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
-                anyhow!(
-                    "tx wait response hash invalid: requested={}, got={}",
-                    requested,
-                    resp.tx_hash
-                )
-            })?;
-            if got != requested {
-                bail!(
-                    "tx wait response hash mismatch: requested={}, got={}",
-                    requested,
-                    got
-                );
-            }
+        if resp.tx_hash.trim().is_empty() {
+            bail!(
+                "tx wait response missing tx_hash: requested={}",
+                requested
+            );
+        }
+        let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
+            anyhow!(
+                "tx wait response hash invalid: requested={}, got={}",
+                requested,
+                resp.tx_hash
+            )
+        })?;
+        if got != requested {
+            bail!(
+                "tx wait response hash mismatch: requested={}, got={}",
+                requested,
+                got
+            );
         }
         if is_terminal_tx_status(&resp.status) {
             return Ok(resp);
@@ -3987,6 +3991,27 @@ mod tests {
         let msg = result.unwrap_err().to_string();
         assert!(
             msg.contains("tx wait response hash mismatch"),
+            "unexpected: {msg}"
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_missing_response_hash() {
+        let result = wait_for_tx(
+            "0xbbb",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: String::new(),
+                    status: "committed".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait response missing tx_hash"),
             "unexpected: {msg}"
         );
     }

@@ -93,6 +93,27 @@ fn wait_for_tx_rejects_invalid_tx_hash_from_query() {
 }
 
 #[test]
+fn wait_for_tx_rejects_missing_tx_hash_from_query() {
+    let result = wait_for_tx(
+        "0xbbbccc",
+        Duration::from_millis(10),
+        Duration::from_millis(1),
+        |_| {
+            Ok(TxQueryResponse {
+                tx_hash: String::new(),
+                status: "committed".to_string(),
+                error: None,
+            })
+        },
+    );
+    let err = result.unwrap_err().to_string();
+    assert!(
+        err.contains("tx wait response missing tx_hash"),
+        "unexpected: {err}"
+    );
+}
+
+#[test]
 fn wait_for_tx_accepts_normalized_success_alias_as_terminal() {
     let result = wait_for_tx(
         "0xbbbccc",
