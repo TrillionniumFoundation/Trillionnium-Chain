@@ -1372,6 +1372,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .contains("rpc_addr must not use a reserved documentation or benchmarking address"),
             "unexpected error: {rpc_v6_doc_err:#}"
         );
+
+        let p2p_v6_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:7000".into(),
+                p2p_addr: "[2001:db8::10]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr IPv6 documentation range must fail closed");
+        assert!(
+            p2p_v6_doc_err
+                .to_string()
+                .contains("p2p_addr must not use a reserved documentation or benchmarking address"),
+            "unexpected error: {p2p_v6_doc_err:#}"
+        );
     }
 
     #[test]

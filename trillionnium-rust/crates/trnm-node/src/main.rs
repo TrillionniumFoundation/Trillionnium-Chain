@@ -121,6 +121,25 @@ struct NodeConfig {
     p2p_addr: String,
 }
 
+fn is_reserved_listener_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(
+                octets,
+                [192, 0, 2, _]
+                    | [198, 51, 100, _]
+                    | [203, 0, 113, _]
+                    | [198, 18 | 19, _, _]
+            )
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
@@ -1640,6 +1659,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use a link-local address",
         path
     );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a reserved documentation or benchmarking address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1717,6 +1741,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !matches!(p2p_socket.ip(), std::net::IpAddr::V4(addr) if addr.is_link_local())
             && !matches!(p2p_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_unicast_link_local()),
         "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a reserved documentation or benchmarking address",
         path
     );
     anyhow::ensure!(
@@ -5708,6 +5737,61 @@ bootstrap_peers = ["127.0.0.1:27656"]
                     .contains("node_id must not contain path separators (/ \\ :)")
             );
         }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_reserved_documentation_and_benchmark_listener_addresses() {
+        let rpc_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "192.0.2.10:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr documentation range must fail closed");
+        assert!(rpc_doc_err
+            .to_string()
+            .contains("rpc_addr must not use a reserved documentation or benchmarking address"));
+
+        let p2p_benchmark_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "198.19.0.10:7001".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr benchmarking range must fail closed");
+        assert!(p2p_benchmark_err
+            .to_string()
+            .contains("p2p_addr must not use a reserved documentation or benchmarking address"));
+
+        let rpc_v6_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:db8::10]:7000".into(),
+                p2p_addr: "[::1]:7001".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 documentation range must fail closed");
+        assert!(rpc_v6_doc_err
+            .to_string()
+            .contains("rpc_addr must not use a reserved documentation or benchmarking address"));
+
+        let p2p_v6_doc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:7000".into(),
+                p2p_addr: "[2001:db8::10]:7001".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 documentation range must fail closed");
+        assert!(p2p_v6_doc_err
+            .to_string()
+            .contains("p2p_addr must not use a reserved documentation or benchmarking address"));
     }
 
     #[test]
