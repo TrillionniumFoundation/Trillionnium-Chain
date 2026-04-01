@@ -122,6 +122,20 @@ fi
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
 [ -f "$MANIFEST_PATH" ] || { echo "missing manifest file: $MANIFEST_PATH" >&2; exit 1; }
 
+resolve_path() {
+  local path="$1"
+  local dir base
+  dir="$(cd "$(dirname "$path")" && pwd -P)"
+  base="$(basename "$path")"
+  printf '%s/%s\n' "$dir" "$base"
+}
+
+SUMMARY_PATH="$(resolve_path "$SUMMARY_PATH")"
+MANIFEST_PATH="$(resolve_path "$MANIFEST_PATH")"
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
+fi
+
 require_key() {
   local path="$1"
   local key="$2"
