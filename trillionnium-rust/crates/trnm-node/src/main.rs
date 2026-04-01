@@ -1835,6 +1835,14 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not contain control characters"
     );
     anyhow::ensure!(
+        !path.contains(',') && !path.contains(';') && !path.contains('|'),
+        "read config failed: path must not contain list separators (, ; |)"
+    );
+    anyhow::ensure!(
+        !path.contains("://"),
+        "read config failed: path must not be a URL"
+    );
+    anyhow::ensure!(
         !Path::new(path)
             .components()
             .any(|component| matches!(component, std::path::Component::ParentDir)),
@@ -4123,6 +4131,26 @@ mod tests {
                 prev_config_path
             );
         }
+    }
+
+    #[test]
+    fn load_config_rejects_list_separators_in_path_fail_closed() {
+        let err = load_config("configs/node1.toml,configs/node2.toml")
+            .expect_err("config path lists must fail closed");
+        assert!(
+            err.to_string().contains("path must not contain list separators"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_url_style_path_fail_closed() {
+        let err = load_config("https://example.invalid/node1.toml")
+            .expect_err("URL-style config paths must fail closed");
+        assert!(
+            err.to_string().contains("path must not be a URL"),
+            "unexpected error: {err:#}"
+        );
     }
 
     #[test]
