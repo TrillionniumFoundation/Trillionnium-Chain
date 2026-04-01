@@ -1081,6 +1081,14 @@ mod tests {
     }
 
     #[test]
+    fn query_account_state_rejects_punctuation_wrapped_address() {
+        let accounts = BTreeMap::new();
+        let wrapped = format!("[trnm1{}]", "1".repeat(40));
+        let err = query_account_state(&accounts, &wrapped).unwrap_err();
+        assert_eq!(err.code(), "INVALID_ADDRESS");
+    }
+
+    #[test]
     fn query_account_state_rejects_wrong_suffix_length() {
         let accounts = BTreeMap::new();
 
