@@ -809,6 +809,18 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_treats_bom_prefixed_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-bom-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "\u{feff} \n\t").unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_treats_bom_prefixed_comment_only_files_as_empty_metadata_scaffolds() {
         let wal_dir = temp_wal_dir("checkpoint-bom-comment-only-scaffold");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -892,6 +904,18 @@ mod tests {
             "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
         )
         .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_bom_prefixed_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-bom-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "\u{feff}\n  \t").unwrap();
 
         let entries = load_wal_meta_entries(&wal_dir).unwrap();
         assert!(entries.is_empty());
