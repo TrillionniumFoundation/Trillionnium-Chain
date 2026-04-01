@@ -953,6 +953,9 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
 
     path.is_absolute()
         && path.parent().is_some()
+        && path.to_string_lossy().chars().all(|c| {
+            !c.is_whitespace() && !contains_hidden_or_control(c)
+        })
         && !path
             .components()
             .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
@@ -2796,6 +2799,28 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {read_err}"
+        );
+
+        let spaced_write_err = write_key(
+            std::path::Path::new("/tmp/trnm wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            spaced_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {spaced_write_err}"
+        );
+
+        let hidden_read_err =
+            read_key(std::path::Path::new("/tmp/trnm\u{200b}wallets"), "alice").unwrap_err();
+        assert!(
+            hidden_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {hidden_read_err}"
         );
     }
 
