@@ -396,6 +396,82 @@ describe("dashboard source normalized audit pagination", () => {
     );
   });
 
+  it("fails closed when normalized audit pagination repeats a cursor", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "345b",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "345b",
+        events: [
+          {
+            id: "EVT-345b",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345b",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-stall",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345c",
+              timestamp: "2026-03-01T00:03:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-stall",
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): Normalized audit pagination cursor stalled at cursor-stall. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+  });
+
   it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {
     const mockClient = {
       queryTask: vi

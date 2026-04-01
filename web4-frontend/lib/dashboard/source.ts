@@ -242,6 +242,7 @@ const fetchNormalizedAuditEventsWithPagination = async (
   const allEvents: NormalizedAuditEvent[] = [];
   const normalizedAuditPageLimit = resolveNormalizedAuditPageLimit();
   const normalizedAuditMaxPages = resolveNormalizedAuditMaxPages();
+  const seenCursors = new Set<string>();
 
   let cursor: string | undefined;
   let page = 0;
@@ -255,8 +256,13 @@ const fetchNormalizedAuditEventsWithPagination = async (
     const nextCursor = pageResp.nextCursor?.trim();
     hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
 
-    if (!hasMore) break;
+    if (!hasMore || !nextCursor) break;
 
+    if (nextCursor === cursor || seenCursors.has(nextCursor)) {
+      throw new Error(`Normalized audit pagination cursor stalled at ${nextCursor}`);
+    }
+
+    seenCursors.add(nextCursor);
     cursor = nextCursor;
     page += 1;
   }
