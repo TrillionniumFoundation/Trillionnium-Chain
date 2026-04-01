@@ -50,6 +50,7 @@ contracts-rust/
 
 - external contracts 保持在 `contracts-rust/` 独立子树，而不是物理并入 `trillionnium-rust/`
 - 当前 crate 更接近 contract semantics / audit normalization / fail-closed behavior 的 Rust MVP
+- 当前仓内 **还没有** 已落地的 `sdk/`、`runtime-spec/`、`integration-tests/` 目录，因此不要把架构目标布局误读成“工程已接线完成”
 - 是否进入 Day-1 mainnet scope，应继续以 `RELEASE_READINESS.md` 与 `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 的口径为准
 
 ## 目录说明
@@ -69,6 +70,17 @@ contracts-rust/
 ### `audit-events/`
 
 共享审计事件 schema crate；用于 contract 模块输出统一 normalized audit event。
+
+## Host / runtime boundary（按当前仓库状态理解）
+
+当前更可信的边界应理解为：
+
+- `contracts-rust/*`：独立 contract crates / shared schema，主要承载合约语义、共享事件 schema 与 fail-closed 规则
+- `trnm-node`：未来的 deterministic WASM executor / gas / quota / rollback runtime 宿主；**当前仓内不应宣称已与本子树完成 canonical runtime 接线**
+- `trnm-state`：未来承接 contract storage delta 与 state-root inclusion；**当前也不应表述成这些 crates 已纳入 canonical state root pipeline**
+- `trnm-rpc`：未来承接 versioned contract call/query/event mapping；**当前不应把现有 crate 直接描述成对外稳定 ABI 已上线**
+
+换句话说：这里现在更像 external-contract runtime perimeter 的 Rust 侧骨架，而不是已经闭合的 host ABI/runtime integration plane。
 
 ## 构建边界
 

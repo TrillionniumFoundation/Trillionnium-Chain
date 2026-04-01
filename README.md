@@ -41,7 +41,7 @@ TrillionniumChain/
 ├── web4-frontend/               # Web4 前端（Next.js + Vitest + Playwright）
 ├── scripts/                     # 仓库级流水线与自动化脚本
 ├── docs/                        # 架构 / 协议 / 开发 / runbook / 报告
-├── contracts-rust/              # Rust-native external contracts 子树（当前为 MVP 合约 crate 集合）
+├── contracts-rust/              # Rust-native external contracts 子树（当前为独立 MVP contract crates / shared schema，尚未形成闭合 host runtime）
 ├── config/                      # 策略与告警配置
 ├── data/                        # 验收数据与实验产物
 ├── run/                         # 运行日志与 gate 输出
