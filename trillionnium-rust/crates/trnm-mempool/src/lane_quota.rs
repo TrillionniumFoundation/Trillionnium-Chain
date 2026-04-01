@@ -111,4 +111,27 @@ mod tests {
         assert!(gate.can_normal_borrow_critical_slot(2));
         assert!(!gate.can_normal_borrow_critical_slot(0));
     }
+
+    #[test]
+    fn reserve_only_mode_keeps_last_free_slot_borrowable_even_with_active_critical_backlog() {
+        let mut gate = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(gate.normal.capacity, 0);
+        assert_eq!(gate.critical.capacity, 3);
+        assert_eq!(gate.admit(10, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert!(!gate.critical.queue.is_empty());
+        assert_eq!(gate.critical_free_slots(), 2);
+        assert!(gate.can_normal_borrow_critical_slot(2));
+
+        assert_eq!(gate.admit(11, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 1);
+
+        // Reserve-only mode shares the critical lane across both classes, so even
+        // with active critical backlog the final truly free slot stays borrowable
+        // until aggregate anti-spam capacity is actually exhausted.
+        assert!(gate.can_normal_borrow_critical_slot(1));
+        assert_eq!(gate.admit(12, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 0);
+        assert!(!gate.can_normal_borrow_critical_slot(0));
+    }
 }
