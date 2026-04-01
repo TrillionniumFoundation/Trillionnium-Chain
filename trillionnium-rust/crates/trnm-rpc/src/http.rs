@@ -549,4 +549,35 @@ mod tests {
             )
         );
     }
+
+    #[test]
+    fn parse_query_events_limit_rejects_unknown_or_duplicate_query_keys() {
+        let duplicate = parse_query_events_limit_from_path("/query-events/42?limit=1&limit=2");
+        assert!(duplicate.is_err());
+        assert_eq!(
+            duplicate.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}"
+            )
+        );
+
+        for path in [
+            "/query-events/42?foo=1",
+            "/query-events/42?limit=1&foo=2",
+            "/query-events/42?foo=2&limit=1",
+            "/query-events/42?Limit=1",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
+    }
 }

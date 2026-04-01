@@ -184,6 +184,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
+  - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - `query-normalized-audit-events` 当前只接受 `source` / `eventType` / `cursor` / `limit` 这组 query 参数；重复键、未知键、空值、编码分隔符与 query smuggling 都按 fail-closed 处理，接入侧不要把“额外参数会被忽略”当作兼容约定。
   - 上述只读路径接受**单个** operator trailing slash（如 `.../alice/`），但会对额外层级、原始/编码斜杠、query/fragment smuggling 维持 fail-closed；接入侧不要把模糊路径当作可兼容输入。
