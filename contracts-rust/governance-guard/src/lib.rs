@@ -271,6 +271,12 @@ impl GovernanceGuard {
             if proposal.kind != ProposalKind::ParamChange {
                 return Err(Error::WrongProposalKind);
             }
+            if matches!(
+                proposal.status,
+                ProposalStatus::Executed | ProposalStatus::Cancelled
+            ) {
+                return Err(Error::AlreadyFinalized);
+            }
             if proposal.status != ProposalStatus::Queued {
                 return Err(Error::NotQueued);
             }
@@ -431,6 +437,12 @@ impl GovernanceGuard {
 
             if proposal.kind != ProposalKind::EmergencyUnpause {
                 return Err(Error::WrongProposalKind);
+            }
+            if matches!(
+                proposal.status,
+                ProposalStatus::Executed | ProposalStatus::Cancelled
+            ) {
+                return Err(Error::AlreadyFinalized);
             }
             if proposal.status != ProposalStatus::Queued {
                 return Err(Error::NotQueued);
@@ -730,7 +742,7 @@ mod tests {
 
         gov.execute("exec", pid, eta).unwrap();
         let second = gov.execute("exec", pid, eta + 1).unwrap_err();
-        assert_eq!(second, Error::NotQueued);
+        assert_eq!(second, Error::AlreadyFinalized);
     }
 
     #[test]
@@ -1207,5 +1219,49 @@ mod tests {
 
         assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
         assert_eq!(event.note.as_deref(), Some("value=true->false"));
+    }
+
+    #[test]
+    fn execute_rejects_cancelled_param_proposal_as_already_finalized() {
+        let mut gov = setup();
+        let now = 7_200;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "180",
+                eta,
+                "reason-finalized-param",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.cancel("alice", pid).unwrap();
+
+        assert_eq!(
+            gov.execute("exec", pid, eta).unwrap_err(),
+            Error::AlreadyFinalized
+        );
+    }
+
+    #[test]
+    fn execute_unpause_rejects_finalized_proposal_as_already_finalized() {
+        let mut gov = setup();
+        let now = 7_300;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-finalized").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-finalized", now)
+            .unwrap();
+        gov.execute_unpause("exec", pid, eta).unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta + 1).unwrap_err(),
+            Error::AlreadyFinalized
+        );
     }
 }
