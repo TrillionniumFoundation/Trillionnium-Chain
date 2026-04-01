@@ -259,13 +259,33 @@ pub(crate) fn metadata_only_recovery_error(
 }
 
 pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
+    let checkpoint_relation = if recovered.wal_entries_retained == 0 {
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| format!("checkpoint_only:{}", checkpoint_height))
+            .unwrap_or_else(|| "none".into())
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                format!("behind:{}", tip_height - checkpoint_height)
+            }
+            Some(checkpoint_height) if checkpoint_height > tip_height => {
+                format!("ahead:{}", checkpoint_height - tip_height)
+            }
+            Some(_) => "aligned".into(),
+            None => "missing".into(),
+        }
+    };
+
     format!(
-        "retained_wal_entries={} checkpoint_height_retained={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
+        "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
         recovered.wal_entries_retained,
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
+        checkpoint_relation,
         recovered.next_height,
         recovered.truncated,
         recovered.metadata_only_recovery,
@@ -382,7 +402,7 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=10 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true"
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true"
         );
     }
 
@@ -392,7 +412,27 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=1 checkpoint_height_retained=none next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false"
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_surfaces_checkpoint_ahead_relation() {
+        let recovered = recovered_state(2, 12, Some(15), false, true);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_surfaces_checkpoint_only_relation_without_wal_entries() {
+        let recovered = recovered_state(0, 9, Some(8), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false"
         );
     }
 

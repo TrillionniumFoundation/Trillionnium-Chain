@@ -713,7 +713,13 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     };
 
     if recovered.wal_entries_retained == 0 {
-        return base;
+        return match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) => format!(
+                "{} (last retained checkpoint height {})",
+                base, checkpoint_height
+            ),
+            None => base,
+        };
     }
 
     let tip_height = recovered.next_height.saturating_sub(1);
@@ -726,6 +732,10 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
                 base, lag, blocks
             )
         }
+        Some(checkpoint_height) if checkpoint_height > tip_height => format!(
+            "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
+            base, checkpoint_height, tip_height
+        ),
         None => format!("{} (no retained checkpoint metadata)", base),
         Some(_) => base,
     }
@@ -15337,6 +15347,34 @@ locked_block_hash = "stale-lock"
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
         assert_eq!(recovered.restored_lock.as_deref(), Some("h2"));
         assert_eq!(recovered.wal_entries_retained, 2);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_reports_checkpoint_without_retained_wal_entries() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-checkpoint-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "r8".into(),
+                wal_entry_hash_hex: "h8".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained no committed WAL entries (last retained checkpoint height 8)"));
+        assert!(err.contains("last retained checkpoint: 8"));
+        assert!(err.contains("next startup height: 9"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
