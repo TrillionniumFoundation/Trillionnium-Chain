@@ -16,6 +16,21 @@ pub(crate) struct NodeConfig {
 
 const MAX_NODE_ID_LEN: usize = 64;
 
+fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
+    value.chars().any(|ch| {
+        matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+    })
+}
+
 fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => addr.is_link_local(),
@@ -72,6 +87,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !node_id.chars().any(char::is_control),
         "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(node_id),
+        "invalid node config {}: node_id must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -135,6 +155,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not contain control characters",
         path
     );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(rpc_addr),
+        "invalid node config {}: rpc_addr must not contain invisible or bidirectional format characters",
+        path
+    );
 
     anyhow::ensure!(
         !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
@@ -171,6 +196,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(p2p_addr),
+        "invalid node config {}: p2p_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -402,6 +432,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
     anyhow::ensure!(
         !path.chars().any(char::is_control),
         "read config failed: path must not contain control characters"
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(path),
+        "read config failed: path must not contain invisible or bidirectional format characters"
     );
     anyhow::ensure!(
         !path.contains(',') && !path.contains(';') && !path.contains('|'),
@@ -639,6 +673,23 @@ mod tests {
                 .contains("path must not contain control characters"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn load_config_rejects_invisible_or_bidi_format_characters_in_path_fail_closed() {
+        for path in [
+            "configs/node1.toml\u{200B}",
+            "configs/node1.toml\u{202E}",
+            "configs/node1.toml\u{2066}",
+        ] {
+            let err = load_config(path)
+                .expect_err("config path invisible/bidi format characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain invisible or bidirectional format characters"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
     }
 
     #[test]
@@ -1516,6 +1567,37 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .contains("node_id must not contain control characters"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters() {
+        let cases = [
+            NodeConfig {
+                node_id: "node\u{200B}1".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            NodeConfig {
+                node_id: "node1".into(),
+                rpc_addr: "127.0.0.1:70\u{202E}00".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            NodeConfig {
+                node_id: "node1".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:700\u{2066}1".into(),
+            },
+        ];
+
+        for cfg in cases {
+            let err = validate_node_config(cfg, "inline")
+                .expect_err("invisible/bidi format characters in node config must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("must not contain invisible or bidirectional format characters"),
+                "unexpected error: {err:#}"
+            );
+        }
     }
 
     #[test]
