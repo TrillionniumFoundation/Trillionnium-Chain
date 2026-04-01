@@ -1846,6 +1846,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
         }
 
         for expected_phrase in [
+            "All four nodes bind the same loopback IP (`127.0.0.1`)",
+            "keep a deterministic `+1000` port spacing between neighboring peers",
             "Start `node1` first as the initial anchor.",
             "Start `node2`, `node3`, and `node4` in slot order.",
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
