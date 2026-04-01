@@ -561,7 +561,12 @@ mod tests {
                 && err.contains("retained 1 committed WAL entry through height 5")
                 && err.contains("no retained checkpoint metadata")
                 && err.contains("last retained checkpoint: none")
-                && err.contains("next startup height: 6"),
+                && err.contains("next startup height: 6")
+                && err.contains("incident clue: metadata_only_recovery=1")
+                && err.contains("wal_entries_retained=1")
+                && err.contains("wal_tail_truncated=true")
+                && err.contains("checkpoint_height_retained=none")
+                && err.contains("next_startup_height=6"),
             "unexpected metadata-only recovery error: {err}"
         );
     }

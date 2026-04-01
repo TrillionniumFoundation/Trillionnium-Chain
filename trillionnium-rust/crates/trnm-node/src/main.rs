@@ -743,9 +743,16 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
 
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
+        recovered.wal_entries_retained,
+        recovered.truncated,
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
@@ -15517,6 +15524,11 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("refusing metadata-only recovery"));
         assert!(err.contains("retained 3 committed WAL entries through height 3"));
         assert!(err.contains("last retained checkpoint: 2"));
+        assert!(err.contains("incident clue: metadata_only_recovery=1"));
+        assert!(err.contains("wal_entries_retained=3"));
+        assert!(err.contains("wal_tail_truncated=true"));
+        assert!(err.contains("checkpoint_height_retained=2"));
+        assert!(err.contains("next_startup_height=4"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
