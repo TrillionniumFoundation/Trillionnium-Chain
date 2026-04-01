@@ -2854,6 +2854,12 @@ mod tests {
         let canonical = canonicalize_risk_source(Some("   Bot\t\n Worker   "));
         assert_eq!(canonical, "bot worker");
 
+        // Quoted wrappers should not create distinct quota buckets for the same source alias.
+        let canonical_wrapped = canonicalize_risk_source(Some("  \"Bot Worker\"  "));
+        assert_eq!(canonical_wrapped, "bot worker");
+        let canonical_nested_wrapped = canonicalize_risk_source(Some("  「 Bot Worker 」  "));
+        assert_eq!(canonical_nested_wrapped, "bot worker");
+
         // Non-ASCII whitespace must still collapse even on the lowercase fast path.
         let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
         assert_eq!(canonical_nbsp, "bot worker");
