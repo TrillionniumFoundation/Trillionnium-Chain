@@ -414,6 +414,25 @@ fn oversized_critical_reserve_clamp_reopens_shared_headroom_immediately_after_on
 }
 
 #[test]
+fn oversized_critical_reserve_clamp_reopened_slot_remains_cross_class_fresh_until_reused() {
+    let mut g = LaneAdmissionGate::new(2, 5);
+
+    // Saturate the reserve-only shared lane and confirm a fresh normal retry is
+    // fail-closed rather than cached as a duplicate while no headroom exists.
+    assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // A single real drain reopens one shared slot even though critical backlog is
+    // still active. The previously backpressured id must admit as fresh through
+    // either class, then immediately dedupe across the other class.
+    assert_eq!(g.pop_ready(), Some(20));
+    assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Duplicate);
+}
+
+#[test]
 fn critical_spillover_can_fill_normal_lane_until_global_capacity() {
     let mut g = LaneAdmissionGate::new(4, 2);
 
