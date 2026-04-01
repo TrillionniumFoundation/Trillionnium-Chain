@@ -792,6 +792,23 @@ mod tests {
     }
 
     #[test]
+    fn rejects_policy_when_max_update_rate_is_zero() {
+        let err = OraclePolicy {
+            min_sources: 1,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 0,
+        }
+        .validate()
+        .expect_err("policy should fail closed when update-rate cap is zero");
+
+        assert_eq!(
+            err,
+            OracleError::InvalidPolicy("max_update_rate_per_window must be > 0")
+        );
+    }
+
+    #[test]
     fn rejects_empty_feed_id_when_building_snapshot() {
         let err = OracleSnapshot::new(
             "   ",
@@ -2024,6 +2041,71 @@ mod tests {
         assert_eq!(
             report.error.as_deref(),
             Some("invalid policy: min_sources must be <= max_update_rate_per_window")
+        );
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.classified_reject_total(), 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn observed_report_preserves_zero_update_rate_policy_error_without_counter_drift() {
+        let p = OraclePolicy {
+            min_sources: 1,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 0,
+        };
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some("invalid policy: max_update_rate_per_window must be > 0")
+        );
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.observation_matches_metrics());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn observed_report_keeps_source_cardinality_on_zero_update_rate_policy_error() {
+        let p = OraclePolicy {
+            min_sources: 1,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 0,
+        };
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("binance"), source("chainlink")],
+            3,
+            Some(100_100),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot should be valid");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some("invalid policy: max_update_rate_per_window must be > 0")
         );
         assert_eq!(report.metrics.oracle_source_cardinality, 3);
         assert_eq!(report.metrics.accepted_total, 0);
