@@ -313,6 +313,19 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     if resp.proof_count != resp.proofs.len() as u32 {
         bail!("proof_count does not match proofs length");
     }
+    let total_proof_steps: u32 = resp.proofs.iter().map(|entry| entry.proof.len() as u32).sum();
+    if resp.total_proof_steps != total_proof_steps {
+        bail!("total_proof_steps does not match proof payload");
+    }
+    let max_proof_depth = resp
+        .proofs
+        .iter()
+        .map(|entry| entry.proof.len() as u32)
+        .max()
+        .unwrap_or(0);
+    if resp.max_proof_depth != max_proof_depth {
+        bail!("max_proof_depth does not match proof payload");
+    }
 
     let expected_root = decode_hex_32(&resp.segment_root_hex, "segment root")?;
 
