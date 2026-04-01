@@ -150,6 +150,19 @@ def validate_packet_line_value(value: str, field: str) -> None:
         )
 
 
+def validate_packet_atom_value(value: str, field: str) -> None:
+    if not value:
+        fail(f"invalid ceremony packet arguments: {field} must not be empty")
+    if any(ch in "\r\n;" for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: {field} must not contain semicolons or embedded newlines"
+        )
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: {field} must be free of control characters"
+        )
+
+
 def validate_node_id(node_id: str, path: Path) -> None:
     if any(ch.isspace() for ch in node_id):
         fail(f"invalid node config {path}: node_id must not contain whitespace")
@@ -321,6 +334,11 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         if prefer_absolute_config_paths:
             config_path = str(Path(config_path).resolve())
         validator_name = entry["node_id"]
+        validate_packet_atom_value(validator_name, "validator_entry.validator_name")
+        validate_packet_atom_value(validator_name, "validator_entry.node_id")
+        validate_packet_atom_value(config_path, "validator_entry.config_path")
+        validate_packet_atom_value(entry["p2p_addr"], "validator_entry.p2p_addr")
+        validate_packet_atom_value(entry["rpc_addr"], "validator_entry.rpc_addr")
         print(
             "validator_entry="
             f"validator_name={validator_name};"
