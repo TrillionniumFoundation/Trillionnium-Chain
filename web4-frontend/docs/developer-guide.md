@@ -25,7 +25,10 @@ npm run test
 
 ## 环境配置
 
-推荐在本地和部署前拷贝并维护：`web4-frontend/.env.example`（执行 `cp web4-frontend/.env.example web4-frontend/.env.local`）。
+推荐在本地和部署前拷贝并维护：`web4-frontend/.env.example`。
+
+- 若当前目录是 `web4-frontend/`：执行 `cp .env.example .env.local`
+- 若当前目录是仓库根：执行 `cp web4-frontend/.env.example web4-frontend/.env.local`
 
 关键变量：
 - `NEXT_PUBLIC_QUERY_API_BASE_URL`（后端查询 API 地址）
