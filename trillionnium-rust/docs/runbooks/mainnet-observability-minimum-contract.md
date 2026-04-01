@@ -76,6 +76,21 @@ If the body later grows by additive fields, `HEAD` should continue to mirror the
 This is a **surface-availability contract**, not a full dependency/read-model health proof.
 Operators should not over-read it as indexer/read-model closure.
 
+### Negative-path transport semantics
+
+The minimum operator-facing contract also includes the current fail-closed transport split around this probe surface:
+
+- a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`
+- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope
+- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope
+
+Operational meaning:
+
+- `404` means the probe surface was reached but the requested path is outside the current contract
+- `400` means the request itself was malformed and should be treated as probe/client error rather than as a service-specific readiness signal
+
+This distinction matters during load balancer, sidecar, and operator triage because it separates "wrong endpoint" from "broken request generation" without overloading the health/readiness meaning of `200`.
+
 ## 2. `trnm-node` incident-summary bundle names
 
 `trnm-node` summary-format tests already keep the following incident-facing bundle append-stable and ordered for operator-visible summaries:
