@@ -105,7 +105,9 @@ When opening an incident or handing off between operators, include one compact s
 
 Minimal template:
 
-- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown>`
+- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<Oracle-specific_drill-down|Evidence_replay_integrity|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown>`
+
+Use `first_stop=Oracle-specific_drill-down` for normal oracle triage and `first_stop=Evidence_replay_integrity` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math.
 
 This keeps oracle handoff lines compatible with the shared observability routing contract in `docs/runbooks/mainnet-observability-alerting-starter-pack.md` while still preserving the oracle-specific `verdict`.
 
@@ -248,6 +250,7 @@ Minimal incident evidence block:
 - `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
 - `needs_replay`: `<yes|no>`
 - `needs_rollback`: `<yes|no>`
+- `first_stop_panel`: `<Oracle-specific drill-down|Evidence / replay integrity|unknown>`
 - `summary_line`: `<operator-visible summary line>`
 - `truth_source`: `<value copied from summary.txt/manifest.txt when present>`
 - `evidence_scope`: `<value copied from summary.txt/manifest.txt when present>`
@@ -263,10 +266,11 @@ Responder rules:
 
 1. Prefer the exact `rollback_command=` / `replay_command=` emitted by generated artifacts.
 2. Keep `signal=oracle-anomaly` in every page/ticket/dashboard link, and use `verdict=` only for the oracle-specific subtype.
-3. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
-4. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.
-5. If `git_worktree_path=` / `git_worktree_branch_ref=` are missing or mismatched during rehearsal, escalate to at least `sev0` until identity is reconciled.
-6. If observability data and replay evidence disagree, treat that as `sev0` until the metrics contract or evidence bundle is reconciled.
+3. Set `first_stop_panel=Oracle-specific drill-down` for normal oracle triage; switch to `Evidence / replay integrity` when `verdict=contract-drift` or evidence/metrics disagree.
+4. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
+5. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.
+6. If `git_worktree_path=` / `git_worktree_branch_ref=` are missing or mismatched during rehearsal, escalate to at least `sev0` until identity is reconciled.
+7. If observability data and replay evidence disagree, treat that as `sev0` until the metrics contract or evidence bundle is reconciled.
 
 ## Operator note
 
