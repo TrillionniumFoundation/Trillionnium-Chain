@@ -93,17 +93,17 @@ describe("dashboard page", () => {
     expect(screen.getByText("Critical events in latest window: 1")).toBeInTheDocument();
     expect(screen.getByText("Non-pass controls to review: 1")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
     expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Done" } });
     expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Events" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
     expect(await screen.findByText("Event Detail · EVT-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Info" } });
     expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
     expect(await screen.findByText("Audit Detail · AUD-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Pass" } });
     expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
@@ -115,13 +115,13 @@ describe("dashboard page", () => {
 
     render(<Home />);
 
-    fireEvent.click(await screen.findByRole("button", { name: "Tasks" }));
+    fireEvent.click(await screen.findByRole("tab", { name: "Tasks" }));
     expect(await screen.findByText("No tasks match current filter")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Events" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
     expect(await screen.findByText("No events found")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
     expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
 
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });

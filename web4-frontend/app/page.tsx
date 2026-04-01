@@ -122,21 +122,39 @@ export default function Home() {
           </p>
         </header>
 
-        <nav className="mb-8 flex flex-wrap gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                activeTab === tab
-                  ? "bg-slate-900 text-white"
-                  : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-100"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        <nav role="tablist" aria-label="Dashboard sections" className="mb-8 flex flex-wrap gap-2">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab;
+            const tabId = `dashboard-tab-${tab.toLowerCase()}`;
+            const panelId = `dashboard-panel-${tab.toLowerCase()}`;
+
+            return (
+              <button
+                key={tab}
+                id={tabId}
+                role="tab"
+                type="button"
+                aria-selected={isActive}
+                aria-controls={panelId}
+                tabIndex={isActive ? 0 : -1}
+                onClick={() => setActiveTab(tab)}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                  isActive
+                    ? "bg-slate-900 text-white"
+                    : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                {tab}
+              </button>
+            );
+          })}
         </nav>
+
+        <div
+          id={`dashboard-panel-${activeTab.toLowerCase()}`}
+          role="tabpanel"
+          aria-labelledby={`dashboard-tab-${activeTab.toLowerCase()}`}
+        >
 
         {loadState.status === "loading" && (
           <EmptyState
@@ -382,6 +400,7 @@ export default function Home() {
             )}
           </>
         )}
+        </div>
       </main>
     </div>
   );
