@@ -3,9 +3,11 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32,
-    EMERGENCY_PAUSE_KEY_ID, ObjectRef, TaskObject, TaskStatus,
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, EMERGENCY_PAUSE_KEY_ID,
+    ObjectRef, TaskObject, TaskStatus,
 };
+#[cfg(test)]
+use trnm_types::GovParamKey;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
