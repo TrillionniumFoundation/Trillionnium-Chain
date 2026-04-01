@@ -55,4 +55,4 @@ trnm(contract-rs-vault): ...
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "settlement-vault"`
 - `event_type`：`vault.deposited` / `vault.locked` / `vault.released` / `vault.slashed` / `vault.transferred` / `vault.paused` / `vault.unpaused`。
-- `amount` 与 `object_id` 分别承载金额、`request_id` 或账户信息。
+- `amount` 承载金额；`object_id` 承载主对象（如 `request_id`，或转账发起账户）；`related_id` 承载次级关联对象（如账户、受益人、转账接收方），避免多主体事件归一化后丢键。
