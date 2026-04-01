@@ -104,7 +104,27 @@ fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
         || lower.contains("%5c")
         || lower.contains("%3f")
         || lower.contains("%23")
+        || contains_percent_encoded_control_or_space(&lower)
         || is_encoded_dot_segment(&lower)
+}
+
+fn contains_percent_encoded_control_or_space(segment: &str) -> bool {
+    let bytes = segment.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
 }
 
 fn is_encoded_dot_segment(segment: &str) -> bool {
@@ -283,9 +303,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        fallback_response_for_request, has_ambiguous_path_segment_encoding,
-        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        parse_path_u64_suffix,
+        contains_percent_encoded_control_or_space, fallback_response_for_request,
+        has_ambiguous_path_segment_encoding, is_health_probe_path, json_response_for_method,
+        parse_nonempty_path_suffix, parse_path_u64_suffix,
     };
 
     #[test]
@@ -406,6 +426,10 @@ mod tests {
         assert_eq!(parse_path_u64_suffix("/query-events/.%2e", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/%2E.", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/%2e%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%0A", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%0d", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%09", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%20", "/query-events/"), None);
     }
 
     #[test]
@@ -560,6 +584,44 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%0Aadmin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%0dadmin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%09admin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%20admin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn percent_encoded_control_or_space_is_treated_as_ambiguous_path_input() {
+        assert!(contains_percent_encoded_control_or_space("alice%0Aadmin"));
+        assert!(contains_percent_encoded_control_or_space("alice%0dadmin"));
+        assert!(contains_percent_encoded_control_or_space("alice%09admin"));
+        assert!(contains_percent_encoded_control_or_space("alice%20admin"));
+        assert!(contains_percent_encoded_control_or_space("alice%7fadmin"));
+        assert!(!contains_percent_encoded_control_or_space("did:trn:alice"));
     }
 
     #[test]
