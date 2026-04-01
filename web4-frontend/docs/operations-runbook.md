@@ -9,6 +9,8 @@ npm run start
 ```
 
 > `release:ready` 会校验 `package.json` 当前版本是否已写入 `CHANGELOG.md`，随后自动执行 `release:preflight`。
+>
+> 边界说明：这里的 `release:ready` 仅表示 **web4-frontend 子项目** 已通过本地版本/变更日志/预检串联检查；**不等于整个 TRNM 仓库已经 release-ready**。仓库级发布口径仍以根目录 `RELEASE_READINESS.md` 为准。
 
 ## 回滚最小路径
 
