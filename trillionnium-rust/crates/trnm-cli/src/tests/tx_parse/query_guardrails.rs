@@ -42,3 +42,19 @@ fn tx_query_rejects_bare_hex_without_0x_prefix_before_shell_exec() {
         "unexpected: {msg}"
     );
 }
+
+#[test]
+fn tx_query_rejects_invalid_tx_hash_from_response() {
+    std::env::set_var(
+        "TRNM_TX_QUERY_CMD",
+        "printf '{\"tx_hash\":\"not-a-hash\",\"status\":\"committed\"}'",
+    );
+    let got = tx_query("0xabc123");
+    std::env::remove_var("TRNM_TX_QUERY_CMD");
+    assert!(got.is_err());
+    let msg = got.err().unwrap().to_string();
+    assert!(
+        msg.contains("invalid tx_hash field in tx query response"),
+        "unexpected: {msg}"
+    );
+}
