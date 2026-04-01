@@ -956,8 +956,6 @@ impl RelayService {
             }
             return Err(err);
         }
-        self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
-
         let g = self
             .sessions
             .lock()
@@ -978,6 +976,8 @@ impl RelayService {
                 format!("to_seq({}) exceeds max sequence({max_seq})", req.to_seq),
             ));
         }
+
+        self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
 
         let expected_len = (req.to_seq - req.from_seq + 1) as usize;
         let start_idx = (req.from_seq - 1) as usize;
@@ -2998,6 +2998,79 @@ mod tests {
             .query_session_proof(RelaySessionProofQuery {
                 task_id: 1,
                 session_id: "proof-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn out_of_bounds_proof_query_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-oob-budget".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-oob-budget".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .query_session_proof(RelaySessionProofQuery {
+                    task_id: 1,
+                    session_id: "proof-oob-budget".into(),
+                    from_seq: 1,
+                    to_seq: 9,
+                    source: Some("proof-src".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        }
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("out-of-bounds requests should not burn proof quota budget");
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("full proof quota budget should remain available after rejected oob requests");
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
                 from_seq: 1,
                 to_seq: 1,
                 source: Some("proof-src".into()),
