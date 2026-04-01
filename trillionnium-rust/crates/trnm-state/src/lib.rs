@@ -4693,6 +4693,29 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7-猫头鹰".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash is non-ascii so sidecars never publish locale-dependent checkpoint evidence"
+        );
+    }
+
+    #[test]
     fn wal_evidence_summary_is_deterministic_and_hash_backed() {
         let wal = WalMeta {
             height: 7,
