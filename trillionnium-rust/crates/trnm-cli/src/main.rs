@@ -1045,6 +1045,32 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name
         .chars()
         .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
+    let uppercase = name.to_ascii_uppercase();
+    let is_windows_reserved_device = matches!(
+        uppercase.as_str(),
+        "CON"
+            | "PRN"
+            | "AUX"
+            | "NUL"
+            | "COM1"
+            | "COM2"
+            | "COM3"
+            | "COM4"
+            | "COM5"
+            | "COM6"
+            | "COM7"
+            | "COM8"
+            | "COM9"
+            | "LPT1"
+            | "LPT2"
+            | "LPT3"
+            | "LPT4"
+            | "LPT5"
+            | "LPT6"
+            | "LPT7"
+            | "LPT8"
+            | "LPT9"
+    );
 
     if name.is_empty()
         || name == "."
@@ -1056,9 +1082,10 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
         ])
         || has_hidden_or_whitespace
+        || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators",
+            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
             name
         );
     }

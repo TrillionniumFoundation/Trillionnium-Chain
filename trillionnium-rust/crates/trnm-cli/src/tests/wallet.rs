@@ -392,6 +392,14 @@ fn wallet_name_rejects_path_like_values() {
         "alice\u{2066}bob",
         "alice\u{2069}bob",
         "alice\u{0007}bob",
+        "con",
+        "PRN",
+        "aux",
+        "nul",
+        "com1",
+        "CoM9",
+        "lpt1",
+        "LPT9",
     ] {
         let err = ensure_wallet_name(bad).unwrap_err();
         assert!(
