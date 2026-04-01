@@ -23,6 +23,20 @@ fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_documentation_or_benchmark_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(octets, [192, 0, 2, _] | [198, 51, 100, _] | [203, 0, 113, _])
+                || (octets[0] == 198 && octets[1] >= 18 && octets[1] <= 19)
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
 fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(_) => false,
@@ -225,6 +239,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
         path
     );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a documentation or benchmark-only address",
+        path
+    );
     let p2p_socket: SocketAddr = p2p_addr.parse().with_context(|| {
         format!(
             "invalid node config {}: p2p_addr must be a valid socket address",
@@ -274,6 +293,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !has_nonzero_ipv6_scope(p2p_socket),
         "invalid node config {}: p2p_addr must not use an IPv6 scope identifier",
+        path
+    );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a documentation or benchmark-only address",
         path
     );
     anyhow::ensure!(
@@ -1136,7 +1160,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_multicast_broadcast_unspecified_and_link_local_listener_addresses(
+    fn validate_node_config_rejects_multicast_broadcast_unspecified_link_local_and_documentation_listener_addresses(
     ) {
         let rpc_multicast_err = validate_node_config(
             NodeConfig {
@@ -1329,6 +1353,54 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .contains("p2p_addr must not use an IPv6 scope identifier"),
             "unexpected error: {p2p_scope_err:#}"
         );
+
+        for rpc_addr in [
+            "192.0.2.10:7000",
+            "198.51.100.10:7000",
+            "203.0.113.10:7000",
+            "198.18.0.10:7000",
+            "[2001:db8::10]:7000",
+        ] {
+            let rpc_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("rpc_addr documentation and benchmark ranges must fail closed");
+            assert!(
+                rpc_err
+                    .to_string()
+                    .contains("rpc_addr must not use a documentation or benchmark-only address"),
+                "unexpected error for {rpc_addr:?}: {rpc_err:#}"
+            );
+        }
+
+        for p2p_addr in [
+            "192.0.2.10:7001",
+            "198.51.100.10:7001",
+            "203.0.113.10:7001",
+            "198.19.0.10:7001",
+            "[2001:db8::11]:7001",
+        ] {
+            let p2p_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "inline",
+            )
+            .expect_err("p2p_addr documentation and benchmark ranges must fail closed");
+            assert!(
+                p2p_err
+                    .to_string()
+                    .contains("p2p_addr must not use a documentation or benchmark-only address"),
+                "unexpected error for {p2p_addr:?}: {p2p_err:#}"
+            );
+        }
     }
 
     #[test]
