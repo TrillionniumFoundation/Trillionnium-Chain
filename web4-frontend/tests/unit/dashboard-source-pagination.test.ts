@@ -446,6 +446,45 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
   });
 
+  it("falls back to '-' when readonly task timestamps are absent", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "347",
+          owner: "ops",
+          status: "running",
+          metadata: { region: "ap-east-1" },
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "347",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks).toHaveLength(1);
+    expect(snapshot.tasks[0]?.updatedAt).toBe("-");
+  });
+
   it("fails closed when mock mode is requested in production", async () => {
     const createClientSpy = vi.spyOn(apiContractClient, "createFrontendApiClient");
 
