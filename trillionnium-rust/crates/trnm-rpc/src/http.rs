@@ -232,7 +232,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -487,6 +487,27 @@ mod tests {
             "/query-events/42\n?limit=1",
             "/query-events/42\r?limit=1",
             "/query-events/4 2?limit=1",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path:?}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-events/42?limit=1 ",
+            "/query-events/42?limit= 1",
+            "/query-events/42?limit =1",
+            "/query-events/42?limit=1& limit=2",
         ] {
             let response = parse_query_events_limit_from_path(path);
             assert!(response.is_err(), "path={path:?}");
