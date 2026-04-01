@@ -122,6 +122,21 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     return value
 
 
+def validate_packet_path(value: str, field: str) -> None:
+    if any(ch.isspace() for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an explicit absolute path without whitespace"
+        )
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be free of control characters"
+        )
+    if not value.startswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
+        )
+
+
 def validate_node_id(node_id: str, path: Path) -> None:
     if any(ch.isspace() for ch in node_id):
         fail(f"invalid node config {path}: node_id must not contain whitespace")
@@ -249,6 +264,9 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires genesis_artifact_sha256 to be a 64-character hex sha256 digest"
         )
+
+    validate_packet_path(args.genesis_artifact_path, "genesis_artifact_path")
+    validate_packet_path(args.packet_distribution_path, "packet_distribution_path")
 
 
 def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]) -> None:

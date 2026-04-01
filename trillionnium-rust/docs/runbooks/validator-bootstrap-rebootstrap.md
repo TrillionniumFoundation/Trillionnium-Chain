@@ -113,7 +113,7 @@ Minimum packet fields:
 
 Recommended for any packet expected to feed a public-mainnet readiness review:
 - `packet_generated_at=` in UTC so later evidence can tie the ceremony packet to the bootstrap window explicitly
-- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed
+- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed; for `public-mainnet-input`, use one explicit absolute path so operators do not normalize different relative paths by hand
 - `operator_contact=` repeated once per operator so a missing acknowledgment can be resolved without ambiguity
 - `abort_condition=` repeated for the specific fail-closed triggers that cause the ceremony to stop immediately (for example mismatched genesis hash, duplicate `node_id`, or wrong assigned worktree)
 
@@ -156,6 +156,7 @@ Interpretation rule:
 Fail-closed rule:
 - if two validators claim the same `node_id`, stop
 - if two validators point at different genesis hashes for the same `ceremony_id`, stop
+- if a `public-mainnet-input` packet uses a relative `genesis_artifact_path=` or `packet_distribution_path=`, stop and regenerate it with explicit absolute paths
 - if an operator cannot map their running process back to one `validator_entry=`, stop
 - if the packet names a validator but does not name the owning operator, treat the ceremony as incomplete
 
@@ -209,6 +210,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
 Fail-closed rule for generated packets:
 - if `packet_generated_at=` or `packet_distribution_path=` is still a placeholder when the packet is shared for operator acknowledgment, do not treat the packet as ceremony-ready
 - if `ceremony_scope=public-mainnet-input`, require operators to replace `<owner>` / `<chat/email/oncall>` / `<optional-ack-path>` placeholders before startup instead of relying on a later cleanup pass
+- if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_path=` and `packet_distribution_path=` to be explicit absolute paths rather than relative paths copied from a local shell
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_sha256=` to be a real 64-character hex SHA-256 digest instead of a shorthand label or truncated checksum
 
 What this proves:
