@@ -58,7 +58,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--ceremony-id",
         default="mn04-bootstrap-YYYYMMDD-HHMMZ",
-        help="ceremony_id value to print when --emit-ceremony-packet is used",
+        help=(
+            "ceremony_id value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing the template default"
+        ),
     )
     parser.add_argument(
         "--ceremony-scope",
@@ -69,17 +72,26 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--packet-generated-at",
         default="<utc-timestamp>",
-        help="packet_generated_at value to print when --emit-ceremony-packet is used",
+        help=(
+            "packet_generated_at value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires a UTC ISO-8601 timestamp like 2026-03-31T06:21:00Z"
+        ),
     )
     parser.add_argument(
         "--packet-distribution-path",
         default="<shared-folder-or-ticket>",
-        help="packet_distribution_path value to print when --emit-ceremony-packet is used",
+        help=(
+            "packet_distribution_path value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit absolute path"
+        ),
     )
     parser.add_argument(
         "--validator-set-version",
         default="v1",
-        help="validator_set_version value to print when --emit-ceremony-packet is used",
+        help=(
+            "validator_set_version value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing the default v1 label"
+        ),
     )
     parser.add_argument(
         "--startup-order-note",
@@ -94,12 +106,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--genesis-artifact-path",
         default="<genesis-artifact-path>",
-        help="genesis_artifact_path value to print when --emit-ceremony-packet is used",
+        help=(
+            "genesis_artifact_path value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit absolute path"
+        ),
     )
     parser.add_argument(
         "--genesis-artifact-sha256",
         default="<genesis-sha256>",
-        help="genesis_artifact_sha256 value to print when --emit-ceremony-packet is used",
+        help=(
+            "genesis_artifact_sha256 value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires a full 64-character hex SHA-256 digest"
+        ),
     )
     return parser.parse_args(argv[1:])
 
