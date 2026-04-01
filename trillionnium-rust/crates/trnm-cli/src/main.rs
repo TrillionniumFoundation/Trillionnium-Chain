@@ -938,7 +938,14 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    (!normalized.is_empty()).then_some(normalized)
+    if normalized.is_empty()
+        || normalized
+            .chars()
+            .any(|c| c.is_whitespace() || contains_hidden_or_control(c))
+    {
+        return None;
+    }
+    Some(normalized)
 }
 
 fn wallet_store_path_is_safe(path: &Path) -> bool {
@@ -2633,6 +2640,13 @@ mod tests {
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
+    }
+
+    #[test]
+    fn normalize_wallet_store_env_rejects_hidden_or_whitespace_payloads() {
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
     }
 
     #[test]
