@@ -24,6 +24,18 @@ Before any public-mainnet cut, freeze all five items together:
    - disposition of already-queued sponsored transactions after revocation (`grandfather`, `drain-only`, or `drop`)
    - whether revoke / drain-only mode must preserve duplicate knowledge for already-seen sponsored ids so replay probes cannot reopen sponsor/free-ingress headroom before the queue truly drains
 
+   ### Sponsor revocation disposition mini-matrix
+
+   Use one label only in the freeze packet, and make the queue semantics explicit:
+
+   | Disposition | Queue effect after revocation | Required duplicate-retention stance | Review bias |
+   | --- | --- | --- | --- |
+   | `grandfather` | already-queued sponsored txs may continue to admission/settlement under the pre-revocation sponsor grant | duplicate tracking must remain intact until those txs leave the queue; otherwise replay probes can make revocation look softer than stated | avoid for day-1 unless the remaining sponsored exposure is tightly capped and auditable |
+   | `drain-only` | no new sponsor-backed ingress is accepted, but already-queued sponsored txs may drain naturally | preserve already-seen sponsored ids as duplicate-classified until the queue truly drains and public headroom stays fail-closed | preferred temporary safety valve when revocation must not fabricate phantom reopen behavior |
+   | `drop` | queued sponsored txs are explicitly removed/cancelled at revocation time | duplicate-retention rule must still say whether dropped ids remain classified as seen until the drop is durably reflected everywhere operators inspect admission state | safest for subsidy shutdown, but only if operator/audit surfaces can explain the discard clearly |
+
+   If the review packet cannot say which one of these three dispositions is in force, treat the sponsor boundary as **not frozen**.
+
 3. **Retention pricing rule**
    - which artifacts are retained: proofs, challenge snapshots, collateral metadata, audit evidence
    - minimum retention window for day-1 mainnet
