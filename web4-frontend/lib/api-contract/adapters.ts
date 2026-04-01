@@ -301,9 +301,11 @@ export const adaptQueryNormalizedAuditEvents = (
       total?: number;
     };
 
+    const nextCursor = data.nextCursor?.trim();
+
     return {
       events: data.events,
-      nextCursor: data.nextCursor,
+      nextCursor: nextCursor && nextCursor.length > 0 ? nextCursor : undefined,
       hasMore: data.hasMore,
       total: data.total,
     };

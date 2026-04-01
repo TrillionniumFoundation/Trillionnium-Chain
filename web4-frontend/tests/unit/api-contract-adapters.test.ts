@@ -328,6 +328,28 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(42);
   });
 
+  it("trims canonical normalized audit pagination cursors before returning them", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [],
+      hasMore: true,
+      nextCursor: "  c2  ",
+    });
+
+    expect(out.nextCursor).toBe("c2");
+    expect(out.hasMore).toBe(true);
+  });
+
+  it("drops canonical normalized audit pagination cursors that normalize to empty", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [],
+      hasMore: true,
+      nextCursor: "   ",
+    });
+
+    expect(out.nextCursor).toBeUndefined();
+    expect(out.hasMore).toBe(true);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({
