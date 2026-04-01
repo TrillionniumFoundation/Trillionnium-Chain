@@ -882,6 +882,18 @@ mod tests {
     }
 
     #[test]
+    fn accepts_policy_when_max_deviation_bps_hits_guardrail_cap() {
+        OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: MAX_DEVIATION_BPS_CAP,
+            max_update_rate_per_window: 60,
+        }
+        .validate()
+        .expect("policy should accept the documented deviation cap boundary");
+    }
+
+    #[test]
     fn rejects_empty_feed_id_when_building_snapshot() {
         let err = OracleSnapshot::new(
             "   ",
